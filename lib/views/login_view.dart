@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/Utility/my_colors.dart';
+import 'package:generador_formato/constants/web_colors.dart';
+import 'package:generador_formato/views/home_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
@@ -24,6 +25,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       // appBar: AppBar(
       //   backgroundColor: MyColors.appBarColor,
@@ -33,37 +35,41 @@ class _LoginViewState extends State<LoginView> {
       //   ],),
       // ),
       body: Container(
+        height: screenHeight,
         width: screenWidth,
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Colors.white, MyColors.cerulean],
+                colors: [Colors.white, WebColors.cerulean],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth > 700 ? 0 : 75),
+          child: Center(
+            child: SizedBox(
               width: 700,
               height: 450,
               child: Card(
                 elevation: 6,
                 color: Colors.white,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: (screenWidth > 700)
+                      ? MainAxisAlignment.spaceBetween
+                      : MainAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 36.0, vertical: 56),
+                          horizontal: 36.0, vertical: 60),
                       child: Form(
                         key: _formKeyLogin,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: (screenWidth > 700)
+                              ? CrossAxisAlignment.start
+                              : CrossAxisAlignment.center,
                           children: [
                             const Image(
                               image: AssetImage("assets/image/logo_lobby.png"),
-                              width: 200,
+                              width: 220,
                             ),
                             Text(
                               "Iniciar sesión",
@@ -121,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
                                         _passwordVisible
                                             ? Icons.visibility
                                             : Icons.visibility_off,
-                                        color: MyColors.azulCielo,
+                                        color: WebColors.azulCielo,
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -134,13 +140,20 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             SizedBox(
                               width: 120,
-                              height: 35,
+                              height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (_formKeyLogin.currentState!.validate()) {}
+                                  if (_formKeyLogin.currentState!.validate()) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                               HomeView()),
+                                    );
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: MyColors.prussianBlue),
+                                    backgroundColor: WebColors.prussianBlue),
                                 child: Text(
                                   "Ingresar",
                                   style: GoogleFonts.poppins(
@@ -153,23 +166,24 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 350,
-                      height: 450,
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(5),
-                              topRight: Radius.circular(5)),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage("assets/image/lobby.jpg"),
-                          )),
-                    )
+                    if (screenWidth > 700)
+                      if (screenHeight > 400)
+                        Container(
+                          width: 350,
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(5),
+                                  topRight: Radius.circular(5)),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage("assets/image/lobby.jpg"),
+                              )),
+                        )
                   ],
                 ),
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
