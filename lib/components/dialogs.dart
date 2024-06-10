@@ -1,9 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
 import 'package:generador_formato/components/text_styles.dart';
 import 'package:generador_formato/components/textformfield_custom.dart';
 import 'package:generador_formato/constants/web_colors.dart';
 import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
+
+import '../models/cotizacion_model.dart';
 
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',
@@ -16,18 +20,25 @@ const List<String> planes = <String>[
 ];
 
 class Dialogs {
-  String dropdownCategoria = categorias.first;
-  String dropdownPlan = planes.first;
-  Widget habitacionDialog() {
+  Widget habitacionDialog(BuildContext context) {
+    Cotizacion nuevaCotizacion = Cotizacion(
+      categoria: categorias.first,
+      plan: planes.first,
+      fechaEntrada: DateTime.now().toString().substring(0, 10),
+      adultos: 0,
+      menores0a6: 0,
+      menores7a12: 0,
+    );
+    final _formKeyHabitacion = GlobalKey<FormState>();
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
           text: "Agregar habitación", color: WebColors.prussianBlue),
       content: StatefulBuilder(
         builder: (context, setState) {
-          return SizedBox(
-            width: 500,
-            child: SingleChildScrollView(
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKeyHabitacion,
               child: Column(
                 children: [
                   Row(
@@ -37,8 +48,13 @@ class Dialogs {
                       const SizedBox(width: 15),
                       CustomWidgets.dropdownMenuCustom(
                           initialSelection: categorias.first,
-                          changeValue: dropdownCategoria,
-                          elements: categorias),
+                          onSelected: (String? value) {
+                            setState(() {
+                              nuevaCotizacion.categoria = value!;
+                            });
+                          },
+                          elements: categorias,
+                          screenWidth: MediaQuery.of(context).size.width),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -49,27 +65,37 @@ class Dialogs {
                       const SizedBox(width: 15),
                       CustomWidgets.dropdownMenuCustom(
                           initialSelection: planes.first,
-                          changeValue: dropdownPlan,
-                          elements: planes),
+                          onSelected: (String? value) {
+                            setState(() {
+                              nuevaCotizacion.plan = value!;
+                            });
+                          },
+                          elements: planes,
+                          screenWidth: MediaQuery.of(context).size.width),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 340,
+                      Expanded(
                         child:
                             TextFormFieldCustom.textFormFieldwithBorderCalendar(
                                 name: "Fecha de entrada",
-                                msgError: "Campo requerido*"),
+                                msgError: "Campo requerido*",
+                                valueChange: nuevaCotizacion.fechaEntrada!),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(width: 10),
                       SizedBox(
                         width: 150,
                         child: TextFormFieldCustom.textFormFieldwithBorder(
                           name: "Numero de noches",
                           msgError: "Campo requerido*",
+                          isNumeric: true,
+                          isDecimal: false,
+                          onChanged: (p0) {
+                            setState(() =>
+                                nuevaCotizacion.noches = int.tryParse(p0));
+                          },
                         ),
                       ),
                     ],
@@ -84,10 +110,28 @@ class Dialogs {
                         TextStyles.standardText(
                             text: "Menores 7-12", aling: TextAlign.center),
                       ]),
-                      const TableRow(children: [
-                        NumberInputWithIncrementDecrement(),
-                        NumberInputWithIncrementDecrement(),
-                        NumberInputWithIncrementDecrement()
+                      TableRow(children: [
+                        NumberInputWithIncrementDecrement(
+                          onChanged: (p0) {
+                            setState(() =>
+                                nuevaCotizacion.adultos = int.tryParse(p0));
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: NumberInputWithIncrementDecrement(
+                            onChanged: (p0) {
+                              setState(() => nuevaCotizacion.menores0a6 =
+                                  int.tryParse(p0));
+                            },
+                          ),
+                        ),
+                        NumberInputWithIncrementDecrement(
+                          onChanged: (p0) {
+                            setState(() =>
+                                nuevaCotizacion.menores7a12 = int.tryParse(p0));
+                          },
+                        )
                       ]),
                     ],
                   ),
@@ -95,17 +139,32 @@ class Dialogs {
                     children: [
                       SizedBox(
                         width: 150,
-                        child:
-                            TextFormFieldCustom.textFormFieldwithBorder(
-                                name: "Tarifa real",
-                                msgError: "Campo requerido*"),
+                        child: TextFormFieldCustom.textFormFieldwithBorder(
+                          name: "Tarifa real",
+                          msgError: "Campo requerido*",
+                          isNumeric: true,
+                          isDecimal: true,
+                          isMoneda: true,
+                          onChanged: (p0) {
+                            setState(() => nuevaCotizacion.tarifaReal =
+                                double.tryParse(p0));
+                          },
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: TextFormFieldCustom.textFormFieldwithBorder(
-                            name:
-                                "Tarifa de preventa oferta por tiempo limitado",
-                            msgError: ""),
+                          name: "Tarifa de preventa oferta por tiempo limitado",
+                          msgError: "",
+                          isRequired: false,
+                          isNumeric: true,
+                          isDecimal: true,
+                          isMoneda: true,
+                          onChanged: (p0) {
+                            setState(() => nuevaCotizacion.tarifaPreventa =
+                                double.tryParse(p0));
+                          },
+                        ),
                       ),
                     ],
                   )
@@ -117,9 +176,17 @@ class Dialogs {
       ),
       actions: [
         TextButton(
-            onPressed: () {}, child: TextStyles.buttonText(text: "Agregar")),
+            onPressed: () {
+              if (_formKeyHabitacion.currentState!.validate()) {
+                Navigator.of(context).pop(nuevaCotizacion);
+              }
+            },
+            child: TextStyles.buttonText(text: "Agregar")),
         TextButton(
-            onPressed: () {}, child: TextStyles.buttonText(text: "Cancelar"))
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: TextStyles.buttonText(text: "Cancelar"))
       ],
     );
   }

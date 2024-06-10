@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
-  const NumberInputWithIncrementDecrement({super.key});
+  final void Function(String)? onChanged;
+  const NumberInputWithIncrementDecrement({super.key, required this.onChanged});
 
   @override
   _NumberInputWithIncrementDecrementState createState() =>
@@ -40,7 +41,9 @@ class _NumberInputWithIncrementDecrementState
           Expanded(
             flex: 1,
             child: TextFormField(
+              onChanged: (value) => widget.onChanged!.call(value),
               textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(fontSize: 13),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 labelStyle: GoogleFonts.poppins(fontSize: 13),
@@ -55,14 +58,14 @@ class _NumberInputWithIncrementDecrementState
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: 38.0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
                         width: 0.5,
@@ -70,7 +73,7 @@ class _NumberInputWithIncrementDecrementState
                     ),
                   ),
                   child: InkWell(
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_drop_up,
                       size: 18.0,
                     ),
@@ -80,22 +83,23 @@ class _NumberInputWithIncrementDecrementState
                         currentValue++;
                         _controller.text =
                             (currentValue).toString(); // incrementing value
+                        widget.onChanged!.call(_controller.text);
                       });
                     },
                   ),
                 ),
                 InkWell(
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_drop_down,
                     size: 18.0,
                   ),
                   onTap: () {
                     int currentValue = int.parse(_controller.text);
                     setState(() {
-                      print("Setting state");
                       currentValue--;
                       _controller.text = (currentValue > 0 ? currentValue : 0)
                           .toString(); // decrementing value
+                      widget.onChanged!.call(_controller.text);
                     });
                   },
                 ),

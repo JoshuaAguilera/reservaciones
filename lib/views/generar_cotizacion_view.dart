@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:generador_formato/components/dialogs.dart';
 import 'package:generador_formato/components/text_styles.dart';
 import 'package:generador_formato/components/textformfield_custom.dart';
+import 'package:generador_formato/components/utility.dart';
 import 'package:generador_formato/constants/web_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../models/cotizacion_model.dart';
 
 const List<String> list = <String>[
   'Cotización Individual',
@@ -20,6 +24,13 @@ class GenerarCotizacionView extends StatefulWidget {
 
 class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
   String dropdownValue = list.first;
+  List<Cotizacion> cotizaciones = [];
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +81,10 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
                 children: [
                   Expanded(
                     child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Teléfono", msgError: "Campo requerido*"),
+                        name: "Teléfono",
+                        msgError: "Campo requerido*",
+                        isNumeric: true,
+                        isDecimal: false),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -90,7 +104,10 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Numero de noches", msgError: "Campo requerido*"),
+                        name: "Numero de noches",
+                        msgError: "Campo requerido*",
+                        isNumeric: true,
+                        isDecimal: false),
                   ),
                 ],
               ),
@@ -110,9 +127,15 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return Dialogs().habitacionDialog();
+                          return Dialogs().habitacionDialog(context);
                         },
-                      );
+                      ).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            cotizaciones.add(value);
+                          });
+                        }
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                         elevation: 4, backgroundColor: WebColors.prussianBlue),
@@ -127,52 +150,135 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
               ),
               const SizedBox(height: 12),
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(12))),
+                    border: Border.all(color: WebColors.prussianBlue),
+                    borderRadius: const BorderRadius.all(Radius.circular(12))),
                 padding: const EdgeInsets.all(10.0),
                 child: Table(
                   columnWidths: const {
-                    0: FractionColumnWidth(.1),
+                    0: FractionColumnWidth(.05),
                     1: FractionColumnWidth(.15),
                     2: FractionColumnWidth(.1),
                     3: FractionColumnWidth(.1),
                     4: FractionColumnWidth(.1),
-                    5: FractionColumnWidth(.1)
+                    5: FractionColumnWidth(.15),
+                    6: FractionColumnWidth(.25),
                   },
                   border: const TableBorder(
                       horizontalInside: BorderSide(color: Colors.black87)),
                   children: [
                     TableRow(children: [
                       TextStyles.standardText(
-                          text: "Día", aling: TextAlign.center),
+                          text: "Día", aling: TextAlign.center, overClip: true),
                       TextStyles.standardText(
-                          text: "Fechas de estancia", aling: TextAlign.center),
+                          text: "Fechas de estancia",
+                          aling: TextAlign.center,
+                          overClip: true),
                       TextStyles.standardText(
-                          text: "Adultos", aling: TextAlign.center),
+                          text: "Adultos",
+                          aling: TextAlign.center,
+                          overClip: true),
                       TextStyles.standardText(
-                          text: "Menores 0-6", aling: TextAlign.center),
+                          text: "Menores 0-6",
+                          aling: TextAlign.center,
+                          overClip: true),
                       TextStyles.standardText(
-                          text: "Menores 7-12", aling: TextAlign.center),
+                          text: "Menores 7-12",
+                          aling: TextAlign.center,
+                          overClip: true),
                       TextStyles.standardText(
-                          text: "Tarifa \nReal", aling: TextAlign.center),
+                          text: "Tarifa \nReal",
+                          aling: TextAlign.center,
+                          overClip: true),
                       TextStyles.standardText(
-                          text:
-                              "Tarifa de preventa \noferta por tiempo limitado",
-                          aling: TextAlign.center),
+                          text: "Tarifa de preventa oferta por tiempo limitado",
+                          aling: TextAlign.center,
+                          overClip: true),
+                      const SizedBox(
+                        width: 15,
+                      )
                     ]),
-                    // TableRow(children: [
-                    //   Text('Cell 4'),
-                    //   Text('Cell 5'),
-                    //   Text('Cell 6'),
-                    //   Text('Cell 4'),
-                    //   Text('Cell 5'),
-                    //   Text('Cell 6'),
-                    //   Text('Cell 4'),
-                    // ]),
                   ],
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 5),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: cotizaciones.length,
+                  itemBuilder: (context, index) {
+                    if (index < cotizaciones.length) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: WebColors.prussianBlue),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12))),
+                        padding: const EdgeInsets.all(10.0),
+                        child: Table(
+                          columnWidths: const {
+                            0: FractionColumnWidth(.05),
+                            1: FractionColumnWidth(.15),
+                            2: FractionColumnWidth(.1),
+                            3: FractionColumnWidth(.1),
+                            4: FractionColumnWidth(.1),
+                            5: FractionColumnWidth(.15),
+                            6: FractionColumnWidth(.25),
+                          },
+                          border: const TableBorder(
+                              horizontalInside:
+                                  BorderSide(color: Colors.black87)),
+                          children: [
+                            TableRow(children: [
+                              TextStyles.standardText(
+                                text: (index + 1).toString(),
+                                aling: TextAlign.center,
+                                overClip: true,
+                              ),
+                              TextStyles.standardText(
+                                text: Utility.getLengthStay(
+                                    cotizaciones[index].fechaEntrada,
+                                    cotizaciones[index].noches),
+                                aling: TextAlign.center,
+                                overClip: true,
+                              ),
+                              TextStyles.standardText(
+                                  text: cotizaciones[index].adultos.toString(),
+                                  aling: TextAlign.center,
+                                  overClip: true),
+                              TextStyles.standardText(
+                                  text:
+                                      cotizaciones[index].menores0a6.toString(),
+                                  aling: TextAlign.center,
+                                  overClip: true),
+                              TextStyles.standardText(
+                                  text: cotizaciones[index]
+                                      .menores7a12
+                                      .toString(),
+                                  aling: TextAlign.center,
+                                  overClip: true),
+                              TextStyles.standardText(
+                                  text: "\$ ${cotizaciones[index].tarifaReal}",
+                                  aling: TextAlign.center,
+                                  overClip: true),
+                              TextStyles.standardText(
+                                  text:
+                                      "\$ ${(cotizaciones[index].tarifaPreventa != null) ? cotizaciones[index].tarifaPreventa : cotizaciones[index].tarifaReal}",
+                                  aling: TextAlign.center,
+                                  overClip: true),
+                              const SizedBox(
+                                width: 15,
+                              )
+                            ]),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),

@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../constants/web_colors.dart';
-import '../ui/show_snackbar.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({

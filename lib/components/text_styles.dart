@@ -4,11 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 class TextStyles {
   static Text standardText(
-      {String text = "", TextAlign aling = TextAlign.left}) {
+      {String text = "", TextAlign aling = TextAlign.left, bool overClip = false}) {
     return Text(
       text,
       textAlign: aling,
-      style: GoogleFonts.poppins(color: WebColors.prussianBlue, fontSize: 13),
+      style: GoogleFonts.poppins(
+          color: WebColors.prussianBlue,
+          fontSize: 13,
+          textStyle:  TextStyle(overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis)),
     );
   }
 
