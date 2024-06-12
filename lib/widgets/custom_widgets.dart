@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/components/utility.dart';
+import 'package:generador_formato/helpers/utility.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomWidgets {
   static Widget dropdownMenuCustom(
       {required String initialSelection,
       required void Function(String?)? onSelected,
-      required List<String> elements, required double screenWidth}) {
+      required List<String> elements,
+      required double? screenWidth}) {
     return StatefulBuilder(
       builder: (context, setState) {
         return DropdownMenu<String>(
-          width: Utility.getWidthDynamic(screenWidth),
+          width:
+              screenWidth == null ? null : Utility.getWidthDynamic(screenWidth),
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,

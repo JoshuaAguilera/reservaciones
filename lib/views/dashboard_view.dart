@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/components/utility.dart';
+import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/views/generar_cotizacion_view.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -25,7 +25,7 @@ class DashboardView extends StatelessWidget {
               style: theme.textTheme.headlineSmall,
             );
           case 1:
-            return const GenerarCotizacionView();
+            return GenerarCotizacionView(sideController: controller);
           default:
             return Text(
               pageTitle,

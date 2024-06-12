@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/components/utility.dart';
+import 'package:generador_formato/helpers/utility.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../components/sidebar.dart';
-import '../constants/web_colors.dart';
+import '../widgets/sidebar.dart';
+import '../helpers/web_colors.dart';
 import 'dashboard_view.dart';
 
 class HomeView extends StatelessWidget {

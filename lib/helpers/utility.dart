@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Utility {
   static String getTitleByIndex(int index) {
     switch (index) {
@@ -28,12 +30,16 @@ class Utility {
     return outWidth;
   }
 
-  static String getLengthStay(String? fechaEntrada, int? 
-  noches) {
+  static String getLengthStay(String? fechaEntrada, int? noches) {
     String date = "";
     DateTime time = DateTime.parse(fechaEntrada!);
-    time.add(Duration(days: noches! + 1));
-    date = "$fechaEntrada a ${time.toString().substring(0, 10)}";
+    date =
+        "$fechaEntrada a ${time.add(Duration(days: noches! + 1)).toString().substring(0, 10)}";
     return date;
+  }
+
+  static String formatterNumber(double number) {
+    return NumberFormat.simpleCurrency(locale: 'EN-us', decimalDigits: 2)
+        .format(number);
   }
 }

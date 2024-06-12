@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants/web_colors.dart';
+import '../helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class TextFormFieldCustom {
@@ -20,7 +20,7 @@ class TextFormFieldCustom {
   }) {
     bool withContent = false;
     return StatefulBuilder(
-      builder: (context, setState) {
+      builder: (context, snapshot) {
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
@@ -39,14 +39,14 @@ class TextFormFieldCustom {
                     top: 15, child: TextStyles.standardText(text: "   \$")),
               TextFormField(
                 onChanged: (value) {
-                  onChanged!.call(value);
-                  setState(() {
+                  snapshot(() {
                     if (value.isEmpty) {
                       withContent = false;
                     } else {
                       withContent = true;
                     }
                   });
+                  if (onChanged != null) onChanged.call(value);
                 },
                 obscureText: passwordVisible,
                 validator: (value) {
@@ -83,7 +83,7 @@ class TextFormFieldCustom {
                             color: WebColors.azulCielo,
                           ),
                           onPressed: () {
-                            setState(() {
+                            snapshot(() {
                               passwordVisible = !passwordVisible;
                             });
                           },
@@ -102,9 +102,7 @@ class TextFormFieldCustom {
   static Widget textFormFieldwithBorderCalendar(
       {required String name,
       required String msgError,
-      required String valueChange}) {
-    TextEditingController dateController =
-        TextEditingController(text: DateTime.now().toString().substring(0, 10));
+      required TextEditingController dateController}) {
     return StatefulBuilder(
       builder: (context, setState) {
         return Container(
@@ -141,11 +139,10 @@ class TextFormFieldCustom {
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime((DateTime.now().year + 2)),
-                      locale: Locale('es', 'ES'),
+                      locale: const Locale('es', 'ES'),
                     ).then((date) {
                       if (date != null) {
                         setState(() {
-                          valueChange = date.toIso8601String().substring(0, 10);
                           dateController.text =
                               date.toIso8601String().substring(0, 10);
                         });

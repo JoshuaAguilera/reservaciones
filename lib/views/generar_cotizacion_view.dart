@@ -1,34 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/components/dialogs.dart';
-import 'package:generador_formato/components/text_styles.dart';
-import 'package:generador_formato/components/textformfield_custom.dart';
-import 'package:generador_formato/components/utility.dart';
-import 'package:generador_formato/constants/web_colors.dart';
+import 'package:generador_formato/widgets/cotizacion_listtile.dart';
+import 'package:generador_formato/widgets/custom_widgets.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../models/cotizacion_model.dart';
 
-const List<String> list = <String>[
+const List<String> cotizacionesList = <String>[
   'Cotización Individual',
   'Cotización Grupos',
   'Cotización Grupos - Temporada Baja',
 ];
 
 class GenerarCotizacionView extends StatefulWidget {
-  const GenerarCotizacionView({Key? key}) : super(key: key);
+  final SidebarXController sideController;
+  const GenerarCotizacionView({Key? key, required this.sideController})
+      : super(key: key);
 
   @override
   State<GenerarCotizacionView> createState() => _GenerarCotizacionViewState();
 }
 
 class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
-  String dropdownValue = list.first;
+  String dropdownValue = cotizacionesList.first;
   List<Cotizacion> cotizaciones = [];
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -41,35 +44,19 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Generar Cotización",
-                textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(
-                    color: WebColors.prussianBlue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22),
-              ),
+              TextStyles.titlePagText(text: "Generar Cotización"),
               const Divider(color: Colors.black54),
               Align(
                 alignment: Alignment.centerRight,
-                child: DropdownMenu<String>(
-                  initialSelection: list.first,
-                  onSelected: (String? value) {
-                    setState(() {
-                      dropdownValue = value!;
-                    });
-                  },
-                  textStyle: GoogleFonts.poppins(fontSize: 13),
-                  dropdownMenuEntries:
-                      list.map<DropdownMenuEntry<String>>((String value) {
-                    return DropdownMenuEntry<String>(
-                        value: value,
-                        label: value,
-                        style: ButtonStyle(
-                            textStyle: WidgetStatePropertyAll(
-                                GoogleFonts.poppins(fontSize: 13))));
-                  }).toList(),
-                ),
+                child: CustomWidgets.dropdownMenuCustom(
+                    initialSelection: cotizacionesList.first,
+                    onSelected: (String? value) {
+                      setState(() {
+                        dropdownValue = value!;
+                      });
+                    },
+                    elements: cotizacionesList,
+                    screenWidth: null),
               ),
               const SizedBox(height: 15),
               TextStyles.titleText(text: "Datos del cliente"),
@@ -149,134 +136,102 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
                 ),
               ),
               const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: WebColors.prussianBlue),
-                    borderRadius: const BorderRadius.all(Radius.circular(12))),
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  columnWidths: const {
-                    0: FractionColumnWidth(.05),
-                    1: FractionColumnWidth(.15),
-                    2: FractionColumnWidth(.1),
-                    3: FractionColumnWidth(.1),
-                    4: FractionColumnWidth(.1),
-                    5: FractionColumnWidth(.15),
-                    6: FractionColumnWidth(.25),
-                  },
-                  border: const TableBorder(
-                      horizontalInside: BorderSide(color: Colors.black87)),
-                  children: [
-                    TableRow(children: [
-                      TextStyles.standardText(
-                          text: "Día", aling: TextAlign.center, overClip: true),
-                      TextStyles.standardText(
-                          text: "Fechas de estancia",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text: "Adultos",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text: "Menores 0-6",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text: "Menores 7-12",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text: "Tarifa \nReal",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text: "Tarifa de preventa oferta por tiempo limitado",
-                          aling: TextAlign.center,
-                          overClip: true),
-                      const SizedBox(
-                        width: 15,
-                      )
-                    ]),
-                  ],
+              if (!isResizable(widget.sideController.extended))
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  child: Table(
+                    columnWidths: const {
+                      0: FractionColumnWidth(.05),
+                      1: FractionColumnWidth(.15),
+                      2: FractionColumnWidth(.1),
+                      3: FractionColumnWidth(.1),
+                      4: FractionColumnWidth(.1),
+                      5: FractionColumnWidth(.1),
+                      6: FractionColumnWidth(.21),
+                    },
+                    children: [
+                      TableRow(children: [
+                        TextStyles.standardText(
+                            text: "Día",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text: "Fechas de estancia",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text: "Adultos",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text: "Menores 0-6",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text: "Menores 7-12",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text: "Tarifa \nReal",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        TextStyles.standardText(
+                            text:
+                                "Tarifa de preventa oferta por tiempo limitado",
+                            aling: TextAlign.center,
+                            overClip: true),
+                        const SizedBox(width: 15)
+                      ]),
+                    ],
+                  ),
+                ),
+              const Divider(color: Colors.black54),
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: SizedBox(
+                  height: limitHeightList(cotizaciones.length),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: cotizaciones.length,
+                    itemBuilder: (context, index) {
+                      if (index < cotizaciones.length) {
+                        return CotizacionListtile(
+                          index: index,
+                          cotizacion: cotizaciones[index],
+                          compact: !isResizable(widget.sideController.extended),
+                          onPressedDelete: () {
+                            setState(
+                                () => cotizaciones.remove(cotizaciones[index]));
+                          },
+                          onPressedEdit: () {},
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0, top: 5),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: cotizaciones.length,
-                  itemBuilder: (context, index) {
-                    if (index < cotizaciones.length) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: WebColors.prussianBlue),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12))),
-                        padding: const EdgeInsets.all(10.0),
-                        child: Table(
-                          columnWidths: const {
-                            0: FractionColumnWidth(.05),
-                            1: FractionColumnWidth(.15),
-                            2: FractionColumnWidth(.1),
-                            3: FractionColumnWidth(.1),
-                            4: FractionColumnWidth(.1),
-                            5: FractionColumnWidth(.15),
-                            6: FractionColumnWidth(.25),
-                          },
-                          border: const TableBorder(
-                              horizontalInside:
-                                  BorderSide(color: Colors.black87)),
-                          children: [
-                            TableRow(children: [
-                              TextStyles.standardText(
-                                text: (index + 1).toString(),
-                                aling: TextAlign.center,
-                                overClip: true,
-                              ),
-                              TextStyles.standardText(
-                                text: Utility.getLengthStay(
-                                    cotizaciones[index].fechaEntrada,
-                                    cotizaciones[index].noches),
-                                aling: TextAlign.center,
-                                overClip: true,
-                              ),
-                              TextStyles.standardText(
-                                  text: cotizaciones[index].adultos.toString(),
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text:
-                                      cotizaciones[index].menores0a6.toString(),
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: cotizaciones[index]
-                                      .menores7a12
-                                      .toString(),
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: "\$ ${cotizaciones[index].tarifaReal}",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text:
-                                      "\$ ${(cotizaciones[index].tarifaPreventa != null) ? cotizaciones[index].tarifaPreventa : cotizaciones[index].tarifaReal}",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              const SizedBox(
-                                width: 15,
-                              )
-                            ]),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12, top: 8),
+                child: Divider(color: Colors.black54),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
+                  width: 200,
+                  height: 40,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        elevation: 4,
+                        backgroundColor: WebColors.ceruleanOscure),
+                    child: Text(
+                      "Generar cotización",
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -284,5 +239,21 @@ class _GenerarCotizacionViewState extends State<GenerarCotizacionView> {
         ),
       ),
     );
+  }
+
+  bool isResizable(bool extended) {
+    bool isVisible = true;
+    final isSmallScreen = MediaQuery.of(context).size.width < 700;
+    final isSmallScreenWithSideBar = MediaQuery.of(context).size.width < 725;
+    isVisible = (extended) ? isSmallScreenWithSideBar : isSmallScreen;
+    return isVisible;
+  }
+
+  double? limitHeightList(int length) {
+    double? height;
+    if (length > 3) {
+      height = 300;
+    }
+    return height;
   }
 }

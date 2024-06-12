@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
-import 'package:generador_formato/components/text_styles.dart';
-import 'package:generador_formato/components/textformfield_custom.dart';
-import 'package:generador_formato/constants/web_colors.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
 
 import '../models/cotizacion_model.dart';
@@ -30,6 +30,8 @@ class Dialogs {
       menores7a12: 0,
     );
     final _formKeyHabitacion = GlobalKey<FormState>();
+    TextEditingController _fechaEntrada =
+        TextEditingController(text: DateTime.now().toString().substring(0, 10));
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
@@ -49,9 +51,7 @@ class Dialogs {
                       CustomWidgets.dropdownMenuCustom(
                           initialSelection: categorias.first,
                           onSelected: (String? value) {
-                            setState(() {
-                              nuevaCotizacion.categoria = value!;
-                            });
+                            nuevaCotizacion.categoria = value!;
                           },
                           elements: categorias,
                           screenWidth: MediaQuery.of(context).size.width),
@@ -66,9 +66,7 @@ class Dialogs {
                       CustomWidgets.dropdownMenuCustom(
                           initialSelection: planes.first,
                           onSelected: (String? value) {
-                            setState(() {
-                              nuevaCotizacion.plan = value!;
-                            });
+                            nuevaCotizacion.plan = value!;
                           },
                           elements: planes,
                           screenWidth: MediaQuery.of(context).size.width),
@@ -80,9 +78,10 @@ class Dialogs {
                       Expanded(
                         child:
                             TextFormFieldCustom.textFormFieldwithBorderCalendar(
-                                name: "Fecha de entrada",
-                                msgError: "Campo requerido*",
-                                valueChange: nuevaCotizacion.fechaEntrada!),
+                          name: "Fecha de entrada",
+                          msgError: "Campo requerido*",
+                          dateController: _fechaEntrada,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       SizedBox(
@@ -93,8 +92,7 @@ class Dialogs {
                           isNumeric: true,
                           isDecimal: false,
                           onChanged: (p0) {
-                            setState(() =>
-                                nuevaCotizacion.noches = int.tryParse(p0));
+                            nuevaCotizacion.noches = int.tryParse(p0);
                           },
                         ),
                       ),
@@ -113,23 +111,20 @@ class Dialogs {
                       TableRow(children: [
                         NumberInputWithIncrementDecrement(
                           onChanged: (p0) {
-                            setState(() =>
-                                nuevaCotizacion.adultos = int.tryParse(p0));
+                            nuevaCotizacion.adultos = int.tryParse(p0);
                           },
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: NumberInputWithIncrementDecrement(
                             onChanged: (p0) {
-                              setState(() => nuevaCotizacion.menores0a6 =
-                                  int.tryParse(p0));
+                              nuevaCotizacion.menores0a6 = int.tryParse(p0);
                             },
                           ),
                         ),
                         NumberInputWithIncrementDecrement(
                           onChanged: (p0) {
-                            setState(() =>
-                                nuevaCotizacion.menores7a12 = int.tryParse(p0));
+                            nuevaCotizacion.menores7a12 = int.tryParse(p0);
                           },
                         )
                       ]),
@@ -146,8 +141,7 @@ class Dialogs {
                           isDecimal: true,
                           isMoneda: true,
                           onChanged: (p0) {
-                            setState(() => nuevaCotizacion.tarifaReal =
-                                double.tryParse(p0));
+                            nuevaCotizacion.tarifaReal = double.tryParse(p0);
                           },
                         ),
                       ),
@@ -161,8 +155,8 @@ class Dialogs {
                           isDecimal: true,
                           isMoneda: true,
                           onChanged: (p0) {
-                            setState(() => nuevaCotizacion.tarifaPreventa =
-                                double.tryParse(p0));
+                            nuevaCotizacion.tarifaPreventa =
+                                double.tryParse(p0);
                           },
                         ),
                       ),
@@ -178,6 +172,7 @@ class Dialogs {
         TextButton(
             onPressed: () {
               if (_formKeyHabitacion.currentState!.validate()) {
+                nuevaCotizacion.fechaEntrada = _fechaEntrada.text;
                 Navigator.of(context).pop(nuevaCotizacion);
               }
             },

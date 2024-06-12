@@ -41,6 +41,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   sidebarx: ^0.17.1
   riverpod: ^2.5.1
+  flutter_animate: ^4.5.0
   flutter_localizations:
     sdk: flutter
   intl: any

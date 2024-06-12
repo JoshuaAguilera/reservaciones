@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/constants/web_colors.dart';
+import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 

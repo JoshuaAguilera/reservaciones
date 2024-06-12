@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../constants/web_colors.dart';
+import '../helpers/web_colors.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({
@@ -83,48 +84,53 @@ class SideBar extends StatelessWidget {
                   ),
                 ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Container(
-              //       decoration: BoxDecoration(
-              //           border: Border.all(color: Colors.white),
-              //           borderRadius: BorderRadius.all(Radius.circular(10))),
-              //       child: Padding(
-              //         padding: const EdgeInsets.all(5.0),
-              //         child: Row(
-              //           children: [
-              //             Container(
-              //               width: 45,
-              //               height: 45,
-              //               decoration: const BoxDecoration(
-              //                 shape: BoxShape.circle,
-              //                 color: Colors.white,
-              //                 image: DecorationImage(
-              //                   fit: BoxFit.fill,
-              //                   image: AssetImage('assets/image/Logo.png'),
-              //                 ),
-              //               ),
-              //             ),
-              //             const SizedBox(width: 10),
-              //             Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text(
-              //                   "Username",
-              //                   style: GoogleFonts.poppins(
-              //                       color: Colors.white, fontSize: 14),
-              //                 ),
-              //                 Text(
-              //                   "188 cotizaciones",
-              //                   style: GoogleFonts.poppins(
-              //                       color: Colors.white, fontSize: 11),
-              //                 )
-              //               ],
-              //             )
-              //           ],
-              //         ),
-              //       )),
-              // )
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10))),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: 45,
+                            height: 45,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: AssetImage('assets/image/Logo.png'),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Username",
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                    color: Colors.white, fontSize: 14),
+                              ),
+                              Text(
+                                "188 cotizaciones",
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                    color: Colors.white, fontSize: 11),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
+              ),
             ],
           );
         } else {
