@@ -4,7 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
   final void Function(String)? onChanged;
-  const NumberInputWithIncrementDecrement({super.key, required this.onChanged});
+  final String? initialValue;
+  final int? minimalValue;
+  final int? maxValue;
+  const NumberInputWithIncrementDecrement(
+      {super.key,
+      required this.onChanged,
+      required this.initialValue,
+      this.minimalValue,
+      this.maxValue});
 
   @override
   _NumberInputWithIncrementDecrementState createState() =>
@@ -13,12 +21,13 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
 
 class _NumberInputWithIncrementDecrementState
     extends State<NumberInputWithIncrementDecrement> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _controller.text = "0"; // Setting the initial value for the field.
+    _controller.text =
+        widget.initialValue ?? "0"; // Setting the initial value for the field.
   }
 
   @override
@@ -40,22 +49,25 @@ class _NumberInputWithIncrementDecrementState
         children: <Widget>[
           Expanded(
             flex: 1,
-            child: TextFormField(
-              onChanged: (value) => widget.onChanged!.call(value),
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 13),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                labelStyle: GoogleFonts.poppins(fontSize: 13),
+            child: AbsorbPointer(
+              absorbing: true,
+              child: TextFormField(
+                onChanged: (value) => widget.onChanged!.call(value),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(fontSize: 13),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelStyle: GoogleFonts.poppins(fontSize: 13),
+                ),
+                controller: _controller,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: false,
+                  signed: true,
+                ),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
               ),
-              controller: _controller,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: false,
-                signed: true,
-              ),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
             ),
           ),
           SizedBox(
@@ -81,8 +93,13 @@ class _NumberInputWithIncrementDecrementState
                       int currentValue = int.parse(_controller.text);
                       setState(() {
                         currentValue++;
-                        _controller.text =
-                            (currentValue).toString(); // incrementing value
+                        _controller.text = widget.maxValue != null
+                            ? _controller.text =
+                                (currentValue < (widget.maxValue!)
+                                        ? currentValue
+                                        : widget.maxValue)
+                                    .toString()
+                            : (currentValue).toString(); // incrementing value
                         widget.onChanged!.call(_controller.text);
                       });
                     },
@@ -97,8 +114,11 @@ class _NumberInputWithIncrementDecrementState
                     int currentValue = int.parse(_controller.text);
                     setState(() {
                       currentValue--;
-                      _controller.text = (currentValue > 0 ? currentValue : 0)
-                          .toString(); // decrementing value
+                      _controller.text =
+                          (currentValue > (widget.minimalValue ?? 0)
+                                  ? currentValue
+                                  : widget.minimalValue ?? 0)
+                              .toString(); // decrementing value
                       widget.onChanged!.call(_controller.text);
                     });
                   },

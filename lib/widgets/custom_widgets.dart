@@ -8,7 +8,7 @@ class CustomWidgets {
       {required String initialSelection,
       required void Function(String?)? onSelected,
       required List<String> elements,
-      required double? screenWidth}) {
+      double? screenWidth}) {
     return StatefulBuilder(
       builder: (context, setState) {
         return DropdownMenu<String>(

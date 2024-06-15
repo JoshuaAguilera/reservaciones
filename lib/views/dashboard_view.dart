@@ -3,7 +3,7 @@ import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/views/generar_cotizacion_view.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   const DashboardView({
     Key? key,
     required this.controller,
@@ -12,20 +12,26 @@ class DashboardView extends StatelessWidget {
   final SidebarXController controller;
 
   @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AnimatedBuilder(
-      animation: controller,
+      animation: widget.controller,
       builder: (context, child) {
-        final pageTitle = Utility.getTitleByIndex(controller.selectedIndex);
-        switch (controller.selectedIndex) {
+        final pageTitle =
+            Utility.getTitleByIndex(widget.controller.selectedIndex);
+        switch (widget.controller.selectedIndex) {
           case 0:
             return Text(
               pageTitle,
               style: theme.textTheme.headlineSmall,
             );
           case 1:
-            return GenerarCotizacionView(sideController: controller);
+            return GenerarCotizacionView(sideController: widget.controller);
           default:
             return Text(
               pageTitle,

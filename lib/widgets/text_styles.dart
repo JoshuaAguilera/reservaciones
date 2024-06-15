@@ -31,9 +31,21 @@ class TextStyles {
     );
   }
 
-  static Text titleText({String text = "", Color? color, double size = 18}) {
+  static Text errorText({String text = "", TextAlign aling = TextAlign.left}) {
+    return Text(
+      text,
+      textAlign: aling,
+      style: GoogleFonts.poppins(color: Colors.red[800], fontSize: 10),
+    );
+  }
+
+  static Text titleText(
+      {String text = "",
+      Color? color,
+      double size = 18,
+      TextAlign textAlign = TextAlign.start}) {
     return Text(text,
-        textAlign: TextAlign.start,
+        textAlign: textAlign,
         style: GoogleFonts.poppins(
           color: color ?? WebColors.cerulean,
           fontWeight: FontWeight.bold,
@@ -41,13 +53,20 @@ class TextStyles {
         ));
   }
 
-  static Column dateTextSpecial({required int day}) {
+  static Column TextSpecial({
+    required int day,
+    String? title,
+    String subtitle = "Día",
+  }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      titleText(text: numeroFormateado, size: 22),
-      standardText(text: "Día"),
+      titleText(
+          text: title ?? numeroFormateado,
+          size: 22,
+          textAlign: TextAlign.center),
+      standardText(text: subtitle),
     ]);
   }
 

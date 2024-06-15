@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-  runApp(const MyApp());
+  //runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -27,10 +29,10 @@ class MyApp extends StatelessWidget {
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: false,
       ),
-      // darkTheme: ThemeData(
-      //     //Se indica que el tema tiene un brillo oscuro
-      //     brightness: Brightness.dark,
-      //     useMaterial3: false),
+      darkTheme: ThemeData(
+          //Se indica que el tema tiene un brillo oscuro
+          brightness: Brightness.dark,
+          useMaterial3: false),
       home: HomeView(),
     );
   }

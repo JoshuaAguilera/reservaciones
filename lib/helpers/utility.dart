@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:intl/intl.dart';
 
 class Utility {
@@ -41,5 +43,39 @@ class Utility {
   static String formatterNumber(double number) {
     return NumberFormat.simpleCurrency(locale: 'EN-us', decimalDigits: 2)
         .format(number);
+  }
+
+  static String calculateTotal(int? numNoches, double? tarifaNoche) {
+    double total = 0;
+    total = (numNoches ?? 0) * (tarifaNoche ?? 0);
+    return formatterNumber(total);
+  }
+
+  static String getPax(int pax) {
+    String paxName = "";
+
+    switch (pax) {
+      case 1 || 2:
+        paxName = "1 o 2";
+        break;
+      case 3:
+        paxName = "3";
+        break;
+      case 4:
+        paxName = "4";
+        break;
+      default:
+    }
+    return paxName;
+  }
+
+  static String getCompleteDate() {
+    String date = "";
+    Intl.defaultLocale = "es_ES";
+    DateTime nowDate = DateTime.now();
+    DateFormat formatter = DateFormat('dd - MMMM - yyyy');
+    date = formatter.format(nowDate);
+    date = date.replaceAll(r'-', "de");
+    return date;
   }
 }

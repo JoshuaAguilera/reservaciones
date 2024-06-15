@@ -45,6 +45,11 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  http: ^1.2.0
+  flutter_riverpod: ^2.3.6
+  infinite_scroll_pagination: ^3.2.0
+  riverpod_infinite_scroll: ^1.0.9
+  pdf: ^3.10.4
 
 dev_dependencies:
   flutter_test:

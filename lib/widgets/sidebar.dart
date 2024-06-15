@@ -85,11 +85,25 @@ class SideBar extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
                 child: Container(
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
+                        border: Border.all(
+                          color: WebColors.actionColor.withOpacity(0.37),
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            WebColors.accentCanvasColor,
+                            WebColors.canvasColor
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.28),
+                            blurRadius: 30,
+                          )
+                        ],
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10))),
                     child: Row(
@@ -162,19 +176,16 @@ class SideBar extends StatelessWidget {
           );
         }
       },
-      items: [
+      items: const [
         SidebarXItem(
           icon: CupertinoIcons.home,
           label: 'Inicio',
-          onTap: () {
-            debugPrint('Home');
-          },
         ),
-        const SidebarXItem(
+        SidebarXItem(
           icon: CupertinoIcons.money_dollar_circle,
           label: 'Generar Cotización',
         ),
-        const SidebarXItem(
+        SidebarXItem(
           icon: Icons.history,
           label: 'Historial',
         ),

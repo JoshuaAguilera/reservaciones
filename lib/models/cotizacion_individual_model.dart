@@ -1,4 +1,4 @@
-class Cotizacion {
+class CotizacionIndividual {
   int? id;
   String? categoria;
   String? plan;
@@ -10,7 +10,7 @@ class Cotizacion {
   double? tarifaReal;
   double? tarifaPreventa;
 
-  Cotizacion({
+  CotizacionIndividual({
     this.id,
     this.categoria,
     this.plan,

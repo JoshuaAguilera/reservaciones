@@ -17,6 +17,9 @@ class TextFormFieldCustom {
     bool isMoneda = false,
     void Function(String)? onChanged,
     bool isRequired = true,
+    String? initialValue,
+    bool blocked = false,
+    TextEditingController? controller,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -37,59 +40,64 @@ class TextFormFieldCustom {
               if (withContent && isMoneda)
                 Positioned(
                     top: 15, child: TextStyles.standardText(text: "   \$")),
-              TextFormField(
-                onChanged: (value) {
-                  snapshot(() {
-                    if (value.isEmpty) {
-                      withContent = false;
-                    } else {
-                      withContent = true;
+              AbsorbPointer(
+                absorbing: blocked,
+                child: TextFormField(
+                  controller: controller,
+                  onChanged: (value) {
+                    snapshot(() {
+                      if (value.isEmpty) {
+                        withContent = false;
+                      } else {
+                        withContent = true;
+                      }
+                    });
+                    if (onChanged != null) onChanged.call(value);
+                  },
+                  obscureText: passwordVisible,
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) && isRequired) {
+                      return msgError;
                     }
-                  });
-                  if (onChanged != null) onChanged.call(value);
-                },
-                obscureText: passwordVisible,
-                validator: (value) {
-                  if ((value == null || value.isEmpty) && isRequired) {
-                    return msgError;
-                  }
-                  return null;
-                },
-                style: GoogleFonts.poppins(fontSize: 13),
-                keyboardType: isNumeric
-                    ? TextInputType.numberWithOptions(
-                        decimal: isDecimal,
-                        signed: isNumeric,
-                      )
-                    : TextInputType.name,
-                inputFormatters: <TextInputFormatter>[
-                  isDecimal
-                      ? FilteringTextInputFormatter.allow(
-                          RegExp(r'^[0-9]+[.]?[0-9]*'))
-                      : isNumeric
-                          ? FilteringTextInputFormatter.digitsOnly
-                          : FilteringTextInputFormatter.singleLineFormatter
-                ],
-                textAlign: isMoneda ? TextAlign.right : TextAlign.left,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelStyle: GoogleFonts.poppins(fontSize: 13),
-                  suffixIcon: isPassword
-                      ? IconButton(
-                          icon: Icon(
-                            passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: WebColors.azulCielo,
-                          ),
-                          onPressed: () {
-                            snapshot(() {
-                              passwordVisible = !passwordVisible;
-                            });
-                          },
+                    return null;
+                  },
+                  style: GoogleFonts.poppins(fontSize: 13),
+                  keyboardType: isNumeric
+                      ? TextInputType.numberWithOptions(
+                          decimal: isDecimal,
+                          signed: isNumeric,
                         )
-                      : null,
-                  labelText: name,
+                      : TextInputType.name,
+                  inputFormatters: <TextInputFormatter>[
+                    isDecimal
+                        ? FilteringTextInputFormatter.allow(
+                            RegExp(r'^[0-9]+[.]?[0-9]*'))
+                        : isNumeric
+                            ? FilteringTextInputFormatter.digitsOnly
+                            : FilteringTextInputFormatter.singleLineFormatter
+                  ],
+                  textAlign: isMoneda ? TextAlign.right : TextAlign.left,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelStyle: GoogleFonts.poppins(fontSize: 13),
+                    suffixIcon: isPassword
+                        ? IconButton(
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: WebColors.azulCielo,
+                            ),
+                            onPressed: () {
+                              snapshot(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          )
+                        : null,
+                    labelText: name,
+                  ),
+                  initialValue: initialValue,
                 ),
               ),
             ],
