@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+
+import '../helpers/doc_templates.dart';
 
 class TextStyles {
   static Text standardText(
@@ -78,6 +82,23 @@ class TextStyles {
           color: WebColors.prussianBlue,
           fontWeight: FontWeight.bold,
           fontSize: 22),
+    );
+  }
+
+  static Future<pw.TextStyle> pwStylePDF(
+      {double size = 6.3,
+      bool isWhite = false,
+      bool isBold = false,
+      bool withUnderline = false}) async {
+    return pw.TextStyle(
+      font: isBold
+          ? await DocTemplates.fontBoldGoogle()
+          : await DocTemplates.fontLightGoogle(),
+      fontSize: size,
+      color:
+          isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000"),
+      decoration:
+          withUnderline ? pw.TextDecoration.underline : pw.TextDecoration.none,
     );
   }
 }
