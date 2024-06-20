@@ -62,7 +62,7 @@ class TextStyles {
   static Column TextSpecial({
     required int day,
     String? title,
-    String subtitle = "Día",
+    String subtitle = "Num",
   }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
@@ -87,16 +87,19 @@ class TextStyles {
     );
   }
 
-  static Future<pw.TextStyle> pwStylePDF(
-      {double size = 6.3,
-      bool isWhite = false,
-      bool isBold = false,
-      bool withUnderline = false}) async {
+  static Future<pw.TextStyle> pwStylePDF({
+    double size = 6.3,
+    bool isWhite = false,
+    bool isBold = false,
+    bool withUnderline = false,
+    bool isItalic = false,
+  }) async {
     return pw.TextStyle(
       font: isBold
           ? await DocTemplates.fontBoldGoogle()
           : await DocTemplates.fontLightGoogle(),
       fontSize: size,
+      fontStyle: isItalic ? pw.FontStyle.italic : null,
       color:
           isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000"),
       decoration:

@@ -21,6 +21,10 @@ class DocTemplates {
         return "En Hotel Coral Blue Huatulco contamos con 2 categorías de habitación y 2 planes de tarifas, por favor elija la que más le agrade.";
       case 3:
         return "En caso de elegir el plan sin alimentos, puede adquirir estos directamente en los centros de consumo. ";
+      case 4:
+        return "-        TARIFA DE ALIMENTOS TIPO BUFFET ADULTOS: DESAYUNO \$280 – COMIDA \$350 – CENA\$440";
+      case 5:
+        return "-        TARIFA DE ALIMENTOS TIPO BUFFET MENORES 7 A 12 AÑOS: DESAYUNO \$200 – COMIDA \$280 – CENA \$360";
       default:
         return "Not found";
     }
@@ -35,7 +39,7 @@ class DocTemplates {
   }) {
     return pw.Column(children: [
       pw.TableHelper.fromTextArray(
-          border: pw.TableBorder.all(width: 0.5),
+          border: pw.TableBorder.all(width: 0.7),
           headerStyle: styleHeader,
           cellPadding: const pw.EdgeInsets.all(2),
           headerCellDecoration:
@@ -44,10 +48,11 @@ class DocTemplates {
           data: []),
       pw.TableHelper.fromTextArray(
         cellStyle: styleGeneral,
-        border: pw.TableBorder.all(width: 0.5),
+        border: pw.TableBorder.all(width: 0.7),
         headerStyle: styleBold,
-        cellPadding: pw.EdgeInsets.all(2),
-        data: const <List<String>>[
+        cellPadding: const pw.EdgeInsets.symmetric(horizontal: 0.5),
+        cellAlignment: pw.Alignment.center,
+        data: <List<String>>[
           <String>[
             'DIA',
             'FECHAS DE\nESTANCIA',
@@ -57,11 +62,11 @@ class DocTemplates {
             'TARIFA REAL',
             'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
           ],
-          <String>['1', '', '', '', '', '', ''],
-          ],
+          for (int i = 1; i < 6; i++) <String>['$i', '', '', '', '', '', ''],
+        ],
       ),
       pw.Padding(
-        padding: const pw.EdgeInsets.only(left: 135),
+        padding: const pw.EdgeInsets.only(left: 131),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.5),
             headerStyle: styleHeader,
@@ -70,8 +75,8 @@ class DocTemplates {
                 pw.BoxDecoration(color: PdfColor.fromHex("#009999")),
             headers: [
               "TOTAL DE ESTANCIA",
-              "\$                   ",
-              "\$                                                    ",
+              "\$                    ",
+              "\$                                                        ",
             ],
             data: []),
       )

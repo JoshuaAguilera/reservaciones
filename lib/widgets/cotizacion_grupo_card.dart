@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/cotizacion_grupo_model.dart';
-import 'package:generador_formato/models/cotizacion_individual_model.dart';
 
 import '../helpers/web_colors.dart';
 import 'text_styles.dart';

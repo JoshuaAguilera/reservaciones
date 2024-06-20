@@ -316,10 +316,16 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   .provider.notifier)
                               .generarComprobante();
 
-                          await Printing.layoutPdf(
-                              name: "example",
-                              format: PdfPageFormat.a4,
-                              onLayout: (format) async => comprobante.save());
+                          await Printing.sharePdf(
+                            bytes: await comprobante.save(),
+                            filename: "cotizacion.pdf",
+                            emails: ["fabioball230@gmail.com"],
+                          );
+
+                          // await Printing.layoutPdf(
+                          //     name: "example",
+                          //     format: PdfPageFormat.a4,
+                          //     onLayout: (format) async => comprobante.save());
                         }
                       },
                       style: ElevatedButton.styleFrom(

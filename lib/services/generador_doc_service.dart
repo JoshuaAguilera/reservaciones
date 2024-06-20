@@ -22,13 +22,13 @@ class GeneradorDocService extends ChangeNotifier {
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
       21.59 * PdfPageFormat.cm,
       27.94 * PdfPageFormat.cm,
-      marginBottom: (2.5 * 0.4) * PdfPageFormat.cm,
+      marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
       marginTop: (3.13 * 0.393) * PdfPageFormat.cm,
       marginLeft: 3 * PdfPageFormat.cm,
       marginRight: 3 * PdfPageFormat.cm,
     );
-    
-    //Header 
+
+    //Header
     final img = await rootBundle.load('assets/image/logo_header.png');
     final imageBytes = img.buffer.asUint8List();
     pw.Image logoHeaderImage = pw.Image(pw.MemoryImage(imageBytes), width: 131);
@@ -36,8 +36,7 @@ class GeneradorDocService extends ChangeNotifier {
     //Footer
     final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
     final imageBytesW = imgWhatsApp.buffer.asUint8List();
-    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 20);
-
+    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 10);
 
     //Styles
     pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF();
@@ -47,6 +46,7 @@ class GeneradorDocService extends ChangeNotifier {
     pw.TextStyle styleBold = await TextStyles.pwStylePDF(size: 7, isBold: true);
     pw.TextStyle styleBoldUnderline =
         await TextStyles.pwStylePDF(size: 8, isBold: true, withUnderline: true);
+        pw.TextStyle styleItalic = await TextStyles.pwStylePDF(size: 7, isItalic: true);
     pw.TextStyle styleFooter = await TextStyles.pwStylePDF(size: 7);
 
     pdf.addPage(
@@ -115,6 +115,20 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text("Notas:", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
                   pw.Text(DocTemplates.StructureDoc(3), style: styleLigth),
+                  pw.SizedBox(height: 10),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(left: 27),
+                    child: pw.Text(DocTemplates.StructureDoc(4),
+                        style: styleItalic),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(left: 27),
+                    child: pw.Text(DocTemplates.StructureDoc(5),
+                        style: styleItalic),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Text("POLÍTICAS PARA RESERVACIÓN", style: styleBoldUnderline),
+                  
                 ]),
           ),
         ],
@@ -123,12 +137,18 @@ class GeneradorDocService extends ChangeNotifier {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
+                pw.SizedBox(height: 20),
                 pw.Text(
                     "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
                     style: styleFooter),
-                pw.Text("Correo: reservas@coralbluehuatulco.mx    958 186 8767",
-                    style: styleFooter),
-                whatsAppImage,
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                    children: [
+                      pw.Text("Correo: reservas@coralbluehuatulco.mx ",
+                          style: styleFooter),
+                      whatsAppImage,
+                      pw.Text("  958 186 8767", style: styleFooter)
+                    ]),
                 pw.Text("Teléfono:  958 525 2061 Ext. 708", style: styleFooter)
               ],
             ),
