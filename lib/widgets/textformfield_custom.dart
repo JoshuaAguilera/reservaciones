@@ -20,6 +20,7 @@ class TextFormFieldCustom {
     String? initialValue,
     bool blocked = false,
     TextEditingController? controller,
+    bool enabled = true,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -43,6 +44,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: blocked,
                 child: TextFormField(
+                  enabled: enabled,
                   controller: controller,
                   onChanged: (value) {
                     snapshot(() {

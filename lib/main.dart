@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         'login': (_) => const LoginView(),
         'preview': (_) => const PreviewPdfView(),
       },
-      initialRoute: 'preview',
+      initialRoute: 'home',
     );
   }
 }

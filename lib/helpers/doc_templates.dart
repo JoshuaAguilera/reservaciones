@@ -36,7 +36,7 @@ class DocTemplates {
       pw.TableHelper.fromTextArray(
           border: pw.TableBorder.all(width: 0.5),
           headerStyle: styleHeader,
-          cellPadding: pw.EdgeInsets.all(2),
+          cellPadding: const pw.EdgeInsets.all(2),
           headerCellDecoration:
               pw.BoxDecoration(color: PdfColor.fromHex("#009999")),
           headers: [nameTable],
@@ -57,10 +57,7 @@ class DocTemplates {
             'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
           ],
           <String>['1', '', '', '', '', '', ''],
-          <String>['2', '', '', '', '', '', ''],
-          <String>['3', '', '', '', '', '', ''],
-          <String>['4', '', '', '', '', '', ''],
-        ],
+          ],
       ),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 135),

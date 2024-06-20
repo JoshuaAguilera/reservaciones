@@ -22,7 +22,8 @@ class CotizacionIndividualCard extends StatefulWidget {
   });
 
   @override
-  State<CotizacionIndividualCard> createState() => _CotizacionIndividualCardState();
+  State<CotizacionIndividualCard> createState() =>
+      _CotizacionIndividualCardState();
 }
 
 class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
@@ -125,8 +126,8 @@ class _TableRowCotizacion extends StatelessWidget {
                       overClip: true,
                     ),
                     TextStyles.standardText(
-                      text: Utility.getLengthStay(
-                          cotizacion.fechaEntrada, cotizacion.noches),
+                      text:
+                          "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
                       aling: TextAlign.center,
                       overClip: true,
                     ),
@@ -143,14 +144,16 @@ class _TableRowCotizacion extends StatelessWidget {
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: Utility.formatterNumber(cotizacion.tarifaReal!),
+                        text: Utility.formatterNumber(
+                            cotizacion.tarifaRealAdulto!),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: (cotizacion.tarifaPreventa != null)
+                        text: (cotizacion.tarifaPreventaAdulto != null)
                             ? Utility.formatterNumber(
-                                cotizacion.tarifaPreventa!)
-                            : Utility.formatterNumber(cotizacion.tarifaReal!),
+                                cotizacion.tarifaPreventaAdulto!)
+                            : Utility.formatterNumber(
+                                cotizacion.tarifaRealAdulto!),
                         aling: TextAlign.center,
                         overClip: true),
                     Row(
@@ -214,15 +217,13 @@ class _ListTileCotizacion extends StatelessWidget {
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
-            text: Utility.getLengthStay(
-                cotizacion.fechaEntrada, cotizacion.noches),
-          ),
+              text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
           TextStyles.standardText(
               text:
-                  "Tarifa real: ${Utility.formatterNumber(cotizacion.tarifaReal!)}"),
+                  "Tarifa real: ${Utility.formatterNumber(cotizacion.tarifaRealAdulto!)}"),
           TextStyles.standardText(
             text:
-                "Tarifa preventa: ${(cotizacion.tarifaPreventa != null) ? Utility.formatterNumber(cotizacion.tarifaPreventa!) : Utility.formatterNumber(cotizacion.tarifaReal!)}",
+                "Tarifa preventa: ${(cotizacion.tarifaPreventaAdulto != null) ? Utility.formatterNumber(cotizacion.tarifaPreventaAdulto!) : Utility.formatterNumber(cotizacion.tarifaRealAdulto!)}",
           )
         ]),
         trailing: PopupMenuButton<ListTileTitleAlignment>(

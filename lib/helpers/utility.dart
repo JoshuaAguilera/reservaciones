@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:generador_formato/models/cotizacion_individual_model.dart';
 import 'package:intl/intl.dart';
 
 class Utility {
@@ -77,5 +78,16 @@ class Utility {
     date = formatter.format(nowDate);
     date = date.replaceAll(r'-', "de");
     return date;
+  }
+
+  static double calculateTarifaTotal(CotizacionIndividual nuevaCotizacion) {
+    double tarifaTotal = 0;
+    double tarifaAdulto = nuevaCotizacion.tarifaRealAdulto ?? 0;
+    double tarifaMenores = nuevaCotizacion.tarifaRealMenor ?? 0;
+
+    tarifaTotal = (nuevaCotizacion.adultos! * tarifaAdulto) +
+        (nuevaCotizacion.menores7a12! * tarifaMenores);
+
+    return tarifaTotal;
   }
 }

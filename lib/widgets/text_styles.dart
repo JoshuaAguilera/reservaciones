@@ -13,13 +13,14 @@ class TextStyles {
       {String text = "",
       TextAlign aling = TextAlign.left,
       bool overClip = false,
+      double size = 13,
       bool isBold = false}) {
     return Text(
       text,
       textAlign: aling,
       style: GoogleFonts.poppins(
           color: WebColors.prussianBlue,
-          fontSize: 13,
+          fontSize: size,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           textStyle: TextStyle(
               overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis)),

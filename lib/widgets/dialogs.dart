@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -29,6 +31,12 @@ class Dialogs {
         text: cotizacion != null
             ? cotizacion.fechaEntrada
             : DateTime.now().toString().substring(0, 10));
+    TextEditingController _fechaSalida = TextEditingController(
+        text: cotizacion != null
+            ? cotizacion.fechaEntrada
+            : DateTime.now().toString().substring(0, 10));
+    bool esOferta = false;
+
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
@@ -41,6 +49,20 @@ class Dialogs {
               key: _formKeyHabitacion,
               child: Column(
                 children: [
+                  CheckboxListTile.adaptive(
+                    title: TextStyles.standardText(
+                        text:
+                            "Cotización con preventa oferta de tiempo limitado"),
+                    value: esOferta,
+                    onChanged: (value) {
+                      setState(() {
+                        esOferta = value!;
+                      });
+                    },
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                    contentPadding: const EdgeInsets.all(0),
+                  ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -90,19 +112,12 @@ class Dialogs {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Numero de noches",
+                      Expanded(
+                        child:
+                            TextFormFieldCustom.textFormFieldwithBorderCalendar(
+                          name: "Fecha de salida",
                           msgError: "Campo requerido*",
-                          isNumeric: true,
-                          isDecimal: false,
-                          initialValue: cotizacion != null
-                              ? nuevaCotizacion.noches!.toString()
-                              : null,
-                          onChanged: (p0) {
-                            nuevaCotizacion.noches = int.tryParse(p0);
-                          },
+                          dateController: _fechaSalida,
                         ),
                       ),
                     ],
@@ -112,74 +127,135 @@ class Dialogs {
                       TableRow(children: [
                         TextStyles.standardText(
                             text: "Adultos", aling: TextAlign.center),
-                        TextStyles.standardText(
-                            text: "Menores 0-6", aling: TextAlign.center),
-                        TextStyles.standardText(
-                            text: "Menores 7-12", aling: TextAlign.center),
+                        const SizedBox(),
+                        const SizedBox()
                       ]),
                       TableRow(children: [
                         NumberInputWithIncrementDecrement(
-                          onChanged: (p0) {
-                            nuevaCotizacion.adultos = int.tryParse(p0);
-                          },
+                          onChanged: (p0) => setState(
+                              () => nuevaCotizacion.adultos = int.tryParse(p0)),
                           initialValue: cotizacion?.adultos!.toString(),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: NumberInputWithIncrementDecrement(
-                            onChanged: (p0) {
-                              nuevaCotizacion.menores0a6 = int.tryParse(p0);
-                            },
-                            initialValue: cotizacion?.menores0a6!.toString(),
+                          child: SizedBox(
+                            width: 150,
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa real adulto",
+                              msgError: "Campo requerido*",
+                              isNumeric: true,
+                              isDecimal: true,
+                              isMoneda: true,
+                              initialValue: cotizacion != null
+                                  ? nuevaCotizacion.tarifaRealAdulto!.toString()
+                                  : null,
+                              onChanged: (p0) => setState(() => nuevaCotizacion
+                                  .tarifaRealAdulto = double.tryParse(p0)),
+                            ),
                           ),
                         ),
-                        NumberInputWithIncrementDecrement(
-                          onChanged: (p0) {
-                            nuevaCotizacion.menores7a12 = int.tryParse(p0);
-                          },
-                          initialValue: cotizacion?.menores7a12!.toString(),
-                        )
+                        SizedBox(
+                          width: 150,
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Tarifa oferta adulto",
+                            msgError: "Campo requerido*",
+                            isNumeric: true,
+                            enabled: esOferta,
+                            isRequired: false,
+                            isDecimal: true,
+                            isMoneda: true,
+                            initialValue: cotizacion != null
+                                ? nuevaCotizacion.tarifaPreventaAdulto!
+                                    .toString()
+                                : null,
+                            onChanged: (p0) => setState(() => nuevaCotizacion
+                                .tarifaRealAdulto = double.tryParse(p0)),
+                          ),
+                        ),
                       ]),
+                      TableRow(children: [
+                        TextStyles.standardText(
+                            text: "Menores 7-12", aling: TextAlign.center),
+                        const SizedBox(),
+                        const SizedBox()
+                      ]),
+                      TableRow(children: [
+                        NumberInputWithIncrementDecrement(
+                          onChanged: (p0) => setState(() =>
+                              nuevaCotizacion.menores7a12 = int.tryParse(p0)),
+                          initialValue: cotizacion?.menores0a6!.toString(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: SizedBox(
+                            width: 150,
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa real menor",
+                              msgError: "Campo requerido*",
+                              isNumeric: true,
+                              isDecimal: true,
+                              isMoneda: true,
+                              initialValue: cotizacion != null
+                                  ? nuevaCotizacion.tarifaRealMenor!.toString()
+                                  : null,
+                              onChanged: (p0) => setState(() => nuevaCotizacion
+                                  .tarifaRealMenor = double.tryParse(p0)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 150,
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Tarifa oferta menor",
+                            msgError: "Campo requerido*",
+                            isNumeric: true,
+                            isDecimal: true,
+                            isMoneda: true,
+                            isRequired: false,
+                            enabled: esOferta,
+                            initialValue: cotizacion != null
+                                ? nuevaCotizacion.tarifaPreventaMenor!
+                                    .toString()
+                                : null,
+                            onChanged: (p0) => setState(() => nuevaCotizacion
+                                .tarifaRealAdulto = double.tryParse(p0)),
+                          ),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        TextStyles.standardText(
+                            text: "Menores 0-6", aling: TextAlign.center),
+                        const SizedBox(),
+                        const SizedBox()
+                      ]),
+                      TableRow(children: [
+                        NumberInputWithIncrementDecrement(
+                          onChanged: (p0) => setState(() => nuevaCotizacion.menores7a12 = int.tryParse(p0)),
+                          initialValue: cotizacion?.menores0a6!.toString(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              right: 8.0, left: 8, top: 10),
+                          child: SizedBox(
+                              child: Center(
+                                  child:
+                                      TextStyles.standardText(text: "Gratis"))),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: SizedBox(
+                            child: TextStyles.standardText(
+                              aling: TextAlign.right,
+                              size: 15,
+                              text:
+                                  "Tarifa total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(nuevaCotizacion))}",
+                              isBold: true,
+                            ),
+                          ),
+                        )
+                      ])
                     ],
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Tarifa real",
-                          msgError: "Campo requerido*",
-                          isNumeric: true,
-                          isDecimal: true,
-                          isMoneda: true,
-                          initialValue: cotizacion != null
-                              ? nuevaCotizacion.tarifaReal!.toString()
-                              : null,
-                          onChanged: (p0) {
-                            nuevaCotizacion.tarifaReal = double.tryParse(p0);
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Tarifa de preventa oferta por tiempo limitado",
-                          msgError: "",
-                          isRequired: false,
-                          isNumeric: true,
-                          isDecimal: true,
-                          isMoneda: true,
-                          initialValue: cotizacion != null
-                              ? nuevaCotizacion.tarifaPreventa?.toString()
-                              : null,
-                          onChanged: (p0) {
-                            nuevaCotizacion.tarifaPreventa =
-                                double.tryParse(p0);
-                          },
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
@@ -191,6 +267,7 @@ class Dialogs {
             onPressed: () {
               if (_formKeyHabitacion.currentState!.validate()) {
                 nuevaCotizacion.fechaEntrada = _fechaEntrada.text;
+                nuevaCotizacion.fechaSalida = _fechaSalida.text;
                 Navigator.of(buildContext).pop(nuevaCotizacion);
               }
             },
