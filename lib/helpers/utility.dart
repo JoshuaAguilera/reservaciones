@@ -26,7 +26,7 @@ class Utility {
   }
 
   static double getWidthDynamic(double width) {
-    double outWidth = 300;
+    double outWidth = 350;
     if (width < 650) {
       outWidth = width * 0.5;
     }
@@ -80,14 +80,26 @@ class Utility {
     return date;
   }
 
-  static double calculateTarifaTotal(CotizacionIndividual nuevaCotizacion) {
+  static double calculateTarifaTotal(
+      {required CotizacionIndividual cotizacion, bool esPreventa = false}) {
     double tarifaTotal = 0;
-    double tarifaAdulto = nuevaCotizacion.tarifaRealAdulto ?? 0;
-    double tarifaMenores = nuevaCotizacion.tarifaRealMenor ?? 0;
+    double tarifaAdulto = esPreventa
+        ? cotizacion.tarifaPreventaAdulto ?? 0
+        : cotizacion.tarifaRealAdulto ?? 0;
+    double tarifaMenores = esPreventa
+        ? cotizacion.tarifaPreventaMenor ?? 0
+        : cotizacion.tarifaRealMenor ?? 0;
 
-    tarifaTotal = (nuevaCotizacion.adultos! * tarifaAdulto) +
-        (nuevaCotizacion.menores7a12! * tarifaMenores);
+    tarifaTotal = (cotizacion.adultos! * tarifaAdulto) +
+        (cotizacion.menores7a12! * tarifaMenores);
 
     return tarifaTotal;
+  }
+
+  static String getNextDay(String text) {
+    return DateTime.parse(text)
+        .add(const Duration(days: 1))
+        .toIso8601String()
+        .substring(0, 10);
   }
 }

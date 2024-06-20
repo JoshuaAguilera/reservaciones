@@ -32,6 +32,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   String dropdownValue = cotizacionesList.first;
   List<CotizacionIndividual> cotizacionesInd = [];
   List<CotizacionGrupo> cotizacionesGrupo = [];
+  final _formKeyCotizacion = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -50,291 +51,291 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextStyles.titlePagText(text: "Generar Cotización"),
-              const Divider(color: Colors.black54),
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomWidgets.dropdownMenuCustom(
-                    initialSelection: cotizacionesList.first,
-                    onSelected: (String? value) {
-                      setState(() {
-                        dropdownValue = value!;
-                      });
-                    },
-                    elements: cotizacionesList,
-                    screenWidth: null),
-              ),
-              const SizedBox(height: 15),
-              TextStyles.titleText(text: "Datos del cliente"),
-              const SizedBox(height: 15),
-              TextFormFieldCustom.textFormFieldwithBorder(
-                  name: "Nombre completo", msgError: "Campo requerido*"),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextFormFieldCustom.textFormFieldwithBorder(
+          child: Form(
+            key: _formKeyCotizacion,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextStyles.titlePagText(text: "Generar Cotización"),
+                const Divider(color: Colors.black54),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: CustomWidgets.dropdownMenuCustom(
+                      initialSelection: cotizacionesList.first,
+                      onSelected: (String? value) {
+                        setState(() {
+                          dropdownValue = value!;
+                        });
+                      },
+                      elements: cotizacionesList,
+                      screenWidth: null),
+                ),
+                const SizedBox(height: 15),
+                TextStyles.titleText(text: "Datos del cliente"),
+                const SizedBox(height: 15),
+                TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Nombre completo",
+                  msgError: "Campo requerido*",
+                  isRequired: true,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormFieldCustom.textFormFieldwithBorder(
                         name: "Teléfono",
                         msgError: "Campo requerido*",
                         isNumeric: true,
-                        isDecimal: false),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormFieldCustom.textFormFieldwithBorder(
+                        isDecimal: false,
+                        isRequired: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormFieldCustom.textFormFieldwithBorder(
                         name: "Correo electronico",
-                        msgError: "Campo requerido*"),
+                        msgError: "Campo requerido*",
+                        isRequired: true,
+                      ),
+                    ),
+                  ],
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Divider(color: Colors.black54),
+                ),
+                TextStyles.titleText(text: "Cotizaciones"),
+                const SizedBox(height: 15),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: 200,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return (dropdownValue == "Cotización Individual")
+                                ? Dialogs().habitacionIndividualDialog(
+                                    buildContext: context)
+                                : Dialogs().habitacionGrupoDialog(
+                                    buildContext: context);
+                          },
+                        ).then((value) {
+                          if (value != null) {
+                            setState(() {
+                              if (dropdownValue == "Cotización Individual") {
+                                cotizacionesInd.add(value);
+                              } else {
+                                cotizacionesGrupo.add(value);
+                              }
+                            });
+                          }
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                          elevation: 4,
+                          backgroundColor: WebColors.prussianBlue),
+                      child: Text(
+                        "Agregar cotización",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: TextFormFieldCustom.textFormFieldwithBorder(
-              //           name: "Fecha de entrada:",
-              //           msgError: "Campo requerido*"),
-              //     ),
-              //     const SizedBox(width: 12),
-              //     Expanded(
-              //       child: TextFormFieldCustom.textFormFieldwithBorder(
-              //           name: "Numero de noches",
-              //           msgError: "Campo requerido*",
-              //           isNumeric: true,
-              //           isDecimal: false),
-              //     ),
-              //   ],
-              // ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Divider(color: Colors.black54),
-              ),
-              TextStyles.titleText(text: "Habitaciones"),
-              const SizedBox(height: 15),
-              Align(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  width: 200,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return (dropdownValue == "Cotización Individual")
-                              ? Dialogs().habitacionIndividualDialog(
-                                  buildContext: context)
-                              : Dialogs()
-                                  .habitacionGrupoDialog(buildContext: context);
+                ),
+                const SizedBox(height: 12),
+                if (!isResizable(widget.sideController.extended))
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    child: Table(
+                      columnWidths: {
+                        0: const FractionColumnWidth(.05),
+                        1: const FractionColumnWidth(.15),
+                        2: const FractionColumnWidth(.1),
+                        3: const FractionColumnWidth(.1),
+                        4: const FractionColumnWidth(.1),
+                        5: FractionColumnWidth(
+                            (dropdownValue == "Cotización Individual")
+                                ? .1
+                                : 0.22),
+                        6: FractionColumnWidth(
+                            (dropdownValue == "Cotización Individual")
+                                ? .21
+                                : .1),
+                      },
+                      children: [
+                        TableRow(children: [
+                          TextStyles.standardText(
+                              text: "#",
+                              // (dropdownValue == "Cotización Individual")
+                              //     ? "Día"
+                              //     : "PAX",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          TextStyles.standardText(
+                              text: "Fechas de estancia",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          TextStyles.standardText(
+                              text: "Adultos",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          if (dropdownValue == "Cotización Individual")
+                            TextStyles.standardText(
+                                text: "Menores 0-6",
+                                aling: TextAlign.center,
+                                overClip: true),
+                          TextStyles.standardText(
+                              text: "Menores 7-12",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          TextStyles.standardText(
+                              text: (dropdownValue == "Cotización Individual")
+                                  ? "Tarifa \nReal"
+                                  : "Tarifa por noche",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          TextStyles.standardText(
+                              text: (dropdownValue == "Cotización Individual")
+                                  ? "Tarifa de preventa oferta por tiempo limitado"
+                                  : "Habitaciones",
+                              aling: TextAlign.center,
+                              overClip: true),
+                          if (dropdownValue == "Cotización Grupos")
+                            TextStyles.standardText(
+                                text: "Subtotal",
+                                aling: TextAlign.center,
+                                overClip: true),
+                          const SizedBox(width: 15)
+                        ]),
+                      ],
+                    ),
+                  ),
+                const Divider(color: Colors.black54),
+                if (dropdownValue == "Cotización Individual")
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: SizedBox(
+                      height: limitHeightList(cotizacionesInd.length),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: cotizacionesInd.length,
+                        itemBuilder: (context, index) {
+                          if (index < cotizacionesInd.length) {
+                            return CotizacionIndividualCard(
+                              key: ObjectKey(cotizacionesInd[index].hashCode),
+                              index: index,
+                              cotizacion: cotizacionesInd[index],
+                              compact:
+                                  !isResizable(widget.sideController.extended),
+                              onPressedDelete: () => setState(() =>
+                                  cotizacionesInd
+                                      .remove(cotizacionesInd[index])),
+                              onPressedEdit: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialogs().habitacionIndividualDialog(
+                                        buildContext: context,
+                                        cotizacion: cotizacionesInd[index]);
+                                  },
+                                ).then((value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      cotizacionesInd[index] = value;
+                                    });
+                                  }
+                                });
+                              },
+                            );
+                          }
                         },
-                      ).then((value) {
-                        if (value != null) {
-                          setState(() {
-                            if (dropdownValue == "Cotización Individual")
-                              cotizacionesInd.add(value);
-                            else
-                              cotizacionesGrupo.add(value);
-                          });
-                        }
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                        elevation: 4, backgroundColor: WebColors.prussianBlue),
-                    child: Text(
-                      "Agregar habitación",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: SizedBox(
+                      height: limitHeightList(cotizacionesGrupo.length),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: cotizacionesGrupo.length,
+                        itemBuilder: (context, index) {
+                          if (index < cotizacionesGrupo.length) {
+                            return CotizacionGrupoCard(
+                              key: ObjectKey(cotizacionesGrupo[index].hashCode),
+                              index: index,
+                              cotizacion: cotizacionesGrupo[index],
+                              compact:
+                                  !isResizable(widget.sideController.extended),
+                              onPressedDelete: () => setState(() =>
+                                  cotizacionesGrupo
+                                      .remove(cotizacionesGrupo[index])),
+                              onPressedEdit: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialogs().habitacionGrupoDialog(
+                                        buildContext: context,
+                                        cotizacion: cotizacionesGrupo[index]);
+                                  },
+                                ).then((value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      cotizacionesGrupo[index] = value;
+                                    });
+                                  }
+                                });
+                              },
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 12, top: 8),
+                  child: Divider(color: Colors.black54),
                 ),
-              ),
-              const SizedBox(height: 12),
-              if (!isResizable(widget.sideController.extended))
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                  child: Table(
-                    columnWidths: {
-                      0: FractionColumnWidth(.05),
-                      1: FractionColumnWidth(.15),
-                      2: FractionColumnWidth(.1),
-                      3: FractionColumnWidth(.1),
-                      4: FractionColumnWidth(.1),
-                      5: FractionColumnWidth(
-                          (dropdownValue == "Cotización Individual")
-                              ? .1
-                              : 0.22),
-                      6: FractionColumnWidth(
-                          (dropdownValue == "Cotización Individual")
-                              ? .21
-                              : .1),
-                    },
-                    children: [
-                      TableRow(children: [
-                        TextStyles.standardText(
-                            text: (dropdownValue == "Cotización Individual")
-                                ? "Día"
-                                : "PAX",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        TextStyles.standardText(
-                            text: "Fechas de estancia",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        TextStyles.standardText(
-                            text: "Adultos",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        if (dropdownValue == "Cotización Individual")
-                          TextStyles.standardText(
-                              text: "Menores 0-6",
-                              aling: TextAlign.center,
-                              overClip: true),
-                        TextStyles.standardText(
-                            text: "Menores 7-12",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        TextStyles.standardText(
-                            text: (dropdownValue == "Cotización Individual")
-                                ? "Tarifa \nReal"
-                                : "Tarifa por noche",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        TextStyles.standardText(
-                            text: (dropdownValue == "Cotización Individual")
-                                ? "Tarifa de preventa oferta por tiempo limitado"
-                                : "Habitaciones",
-                            aling: TextAlign.center,
-                            overClip: true),
-                        if (dropdownValue == "Cotización Grupos")
-                          TextStyles.standardText(
-                              text: "Subtotal",
-                              aling: TextAlign.center,
-                              overClip: true),
-                        const SizedBox(width: 15)
-                      ]),
-                    ],
-                  ),
-                ),
-              const Divider(color: Colors.black54),
-              if (dropdownValue == "Cotización Individual")
-                Padding(
-                  padding: const EdgeInsets.only(top: 5),
+                Align(
+                  alignment: Alignment.centerLeft,
                   child: SizedBox(
-                    height: limitHeightList(cotizacionesInd.length),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: cotizacionesInd.length,
-                      itemBuilder: (context, index) {
-                        if (index < cotizacionesInd.length) {
-                          return CotizacionIndividualCard(
-                            key: ObjectKey(cotizacionesInd[index].hashCode),
-                            index: index,
-                            cotizacion: cotizacionesInd[index],
-                            compact:
-                                !isResizable(widget.sideController.extended),
-                            onPressedDelete: () => setState(() =>
-                                cotizacionesInd.remove(cotizacionesInd[index])),
-                            onPressedEdit: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialogs().habitacionIndividualDialog(
-                                      buildContext: context,
-                                      cotizacion: cotizacionesInd[index]);
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    cotizacionesInd[index] = value;
-                                  });
-                                }
-                              });
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: SizedBox(
-                    height: limitHeightList(cotizacionesGrupo.length),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: cotizacionesGrupo.length,
-                      itemBuilder: (context, index) {
-                        if (index < cotizacionesGrupo.length) {
-                          return CotizacionGrupoCard(
-                            key: ObjectKey(cotizacionesGrupo[index].hashCode),
-                            index: index,
-                            cotizacion: cotizacionesGrupo[index],
-                            compact:
-                                !isResizable(widget.sideController.extended),
-                            onPressedDelete: () => setState(() =>
-                                cotizacionesGrupo
-                                    .remove(cotizacionesGrupo[index])),
-                            onPressedEdit: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialogs().habitacionGrupoDialog(
-                                      buildContext: context,
-                                      cotizacion: cotizacionesGrupo[index]);
-                                },
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    cotizacionesGrupo[index] = value;
-                                  });
-                                }
-                              });
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12, top: 8),
-                child: Divider(color: Colors.black54),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: SizedBox(
-                  width: 200,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      pw.Document comprobante = await ref
-                          .watch(CotizacionIndividualProvider.provider.notifier)
-                          .generarComprobante();
+                    width: 200,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKeyCotizacion.currentState!.validate()) {
+                          pw.Document comprobante = await ref
+                              .watch(CotizacionIndividualProvider
+                                  .provider.notifier)
+                              .generarComprobante();
 
-                      await Printing.layoutPdf(
-                          name: "example",
-                          format: PdfPageFormat.a4,
-                          onLayout: (format) async => comprobante.save());
-                    },
-                    style: ElevatedButton.styleFrom(
-                        elevation: 4,
-                        backgroundColor: WebColors.ceruleanOscure),
-                    child: Text(
-                      "Generar cotización",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
+                          await Printing.layoutPdf(
+                              name: "example",
+                              format: PdfPageFormat.a4,
+                              onLayout: (format) async => comprobante.save());
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          elevation: 4,
+                          backgroundColor: WebColors.ceruleanOscure),
+                      child: Text(
+                        "Generar cotización",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

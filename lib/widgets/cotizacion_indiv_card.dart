@@ -220,10 +220,10 @@ class _ListTileCotizacion extends StatelessWidget {
               text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
           TextStyles.standardText(
               text:
-                  "Tarifa real: ${Utility.formatterNumber(cotizacion.tarifaRealAdulto!)}"),
+                  "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: cotizacion))}"),
           TextStyles.standardText(
             text:
-                "Tarifa preventa: ${(cotizacion.tarifaPreventaAdulto != null) ? Utility.formatterNumber(cotizacion.tarifaPreventaAdulto!) : Utility.formatterNumber(cotizacion.tarifaRealAdulto!)}",
+                "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: cotizacion, esPreventa: true))}",
           )
         ]),
         trailing: PopupMenuButton<ListTileTitleAlignment>(

@@ -36,11 +36,12 @@ class TextStyles {
     );
   }
 
-  static Text errorText({String text = "", TextAlign aling = TextAlign.left}) {
+  static Text errorText(
+      {String text = "", TextAlign aling = TextAlign.left, double size = 10}) {
     return Text(
       text,
       textAlign: aling,
-      style: GoogleFonts.poppins(color: Colors.red[800], fontSize: 10),
+      style: GoogleFonts.poppins(color: Colors.red[800], fontSize: size),
     );
   }
 

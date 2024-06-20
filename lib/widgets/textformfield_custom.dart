@@ -47,13 +47,15 @@ class TextFormFieldCustom {
                   enabled: enabled,
                   controller: controller,
                   onChanged: (value) {
-                    snapshot(() {
-                      if (value.isEmpty) {
-                        withContent = false;
-                      } else {
-                        withContent = true;
-                      }
-                    });
+                    snapshot(
+                      () {
+                        if (value.isEmpty) {
+                          withContent = false;
+                        } else {
+                          withContent = true;
+                        }
+                      },
+                    );
                     if (onChanged != null) onChanged.call(value);
                   },
                   obscureText: passwordVisible,
@@ -109,10 +111,15 @@ class TextFormFieldCustom {
     );
   }
 
-  static Widget textFormFieldwithBorderCalendar(
-      {required String name,
-      required String msgError,
-      required TextEditingController dateController}) {
+  static Widget textFormFieldwithBorderCalendar({
+    required String name,
+    required String msgError,
+    required TextEditingController dateController,
+    String fechaInicial = '',
+    void Function()? onChanged,
+  }) {
+    DateTime fecha = DateTime.now();
+    if (fechaInicial.isNotEmpty) fecha = fecha.add(const Duration(days: 1));
     return StatefulBuilder(
       builder: (context, setState) {
         return Container(
@@ -126,19 +133,29 @@ class TextFormFieldCustom {
             minHeight: 25.0,
             maxHeight: 100.0,
           ),
-          child: TextFormField(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return msgError;
-              }
-              return null;
-            },
-            controller: dateController,
-            style: GoogleFonts.poppins(fontSize: 13),
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelStyle: GoogleFonts.poppins(fontSize: 13),
-                suffixIcon: IconButton(
+          child: Stack(
+            children: [
+              AbsorbPointer(
+                absorbing: true,
+                child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return msgError;
+                    }
+                    return null;
+                  },
+                  controller: dateController,
+                  style: GoogleFonts.poppins(fontSize: 13),
+                  decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelStyle: GoogleFonts.poppins(fontSize: 13),
+                      labelText: name),
+                ),
+              ),
+              Positioned(
+                right: 5,
+                top: 5,
+                child: IconButton(
                   icon: Icon(
                     Icons.calendar_month,
                     color: WebColors.azulCielo,
@@ -146,8 +163,14 @@ class TextFormFieldCustom {
                   onPressed: () {
                     showDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
+                      initialDate: fechaInicial.isNotEmpty
+                          ? DateTime.parse(fechaInicial)
+                              .add(const Duration(days: 1))
+                          : DateTime.now(),
+                      firstDate: fechaInicial.isNotEmpty
+                          ? DateTime.parse(fechaInicial)
+                              .add(const Duration(days: 1))
+                          : DateTime.now(),
                       lastDate: DateTime((DateTime.now().year + 2)),
                       locale: const Locale('es', 'ES'),
                     ).then((date) {
@@ -155,12 +178,14 @@ class TextFormFieldCustom {
                         setState(() {
                           dateController.text =
                               date.toIso8601String().substring(0, 10);
+                          if (onChanged != null) onChanged.call();
                         });
                       }
                     });
                   },
                 ),
-                labelText: name),
+              ),
+            ],
           ),
         );
       },

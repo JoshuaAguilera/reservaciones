@@ -27,11 +27,17 @@ class GeneradorDocService extends ChangeNotifier {
       marginLeft: 3 * PdfPageFormat.cm,
       marginRight: 3 * PdfPageFormat.cm,
     );
-
-    //Header
+    
+    //Header 
     final img = await rootBundle.load('assets/image/logo_header.png');
     final imageBytes = img.buffer.asUint8List();
     pw.Image logoHeaderImage = pw.Image(pw.MemoryImage(imageBytes), width: 131);
+
+    //Footer
+    final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
+    final imageBytesW = imgWhatsApp.buffer.asUint8List();
+    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 20);
+
 
     //Styles
     pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF();
@@ -40,7 +46,8 @@ class GeneradorDocService extends ChangeNotifier {
         await TextStyles.pwStylePDF(size: 7, isWhite: true, isBold: true);
     pw.TextStyle styleBold = await TextStyles.pwStylePDF(size: 7, isBold: true);
     pw.TextStyle styleBoldUnderline =
-        await TextStyles.pwStylePDF(size: 7, isBold: true, withUnderline: true);
+        await TextStyles.pwStylePDF(size: 8, isBold: true, withUnderline: true);
+    pw.TextStyle styleFooter = await TextStyles.pwStylePDF(size: 7);
 
     pdf.addPage(
       pw.MultiPage(
@@ -112,8 +119,20 @@ class GeneradorDocService extends ChangeNotifier {
           ),
         ],
         footer: (context) {
-          return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center, children: []);
+          return pw.Center(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Text(
+                    "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
+                    style: styleFooter),
+                pw.Text("Correo: reservas@coralbluehuatulco.mx    958 186 8767",
+                    style: styleFooter),
+                whatsAppImage,
+                pw.Text("Teléfono:  958 525 2061 Ext. 708", style: styleFooter)
+              ],
+            ),
+          );
         },
       ),
     );
