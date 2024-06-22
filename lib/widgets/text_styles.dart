@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,12 +19,12 @@ class TextStyles {
     return Text(
       text,
       textAlign: aling,
-      style: GoogleFonts.poppins(
+      style: TextStyle(
+          fontFamily: "poppins_regular",
           color: WebColors.prussianBlue,
           fontSize: size,
           fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          textStyle: TextStyle(
-              overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis)),
+          overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis),
     );
   }
 
@@ -31,8 +32,12 @@ class TextStyles {
     return Text(
       text,
       textAlign: aling,
-      style: GoogleFonts.poppins(
-          color: WebColors.turqueza, fontSize: 14, fontWeight: FontWeight.bold),
+      style: TextStyle(
+        color: WebColors.turqueza,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        fontFamily: "poppins_regular",
+      ),
     );
   }
 
@@ -41,7 +46,11 @@ class TextStyles {
     return Text(
       text,
       textAlign: aling,
-      style: GoogleFonts.poppins(color: Colors.red[800], fontSize: size),
+      style: TextStyle(
+        fontFamily: "poppins_regular",
+        color: Colors.red[800],
+        fontSize: size,
+      ),
     );
   }
 
@@ -52,7 +61,8 @@ class TextStyles {
       TextAlign textAlign = TextAlign.start}) {
     return Text(text,
         textAlign: textAlign,
-        style: GoogleFonts.poppins(
+        style: TextStyle(
+          fontFamily: "poppins_bold",
           color: color ?? WebColors.cerulean,
           fontWeight: FontWeight.bold,
           fontSize: size,
@@ -80,10 +90,12 @@ class TextStyles {
     return Text(
       text,
       textAlign: TextAlign.start,
-      style: GoogleFonts.poppins(
-          color: WebColors.prussianBlue,
-          fontWeight: FontWeight.bold,
-          fontSize: 22),
+      style: TextStyle(
+        fontFamily: "poppins_bold",
+        color: WebColors.prussianBlue,
+        fontWeight: FontWeight.bold,
+        fontSize: 22,
+      ),
     );
   }
 
@@ -93,13 +105,34 @@ class TextStyles {
     bool isBold = false,
     bool withUnderline = false,
     bool isItalic = false,
+    double? letterSpacing,
+    double lineSpacing = 2,
+    bool isRegular = false,
   }) async {
     return pw.TextStyle(
-      font: isBold
-          ? await DocTemplates.fontBoldGoogle()
-          : await DocTemplates.fontLightGoogle(),
       fontSize: size,
-      fontStyle: isItalic ? pw.FontStyle.italic : null,
+      letterSpacing: letterSpacing,
+      lineSpacing: lineSpacing,
+      fontWeight: isRegular
+          ? null
+          : isBold
+              ? pw.FontWeight.bold
+              : pw.FontWeight.normal,
+      font: pw.Font.ttf(
+          await rootBundle.load("assets/fonts/calibri-regular.ttf")),
+      fontBold:
+          pw.Font.ttf(await rootBundle.load("assets/fonts/calibri-bold.ttf")),
+      fontBoldItalic: pw.Font.ttf(
+          await rootBundle.load("assets/fonts/calibri-bold-italic.ttf")),
+      fontItalic:
+          pw.Font.ttf(await rootBundle.load("assets/fonts/calibri-italic.ttf")),
+      fontNormal:
+          pw.Font.ttf(await rootBundle.load("assets/fonts/calibri-light.ttf")),
+      fontStyle: isRegular
+          ? null
+          : isItalic
+              ? pw.FontStyle.italic
+              : pw.FontStyle.normal,
       color:
           isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000"),
       decoration:

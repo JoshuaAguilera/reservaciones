@@ -65,7 +65,10 @@ class TextFormFieldCustom {
                     }
                     return null;
                   },
-                  style: GoogleFonts.poppins(fontSize: 13),
+                  style: const TextStyle(
+                    fontFamily: "poppins_regular",
+                    fontSize: 13,
+                  ),
                   keyboardType: isNumeric
                       ? TextInputType.numberWithOptions(
                           decimal: isDecimal,
@@ -83,7 +86,10 @@ class TextFormFieldCustom {
                   textAlign: isMoneda ? TextAlign.right : TextAlign.left,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    labelStyle: GoogleFonts.poppins(fontSize: 13),
+                    labelStyle: const TextStyle(
+                      fontFamily: "poppins_regular",
+                      fontSize: 13,
+                    ),
                     suffixIcon: isPassword
                         ? IconButton(
                             icon: Icon(
@@ -100,6 +106,11 @@ class TextFormFieldCustom {
                           )
                         : null,
                     labelText: name,
+                    errorStyle: TextStyle(
+                      fontFamily: "poppins_regular",
+                      color: Colors.red[800],
+                      fontSize: 10,
+                    ),
                   ),
                   initialValue: initialValue,
                 ),
@@ -145,11 +156,23 @@ class TextFormFieldCustom {
                     return null;
                   },
                   controller: dateController,
-                  style: GoogleFonts.poppins(fontSize: 13),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontFamily: "poppins_regular",
+                  ),
                   decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelStyle: GoogleFonts.poppins(fontSize: 13),
-                      labelText: name),
+                    border: const OutlineInputBorder(),
+                    labelStyle: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: "poppins_regular",
+                    ),
+                    labelText: name,
+                    errorStyle: TextStyle(
+                      fontFamily: "poppins_regular",
+                      color: Colors.red[800],
+                      fontSize: 10,
+                    ),
+                  ),
                 ),
               ),
               Positioned(

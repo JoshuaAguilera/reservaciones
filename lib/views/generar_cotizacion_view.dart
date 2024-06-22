@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/cotizacion_individual_provider.dart';
+import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/widgets/cotizacion_grupo_card.dart';
 import 'package:generador_formato/widgets/cotizacion_indiv_card.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
@@ -311,6 +312,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKeyCotizacion.currentState!.validate()) {
+                          if((cotizacionesInd.isEmpty && dropdownValue == "Cotización Individual") || (cotizacionesGrupo.isEmpty &&  dropdownValue == "Cotización Grupos")) {
+                            showSnackBar(context, "Se requiere al menos una cotización");
+                            return null;
+                          }
                           pw.Document comprobante = await ref
                               .watch(CotizacionIndividualProvider
                                   .provider.notifier)
