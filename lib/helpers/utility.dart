@@ -1,7 +1,8 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:generador_formato/models/cotizacion_individual_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:intl/intl.dart';
 
 class Utility {
@@ -13,8 +14,8 @@ class Utility {
         return 'Generar Cotización';
       case 2:
         return 'Historial';
-      // case 3:
-      //   return 'Favorites';
+      case 4:
+        return 'Perfil';
       // case 4:
       //   return 'Custom iconWidget';
       // case 5:
@@ -81,8 +82,8 @@ class Utility {
     return date;
   }
 
-  static double calculateTarifaTotal(
-      {required CotizacionIndividual cotizacion, bool esPreventa = false}) {
+  static double calculateTarifaDiaria(
+      {required Cotizacion cotizacion, bool esPreventa = false}) {
     double tarifaTotal = 0;
     double tarifaAdulto = esPreventa
         ? cotizacion.tarifaPreventaAdulto ?? 0
@@ -115,5 +116,17 @@ class Utility {
         MediaQuery.of(context).size.width < minWidthWithBar;
     isVisible = (extended) ? isSmallScreenWithSideBar : isSmallScreen;
     return isVisible;
+  }
+
+  static double calculateTarifaTotal(List<Cotizacion> cotizaciones) {
+    double tarifaTotal = 0;
+    for (var element in cotizaciones) {
+      int days = DateTime.parse(element.fechaSalida!)
+          .difference(DateTime.parse(element.fechaEntrada!))
+          .inDays;
+      tarifaTotal += calculateTarifaDiaria(cotizacion: element) * days;
+    }
+
+    return tarifaTotal;
   }
 }

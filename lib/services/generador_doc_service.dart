@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:generador_formato/helpers/constants.dart';
 import 'package:generador_formato/helpers/doc_templates.dart';
 import 'package:generador_formato/helpers/utility.dart';
-import 'package:generador_formato/models/cotizacion_individual_model.dart';
+import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -16,7 +18,7 @@ class GeneradorDocService extends ChangeNotifier {
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
   Future<pw.Document> generarComprobanteCotizacion(
-      List<CotizacionIndividual> cotizaciones) async {
+      List<Cotizacion> cotizaciones, ComprobanteCotizacion comprobante) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
@@ -80,48 +82,14 @@ class GeneradorDocService extends ChangeNotifier {
             child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text("ESTIMAD@:", style: styleBold),
+                  pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
                   pw.SizedBox(height: 13),
                   pw.Text(DocTemplates.StructureDoc(1), style: styleLigth),
                   pw.SizedBox(height: 14),
                   pw.Text(DocTemplates.StructureDoc(2), style: styleLigth),
                   pw.SizedBox(height: 12),
-                  DocTemplates.getTablesCotIndiv(
-                    nameTable:
-                        "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-                    cotizaciones: cotizaciones,
-                    styleGeneral: styleLigth,
-                    styleHeader: styleLigthHeaderTable,
-                    styleBold: styleBoldTable,
-                  ),
-                  pw.SizedBox(height: 20),
-                  DocTemplates.getTablesCotIndiv(
-                    nameTable:
-                        "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
-                    cotizaciones: cotizaciones,
-                    styleGeneral: styleLigth,
-                    styleHeader: styleLigthHeaderTable,
-                    styleBold: styleBoldTable,
-                  ),
-                  pw.SizedBox(height: 20),
-                  DocTemplates.getTablesCotIndiv(
-                    nameTable:
-                        "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-                    cotizaciones: cotizaciones,
-                    styleGeneral: styleLigth,
-                    styleHeader: styleLigthHeaderTable,
-                    styleBold: styleBoldTable,
-                  ),
-                  pw.SizedBox(height: 20),
-                  DocTemplates.getTablesCotIndiv(
-                    nameTable:
-                        "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
-                    cotizaciones: cotizaciones,
-                    styleGeneral: styleLigth,
-                    styleHeader: styleLigthHeaderTable,
-                    styleBold: styleBoldTable,
-                  ),
-                  pw.SizedBox(height: 25),
+                  generateTables(cotizaciones, styleLigth,
+                      styleLigthHeaderTable, styleBoldTable),
                   pw.Text("NOTAS", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
                   pw.Text(DocTemplates.StructureDoc(3), style: styleRegular),
@@ -139,7 +107,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.SizedBox(height: 20),
                   pw.Text("POLÍTICAS PARA RESERVACIÓN",
                       style: styleBoldUnderline),
-                  pw.SizedBox(height: 0),
+                  pw.SizedBox(height: 11),
                   DocTemplates.getListDocument(
                       styleItalic: styleItalic,
                       styleLight: styleLigth,
@@ -258,9 +226,85 @@ class GeneradorDocService extends ChangeNotifier {
     return pdf;
   }
 
-  Future<Uint8List> saveDocument() async {
-    pw.Document doc = await generarComprobanteCotizacion([]);
+  pw.Column generateTables(
+      List<Cotizacion> cotizaciones,
+      pw.TextStyle styleLigth,
+      pw.TextStyle styleLigthHeaderTable,
+      pw.TextStyle styleBoldTable) {
+    List<pw.Widget> tablas = [];
 
-    return await doc.save();
+    if (cotizaciones
+        .any((element) => element.categoria == "HABITACIÓN DELUXE DOBLE")) {
+      if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
+        tablas.add(
+          DocTemplates.getTablesCotIndiv(
+            nameTable:
+                "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
+            cotizaciones: cotizaciones
+                .where((element) =>
+                    element.plan == "PLAN TODO INCLUIDO" &&
+                    element.categoria == "HABITACIÓN DELUXE DOBLE")
+                .toList(),
+            styleGeneral: styleLigth,
+            styleHeader: styleLigthHeaderTable,
+            styleBold: styleBoldTable,
+          ),
+        );
+        tablas.add(pw.SizedBox(height: 20));
+      }
+      if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
+        tablas.add(DocTemplates.getTablesCotIndiv(
+          nameTable:
+              "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
+          cotizaciones: cotizaciones
+              .where((element) =>
+                  element.plan == "SOLO HOSPEDAJE" &&
+                  element.categoria == "HABITACIÓN DELUXE DOBLE")
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+        ));
+        tablas.add(pw.SizedBox(height: 20));
+      }
+    }
+
+    if (cotizaciones.any((element) =>
+        element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")) {
+      if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
+        tablas.add(
+          DocTemplates.getTablesCotIndiv(
+            nameTable:
+                "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
+            cotizaciones: cotizaciones
+                .where((element) =>
+                    element.plan == "PLAN TODO INCLUIDO" &&
+                    element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")
+                .toList(),
+            styleGeneral: styleLigth,
+            styleHeader: styleLigthHeaderTable,
+            styleBold: styleBoldTable,
+          ),
+        );
+        tablas.add(pw.SizedBox(height: 20));
+      }
+      if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
+        tablas.add(DocTemplates.getTablesCotIndiv(
+          nameTable:
+              "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
+          cotizaciones: cotizaciones
+              .where((element) =>
+                  element.plan == "SOLO HOSPEDAJE" &&
+                  element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+        ));
+        tablas.add(pw.SizedBox(height: 20));
+      }
+    }
+
+    return pw.Column(children: tablas);
   }
 }

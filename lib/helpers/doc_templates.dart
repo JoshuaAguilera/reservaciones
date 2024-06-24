@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:generador_formato/models/cotizacion_individual_model.dart';
+import 'package:generador_formato/helpers/constants.dart';
+import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -144,13 +148,32 @@ class DocTemplates {
   }
 
   static pw.Widget getTablesCotIndiv({
-    required List<CotizacionIndividual> cotizaciones,
+    required List<Cotizacion> cotizaciones,
     required String nameTable,
     required pw.TextStyle styleGeneral,
     required pw.TextStyle styleHeader,
     required pw.TextStyle styleBold,
     bool requiredPreventa = false,
   }) {
+    List<List<String>> contenido = [];
+
+    contenido = [
+      <String>[
+        'DIA',
+        'FECHAS DE\nESTANCIA',
+        'ADULTOS',
+        'MENORES\n0-6',
+        'MENORES\n7-12',
+        '       TARIFA REAL       ',
+        if (requiredPreventa) 'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
+      ]
+    ];
+
+    for (var element in cotizaciones) {
+      int index = contenido.length - 1;
+      contenido.addAll(generateDaysCotizacion(element, index));
+    }
+
     return pw.Column(children: [
       pw.TableHelper.fromTextArray(
           border: pw.TableBorder.all(width: 0.7),
@@ -168,43 +191,39 @@ class DocTemplates {
             const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 0.5),
         headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 2.5, 1.5, 1),
         cellAlignment: pw.Alignment.center,
-        // columnWidths: {
-        //   0 : pw.TableColumnWidth(2),
-        // },
-        data: <List<String>>[
-          <String>[
-            'DIA',
-            'FECHAS DE\nESTANCIA',
-            'ADULTOS',
-            'MENORES\n0-6',
-            'MENORES\n7-12',
-            '       TARIFA REAL       ',
-            if (requiredPreventa)
-              'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
-          ],
-          for (int i = 1; i < 6; i++)
-            <String>['$i', '', '', '', '', '', if (requiredPreventa) ''],
-        ],
+        columnWidths: {
+          0: const pw.FixedColumnWidth(10),
+          1: const pw.FixedColumnWidth(40),
+          2: const pw.FixedColumnWidth(30),
+          3: const pw.FixedColumnWidth(30),
+          4: const pw.FixedColumnWidth(30),
+          5: const pw.FixedColumnWidth(60),
+        },
+        data: contenido,
       ),
       pw.Padding(
-        padding:  pw.EdgeInsets.only(left:requiredPreventa ? 115 : 169),
+        padding: pw.EdgeInsets.only(left: requiredPreventa ? 178 : 177),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.9),
             headerStyle: styleHeader,
+            columnWidths: {
+              0: const pw.FixedColumnWidth(100),
+              1: const pw.FixedColumnWidth(100)
+            },
             cellPadding:
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
             headerCellDecoration:
                 pw.BoxDecoration(color: PdfColor.fromHex("#009999")),
             headers: [
               "TOTAL DE ESTANCIA",
-              "\$                                 ",
+              Utility.formatterNumber(
+                  Utility.calculateTarifaTotal(cotizaciones)),
               if (requiredPreventa)
                 "\$                                                      ",
             ],
             data: []),
       )
     ]);
-    // return pw.Table(border: pw.TableBorder(bottom: pw.BorderSide(color: pw.C)),children: [pw.TableRow(children: [])]);
   }
 
   static pw.Column getListDocument({
@@ -287,5 +306,34 @@ class DocTemplates {
         ],
       ),
     );
+  }
+
+  static List<List<String>> generateDaysCotizacion(
+      Cotizacion cotizacion, int index) {
+    List<List<String>> dias = [];
+    int days = DateTime.parse(cotizacion.fechaSalida!)
+        .difference(DateTime.parse(cotizacion.fechaEntrada!))
+        .inDays;
+
+    for (int i = 0; i < days; i++) {
+      List<String> diasFila = [];
+      diasFila.add("${i + 1 + index}");
+      diasFila.add(DateTime.parse(cotizacion.fechaEntrada!)
+          .add(Duration(days: i))
+          .toIso8601String()
+          .substring(0, 10));
+      diasFila.add("${cotizacion.adultos}");
+      diasFila.add("${cotizacion.menores0a6}");
+      diasFila.add("${cotizacion.menores7a12}");
+      diasFila.add(Utility.formatterNumber(
+          Utility.calculateTarifaDiaria(cotizacion: cotizacion)));
+      if (cotizacion.tarifaPreventaAdulto != null) {
+        diasFila.add(Utility.formatterNumber(Utility.calculateTarifaDiaria(
+            cotizacion: cotizacion, esPreventa: true)));
+      }
+      dias.add(diasFila);
+    }
+
+    return dias;
   }
 }

@@ -1,5 +1,6 @@
-class CotizacionIndividual {
+class Cotizacion {
   int? id;
+  bool? esGrupo;
   String? categoria;
   String? plan;
   String? fechaEntrada;
@@ -12,8 +13,16 @@ class CotizacionIndividual {
   double? tarifaRealMenor;
   double? tarifaPreventaMenor;
 
-  CotizacionIndividual({
+  // Cotizacion grupo
+  int? pax;
+  String? tipoHabitacion;
+  double? tarifaNoche;
+  double? subtotal;
+  List<String>? habitaciones;
+
+  Cotizacion({
     this.id,
+    this.esGrupo,
     this.categoria,
     this.plan,
     this.fechaEntrada,
@@ -25,10 +34,18 @@ class CotizacionIndividual {
     this.tarifaPreventaAdulto,
     this.tarifaPreventaMenor,
     this.tarifaRealMenor,
+
+    // Cotizacion grupo
+    this.pax,
+    this.tipoHabitacion,
+    this.tarifaNoche,
+    this.subtotal,
+    this.habitaciones,
   });
 
   Map<String, dynamic> toMap() => {
         "id": id,
+        "esGrupo": esGrupo,
         "categoria": categoria,
         "plan": plan,
         "fechaEntrada": fechaEntrada,
@@ -40,9 +57,17 @@ class CotizacionIndividual {
         "tarifaPreventa": tarifaPreventaAdulto,
         "tarifaRealMenor": tarifaRealMenor,
         "tarifaPreventaMenor": tarifaPreventaMenor,
+
+        // Cotizacion grupo
+        "pax": pax,
+        "tipoHabitacion": tipoHabitacion,
+        "tarifaNoche": tarifaNoche,
+        "subtotal": subtotal,
+        "habitaciones": habitaciones,
       };
 
   Map<String, dynamic> toMapUpdate() => {
+        "esGrupo": esGrupo,
         "categoria": categoria,
         "plan": plan,
         "fechaEntrada": fechaEntrada,
@@ -54,5 +79,12 @@ class CotizacionIndividual {
         "tarifaPreventaAdulto": tarifaPreventaAdulto,
         "tarifaRealMenor": tarifaRealMenor,
         "tarifaPreventaMenor": tarifaPreventaMenor,
+
+        // Cotizacion grupo
+        "pax": pax,
+        "tipoHabitacion": tipoHabitacion,
+        "tarifaNoche": tarifaNoche,
+        "subtotal": subtotal,
+        "habitaciones": habitaciones,
       };
 }

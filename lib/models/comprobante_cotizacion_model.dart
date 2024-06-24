@@ -1,11 +1,11 @@
-import 'cotizacion_individual_model.dart';
+import 'cotizacion_model.dart';
 
 class ComprobanteCotizacion {
   int? id;
   String? nombre;
   String? telefono;
   String? correo;
-  List<CotizacionIndividual>? cotizaciones;
+  List<Cotizacion>? cotizaciones;
 
   ComprobanteCotizacion({
     this.id,

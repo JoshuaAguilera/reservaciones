@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  if (Platform.isWindows) {
+    WindowManager.instance.setMinimumSize(const Size(320, 420));
+    //WindowManager.instance.setMaximumSize(const Size(1200, 600));
+  }
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -37,7 +46,7 @@ class MyApp extends StatelessWidget {
         'home': (_) => HomeView(),
         'login': (_) => const LoginView(),
       },
-      initialRoute: 'home',
+      initialRoute: 'login',
     );
   }
 }

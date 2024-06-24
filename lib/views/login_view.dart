@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:generador_formato/views/home_view.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
@@ -43,11 +44,16 @@ class _LoginViewState extends State<LoginView> {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter)),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth > 700 ? 0 : 75),
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth > 500
+                  ? screenWidth > 700
+                      ? 0
+                      : 55
+                  : 20),
           child: Center(
             child: SizedBox(
               width: 700,
-              height: 450,
+              height: screenWidth > 350 ? 450 : 360,
               child: Card(
                 elevation: 6,
                 color: Colors.white,
@@ -57,8 +63,9 @@ class _LoginViewState extends State<LoginView> {
                       : MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 36.0, vertical: 60),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth > 500 ? 36.0 : 12,
+                          vertical: screenHeight > 500 ? 60 : 25),
                       child: Form(
                         key: _formKeyLogin,
                         child: Column(
@@ -67,14 +74,15 @@ class _LoginViewState extends State<LoginView> {
                               ? CrossAxisAlignment.start
                               : CrossAxisAlignment.center,
                           children: [
-                            const Image(
-                              image: AssetImage("assets/image/logo_lobby.png"),
-                              width: 220,
+                            Image(
+                              image: const AssetImage(
+                                  "assets/image/logo_lobby.png"),
+                              width: screenWidth > 350 ? 220 : 170,
                             ),
-                            Text(
-                              "Iniciar sesión",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            TextStyles.titleText(
+                              text: "Iniciar sesión",
+                              color: WebColors.prussianBlue,
+                              size: screenWidth > 350 ? 18 : 15,
                             ),
                             Container(
                               margin: const EdgeInsets.only(bottom: 8),
@@ -82,9 +90,9 @@ class _LoginViewState extends State<LoginView> {
                                 color: Colors.white.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(2),
                               ),
-                              constraints: const BoxConstraints(
-                                minWidth: 270,
-                                maxWidth: 270,
+                              constraints: BoxConstraints(
+                                minWidth: 180,
+                                maxWidth: screenWidth > 350 ? 270 : 200,
                                 minHeight: 25.0,
                                 maxHeight: 100.0,
                               ),
@@ -106,9 +114,9 @@ class _LoginViewState extends State<LoginView> {
                                 color: Colors.white.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(2),
                               ),
-                              constraints: const BoxConstraints(
-                                minWidth: 270,
-                                maxWidth: 270,
+                              constraints: BoxConstraints(
+                                minWidth: 180,
+                                maxWidth: screenWidth > 350 ? 270 : 200,
                                 minHeight: 25.0,
                                 maxHeight: 100.0,
                               ),
@@ -140,26 +148,21 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             SizedBox(
                               width: 120,
-                              height: 40,
+                              height: screenWidth > 350 ? 40 : 35,
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (_formKeyLogin.currentState!.validate()) {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                               HomeView()),
+                                          builder: (context) => HomeView()),
                                     );
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: WebColors.prussianBlue),
-                                child: Text(
-                                  "Ingresar",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                child: TextStyles.buttonTextStyle(
+                                    text: "Ingresar"),
                               ),
                             )
                           ],
@@ -167,18 +170,18 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     if (screenWidth > 700)
-                      if (screenHeight > 400)
-                        Container(
-                          width: 350,
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(5),
-                                  topRight: Radius.circular(5)),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage("assets/image/lobby.jpg"),
-                              )),
-                        )
+                      // if (screenHeight > 400)
+                      Container(
+                        width: 350,
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage("assets/image/lobby.jpg"),
+                            )),
+                      )
                   ],
                 ),
               ),

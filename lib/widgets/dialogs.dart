@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/helpers/utility.dart';
-import 'package:generador_formato/models/cotizacion_grupo_model.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
@@ -10,13 +9,13 @@ import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
 
 import '../helpers/constants.dart';
-import '../models/cotizacion_individual_model.dart';
+import '../models/cotizacion_model.dart';
 
 class Dialogs {
   Widget habitacionIndividualDialog(
-      {required BuildContext buildContext, CotizacionIndividual? cotizacion}) {
-    CotizacionIndividual nuevaCotizacion = cotizacion ??
-        CotizacionIndividual(
+      {required BuildContext buildContext, Cotizacion? cotizacion}) {
+    Cotizacion nuevaCotizacion = cotizacion ??
+        Cotizacion(
           categoria: categorias.first,
           plan: planes.first,
           fechaEntrada: DateTime.now().toString().substring(0, 10),
@@ -31,7 +30,7 @@ class Dialogs {
             : DateTime.now().toString().substring(0, 10));
     TextEditingController _fechaSalida = TextEditingController(
         text: cotizacion != null
-            ? cotizacion.fechaEntrada
+            ? cotizacion.fechaSalida
             : DateTime.now()
                 .add(const Duration(days: 1))
                 .toString()
@@ -130,7 +129,8 @@ class Dialogs {
                         name: "Fecha de salida",
                         msgError: "Campo requerido*",
                         dateController: _fechaSalida,
-                        fechaInicial: _fechaEntrada.text,
+                        fechaInicial: _fechaSalida.text,
+                        fechaLimite: _fechaEntrada.text,
                       ),
                     ),
                   ],
@@ -198,7 +198,7 @@ class Dialogs {
                       NumberInputWithIncrementDecrement(
                         onChanged: (p0) => setState(() =>
                             nuevaCotizacion.menores7a12 = int.tryParse(p0)),
-                        initialValue: cotizacion?.menores0a6!.toString(),
+                        initialValue: cotizacion?.menores7a12!.toString(),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -261,7 +261,7 @@ class Dialogs {
                                     size: 15,
                                     overClip: true,
                                     text:
-                                        "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: nuevaCotizacion, esPreventa: true))}",
+                                        "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion, esPreventa: true))}",
                                     isBold: true,
                                   )
                                 : const SizedBox(),
@@ -276,7 +276,7 @@ class Dialogs {
                             size: 15,
                             overClip: true,
                             text:
-                                "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: nuevaCotizacion))}",
+                                "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion))}",
                             isBold: true,
                           ),
                         ),
@@ -325,9 +325,9 @@ class Dialogs {
   }
 
   Widget habitacionGrupoDialog(
-      {required BuildContext buildContext, CotizacionGrupo? cotizacion}) {
-    CotizacionGrupo nuevaCotizacion = cotizacion ??
-        CotizacionGrupo(
+      {required BuildContext buildContext, Cotizacion? cotizacion}) {
+    Cotizacion nuevaCotizacion = cotizacion ??
+        Cotizacion(
           tipoHabitacion: tipoHabitacion.first,
           plan: planes.first,
           fechaEntrada: DateTime.now().toString().substring(0, 10),
@@ -407,25 +407,25 @@ class Dialogs {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Numero de noches",
-                          msgError: "Campo requerido*",
-                          isNumeric: true,
-                          isDecimal: false,
-                          initialValue: cotizacion != null
-                              ? nuevaCotizacion.noches!.toString()
-                              : null,
-                          onChanged: (p0) {
-                            nuevaCotizacion.noches = int.tryParse(p0);
-                            _subtotalController.text = Utility.calculateTotal(
-                              nuevaCotizacion.noches,
-                              nuevaCotizacion.tarifaNoche,
-                            );
-                          },
-                        ),
-                      ),
+                      // SizedBox(
+                      //   width: 150,
+                      //   child: TextFormFieldCustom.textFormFieldwithBorder(
+                      //     name: "Numero de noches",
+                      //     msgError: "Campo requerido*",
+                      //     isNumeric: true,
+                      //     isDecimal: false,
+                      //     initialValue: cotizacion != null
+                      //         ? nuevaCotizacion.noches!.toString()
+                      //         : null,
+                      //     onChanged: (p0) {
+                      //       nuevaCotizacion.noches = int.tryParse(p0);
+                      //       _subtotalController.text = Utility.calculateTotal(
+                      //         nuevaCotizacion.noches,
+                      //         nuevaCotizacion.tarifaNoche,
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                   Table(
@@ -505,7 +505,7 @@ class Dialogs {
                           onChanged: (p0) {
                             nuevaCotizacion.tarifaNoche = double.tryParse(p0);
                             _subtotalController.text = Utility.calculateTotal(
-                              nuevaCotizacion.noches,
+                              7,
                               nuevaCotizacion.tarifaNoche,
                             );
                           },

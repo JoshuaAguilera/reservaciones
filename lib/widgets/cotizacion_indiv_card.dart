@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/models/cotizacion_individual_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -8,7 +8,7 @@ import '../helpers/utility.dart';
 
 class CotizacionIndividualCard extends StatefulWidget {
   final int index;
-  final CotizacionIndividual cotizacion;
+  final Cotizacion cotizacion;
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
@@ -85,7 +85,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
 
 class _TableRowCotizacion extends StatelessWidget {
   final int index;
-  final CotizacionIndividual cotizacion;
+  final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   const _TableRowCotizacion({
@@ -193,7 +193,7 @@ class _TableRowCotizacion extends StatelessWidget {
 
 class _ListTileCotizacion extends StatelessWidget {
   final int index;
-  final CotizacionIndividual cotizacion;
+  final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
 
@@ -220,10 +220,10 @@ class _ListTileCotizacion extends StatelessWidget {
               text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
           TextStyles.standardText(
               text:
-                  "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: cotizacion))}"),
+                  "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion))}"),
           TextStyles.standardText(
             text:
-                "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacion: cotizacion, esPreventa: true))}",
+                "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))}",
           )
         ]),
         trailing: PopupMenuButton<ListTileTitleAlignment>(

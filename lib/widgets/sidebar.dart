@@ -90,13 +90,13 @@ class SideBar extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => _controller.selectIndex(3),
+                onTap: () => _controller.selectIndex(4),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
                   child: Container(
                       padding: const EdgeInsets.all(5),
-                      decoration: _controller.selectedIndex == 3
+                      decoration: _controller.selectedIndex == 4
                           ? BoxDecoration(
                               border: Border.all(
                                 color: WebColors.actionColor.withOpacity(0.37),
@@ -161,24 +161,53 @@ class SideBar extends StatelessWidget {
         } else {
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Image.network(
-                  "https://static.wixstatic.com/media/a3b865_02615e33874a4314b822456823c169eb~mv2.png",
-                  width: 33,
+              GestureDetector(
+                onTap: () => _controller.selectIndex(0),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Image.network(
+                    "https://static.wixstatic.com/media/a3b865_02615e33874a4314b822456823c169eb~mv2.png",
+                    width: 33,
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage('assets/image/Logo.png'),
+              GestureDetector(
+                onTap: () => _controller.selectIndex(4),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: _controller.selectedIndex == 4
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: WebColors.actionColor.withOpacity(0.37),
+                            ),
+                            gradient: LinearGradient(
+                              colors: [
+                                WebColors.accentCanvasColor,
+                                WebColors.canvasColor
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.28),
+                                blurRadius: 30,
+                              )
+                            ],
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)))
+                        : null,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage('assets/image/Logo.png'),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -199,6 +228,12 @@ class SideBar extends StatelessWidget {
         SidebarXItem(
           icon: Icons.history,
           label: 'Historial',
+        ),
+      ],
+      footerItems: const [
+        SidebarXItem(
+          icon: Icons.output_rounded,
+          label: 'Cerrar sesión',
         ),
       ],
     );

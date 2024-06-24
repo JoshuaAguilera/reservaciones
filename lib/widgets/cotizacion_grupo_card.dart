@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/models/cotizacion_grupo_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -8,7 +8,7 @@ import '../helpers/utility.dart';
 
 class CotizacionGrupoCard extends StatefulWidget {
   final int index;
-  final CotizacionGrupo cotizacion;
+  final Cotizacion cotizacion;
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
@@ -84,7 +84,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
 
 class _TableRowCotizacion extends StatelessWidget {
   final int index;
-  final CotizacionGrupo cotizacion;
+  final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   const _TableRowCotizacion({
@@ -125,8 +125,7 @@ class _TableRowCotizacion extends StatelessWidget {
                       overClip: true,
                     ),
                     TextStyles.standardText(
-                      text: Utility.getLengthStay(
-                          cotizacion.fechaEntrada, cotizacion.noches),
+                      text: Utility.getLengthStay(cotizacion.fechaEntrada, 23),
                       aling: TextAlign.center,
                       overClip: true,
                     ),
@@ -187,7 +186,7 @@ class _TableRowCotizacion extends StatelessWidget {
 
 class _ListTileCotizacion extends StatelessWidget {
   final int index;
-  final CotizacionGrupo cotizacion;
+  final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
 
@@ -215,8 +214,7 @@ class _ListTileCotizacion extends StatelessWidget {
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
-            text: Utility.getLengthStay(
-                cotizacion.fechaEntrada, cotizacion.noches),
+            text: Utility.getLengthStay(cotizacion.fechaEntrada, 2),
           ),
           TextStyles.standardText(
               text:

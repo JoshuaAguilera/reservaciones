@@ -130,6 +130,7 @@ class TextFormFieldCustom {
     required TextEditingController dateController,
     String fechaInicial = '',
     void Function()? onChanged,
+    String fechaLimite = "",
   }) {
     DateTime fecha = DateTime.now();
     if (fechaInicial.isNotEmpty) fecha = fecha.add(const Duration(days: 1));
@@ -188,12 +189,9 @@ class TextFormFieldCustom {
                   onPressed: () {
                     showDatePicker(
                       context: context,
-                      initialDate: fechaInicial.isNotEmpty
-                          ? DateTime.parse(fechaInicial)
-                              .add(const Duration(days: 1))
-                          : DateTime.now(),
-                      firstDate: fechaInicial.isNotEmpty
-                          ? DateTime.parse(fechaInicial)
+                      initialDate: DateTime.parse(dateController.text),
+                      firstDate: fechaLimite.isNotEmpty
+                          ? DateTime.parse(fechaLimite)
                               .add(const Duration(days: 1))
                           : DateTime.now(),
                       lastDate: DateTime((DateTime.now().year + 2)),

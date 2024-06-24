@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../helpers/constants.dart';
-import '../models/cotizacion_grupo_model.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -31,7 +31,6 @@ class GenerarCotizacionView extends ConsumerStatefulWidget {
 
 class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   String dropdownValue = cotizacionesList.first;
-  List<CotizacionGrupo> cotizacionesGrupo = [];
   final _formKeyCotizacion = GlobalKey<FormState>();
   late pw.Document comprobantePDF;
   bool isLoading = false;
@@ -73,10 +72,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               setState(() {
                                 isFinish = false;
                                 isLoading = false;
-                                comprobante.correo = "";
-                                comprobante.nombre = "";
-                                comprobante.telefono = "";
-                                cotizaciones.clear();
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -183,14 +178,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     },
                                   ).then((value) {
                                     if (value != null) {
-                                      setState(() {
-                                        if (dropdownValue ==
-                                            "Cotización Individual") {
-                                          cotizaciones.add(value);
-                                        } else {
-                                          cotizacionesGrupo.add(value);
-                                        }
-                                      });
+                                      setState(() => cotizaciones.add(value));
                                     }
                                   });
                                 },
@@ -280,103 +268,52 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               ),
                             ),
                           const Divider(color: Colors.black54),
-                          if (dropdownValue == "Cotización Individual")
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SizedBox(
-                                height: limitHeightList(cotizaciones.length),
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: cotizaciones.length,
-                                  itemBuilder: (context, index) {
-                                    if (index < cotizaciones.length) {
-                                      return CotizacionIndividualCard(
-                                        key: ObjectKey(
-                                            cotizaciones[index].hashCode),
-                                        index: index,
-                                        cotizacion: cotizaciones[index],
-                                        compact: !Utility.isResizable(
-                                            extended:
-                                                widget.sideController.extended,
-                                            context: context),
-                                        onPressedDelete: () => setState(() =>
-                                            cotizaciones
-                                                .remove(cotizaciones[index])),
-                                        onPressedEdit: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return Dialogs()
-                                                  .habitacionIndividualDialog(
-                                                      buildContext: context,
-                                                      cotizacion:
-                                                          cotizaciones[index]);
-                                            },
-                                          ).then((value) {
-                                            if (value != null) {
-                                              setState(() {
-                                                cotizaciones[index] = value;
-                                              });
-                                            }
-                                          });
-                                        },
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            )
-                          else
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SizedBox(
-                                height:
-                                    limitHeightList(cotizacionesGrupo.length),
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: cotizacionesGrupo.length,
-                                  itemBuilder: (context, index) {
-                                    if (index < cotizacionesGrupo.length) {
-                                      return CotizacionGrupoCard(
-                                        key: ObjectKey(
-                                            cotizacionesGrupo[index].hashCode),
-                                        index: index,
-                                        cotizacion: cotizacionesGrupo[index],
-                                        compact: !Utility.isResizable(
-                                            extended:
-                                                widget.sideController.extended,
-                                            context: context),
-                                        onPressedDelete: () => setState(() =>
-                                            cotizacionesGrupo.remove(
-                                                cotizacionesGrupo[index])),
-                                        onPressedEdit: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return Dialogs()
-                                                  .habitacionGrupoDialog(
-                                                      buildContext: context,
-                                                      cotizacion:
-                                                          cotizacionesGrupo[
-                                                              index]);
-                                            },
-                                          ).then((value) {
-                                            if (value != null) {
-                                              setState(() {
-                                                cotizacionesGrupo[index] =
-                                                    value;
-                                              });
-                                            }
-                                          });
-                                        },
-                                      );
-                                    }
-                                  },
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              height: limitHeightList(cotizaciones.length),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: cotizaciones.length,
+                                itemBuilder: (context, index) {
+                                  if (index < cotizaciones.length) {
+                                    return CotizacionIndividualCard(
+                                      key: ObjectKey(
+                                          cotizaciones[index].hashCode),
+                                      index: index,
+                                      cotizacion: cotizaciones[index],
+                                      compact: !Utility.isResizable(
+                                          extended:
+                                              widget.sideController.extended,
+                                          context: context),
+                                      onPressedDelete: () => setState(() =>
+                                          cotizaciones
+                                              .remove(cotizaciones[index])),
+                                      onPressedEdit: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialogs()
+                                                .habitacionIndividualDialog(
+                                                    buildContext: context,
+                                                    cotizacion:
+                                                        cotizaciones[index]);
+                                          },
+                                        ).then((value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              cotizaciones[index] = value;
+                                            });
+                                          }
+                                        });
+                                      },
+                                    );
+                                  }
+                                },
                               ),
                             ),
+                          ),
                           const Padding(
                             padding: EdgeInsets.only(bottom: 12, top: 8),
                             child: Divider(color: Colors.black54),
@@ -390,12 +327,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 onPressed: () async {
                                   if (_formKeyCotizacion.currentState!
                                       .validate()) {
-                                    if ((cotizaciones.isEmpty &&
-                                            dropdownValue ==
-                                                "Cotización Individual") ||
-                                        (cotizacionesGrupo.isEmpty &&
-                                            dropdownValue ==
-                                                "Cotización Grupos")) {
+                                    if (cotizaciones.isEmpty) {
                                       showSnackBar(
                                         context: context,
                                         title: "Cotizaciones no registradas",
@@ -410,9 +342,17 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     comprobantePDF = await ref
                                         .watch(CotizacionIndividualProvider
                                             .provider.notifier)
-                                        .generarComprobante();
+                                        .generarComprobante(comprobante);
 
-                                    setState(() => isFinish = true);
+                                    Future.delayed(
+                                        Durations.extralong1,
+                                        () => setState(() {
+                                              isFinish = true;
+                                              comprobante.correo = "";
+                                              comprobante.nombre = "";
+                                              comprobante.telefono = "";
+                                              cotizaciones.clear();
+                                            }));
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -431,17 +371,53 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       ),
                     if (isLoading && !isFinish)
                       Center(
-                        child: CircularProgressIndicator(
-                          color: WebColors.prussianBlue,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: screenHight * 0.37),
+                          child: Column(
+                            children: [
+                              CircularProgressIndicator(
+                                color: WebColors.prussianBlue,
+                              ),
+                              TextStyles.standardText(
+                                text: "Espere",
+                                size: 15,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     if (isFinish)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: SizedBox(
-                          height: screenHight * 0.875,
+                          height: screenHight * 0.89,
                           child: PdfPreview(
-                              build: (format) => comprobantePDF.save()),
+                            build: (format) => comprobantePDF.save(),
+                            actionBarTheme: PdfActionBarTheme(
+                              backgroundColor: WebColors.ceruleanOscure,
+                            ),
+                            canChangeOrientation: false,
+                            canChangePageFormat: false,
+                            canDebug: false,
+                            allowSharing: false,
+                            pdfFileName:
+                                "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+                            actions: [
+                              IconButton(
+                                  onPressed: () async {
+                                    await Printing.sharePdf(
+                                      filename:
+                                          "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+                                      bytes: await comprobantePDF.save(),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    CupertinoIcons.arrow_down_doc_fill,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ))
+                            ],
+                          ),
                         ),
                       )
                   ],
