@@ -60,8 +60,10 @@ class TextFormFieldCustom {
                   },
                   obscureText: passwordVisible,
                   validator: (value) {
-                    if ((value == null || value.isEmpty) && isRequired) {
-                      return msgError;
+                    if (isRequired) {
+                      if ((value == null || value.isEmpty)) {
+                        return msgError;
+                      }
                     }
                     return null;
                   },

@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
-import 'package:generador_formato/views/preview_pdf_view.dart';
 
 void main() {
-  //runApp(const MyApp());
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -35,11 +33,9 @@ class MyApp extends StatelessWidget {
       //     //Se indica que el tema tiene un brillo oscuro
       //     brightness: Brightness.dark,
       //     useMaterial3: false),
-      // home: HomeView(),
       routes: {
         'home': (_) => HomeView(),
         'login': (_) => const LoginView(),
-        'preview': (_) => const PreviewPdfView(),
       },
       initialRoute: 'home',
     );

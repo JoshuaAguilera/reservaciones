@@ -32,6 +32,11 @@ class _DashboardViewState extends State<DashboardView> {
             );
           case 1:
             return GenerarCotizacionView(sideController: widget.controller);
+          case 2:
+            return Text(
+              pageTitle,
+              style: theme.textTheme.headlineSmall,
+            );
           default:
             return Text(
               pageTitle,

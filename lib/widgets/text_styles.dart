@@ -41,6 +41,20 @@ class TextStyles {
     );
   }
 
+  static Text buttonTextStyle(
+      {String text = "", TextAlign aling = TextAlign.left}) {
+    return Text(
+      text,
+      textAlign: aling,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        fontFamily: "poppins_bold",
+      ),
+    );
+  }
+
   static Text errorText(
       {String text = "", TextAlign aling = TextAlign.left, double size = 10}) {
     return Text(

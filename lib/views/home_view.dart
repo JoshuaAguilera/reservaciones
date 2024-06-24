@@ -16,6 +16,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return Scaffold(
       key: _key,
       appBar: isSmallScreen
@@ -33,10 +34,16 @@ class HomeView extends StatelessWidget {
               ),
             )
           : null,
-      drawer: SideBar(controller: _controller),
+      drawer: SideBar(
+        controller: _controller,
+      ),
       body: Row(
         children: [
-          if (!isSmallScreen) SideBar(controller: _controller),
+          if (!isSmallScreen)
+            SideBar(
+              controller: _controller,
+              isExpanded: true,
+            ),
           Expanded(
             child: Center(
               child: DashboardView(

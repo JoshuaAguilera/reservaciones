@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:generador_formato/models/cotizacion_individual_model.dart';
 import 'package:intl/intl.dart';
 
@@ -101,5 +102,18 @@ class Utility {
         .add(const Duration(days: 1))
         .toIso8601String()
         .substring(0, 10);
+  }
+
+  static bool isResizable(
+      {required bool extended,
+      required BuildContext context,
+      double minWidth = 700,
+      double minWidthWithBar = 725}) {
+    bool isVisible = true;
+    final isSmallScreen = MediaQuery.of(context).size.width < minWidth;
+    final isSmallScreenWithSideBar =
+        MediaQuery.of(context).size.width < minWidthWithBar;
+    isVisible = (extended) ? isSmallScreenWithSideBar : isSmallScreen;
+    return isVisible;
   }
 }

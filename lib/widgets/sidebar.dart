@@ -6,9 +6,11 @@ import 'package:sidebarx/sidebarx.dart';
 import '../helpers/web_colors.dart';
 
 class SideBar extends StatelessWidget {
+  final bool isExpanded;
   const SideBar({
     Key? key,
     required SidebarXController controller,
+    this.isExpanded = false,
   })  : _controller = controller,
         super(key: key);
 
@@ -18,6 +20,7 @@ class SideBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SidebarX(
       controller: _controller,
+      showToggleButton: !isExpanded,
       theme: SidebarXTheme(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -73,7 +76,9 @@ class SideBar extends StatelessWidget {
           return Column(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  _controller.selectIndex(0);
+                },
                 child: SizedBox(
                   height: 100,
                   child: Padding(
@@ -84,66 +89,72 @@ class SideBar extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
-                child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: WebColors.actionColor.withOpacity(0.37),
-                        ),
-                        gradient: LinearGradient(
-                          colors: [
-                            WebColors.accentCanvasColor,
-                            WebColors.canvasColor
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.28),
-                            blurRadius: 30,
-                          )
-                        ],
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10))),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: AssetImage('assets/image/Logo.png'),
+              GestureDetector(
+                onTap: () => _controller.selectIndex(3),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
+                  child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: _controller.selectedIndex == 3
+                          ? BoxDecoration(
+                              border: Border.all(
+                                color: WebColors.actionColor.withOpacity(0.37),
+                              ),
+                              gradient: LinearGradient(
+                                colors: [
+                                  WebColors.accentCanvasColor,
+                                  WebColors.canvasColor
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.28),
+                                  blurRadius: 30,
+                                )
+                              ],
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)))
+                          : null,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: AssetImage('assets/image/Logo.png'),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Username",
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                    color: Colors.white, fontSize: 14),
-                              ),
-                              Text(
-                                "188 cotizaciones",
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                    color: Colors.white, fontSize: 11),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    )),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Username",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                                Text(
+                                  "188 cotizaciones",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.white, fontSize: 11),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      )),
+                ),
               ),
             ],
           );

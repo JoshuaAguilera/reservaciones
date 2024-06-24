@@ -43,8 +43,7 @@ class Dialogs {
       return AlertDialog(
         insetPadding: const EdgeInsets.all(10),
         title: TextStyles.titleText(
-            text:
-                cotizacion != null ? "Editar" : "Agregar" " cotización",
+            text: cotizacion != null ? "Editar" : "Agregar" " cotización",
             color: WebColors.prussianBlue),
         content: SingleChildScrollView(
           child: Form(
@@ -60,6 +59,11 @@ class Dialogs {
                     setState(() {
                       esOferta = value!;
                     });
+                    if (!value!) {
+                      Future.delayed(Durations.medium1, () {
+                        if (_formKeyHabitacion.currentState!.validate()) {}
+                      });
+                    }
                   },
                   visualDensity: VisualDensity.adaptivePlatformDensity,
                   contentPadding: const EdgeInsets.all(0),
@@ -156,7 +160,8 @@ class Dialogs {
                               isDecimal: true,
                               isMoneda: true,
                               initialValue: cotizacion != null
-                                  ? (nuevaCotizacion.tarifaRealAdulto ?? "").toString()
+                                  ? (nuevaCotizacion.tarifaRealAdulto ?? "")
+                                      .toString()
                                   : null,
                               onChanged: (p0) => setState(() => nuevaCotizacion
                                   .tarifaRealAdulto = double.tryParse(p0)),
@@ -170,7 +175,8 @@ class Dialogs {
                           msgError: "Campo requerido*",
                           isNumeric: true,
                           enabled: esOferta,
-                          isRequired: esOferta && nuevaCotizacion.adultos! > 0,
+                          isRequired:
+                              esOferta && (nuevaCotizacion.adultos! > 0),
                           isDecimal: true,
                           isMoneda: true,
                           initialValue: cotizacion != null
@@ -205,7 +211,8 @@ class Dialogs {
                               isDecimal: true,
                               isMoneda: true,
                               initialValue: cotizacion != null
-                                  ? (nuevaCotizacion.tarifaRealMenor ?? "").toString()
+                                  ? (nuevaCotizacion.tarifaRealMenor ?? "")
+                                      .toString()
                                   : null,
                               onChanged: (p0) => setState(() => nuevaCotizacion
                                   .tarifaRealMenor = double.tryParse(p0)),
@@ -221,7 +228,7 @@ class Dialogs {
                           isDecimal: true,
                           isMoneda: true,
                           isRequired:
-                              esOferta && nuevaCotizacion.menores7a12! > 0,
+                              esOferta && (nuevaCotizacion.menores7a12! > 0),
                           enabled: esOferta,
                           initialValue: cotizacion != null
                               ? (cotizacion.tarifaPreventaMenor ?? "")
@@ -298,6 +305,8 @@ class Dialogs {
                   if (nuevaCotizacion.adultos == 0) {
                     setState(() => isError = true);
                     return;
+                  } else {
+                    setState(() => isError = false);
                   }
 
                   Navigator.of(buildContext).pop(nuevaCotizacion);
