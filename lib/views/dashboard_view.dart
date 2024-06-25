@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/views/generar_cotizacion_view.dart';
+import 'package:generador_formato/views/historial_view.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 class DashboardView extends StatefulWidget {
@@ -33,10 +34,7 @@ class _DashboardViewState extends State<DashboardView> {
           case 1:
             return GenerarCotizacionView(sideController: widget.controller);
           case 2:
-            return Text(
-              pageTitle,
-              style: theme.textTheme.headlineSmall,
-            );
+            return HistorialView();
           default:
             return Text(
               pageTitle,

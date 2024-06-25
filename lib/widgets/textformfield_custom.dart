@@ -21,6 +21,7 @@ class TextFormFieldCustom {
     bool blocked = false,
     TextEditingController? controller,
     bool enabled = true,
+    double? maxWidth,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -31,10 +32,11 @@ class TextFormFieldCustom {
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(2),
           ),
-          constraints: const BoxConstraints(
+          constraints: BoxConstraints(
             minWidth: 270,
             minHeight: 25.0,
             maxHeight: 100.0,
+            maxWidth: maxWidth ?? double.infinity,
           ),
           child: Stack(
             children: [

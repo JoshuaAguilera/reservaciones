@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/providers/comprobante_provider.dart';
 import 'package:generador_formato/providers/cotizacion_individual_provider.dart';
+import 'package:generador_formato/services/comprobante_service.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/widgets/cotizacion_grupo_card.dart';
 import 'package:generador_formato/widgets/cotizacion_indiv_card.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -51,6 +51,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     double screenHight = MediaQuery.of(context).size.height;
     final cotizaciones = ref.watch(CotizacionIndividualProvider.provider);
     final comprobante = ref.watch(comprobanteProvider);
+    final folio = ref.watch(uniqueFolioProvider);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -338,6 +339,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     }
 
                                     setState(() => isLoading = true);
+
+                                     if (await ComprobanteService().createComprobante(comprobante, cotizaciones, folio)) {
+                                     
+                                     }
 
                                     comprobantePDF = await ref
                                         .watch(CotizacionIndividualProvider

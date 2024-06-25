@@ -8,12 +8,14 @@ import 'package:generador_formato/views/login_view.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
+  //Compatibily Windows scale
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   if (Platform.isWindows) {
     WindowManager.instance.setMinimumSize(const Size(320, 420));
     //WindowManager.instance.setMaximumSize(const Size(1200, 600));
   }
+  //databse
   runApp(const ProviderScope(child: MyApp()));
 }
 
