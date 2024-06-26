@@ -83,7 +83,6 @@ class _LoginViewState extends State<LoginView> {
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
                               Container(
-                                height: 45,
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.1),
@@ -92,7 +91,7 @@ class _LoginViewState extends State<LoginView> {
                                 constraints: BoxConstraints(
                                   minWidth: 180,
                                   maxWidth: screenWidth > 350 ? 270 : 200,
-                                  minHeight: 25.0,
+                                  minHeight: 70.0,
                                   maxHeight: 100.0,
                                 ),
                                 child: TextFormField(
@@ -122,7 +121,7 @@ class _LoginViewState extends State<LoginView> {
                                 constraints: BoxConstraints(
                                   minWidth: 180,
                                   maxWidth: screenWidth > 350 ? 270 : 200,
-                                  minHeight: 25.0,
+                                  minHeight: 70.0,
                                   maxHeight: 100.0,
                                 ),
                                 child: TextFormField(

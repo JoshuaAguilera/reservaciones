@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import '../helpers/doc_templates.dart';
 
 class TextStyles {
   static Text standardText(
@@ -75,6 +72,7 @@ class TextStyles {
       TextAlign textAlign = TextAlign.start}) {
     return Text(text,
         textAlign: textAlign,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontFamily: "poppins_bold",
           color: color ?? WebColors.cerulean,
@@ -91,13 +89,29 @@ class TextStyles {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      titleText(
-          text: title ?? numeroFormateado,
-          size: 22,
-          textAlign: TextAlign.center),
-      standardText(text: subtitle),
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          titleText(
+              text: title ?? numeroFormateado,
+              size: 22,
+              textAlign: TextAlign.center),
+          if (subtitle != "NUM") standardText(text: subtitle),
+        ]);
+  }
+
+  static Text TextTitleList({
+    required int index,
+  }) {
+    NumberFormat formatter = NumberFormat('00');
+    String numeroFormateado = formatter.format(index);
+
+    return titleText(
+        text: numeroFormateado,
+        size: 22,
+        textAlign: TextAlign.center,
+        color: WebColors.ceruleanOscure);
   }
 
   static Text titlePagText({required String text}) {

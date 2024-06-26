@@ -1,6 +1,7 @@
 import 'dart:isolate';
 
 import 'package:flutter/cupertino.dart';
+import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
@@ -15,6 +16,7 @@ class ComprobanteService extends ChangeNotifier {
     for (var element in cotizaciones) {
       await database.into(database.quote).insert(QuoteCompanion.insert(
             isGroup: false,
+            folio: folio,
             category: element.categoria ?? '',
             plan: element.plan ?? '',
             enterDate: element.fechaEntrada ?? '',
@@ -37,19 +39,11 @@ class ComprobanteService extends ChangeNotifier {
           nameCustomer: comprobante.nombre!,
           numPhone: comprobante.telefono!,
           userId: 1,
+          dateRegister: DateTime.now().toIso8601String(),
+          rateDay:
+              Utility.calculateTarifaDiaria(cotizacion: cotizaciones.first),
+          total: Utility.calculateTarifaTotal(cotizaciones),
         ));
-
-    /*
-    f
-
-  await database.into(database.todoItems).insert(TodoItemsCompanion.insert(
-        title: 'todo: finish drift setup',
-        content: 'We can now write queries and define our own tables.',
-      ));
-  List<TodoItem> allItems = await database.select(database.todoItems).get();
-
-  print('items in database: $allItems');
-    */
 
     return created;
   }
@@ -59,5 +53,17 @@ class ComprobanteService extends ChangeNotifier {
     folio = UniqueKey().hashCode.toString();
     print("new Folio: $folio");
     return folio;
+  }
+
+  Future<List<ReceiptQuoteData>> getComprobantesLocales() async {
+    final database = AppDatabase();
+    try {
+      List<ReceiptQuoteData> comprobantes =
+          await database.select(database.receiptQuote).get();
+      return comprobantes;
+    } catch (e) {
+      print(e);
+      return List.empty();
+    }
   }
 }

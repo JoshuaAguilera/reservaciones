@@ -468,9 +468,35 @@ class $ReceiptQuoteTable extends ReceiptQuote
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _dateRegisterMeta =
+      const VerificationMeta('dateRegister');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, nameCustomer, numPhone, mail, folioQuotes, userId];
+  late final GeneratedColumn<String> dateRegister = GeneratedColumn<String>(
+      'date_register', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _rateDayMeta =
+      const VerificationMeta('rateDay');
+  @override
+  late final GeneratedColumn<double> rateDay = GeneratedColumn<double>(
+      'rate_day', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _totalMeta = const VerificationMeta('total');
+  @override
+  late final GeneratedColumn<double> total = GeneratedColumn<double>(
+      'total', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        nameCustomer,
+        numPhone,
+        mail,
+        folioQuotes,
+        userId,
+        dateRegister,
+        rateDay,
+        total
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -518,6 +544,26 @@ class $ReceiptQuoteTable extends ReceiptQuote
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
+    if (data.containsKey('date_register')) {
+      context.handle(
+          _dateRegisterMeta,
+          dateRegister.isAcceptableOrUnknown(
+              data['date_register']!, _dateRegisterMeta));
+    } else if (isInserting) {
+      context.missing(_dateRegisterMeta);
+    }
+    if (data.containsKey('rate_day')) {
+      context.handle(_rateDayMeta,
+          rateDay.isAcceptableOrUnknown(data['rate_day']!, _rateDayMeta));
+    } else if (isInserting) {
+      context.missing(_rateDayMeta);
+    }
+    if (data.containsKey('total')) {
+      context.handle(
+          _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
+    } else if (isInserting) {
+      context.missing(_totalMeta);
+    }
     return context;
   }
 
@@ -539,6 +585,12 @@ class $ReceiptQuoteTable extends ReceiptQuote
           .read(DriftSqlType.string, data['${effectivePrefix}folio_quotes'])!,
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
+      dateRegister: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}date_register'])!,
+      rateDay: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}rate_day'])!,
+      total: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
     );
   }
 
@@ -556,13 +608,19 @@ class ReceiptQuoteData extends DataClass
   final String mail;
   final String folioQuotes;
   final int userId;
+  final String dateRegister;
+  final double rateDay;
+  final double total;
   const ReceiptQuoteData(
       {required this.id,
       required this.nameCustomer,
       required this.numPhone,
       required this.mail,
       required this.folioQuotes,
-      required this.userId});
+      required this.userId,
+      required this.dateRegister,
+      required this.rateDay,
+      required this.total});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -572,6 +630,9 @@ class ReceiptQuoteData extends DataClass
     map['mail'] = Variable<String>(mail);
     map['folio_quotes'] = Variable<String>(folioQuotes);
     map['user_id'] = Variable<int>(userId);
+    map['date_register'] = Variable<String>(dateRegister);
+    map['rate_day'] = Variable<double>(rateDay);
+    map['total'] = Variable<double>(total);
     return map;
   }
 
@@ -583,6 +644,9 @@ class ReceiptQuoteData extends DataClass
       mail: Value(mail),
       folioQuotes: Value(folioQuotes),
       userId: Value(userId),
+      dateRegister: Value(dateRegister),
+      rateDay: Value(rateDay),
+      total: Value(total),
     );
   }
 
@@ -596,6 +660,9 @@ class ReceiptQuoteData extends DataClass
       mail: serializer.fromJson<String>(json['mail']),
       folioQuotes: serializer.fromJson<String>(json['folioQuotes']),
       userId: serializer.fromJson<int>(json['userId']),
+      dateRegister: serializer.fromJson<String>(json['dateRegister']),
+      rateDay: serializer.fromJson<double>(json['rateDay']),
+      total: serializer.fromJson<double>(json['total']),
     );
   }
   @override
@@ -608,6 +675,9 @@ class ReceiptQuoteData extends DataClass
       'mail': serializer.toJson<String>(mail),
       'folioQuotes': serializer.toJson<String>(folioQuotes),
       'userId': serializer.toJson<int>(userId),
+      'dateRegister': serializer.toJson<String>(dateRegister),
+      'rateDay': serializer.toJson<double>(rateDay),
+      'total': serializer.toJson<double>(total),
     };
   }
 
@@ -617,7 +687,10 @@ class ReceiptQuoteData extends DataClass
           String? numPhone,
           String? mail,
           String? folioQuotes,
-          int? userId}) =>
+          int? userId,
+          String? dateRegister,
+          double? rateDay,
+          double? total}) =>
       ReceiptQuoteData(
         id: id ?? this.id,
         nameCustomer: nameCustomer ?? this.nameCustomer,
@@ -625,6 +698,9 @@ class ReceiptQuoteData extends DataClass
         mail: mail ?? this.mail,
         folioQuotes: folioQuotes ?? this.folioQuotes,
         userId: userId ?? this.userId,
+        dateRegister: dateRegister ?? this.dateRegister,
+        rateDay: rateDay ?? this.rateDay,
+        total: total ?? this.total,
       );
   @override
   String toString() {
@@ -634,14 +710,17 @@ class ReceiptQuoteData extends DataClass
           ..write('numPhone: $numPhone, ')
           ..write('mail: $mail, ')
           ..write('folioQuotes: $folioQuotes, ')
-          ..write('userId: $userId')
+          ..write('userId: $userId, ')
+          ..write('dateRegister: $dateRegister, ')
+          ..write('rateDay: $rateDay, ')
+          ..write('total: $total')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, nameCustomer, numPhone, mail, folioQuotes, userId);
+  int get hashCode => Object.hash(id, nameCustomer, numPhone, mail, folioQuotes,
+      userId, dateRegister, rateDay, total);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -651,7 +730,10 @@ class ReceiptQuoteData extends DataClass
           other.numPhone == this.numPhone &&
           other.mail == this.mail &&
           other.folioQuotes == this.folioQuotes &&
-          other.userId == this.userId);
+          other.userId == this.userId &&
+          other.dateRegister == this.dateRegister &&
+          other.rateDay == this.rateDay &&
+          other.total == this.total);
 }
 
 class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
@@ -661,6 +743,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
   final Value<String> mail;
   final Value<String> folioQuotes;
   final Value<int> userId;
+  final Value<String> dateRegister;
+  final Value<double> rateDay;
+  final Value<double> total;
   const ReceiptQuoteCompanion({
     this.id = const Value.absent(),
     this.nameCustomer = const Value.absent(),
@@ -668,6 +753,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     this.mail = const Value.absent(),
     this.folioQuotes = const Value.absent(),
     this.userId = const Value.absent(),
+    this.dateRegister = const Value.absent(),
+    this.rateDay = const Value.absent(),
+    this.total = const Value.absent(),
   });
   ReceiptQuoteCompanion.insert({
     this.id = const Value.absent(),
@@ -676,11 +764,17 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     required String mail,
     required String folioQuotes,
     required int userId,
+    required String dateRegister,
+    required double rateDay,
+    required double total,
   })  : nameCustomer = Value(nameCustomer),
         numPhone = Value(numPhone),
         mail = Value(mail),
         folioQuotes = Value(folioQuotes),
-        userId = Value(userId);
+        userId = Value(userId),
+        dateRegister = Value(dateRegister),
+        rateDay = Value(rateDay),
+        total = Value(total);
   static Insertable<ReceiptQuoteData> custom({
     Expression<int>? id,
     Expression<String>? nameCustomer,
@@ -688,6 +782,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     Expression<String>? mail,
     Expression<String>? folioQuotes,
     Expression<int>? userId,
+    Expression<String>? dateRegister,
+    Expression<double>? rateDay,
+    Expression<double>? total,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -696,6 +793,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       if (mail != null) 'mail': mail,
       if (folioQuotes != null) 'folio_quotes': folioQuotes,
       if (userId != null) 'user_id': userId,
+      if (dateRegister != null) 'date_register': dateRegister,
+      if (rateDay != null) 'rate_day': rateDay,
+      if (total != null) 'total': total,
     });
   }
 
@@ -705,7 +805,10 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       Value<String>? numPhone,
       Value<String>? mail,
       Value<String>? folioQuotes,
-      Value<int>? userId}) {
+      Value<int>? userId,
+      Value<String>? dateRegister,
+      Value<double>? rateDay,
+      Value<double>? total}) {
     return ReceiptQuoteCompanion(
       id: id ?? this.id,
       nameCustomer: nameCustomer ?? this.nameCustomer,
@@ -713,6 +816,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       mail: mail ?? this.mail,
       folioQuotes: folioQuotes ?? this.folioQuotes,
       userId: userId ?? this.userId,
+      dateRegister: dateRegister ?? this.dateRegister,
+      rateDay: rateDay ?? this.rateDay,
+      total: total ?? this.total,
     );
   }
 
@@ -737,6 +843,15 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     if (userId.present) {
       map['user_id'] = Variable<int>(userId.value);
     }
+    if (dateRegister.present) {
+      map['date_register'] = Variable<String>(dateRegister.value);
+    }
+    if (rateDay.present) {
+      map['rate_day'] = Variable<double>(rateDay.value);
+    }
+    if (total.present) {
+      map['total'] = Variable<double>(total.value);
+    }
     return map;
   }
 
@@ -748,7 +863,10 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
           ..write('numPhone: $numPhone, ')
           ..write('mail: $mail, ')
           ..write('folioQuotes: $folioQuotes, ')
-          ..write('userId: $userId')
+          ..write('userId: $userId, ')
+          ..write('dateRegister: $dateRegister, ')
+          ..write('rateDay: $rateDay, ')
+          ..write('total: $total')
           ..write(')'))
         .toString();
   }
@@ -768,6 +886,11 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _folioMeta = const VerificationMeta('folio');
+  @override
+  late final GeneratedColumn<String> folio = GeneratedColumn<String>(
+      'folio', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _isGroupMeta =
       const VerificationMeta('isGroup');
   @override
@@ -844,6 +967,7 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        folio,
         isGroup,
         category,
         plan,
@@ -869,6 +993,12 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('folio')) {
+      context.handle(
+          _folioMeta, folio.isAcceptableOrUnknown(data['folio']!, _folioMeta));
+    } else if (isInserting) {
+      context.missing(_folioMeta);
     }
     if (data.containsKey('is_group')) {
       context.handle(_isGroupMeta,
@@ -961,6 +1091,8 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
     return QuoteData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      folio: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
       isGroup: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_group'])!,
       category: attachedDatabase.typeMapping
@@ -996,6 +1128,7 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
 
 class QuoteData extends DataClass implements Insertable<QuoteData> {
   final int id;
+  final String folio;
   final bool isGroup;
   final String category;
   final String plan;
@@ -1010,6 +1143,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   final double ratePresaleMinor;
   const QuoteData(
       {required this.id,
+      required this.folio,
       required this.isGroup,
       required this.category,
       required this.plan,
@@ -1026,6 +1160,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['folio'] = Variable<String>(folio);
     map['is_group'] = Variable<bool>(isGroup);
     map['category'] = Variable<String>(category);
     map['plan'] = Variable<String>(plan);
@@ -1044,6 +1179,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   QuoteCompanion toCompanion(bool nullToAbsent) {
     return QuoteCompanion(
       id: Value(id),
+      folio: Value(folio),
       isGroup: Value(isGroup),
       category: Value(category),
       plan: Value(plan),
@@ -1064,6 +1200,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return QuoteData(
       id: serializer.fromJson<int>(json['id']),
+      folio: serializer.fromJson<String>(json['folio']),
       isGroup: serializer.fromJson<bool>(json['isGroup']),
       category: serializer.fromJson<String>(json['category']),
       plan: serializer.fromJson<String>(json['plan']),
@@ -1083,6 +1220,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'folio': serializer.toJson<String>(folio),
       'isGroup': serializer.toJson<bool>(isGroup),
       'category': serializer.toJson<String>(category),
       'plan': serializer.toJson<String>(plan),
@@ -1100,6 +1238,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
 
   QuoteData copyWith(
           {int? id,
+          String? folio,
           bool? isGroup,
           String? category,
           String? plan,
@@ -1114,6 +1253,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
           double? ratePresaleMinor}) =>
       QuoteData(
         id: id ?? this.id,
+        folio: folio ?? this.folio,
         isGroup: isGroup ?? this.isGroup,
         category: category ?? this.category,
         plan: plan ?? this.plan,
@@ -1131,6 +1271,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   String toString() {
     return (StringBuffer('QuoteData(')
           ..write('id: $id, ')
+          ..write('folio: $folio, ')
           ..write('isGroup: $isGroup, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
@@ -1150,6 +1291,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   @override
   int get hashCode => Object.hash(
       id,
+      folio,
       isGroup,
       category,
       plan,
@@ -1167,6 +1309,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       identical(this, other) ||
       (other is QuoteData &&
           other.id == this.id &&
+          other.folio == this.folio &&
           other.isGroup == this.isGroup &&
           other.category == this.category &&
           other.plan == this.plan &&
@@ -1183,6 +1326,7 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
 
 class QuoteCompanion extends UpdateCompanion<QuoteData> {
   final Value<int> id;
+  final Value<String> folio;
   final Value<bool> isGroup;
   final Value<String> category;
   final Value<String> plan;
@@ -1197,6 +1341,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   final Value<double> ratePresaleMinor;
   const QuoteCompanion({
     this.id = const Value.absent(),
+    this.folio = const Value.absent(),
     this.isGroup = const Value.absent(),
     this.category = const Value.absent(),
     this.plan = const Value.absent(),
@@ -1212,6 +1357,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   });
   QuoteCompanion.insert({
     this.id = const Value.absent(),
+    required String folio,
     required bool isGroup,
     required String category,
     required String plan,
@@ -1224,7 +1370,8 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     required double ratePresaleAdult,
     required double rateRealMinor,
     required double ratePresaleMinor,
-  })  : isGroup = Value(isGroup),
+  })  : folio = Value(folio),
+        isGroup = Value(isGroup),
         category = Value(category),
         plan = Value(plan),
         enterDate = Value(enterDate),
@@ -1238,6 +1385,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
         ratePresaleMinor = Value(ratePresaleMinor);
   static Insertable<QuoteData> custom({
     Expression<int>? id,
+    Expression<String>? folio,
     Expression<bool>? isGroup,
     Expression<String>? category,
     Expression<String>? plan,
@@ -1253,6 +1401,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (folio != null) 'folio': folio,
       if (isGroup != null) 'is_group': isGroup,
       if (category != null) 'category': category,
       if (plan != null) 'plan': plan,
@@ -1270,6 +1419,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
 
   QuoteCompanion copyWith(
       {Value<int>? id,
+      Value<String>? folio,
       Value<bool>? isGroup,
       Value<String>? category,
       Value<String>? plan,
@@ -1284,6 +1434,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
       Value<double>? ratePresaleMinor}) {
     return QuoteCompanion(
       id: id ?? this.id,
+      folio: folio ?? this.folio,
       isGroup: isGroup ?? this.isGroup,
       category: category ?? this.category,
       plan: plan ?? this.plan,
@@ -1304,6 +1455,9 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (folio.present) {
+      map['folio'] = Variable<String>(folio.value);
     }
     if (isGroup.present) {
       map['is_group'] = Variable<bool>(isGroup.value);
@@ -1348,6 +1502,7 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   String toString() {
     return (StringBuffer('QuoteCompanion(')
           ..write('id: $id, ')
+          ..write('folio: $folio, ')
           ..write('isGroup: $isGroup, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
@@ -1619,6 +1774,9 @@ typedef $$ReceiptQuoteTableInsertCompanionBuilder = ReceiptQuoteCompanion
   required String mail,
   required String folioQuotes,
   required int userId,
+  required String dateRegister,
+  required double rateDay,
+  required double total,
 });
 typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
     Function({
@@ -1628,6 +1786,9 @@ typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
   Value<String> mail,
   Value<String> folioQuotes,
   Value<int> userId,
+  Value<String> dateRegister,
+  Value<double> rateDay,
+  Value<double> total,
 });
 
 class $$ReceiptQuoteTableTableManager extends RootTableManager<
@@ -1656,6 +1817,9 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             Value<String> mail = const Value.absent(),
             Value<String> folioQuotes = const Value.absent(),
             Value<int> userId = const Value.absent(),
+            Value<String> dateRegister = const Value.absent(),
+            Value<double> rateDay = const Value.absent(),
+            Value<double> total = const Value.absent(),
           }) =>
               ReceiptQuoteCompanion(
             id: id,
@@ -1664,6 +1828,9 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             mail: mail,
             folioQuotes: folioQuotes,
             userId: userId,
+            dateRegister: dateRegister,
+            rateDay: rateDay,
+            total: total,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -1672,6 +1839,9 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             required String mail,
             required String folioQuotes,
             required int userId,
+            required String dateRegister,
+            required double rateDay,
+            required double total,
           }) =>
               ReceiptQuoteCompanion.insert(
             id: id,
@@ -1680,6 +1850,9 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             mail: mail,
             folioQuotes: folioQuotes,
             userId: userId,
+            dateRegister: dateRegister,
+            rateDay: rateDay,
+            total: total,
           ),
         ));
 }
@@ -1728,6 +1901,21 @@ class $$ReceiptQuoteTableFilterComposer
       column: $state.table.userId,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get dateRegister => $state.composableBuilder(
+      column: $state.table.dateRegister,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get rateDay => $state.composableBuilder(
+      column: $state.table.rateDay,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get total => $state.composableBuilder(
+      column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$ReceiptQuoteTableOrderingComposer
@@ -1762,10 +1950,26 @@ class $$ReceiptQuoteTableOrderingComposer
       column: $state.table.userId,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get dateRegister => $state.composableBuilder(
+      column: $state.table.dateRegister,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get rateDay => $state.composableBuilder(
+      column: $state.table.rateDay,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get total => $state.composableBuilder(
+      column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
+  required String folio,
   required bool isGroup,
   required String category,
   required String plan,
@@ -1781,6 +1985,7 @@ typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
 });
 typedef $$QuoteTableUpdateCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
+  Value<String> folio,
   Value<bool> isGroup,
   Value<String> category,
   Value<String> plan,
@@ -1815,6 +2020,7 @@ class $$QuoteTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$QuoteTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            Value<String> folio = const Value.absent(),
             Value<bool> isGroup = const Value.absent(),
             Value<String> category = const Value.absent(),
             Value<String> plan = const Value.absent(),
@@ -1830,6 +2036,7 @@ class $$QuoteTableTableManager extends RootTableManager<
           }) =>
               QuoteCompanion(
             id: id,
+            folio: folio,
             isGroup: isGroup,
             category: category,
             plan: plan,
@@ -1845,6 +2052,7 @@ class $$QuoteTableTableManager extends RootTableManager<
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            required String folio,
             required bool isGroup,
             required String category,
             required String plan,
@@ -1860,6 +2068,7 @@ class $$QuoteTableTableManager extends RootTableManager<
           }) =>
               QuoteCompanion.insert(
             id: id,
+            folio: folio,
             isGroup: isGroup,
             category: category,
             plan: plan,
@@ -1893,6 +2102,11 @@ class $$QuoteTableFilterComposer
   $$QuoteTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get folio => $state.composableBuilder(
+      column: $state.table.folio,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1962,6 +2176,11 @@ class $$QuoteTableOrderingComposer
   $$QuoteTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get folio => $state.composableBuilder(
+      column: $state.table.folio,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

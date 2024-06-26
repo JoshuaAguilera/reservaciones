@@ -26,11 +26,15 @@ class ReceiptQuote extends Table {
   TextColumn get mail => text()();
   TextColumn get folioQuotes => text()();
   IntColumn get userId => integer()();
+  TextColumn get dateRegister => text()();
+  RealColumn get rateDay => real()();
+  RealColumn get total => real()();
 }
 
 class Quote extends Table {
   //Cotizacion individual
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get folio => text()();
   BoolColumn get isGroup => boolean()();
   TextColumn get category => text()();
   TextColumn get plan => text()();
@@ -60,6 +64,17 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  Stream<List<QuoteData>> getQuotesbyFolio(String folioQuotes) {
+    return (select(quote)..where((t) => t.folio.equals(folioQuotes))).watch();
+  }
+
+  Stream<List<ReceiptQuoteData>> getReceiptQuotesByCustomer(
+      String nameCustomer) {
+    return (select(receiptQuote)
+          ..where((t) => t.nameCustomer.equals(nameCustomer)))
+        .watch();
+  }
 }
 
 LazyDatabase _openConnection() {

@@ -6,6 +6,7 @@ import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/providers/comprobante_provider.dart';
 import 'package:generador_formato/providers/cotizacion_individual_provider.dart';
 import 'package:generador_formato/services/comprobante_service.dart';
+import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/widgets/cotizacion_indiv_card.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
@@ -340,9 +341,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                                     setState(() => isLoading = true);
 
-                                     if (await ComprobanteService().createComprobante(comprobante, cotizaciones, folio)) {
-                                     
-                                     }
+                                    if (await ComprobanteService()
+                                        .createComprobante(comprobante,
+                                            cotizaciones, folio)) {}
 
                                     comprobantePDF = await ref
                                         .watch(CotizacionIndividualProvider
@@ -375,22 +376,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         ],
                       ),
                     if (isLoading && !isFinish)
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: screenHight * 0.37),
-                          child: Column(
-                            children: [
-                              CircularProgressIndicator(
-                                color: WebColors.prussianBlue,
-                              ),
-                              TextStyles.standardText(
-                                text: "Espere",
-                                size: 15,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      ProgressIndicatorCustom(screenHight),
                     if (isFinish)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
