@@ -65,8 +65,8 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  Stream<List<QuoteData>> getQuotesbyFolio(String folioQuotes) {
-    return (select(quote)..where((t) => t.folio.equals(folioQuotes))).watch();
+  Future<List<QuoteData>> getQuotesbyFolio(String folioQuotes) {
+    return (select(quote)..where((t) => t.folio.equals(folioQuotes))).get();
   }
 
   Stream<List<ReceiptQuoteData>> getReceiptQuotesByCustomer(

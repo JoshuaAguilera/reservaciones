@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
+import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../providers/comprobante_provider.dart';
 import '../services/comprobante_service.dart';
 import '../widgets/comprobante_item_row.dart';
+import 'comprobante_detalle_view.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -30,7 +35,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -72,6 +76,30 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         index: index,
                         screenWidth: screenWidth,
                         expandedSideBar: widget.sideController.extended,
+                        seeReceipt: () async {
+                          List<Cotizacion> respCotizaciones =
+                              await CotizacionService().getCotizacionesByFolio(
+                                  comprobantes[index].folioQuotes);
+                          if (!mounted) return;
+
+                          ComprobanteCotizacion newComprobante =
+                              ComprobanteCotizacion(
+                            nombre: comprobantes[index].nameCustomer,
+                            correo: comprobantes[index].mail,
+                            telefono: comprobantes[index].numPhone,
+                            fechaRegistro: comprobantes[index].dateRegister,
+                            folioCuotas: comprobantes[index].folioQuotes,
+                            tarifaDiaria: comprobantes[index].rateDay,
+                            total: comprobantes[index].total,
+                            cotizaciones: respCotizaciones,
+                          );
+
+                          ref
+                              .read(comprobanteDetalleProvider.notifier)
+                              .update((state) => newComprobante);
+
+                          widget.sideController.selectIndex(12);
+                        },
                       );
                     },
                   ),

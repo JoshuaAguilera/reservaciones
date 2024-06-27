@@ -13,16 +13,23 @@ class TextStyles {
       bool overClip = false,
       double size = 13,
       bool isBold = false}) {
-    return Text(
-      text,
-      textAlign: aling,
-      style: TextStyle(
-          fontFamily: "poppins_regular",
-          color: WebColors.prussianBlue,
-          fontSize: size,
-          fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis),
-    );
+    return Text(text,
+        textAlign: aling,
+        style: styleStandar(
+          size: size,
+          isBold: isBold,
+          overClip: overClip,
+        ));
+  }
+
+  static TextStyle styleStandar(
+      {double size = 13, bool isBold = false, bool overClip = false}) {
+    return TextStyle(
+        fontFamily: "poppins_regular",
+        color: WebColors.prussianBlue,
+        fontSize: size,
+        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+        overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis);
   }
 
   static Text buttonText({String text = "", TextAlign aling = TextAlign.left}) {
@@ -114,10 +121,12 @@ class TextStyles {
         color: WebColors.ceruleanOscure);
   }
 
-  static Text titlePagText({required String text}) {
+  static Text titlePagText(
+      {required String text, TextOverflow overflow = TextOverflow.ellipsis}) {
     return Text(
       text,
       textAlign: TextAlign.start,
+      overflow: overflow,
       style: TextStyle(
         fontFamily: "poppins_bold",
         color: WebColors.prussianBlue,
@@ -166,5 +175,27 @@ class TextStyles {
       decoration:
           withUnderline ? pw.TextDecoration.underline : pw.TextDecoration.none,
     );
+  }
+
+  static Text boldRegularText(String text) {
+    TextStyle styleBold = TextStyle(
+        fontFamily: "poppins_regular",
+        color: WebColors.prussianBlue,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        overflow: TextOverflow.ellipsis);
+
+    TextStyle styleRegular = TextStyle(
+        fontFamily: "poppins_regular",
+        color: WebColors.prussianBlue,
+        fontSize: 12,
+        fontWeight: FontWeight.normal,
+        overflow: TextOverflow.ellipsis);
+
+    styleBold.merge(styleRegular);
+
+    //var mergedStyle = firstStyle.merge(secondStyle);
+
+    return Text(text, style: styleBold);
   }
 }

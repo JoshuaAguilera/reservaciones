@@ -11,3 +11,6 @@ final comprobanteGeneradoProvider = StateProvider<bool>((ref) => false);
 
 final uniqueFolioProvider =
     StateProvider<String>((ref) => UniqueKey().hashCode.toString());
+
+final comprobanteDetalleProvider =
+    StateProvider<ComprobanteCotizacion>((ref) => ComprobanteCotizacion());

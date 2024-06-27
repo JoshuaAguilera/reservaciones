@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../helpers/web_colors.dart';
@@ -12,13 +13,15 @@ class CotizacionIndividualCard extends StatefulWidget {
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool esDetalle;
   const CotizacionIndividualCard({
     super.key,
     required this.index,
     required this.cotizacion,
     required this.compact,
-    required this.onPressedEdit,
-    required this.onPressedDelete,
+    this.onPressedEdit,
+    this.onPressedDelete,
+    this.esDetalle = false,
   });
 
   @override
@@ -38,6 +41,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                   cotizacion: widget.cotizacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  esDetalle: widget.esDetalle,
                 )
                   .animate()
                   .fadeOut()
@@ -53,6 +57,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                         Durations.extralong2, widget.onPressedDelete);
                   },
                   onPressedEdit: widget.onPressedEdit,
+                  esDetalle: widget.esDetalle,
                 )
           : selected
               ? _TableRowCotizacion(
@@ -60,6 +65,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                   cotizacion: widget.cotizacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  esDetalle: widget.esDetalle,
                 )
                   .animate()
                   .fadeOut()
@@ -75,6 +81,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                         Durations.extralong2, widget.onPressedDelete);
                   },
                   onPressedEdit: widget.onPressedEdit,
+                  esDetalle: widget.esDetalle,
                 ),
     )
         .animate()
@@ -88,18 +95,21 @@ class _TableRowCotizacion extends StatelessWidget {
   final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool esDetalle;
+
   const _TableRowCotizacion({
     super.key,
     required this.index,
     required this.cotizacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    required this.esDetalle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 5,
       child: Container(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -196,6 +206,7 @@ class _ListTileCotizacion extends StatelessWidget {
   final Cotizacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool esDetalle;
 
   const _ListTileCotizacion({
     super.key,
@@ -203,12 +214,13 @@ class _ListTileCotizacion extends StatelessWidget {
     required this.cotizacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    required this.esDetalle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 5,
       child: ListTile(
         leading: TextStyles.TextSpecial(day: index + 1),
         visualDensity: VisualDensity.standard,
@@ -221,40 +233,92 @@ class _ListTileCotizacion extends StatelessWidget {
           TextStyles.standardText(
               text:
                   "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion))}"),
-          TextStyles.standardText(
-            text:
-                "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))}",
-          )
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                  text: "Tarifa preventa: ",
+                  style: TextStyles.styleStandar(isBold: true)),
+              TextSpan(
+                  text:
+                      "${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))}    ",
+                  style: TextStyles.styleStandar()),
+            ]),
+          ),
+          if (esDetalle)
+            Wrap(
+              children: [
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: 'Menores 0-6: ',
+                        style: TextStyles.styleStandar(isBold: true)),
+                    TextSpan(
+                        text: "${cotizacion.menores0a6}    ",
+                        style: TextStyles.styleStandar()),
+                  ]),
+                ),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: 'Menores 7-12: ',
+                        style: TextStyles.styleStandar(isBold: true)),
+                    TextSpan(
+                        text: "${cotizacion.menores7a12}    ",
+                        style: TextStyles.styleStandar()),
+                  ]),
+                ),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: 'Adultos: ',
+                        style: TextStyles.styleStandar(isBold: true)),
+                    TextSpan(
+                        text: "${cotizacion.adultos}",
+                        style: TextStyles.styleStandar()),
+                  ]),
+                ),
+              ],
+            ),
         ]),
-        trailing: PopupMenuButton<ListTileTitleAlignment>(
-          itemBuilder: (BuildContext context) =>
-              <PopupMenuEntry<ListTileTitleAlignment>>[
-            PopupMenuItem<ListTileTitleAlignment>(
-              value: ListTileTitleAlignment.threeLine,
-              onTap: onPressedEdit,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.edit, color: WebColors.turqueza),
-                  TextStyles.standardText(text: "Editar")
+        trailing: esDetalle
+            ? null
+            : PopupMenuButton<ListTileTitleAlignment>(
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<ListTileTitleAlignment>>[
+                  PopupMenuItem<ListTileTitleAlignment>(
+                    value: ListTileTitleAlignment.threeLine,
+                    onTap: onPressedEdit,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.edit, color: WebColors.turqueza),
+                        TextStyles.standardText(text: "Editar")
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<ListTileTitleAlignment>(
+                    value: ListTileTitleAlignment.titleHeight,
+                    onTap: onPressedDelete,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.delete, color: Colors.red[800]),
+                        TextStyles.standardText(text: "Eliminar")
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-            PopupMenuItem<ListTileTitleAlignment>(
-              value: ListTileTitleAlignment.titleHeight,
-              onTap: onPressedDelete,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.delete, color: Colors.red[800]),
-                  TextStyles.standardText(text: "Eliminar")
-                ],
-              ),
-            ),
-          ],
-        ),
         isThreeLine: true,
       ),
     );
+  }
+
+  Widget statisticsCustomers(Cotizacion cotizacion) {
+    return Column(children: [
+      Row(
+        children: [],
+      )
+    ]);
   }
 }

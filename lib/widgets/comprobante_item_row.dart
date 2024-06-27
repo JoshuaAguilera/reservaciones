@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/views/comprobante_detalle_view.dart';
 
 import '../helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -13,12 +14,14 @@ class ComprobanteItemRow extends StatefulWidget {
     required this.index,
     required this.screenWidth,
     required this.expandedSideBar,
+    this.seeReceipt,
   }) : super(key: key);
 
   final ReceiptQuoteData comprobante;
   final int index;
   final double screenWidth;
   final bool expandedSideBar;
+  final void Function()? seeReceipt;
 
   @override
   State<ComprobanteItemRow> createState() => _ComprobanteItemRowState();
@@ -38,7 +41,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           leading: TextStyles.TextTitleList(index: widget.index + 1),
           title: TextStyles.titleText(
               color: WebColors.prussianBlue,
-              text: "Nombre :${widget.comprobante.nameCustomer}",
+              text: "Cliente: ${widget.comprobante.nameCustomer}",
               size: 16),
           subtitle: TextStyles.standardText(
             text:
@@ -48,7 +51,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           trailing: Wrap(
             children: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: widget.seeReceipt,
                   icon: Icon(
                     color: WebColors.ceruleanOscure,
                     CupertinoIcons.eye,

@@ -127,4 +127,12 @@ class Utility {
 
     return tarifaTotal;
   }
+
+  static double? limitHeightList(int length) {
+    double? height;
+    if (length > 3) {
+      height = 290;
+    }
+    return height;
+  }
 }

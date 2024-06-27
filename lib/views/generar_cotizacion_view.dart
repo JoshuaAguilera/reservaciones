@@ -111,7 +111,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 screenWidth: null),
                           ),
                           const SizedBox(height: 15),
-                          TextStyles.titleText(text: "Datos del cliente"),
+                          TextStyles.titleText(text: "Datos del huesped"),
                           const SizedBox(height: 15),
                           TextFormFieldCustom.textFormFieldwithBorder(
                             name: "Nombre completo",
@@ -273,7 +273,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: SizedBox(
-                              height: limitHeightList(cotizaciones.length),
+                              height:
+                                  Utility.limitHeightList(cotizaciones.length),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
@@ -364,12 +365,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 style: ElevatedButton.styleFrom(
                                     elevation: 4,
                                     backgroundColor: WebColors.ceruleanOscure),
-                                child: Text(
-                                  "Generar cotización",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                child: TextStyles.buttonTextStyle(
+                                    text: "Generar cotización"),
                               ),
                             ),
                           ),
@@ -419,13 +416,5 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
         ),
       ),
     );
-  }
-
-  double? limitHeightList(int length) {
-    double? height;
-    if (length > 3) {
-      height = 290;
-    }
-    return height;
   }
 }
