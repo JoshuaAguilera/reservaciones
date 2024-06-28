@@ -177,25 +177,16 @@ class TextStyles {
     );
   }
 
-  static Text boldRegularText(String text) {
-    TextStyle styleBold = TextStyle(
-        fontFamily: "poppins_regular",
-        color: WebColors.prussianBlue,
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        overflow: TextOverflow.ellipsis);
-
-    TextStyle styleRegular = TextStyle(
-        fontFamily: "poppins_regular",
-        color: WebColors.prussianBlue,
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        overflow: TextOverflow.ellipsis);
-
-    styleBold.merge(styleRegular);
-
-    //var mergedStyle = firstStyle.merge(secondStyle);
-
-    return Text(text, style: styleBold);
+  static RichText TextAsociative(String title, String content,
+      {bool isInverted = false}) {
+    return RichText(
+      text: TextSpan(children: [
+        if (!isInverted)
+          TextSpan(text: title, style: styleStandar(isBold: true)),
+        TextSpan(text: content, style: styleStandar()),
+        if (isInverted)
+          TextSpan(text: title, style: styleStandar(isBold: true)),
+      ]),
+    );
   }
 }

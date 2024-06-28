@@ -230,53 +230,18 @@ class _ListTileCotizacion extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
               text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
-          TextStyles.standardText(
-              text:
-                  "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion))}"),
-          RichText(
-            text: TextSpan(children: [
-              TextSpan(
-                  text: "Tarifa preventa: ",
-                  style: TextStyles.styleStandar(isBold: true)),
-              TextSpan(
-                  text:
-                      "${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))}    ",
-                  style: TextStyles.styleStandar()),
-            ]),
-          ),
+          TextStyles.TextAsociative("Tarifa real:",
+              Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion))),
+          TextStyles.TextAsociative("Tarifa preventa: ",
+              Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))),
           if (esDetalle)
             Wrap(
               children: [
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: 'Menores 0-6: ',
-                        style: TextStyles.styleStandar(isBold: true)),
-                    TextSpan(
-                        text: "${cotizacion.menores0a6}    ",
-                        style: TextStyles.styleStandar()),
-                  ]),
-                ),
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: 'Menores 7-12: ',
-                        style: TextStyles.styleStandar(isBold: true)),
-                    TextSpan(
-                        text: "${cotizacion.menores7a12}    ",
-                        style: TextStyles.styleStandar()),
-                  ]),
-                ),
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: 'Adultos: ',
-                        style: TextStyles.styleStandar(isBold: true)),
-                    TextSpan(
-                        text: "${cotizacion.adultos}",
-                        style: TextStyles.styleStandar()),
-                  ]),
-                ),
+                TextStyles.TextAsociative(
+                    'Menores 0-6: ', "${cotizacion.menores0a6}    "),
+                TextStyles.TextAsociative(
+                    'Menores 7-12: ', "${cotizacion.menores7a12}    "),
+                TextStyles.TextAsociative('Adultos: ', "${cotizacion.adultos}"),
               ],
             ),
         ]),

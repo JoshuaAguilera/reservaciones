@@ -58,6 +58,20 @@ class Quote extends Table {
 // @DriftDatabase(tables: [Users, RolUser, ReceiptQuote, Quote])
 // class AppDatabase extends _$AppDatabase {}
 
+/*
+class FeedDatabase extends _$FeedDatabase {
+  // we tell the database where to store the data with this constructor
+  FeedDatabase._internal()
+      : super(FlutterQueryExecutor.inDatabaseFolder(path: 'feed.db'));
+
+  static FeedDatabase _instance = FeedDatabase._internal();
+
+  factory FeedDatabase() => _instance;
+  @override
+  int get schemaVersion => 1;
+}
+*/
+
 @DriftDatabase(tables: [Users, RolUser, ReceiptQuote, Quote])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -74,6 +88,15 @@ class AppDatabase extends _$AppDatabase {
     return (select(receiptQuote)
           ..where((t) => t.nameCustomer.equals(nameCustomer)))
         .watch();
+  }
+
+  Future deleteReceiptQuoteByFolio(String folio) {
+    return (delete(receiptQuote)..where((t) => t.folioQuotes.equals(folio)))
+        .go();
+  }
+
+  Future deleteQuotesByFolio(String folio) {
+    return (delete(quote)..where((t) => t.folio.equals(folio ?? "elepep"))).go();
   }
 }
 

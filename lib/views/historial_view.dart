@@ -6,6 +6,7 @@ import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -26,6 +27,11 @@ class HistorialView extends ConsumerStatefulWidget {
 class _HistorialViewState extends ConsumerState<HistorialView> {
   List<ReceiptQuoteData> comprobantes = [];
   bool isLoading = false;
+  int pag = 1;
+  String search = "";
+  DateTime initDate = DateTime.now();
+  DateTime lastDate = DateTime.now().add(const Duration(days: 1));
+  String typeQuote = "Individual";
 
   @override
   void initState() {
@@ -38,7 +44,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     super.dispose();
   }
 
-  void fetchData({int pag = 1}) async {
+  void fetchData() async {
     isLoading = true;
     setState(() {});
     List<ReceiptQuoteData> resp =
@@ -72,6 +78,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return ComprobanteItemRow(
+                        key: UniqueKey(),
                         comprobante: comprobantes[index],
                         index: index,
                         screenWidth: screenWidth,
@@ -99,6 +106,40 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                               .update((state) => newComprobante);
 
                           widget.sideController.selectIndex(12);
+                        },
+                        deleteReceipt: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialogs.customAlertDialog(
+                              context: context,
+                              title: "Eliminar comprobante",
+                              content:
+                                  "¿Desea eliminar la siguiente cotización \ndel huesped: ${comprobantes[index].nameCustomer}?",
+                              nameButtonMain: "Aceptar",
+                              funtionMain: () async {
+                                debugPrint(comprobantes[index].folioQuotes);
+                                if (await ComprobanteService()
+                                    .eliminarComprobante(
+                                        comprobantes[index].folioQuotes)) {
+                                  if (await CotizacionService()
+                                      .eliminarCotizaciones(
+                                          comprobantes[index].folioQuotes)) {}
+                                }
+                              },
+                              nameButtonCancel: "Cancelar",
+                              withButtonCancel: true,
+                              iconData: Icons.delete,
+                            ),
+                          ).then(
+                            (value) {
+                              if (value != null) {
+                                isLoading = true;
+                                setState(() {});
+                                Future.delayed(
+                                    Durations.long1, () => fetchData());
+                              }
+                            },
+                          );
                         },
                       );
                     },

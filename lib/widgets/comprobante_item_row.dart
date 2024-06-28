@@ -15,6 +15,7 @@ class ComprobanteItemRow extends StatefulWidget {
     required this.screenWidth,
     required this.expandedSideBar,
     this.seeReceipt,
+    this.deleteReceipt
   }) : super(key: key);
 
   final ReceiptQuoteData comprobante;
@@ -22,12 +23,15 @@ class ComprobanteItemRow extends StatefulWidget {
   final double screenWidth;
   final bool expandedSideBar;
   final void Function()? seeReceipt;
+  final void Function()? deleteReceipt;
 
   @override
   State<ComprobanteItemRow> createState() => _ComprobanteItemRowState();
 }
 
 class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,7 +45,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           leading: TextStyles.TextTitleList(index: widget.index + 1),
           title: TextStyles.titleText(
               color: WebColors.prussianBlue,
-              text: "Cliente: ${widget.comprobante.nameCustomer}",
+              text: "Huesped: ${widget.comprobante.nameCustomer}",
               size: 16),
           subtitle: TextStyles.standardText(
             text:
@@ -50,14 +54,28 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           ),
           trailing: Wrap(
             children: [
-              IconButton(
-                  onPressed: widget.seeReceipt,
+              if (!isLoading)
+                IconButton(
+                  onPressed: () {
+                    widget.seeReceipt!.call();
+                    setState(() {
+                      isLoading = true;
+                    });
+                  },
                   icon: Icon(
                     color: WebColors.ceruleanOscure,
                     CupertinoIcons.eye,
-                  )),
+                  ),
+                )
+              else
+                SizedBox(
+                    height: 30,
+                    width: 30,
+                    child: CircularProgressIndicator(
+                      color: WebColors.ceruleanOscure,
+                    )),
               IconButton(
-                  onPressed: () {},
+                  onPressed: widget.deleteReceipt,
                   icon: Icon(
                       color: WebColors.ceruleanOscure,
                       CupertinoIcons.delete_solid))

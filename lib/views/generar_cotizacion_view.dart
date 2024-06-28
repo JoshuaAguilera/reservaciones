@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/providers/comprobante_provider.dart';
 import 'package:generador_formato/providers/cotizacion_individual_provider.dart';
 import 'package:generador_formato/services/comprobante_service.dart';
@@ -18,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 import '../helpers/constants.dart';
 
@@ -222,9 +224,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   TableRow(children: [
                                     TextStyles.standardText(
                                         text: "#",
-                                        // (dropdownValue == "Cotización Individual")
-                                        //     ? "Día"
-                                        //     : "PAX",
                                         aling: TextAlign.center,
                                         overClip: true),
                                     TextStyles.standardText(
@@ -317,6 +316,30 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               ),
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: TextStyles.titleText(
+                                text:
+                                    "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                size: 16,
+                                color: WebColors.prussianBlue,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: TextStyles.titleText(
+                                text:
+                                    "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                size: 16,
+                                color: WebColors.prussianBlue,
+                              ),
+                            ),
+                          ),
                           const Padding(
                             padding: EdgeInsets.only(bottom: 12, top: 8),
                             child: Divider(color: Colors.black54),
@@ -332,6 +355,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       .validate()) {
                                     if (cotizaciones.isEmpty) {
                                       showSnackBar(
+                                        contentType: ContentType.warning,
                                         context: context,
                                         title: "Cotizaciones no registradas",
                                         message:
@@ -342,24 +366,42 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                                     setState(() => isLoading = true);
 
-                                    if (await ComprobanteService()
+                                    if (!(await ComprobanteService()
                                         .createComprobante(comprobante,
-                                            cotizaciones, folio)) {}
+                                            cotizaciones, folio))) {
+                                      if (!context.mounted) return;
+                                      showSnackBar(
+                                        contentType: ContentType.failure,
+                                        context: context,
+                                        title:
+                                            "Error al registrar la cotizacion",
+                                        message:
+                                            "Se produjo un error al insertar la nueva cotización.",
+                                      );
+                                      return;
+                                    }
 
                                     comprobantePDF = await ref
                                         .watch(CotizacionIndividualProvider
                                             .provider.notifier)
                                         .generarComprobante(comprobante);
 
-                                    Future.delayed(
-                                        Durations.extralong1,
-                                        () => setState(() {
-                                              isFinish = true;
-                                              comprobante.correo = "";
-                                              comprobante.nombre = "";
-                                              comprobante.telefono = "";
-                                              cotizaciones.clear();
-                                            }));
+                                    ref
+                                        .read(comprobanteProvider.notifier)
+                                        .update(
+                                            (state) => ComprobanteCotizacion());
+                                    ref
+                                        .watch(CotizacionIndividualProvider
+                                            .provider.notifier)
+                                        .clear();
+                                    ref
+                                        .read(uniqueFolioProvider.notifier)
+                                        .update((state) =>
+                                            UniqueKey().hashCode.toString());
+
+                                    if (!context.mounted) return;
+                                    Future.delayed(Durations.long2,
+                                        () => setState(() => isFinish = true));
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -392,22 +434,23 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
                             actions: [
                               IconButton(
-                                  onPressed: () async {
-                                    await Printing.sharePdf(
-                                      filename:
-                                          "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                                      bytes: await comprobantePDF.save(),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    CupertinoIcons.arrow_down_doc_fill,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ))
+                                onPressed: () async {
+                                  await Printing.sharePdf(
+                                    filename:
+                                        "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+                                    bytes: await comprobantePDF.save(),
+                                  );
+                                },
+                                icon: const Icon(
+                                  CupertinoIcons.arrow_down_doc_fill,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      )
+                      ),
                   ],
                 ),
               ),

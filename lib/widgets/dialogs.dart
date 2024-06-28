@@ -261,7 +261,7 @@ class Dialogs {
                                     size: 15,
                                     overClip: true,
                                     text:
-                                        "Tarifa preventa: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion, esPreventa: true))}",
+                                        "Tarifa preventa diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion, esPreventa: true))}",
                                     isBold: true,
                                   )
                                 : const SizedBox(),
@@ -276,7 +276,7 @@ class Dialogs {
                             size: 15,
                             overClip: true,
                             text:
-                                "Tarifa real: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion))}",
+                                "Tarifa real diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion))}",
                             isBold: true,
                           ),
                         ),
@@ -573,5 +573,49 @@ class Dialogs {
       default:
     }
     return paxName;
+  }
+
+  static AlertDialog customAlertDialog({
+    IconData? iconData,
+    required BuildContext context,
+    required String title,
+    required String content,
+    String? contentBold,
+    required String nameButtonMain,
+    required VoidCallback funtionMain,
+    required String nameButtonCancel,
+    required bool withButtonCancel,
+  }) {
+    return AlertDialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      title: Row(children: [
+        if (iconData != null)
+          Icon(
+            iconData,
+            size: 33,
+            color: WebColors.ceruleanOscure,
+          ),
+        const SizedBox(width: 10),
+        Expanded(child: TextStyles.titleText(text: title, color: Colors.black, size: 18))
+      ]),
+      content: TextStyles.TextAsociative(contentBold ?? "", content, isInverted: contentBold != null),
+      actions: [
+        if (withButtonCancel)
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: TextStyles.buttonText(text: nameButtonCancel)),
+        TextButton(
+          onPressed: () {
+            funtionMain.call();
+            Navigator.of(context).pop(true);
+          },
+          child: TextStyles.buttonText(
+            text: nameButtonMain,
+          ),
+        ),
+      ],
+    );
   }
 }
