@@ -27,23 +27,12 @@ class CotizacionService extends ChangeNotifier {
           tarifaPreventaMenor: element.ratePresaleMinor,
         ));
       }
-      database.close();
+       await database.close();
       return cotizaciones;
     } catch (e) {
       print(e);
+       await database.close();
       return List.empty();
-    }
-  }
-
-  Future<bool> eliminarCotizaciones(String folio) async {
-    final database = AppDatabase();
-    try {
-      await database.deleteQuotesByFolio(folio).toString();
-      database.close();
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
     }
   }
 }

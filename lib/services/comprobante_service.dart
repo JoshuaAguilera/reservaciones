@@ -13,42 +13,46 @@ class ComprobanteService extends ChangeNotifier {
     final database = AppDatabase();
 
     try {
-      for (var element in cotizaciones) {
-        await database.into(database.quote).insert(QuoteCompanion.insert(
-              isGroup: false,
-              folio: folio,
-              category: element.categoria ?? '',
-              plan: element.plan ?? '',
-              enterDate: element.fechaEntrada ?? '',
-              outDate: element.fechaSalida ?? '',
-              adults: element.adultos!,
-              minor0a6: element.menores0a6!,
-              minor7a12: element.menores7a12!,
-              rateRealAdult: element.tarifaRealAdulto ?? 0,
-              ratePresaleAdult: element.tarifaPreventaAdulto ?? 0,
-              rateRealMinor: element.tarifaRealMenor ?? 0,
-              ratePresaleMinor: element.tarifaPreventaMenor ?? 0,
-            ));
-      }
+      database.transaction(
+        () async {
+          for (var element in cotizaciones) {
+            await database.into(database.quote).insert(QuoteCompanion.insert(
+                  isGroup: false,
+                  folio: folio,
+                  category: element.categoria ?? '',
+                  plan: element.plan ?? '',
+                  enterDate: element.fechaEntrada ?? '',
+                  outDate: element.fechaSalida ?? '',
+                  adults: element.adultos!,
+                  minor0a6: element.menores0a6!,
+                  minor7a12: element.menores7a12!,
+                  rateRealAdult: element.tarifaRealAdulto ?? 0,
+                  ratePresaleAdult: element.tarifaPreventaAdulto ?? 0,
+                  rateRealMinor: element.tarifaRealMenor ?? 0,
+                  ratePresaleMinor: element.tarifaPreventaMenor ?? 0,
+                ));
+          }
 
-      await database
-          .into(database.receiptQuote)
-          .insert(ReceiptQuoteCompanion.insert(
-            folioQuotes: folio,
-            mail: comprobante.correo!,
-            nameCustomer: comprobante.nombre!,
-            numPhone: comprobante.telefono!,
-            userId: 1,
-            dateRegister: DateTime.now().toIso8601String(),
-            rateDay:
-                Utility.calculateTarifaDiaria(cotizacion: cotizaciones.first),
-            total: Utility.calculateTarifaTotal(cotizaciones),
-          ));
-
-      database.close();
+          await database
+              .into(database.receiptQuote)
+              .insert(ReceiptQuoteCompanion.insert(
+                folioQuotes: folio,
+                mail: comprobante.correo!,
+                nameCustomer: comprobante.nombre!,
+                numPhone: comprobante.telefono!,
+                userId: 1,
+                dateRegister: DateTime.now().toIso8601String(),
+                rateDay: Utility.calculateTarifaDiaria(
+                    cotizacion: cotizaciones.first),
+                total: Utility.calculateTarifaTotal(cotizaciones),
+              ));
+        },
+      );
+      await database.close();
       return true;
     } catch (e) {
       print(e);
+      await database.close();
       return false;
     }
   }
@@ -58,10 +62,12 @@ class ComprobanteService extends ChangeNotifier {
     try {
       List<ReceiptQuoteData> comprobantes =
           await database.select(database.receiptQuote).get();
-      database.close();
+      await database.close();
       return comprobantes;
     } catch (e) {
       print(e);
+      await database.close();
+
       return List.empty();
     }
   }
@@ -70,7 +76,9 @@ class ComprobanteService extends ChangeNotifier {
     final database = AppDatabase();
     try {
       await database.deleteReceiptQuoteByFolio(folio).toString();
-      database.close();
+      await database.deleteQuotesByFolio(folio).toString();
+
+      await database.close();
       return true;
     } catch (e) {
       print(e);

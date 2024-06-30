@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:generador_formato/ui/textformfield_style.dart';
 
 import '../helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -164,19 +165,7 @@ class TextFormFieldCustom {
                     fontSize: 13,
                     fontFamily: "poppins_regular",
                   ),
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelStyle: const TextStyle(
-                      fontSize: 13,
-                      fontFamily: "poppins_regular",
-                    ),
-                    labelText: name,
-                    errorStyle: TextStyle(
-                      fontFamily: "poppins_regular",
-                      color: Colors.red[800],
-                      fontSize: 10,
-                    ),
-                  ),
+                  decoration: TextFormFieldStyle.decorationFieldStandar(name),
                 ),
               ),
               Positioned(

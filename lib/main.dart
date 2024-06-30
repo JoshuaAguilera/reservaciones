@@ -7,6 +7,8 @@ import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:generador_formato/helpers/custom_scroll_behavior.dart';
+
 
 Future<void> main() async {
   //Compatibily Windows scale
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Generador de formatos de pago',
       debugShowCheckedModeBanner: false,
+      scrollBehavior: CustomScrollBehavior(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

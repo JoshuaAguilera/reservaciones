@@ -1,19 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/helpers/web_colors.dart';
+import 'package:generador_formato/helpers/constants.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/ui/textformfield_style.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../providers/comprobante_provider.dart';
 import '../services/comprobante_service.dart';
+import '../ui/buttons.dart';
 import '../widgets/comprobante_item_row.dart';
-import 'comprobante_detalle_view.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -32,6 +35,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
   DateTime initDate = DateTime.now();
   DateTime lastDate = DateTime.now().add(const Duration(days: 1));
   String typeQuote = "Individual";
+  final TextEditingController _searchController = TextEditingController();
+  String filtro = filtros.first;
 
   @override
   void initState() {
@@ -68,8 +73,55 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextStyles.titlePagText(text: "Historial"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextStyles.titlePagText(text: "Historial"),
+                  SizedBox(
+                    height: 35,
+                    width: screenWidth * 0.3,
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: "poppins_regular",
+                          height: 1),
+                      decoration:
+                          TextFormFieldStyle.decorationFieldSearch("Buscar"),
+                    ),
+                  ),
+                ],
+              ),
               const Divider(color: Colors.black54),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: SizedBox(
+                    height: 30,
+                    child: StatefulBuilder(
+                      builder: (context, snapshot) {
+                        return ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: filtros.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 2),
+                              child: SelectableButton(
+                                selected: filtro == filtros[index],
+                                onPressed: () {
+                                  snapshot(() {
+                                    filtro = filtros[index];
+                                  });
+                                },
+                                child: Text(filtros[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    )),
+              ),
               if (!isLoading)
                 SizedBox(
                   width: screenWidth,
@@ -120,11 +172,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 debugPrint(comprobantes[index].folioQuotes);
                                 if (await ComprobanteService()
                                     .eliminarComprobante(
-                                        comprobantes[index].folioQuotes)) {
-                                  if (await CotizacionService()
-                                      .eliminarCotizaciones(
-                                          comprobantes[index].folioQuotes)) {}
-                                }
+                                        comprobantes[index].folioQuotes)) {}
                               },
                               nameButtonCancel: "Cancelar",
                               withButtonCancel: true,
@@ -136,7 +184,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 isLoading = true;
                                 setState(() {});
                                 Future.delayed(
-                                    Durations.long1, () => fetchData());
+                                    Durations.extralong1, () => fetchData());
                               }
                             },
                           );

@@ -3,7 +3,7 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $RolUserTable extends RolUser with TableInfo<$RolUserTable, RolUserData> {
+class $RolUserTable extends RolUserTable with TableInfo<$RolUserTable, RolUserData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -177,7 +177,7 @@ class RolUserCompanion extends UpdateCompanion<RolUserData> {
   }
 }
 
-class $UsersTable extends Users with TableInfo<$UsersTable, User> {
+class $UsersTable extends UsersTable with TableInfo<$UsersTable, User> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -425,7 +425,7 @@ class UsersCompanion extends UpdateCompanion<User> {
   }
 }
 
-class $ReceiptQuoteTable extends ReceiptQuote
+class $ReceiptQuoteTable extends ReceiptQuoteTable
     with TableInfo<$ReceiptQuoteTable, ReceiptQuoteData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -872,7 +872,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
   }
 }
 
-class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
+class $QuoteTable extends QuoteTable with TableInfo<$QuoteTable, QuoteData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;

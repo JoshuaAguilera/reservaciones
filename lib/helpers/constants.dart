@@ -24,3 +24,13 @@ const List<String> paxes = <String>[
   '3',
   '4',
 ];
+
+const List<String> filtros = <String>[
+  'Todos',
+  'Ultimo dia',
+  'Ultima semana',
+  'Ultimo mes',
+  'Mas cotizado',
+  'Menos cotizado',
+  'Personalizado',
+];
