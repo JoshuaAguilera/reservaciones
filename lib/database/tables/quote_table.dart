@@ -1,7 +1,7 @@
 
 import 'package:drift/drift.dart';
 
-class QuoteTable extends Table {
+class Quote extends Table {
   //Cotizacion individual
   IntColumn get id => integer().autoIncrement()();
   TextColumn get folio => text()();

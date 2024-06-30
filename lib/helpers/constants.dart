@@ -30,7 +30,7 @@ const List<String> filtros = <String>[
   'Ultimo dia',
   'Ultima semana',
   'Ultimo mes',
-  'Mas cotizado',
-  'Menos cotizado',
+  // 'Mas cotizado',
+  // 'Menos cotizado',
   'Personalizado',
 ];

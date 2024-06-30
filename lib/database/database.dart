@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:drift/native.dart';
+import 'package:generador_formato/helpers/utility.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,21 +15,12 @@ part 'database.g.dart';
 // @DriftDatabase(tables: [Users, RolUser, ReceiptQuote, Quote])
 // class AppDatabase extends _$AppDatabase {}
 
-/*
-class FeedDatabase extends _$FeedDatabase {
-  // we tell the database where to store the data with this constructor
-  FeedDatabase._internal()
-      : super(FlutterQueryExecutor.inDatabaseFolder(path: 'feed.db'));
-
-  static FeedDatabase _instance = FeedDatabase._internal();
-
-  factory FeedDatabase() => _instance;
-  @override
-  int get schemaVersion => 1;
-}
-*/
-
-@DriftDatabase(tables: [UsersTable, RolUserTable, ReceiptQuoteTable, QuoteTable])
+@DriftDatabase(tables: [
+  Users,
+  RolUser,
+  ReceiptQuote,
+  Quote,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -39,11 +31,33 @@ class AppDatabase extends _$AppDatabase {
     return (select(quote)..where((t) => t.folio.equals(folioQuotes))).get();
   }
 
-  Stream<List<ReceiptQuoteData>> getReceiptQuotesByCustomer(
-      String nameCustomer) {
+  Future<List<ReceiptQuoteData>> getReceiptQuotesSearch(String search) {
+    return (select(receiptQuote)..where((t) => t.nameCustomer.contains(search)))
+        .get();
+  }
+
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastDay() {
     return (select(receiptQuote)
-          ..where((t) => t.nameCustomer.equals(nameCustomer)))
-        .watch();
+          ..where((t) => t.dateRegister.isBetweenValues(
+              DateTime.now().subtract(const Duration(days: 1)),
+              DateTime.now())))
+        .get();
+  }
+
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastWeek() {
+    return (select(receiptQuote)
+          ..where((t) => t.dateRegister.isBetweenValues(
+              DateTime.now().subtract(const Duration(days: 7)),
+              DateTime.now())))
+        .get();
+  }
+
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastMont() {
+    return (select(receiptQuote)
+          ..where((t) => t.dateRegister.isBetweenValues(
+              DateTime.now().subtract(const Duration(days: 30)),
+              DateTime.now())))
+        .get();
   }
 
   Future deleteReceiptQuoteByFolio(String folio) {

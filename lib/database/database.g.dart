@@ -3,7 +3,7 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $RolUserTable extends RolUserTable with TableInfo<$RolUserTable, RolUserData> {
+class $RolUserTable extends RolUser with TableInfo<$RolUserTable, RolUserData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -177,7 +177,7 @@ class RolUserCompanion extends UpdateCompanion<RolUserData> {
   }
 }
 
-class $UsersTable extends UsersTable with TableInfo<$UsersTable, User> {
+class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -425,7 +425,7 @@ class UsersCompanion extends UpdateCompanion<User> {
   }
 }
 
-class $ReceiptQuoteTable extends ReceiptQuoteTable
+class $ReceiptQuoteTable extends ReceiptQuote
     with TableInfo<$ReceiptQuoteTable, ReceiptQuoteData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -471,9 +471,9 @@ class $ReceiptQuoteTable extends ReceiptQuoteTable
   static const VerificationMeta _dateRegisterMeta =
       const VerificationMeta('dateRegister');
   @override
-  late final GeneratedColumn<String> dateRegister = GeneratedColumn<String>(
+  late final GeneratedColumn<DateTime> dateRegister = GeneratedColumn<DateTime>(
       'date_register', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   static const VerificationMeta _rateDayMeta =
       const VerificationMeta('rateDay');
   @override
@@ -585,8 +585,8 @@ class $ReceiptQuoteTable extends ReceiptQuoteTable
           .read(DriftSqlType.string, data['${effectivePrefix}folio_quotes'])!,
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
-      dateRegister: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}date_register'])!,
+      dateRegister: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}date_register'])!,
       rateDay: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}rate_day'])!,
       total: attachedDatabase.typeMapping
@@ -608,7 +608,7 @@ class ReceiptQuoteData extends DataClass
   final String mail;
   final String folioQuotes;
   final int userId;
-  final String dateRegister;
+  final DateTime dateRegister;
   final double rateDay;
   final double total;
   const ReceiptQuoteData(
@@ -630,7 +630,7 @@ class ReceiptQuoteData extends DataClass
     map['mail'] = Variable<String>(mail);
     map['folio_quotes'] = Variable<String>(folioQuotes);
     map['user_id'] = Variable<int>(userId);
-    map['date_register'] = Variable<String>(dateRegister);
+    map['date_register'] = Variable<DateTime>(dateRegister);
     map['rate_day'] = Variable<double>(rateDay);
     map['total'] = Variable<double>(total);
     return map;
@@ -660,7 +660,7 @@ class ReceiptQuoteData extends DataClass
       mail: serializer.fromJson<String>(json['mail']),
       folioQuotes: serializer.fromJson<String>(json['folioQuotes']),
       userId: serializer.fromJson<int>(json['userId']),
-      dateRegister: serializer.fromJson<String>(json['dateRegister']),
+      dateRegister: serializer.fromJson<DateTime>(json['dateRegister']),
       rateDay: serializer.fromJson<double>(json['rateDay']),
       total: serializer.fromJson<double>(json['total']),
     );
@@ -675,7 +675,7 @@ class ReceiptQuoteData extends DataClass
       'mail': serializer.toJson<String>(mail),
       'folioQuotes': serializer.toJson<String>(folioQuotes),
       'userId': serializer.toJson<int>(userId),
-      'dateRegister': serializer.toJson<String>(dateRegister),
+      'dateRegister': serializer.toJson<DateTime>(dateRegister),
       'rateDay': serializer.toJson<double>(rateDay),
       'total': serializer.toJson<double>(total),
     };
@@ -688,7 +688,7 @@ class ReceiptQuoteData extends DataClass
           String? mail,
           String? folioQuotes,
           int? userId,
-          String? dateRegister,
+          DateTime? dateRegister,
           double? rateDay,
           double? total}) =>
       ReceiptQuoteData(
@@ -743,7 +743,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
   final Value<String> mail;
   final Value<String> folioQuotes;
   final Value<int> userId;
-  final Value<String> dateRegister;
+  final Value<DateTime> dateRegister;
   final Value<double> rateDay;
   final Value<double> total;
   const ReceiptQuoteCompanion({
@@ -764,7 +764,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     required String mail,
     required String folioQuotes,
     required int userId,
-    required String dateRegister,
+    required DateTime dateRegister,
     required double rateDay,
     required double total,
   })  : nameCustomer = Value(nameCustomer),
@@ -782,7 +782,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     Expression<String>? mail,
     Expression<String>? folioQuotes,
     Expression<int>? userId,
-    Expression<String>? dateRegister,
+    Expression<DateTime>? dateRegister,
     Expression<double>? rateDay,
     Expression<double>? total,
   }) {
@@ -806,7 +806,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       Value<String>? mail,
       Value<String>? folioQuotes,
       Value<int>? userId,
-      Value<String>? dateRegister,
+      Value<DateTime>? dateRegister,
       Value<double>? rateDay,
       Value<double>? total}) {
     return ReceiptQuoteCompanion(
@@ -844,7 +844,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       map['user_id'] = Variable<int>(userId.value);
     }
     if (dateRegister.present) {
-      map['date_register'] = Variable<String>(dateRegister.value);
+      map['date_register'] = Variable<DateTime>(dateRegister.value);
     }
     if (rateDay.present) {
       map['rate_day'] = Variable<double>(rateDay.value);
@@ -872,7 +872,7 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
   }
 }
 
-class $QuoteTable extends QuoteTable with TableInfo<$QuoteTable, QuoteData> {
+class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1774,7 +1774,7 @@ typedef $$ReceiptQuoteTableInsertCompanionBuilder = ReceiptQuoteCompanion
   required String mail,
   required String folioQuotes,
   required int userId,
-  required String dateRegister,
+  required DateTime dateRegister,
   required double rateDay,
   required double total,
 });
@@ -1786,7 +1786,7 @@ typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
   Value<String> mail,
   Value<String> folioQuotes,
   Value<int> userId,
-  Value<String> dateRegister,
+  Value<DateTime> dateRegister,
   Value<double> rateDay,
   Value<double> total,
 });
@@ -1817,7 +1817,7 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             Value<String> mail = const Value.absent(),
             Value<String> folioQuotes = const Value.absent(),
             Value<int> userId = const Value.absent(),
-            Value<String> dateRegister = const Value.absent(),
+            Value<DateTime> dateRegister = const Value.absent(),
             Value<double> rateDay = const Value.absent(),
             Value<double> total = const Value.absent(),
           }) =>
@@ -1839,7 +1839,7 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             required String mail,
             required String folioQuotes,
             required int userId,
-            required String dateRegister,
+            required DateTime dateRegister,
             required double rateDay,
             required double total,
           }) =>
@@ -1902,7 +1902,7 @@ class $$ReceiptQuoteTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get dateRegister => $state.composableBuilder(
+  ColumnFilters<DateTime> get dateRegister => $state.composableBuilder(
       column: $state.table.dateRegister,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -1951,7 +1951,7 @@ class $$ReceiptQuoteTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get dateRegister => $state.composableBuilder(
+  ColumnOrderings<DateTime> get dateRegister => $state.composableBuilder(
       column: $state.table.dateRegister,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));

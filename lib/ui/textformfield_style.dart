@@ -18,7 +18,8 @@ class TextFormFieldStyle {
     );
   }
 
-  static InputDecoration decorationFieldSearch(String label) {
+  static InputDecoration decorationFieldSearch(
+      {required String label, required void Function() function}) {
     return InputDecoration(
       floatingLabelBehavior: FloatingLabelBehavior.never,
       border: const OutlineInputBorder(
@@ -36,9 +37,12 @@ class TextFormFieldStyle {
         color: Colors.red[800],
         fontSize: 13,
       ),
-      suffixIcon: Icon(
-        CupertinoIcons.search,
-        color: Colors.grey[600],
+      suffixIcon: GestureDetector(
+        onTap: function,
+        child: Icon(
+          CupertinoIcons.search,
+          color: Colors.grey[600],
+        ),
       ),
     );
   }

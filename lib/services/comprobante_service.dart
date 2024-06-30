@@ -41,7 +41,7 @@ class ComprobanteService extends ChangeNotifier {
                 nameCustomer: comprobante.nombre!,
                 numPhone: comprobante.telefono!,
                 userId: 1,
-                dateRegister: DateTime.now().toIso8601String(),
+                dateRegister: DateTime.now(),
                 rateDay: Utility.calculateTarifaDiaria(
                     cotizacion: cotizaciones.first),
                 total: Utility.calculateTarifaTotal(cotizaciones),
@@ -57,11 +57,37 @@ class ComprobanteService extends ChangeNotifier {
     }
   }
 
-  Future<List<ReceiptQuoteData>> getComprobantesLocales() async {
+  Future<List<ReceiptQuoteData>> getComprobantesLocales(
+      String search, int pag, String filtro, bool empty) async {
     final database = AppDatabase();
+
+    print( DateTime.now().subtract(const Duration(days: 1)).toIso8601String());
     try {
-      List<ReceiptQuoteData> comprobantes =
-          await database.select(database.receiptQuote).get();
+      List<ReceiptQuoteData> comprobantes = [];
+      if (empty) {
+        comprobantes = await database.select(database.receiptQuote).get();
+      } else {
+        if (search.isNotEmpty) {
+          comprobantes = await database.getReceiptQuotesSearch(search);
+        } else {
+          switch (filtro) {
+            case "Todos":
+              comprobantes = await database.select(database.receiptQuote).get();
+              break;
+            case "Ultimo dia":
+              comprobantes = await database.getReceiptQuotesLastDay();
+              break;
+            case "Ultima semana":
+              comprobantes = await database.getReceiptQuotesLastWeek();
+              break;
+            case "Ultimo mes":
+              comprobantes = await database.getReceiptQuotesLastMont();
+              break;
+            default:
+          }
+        }
+      }
+
       await database.close();
       return comprobantes;
     } catch (e) {

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
@@ -35,7 +33,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
   DateTime initDate = DateTime.now();
   DateTime lastDate = DateTime.now().add(const Duration(days: 1));
   String typeQuote = "Individual";
-  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController =
+      TextEditingController(text: "");
   String filtro = filtros.first;
 
   @override
@@ -49,11 +48,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     super.dispose();
   }
 
-  void fetchData() async {
+  void fetchData({bool empty = true}) async {
     isLoading = true;
     setState(() {});
-    List<ReceiptQuoteData> resp =
-        await ComprobanteService().getComprobantesLocales();
+    List<ReceiptQuoteData> resp = await ComprobanteService()
+        .getComprobantesLocales(_searchController.text, pag, filtro, empty);
     if (!mounted) return;
     setState(() {
       comprobantes = resp;
@@ -81,13 +80,24 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                     height: 35,
                     width: screenWidth * 0.3,
                     child: TextField(
+                      onSubmitted: (value) {
+                        pag = 1;
+                        fetchData(empty: false);
+                        _searchController.text = "";
+                      },
                       controller: _searchController,
                       style: const TextStyle(
                           fontSize: 13,
                           fontFamily: "poppins_regular",
                           height: 1),
-                      decoration:
-                          TextFormFieldStyle.decorationFieldSearch("Buscar"),
+                      decoration: TextFormFieldStyle.decorationFieldSearch(
+                        label: "Buscar",
+                        function: () {
+                          pag = 1;
+                          fetchData(empty: false);
+                          _searchController.text = "";
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -112,6 +122,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 onPressed: () {
                                   snapshot(() {
                                     filtro = filtros[index];
+                                    pag = 1;
+                                    fetchData(empty: false);
                                   });
                                 },
                                 child: Text(filtros[index]),
@@ -146,7 +158,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             nombre: comprobantes[index].nameCustomer,
                             correo: comprobantes[index].mail,
                             telefono: comprobantes[index].numPhone,
-                            fechaRegistro: comprobantes[index].dateRegister,
+                            fechaRegistro:
+                                comprobantes[index].dateRegister.toString(),
                             folioCuotas: comprobantes[index].folioQuotes,
                             tarifaDiaria: comprobantes[index].rateDay,
                             total: comprobantes[index].total,

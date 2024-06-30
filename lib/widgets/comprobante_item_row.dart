@@ -49,7 +49,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
               size: 16),
           subtitle: TextStyles.standardText(
             text:
-                "Folio: ${widget.comprobante.folioQuotes}     Fecha: ${widget.comprobante.dateRegister.substring(0, 10)} ${widget.comprobante.dateRegister.substring(11, 16)}      Tarifa: ${Utility.formatterNumber(widget.comprobante.rateDay)}     Total: ${Utility.formatterNumber(widget.comprobante.total)}",
+                "Folio: ${widget.comprobante.folioQuotes}     Fecha: ${widget.comprobante.dateRegister.toIso8601String().substring(0, 10)} ${widget.comprobante.dateRegister.toIso8601String().substring(11, 16)}      Tarifa: ${Utility.formatterNumber(widget.comprobante.rateDay)}     Total: ${Utility.formatterNumber(widget.comprobante.total)}",
             size: 12,
           ),
           trailing: Wrap(
