@@ -27,9 +27,9 @@ const List<String> paxes = <String>[
 
 const List<String> filtros = <String>[
   'Todos',
-  'Ultimo dia',
-  'Ultima semana',
-  'Ultimo mes',
+  'Hace un dia',
+  'Hace una semana',
+  'Hace un mes',
   // 'Mas cotizado',
   // 'Menos cotizado',
   'Personalizado',

@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:flutter/cupertino.dart';
 import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
@@ -58,29 +56,33 @@ class ComprobanteService extends ChangeNotifier {
   }
 
   Future<List<ReceiptQuoteData>> getComprobantesLocales(
-      String search, int pag, String filtro, bool empty) async {
+      String search, int pag, String filtro, bool empty, String periodo) async {
     final database = AppDatabase();
-
-    print( DateTime.now().subtract(const Duration(days: 1)).toIso8601String());
     try {
       List<ReceiptQuoteData> comprobantes = [];
       if (empty) {
         comprobantes = await database.select(database.receiptQuote).get();
       } else {
-        if (search.isNotEmpty) {
+        if (periodo.isNotEmpty) {
+          print(periodo);
+          DateTime initTime = DateTime.parse(periodo.substring(0, 10));
+          DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
+          comprobantes =
+              await database.getReceiptQuotesTimePeriod(initTime, lastTime);
+        } else if (search.isNotEmpty) {
           comprobantes = await database.getReceiptQuotesSearch(search);
         } else {
           switch (filtro) {
             case "Todos":
               comprobantes = await database.select(database.receiptQuote).get();
               break;
-            case "Ultimo dia":
+            case 'Hace un dia':
               comprobantes = await database.getReceiptQuotesLastDay();
               break;
-            case "Ultima semana":
+            case 'Hace una semana':
               comprobantes = await database.getReceiptQuotesLastWeek();
               break;
-            case "Ultimo mes":
+            case 'Hace un mes':
               comprobantes = await database.getReceiptQuotesLastMont();
               break;
             default:

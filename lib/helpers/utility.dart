@@ -104,6 +104,13 @@ class Utility {
         .substring(0, 10);
   }
 
+   static String getNextMonth(String text) {
+    return DateTime.parse(text)
+        .add(const Duration(days: 30))
+        .toIso8601String()
+        .substring(0, 10);
+  }
+
   static bool isResizable(
       {required bool extended,
       required BuildContext context,

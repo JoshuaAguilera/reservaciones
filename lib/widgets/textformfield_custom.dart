@@ -130,12 +130,10 @@ class TextFormFieldCustom {
     required String name,
     required String msgError,
     required TextEditingController dateController,
-    String fechaInicial = '',
     void Function()? onChanged,
     String fechaLimite = "",
+    bool esInvertido = false,
   }) {
-    DateTime fecha = DateTime.now();
-    if (fechaInicial.isNotEmpty) fecha = fecha.add(const Duration(days: 1));
     return StatefulBuilder(
       builder: (context, setState) {
         return Container(
@@ -180,10 +178,10 @@ class TextFormFieldCustom {
                     showDatePicker(
                       context: context,
                       initialDate: DateTime.parse(dateController.text),
-                      firstDate: fechaLimite.isNotEmpty
+                      firstDate:  fechaLimite.isNotEmpty
                           ? DateTime.parse(fechaLimite)
                               .add(const Duration(days: 1))
-                          : DateTime.now(),
+                          : DateTime(DateTime.now().year - 2),
                       lastDate: DateTime((DateTime.now().year + 2)),
                       locale: const Locale('es', 'ES'),
                     ).then((date) {

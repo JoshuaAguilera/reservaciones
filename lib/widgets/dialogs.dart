@@ -129,7 +129,6 @@ class Dialogs {
                         name: "Fecha de salida",
                         msgError: "Campo requerido*",
                         dateController: _fechaSalida,
-                        fechaInicial: _fechaSalida.text,
                         fechaLimite: _fechaEntrada.text,
                       ),
                     ),
@@ -407,25 +406,6 @@ class Dialogs {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      // SizedBox(
-                      //   width: 150,
-                      //   child: TextFormFieldCustom.textFormFieldwithBorder(
-                      //     name: "Numero de noches",
-                      //     msgError: "Campo requerido*",
-                      //     isNumeric: true,
-                      //     isDecimal: false,
-                      //     initialValue: cotizacion != null
-                      //         ? nuevaCotizacion.noches!.toString()
-                      //         : null,
-                      //     onChanged: (p0) {
-                      //       nuevaCotizacion.noches = int.tryParse(p0);
-                      //       _subtotalController.text = Utility.calculateTotal(
-                      //         nuevaCotizacion.noches,
-                      //         nuevaCotizacion.tarifaNoche,
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
                     ],
                   ),
                   Table(
@@ -596,9 +576,12 @@ class Dialogs {
             color: WebColors.ceruleanOscure,
           ),
         const SizedBox(width: 10),
-        Expanded(child: TextStyles.titleText(text: title, color: Colors.black, size: 18))
+        Expanded(
+            child: TextStyles.titleText(
+                text: title, color: Colors.black, size: 18))
       ]),
-      content: TextStyles.TextAsociative(contentBold ?? "", content, isInverted: contentBold != null),
+      content: TextStyles.TextAsociative(contentBold ?? "", content,
+          isInverted: contentBold != null),
       actions: [
         if (withButtonCancel)
           TextButton(
@@ -615,6 +598,84 @@ class Dialogs {
             text: nameButtonMain,
           ),
         ),
+      ],
+    );
+  }
+
+  static AlertDialog filterDateDialog({
+    required BuildContext context,
+    required VoidCallback funtionMain,
+  }) {
+    final TextEditingController _initDateController = TextEditingController(
+        text: DateTime.now()
+            .subtract(const Duration(days: 30))
+            .toIso8601String()
+            .substring(0, 10));
+    final TextEditingController _endDateController = TextEditingController(
+        text: DateTime.now().toIso8601String().substring(0, 10));
+
+    return AlertDialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      title: Row(children: [
+        Icon(
+          Icons.date_range_outlined,
+          size: 33,
+          color: WebColors.ceruleanOscure,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+            child: TextStyles.titleText(
+          text: "Filtrar por fechas",
+          color: WebColors.prussianBlue,
+          size: 18,
+        ))
+      ]),
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextStyles.standardText(
+                    text: "Seleccione un periodo de tiempo:"),
+                const SizedBox(height: 15),
+                TextFormFieldCustom.textFormFieldwithBorderCalendar(
+                  name: "Fecha inicial",
+                  msgError: "",
+                  esInvertido: true,
+                  dateController: _initDateController,
+                  onChanged: () => setState(
+                    () => _endDateController.text =
+                        Utility.getNextMonth(_initDateController.text),
+                  ),
+                ),
+                TextFormFieldCustom.textFormFieldwithBorderCalendar(
+                  name: "Fecha final",
+                  msgError: "",
+                  dateController: _endDateController,
+                  fechaLimite: (_initDateController.text),
+                )
+              ],
+            ),
+          );
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            funtionMain.call();
+            Navigator.of(context)
+                .pop(_initDateController.text + _endDateController.text);
+          },
+          child: TextStyles.buttonText(
+            text: "Aceptar",
+          ),
+        ),
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: TextStyles.buttonText(text: "Cancelar")),
       ],
     );
   }

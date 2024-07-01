@@ -48,11 +48,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     super.dispose();
   }
 
-  void fetchData({bool empty = true}) async {
+  void fetchData({bool empty = true, String periodo = ""}) async {
     isLoading = true;
     setState(() {});
     List<ReceiptQuoteData> resp = await ComprobanteService()
-        .getComprobantesLocales(_searchController.text, pag, filtro, empty);
+        .getComprobantesLocales(_searchController.text, pag, filtro, empty, periodo);
     if (!mounted) return;
     setState(() {
       comprobantes = resp;
@@ -122,8 +122,27 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 onPressed: () {
                                   snapshot(() {
                                     filtro = filtros[index];
-                                    pag = 1;
-                                    fetchData(empty: false);
+                                    if (filtro == "Personalizado") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialogs.filterDateDialog(
+                                            context: context,
+                                            funtionMain: () {},
+                                          );
+                                        },
+                                      ).then(
+                                        (value) {
+                                          if (value != null) {
+                                            pag = 1;
+                                            fetchData(empty: false, periodo: value);
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      pag = 1;
+                                      fetchData(empty: false);
+                                    }
                                   });
                                 },
                                 child: Text(filtros[index]),

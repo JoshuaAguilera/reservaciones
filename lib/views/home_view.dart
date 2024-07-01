@@ -6,7 +6,7 @@ import 'package:sidebarx/sidebarx.dart';
 
 import '../widgets/sidebar.dart';
 import '../helpers/web_colors.dart';
-import 'dashboard_view.dart';
+import 'menu_view.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key? key}) : super(key: key);
@@ -62,7 +62,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           Expanded(
             child: Center(
-              child: DashboardView(
+              child: MenuView(
                 controller: _controller,
               ),
             ),

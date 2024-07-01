@@ -60,6 +60,14 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  Future<List<ReceiptQuoteData>> getReceiptQuotesTimePeriod(DateTime initTime, DateTime lastTime) {
+    return (select(receiptQuote)
+          ..where((t) => t.dateRegister.isBetweenValues(
+              initTime,
+              lastTime,)))
+        .get();
+  }
+
   Future deleteReceiptQuoteByFolio(String folio) {
     return (delete(receiptQuote)..where((t) => t.folioQuotes.equals(folio)))
         .go();
