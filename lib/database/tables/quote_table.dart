@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 class Quote extends Table {
@@ -6,8 +5,10 @@ class Quote extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get folio => text()();
   BoolColumn get isGroup => boolean()();
+  BoolColumn get isPresale => boolean()();
   TextColumn get category => text()();
   TextColumn get plan => text()();
+  DateTimeColumn get registerDate => dateTime()();
   TextColumn get enterDate => text()();
   TextColumn get outDate => text()();
   IntColumn get adults => integer()();

@@ -23,10 +23,10 @@ class TextStyles {
   }
 
   static TextStyle styleStandar(
-      {double size = 13, bool isBold = false, bool overClip = false}) {
+      {double size = 13, bool isBold = false, bool overClip = false, Color? color}) {
     return TextStyle(
         fontFamily: "poppins_regular",
-        color: WebColors.prussianBlue,
+        color: color ?? WebColors.prussianBlue,
         fontSize: size,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis);

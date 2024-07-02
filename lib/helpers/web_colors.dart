@@ -7,6 +7,7 @@ class WebColors {
   static Color azulCielo = Color.fromARGB(255, 128, 206, 215);
   static Color azulClaro = Color.fromARGB(255, 154, 209, 212);
   static Color turqueza = Color.fromARGB(255, 0, 192, 144);
+  static Color turquezaOscure = Color.fromARGB(255, 3, 130, 98);
 
   static Color primaryColor = Color(0xFF685BFF);
   static Color canvasColor = Color(0xFF2E2E48);

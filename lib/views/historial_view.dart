@@ -83,7 +83,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                       onSubmitted: (value) {
                         pag = 1;
                         fetchData(empty: false);
-                        _searchController.text = "";
                       },
                       controller: _searchController,
                       style: const TextStyle(
@@ -95,7 +94,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         function: () {
                           pag = 1;
                           fetchData(empty: false);
-                          _searchController.text = "";
                         },
                       ),
                     ),

@@ -116,14 +116,14 @@ class _TableRowCotizacion extends StatelessWidget {
           children: [
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: const {
-                0: FractionColumnWidth(.05),
-                1: FractionColumnWidth(.15),
-                2: FractionColumnWidth(.1),
-                3: FractionColumnWidth(.1),
-                4: FractionColumnWidth(.1),
-                5: FractionColumnWidth(.1),
-                6: FractionColumnWidth(.21),
+              columnWidths: {
+                0: const FractionColumnWidth(.05),
+                1: const FractionColumnWidth(.15),
+                2: const FractionColumnWidth(.1),
+                3: const FractionColumnWidth(.1),
+                4: const FractionColumnWidth(.1),
+                5: const FractionColumnWidth(.1),
+                if (!esDetalle) 6: const FractionColumnWidth(.21),
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),
@@ -166,23 +166,24 @@ class _TableRowCotizacion extends StatelessWidget {
                                 cotizacion.tarifaRealAdulto!),
                         aling: TextAlign.center,
                         overClip: true),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            onPressed: onPressedEdit,
-                            icon: Icon(
-                              Icons.edit,
-                              color: WebColors.turqueza,
-                            )),
-                        IconButton(
-                            onPressed: onPressedDelete,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.red[800],
-                            )),
-                      ],
-                    ),
+                    if (!esDetalle)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                              onPressed: onPressedEdit,
+                              icon: Icon(
+                                Icons.edit,
+                                color: WebColors.turqueza,
+                              )),
+                          IconButton(
+                              onPressed: onPressedDelete,
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red[800],
+                              )),
+                        ],
+                      ),
                   ],
                 ),
               ],
@@ -230,10 +231,14 @@ class _ListTileCotizacion extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
               text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
-          TextStyles.TextAsociative("Tarifa real:",
-              Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion))),
-          TextStyles.TextAsociative("Tarifa preventa: ",
-              Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: cotizacion, esPreventa: true))),
+          TextStyles.TextAsociative(
+              "Tarifa real:",
+              Utility.formatterNumber(
+                  Utility.calculateTarifaDiaria(cotizacion: cotizacion))),
+          TextStyles.TextAsociative(
+              "Tarifa preventa: ",
+              Utility.formatterNumber(Utility.calculateTarifaDiaria(
+                  cotizacion: cotizacion, esPreventa: true))),
           if (esDetalle)
             Wrap(
               children: [
@@ -280,7 +285,7 @@ class _ListTileCotizacion extends StatelessWidget {
   }
 
   Widget statisticsCustomers(Cotizacion cotizacion) {
-    return Column(children: [
+    return const Column(children: [
       Row(
         children: [],
       )

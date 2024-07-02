@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/cotizacion_diarias_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:intl/intl.dart';
 
@@ -104,7 +105,7 @@ class Utility {
         .substring(0, 10);
   }
 
-   static String getNextMonth(String text) {
+  static String getNextMonth(String text) {
     return DateTime.parse(text)
         .add(const Duration(days: 30))
         .toIso8601String()
@@ -124,13 +125,13 @@ class Utility {
     return isVisible;
   }
 
-  static double calculateTarifaTotal(List<Cotizacion> cotizaciones) {
+  static double calculateTarifaTotal(List<Cotizacion> cotizaciones, {bool esPreventa = false}) {
     double tarifaTotal = 0;
     for (var element in cotizaciones) {
       int days = DateTime.parse(element.fechaSalida!)
           .difference(DateTime.parse(element.fechaEntrada!))
           .inDays;
-      tarifaTotal += calculateTarifaDiaria(cotizacion: element) * days;
+      tarifaTotal += calculateTarifaDiaria(cotizacion: element, esPreventa: esPreventa) * days;
     }
 
     return tarifaTotal;
@@ -142,5 +143,68 @@ class Utility {
       height = 290;
     }
     return height;
+  }
+
+  static List<CotizacionDiaria> getStatics(List<QuoteData> cotizaciones) {
+    List<CotizacionDiaria> listCot = [];
+
+    for (var i = 1; i < 8; i++) {
+      CotizacionDiaria quoteDay = CotizacionDiaria(
+        numCotizacionesGrupales: 0,
+        numCotizacionesIndividual: 0,
+        numCotizacionesGrupalesPreventa: 0,
+        numCotizacionesIndividualPreventa: 0,
+      );
+
+      List<QuoteData> quotes = cotizaciones
+          .where((element) => element.registerDate.weekday == i)
+          .toList();
+
+      if (i == 2) {
+        quoteDay.numCotizacionesGrupales++;
+      }
+
+      for (var element in quotes) {
+        if (element.isGroup) {
+          if (element.isPresale) {
+            quoteDay.numCotizacionesGrupalesPreventa++;
+          } else {
+            quoteDay.numCotizacionesGrupales++;
+          }
+        } else {
+          if (element.isPresale) {
+            quoteDay.numCotizacionesIndividualPreventa++;
+          } else {
+            quoteDay.numCotizacionesIndividual++;
+          }
+        }
+      }
+
+      quoteDay.dia = getNameDay(i);
+      listCot.add(quoteDay);
+    }
+
+    return listCot;
+  }
+
+  static String getNameDay(int i) {
+    switch (i) {
+      case 1:
+        return "Lunes";
+      case 2:
+        return "Martes";
+      case 3:
+        return "Miercoles";
+      case 4:
+        return "Jueves";
+      case 5:
+        return "Viernes";
+      case 6:
+        return "Sabado";
+      case 7:
+        return "Domingo";
+      default:
+        return "Unknow";
+    }
   }
 }

@@ -165,7 +165,8 @@ class DocTemplates {
         'MENORES\n0-6',
         'MENORES\n7-12',
         '       TARIFA REAL       ',
-        if (requiredPreventa) 'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
+        if (cotizaciones.any((element) => element.esPreVenta!))
+          'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
       ]
     ];
 
@@ -202,13 +203,18 @@ class DocTemplates {
         data: contenido,
       ),
       pw.Padding(
-        padding: pw.EdgeInsets.only(left: requiredPreventa ? 178 : 177),
+        padding: pw.EdgeInsets.only(
+            left: (cotizaciones.any((element) => element.esPreVenta!))
+                ? 140
+                : 177),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.9),
             headerStyle: styleHeader,
             columnWidths: {
               0: const pw.FixedColumnWidth(100),
-              1: const pw.FixedColumnWidth(100)
+              1: const pw.FixedColumnWidth(100),
+              if (cotizaciones.any((element) => element.esPreVenta!))
+                2: const pw.FixedColumnWidth(120)
             },
             cellPadding:
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
@@ -218,8 +224,10 @@ class DocTemplates {
               "TOTAL DE ESTANCIA",
               Utility.formatterNumber(
                   Utility.calculateTarifaTotal(cotizaciones)),
-              if (requiredPreventa)
-                "\$                                                      ",
+              if (cotizaciones.any((element) => element.esPreVenta!))
+                Utility.formatterNumber(Utility.calculateTarifaTotal(
+                    cotizaciones,
+                    esPreventa: true)),
             ],
             data: []),
       )
@@ -327,7 +335,7 @@ class DocTemplates {
       diasFila.add("${cotizacion.menores7a12}");
       diasFila.add(Utility.formatterNumber(
           Utility.calculateTarifaDiaria(cotizacion: cotizacion)));
-      if (cotizacion.tarifaPreventaAdulto != null) {
+      if (cotizacion.esPreVenta!) {
         diasFila.add(Utility.formatterNumber(Utility.calculateTarifaDiaria(
             cotizacion: cotizacion, esPreventa: true)));
       }

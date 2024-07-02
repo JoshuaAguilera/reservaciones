@@ -7,13 +7,10 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../helpers/utility.dart';
 import '../helpers/web_colors.dart';
-import '../providers/cotizacion_individual_provider.dart';
-import '../services/comprobante_service.dart';
 import '../services/generador_doc_service.dart';
 import '../ui/progress_indicator.dart';
 import '../widgets/cotizacion_indiv_card.dart';
 import '../widgets/text_styles.dart';
-import '../widgets/textformfield_custom.dart';
 
 class ComprobanteDetalleView extends ConsumerStatefulWidget {
   const ComprobanteDetalleView({super.key, required this.sideController});
@@ -122,7 +119,6 @@ class _ComprobanteDetalleViewState
                             3: FractionColumnWidth(.1),
                             4: FractionColumnWidth(.1),
                             5: FractionColumnWidth(.1),
-                            6: FractionColumnWidth(.21),
                           },
                           children: [
                             TableRow(children: [
@@ -164,7 +160,6 @@ class _ComprobanteDetalleViewState
                               //       text: "Subtotal",
                               //       aling: TextAlign.center,
                               //       overClip: true),
-                              const SizedBox(width: 15)
                             ]),
                           ],
                         ),

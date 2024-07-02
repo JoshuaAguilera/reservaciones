@@ -16,9 +16,11 @@ class ComprobanteService extends ChangeNotifier {
           for (var element in cotizaciones) {
             await database.into(database.quote).insert(QuoteCompanion.insert(
                   isGroup: false,
+                  isPresale: element.esPreVenta!,
                   folio: folio,
                   category: element.categoria ?? '',
                   plan: element.plan ?? '',
+                  registerDate: DateTime.now(),
                   enterDate: element.fechaEntrada ?? '',
                   outDate: element.fechaSalida ?? '',
                   adults: element.adultos!,
@@ -67,23 +69,29 @@ class ComprobanteService extends ChangeNotifier {
           print(periodo);
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
           DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
-          comprobantes =
-              await database.getReceiptQuotesTimePeriod(initTime, lastTime);
-        } else if (search.isNotEmpty) {
-          comprobantes = await database.getReceiptQuotesSearch(search);
+          comprobantes = await database
+              .getReceiptQuotesTimePeriod(initTime, lastTime, search: search);
         } else {
           switch (filtro) {
             case "Todos":
-              comprobantes = await database.select(database.receiptQuote).get();
+              if (search.isNotEmpty) {
+                comprobantes = await database.getReceiptQuotesSearch(search);
+              } else {
+                comprobantes =
+                    await database.select(database.receiptQuote).get();
+              }
               break;
             case 'Hace un dia':
-              comprobantes = await database.getReceiptQuotesLastDay();
+              comprobantes =
+                  await database.getReceiptQuotesLastDay(search: search);
               break;
             case 'Hace una semana':
-              comprobantes = await database.getReceiptQuotesLastWeek();
+              comprobantes =
+                  await database.getReceiptQuotesLastWeek(search: search);
               break;
             case 'Hace un mes':
-              comprobantes = await database.getReceiptQuotesLastMont();
+              comprobantes =
+                  await database.getReceiptQuotesLastMont(search: search);
               break;
             default:
           }

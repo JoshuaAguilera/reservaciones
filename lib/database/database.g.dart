@@ -900,6 +900,15 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_group" IN (0, 1))'));
+  static const VerificationMeta _isPresaleMeta =
+      const VerificationMeta('isPresale');
+  @override
+  late final GeneratedColumn<bool> isPresale = GeneratedColumn<bool>(
+      'is_presale', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_presale" IN (0, 1))'));
   static const VerificationMeta _categoryMeta =
       const VerificationMeta('category');
   @override
@@ -911,6 +920,12 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   late final GeneratedColumn<String> plan = GeneratedColumn<String>(
       'plan', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _registerDateMeta =
+      const VerificationMeta('registerDate');
+  @override
+  late final GeneratedColumn<DateTime> registerDate = GeneratedColumn<DateTime>(
+      'register_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   static const VerificationMeta _enterDateMeta =
       const VerificationMeta('enterDate');
   @override
@@ -969,8 +984,10 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
         id,
         folio,
         isGroup,
+        isPresale,
         category,
         plan,
+        registerDate,
         enterDate,
         outDate,
         adults,
@@ -1006,6 +1023,12 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
     } else if (isInserting) {
       context.missing(_isGroupMeta);
     }
+    if (data.containsKey('is_presale')) {
+      context.handle(_isPresaleMeta,
+          isPresale.isAcceptableOrUnknown(data['is_presale']!, _isPresaleMeta));
+    } else if (isInserting) {
+      context.missing(_isPresaleMeta);
+    }
     if (data.containsKey('category')) {
       context.handle(_categoryMeta,
           category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
@@ -1017,6 +1040,14 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
           _planMeta, plan.isAcceptableOrUnknown(data['plan']!, _planMeta));
     } else if (isInserting) {
       context.missing(_planMeta);
+    }
+    if (data.containsKey('register_date')) {
+      context.handle(
+          _registerDateMeta,
+          registerDate.isAcceptableOrUnknown(
+              data['register_date']!, _registerDateMeta));
+    } else if (isInserting) {
+      context.missing(_registerDateMeta);
     }
     if (data.containsKey('enter_date')) {
       context.handle(_enterDateMeta,
@@ -1095,10 +1126,14 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
           .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
       isGroup: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_group'])!,
+      isPresale: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_presale'])!,
       category: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
       plan: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}plan'])!,
+      registerDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}register_date'])!,
       enterDate: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}enter_date'])!,
       outDate: attachedDatabase.typeMapping
@@ -1130,8 +1165,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   final int id;
   final String folio;
   final bool isGroup;
+  final bool isPresale;
   final String category;
   final String plan;
+  final DateTime registerDate;
   final String enterDate;
   final String outDate;
   final int adults;
@@ -1145,8 +1182,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       {required this.id,
       required this.folio,
       required this.isGroup,
+      required this.isPresale,
       required this.category,
       required this.plan,
+      required this.registerDate,
       required this.enterDate,
       required this.outDate,
       required this.adults,
@@ -1162,8 +1201,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     map['id'] = Variable<int>(id);
     map['folio'] = Variable<String>(folio);
     map['is_group'] = Variable<bool>(isGroup);
+    map['is_presale'] = Variable<bool>(isPresale);
     map['category'] = Variable<String>(category);
     map['plan'] = Variable<String>(plan);
+    map['register_date'] = Variable<DateTime>(registerDate);
     map['enter_date'] = Variable<String>(enterDate);
     map['out_date'] = Variable<String>(outDate);
     map['adults'] = Variable<int>(adults);
@@ -1181,8 +1222,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       id: Value(id),
       folio: Value(folio),
       isGroup: Value(isGroup),
+      isPresale: Value(isPresale),
       category: Value(category),
       plan: Value(plan),
+      registerDate: Value(registerDate),
       enterDate: Value(enterDate),
       outDate: Value(outDate),
       adults: Value(adults),
@@ -1202,8 +1245,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       id: serializer.fromJson<int>(json['id']),
       folio: serializer.fromJson<String>(json['folio']),
       isGroup: serializer.fromJson<bool>(json['isGroup']),
+      isPresale: serializer.fromJson<bool>(json['isPresale']),
       category: serializer.fromJson<String>(json['category']),
       plan: serializer.fromJson<String>(json['plan']),
+      registerDate: serializer.fromJson<DateTime>(json['registerDate']),
       enterDate: serializer.fromJson<String>(json['enterDate']),
       outDate: serializer.fromJson<String>(json['outDate']),
       adults: serializer.fromJson<int>(json['adults']),
@@ -1222,8 +1267,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       'id': serializer.toJson<int>(id),
       'folio': serializer.toJson<String>(folio),
       'isGroup': serializer.toJson<bool>(isGroup),
+      'isPresale': serializer.toJson<bool>(isPresale),
       'category': serializer.toJson<String>(category),
       'plan': serializer.toJson<String>(plan),
+      'registerDate': serializer.toJson<DateTime>(registerDate),
       'enterDate': serializer.toJson<String>(enterDate),
       'outDate': serializer.toJson<String>(outDate),
       'adults': serializer.toJson<int>(adults),
@@ -1240,8 +1287,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
           {int? id,
           String? folio,
           bool? isGroup,
+          bool? isPresale,
           String? category,
           String? plan,
+          DateTime? registerDate,
           String? enterDate,
           String? outDate,
           int? adults,
@@ -1255,8 +1304,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
         id: id ?? this.id,
         folio: folio ?? this.folio,
         isGroup: isGroup ?? this.isGroup,
+        isPresale: isPresale ?? this.isPresale,
         category: category ?? this.category,
         plan: plan ?? this.plan,
+        registerDate: registerDate ?? this.registerDate,
         enterDate: enterDate ?? this.enterDate,
         outDate: outDate ?? this.outDate,
         adults: adults ?? this.adults,
@@ -1273,8 +1324,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
           ..write('id: $id, ')
           ..write('folio: $folio, ')
           ..write('isGroup: $isGroup, ')
+          ..write('isPresale: $isPresale, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
+          ..write('registerDate: $registerDate, ')
           ..write('enterDate: $enterDate, ')
           ..write('outDate: $outDate, ')
           ..write('adults: $adults, ')
@@ -1293,8 +1346,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       id,
       folio,
       isGroup,
+      isPresale,
       category,
       plan,
+      registerDate,
       enterDate,
       outDate,
       adults,
@@ -1311,8 +1366,10 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
           other.id == this.id &&
           other.folio == this.folio &&
           other.isGroup == this.isGroup &&
+          other.isPresale == this.isPresale &&
           other.category == this.category &&
           other.plan == this.plan &&
+          other.registerDate == this.registerDate &&
           other.enterDate == this.enterDate &&
           other.outDate == this.outDate &&
           other.adults == this.adults &&
@@ -1328,8 +1385,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   final Value<int> id;
   final Value<String> folio;
   final Value<bool> isGroup;
+  final Value<bool> isPresale;
   final Value<String> category;
   final Value<String> plan;
+  final Value<DateTime> registerDate;
   final Value<String> enterDate;
   final Value<String> outDate;
   final Value<int> adults;
@@ -1343,8 +1402,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     this.id = const Value.absent(),
     this.folio = const Value.absent(),
     this.isGroup = const Value.absent(),
+    this.isPresale = const Value.absent(),
     this.category = const Value.absent(),
     this.plan = const Value.absent(),
+    this.registerDate = const Value.absent(),
     this.enterDate = const Value.absent(),
     this.outDate = const Value.absent(),
     this.adults = const Value.absent(),
@@ -1359,8 +1420,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     this.id = const Value.absent(),
     required String folio,
     required bool isGroup,
+    required bool isPresale,
     required String category,
     required String plan,
+    required DateTime registerDate,
     required String enterDate,
     required String outDate,
     required int adults,
@@ -1372,8 +1435,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     required double ratePresaleMinor,
   })  : folio = Value(folio),
         isGroup = Value(isGroup),
+        isPresale = Value(isPresale),
         category = Value(category),
         plan = Value(plan),
+        registerDate = Value(registerDate),
         enterDate = Value(enterDate),
         outDate = Value(outDate),
         adults = Value(adults),
@@ -1387,8 +1452,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     Expression<int>? id,
     Expression<String>? folio,
     Expression<bool>? isGroup,
+    Expression<bool>? isPresale,
     Expression<String>? category,
     Expression<String>? plan,
+    Expression<DateTime>? registerDate,
     Expression<String>? enterDate,
     Expression<String>? outDate,
     Expression<int>? adults,
@@ -1403,8 +1470,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
       if (id != null) 'id': id,
       if (folio != null) 'folio': folio,
       if (isGroup != null) 'is_group': isGroup,
+      if (isPresale != null) 'is_presale': isPresale,
       if (category != null) 'category': category,
       if (plan != null) 'plan': plan,
+      if (registerDate != null) 'register_date': registerDate,
       if (enterDate != null) 'enter_date': enterDate,
       if (outDate != null) 'out_date': outDate,
       if (adults != null) 'adults': adults,
@@ -1421,8 +1490,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
       {Value<int>? id,
       Value<String>? folio,
       Value<bool>? isGroup,
+      Value<bool>? isPresale,
       Value<String>? category,
       Value<String>? plan,
+      Value<DateTime>? registerDate,
       Value<String>? enterDate,
       Value<String>? outDate,
       Value<int>? adults,
@@ -1436,8 +1507,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
       id: id ?? this.id,
       folio: folio ?? this.folio,
       isGroup: isGroup ?? this.isGroup,
+      isPresale: isPresale ?? this.isPresale,
       category: category ?? this.category,
       plan: plan ?? this.plan,
+      registerDate: registerDate ?? this.registerDate,
       enterDate: enterDate ?? this.enterDate,
       outDate: outDate ?? this.outDate,
       adults: adults ?? this.adults,
@@ -1462,11 +1535,17 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     if (isGroup.present) {
       map['is_group'] = Variable<bool>(isGroup.value);
     }
+    if (isPresale.present) {
+      map['is_presale'] = Variable<bool>(isPresale.value);
+    }
     if (category.present) {
       map['category'] = Variable<String>(category.value);
     }
     if (plan.present) {
       map['plan'] = Variable<String>(plan.value);
+    }
+    if (registerDate.present) {
+      map['register_date'] = Variable<DateTime>(registerDate.value);
     }
     if (enterDate.present) {
       map['enter_date'] = Variable<String>(enterDate.value);
@@ -1504,8 +1583,10 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
           ..write('id: $id, ')
           ..write('folio: $folio, ')
           ..write('isGroup: $isGroup, ')
+          ..write('isPresale: $isPresale, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
+          ..write('registerDate: $registerDate, ')
           ..write('enterDate: $enterDate, ')
           ..write('outDate: $outDate, ')
           ..write('adults: $adults, ')
@@ -1971,8 +2052,10 @@ typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
   required String folio,
   required bool isGroup,
+  required bool isPresale,
   required String category,
   required String plan,
+  required DateTime registerDate,
   required String enterDate,
   required String outDate,
   required int adults,
@@ -1987,8 +2070,10 @@ typedef $$QuoteTableUpdateCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
   Value<String> folio,
   Value<bool> isGroup,
+  Value<bool> isPresale,
   Value<String> category,
   Value<String> plan,
+  Value<DateTime> registerDate,
   Value<String> enterDate,
   Value<String> outDate,
   Value<int> adults,
@@ -2022,8 +2107,10 @@ class $$QuoteTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> folio = const Value.absent(),
             Value<bool> isGroup = const Value.absent(),
+            Value<bool> isPresale = const Value.absent(),
             Value<String> category = const Value.absent(),
             Value<String> plan = const Value.absent(),
+            Value<DateTime> registerDate = const Value.absent(),
             Value<String> enterDate = const Value.absent(),
             Value<String> outDate = const Value.absent(),
             Value<int> adults = const Value.absent(),
@@ -2038,8 +2125,10 @@ class $$QuoteTableTableManager extends RootTableManager<
             id: id,
             folio: folio,
             isGroup: isGroup,
+            isPresale: isPresale,
             category: category,
             plan: plan,
+            registerDate: registerDate,
             enterDate: enterDate,
             outDate: outDate,
             adults: adults,
@@ -2054,8 +2143,10 @@ class $$QuoteTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required String folio,
             required bool isGroup,
+            required bool isPresale,
             required String category,
             required String plan,
+            required DateTime registerDate,
             required String enterDate,
             required String outDate,
             required int adults,
@@ -2070,8 +2161,10 @@ class $$QuoteTableTableManager extends RootTableManager<
             id: id,
             folio: folio,
             isGroup: isGroup,
+            isPresale: isPresale,
             category: category,
             plan: plan,
+            registerDate: registerDate,
             enterDate: enterDate,
             outDate: outDate,
             adults: adults,
@@ -2115,6 +2208,11 @@ class $$QuoteTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<bool> get isPresale => $state.composableBuilder(
+      column: $state.table.isPresale,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ColumnFilters<String> get category => $state.composableBuilder(
       column: $state.table.category,
       builder: (column, joinBuilders) =>
@@ -2122,6 +2220,11 @@ class $$QuoteTableFilterComposer
 
   ColumnFilters<String> get plan => $state.composableBuilder(
       column: $state.table.plan,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get registerDate => $state.composableBuilder(
+      column: $state.table.registerDate,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -2189,6 +2292,11 @@ class $$QuoteTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<bool> get isPresale => $state.composableBuilder(
+      column: $state.table.isPresale,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get category => $state.composableBuilder(
       column: $state.table.category,
       builder: (column, joinBuilders) =>
@@ -2196,6 +2304,11 @@ class $$QuoteTableOrderingComposer
 
   ColumnOrderings<String> get plan => $state.composableBuilder(
       column: $state.table.plan,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get registerDate => $state.composableBuilder(
+      column: $state.table.registerDate,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

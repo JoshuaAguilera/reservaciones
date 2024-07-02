@@ -1,6 +1,7 @@
 class Cotizacion {
   int? id;
   bool? esGrupo;
+  bool? esPreVenta;
   String? categoria;
   String? plan;
   String? fechaEntrada;
@@ -23,6 +24,7 @@ class Cotizacion {
   Cotizacion({
     this.id,
     this.esGrupo,
+    this.esPreVenta,
     this.categoria,
     this.plan,
     this.fechaEntrada,
@@ -45,6 +47,7 @@ class Cotizacion {
 
   Map<String, dynamic> toMap() => {
         "id": id,
+        "esPreventa": esPreVenta,
         "esGrupo": esGrupo,
         "categoria": categoria,
         "plan": plan,
@@ -67,6 +70,7 @@ class Cotizacion {
       };
 
   Map<String, dynamic> toMapUpdate() => {
+        "esPreventa": esPreVenta,
         "esGrupo": esGrupo,
         "categoria": categoria,
         "plan": plan,

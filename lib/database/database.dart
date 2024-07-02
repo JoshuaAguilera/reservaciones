@@ -36,35 +36,92 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastDay() {
-    return (select(receiptQuote)
-          ..where((t) => t.dateRegister.isBetweenValues(
-              DateTime.now().subtract(const Duration(days: 1)),
-              DateTime.now())))
-        .get();
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastDay({String search = ""}) {
+    if (search.isEmpty) {
+      return (select(receiptQuote)
+            ..where(
+              (t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 1)),
+                DateTime.now(),
+              ),
+            ))
+          .get();
+    } else {
+      return (select(receiptQuote)
+            ..where((t) => t.nameCustomer.contains(search))
+            ..where((t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 1)),
+                DateTime.now())))
+          .get();
+    }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastWeek() {
-    return (select(receiptQuote)
-          ..where((t) => t.dateRegister.isBetweenValues(
-              DateTime.now().subtract(const Duration(days: 7)),
-              DateTime.now())))
-        .get();
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastWeek(
+      {String search = ""}) {
+    if (search.isEmpty) {
+      return (select(receiptQuote)
+            ..where((t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 7)),
+                DateTime.now())))
+          .get();
+    } else {
+      return (select(receiptQuote)
+            ..where((t) => t.nameCustomer.contains(search))
+            ..where((t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 7)),
+                DateTime.now())))
+          .get();
+    }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastMont() {
-    return (select(receiptQuote)
-          ..where((t) => t.dateRegister.isBetweenValues(
-              DateTime.now().subtract(const Duration(days: 30)),
-              DateTime.now())))
-        .get();
+  Future<List<ReceiptQuoteData>> getReceiptQuotesLastMont(
+      {String search = ""}) {
+    if (search.isEmpty) {
+      return (select(receiptQuote)
+            ..where((t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 30)),
+                DateTime.now())))
+          .get();
+    } else {
+      return (select(receiptQuote)
+            ..where((t) => t.nameCustomer.contains(search))
+            ..where((t) => t.dateRegister.isBetweenValues(
+                DateTime.now().subtract(const Duration(days: 30)),
+                DateTime.now())))
+          .get();
+    }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesTimePeriod(DateTime initTime, DateTime lastTime) {
-    return (select(receiptQuote)
-          ..where((t) => t.dateRegister.isBetweenValues(
-              initTime,
-              lastTime,)))
+  Future<List<ReceiptQuoteData>> getReceiptQuotesTimePeriod(
+      DateTime initTime, DateTime lastTime,
+      {String search = ""}) {
+    if (search.isEmpty) {
+      return (select(receiptQuote)
+            ..where((t) => t.dateRegister.isBetweenValues(
+                  initTime,
+                  lastTime,
+                )))
+          .get();
+    } else {
+      return (select(receiptQuote)
+            ..where((t) => t.nameCustomer.contains(search))
+            ..where((t) => t.dateRegister.isBetweenValues(
+                  initTime,
+                  lastTime,
+                )))
+          .get();
+    }
+  }
+
+  Future<List<QuoteData>> getQuotesTimePeriod(
+    DateTime initTime,
+    DateTime lastTime,
+  ) {
+    return (select(quote)
+          ..where((t) => t.registerDate.isBetweenValues(
+                initTime,
+                lastTime,
+              )))
         .get();
   }
 

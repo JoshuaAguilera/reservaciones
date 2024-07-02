@@ -27,12 +27,18 @@ class CotizacionService extends ChangeNotifier {
           tarifaPreventaMenor: element.ratePresaleMinor,
         ));
       }
-       await database.close();
+      await database.close();
       return cotizaciones;
     } catch (e) {
       print(e);
-       await database.close();
+      await database.close();
       return List.empty();
     }
+  }
+
+  Future<List<QuoteData>> getCotizacionesTimePeriod(
+      DateTime initTime, DateTime lastTime) async {
+    final dataBase = AppDatabase();
+    return await dataBase.getQuotesTimePeriod(initTime, lastTime);
   }
 }

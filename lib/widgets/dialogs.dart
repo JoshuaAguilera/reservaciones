@@ -301,6 +301,7 @@ class Dialogs {
                 if (_formKeyHabitacion.currentState!.validate()) {
                   nuevaCotizacion.fechaEntrada = _fechaEntrada.text;
                   nuevaCotizacion.fechaSalida = _fechaSalida.text;
+                  nuevaCotizacion.esPreVenta = esOferta;
                   if (nuevaCotizacion.adultos == 0) {
                     setState(() => isError = true);
                     return;
