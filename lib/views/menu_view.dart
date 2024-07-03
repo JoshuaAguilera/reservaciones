@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/views/comprobante_detalle_view.dart';
+import 'package:generador_formato/views/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';
 import 'package:generador_formato/views/generar_cotizacion_view.dart';
 import 'package:generador_formato/views/historial_view.dart';
@@ -29,11 +30,13 @@ class _MenuViewState extends State<MenuView> {
             Utility.getTitleByIndex(widget.controller.selectedIndex);
         switch (widget.controller.selectedIndex) {
           case 0:
-            return const DashboardView();
+            return DashboardView(sideController: widget.controller);
           case 1:
             return GenerarCotizacionView(sideController: widget.controller);
           case 2:
             return HistorialView(sideController: widget.controller);
+          case 3:
+            return ConfiguracionView();
           case 12:
             return ComprobanteDetalleView(sideController: widget.controller);
           default:

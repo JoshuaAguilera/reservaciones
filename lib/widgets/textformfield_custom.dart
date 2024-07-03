@@ -100,7 +100,7 @@ class TextFormFieldCustom {
                               passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: WebColors.azulCielo,
+                              color: DesktopColors.azulCielo,
                             ),
                             onPressed: () {
                               snapshot(() {
@@ -172,7 +172,7 @@ class TextFormFieldCustom {
                 child: IconButton(
                   icon: Icon(
                     Icons.calendar_month,
-                    color: WebColors.azulCielo,
+                    color: DesktopColors.azulCielo,
                   ),
                   onPressed: () {
                     showDatePicker(

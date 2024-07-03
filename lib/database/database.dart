@@ -113,6 +113,29 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  Future<List<QuoteData>> getQuotesToday() {
+    return (select(quote)
+          ..where(
+            (t) => t.registerDate.isBetweenValues(
+              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+              DateTime.now(),
+            ),
+          ))
+        .get();
+  }
+
+  Future<List<ReceiptQuoteData>> getReceiptQuotesToday() {
+    return (select(receiptQuote)
+          // ..limit(20, offset: 1)
+          ..where(
+            (t) => t.dateRegister.isBetweenValues(
+              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+              DateTime.now(),
+            ),
+          ))
+        .get();
+  }
+
   Future<List<QuoteData>> getQuotesTimePeriod(
     DateTime initTime,
     DateTime lastTime,

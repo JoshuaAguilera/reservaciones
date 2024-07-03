@@ -100,7 +100,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   ),
                 ],
               ),
-              const Divider(color: Colors.black54),
+              const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: SizedBox(
@@ -163,7 +163,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         comprobante: comprobantes[index],
                         index: index,
                         screenWidth: screenWidth,
-                        expandedSideBar: widget.sideController.extended,
                         seeReceipt: () async {
                           List<Cotizacion> respCotizaciones =
                               await CotizacionService().getCotizacionesByFolio(

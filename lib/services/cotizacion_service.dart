@@ -25,6 +25,8 @@ class CotizacionService extends ChangeNotifier {
           tarifaPreventaAdulto: element.ratePresaleAdult,
           tarifaRealMenor: element.rateRealMinor,
           tarifaPreventaMenor: element.ratePresaleMinor,
+          esPreVenta: element.isPresale,
+          
         ));
       }
       await database.close();
@@ -39,6 +41,26 @@ class CotizacionService extends ChangeNotifier {
   Future<List<QuoteData>> getCotizacionesTimePeriod(
       DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
-    return await dataBase.getQuotesTimePeriod(initTime, lastTime);
+    try {
+      List<QuoteData> resp =
+          await dataBase.getQuotesTimePeriod(initTime, lastTime);
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
+  }
+
+  Future<List<QuoteData>> getCotizacionesActuales() async {
+    final dataBase = AppDatabase();
+    try {
+      List<QuoteData> resp = await dataBase.getQuotesToday();
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
   }
 }

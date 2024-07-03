@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_diarias_model.dart';
+import 'package:generador_formato/models/cotizacion_diaria_model.dart';
+import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:intl/intl.dart';
 
@@ -125,13 +126,16 @@ class Utility {
     return isVisible;
   }
 
-  static double calculateTarifaTotal(List<Cotizacion> cotizaciones, {bool esPreventa = false}) {
+  static double calculateTarifaTotal(List<Cotizacion> cotizaciones,
+      {bool esPreventa = false}) {
     double tarifaTotal = 0;
     for (var element in cotizaciones) {
       int days = DateTime.parse(element.fechaSalida!)
           .difference(DateTime.parse(element.fechaEntrada!))
           .inDays;
-      tarifaTotal += calculateTarifaDiaria(cotizacion: element, esPreventa: esPreventa) * days;
+      tarifaTotal +=
+          calculateTarifaDiaria(cotizacion: element, esPreventa: esPreventa) *
+              days;
     }
 
     return tarifaTotal;
@@ -145,11 +149,11 @@ class Utility {
     return height;
   }
 
-  static List<CotizacionDiaria> getStatics(List<QuoteData> cotizaciones) {
-    List<CotizacionDiaria> listCot = [];
+  static List<ReporteCotizacion> getReportQuotes(List<QuoteData> cotizaciones) {
+    List<ReporteCotizacion> listCot = [];
 
     for (var i = 1; i < 8; i++) {
-      CotizacionDiaria quoteDay = CotizacionDiaria(
+      ReporteCotizacion quoteDay = ReporteCotizacion(
         numCotizacionesGrupales: 0,
         numCotizacionesIndividual: 0,
         numCotizacionesGrupalesPreventa: 0,
@@ -159,10 +163,6 @@ class Utility {
       List<QuoteData> quotes = cotizaciones
           .where((element) => element.registerDate.weekday == i)
           .toList();
-
-      if (i == 2) {
-        quoteDay.numCotizacionesGrupales++;
-      }
 
       for (var element in quotes) {
         if (element.isGroup) {
@@ -206,5 +206,47 @@ class Utility {
       default:
         return "Unknow";
     }
+  }
+
+  static List<CotizacionDiaria> getDailyQuotesReport(
+      List<QuoteData> respToday) {
+    List<CotizacionDiaria> cot = [];
+
+    CotizacionDiaria cotizacionesGrupales =
+        CotizacionDiaria(tipoCotizacion: "Cotizaciones grupales");
+
+    CotizacionDiaria cotizacionesGrupalesPreventa =
+        CotizacionDiaria(tipoCotizacion: "Cotizaciones grupales en Preventa");
+
+    CotizacionDiaria cotizacionesIndividuales =
+        CotizacionDiaria(tipoCotizacion: "Cotizaciones individuales");
+
+    CotizacionDiaria cotizacionesIndividualesPreventa = CotizacionDiaria(
+        tipoCotizacion: "Cotizaciones individuales en Preventa");
+
+    for (var element in respToday) {
+      if (element.isGroup) {
+        if (element.isPresale) {
+          cotizacionesGrupalesPreventa.numCotizaciones++;
+        } else {
+          cotizacionesGrupales.numCotizaciones++;
+        }
+      } else {
+        if (element.isPresale) {
+          cotizacionesIndividualesPreventa.numCotizaciones++;
+        } else {
+          cotizacionesIndividuales.numCotizaciones++;
+        }
+      }
+    }
+
+    cot.addAll([
+      cotizacionesGrupales,
+      cotizacionesIndividuales,
+      cotizacionesGrupalesPreventa,
+      cotizacionesIndividualesPreventa,
+    ]);
+
+    return cot;
   }
 }

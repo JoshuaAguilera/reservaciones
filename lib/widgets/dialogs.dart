@@ -35,7 +35,7 @@ class Dialogs {
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    bool esOferta = false;
+    bool esOferta = cotizacion != null ? cotizacion.esPreVenta!  : false;
     bool isError = false;
 
     return StatefulBuilder(builder: (context, setState) {
@@ -43,7 +43,7 @@ class Dialogs {
         insetPadding: const EdgeInsets.all(10),
         title: TextStyles.titleText(
             text: cotizacion != null ? "Editar" : "Agregar" " cotización",
-            color: WebColors.prussianBlue),
+            color: DesktopColors.prussianBlue),
         content: SingleChildScrollView(
           child: Form(
             key: _formKeyHabitacion,
@@ -350,7 +350,7 @@ class Dialogs {
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
           text: cotizacion != null ? "Editar habitación" : "Agregar habitación",
-          color: WebColors.prussianBlue),
+          color: DesktopColors.prussianBlue),
       content: StatefulBuilder(
         builder: (context, setState) {
           return SingleChildScrollView(
@@ -574,7 +574,7 @@ class Dialogs {
           Icon(
             iconData,
             size: 33,
-            color: WebColors.ceruleanOscure,
+            color: DesktopColors.ceruleanOscure,
           ),
         const SizedBox(width: 10),
         Expanded(
@@ -621,13 +621,13 @@ class Dialogs {
         Icon(
           Icons.date_range_outlined,
           size: 33,
-          color: WebColors.ceruleanOscure,
+          color: DesktopColors.ceruleanOscure,
         ),
         const SizedBox(width: 10),
         Expanded(
             child: TextStyles.titleText(
           text: "Filtrar por fechas",
-          color: WebColors.prussianBlue,
+          color: DesktopColors.prussianBlue,
           size: 18,
         ))
       ]),

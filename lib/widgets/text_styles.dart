@@ -23,22 +23,26 @@ class TextStyles {
   }
 
   static TextStyle styleStandar(
-      {double size = 13, bool isBold = false, bool overClip = false, Color? color}) {
+      {double size = 13,
+      bool isBold = false,
+      bool overClip = false,
+      Color? color}) {
     return TextStyle(
         fontFamily: "poppins_regular",
-        color: color ?? WebColors.prussianBlue,
+        color: color ?? DesktopColors.prussianBlue,
         fontSize: size,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis);
   }
 
-  static Text buttonText({String text = "", TextAlign aling = TextAlign.left}) {
+  static Text buttonText(
+      {String text = "", TextAlign aling = TextAlign.left, double size = 14}) {
     return Text(
       text,
       textAlign: aling,
       style: TextStyle(
-        color: WebColors.turqueza,
-        fontSize: 14,
+        color: DesktopColors.turqueza,
+        fontSize: size,
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_regular",
       ),
@@ -82,7 +86,7 @@ class TextStyles {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontFamily: "poppins_bold",
-          color: color ?? WebColors.cerulean,
+          color: color ?? DesktopColors.cerulean,
           fontWeight: FontWeight.bold,
           fontSize: size,
         ));
@@ -118,7 +122,7 @@ class TextStyles {
         text: numeroFormateado,
         size: 22,
         textAlign: TextAlign.center,
-        color: WebColors.ceruleanOscure);
+        color: DesktopColors.ceruleanOscure);
   }
 
   static Text titlePagText(
@@ -129,7 +133,7 @@ class TextStyles {
       overflow: overflow,
       style: TextStyle(
         fontFamily: "poppins_bold",
-        color: WebColors.prussianBlue,
+        color: DesktopColors.prussianBlue,
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),
@@ -178,14 +182,14 @@ class TextStyles {
   }
 
   static RichText TextAsociative(String title, String content,
-      {bool isInverted = false}) {
+      {bool isInverted = false, double size = 12}) {
     return RichText(
       text: TextSpan(children: [
         if (!isInverted)
-          TextSpan(text: title, style: styleStandar(isBold: true)),
-        TextSpan(text: content, style: styleStandar()),
+          TextSpan(text: title, style: styleStandar(isBold: true, size: size)),
+        TextSpan(text: content, style: styleStandar(size: size)),
         if (isInverted)
-          TextSpan(text: title, style: styleStandar(isBold: true)),
+          TextSpan(text: title, style: styleStandar(isBold: true, size: size)),
       ]),
     );
   }

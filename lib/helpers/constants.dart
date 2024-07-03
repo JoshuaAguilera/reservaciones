@@ -34,3 +34,9 @@ const List<String> filtros = <String>[
   // 'Menos cotizado',
   'Personalizado',
 ];
+
+const List<String> filtrosRegistro = <String>[
+  'Semanal',
+  'Mensual',
+  'Anual',
+];

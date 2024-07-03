@@ -58,7 +58,7 @@ class _ComprobanteDetalleViewState
                       },
                       icon: Icon(
                         CupertinoIcons.chevron_left_circle,
-                        color: WebColors.prussianBlue,
+                        color: DesktopColors.prussianBlue,
                         size: 30,
                       )),
                   Expanded(
@@ -214,7 +214,7 @@ class _ComprobanteDetalleViewState
                           },
                           style: ElevatedButton.styleFrom(
                               elevation: 4,
-                              backgroundColor: WebColors.ceruleanOscure),
+                              backgroundColor: DesktopColors.ceruleanOscure),
                           child: TextStyles.buttonTextStyle(
                               text: "Generar comprobante PDF"),
                         ),
@@ -231,7 +231,7 @@ class _ComprobanteDetalleViewState
                     child: PdfPreview(
                       build: (format) => comprobantePDF.save(),
                       actionBarTheme: PdfActionBarTheme(
-                        backgroundColor: WebColors.ceruleanOscure,
+                        backgroundColor: DesktopColors.ceruleanOscure,
                       ),
                       canChangeOrientation: false,
                       canChangePageFormat: false,

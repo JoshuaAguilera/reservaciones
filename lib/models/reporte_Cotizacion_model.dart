@@ -1,11 +1,11 @@
-class CotizacionDiaria {
+class ReporteCotizacion {
   String? dia;
   int numCotizacionesIndividual;
   int numCotizacionesGrupales;
   int numCotizacionesIndividualPreventa;
   int numCotizacionesGrupalesPreventa;
 
-  CotizacionDiaria({
+  ReporteCotizacion({
     this.dia,
     required this.numCotizacionesIndividual,
     required this.numCotizacionesGrupales,

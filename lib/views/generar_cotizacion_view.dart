@@ -80,7 +80,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             },
                             style: ElevatedButton.styleFrom(
                                 elevation: 4,
-                                backgroundColor: WebColors.prussianBlue),
+                                backgroundColor: DesktopColors.prussianBlue),
                             child: (!Utility.isResizable(
                                     extended: widget.sideController.extended,
                                     context: context,
@@ -95,7 +95,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           )
                       ],
                     ),
-                    const Divider(color: Colors.black54),
+                    // const Divider(color: Colors.black54),
                     if (!isLoading)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,302 +113,346 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 screenWidth: null),
                           ),
                           const SizedBox(height: 15),
-                          TextStyles.titleText(text: "Datos del huesped"),
-                          const SizedBox(height: 15),
-                          TextFormFieldCustom.textFormFieldwithBorder(
-                            name: "Nombre completo",
-                            msgError: "Campo requerido*",
-                            initialValue: comprobante.nombre,
-                            isRequired: true,
-                            onChanged: (p0) {
-                              comprobante.nombre = p0;
-                            },
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child:
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                  name: "Teléfono",
-                                  msgError: "Campo requerido*",
-                                  initialValue: comprobante.telefono,
-                                  isNumeric: true,
-                                  isDecimal: false,
-                                  isRequired: true,
-                                  onChanged: (p0) {
-                                    comprobante.telefono = p0;
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child:
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                  name: "Correo electronico",
-                                  msgError: "Campo requerido*",
-                                  initialValue: comprobante.correo,
-                                  isRequired: true,
-                                  onChanged: (p0) {
-                                    comprobante.correo = p0;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 8),
-                            child: Divider(color: Colors.black54),
-                          ),
-                          TextStyles.titleText(text: "Cotizaciones"),
-                          const SizedBox(height: 15),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: 200,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return (dropdownValue ==
-                                              "Cotización Individual")
-                                          ? Dialogs()
-                                              .habitacionIndividualDialog(
-                                                  buildContext: context)
-                                          : Dialogs().habitacionGrupoDialog(
-                                              buildContext: context);
-                                    },
-                                  ).then((value) {
-                                    if (value != null) {
-                                      setState(() => cotizaciones.add(value));
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    elevation: 4,
-                                    backgroundColor: WebColors.prussianBlue),
-                                child: Text(
-                                  "Agregar cotización",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
+                          Card(
+                            elevation: 6,
+                            child: Padding(
+                              padding: const EdgeInsets.all(14.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextStyles.titleText(
+                                        text: "Datos del huesped",
+                                        textAlign: TextAlign.start),
                                   ),
-                                ),
+                                  const SizedBox(height: 15),
+                                  TextFormFieldCustom.textFormFieldwithBorder(
+                                    name: "Nombre completo",
+                                    msgError: "Campo requerido*",
+                                    initialValue: comprobante.nombre,
+                                    isRequired: true,
+                                    onChanged: (p0) {
+                                      comprobante.nombre = p0;
+                                    },
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: TextFormFieldCustom
+                                            .textFormFieldwithBorder(
+                                          name: "Teléfono",
+                                          msgError: "Campo requerido*",
+                                          initialValue: comprobante.telefono,
+                                          isNumeric: true,
+                                          isDecimal: false,
+                                          isRequired: true,
+                                          onChanged: (p0) {
+                                            comprobante.telefono = p0;
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: TextFormFieldCustom
+                                            .textFormFieldwithBorder(
+                                          name: "Correo electronico",
+                                          msgError: "Campo requerido*",
+                                          initialValue: comprobante.correo,
+                                          isRequired: true,
+                                          onChanged: (p0) {
+                                            comprobante.correo = p0;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Card(
+                            elevation: 6,
+                            child: Padding(
+                              padding: const EdgeInsets.all(14.0),
+                              child: Column(
+                                children: [
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: TextStyles.titleText(
+                                          text: "Cotizaciones")),
+                                  const SizedBox(height: 15),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: SizedBox(
+                                      width: 200,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? Dialogs()
+                                                      .habitacionIndividualDialog(
+                                                          buildContext: context)
+                                                  : Dialogs()
+                                                      .habitacionGrupoDialog(
+                                                          buildContext:
+                                                              context);
+                                            },
+                                          ).then((value) {
+                                            if (value != null) {
+                                              setState(() =>
+                                                  cotizaciones.add(value));
+                                            }
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 4,
+                                            backgroundColor:
+                                                DesktopColors.ceruleanOscure),
+                                        child: Text(
+                                          "Agregar cotización",
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  if (!Utility.isResizable(
+                                      extended: widget.sideController.extended,
+                                      context: context))
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 5),
+                                      child: Table(
+                                        columnWidths: {
+                                          0: const FractionColumnWidth(.05),
+                                          1: const FractionColumnWidth(.15),
+                                          2: const FractionColumnWidth(.1),
+                                          3: const FractionColumnWidth(.1),
+                                          4: const FractionColumnWidth(.1),
+                                          5: FractionColumnWidth(
+                                              (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? .1
+                                                  : 0.22),
+                                          6: FractionColumnWidth(
+                                              (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? .21
+                                                  : .1),
+                                        },
+                                        children: [
+                                          TableRow(children: [
+                                            TextStyles.standardText(
+                                                text: "#",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            TextStyles.standardText(
+                                                text: "Fechas de estancia",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            TextStyles.standardText(
+                                                text: "Adultos",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Individual")
+                                              TextStyles.standardText(
+                                                  text: "Menores 0-6",
+                                                  aling: TextAlign.center,
+                                                  overClip: true),
+                                            TextStyles.standardText(
+                                                text: "Menores 7-12",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            TextStyles.standardText(
+                                                text: (dropdownValue ==
+                                                        "Cotización Individual")
+                                                    ? "Tarifa \nReal"
+                                                    : "Tarifa por noche",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            TextStyles.standardText(
+                                                text: (dropdownValue ==
+                                                        "Cotización Individual")
+                                                    ? "Tarifa de preventa oferta por tiempo limitado"
+                                                    : "Habitaciones",
+                                                aling: TextAlign.center,
+                                                overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Grupos")
+                                              TextStyles.standardText(
+                                                  text: "Subtotal",
+                                                  aling: TextAlign.center,
+                                                  overClip: true)
+                                            else
+                                              TextStyles.standardText(
+                                                  text: "Opciones",
+                                                  aling: TextAlign.center)
+                                          ]),
+                                        ],
+                                      ),
+                                    ),
+                                  const Divider(color: Colors.black54),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: SizedBox(
+                                      height: Utility.limitHeightList(
+                                          cotizaciones.length),
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: cotizaciones.length,
+                                        itemBuilder: (context, index) {
+                                          if (index < cotizaciones.length) {
+                                            return CotizacionIndividualCard(
+                                              key: ObjectKey(
+                                                  cotizaciones[index].hashCode),
+                                              index: index,
+                                              cotizacion: cotizaciones[index],
+                                              compact: !Utility.isResizable(
+                                                  extended: widget
+                                                      .sideController.extended,
+                                                  context: context),
+                                              onPressedDelete: () => setState(
+                                                  () => cotizaciones.remove(
+                                                      cotizaciones[index])),
+                                              onPressedEdit: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return Dialogs()
+                                                        .habitacionIndividualDialog(
+                                                            buildContext:
+                                                                context,
+                                                            cotizacion:
+                                                                cotizaciones[
+                                                                    index]);
+                                                  },
+                                                ).then((value) {
+                                                  if (value != null) {
+                                                    setState(() {
+                                                      cotizaciones[index] =
+                                                          value;
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6.0),
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextStyles.titleText(
+                                        text:
+                                            "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                        size: 16,
+                                        color: DesktopColors.prussianBlue,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 3.0),
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextStyles.titleText(
+                                        text:
+                                            "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                        size: 16,
+                                        color: DesktopColors.prussianBlue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          if (!Utility.isResizable(
-                              extended: widget.sideController.extended,
-                              context: context))
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                              child: Table(
-                                columnWidths: {
-                                  0: const FractionColumnWidth(.05),
-                                  1: const FractionColumnWidth(.15),
-                                  2: const FractionColumnWidth(.1),
-                                  3: const FractionColumnWidth(.1),
-                                  4: const FractionColumnWidth(.1),
-                                  5: FractionColumnWidth(
-                                      (dropdownValue == "Cotización Individual")
-                                          ? .1
-                                          : 0.22),
-                                  6: FractionColumnWidth(
-                                      (dropdownValue == "Cotización Individual")
-                                          ? .21
-                                          : .1),
-                                },
-                                children: [
-                                  TableRow(children: [
-                                    TextStyles.standardText(
-                                        text: "#",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    TextStyles.standardText(
-                                        text: "Fechas de estancia",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    TextStyles.standardText(
-                                        text: "Adultos",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    if (dropdownValue ==
-                                        "Cotización Individual")
-                                      TextStyles.standardText(
-                                          text: "Menores 0-6",
-                                          aling: TextAlign.center,
-                                          overClip: true),
-                                    TextStyles.standardText(
-                                        text: "Menores 7-12",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    TextStyles.standardText(
-                                        text: (dropdownValue ==
-                                                "Cotización Individual")
-                                            ? "Tarifa \nReal"
-                                            : "Tarifa por noche",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    TextStyles.standardText(
-                                        text: (dropdownValue ==
-                                                "Cotización Individual")
-                                            ? "Tarifa de preventa oferta por tiempo limitado"
-                                            : "Habitaciones",
-                                        aling: TextAlign.center,
-                                        overClip: true),
-                                    if (dropdownValue == "Cotización Grupos")
-                                      TextStyles.standardText(
-                                          text: "Subtotal",
-                                          aling: TextAlign.center,
-                                          overClip: true),
-                                    const SizedBox(width: 15)
-                                  ]),
-                                ],
-                              ),
-                            ),
-                          const Divider(color: Colors.black54),
                           Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: SizedBox(
-                              height:
-                                  Utility.limitHeightList(cotizaciones.length),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                itemCount: cotizaciones.length,
-                                itemBuilder: (context, index) {
-                                  if (index < cotizaciones.length) {
-                                    return CotizacionIndividualCard(
-                                      key: ObjectKey(
-                                          cotizaciones[index].hashCode),
-                                      index: index,
-                                      cotizacion: cotizaciones[index],
-                                      compact: !Utility.isResizable(
-                                          extended:
-                                              widget.sideController.extended,
-                                          context: context),
-                                      onPressedDelete: () => setState(() =>
-                                          cotizaciones
-                                              .remove(cotizaciones[index])),
-                                      onPressedEdit: () {
-                                        showDialog(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                width: 200,
+                                height: 40,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    if (_formKeyCotizacion.currentState!
+                                        .validate()) {
+                                      if (cotizaciones.isEmpty) {
+                                        showSnackBar(
+                                          contentType: ContentType.warning,
                                           context: context,
-                                          builder: (context) {
-                                            return Dialogs()
-                                                .habitacionIndividualDialog(
-                                                    buildContext: context,
-                                                    cotizacion:
-                                                        cotizaciones[index]);
-                                          },
-                                        ).then((value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              cotizaciones[index] = value;
-                                            });
-                                          }
-                                        });
-                                      },
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6.0),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: TextStyles.titleText(
-                                text:
-                                    "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
-                                size: 16,
-                                color: WebColors.prussianBlue,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3.0),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: TextStyles.titleText(
-                                text:
-                                    "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
-                                size: 16,
-                                color: WebColors.prussianBlue,
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 12, top: 8),
-                            child: Divider(color: Colors.black54),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: 200,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKeyCotizacion.currentState!
-                                      .validate()) {
-                                    if (cotizaciones.isEmpty) {
-                                      showSnackBar(
-                                        contentType: ContentType.warning,
-                                        context: context,
-                                        title: "Cotizaciones no registradas",
-                                        message:
-                                            "Se requiere al menos una cotización",
-                                      );
-                                      return;
-                                    }
+                                          title: "Cotizaciones no registradas",
+                                          message:
+                                              "Se requiere al menos una cotización",
+                                        );
+                                        return;
+                                      }
 
-                                    setState(() => isLoading = true);
+                                      setState(() => isLoading = true);
 
-                                    if (!(await ComprobanteService()
-                                        .createComprobante(comprobante,
-                                            cotizaciones, folio))) {
+                                      if (!(await ComprobanteService()
+                                          .createComprobante(comprobante,
+                                              cotizaciones, folio))) {
+                                        if (!context.mounted) return;
+                                        showSnackBar(
+                                          contentType: ContentType.failure,
+                                          context: context,
+                                          title:
+                                              "Error al registrar la cotizacion",
+                                          message:
+                                              "Se produjo un error al insertar la nueva cotización.",
+                                        );
+                                        return;
+                                      }
+
+                                      comprobantePDF = await ref
+                                          .watch(CotizacionIndividualProvider
+                                              .provider.notifier)
+                                          .generarComprobante(comprobante);
+
+                                      ref
+                                          .read(comprobanteProvider.notifier)
+                                          .update((state) =>
+                                              ComprobanteCotizacion());
+                                      ref
+                                          .watch(CotizacionIndividualProvider
+                                              .provider.notifier)
+                                          .clear();
+                                      ref
+                                          .read(uniqueFolioProvider.notifier)
+                                          .update((state) =>
+                                              UniqueKey().hashCode.toString());
+
                                       if (!context.mounted) return;
-                                      showSnackBar(
-                                        contentType: ContentType.failure,
-                                        context: context,
-                                        title:
-                                            "Error al registrar la cotizacion",
-                                        message:
-                                            "Se produjo un error al insertar la nueva cotización.",
-                                      );
-                                      return;
+                                      Future.delayed(
+                                          Durations.long2,
+                                          () =>
+                                              setState(() => isFinish = true));
                                     }
-
-                                    comprobantePDF = await ref
-                                        .watch(CotizacionIndividualProvider
-                                            .provider.notifier)
-                                        .generarComprobante(comprobante);
-
-                                    ref
-                                        .read(comprobanteProvider.notifier)
-                                        .update(
-                                            (state) => ComprobanteCotizacion());
-                                    ref
-                                        .watch(CotizacionIndividualProvider
-                                            .provider.notifier)
-                                        .clear();
-                                    ref
-                                        .read(uniqueFolioProvider.notifier)
-                                        .update((state) =>
-                                            UniqueKey().hashCode.toString());
-
-                                    if (!context.mounted) return;
-                                    Future.delayed(Durations.long2,
-                                        () => setState(() => isFinish = true));
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    elevation: 4,
-                                    backgroundColor: WebColors.ceruleanOscure),
-                                child: TextStyles.buttonTextStyle(
-                                    text: "Generar cotización"),
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      elevation: 4,
+                                      backgroundColor:
+                                          DesktopColors.prussianBlue),
+                                  child: TextStyles.buttonTextStyle(
+                                      text: "Generar cotización"),
+                                ),
                               ),
                             ),
                           ),
@@ -418,13 +462,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       ProgressIndicatorCustom(screenHight),
                     if (isFinish)
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                         child: SizedBox(
                           height: screenHight * 0.89,
                           child: PdfPreview(
                             build: (format) => comprobantePDF.save(),
                             actionBarTheme: PdfActionBarTheme(
-                              backgroundColor: WebColors.ceruleanOscure,
+                              backgroundColor: DesktopColors.ceruleanOscure,
                             ),
                             canChangeOrientation: false,
                             canChangePageFormat: false,

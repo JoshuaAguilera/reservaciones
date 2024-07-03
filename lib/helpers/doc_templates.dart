@@ -205,7 +205,7 @@ class DocTemplates {
       pw.Padding(
         padding: pw.EdgeInsets.only(
             left: (cotizaciones.any((element) => element.esPreVenta!))
-                ? 140
+                ? 119
                 : 177),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.9),
@@ -214,7 +214,7 @@ class DocTemplates {
               0: const pw.FixedColumnWidth(100),
               1: const pw.FixedColumnWidth(100),
               if (cotizaciones.any((element) => element.esPreVenta!))
-                2: const pw.FixedColumnWidth(120)
+                2: const pw.FixedColumnWidth(160)
             },
             cellPadding:
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),

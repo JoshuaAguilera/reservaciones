@@ -24,29 +24,38 @@ class SideBar extends StatelessWidget {
       theme: SidebarXTheme(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: WebColors.canvasColor,
+          color: DesktopColors.canvasColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        hoverColor: WebColors.scaffoldBackgroundColor,
-        textStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-        selectedTextStyle: const TextStyle(color: Colors.white),
+        hoverColor: DesktopColors.scaffoldBackgroundColor,
+        textStyle: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontFamily: "poppins_regular",
+            fontSize: 12),
+        selectedTextStyle: const TextStyle(
+            color: Colors.white, fontFamily: "poppins_regular", fontSize: 12),
         hoverTextStyle: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w500,
+          fontSize: 12.5,
+          fontFamily: "poppins_regular",
         ),
         itemTextPadding: const EdgeInsets.only(left: 30),
         selectedItemTextPadding: const EdgeInsets.only(left: 30),
         itemDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: WebColors.canvasColor),
+          border: Border.all(color: DesktopColors.canvasColor),
         ),
         selectedItemDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: WebColors.actionColor.withOpacity(0.37),
+            color: DesktopColors.actionColor.withOpacity(0.37),
           ),
           gradient: LinearGradient(
-            colors: [WebColors.accentCanvasColor, WebColors.canvasColor],
+            colors: [
+              DesktopColors.accentCanvasColor,
+              DesktopColors.canvasColor
+            ],
           ),
           boxShadow: [
             BoxShadow(
@@ -67,10 +76,10 @@ class SideBar extends StatelessWidget {
       extendedTheme: SidebarXTheme(
         width: 200,
         decoration: BoxDecoration(
-          color: WebColors.canvasColor,
+          color: DesktopColors.canvasColor,
         ),
       ),
-      footerDivider: WebColors.divider,
+      footerDivider: DesktopColors.divider,
       headerBuilder: (context, extended) {
         if (extended) {
           return Column(
@@ -99,12 +108,13 @@ class SideBar extends StatelessWidget {
                       decoration: _controller.selectedIndex == 4
                           ? BoxDecoration(
                               border: Border.all(
-                                color: WebColors.actionColor.withOpacity(0.37),
+                                color:
+                                    DesktopColors.actionColor.withOpacity(0.37),
                               ),
                               gradient: LinearGradient(
                                 colors: [
-                                  WebColors.accentCanvasColor,
-                                  WebColors.canvasColor
+                                  DesktopColors.accentCanvasColor,
+                                  DesktopColors.canvasColor
                                 ],
                               ),
                               boxShadow: [
@@ -180,12 +190,13 @@ class SideBar extends StatelessWidget {
                     decoration: _controller.selectedIndex == 4
                         ? BoxDecoration(
                             border: Border.all(
-                              color: WebColors.actionColor.withOpacity(0.37),
+                              color:
+                                  DesktopColors.actionColor.withOpacity(0.37),
                             ),
                             gradient: LinearGradient(
                               colors: [
-                                WebColors.accentCanvasColor,
-                                WebColors.canvasColor
+                                DesktopColors.accentCanvasColor,
+                                DesktopColors.canvasColor
                               ],
                             ),
                             boxShadow: [
@@ -229,6 +240,10 @@ class SideBar extends StatelessWidget {
           icon: Icons.history,
           label: 'Historial',
         ),
+        SidebarXItem(
+          icon: Icons.settings,
+          label: 'Configuracion',
+        ),
       ],
       footerItems: const [
         SidebarXItem(
@@ -236,6 +251,36 @@ class SideBar extends StatelessWidget {
           label: 'Cerrar sesión',
         ),
       ],
+      // footerBuilder: (context, extended) {
+      //   if (!extended) {
+      //     return RotatedBox(
+      //       quarterTurns: 1,
+      //       child: Switch(
+      //         value: true,
+      //         onChanged: (value) {},
+      //       ),
+      //     );
+      //   } else {
+      //     return Padding(
+      //       padding: const EdgeInsets.only(top: 8.0),
+      //       child: Wrap(
+      //         children: [
+      //           Text(
+      //             "Modo oscuro",
+      //             style: TextStyle(
+      //                 color: Colors.white,
+      //                 fontFamily: "poppins_regular",
+      //                 fontSize: 12),
+      //           ),
+      //           Switch(
+      //             value: false,
+      //             onChanged: (value) {},
+      //           )
+      //         ],
+      //       ),
+      //     );
+      //   }
+      // },
     );
   }
 }

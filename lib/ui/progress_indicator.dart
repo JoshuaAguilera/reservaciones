@@ -10,7 +10,7 @@ Widget ProgressIndicatorCustom(double screenHight) {
       child: Column(
         children: [
           CircularProgressIndicator(
-            color: WebColors.prussianBlue,
+            color: DesktopColors.prussianBlue,
           ),
           TextStyles.standardText(
             text: "Espere",

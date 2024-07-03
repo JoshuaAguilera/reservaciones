@@ -121,4 +121,16 @@ class ComprobanteService extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<List<ReceiptQuoteData>> getComprobantesActuales() async {
+    final dataBase = AppDatabase();
+    try {
+      List<ReceiptQuoteData> resp = await dataBase.getReceiptQuotesToday();
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
+  }
 }

@@ -109,6 +109,7 @@ class _TableRowCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.blue[100],
       elevation: 5,
       child: Container(
         padding: const EdgeInsets.all(10.0),
@@ -155,15 +156,15 @@ class _TableRowCotizacion extends StatelessWidget {
                         overClip: true),
                     TextStyles.standardText(
                         text: Utility.formatterNumber(
-                            cotizacion.tarifaRealAdulto!),
+                            Utility.calculateTarifaDiaria(
+                                cotizacion: cotizacion)),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: (cotizacion.tarifaPreventaAdulto != null)
-                            ? Utility.formatterNumber(
-                                cotizacion.tarifaPreventaAdulto!)
-                            : Utility.formatterNumber(
-                                cotizacion.tarifaRealAdulto!),
+                        text: Utility.formatterNumber(
+                            Utility.calculateTarifaDiaria(
+                                cotizacion: cotizacion,
+                                esPreventa: cotizacion.esPreVenta!)),
                         aling: TextAlign.center,
                         overClip: true),
                     if (!esDetalle)
@@ -174,7 +175,7 @@ class _TableRowCotizacion extends StatelessWidget {
                               onPressed: onPressedEdit,
                               icon: Icon(
                                 Icons.edit,
-                                color: WebColors.turqueza,
+                                color: DesktopColors.turqueza,
                               )),
                           IconButton(
                               onPressed: onPressedDelete,
@@ -221,6 +222,7 @@ class _ListTileCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.blue[100],
       elevation: 5,
       child: ListTile(
         leading: TextStyles.TextSpecial(day: index + 1),
@@ -261,7 +263,7 @@ class _ListTileCotizacion extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.edit, color: WebColors.turqueza),
+                        Icon(Icons.edit, color: DesktopColors.turqueza),
                         TextStyles.standardText(text: "Editar")
                       ],
                     ),

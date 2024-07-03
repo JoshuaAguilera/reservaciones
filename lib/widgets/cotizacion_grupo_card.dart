@@ -156,7 +156,7 @@ class _TableRowCotizacion extends StatelessWidget {
                             onPressed: onPressedEdit,
                             icon: Icon(
                               Icons.edit,
-                              color: WebColors.turqueza,
+                              color: DesktopColors.turqueza,
                             )),
                         IconButton(
                             onPressed: onPressedDelete,
@@ -232,7 +232,7 @@ class _ListTileCotizacion extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.edit, color: WebColors.turqueza),
+                  Icon(Icons.edit, color: DesktopColors.turqueza),
                   TextStyles.standardText(text: "Editar")
                 ],
               ),

@@ -52,7 +52,7 @@ class _SelectableButtonState extends State<SelectableButton> {
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(isBold: true),
               ),
-              foregroundColor: WidgetStatePropertyAll(widget.selected ? WebColors.ceruleanOscure : Colors.grey[700]))
+              foregroundColor: WidgetStatePropertyAll(widget.selected ? DesktopColors.ceruleanOscure : Colors.grey[700]))
           : ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
               shape: MaterialStatePropertyAll(

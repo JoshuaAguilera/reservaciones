@@ -34,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
           width: screenWidth,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Colors.white, WebColors.cerulean],
+                colors: [Colors.white, DesktopColors.cerulean],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter),
           ),
@@ -79,7 +79,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
-                                color: WebColors.prussianBlue,
+                                color: DesktopColors.prussianBlue,
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
                               Container(
@@ -144,7 +144,7 @@ class _LoginViewState extends State<LoginView> {
                                           _passwordVisible
                                               ? CupertinoIcons.eye_solid
                                               : CupertinoIcons.eye_slash_fill,
-                                          color: WebColors.cerulean,
+                                          color: DesktopColors.cerulean,
                                         ),
                                         onPressed: () {
                                           setState(() {
@@ -171,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: WebColors.prussianBlue),
+                                      backgroundColor: DesktopColors.prussianBlue),
                                   child: TextStyles.buttonTextStyle(
                                       text: "Ingresar"),
                                 ),

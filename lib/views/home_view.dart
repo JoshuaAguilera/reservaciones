@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
       key: _key,
       appBar: isSmallScreen
           ? AppBar(
-              backgroundColor: WebColors.canvasColor,
+              backgroundColor: DesktopColors.canvasColor,
               title: TextStyles.titleText(
                   color: Colors.white,
                   text: Utility.getTitleByIndex(_controller.selectedIndex)),
