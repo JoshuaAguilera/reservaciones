@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/helpers/utility.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomWidgets {
   static Widget dropdownMenuCustom(
       {required String initialSelection,
       required void Function(String?)? onSelected,
       required List<String> elements,
+      double fontSize = 13,
       double? screenWidth}) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -17,9 +17,8 @@ class CustomWidgets {
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,
-          textStyle: GoogleFonts.poppins(
-              fontSize: 13,
-              textStyle: const TextStyle(overflow: TextOverflow.ellipsis)),
+          textStyle:
+              TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
           dropdownMenuEntries:
               elements.map<DropdownMenuEntry<String>>((String value) {
             return DropdownMenuEntry<String>(
@@ -27,10 +26,7 @@ class CustomWidgets {
               label: value,
               style: ButtonStyle(
                 textStyle: WidgetStatePropertyAll(
-                  GoogleFonts.poppins(
-                      fontSize: 13,
-                      textStyle:
-                          const TextStyle(overflow: TextOverflow.ellipsis)),
+                  TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
                 ),
               ),
             );

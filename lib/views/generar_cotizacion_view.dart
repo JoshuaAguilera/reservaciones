@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,11 +17,11 @@ import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 import '../helpers/constants.dart';
 
@@ -216,11 +218,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             elevation: 4,
                                             backgroundColor:
                                                 DesktopColors.ceruleanOscure),
-                                        child: Text(
+                                        child: const Text(
                                           "Agregar cotización",
-                                          style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: TextStyle(
+                                              fontFamily: "poppins_bold"),
                                         ),
                                       ),
                                     ),
@@ -395,7 +396,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         .validate()) {
                                       if (cotizaciones.isEmpty) {
                                         showSnackBar(
-                                          contentType: ContentType.warning,
+                                          type: "alert",
                                           context: context,
                                           title: "Cotizaciones no registradas",
                                           message:
@@ -411,7 +412,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               cotizaciones, folio))) {
                                         if (!context.mounted) return;
                                         showSnackBar(
-                                          contentType: ContentType.failure,
+                                          type: "danger",
                                           context: context,
                                           title:
                                               "Error al registrar la cotizacion",
@@ -486,11 +487,73 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   );
                                 },
                                 icon: const Icon(
-                                  CupertinoIcons.arrow_down_doc_fill,
+                                  CupertinoIcons.reply_thick_solid,
                                   color: Colors.white,
                                   size: 22,
                                 ),
                               ),
+                              IconButton(
+                                onPressed: () async {
+                                  String username = 'sys2@coralbluehuatulco.mx';
+                                  String password = 'Sys2024CB';
+
+                                  final smtpServer = SmtpServer(
+                                    "mail.coralbluehuatulco.mx",
+                                    username: username,
+                                    password: password,
+                                    port: 465,
+                                    ssl: true,
+                                  );
+
+                                  final message = Message()
+                                    ..from = Address(username, 'EL ETESECH')
+                                    ..recipients
+                                        .add('coralbluehuatulco@outlook.com')
+                                    // ..ccRecipients.addAll([
+                                    //   'destCc1@example.com',
+                                    //   'destCc2@example.com'
+                                    // ])
+                                    ..bccRecipients.add(Address(
+                                        'sistemas@coralbluehuatulco.mx'))
+                                    ..subject =
+                                        'Test Dart Mailer library :: 😀 :: ${DateTime.now()}'
+                                    ..text =
+                                        'This is the plain text.\nThis is line 2 of the text part.'
+                                    ..html =
+                                        "<h1>Test</h1>\n<p>Hey! Here's some HTML content</p>";
+
+                                  try {
+                                    final sendReport =
+                                        await send(message, smtpServer);
+                                    print('Message sent: ' +
+                                        sendReport.toString());
+                                  } on MailerException catch (e) {
+                                    print('Message not sent.');
+                                    for (var p in e.problems) {
+                                      print('Problem: ${p.code}: ${p.msg}');
+                                    }
+                                  }
+                                  // Sending multiple messages with the same connection
+                                  //
+                                  // Create a smtp client that will persist the connection
+                                  var connection =
+                                      PersistentConnection(smtpServer);
+
+                                  // Send the first message
+                                  await connection.send(message);
+
+                                  // send the equivalent message
+                                  // await connection.send(equivalentMessage);
+
+                                  // close the connection
+                                  await connection.close();
+                                },
+                                icon: const Icon(
+                                  CupertinoIcons.mail,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              )
                             ],
                           ),
                         ),

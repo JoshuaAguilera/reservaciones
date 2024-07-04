@@ -188,6 +188,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
                           widget.sideController.selectIndex(12);
                         },
+                        delay: index,
                         deleteReceipt: () {
                           showDialog(
                             context: context,

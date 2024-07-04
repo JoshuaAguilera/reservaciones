@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
+import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+
+import '../ui/show_snackbar.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -16,6 +19,7 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passwordController = TextEditingController();
   final _formKeyLogin = GlobalKey<FormState>();
   bool _passwordVisible = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -51,10 +55,9 @@ class _LoginViewState extends State<LoginView> {
             child: Center(
               child: SizedBox(
                 width: 700,
-                height: screenWidth > 350 ? 450 : 360,
+                height: screenWidth > 350 ? 450 : 390,
                 child: Card(
                   elevation: 6,
-                  color: Colors.white,
                   child: Row(
                     mainAxisAlignment: (screenWidth > 700)
                         ? MainAxisAlignment.spaceBetween
@@ -95,6 +98,7 @@ class _LoginViewState extends State<LoginView> {
                                   maxHeight: 100.0,
                                 ),
                                 child: TextFormField(
+                                  enabled: !isLoading,
                                   controller: userNameController,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -125,6 +129,7 @@ class _LoginViewState extends State<LoginView> {
                                   maxHeight: 100.0,
                                 ),
                                 child: TextFormField(
+                                  enabled: !isLoading,
                                   controller: passwordController,
                                   obscureText: _passwordVisible,
                                   validator: (value) {
@@ -160,9 +165,38 @@ class _LoginViewState extends State<LoginView> {
                                 width: 120,
                                 height: screenWidth > 350 ? 40 : 35,
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    setState(() => isLoading = true);
                                     if (_formKeyLogin.currentState!
                                         .validate()) {
+                                      if (!await AuthService().foundUserName(
+                                          userNameController.text)) {
+                                        setState(() => isLoading = false);
+                                        showSnackBar(
+                                          type: "alert",
+                                          context: context,
+                                          title: "Usuario no encontrado",
+                                          message:
+                                              "No se tiene registro del usuario: ${userNameController.text}",
+                                        );
+                                        return;
+                                      }
+
+                                      if (!await AuthService().loginUser(
+                                          userNameController.text,
+                                          passwordController.text)) {
+                                        setState(() => isLoading = false);
+                                        showSnackBar(
+                                          type: "danger",
+                                          context: context,
+                                          title:
+                                              "Usuario y contraseña incorrectos",
+                                          message:
+                                              "Nombre de usuario o contraseña no válidos",
+                                        );
+                                        return;
+                                      }
+
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -171,9 +205,28 @@ class _LoginViewState extends State<LoginView> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: DesktopColors.prussianBlue),
-                                  child: TextStyles.buttonTextStyle(
-                                      text: "Ingresar"),
+                                      backgroundColor: isLoading
+                                          ? DesktopColors.cerulean
+                                          : DesktopColors.prussianBlue),
+                                  child: Row(
+                                    mainAxisAlignment: isLoading
+                                        ? MainAxisAlignment.spaceAround
+                                        : MainAxisAlignment.center,
+                                    children: [
+                                      if (isLoading)
+                                        const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white),
+                                        ),
+                                      TextStyles.buttonTextStyle(
+                                          text: !isLoading
+                                              ? "Ingresar"
+                                              : "Espere"),
+                                    ],
+                                  ),
                                 ),
                               )
                             ],

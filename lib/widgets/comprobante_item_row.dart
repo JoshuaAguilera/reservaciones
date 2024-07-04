@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/helpers/utility.dart';
 
@@ -15,6 +16,7 @@ class ComprobanteItemRow extends StatefulWidget {
     this.seeReceipt,
     this.deleteReceipt,
     this.isQuery = false,
+    this.delay = 0,
   }) : super(key: key);
 
   final ReceiptQuoteData comprobante;
@@ -23,6 +25,7 @@ class ComprobanteItemRow extends StatefulWidget {
   final void Function()? seeReceipt;
   final void Function()? deleteReceipt;
   final bool isQuery;
+  final int delay;
 
   @override
   State<ComprobanteItemRow> createState() => _ComprobanteItemRowState();
@@ -105,7 +108,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   ],
                 ),
         ),
-      ),
+      ).animate().fadeIn(delay: Duration(milliseconds: 100 * widget.delay)),
     );
   }
 }

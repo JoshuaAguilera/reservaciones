@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/helpers/constants.dart';
 import 'package:generador_formato/helpers/utility.dart';
 import 'package:generador_formato/helpers/web_colors.dart';
 import 'package:generador_formato/models/cotizacion_diaria_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
+import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/services/comprobante_service.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -16,16 +20,16 @@ import '../widgets/comprobante_item_row.dart';
 import '../widgets/custom_widgets.dart';
 import '../widgets/text_styles.dart';
 
-class DashboardView extends StatefulWidget {
+class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key, required this.sideController});
 
   final SidebarXController sideController;
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
+  _DashboardViewState createState() => _DashboardViewState();
 }
 
-class _DashboardViewState extends State<DashboardView> {
+class _DashboardViewState extends ConsumerState<DashboardView> {
   List<QuoteData> cotizaciones = [];
   List<ReporteCotizacion> reportQuotes = [];
   List<CotizacionDiaria> todayQuotes = [];
@@ -33,6 +37,7 @@ class _DashboardViewState extends State<DashboardView> {
   bool isLoading = false;
   late TooltipBehavior _tooltipBehavior;
   String dropdownValue = filtrosRegistro.first;
+  final GlobalKey<TooltipState> messageKey = GlobalKey<TooltipState>();
 
   @override
   void initState() {
@@ -52,7 +57,7 @@ class _DashboardViewState extends State<DashboardView> {
     List<QuoteData> respToday =
         await CotizacionService().getCotizacionesActuales();
     List<ReceiptQuoteData> respLatest =
-        await ComprobanteService().getComprobantesActuales();
+        await ComprobanteService().getComprobantesRecientes();
     if (!mounted) return;
     setState(() {
       cotizaciones = resp;
@@ -67,6 +72,8 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    final notificaciones = ref.watch(NotificacionProvider.provider);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -81,23 +88,20 @@ class _DashboardViewState extends State<DashboardView> {
                   TextStyles.titlePagText(text: "Dashboard"),
                   Row(
                     children: [
+                      NotificationWidget.notificationsWidget(
+                          key: messageKey,
+                          screenWidth: screenWidth,
+                          notifications: notificaciones),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          widget.sideController.selectIndex(3);
+                        },
                         icon: Icon(
-                          CupertinoIcons.bell_solid,
+                          Icons.settings,
                           color: DesktopColors.cerulean,
                           size: 26,
                         ),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            widget.sideController.selectIndex(3);
-                          },
-                          icon: Icon(
-                            Icons.settings,
-                            color: DesktopColors.cerulean,
-                            size: 26,
-                          )),
                     ],
                   )
                 ],
@@ -128,6 +132,7 @@ class _DashboardViewState extends State<DashboardView> {
                                           overClip: true,
                                           size: 16),
                                       CustomWidgets.dropdownMenuCustom(
+                                          fontSize: 12,
                                           initialSelection:
                                               filtrosRegistro.first,
                                           onSelected: (String? value) {
@@ -234,15 +239,17 @@ class _DashboardViewState extends State<DashboardView> {
                               ],
                             ),
                           ),
-                        ),
+                        ).animate().fadeIn(),
                       ),
                       Expanded(
                         child: SizedBox(
                           height: 500,
-                          child: Card(
+                          child: const Card(
                             elevation: 5,
-                            child: const SizedBox(),
-                          ),
+                            child: SizedBox(),
+                          )
+                              .animate()
+                              .fadeIn(delay: const Duration(milliseconds: 500)),
                         ),
                       )
                     ],
@@ -260,117 +267,160 @@ class _DashboardViewState extends State<DashboardView> {
                           flex: 2,
                           child: SizedBox(
                             height: 400,
-                            child: Card(
-                              elevation: 5,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                            child: Stack(
+                              children: [
+                                Card(
+                                  elevation: 5,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 12.0, left: 20),
+                                        child: TextStyles.standardText(
+                                          isBold: true,
+                                          text: "Reporte de hoy",
+                                          size: 16,
+                                        ),
+                                      ),
+                                      SfCircularChart(
+                                        tooltipBehavior:
+                                            !Utility.foundQuotes(todayQuotes)
+                                                ? null
+                                                : _tooltipBehavior,
+                                        palette: [
+                                          DesktopColors.cotGroupColor,
+                                          DesktopColors.cotIndColor,
+                                          DesktopColors.cotGroupPreColor,
+                                          DesktopColors.cotIndPreColor
+                                        ],
+                                        legend: Legend(
+                                          isVisible: true,
+                                          textStyle:
+                                              TextStyles.styleStandar(size: 11),
+                                          overflowMode:
+                                              LegendItemOverflowMode.wrap,
+                                          position: LegendPosition.bottom,
+                                        ),
+                                        series: [
+                                          DoughnutSeries<CotizacionDiaria,
+                                              String>(
+                                            dataSource: todayQuotes,
+                                            xValueMapper: (datum, index) =>
+                                                datum.tipoCotizacion,
+                                            yValueMapper: (datum, index) =>
+                                                datum.numCotizaciones,
+                                            enableTooltip: true,
+                                            dataLabelSettings:
+                                                const DataLabelSettings(
+                                                    isVisible: true,
+                                                    showZeroValue: false,
+                                                    textStyle: TextStyle(
+                                                        fontFamily:
+                                                            "poppins_regular",
+                                                        fontSize: 11)),
+                                          ),
+                                          if (!Utility.foundQuotes(todayQuotes))
+                                            DoughnutSeries<CotizacionDiaria,
+                                                String>(
+                                              dataSource: [
+                                                CotizacionDiaria(
+                                                    tipoCotizacion:
+                                                        "Sin resultados",
+                                                    numCotizaciones: 1)
+                                              ],
+                                              xValueMapper: (datum, index) =>
+                                                  datum.tipoCotizacion,
+                                              yValueMapper: (datum, index) =>
+                                                  datum.numCotizaciones,
+                                            )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ).animate().fadeIn(
+                                    delay: const Duration(milliseconds: 750)),
+                                if (!Utility.foundQuotes(todayQuotes))
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 12.0, left: 20),
-                                    child: TextStyles.standardText(
-                                      isBold: true,
-                                      text: "Reporte de hoy",
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SfCircularChart(
-                                    tooltipBehavior: _tooltipBehavior,
-                                    palette: [
-                                      DesktopColors.cotGroupColor,
-                                      DesktopColors.cotIndColor,
-                                      DesktopColors.cotGroupPreColor,
-                                      DesktopColors.cotIndPreColor
-                                    ],
-                                    legend: Legend(
-                                      isVisible: true,
-                                      textStyle:
-                                          TextStyles.styleStandar(size: 11),
-                                      overflowMode: LegendItemOverflowMode.wrap,
-                                      position: LegendPosition.bottom,
-                                    ),
-                                    series: [
-                                      DoughnutSeries<CotizacionDiaria, String>(
-                                        dataSource: todayQuotes,
-                                        xValueMapper: (datum, index) =>
-                                            datum.tipoCotizacion,
-                                        yValueMapper: (datum, index) =>
-                                            datum.numCotizaciones,
-                                        enableTooltip: true,
-                                        dataLabelSettings:
-                                            const DataLabelSettings(
-                                                isVisible: true,
-                                                showZeroValue: false,
-                                                textStyle: TextStyle(
-                                                    fontFamily:
-                                                        "poppins_regular",
-                                                    fontSize: 11)),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    padding:
+                                        const EdgeInsets.only(bottom: 85.0),
+                                    child: Center(
+                                        child: TextStyles.standardText(
+                                            text: "Sin resultados", size: 11)),
+                                  ).animate().fadeIn(
+                                      delay: const Duration(milliseconds: 850))
+                              ],
                             ),
                           ),
                         ),
                         Expanded(
                           flex: 3,
                           child: SizedBox(
-                            height: 400,
-                            child: Card(
-                              elevation: 4,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 12, top: 12, bottom: 10, left: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8, bottom: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          TextStyles.standardText(
-                                              isBold: true,
-                                              text: "Ultimas cotizaciones",
-                                              size: 16),
-                                          TextButton(
-                                            onPressed: () {
-                                              widget.sideController
-                                                  .selectIndex(2);
+                              height: 400,
+                              child: Card(
+                                elevation: 4,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 12, top: 12, bottom: 10, left: 12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8, bottom: 5),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TextStyles.standardText(
+                                                isBold: true,
+                                                text: "Ultimas cotizaciones",
+                                                size: 16),
+                                            TextButton(
+                                              onPressed: () {
+                                                widget.sideController
+                                                    .selectIndex(2);
+                                              },
+                                              child: TextStyles.buttonText(
+                                                  text: "Mostrar todos",
+                                                  size: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (ultimasCotizaciones.isEmpty)
+                                        Center(
+                                            child: TextStyles.standardText(
+                                                text:
+                                                    "No se encontraron cotizaciones"))
+                                      else
+                                        SizedBox(
+                                          width: screenWidth,
+                                          height: 330,
+                                          child: ListView.builder(
+                                            itemCount:
+                                                ultimasCotizaciones.length,
+                                            shrinkWrap: false,
+                                            itemBuilder: (context, index) {
+                                              return ComprobanteItemRow(
+                                                delay: index,
+                                                key: UniqueKey(),
+                                                comprobante:
+                                                    ultimasCotizaciones[index],
+                                                index: index,
+                                                screenWidth: screenWidth,
+                                                isQuery: true,
+                                              );
                                             },
-                                            child: TextStyles.buttonText(
-                                                text: "Mostrar todos",
-                                                size: 12),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: screenWidth,
-                                      height: 330,
-                                      child: ListView.builder(
-                                        itemCount: ultimasCotizaciones.length,
-                                        shrinkWrap: false,
-                                        itemBuilder: (context, index) {
-                                          return ComprobanteItemRow(
-                                            key: UniqueKey(),
-                                            comprobante:
-                                                ultimasCotizaciones[index],
-                                            index: index,
-                                            screenWidth: screenWidth,
-                                            isQuery: true,
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  ],
+                                        )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
+                              ).animate().fadeIn(
+                                  delay: const Duration(milliseconds: 1050))),
                         ),
                       ],
                     ),

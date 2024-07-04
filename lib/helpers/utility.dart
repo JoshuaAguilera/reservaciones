@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/cotizacion_diaria_model.dart';
@@ -248,5 +249,45 @@ class Utility {
     ]);
 
     return cot;
+  }
+
+  static bool foundQuotes(List<CotizacionDiaria> todayQuotes) {
+    bool withQuotes = false;
+
+    for (var element in todayQuotes) {
+      if (element.numCotizaciones > 0) {
+        withQuotes = true;
+      }
+    }
+
+    return withQuotes;
+  }
+
+  static Color? getColorNavbar(String type) {
+    switch (type) {
+      case "alert":
+        return Colors.amber[700];
+      case "danger":
+        return Colors.red[800];
+      case "success":
+        return Colors.green[700];
+      case "info":
+        return Colors.blue[400];
+      default:
+    }
+  }
+
+  static IconData? getIconNavbar(String type) {
+    switch (type) {
+      case "alert":
+        return CupertinoIcons.exclamationmark_octagon;
+      case "danger":
+        return CupertinoIcons.exclamationmark_triangle;
+      case "success":
+        return CupertinoIcons.checkmark_alt;
+      case "info":
+        return CupertinoIcons.exclamationmark_bubble;
+      default:
+    }
   }
 }

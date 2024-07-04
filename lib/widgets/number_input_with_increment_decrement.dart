@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
   final void Function(String)? onChanged;
@@ -54,10 +53,12 @@ class _NumberInputWithIncrementDecrementState
               child: TextFormField(
                 onChanged: (value) => widget.onChanged!.call(value),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(fontSize: 13),
-                decoration: InputDecoration(
+                style: const TextStyle(
+                    fontFamily: "poppins_regular", fontSize: 13),
+                decoration: const InputDecoration(
                   border: InputBorder.none,
-                  labelStyle: GoogleFonts.poppins(fontSize: 13),
+                  labelStyle:
+                      TextStyle(fontFamily: "poppins_regular", fontSize: 13),
                 ),
                 controller: _controller,
                 keyboardType: const TextInputType.numberWithOptions(

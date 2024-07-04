@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../helpers/web_colors.dart';
@@ -142,7 +141,7 @@ class SideBar extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             flex: 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,14 +149,18 @@ class SideBar extends StatelessWidget {
                                 Text(
                                   "Username",
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.white, fontSize: 14),
+                                  style: TextStyle(
+                                      fontFamily: "poppins_regular",
+                                      fontSize: 14,
+                                      color: Colors.white),
                                 ),
                                 Text(
                                   "188 cotizaciones",
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.white, fontSize: 11),
+                                  style: TextStyle(
+                                      fontFamily: "poppins_regular",
+                                      color: Colors.white,
+                                      fontSize: 11),
                                 )
                               ],
                             ),

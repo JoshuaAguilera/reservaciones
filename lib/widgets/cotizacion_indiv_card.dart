@@ -172,17 +172,19 @@ class _TableRowCotizacion extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                              onPressed: onPressedEdit,
-                              icon: Icon(
-                                Icons.edit,
-                                color: DesktopColors.turqueza,
-                              )),
+                            onPressed: onPressedEdit,
+                            icon: Icon(
+                              Icons.edit,
+                              color: DesktopColors.cerulean,
+                            ),
+                          ),
                           IconButton(
-                              onPressed: onPressedDelete,
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red[800],
-                              )),
+                            onPressed: onPressedDelete,
+                            icon: Icon(
+                              Icons.delete,
+                              color: DesktopColors.ceruleanOscure,
+                            ),
+                          ),
                         ],
                       ),
                   ],

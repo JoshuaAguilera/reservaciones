@@ -3,180 +3,6 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $RolUserTable extends RolUser with TableInfo<$RolUserTable, RolUserData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $RolUserTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
-  @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns => [id, description];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'rol_user';
-  @override
-  VerificationContext validateIntegrity(Insertable<RolUserData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('description')) {
-      context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  RolUserData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return RolUserData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-    );
-  }
-
-  @override
-  $RolUserTable createAlias(String alias) {
-    return $RolUserTable(attachedDatabase, alias);
-  }
-}
-
-class RolUserData extends DataClass implements Insertable<RolUserData> {
-  final int id;
-  final String description;
-  const RolUserData({required this.id, required this.description});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['description'] = Variable<String>(description);
-    return map;
-  }
-
-  RolUserCompanion toCompanion(bool nullToAbsent) {
-    return RolUserCompanion(
-      id: Value(id),
-      description: Value(description),
-    );
-  }
-
-  factory RolUserData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return RolUserData(
-      id: serializer.fromJson<int>(json['id']),
-      description: serializer.fromJson<String>(json['description']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'description': serializer.toJson<String>(description),
-    };
-  }
-
-  RolUserData copyWith({int? id, String? description}) => RolUserData(
-        id: id ?? this.id,
-        description: description ?? this.description,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('RolUserData(')
-          ..write('id: $id, ')
-          ..write('description: $description')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, description);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is RolUserData &&
-          other.id == this.id &&
-          other.description == this.description);
-}
-
-class RolUserCompanion extends UpdateCompanion<RolUserData> {
-  final Value<int> id;
-  final Value<String> description;
-  const RolUserCompanion({
-    this.id = const Value.absent(),
-    this.description = const Value.absent(),
-  });
-  RolUserCompanion.insert({
-    this.id = const Value.absent(),
-    required String description,
-  }) : description = Value(description);
-  static Insertable<RolUserData> custom({
-    Expression<int>? id,
-    Expression<String>? description,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (description != null) 'description': description,
-    });
-  }
-
-  RolUserCompanion copyWith({Value<int>? id, Value<String>? description}) {
-    return RolUserCompanion(
-      id: id ?? this.id,
-      description: description ?? this.description,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('RolUserCompanion(')
-          ..write('id: $id, ')
-          ..write('description: $description')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -204,12 +30,9 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _rolMeta = const VerificationMeta('rol');
   @override
-  late final GeneratedColumn<int> rol = GeneratedColumn<int>(
-      'rol', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES rol_user (id)'));
+  late final GeneratedColumn<String> rol = GeneratedColumn<String>(
+      'rol', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, name, password, rol];
   @override
@@ -240,6 +63,8 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     if (data.containsKey('rol')) {
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
+    } else if (isInserting) {
+      context.missing(_rolMeta);
     }
     return context;
   }
@@ -257,7 +82,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
       rol: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}rol']),
+          .read(DriftSqlType.string, data['${effectivePrefix}rol'])!,
     );
   }
 
@@ -271,18 +96,19 @@ class User extends DataClass implements Insertable<User> {
   final int id;
   final String name;
   final String password;
-  final int? rol;
+  final String rol;
   const User(
-      {required this.id, required this.name, required this.password, this.rol});
+      {required this.id,
+      required this.name,
+      required this.password,
+      required this.rol});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['password'] = Variable<String>(password);
-    if (!nullToAbsent || rol != null) {
-      map['rol'] = Variable<int>(rol);
-    }
+    map['rol'] = Variable<String>(rol);
     return map;
   }
 
@@ -291,7 +117,7 @@ class User extends DataClass implements Insertable<User> {
       id: Value(id),
       name: Value(name),
       password: Value(password),
-      rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
+      rol: Value(rol),
     );
   }
 
@@ -302,7 +128,7 @@ class User extends DataClass implements Insertable<User> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       password: serializer.fromJson<String>(json['password']),
-      rol: serializer.fromJson<int?>(json['rol']),
+      rol: serializer.fromJson<String>(json['rol']),
     );
   }
   @override
@@ -312,20 +138,15 @@ class User extends DataClass implements Insertable<User> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'password': serializer.toJson<String>(password),
-      'rol': serializer.toJson<int?>(rol),
+      'rol': serializer.toJson<String>(rol),
     };
   }
 
-  User copyWith(
-          {int? id,
-          String? name,
-          String? password,
-          Value<int?> rol = const Value.absent()}) =>
-      User(
+  User copyWith({int? id, String? name, String? password, String? rol}) => User(
         id: id ?? this.id,
         name: name ?? this.name,
         password: password ?? this.password,
-        rol: rol.present ? rol.value : this.rol,
+        rol: rol ?? this.rol,
       );
   @override
   String toString() {
@@ -354,7 +175,7 @@ class UsersCompanion extends UpdateCompanion<User> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> password;
-  final Value<int?> rol;
+  final Value<String> rol;
   const UsersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -365,14 +186,15 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.id = const Value.absent(),
     required String name,
     required String password,
-    this.rol = const Value.absent(),
+    required String rol,
   })  : name = Value(name),
-        password = Value(password);
+        password = Value(password),
+        rol = Value(rol);
   static Insertable<User> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? password,
-    Expression<int>? rol,
+    Expression<String>? rol,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -386,7 +208,7 @@ class UsersCompanion extends UpdateCompanion<User> {
       {Value<int>? id,
       Value<String>? name,
       Value<String>? password,
-      Value<int?>? rol}) {
+      Value<String>? rol}) {
     return UsersCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -408,7 +230,7 @@ class UsersCompanion extends UpdateCompanion<User> {
       map['password'] = Variable<String>(password.value);
     }
     if (rol.present) {
-      map['rol'] = Variable<int>(rol.value);
+      map['rol'] = Variable<String>(rol.value);
     }
     return map;
   }
@@ -1604,7 +1426,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
-  late final $RolUserTable rolUser = $RolUserTable(this);
   late final $UsersTable users = $UsersTable(this);
   late final $ReceiptQuoteTable receiptQuote = $ReceiptQuoteTable(this);
   late final $QuoteTable quote = $QuoteTable(this);
@@ -1613,119 +1434,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [rolUser, users, receiptQuote, quote];
-}
-
-typedef $$RolUserTableInsertCompanionBuilder = RolUserCompanion Function({
-  Value<int> id,
-  required String description,
-});
-typedef $$RolUserTableUpdateCompanionBuilder = RolUserCompanion Function({
-  Value<int> id,
-  Value<String> description,
-});
-
-class $$RolUserTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $RolUserTable,
-    RolUserData,
-    $$RolUserTableFilterComposer,
-    $$RolUserTableOrderingComposer,
-    $$RolUserTableProcessedTableManager,
-    $$RolUserTableInsertCompanionBuilder,
-    $$RolUserTableUpdateCompanionBuilder> {
-  $$RolUserTableTableManager(_$AppDatabase db, $RolUserTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$RolUserTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$RolUserTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$RolUserTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> description = const Value.absent(),
-          }) =>
-              RolUserCompanion(
-            id: id,
-            description: description,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String description,
-          }) =>
-              RolUserCompanion.insert(
-            id: id,
-            description: description,
-          ),
-        ));
-}
-
-class $$RolUserTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $RolUserTable,
-    RolUserData,
-    $$RolUserTableFilterComposer,
-    $$RolUserTableOrderingComposer,
-    $$RolUserTableProcessedTableManager,
-    $$RolUserTableInsertCompanionBuilder,
-    $$RolUserTableUpdateCompanionBuilder> {
-  $$RolUserTableProcessedTableManager(super.$state);
-}
-
-class $$RolUserTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $RolUserTable> {
-  $$RolUserTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ComposableFilter usersRefs(
-      ComposableFilter Function($$UsersTableFilterComposer f) f) {
-    final $$UsersTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.users,
-        getReferencedColumn: (t) => t.rol,
-        builder: (joinBuilder, parentComposers) => $$UsersTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.users, joinBuilder, parentComposers)));
-    return f(composer);
-  }
-}
-
-class $$RolUserTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $RolUserTable> {
-  $$RolUserTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get description => $state.composableBuilder(
-      column: $state.table.description,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+      [users, receiptQuote, quote];
 }
 
 typedef $$UsersTableInsertCompanionBuilder = UsersCompanion Function({
   Value<int> id,
   required String name,
   required String password,
-  Value<int?> rol,
+  required String rol,
 });
 typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
   Value<int> id,
   Value<String> name,
   Value<String> password,
-  Value<int?> rol,
+  Value<String> rol,
 });
 
 class $$UsersTableTableManager extends RootTableManager<
@@ -1750,7 +1472,7 @@ class $$UsersTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> password = const Value.absent(),
-            Value<int?> rol = const Value.absent(),
+            Value<String> rol = const Value.absent(),
           }) =>
               UsersCompanion(
             id: id,
@@ -1762,7 +1484,7 @@ class $$UsersTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required String name,
             required String password,
-            Value<int?> rol = const Value.absent(),
+            required String rol,
           }) =>
               UsersCompanion.insert(
             id: id,
@@ -1803,17 +1525,10 @@ class $$UsersTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$RolUserTableFilterComposer get rol {
-    final $$RolUserTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.rol,
-        referencedTable: $state.db.rolUser,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) => $$RolUserTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.rolUser, joinBuilder, parentComposers)));
-    return composer;
-  }
+  ColumnFilters<String> get rol => $state.composableBuilder(
+      column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$UsersTableOrderingComposer
@@ -1834,17 +1549,10 @@ class $$UsersTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$RolUserTableOrderingComposer get rol {
-    final $$RolUserTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.rol,
-        referencedTable: $state.db.rolUser,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$RolUserTableOrderingComposer(ComposerState(
-                $state.db, $state.db.rolUser, joinBuilder, parentComposers)));
-    return composer;
-  }
+  ColumnOrderings<String> get rol => $state.composableBuilder(
+      column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$ReceiptQuoteTableInsertCompanionBuilder = ReceiptQuoteCompanion
@@ -2361,8 +2069,6 @@ class $$QuoteTableOrderingComposer
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
-  $$RolUserTableTableManager get rolUser =>
-      $$RolUserTableTableManager(_db, _db.rolUser);
   $$UsersTableTableManager get users =>
       $$UsersTableTableManager(_db, _db.users);
   $$ReceiptQuoteTableTableManager get receiptQuote =>

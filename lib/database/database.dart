@@ -12,12 +12,11 @@ import 'tables/receipt_quotes_table.dart';
 import 'tables/user_table.dart';
 part 'database.g.dart';
 
-// @DriftDatabase(tables: [Users, RolUser, ReceiptQuote, Quote])
+// @DriftDatabase(tables: [Users, ReceiptQuote, Quote])
 // class AppDatabase extends _$AppDatabase {}
 
 @DriftDatabase(tables: [
   Users,
-  RolUser,
   ReceiptQuote,
   Quote,
 ])
@@ -124,15 +123,18 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesToday() {
+  Future<List<ReceiptQuoteData>> getReceiptQuotesRecent() {
     return (select(receiptQuote)
           // ..limit(20, offset: 1)
-          ..where(
-            (t) => t.dateRegister.isBetweenValues(
-              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
-              DateTime.now(),
-            ),
-          ))
+          // ..where(
+          // (t) => t.dateRegister.isBetweenValues(
+          //   DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+          //   DateTime.now(),
+          // ),
+          ..orderBy([
+            (t) => OrderingTerm(
+                expression: t.dateRegister, mode: OrderingMode.desc)
+          ]))
         .get();
   }
 
@@ -155,6 +157,20 @@ class AppDatabase extends _$AppDatabase {
 
   Future deleteQuotesByFolio(String folio) {
     return (delete(quote)..where((t) => t.folio.equals(folio))).go();
+  }
+
+  //USER SECCION
+  Future<List<User>> foundUserByName(String userName) async {
+    return await (select(users)..where((t) => t.name.equals(userName))).get();
+  }
+
+  Future<List<User>> loginUser(String userName, String password) async {
+    return await (select(users)
+          ..where((t) => t.name.equals(userName))
+          ..where(
+            (tbl) => tbl.password.equals(password),
+          ))
+        .get();
   }
 }
 

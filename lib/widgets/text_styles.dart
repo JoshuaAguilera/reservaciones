@@ -12,14 +12,12 @@ class TextStyles {
       TextAlign aling = TextAlign.left,
       bool overClip = false,
       double size = 13,
-      bool isBold = false}) {
+      bool isBold = false,
+      Color? color}) {
     return Text(text,
         textAlign: aling,
         style: styleStandar(
-          size: size,
-          isBold: isBold,
-          overClip: overClip,
-        ));
+            size: size, isBold: isBold, overClip: overClip, color: color));
   }
 
   static TextStyle styleStandar(
@@ -50,13 +48,13 @@ class TextStyles {
   }
 
   static Text buttonTextStyle(
-      {String text = "", TextAlign aling = TextAlign.left}) {
+      {String text = "", TextAlign aling = TextAlign.left, double size = 14}) {
     return Text(
       text,
       textAlign: aling,
-      style: const TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize: 14,
+        fontSize: size,
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_bold",
       ),

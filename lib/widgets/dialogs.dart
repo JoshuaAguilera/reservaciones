@@ -35,7 +35,7 @@ class Dialogs {
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    bool esOferta = cotizacion != null ? cotizacion.esPreVenta!  : false;
+    bool esOferta = cotizacion != null ? cotizacion.esPreVenta! : false;
     bool isError = false;
 
     return StatefulBuilder(builder: (context, setState) {
@@ -113,6 +113,10 @@ class Dialogs {
                           TextFormFieldCustom.textFormFieldwithBorderCalendar(
                         name: "Fecha de entrada",
                         msgError: "Campo requerido*",
+                        fechaLimite: DateTime.now()
+                            .subtract(const Duration(days: 1))
+                            .toIso8601String()
+                            .substring(0, 10),
                         dateController: _fechaEntrada,
                         onChanged: () => setState(
                           () {
