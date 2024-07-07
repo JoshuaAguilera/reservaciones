@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -14,6 +15,7 @@ import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:tuple/tuple.dart';
 
 import '../database/database.dart';
 import '../widgets/comprobante_item_row.dart';
@@ -30,9 +32,6 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-  List<QuoteData> cotizaciones = [];
-  List<ReporteCotizacion> reportQuotes = [];
-  List<CotizacionDiaria> todayQuotes = [];
   List<ReceiptQuoteData> ultimasCotizaciones = [];
   bool isLoading = false;
   late TooltipBehavior _tooltipBehavior;
@@ -52,17 +51,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   void fetchData() async {
     isLoading = true;
     setState(() {});
-    List<QuoteData> resp = await CotizacionService().getCotizacionesTimePeriod(
-        DateTime.now().subtract(const Duration(days: 7)), DateTime.now());
-    List<QuoteData> respToday =
-        await CotizacionService().getCotizacionesActuales();
     List<ReceiptQuoteData> respLatest =
         await ComprobanteService().getComprobantesRecientes();
     if (!mounted) return;
     setState(() {
-      cotizaciones = resp;
-      reportQuotes = Utility.getReportQuotes(cotizaciones);
-      todayQuotes = Utility.getDailyQuotesReport(respToday);
       ultimasCotizaciones = respLatest;
       isLoading = false;
     });
@@ -73,6 +65,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
+    final reportesSync = ref.watch(reporteCotizacionesProvider(
+        const Tuple2<String, dynamic>('almacenes', '')));
+    final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(
+        const Tuple2<String, dynamic>('almacenes', '')));
 
     return Scaffold(
       body: Padding(
@@ -146,96 +142,122 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   ),
                                 ),
                                 const SizedBox(height: 7),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RotatedBox(
-                                      quarterTurns: 3,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: TextStyles.standardText(
-                                            text: "Cotizaciones", size: 12),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: 450,
-                                        child: SfCartesianChart(
-                                          plotAreaBorderWidth: 0,
-                                          tooltipBehavior: _tooltipBehavior,
-                                          palette: [
-                                            DesktopColors.cotGroupColor,
-                                            DesktopColors.cotIndColor,
-                                            DesktopColors.cotGroupPreColor,
-                                            DesktopColors.cotIndPreColor
-                                          ],
-                                          legend: Legend(
-                                              isVisible: true,
-                                              orientation: LegendItemOrientation
-                                                  .horizontal,
-                                              isResponsive: true,
-                                              position: LegendPosition.bottom,
-                                              textStyle:
-                                                  TextStyles.styleStandar(
-                                                      size: 11),
-                                              overflowMode:
-                                                  LegendItemOverflowMode.wrap),
-                                          series: [
-                                            StackedColumnSeries<
-                                                ReporteCotizacion, String>(
-                                              dataSource: reportQuotes,
-                                              xValueMapper: (datum, _) =>
-                                                  datum.dia,
-                                              yValueMapper: (datum, _) =>
-                                                  datum.numCotizacionesGrupales,
-                                              name: "Cotizaciones grupales",
-                                            ),
-                                            StackedColumnSeries<
-                                                ReporteCotizacion, String>(
-                                              dataSource: reportQuotes,
-                                              xValueMapper: (datum, index) =>
-                                                  datum.dia,
-                                              yValueMapper: (datum, index) =>
-                                                  datum
-                                                      .numCotizacionesIndividual,
-                                              name: "Cotizaciones Individuales",
-                                            ),
-                                            SplineSeries<ReporteCotizacion,
-                                                String>(
-                                              splineType: SplineType.monotonic,
-                                              dataSource: reportQuotes,
-                                              xValueMapper: (datum, index) =>
-                                                  datum.dia,
-                                              yValueMapper: (datum, index) => datum
-                                                  .numCotizacionesGrupalesPreventa,
-                                              name:
-                                                  "Cotizaciones grupales oferta",
-                                            ),
-                                            SplineSeries<ReporteCotizacion,
-                                                String>(
-                                              splineType: SplineType.monotonic,
-                                              dataSource: reportQuotes,
-                                              xValueMapper: (datum, index) =>
-                                                  datum.dia,
-                                              yValueMapper: (datum, index) => datum
-                                                  .numCotizacionesIndividualPreventa,
-                                              name:
-                                                  "Cotizaciones individuales oferta",
-                                            ),
-                                          ],
-                                          primaryXAxis: CategoryAxis(
-                                            labelStyle: TextStyles.styleStandar(
-                                                size: 12),
-                                            axisLine: const AxisLine(width: 2),
-                                            majorGridLines:
-                                                const MajorGridLines(width: 0),
+                                reportesSync.when(
+                                  data: (list) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        RotatedBox(
+                                          quarterTurns: 3,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: TextStyles.standardText(
+                                                text: "Cotizaciones", size: 12),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                        Expanded(
+                                          child: Container(
+                                            height: 450,
+                                            child: SfCartesianChart(
+                                              plotAreaBorderWidth: 0,
+                                              tooltipBehavior: _tooltipBehavior,
+                                              palette: [
+                                                DesktopColors.cotGroupColor,
+                                                DesktopColors.cotIndColor,
+                                                DesktopColors.cotGroupPreColor,
+                                                DesktopColors.cotIndPreColor
+                                              ],
+                                              legend: Legend(
+                                                  isVisible: true,
+                                                  orientation:
+                                                      LegendItemOrientation
+                                                          .horizontal,
+                                                  isResponsive: true,
+                                                  position:
+                                                      LegendPosition.bottom,
+                                                  textStyle:
+                                                      TextStyles.styleStandar(
+                                                          size: 11),
+                                                  overflowMode:
+                                                      LegendItemOverflowMode
+                                                          .wrap),
+                                              series: [
+                                                StackedColumnSeries<
+                                                    ReporteCotizacion, String>(
+                                                  dataSource: list,
+                                                  xValueMapper: (datum, _) =>
+                                                      datum.dia,
+                                                  yValueMapper: (datum, _) => datum
+                                                      .numCotizacionesGrupales,
+                                                  name: "Cotizaciones grupales",
+                                                ),
+                                                StackedColumnSeries<
+                                                    ReporteCotizacion, String>(
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.dia,
+                                                  yValueMapper:
+                                                      (datum, index) => datum
+                                                          .numCotizacionesIndividual,
+                                                  name:
+                                                      "Cotizaciones Individuales",
+                                                ),
+                                                SplineSeries<ReporteCotizacion,
+                                                    String>(
+                                                  splineType:
+                                                      SplineType.monotonic,
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.dia,
+                                                  yValueMapper:
+                                                      (datum, index) => datum
+                                                          .numCotizacionesGrupalesPreventa,
+                                                  name:
+                                                      "Cotizaciones grupales oferta",
+                                                ),
+                                                SplineSeries<ReporteCotizacion,
+                                                    String>(
+                                                  splineType:
+                                                      SplineType.monotonic,
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.dia,
+                                                  yValueMapper:
+                                                      (datum, index) => datum
+                                                          .numCotizacionesIndividualPreventa,
+                                                  name:
+                                                      "Cotizaciones individuales oferta",
+                                                ),
+                                              ],
+                                              primaryXAxis: CategoryAxis(
+                                                labelStyle:
+                                                    TextStyles.styleStandar(
+                                                        size: 12),
+                                                axisLine:
+                                                    const AxisLine(width: 2),
+                                                majorGridLines:
+                                                    const MajorGridLines(
+                                                        width: 0),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  error: (error, stackTrace) {
+                                    return const Text(
+                                        'No se encontraron resultados');
+                                  },
+                                  loading: () {
+                                    return ProgressIndicatorCustom(screenHight);
+                                  },
+                                )
                               ],
                             ),
                           ),
@@ -284,72 +306,103 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           size: 16,
                                         ),
                                       ),
-                                      SfCircularChart(
-                                        tooltipBehavior:
-                                            !Utility.foundQuotes(todayQuotes)
-                                                ? null
-                                                : _tooltipBehavior,
-                                        palette: [
-                                          DesktopColors.cotGroupColor,
-                                          DesktopColors.cotIndColor,
-                                          DesktopColors.cotGroupPreColor,
-                                          DesktopColors.cotIndPreColor
-                                        ],
-                                        legend: Legend(
-                                          isVisible: true,
-                                          textStyle:
-                                              TextStyles.styleStandar(size: 11),
-                                          overflowMode:
-                                              LegendItemOverflowMode.wrap,
-                                          position: LegendPosition.bottom,
-                                        ),
-                                        series: [
-                                          DoughnutSeries<CotizacionDiaria,
-                                              String>(
-                                            dataSource: todayQuotes,
-                                            xValueMapper: (datum, index) =>
-                                                datum.tipoCotizacion,
-                                            yValueMapper: (datum, index) =>
-                                                datum.numCotizaciones,
-                                            enableTooltip: true,
-                                            dataLabelSettings:
-                                                const DataLabelSettings(
-                                                    isVisible: true,
-                                                    showZeroValue: false,
-                                                    textStyle: TextStyle(
-                                                        fontFamily:
-                                                            "poppins_regular",
-                                                        fontSize: 11)),
-                                          ),
-                                          if (!Utility.foundQuotes(todayQuotes))
-                                            DoughnutSeries<CotizacionDiaria,
-                                                String>(
-                                              dataSource: [
-                                                CotizacionDiaria(
-                                                    tipoCotizacion:
-                                                        "Sin resultados",
-                                                    numCotizaciones: 1)
-                                              ],
-                                              xValueMapper: (datum, index) =>
-                                                  datum.tipoCotizacion,
-                                              yValueMapper: (datum, index) =>
-                                                  datum.numCotizaciones,
-                                            )
-                                        ],
-                                      ),
+                                      cotizacionesDiariasSync.when(
+                                        data: (list) {
+                                          return SfCircularChart(
+                                            tooltipBehavior:
+                                                !Utility.foundQuotes(list)
+                                                    ? null
+                                                    : _tooltipBehavior,
+                                            palette: [
+                                              DesktopColors.cotGroupColor,
+                                              DesktopColors.cotIndColor,
+                                              DesktopColors.cotGroupPreColor,
+                                              DesktopColors.cotIndPreColor
+                                            ],
+                                            legend: Legend(
+                                              isVisible: true,
+                                              textStyle:
+                                                  TextStyles.styleStandar(
+                                                      size: 11),
+                                              overflowMode:
+                                                  LegendItemOverflowMode.wrap,
+                                              position: LegendPosition.bottom,
+                                            ),
+                                            series: [
+                                              DoughnutSeries<CotizacionDiaria,
+                                                  String>(
+                                                dataSource: list,
+                                                xValueMapper: (datum, index) =>
+                                                    datum.tipoCotizacion,
+                                                yValueMapper: (datum, index) =>
+                                                    datum.numCotizaciones,
+                                                enableTooltip: true,
+                                                dataLabelSettings:
+                                                    const DataLabelSettings(
+                                                        isVisible: true,
+                                                        showZeroValue: false,
+                                                        textStyle: TextStyle(
+                                                            fontFamily:
+                                                                "poppins_regular",
+                                                            fontSize: 11)),
+                                              ),
+                                              if (!Utility.foundQuotes(list))
+                                                DoughnutSeries<CotizacionDiaria,
+                                                    String>(
+                                                  dataSource: [
+                                                    CotizacionDiaria(
+                                                        tipoCotizacion:
+                                                            "Sin resultados",
+                                                        numCotizaciones: 1)
+                                                  ],
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.tipoCotizacion,
+                                                  yValueMapper:
+                                                      (datum, index) =>
+                                                          datum.numCotizaciones,
+                                                )
+                                            ],
+                                          );
+                                        },
+                                        error: (error, stackTrace) {
+                                          return const Text(
+                                              'No se encontraron ');
+                                        },
+                                        loading: () {
+                                          return ProgressIndicatorCustom(
+                                              screenHight);
+                                        },
+                                      )
                                     ],
                                   ),
                                 ).animate().fadeIn(
                                     delay: const Duration(milliseconds: 750)),
-                                if (!Utility.foundQuotes(todayQuotes))
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(bottom: 85.0),
-                                    child: Center(
-                                        child: TextStyles.standardText(
-                                            text: "Sin resultados", size: 11)),
-                                  ).animate().fadeIn(
-                                      delay: const Duration(milliseconds: 850))
+                                cotizacionesDiariasSync.when(
+                                  data: (list) {
+                                    if (!Utility.foundQuotes(list)) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 85.0),
+                                        child: Center(
+                                            child: TextStyles.standardText(
+                                                text: "Sin resultados",
+                                                size: 11)),
+                                      ).animate().fadeIn(
+                                          delay: const Duration(
+                                              milliseconds: 850));
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  },
+                                  error: (error, stackTrace) {
+                                    return const Text(
+                                        'No se encontraron *****');
+                                  },
+                                  loading: () {
+                                    return ProgressIndicatorCustom(screenHight);
+                                  },
+                                )
                               ],
                             ),
                           ),
