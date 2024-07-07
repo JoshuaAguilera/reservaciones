@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:generador_formato/helpers/doc_templates.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/files_templates.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -83,31 +83,31 @@ class GeneradorDocService extends ChangeNotifier {
                 children: [
                   pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
                   pw.SizedBox(height: 13),
-                  pw.Text(DocTemplates.StructureDoc(1), style: styleLigth),
+                  pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
                   pw.SizedBox(height: 14),
-                  pw.Text(DocTemplates.StructureDoc(2), style: styleLigth),
+                  pw.Text(FilesTemplate.StructureDoc(2), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(cotizaciones, styleLigth,
                       styleLigthHeaderTable, styleBoldTable),
                   pw.Text("NOTAS", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
-                  pw.Text(DocTemplates.StructureDoc(3), style: styleRegular),
+                  pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
                   pw.SizedBox(height: 10),
                   pw.Padding(
                     padding: const pw.EdgeInsets.only(left: 27),
-                    child: pw.Text(DocTemplates.StructureDoc(4),
+                    child: pw.Text(FilesTemplate.StructureDoc(4),
                         style: styleItalic),
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.only(left: 27),
-                    child: pw.Text(DocTemplates.StructureDoc(5),
+                    child: pw.Text(FilesTemplate.StructureDoc(5),
                         style: styleItalic),
                   ),
                   pw.SizedBox(height: 20),
                   pw.Text("POLÍTICAS PARA RESERVACIÓN",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 11),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       styleItalic: styleItalic,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
@@ -116,7 +116,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text("POLÍTICAS DE CANCELACIÓN",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 11),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       styleLight: styleLigth,
                       styleIndice: styleBold,
                       idsText: [12, 13, 14]),
@@ -124,7 +124,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 12),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
@@ -133,7 +133,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text("CARACTERÍSTICAS DE LAS HABITACIONES",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 12),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
@@ -141,7 +141,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.SizedBox(height: 10),
                   pw.Text("GENERALES", style: styleBoldUnderline),
                   pw.SizedBox(height: 12),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
@@ -150,20 +150,20 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text("HORARIOS Y SERVICIOS RESTAURANTE CORALES:",
                       style: styleBold),
                   pw.SizedBox(height: 12),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
                       idsText: [49, 36, 37, 38, 39]),
                   pw.SizedBox(height: 8),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       isSubIndice: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
                       idsText: [40, 41, 42, 43, 44, 45, 46]),
                   pw.SizedBox(height: 10),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
@@ -171,24 +171,24 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.SizedBox(height: 14),
                   pw.Text("FACILIDADES", style: styleBold),
                   pw.SizedBox(height: 13),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
                       idsText: [50, 51, 52, 53, 54, 55]),
                   pw.SizedBox(height: 9),
-                  pw.Text(DocTemplates.StructureDoc(56), style: styleBold),
-                  pw.Text(DocTemplates.StructureDoc(57), style: styleLigth),
+                  pw.Text(FilesTemplate.StructureDoc(56), style: styleBold),
+                  pw.Text(FilesTemplate.StructureDoc(57), style: styleLigth),
                   pw.SizedBox(height: 13),
-                  DocTemplates.getListDocument(
+                  FilesTemplate.getListDocument(
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
                       idsText: [58, 59]),
                   pw.SizedBox(height: 11),
-                  pw.Text(DocTemplates.StructureDoc(60), style: styleLigth),
+                  pw.Text(FilesTemplate.StructureDoc(60), style: styleLigth),
                   pw.SizedBox(height: 10),
-                  pw.Text(DocTemplates.StructureDoc(61), style: styleLigth),
+                  pw.Text(FilesTemplate.StructureDoc(61), style: styleLigth),
                   pw.SizedBox(height: 10),
                 ]),
           ),
@@ -236,7 +236,7 @@ class GeneradorDocService extends ChangeNotifier {
         .any((element) => element.categoria == "HABITACIÓN DELUXE DOBLE")) {
       if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
         tablas.add(
-          DocTemplates.getTablesCotIndiv(
+          FilesTemplate.getTablesCotIndiv(
             nameTable:
                 "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
             cotizaciones: cotizaciones
@@ -252,7 +252,7 @@ class GeneradorDocService extends ChangeNotifier {
         tablas.add(pw.SizedBox(height: 20));
       }
       if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
-        tablas.add(DocTemplates.getTablesCotIndiv(
+        tablas.add(FilesTemplate.getTablesCotIndiv(
           nameTable:
               "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
           cotizaciones: cotizaciones
@@ -272,7 +272,7 @@ class GeneradorDocService extends ChangeNotifier {
         element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")) {
       if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
         tablas.add(
-          DocTemplates.getTablesCotIndiv(
+          FilesTemplate.getTablesCotIndiv(
             nameTable:
                 "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
             cotizaciones: cotizaciones
@@ -288,7 +288,7 @@ class GeneradorDocService extends ChangeNotifier {
         tablas.add(pw.SizedBox(height: 20));
       }
       if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
-        tablas.add(DocTemplates.getTablesCotIndiv(
+        tablas.add(FilesTemplate.getTablesCotIndiv(
           nameTable:
               "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
           cotizaciones: cotizaciones

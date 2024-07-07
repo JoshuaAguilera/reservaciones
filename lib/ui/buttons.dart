@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 class SelectableButton extends StatefulWidget {

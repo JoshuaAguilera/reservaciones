@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 

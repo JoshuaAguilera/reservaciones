@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
-import '../helpers/utility.dart';
+import '../utils/helpers/utility.dart';
 
 class CotizacionIndividualCard extends StatefulWidget {
   final int index;

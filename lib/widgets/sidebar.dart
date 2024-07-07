@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 
 class SideBar extends StatelessWidget {
   final bool isExpanded;

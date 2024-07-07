@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class TextFormFieldCustom {

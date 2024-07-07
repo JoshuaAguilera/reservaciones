@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/views/comprobante_detalle_view.dart';
 import 'package:generador_formato/views/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';

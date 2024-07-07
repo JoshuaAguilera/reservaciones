@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class ComprobanteItemRow extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 
-import '../encrypt/encrypter.dart';
+import '../utils/encrypt/encrypter.dart';
 
 class AuthService extends ChangeNotifier {
   Future<bool> foundUserName(String userName) async {

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/notificacion_model.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class NotificationWidget {

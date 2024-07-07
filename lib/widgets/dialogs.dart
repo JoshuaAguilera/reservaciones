@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:generador_formato/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
 
-import '../helpers/constants.dart';
+import '../utils/helpers/constants.dart';
 import '../models/cotizacion_model.dart';
 
 class Dialogs {
@@ -562,6 +562,7 @@ class Dialogs {
 
   static AlertDialog customAlertDialog({
     IconData? iconData,
+    Color? iconColor,
     required BuildContext context,
     required String title,
     required String content,
@@ -578,12 +579,10 @@ class Dialogs {
           Icon(
             iconData,
             size: 33,
-            color: DesktopColors.ceruleanOscure,
+            color: iconColor ?? DesktopColors.ceruleanOscure,
           ),
         const SizedBox(width: 10),
-        Expanded(
-            child: TextStyles.titleText(
-                text: title, color: Colors.black, size: 18))
+        Expanded(child: TextStyles.titleText(text: title, size: 18))
       ]),
       content: TextStyles.TextAsociative(contentBold ?? "", content,
           isInverted: contentBold != null),

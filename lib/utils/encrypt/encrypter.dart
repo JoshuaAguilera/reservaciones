@@ -1,6 +1,6 @@
 import 'package:encrypt/encrypt.dart' as enc;
-import 'package:generador_formato/encrypt/constants.dart';
-import 'package:generador_formato/encrypt/encryptionmodes.dart';
+import 'package:generador_formato/utils/encrypt/constants.dart';
+import 'package:generador_formato/utils/encrypt/encryptionmodes.dart';
 
 class EncrypterTool {
   static encryptData(String text, enc.AESMode? _aesmode) {

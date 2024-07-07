@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';

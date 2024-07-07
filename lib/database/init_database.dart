@@ -1,4 +1,4 @@
-import '../encrypt/encrypter.dart';
+import '../utils/encrypt/encrypter.dart';
 import 'database.dart';
 
 class InitDatabase {

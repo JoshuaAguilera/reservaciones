@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/web_colors.dart';
+import '../utils/helpers/web_colors.dart';
 import '../widgets/text_styles.dart';
 
 Widget ProgressIndicatorCustom(double screenHight) {

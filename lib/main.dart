@@ -8,7 +8,7 @@ import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:generador_formato/helpers/custom_scroll_behavior.dart';
+import 'package:generador_formato/utils/helpers/custom_scroll_behavior.dart';
 
 Future<void> main() async {
   //Compatibily Windows scale

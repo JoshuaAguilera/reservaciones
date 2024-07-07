@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 void showSnackBar({
