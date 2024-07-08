@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -6,8 +7,11 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import '../database/database.dart';
 
 class ComprobanteService extends ChangeNotifier {
-  Future<bool> createComprobante(ComprobanteCotizacion comprobante,
-      List<Cotizacion> cotizaciones, String folio) async {
+  Future<bool> createComprobante(
+      ComprobanteCotizacion comprobante,
+      List<Cotizacion> cotizaciones,
+      String folio,
+      PrefijoTelefonico prefijoInit) async {
     final database = AppDatabase();
 
     try {
@@ -39,7 +43,7 @@ class ComprobanteService extends ChangeNotifier {
                 folioQuotes: folio,
                 mail: comprobante.correo!,
                 nameCustomer: comprobante.nombre!,
-                numPhone: comprobante.telefono!,
+                numPhone: prefijoInit.prefijo + comprobante.telefono!,
                 userId: 1,
                 dateRegister: DateTime.now(),
                 rateDay: Utility.calculateTarifaDiaria(

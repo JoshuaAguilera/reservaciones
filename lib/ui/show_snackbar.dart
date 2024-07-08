@@ -38,6 +38,7 @@ void showSnackBar({
             Icon(
               Utility.getIconNavbar(type),
               size: 50,
+              color: Colors.white,
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+import '../../models/prefijo_telefonico_model.dart';
+
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',
   'HABITACIÓN DELUXE DOBLE O KING SIZE',
@@ -40,3 +42,49 @@ const List<String> filtrosRegistro = <String>[
   'Mensual',
   'Anual',
 ];
+
+List<PrefijoTelefonico> getPrefijosTelefonicos() {
+  List<PrefijoTelefonico> prefijos = [
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/mexico.png",
+        nombre: "Mexico",
+        prefijo: "+52"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/usa.png", nombre: "USA", prefijo: "+1"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/canada.png",
+        nombre: "Canada",
+        prefijo: "+1"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/argentina.png",
+        nombre: "Argentina",
+        prefijo: "+54"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/brasil.png",
+        nombre: "Brasil",
+        prefijo: "+55"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/chile.png",
+        nombre: "Chile",
+        prefijo: "+56"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/colombia.png",
+        nombre: "Colombia",
+        prefijo: "+57"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/espana.png",
+        nombre: "España",
+        prefijo: "+34"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/guatemala.png",
+        nombre: "Guatemala",
+        prefijo: "+502"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/peru.png", nombre: "Peru", prefijo: "+51"),
+    PrefijoTelefonico(
+        banderaAssets: "assets/icons/uruguay.png",
+        nombre: "Uruguay",
+        prefijo: "+598"),
+  ];
+  return prefijos;
+}

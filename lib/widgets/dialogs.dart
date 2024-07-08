@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/widgets/custom_widgets.dart';
+import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -75,7 +75,7 @@ class Dialogs {
                         child: TextStyles.standardText(
                             text: "Categoría: ", overClip: true)),
                     const SizedBox(width: 15),
-                    CustomWidgets.dropdownMenuCustom(
+                    CustomDropdown.dropdownMenuCustom(
                         initialSelection: cotizacion != null
                             ? cotizacion.categoria!
                             : categorias.first,
@@ -94,7 +94,7 @@ class Dialogs {
                         child: TextStyles.standardText(
                             text: "Plan: ", overClip: true)),
                     const SizedBox(width: 15),
-                    CustomWidgets.dropdownMenuCustom(
+                    CustomDropdown.dropdownMenuCustom(
                         initialSelection: cotizacion != null
                             ? cotizacion.plan!
                             : planes.first,
@@ -369,7 +369,7 @@ class Dialogs {
                           child: TextStyles.standardText(
                               text: "Tipo de habitacion: ", overClip: true)),
                       const SizedBox(width: 15),
-                      CustomWidgets.dropdownMenuCustom(
+                      CustomDropdown.dropdownMenuCustom(
                           initialSelection: cotizacion != null
                               ? cotizacion.tipoHabitacion!
                               : tipoHabitacion.first,
@@ -388,7 +388,7 @@ class Dialogs {
                           child: TextStyles.standardText(
                               text: "Plan: ", overClip: true)),
                       const SizedBox(width: 15),
-                      CustomWidgets.dropdownMenuCustom(
+                      CustomDropdown.dropdownMenuCustom(
                           initialSelection: cotizacion != null
                               ? cotizacion.plan!
                               : planes.first,

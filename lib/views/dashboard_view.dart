@@ -9,17 +9,14 @@ import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/models/cotizacion_diaria_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/providers/notificacion_provider.dart';
-import 'package:generador_formato/services/comprobante_service.dart';
-import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tuple/tuple.dart';
 
-import '../database/database.dart';
 import '../widgets/comprobante_item_row.dart';
-import '../widgets/custom_widgets.dart';
+import '../widgets/custom_dropdown.dart';
 import '../widgets/text_styles.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
@@ -32,7 +29,6 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-  List<ReceiptQuoteData> ultimasCotizaciones = [];
   bool isLoading = false;
   late TooltipBehavior _tooltipBehavior;
   String dropdownValue = filtrosRegistro.first;
@@ -40,7 +36,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   void initState() {
-    fetchData();
     _tooltipBehavior = TooltipBehavior(
         enable: true,
         duration: 1000,
@@ -48,27 +43,17 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     super.initState();
   }
 
-  void fetchData() async {
-    isLoading = true;
-    setState(() {});
-    List<ReceiptQuoteData> respLatest =
-        await ComprobanteService().getComprobantesRecientes();
-    if (!mounted) return;
-    setState(() {
-      ultimasCotizaciones = respLatest;
-      isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
-    final reportesSync = ref.watch(reporteCotizacionesProvider(
-        const Tuple2<String, dynamic>('almacenes', '')));
-    final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(
-        const Tuple2<String, dynamic>('almacenes', '')));
+    final reportesSync = ref.watch(
+        reporteCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
+    final cotizacionesDiariasSync = ref.watch(
+        cotizacionesDiariasProvider(const Tuple2<String, dynamic>('', '')));
+    final ultimasCotizacionesSync = ref.watch(
+        ultimaCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
 
     return Scaffold(
       body: Padding(
@@ -127,7 +112,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           text: "Reporte de cotizaciones",
                                           overClip: true,
                                           size: 16),
-                                      CustomWidgets.dropdownMenuCustom(
+                                      CustomDropdown.dropdownMenuCustom(
                                           fontSize: 12,
                                           initialSelection:
                                               filtrosRegistro.first,
@@ -255,7 +240,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         'No se encontraron resultados');
                                   },
                                   loading: () {
-                                    return ProgressIndicatorCustom(screenHight);
+                                    return SizedBox(
+                                        height: 450,
+                                        child: ProgressIndicatorCustom(250));
                                   },
                                 )
                               ],
@@ -366,12 +353,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           );
                                         },
                                         error: (error, stackTrace) {
-                                          return const Text(
-                                              'No se encontraron ');
+                                          return const SizedBox();
                                         },
                                         loading: () {
                                           return ProgressIndicatorCustom(
-                                              screenHight);
+                                              screenHight * 0.4);
                                         },
                                       )
                                     ],
@@ -396,11 +382,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     }
                                   },
                                   error: (error, stackTrace) {
-                                    return const Text(
-                                        'No se encontraron *****');
+                                    return Container();
                                   },
                                   loading: () {
-                                    return ProgressIndicatorCustom(screenHight);
+                                    return SizedBox();
                                   },
                                 )
                               ],
@@ -443,32 +428,45 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           ],
                                         ),
                                       ),
-                                      if (ultimasCotizaciones.isEmpty)
-                                        Center(
-                                            child: TextStyles.standardText(
-                                                text:
-                                                    "No se encontraron cotizaciones"))
-                                      else
-                                        SizedBox(
-                                          width: screenWidth,
-                                          height: 330,
-                                          child: ListView.builder(
-                                            itemCount:
-                                                ultimasCotizaciones.length,
-                                            shrinkWrap: false,
-                                            itemBuilder: (context, index) {
-                                              return ComprobanteItemRow(
-                                                delay: index,
-                                                key: UniqueKey(),
-                                                comprobante:
-                                                    ultimasCotizaciones[index],
-                                                index: index,
-                                                screenWidth: screenWidth,
-                                                isQuery: true,
-                                              );
-                                            },
-                                          ),
-                                        )
+                                      ultimasCotizacionesSync.when(
+                                        data: (list) {
+                                          if (list.isEmpty) {
+                                            return Center(
+                                                child: TextStyles.standardText(
+                                                    text:
+                                                        "No se encontraron cotizaciones"));
+                                          } else {
+                                            return SizedBox(
+                                              width: screenWidth,
+                                              height: 330,
+                                              child: ListView.builder(
+                                                itemCount: list.length,
+                                                shrinkWrap: false,
+                                                itemBuilder: (context, index) {
+                                                  return ComprobanteItemRow(
+                                                    delay: index,
+                                                    key: UniqueKey(),
+                                                    comprobante: list[index],
+                                                    index: index,
+                                                    screenWidth: screenWidth,
+                                                    isQuery: true,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        error: (error, stackTrace) {
+                                          return Center(
+                                              child: TextStyles.standardText(
+                                                  text:
+                                                      "No se encontraron cotizaciones"));
+                                        },
+                                        loading: () {
+                                          return ProgressIndicatorCustom(
+                                              screenHight * 0.4);
+                                        },
+                                      )
                                     ],
                                   ),
                                 ),

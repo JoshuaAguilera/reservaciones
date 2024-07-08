@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:mailer/mailer.dart';
@@ -20,8 +19,9 @@ class SendQuoteService extends ChangeNotifier {
   // var username = Preferences.username;
 
   Future<bool> sendQuoteMail(
-    String recipient,
     Document comprobantePDF,
+    ComprobanteCotizacion receiptQuotePresent,
+    List<Cotizacion> quotesPresent,
   ) async {
     bool isSent = false;
 
@@ -55,11 +55,10 @@ class SendQuoteService extends ChangeNotifier {
 
     final message = Message()
       ..from = Address(username, username)
-      ..recipients.add('fabioball230@gmail.com')
+      ..recipients.add(receiptQuotePresent.correo)
       ..subject =
-          'Cotización de Reserva 📠 :: ${DateTime.now().toString().substring(0, 10)}'
-      ..text = 'This is the plain text.\nThis is line 2 of the text part.'
-      ..html = FilesTemplate.getHtmlCotizacion()
+          'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
+      ..html = FilesTemplate.getHTML()
       ..attachments = [
         FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
       ];
@@ -74,8 +73,6 @@ class SendQuoteService extends ChangeNotifier {
         print('Problem: ${p.code}: ${p.msg}');
       }
     }
-
-    
 
     var connection = PersistentConnection(smtpServer);
     await connection.close();
