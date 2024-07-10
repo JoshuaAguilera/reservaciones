@@ -8,11 +8,17 @@ class SelectableButton extends StatefulWidget {
     required this.selected,
     required this.onPressed,
     required this.child,
+    this.color = const Color.fromRGBO(144, 202, 249, 1),
+    this.round = 12,
+    this.roundActive = 10,
   });
 
   final bool selected;
   final VoidCallback? onPressed;
   final Widget child;
+  final Color? color;
+  final double? roundActive;
+  final double? round;
 
   @override
   State<SelectableButton> createState() => _SelectableButtonState();
@@ -42,25 +48,26 @@ class _SelectableButtonState extends State<SelectableButton> {
       statesController: statesController,
       style: widget.selected
           ? ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.blue[200]),
+              backgroundColor: WidgetStatePropertyAll(widget.color),
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      10.0), // Adjust for desired roundness
+                  borderRadius: BorderRadius.circular(widget.roundActive!),
                 ),
               ),
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(isBold: true),
               ),
-              foregroundColor: WidgetStatePropertyAll(widget.selected ? DesktopColors.ceruleanOscure : Colors.grey[700]))
+              foregroundColor: WidgetStatePropertyAll(widget.selected
+                  ? DesktopColors.ceruleanOscure
+                  : Colors.grey[700]))
           : ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      12.0), // Adjust for desired roundness
+                  borderRadius: BorderRadius.circular(widget.round!),
                 ),
               ),
+              
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(),
               ),

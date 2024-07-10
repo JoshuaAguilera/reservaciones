@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
@@ -196,7 +197,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 ],
                               ),
                             ),
-                          ),
+                          ).animate().fadeIn(),
                           const SizedBox(height: 10),
                           Card(
                             elevation: 6,
@@ -403,7 +404,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 ],
                               ),
                             ),
-                          ),
+                          )
+                              .animate()
+                              .fadeIn(delay: const Duration(milliseconds: 500)),
                           const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.only(left: 4.0),
@@ -485,7 +488,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           DesktopColors.prussianBlue),
                                   child: TextStyles.buttonTextStyle(
                                       text: "Generar cotización"),
-                                ),
+                                ).animate().fadeIn(
+                                    delay: const Duration(milliseconds: 1000)),
                               ),
                             ),
                           ),

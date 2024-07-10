@@ -12,10 +12,10 @@ import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../providers/comprobante_provider.dart';
-import '../services/comprobante_service.dart';
-import '../ui/buttons.dart';
-import '../widgets/comprobante_item_row.dart';
+import '../../providers/comprobante_provider.dart';
+import '../../services/comprobante_service.dart';
+import '../../ui/buttons.dart';
+import '../../widgets/comprobante_item_row.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -31,7 +31,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
   DateTime lastDate = DateTime.now().add(const Duration(days: 1));
   final TextEditingController _searchController =
       TextEditingController(text: "");
-  String filtro = filtros.first;
 
   @override
   void initState() {
@@ -48,6 +47,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final receiptQuoteQuery = ref.watch(receiptQuoteQueryProvider(""));
+    final filter = ref.watch(filtroProvider);
 
     return PopScope(
       onPopInvoked: (didPop) {
@@ -115,14 +115,17 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 2),
                                 child: SelectableButton(
-                                  selected: filtro == filtros[index],
+                                  selected: filter == filtros[index],
                                   onPressed: () {
                                     ref
                                         .read(searchProvider.notifier)
                                         .update((state) => "");
                                     snapshot(() {
-                                      filtro = filtros[index];
-                                      if (filtro == "Personalizado") {
+                                      ref
+                                          .read(filtroProvider.notifier)
+                                          .update((state) => filtros[index]);
+
+                                      if (filter == "Personalizado") {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
@@ -134,10 +137,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                         ).then(
                                           (value) {
                                             if (value != null) {
-                                              ref
-                                                  .read(filtroProvider.notifier)
-                                                  .update((state) =>
-                                                      filtros[index]);
                                               ref
                                                   .read(
                                                       periodoProvider.notifier)

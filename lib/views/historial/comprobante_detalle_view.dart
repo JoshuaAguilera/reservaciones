@@ -5,12 +5,12 @@ import 'package:generador_formato/providers/comprobante_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
-import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
-import '../services/generador_doc_service.dart';
-import '../ui/progress_indicator.dart';
-import '../widgets/cotizacion_indiv_card.dart';
-import '../widgets/text_styles.dart';
+import '../../utils/helpers/utility.dart';
+import '../../utils/helpers/web_colors.dart';
+import '../../services/generador_doc_service.dart';
+import '../../ui/progress_indicator.dart';
+import '../../widgets/cotizacion_indiv_card.dart';
+import '../../widgets/text_styles.dart';
 
 class ComprobanteDetalleView extends ConsumerStatefulWidget {
   const ComprobanteDetalleView({super.key, required this.sideController});

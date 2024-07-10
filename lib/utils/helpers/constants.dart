@@ -113,3 +113,9 @@ const List<String> dayNames = [
   "Sabado",
   "Domingo",
 ];
+
+const List<String> typeSettings = [
+  "Generales",
+  "Formato de documento",
+  "Planes y categorias",
+];

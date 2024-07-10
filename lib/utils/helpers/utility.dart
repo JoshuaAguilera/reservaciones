@@ -160,43 +160,44 @@ class Utility {
 
     switch (filter) {
       case "Semanal":
-        for (var i = 1; i < 8; i++) {
-          ReporteCotizacion quoteDay = ReporteCotizacion(
-            numCotizacionesGrupales: 0,
-            numCotizacionesIndividual: 0,
-            numCotizacionesGrupalesPreventa: 0,
-            numCotizacionesIndividualPreventa: 0,
-          );
+        try {
+          for (var i = 1; i < 8; i++) {
+            ReporteCotizacion quoteDay = ReporteCotizacion(
+              numCotizacionesGrupales: 0,
+              numCotizacionesIndividual: 0,
+              numCotizacionesGrupalesPreventa: 0,
+              numCotizacionesIndividualPreventa: 0,
+            );
 
-          List<QuoteData> quotes = cotizaciones
-              .where((element) => element.registerDate.weekday == i)
-              .toList();
+            List<QuoteData> quotes = cotizaciones
+                .where((element) => element.registerDate.weekday == i)
+                .toList();
 
-          for (var element in quotes) {
-            if (element.isGroup) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesGrupalesPreventa++;
+            for (var element in quotes) {
+              if (element.isGroup) {
+                if (element.isPresale) {
+                  quoteDay.numCotizacionesGrupalesPreventa++;
+                } else {
+                  quoteDay.numCotizacionesGrupales++;
+                }
               } else {
-                quoteDay.numCotizacionesGrupales++;
-              }
-            } else {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesIndividualPreventa++;
-              } else {
-                quoteDay.numCotizacionesIndividual++;
+                if (element.isPresale) {
+                  quoteDay.numCotizacionesIndividualPreventa++;
+                } else {
+                  quoteDay.numCotizacionesIndividual++;
+                }
               }
             }
-          }
 
-          quoteDay.dia = getNameDay(i);
-          listCot.add(quoteDay);
+            quoteDay.dia = dayNames[i - 1];
+            listCot.add(quoteDay);
+          }
+        } catch (e) {
+          print(e);
         }
         break;
       case "Mensual":
-        int difference =
-            now.difference(DateTime(now.year, now.month, 1)).inDays;
-
-        for (var i = 1; i < difference + 1; i++) {
+        for (var i = 1; i < getDaysInMonth(now.year, now.month) + 1; i++) {
           ReporteCotizacion quoteDay = ReporteCotizacion(
             numCotizacionesGrupales: 0,
             numCotizacionesIndividual: 0,
@@ -205,7 +206,7 @@ class Utility {
           );
 
           List<QuoteData> quotes = cotizaciones
-              .where((element) => element.registerDate.weekday == i)
+              .where((element) => element.registerDate.day == i)
               .toList();
 
           for (var element in quotes) {
@@ -224,7 +225,40 @@ class Utility {
             }
           }
 
-          quoteDay.dia = monthNames[i];
+          quoteDay.dia = "$i";
+          listCot.add(quoteDay);
+        }
+        break;
+      case "Anual":
+        for (var i = 1; i < 12 + 1; i++) {
+          ReporteCotizacion quoteDay = ReporteCotizacion(
+            numCotizacionesGrupales: 0,
+            numCotizacionesIndividual: 0,
+            numCotizacionesGrupalesPreventa: 0,
+            numCotizacionesIndividualPreventa: 0,
+          );
+
+          List<QuoteData> quotes = cotizaciones
+              .where((element) => element.registerDate.month == i)
+              .toList();
+
+          for (var element in quotes) {
+            if (element.isGroup) {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesGrupalesPreventa++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesIndividualPreventa++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
+              }
+            }
+          }
+
+          quoteDay.dia = monthNames[i - 1];
           listCot.add(quoteDay);
         }
 
@@ -235,25 +269,15 @@ class Utility {
     return listCot;
   }
 
-  static String getNameDay(int i) {
-    switch (i) {
-      case 1:
-        return "Lunes";
-      case 2:
-        return "Martes";
-      case 3:
-        return "Miercoles";
-      case 4:
-        return "Jueves";
-      case 5:
-        return "Viernes";
-      case 6:
-        return "Sabado";
-      case 7:
-        return "Domingo";
-      default:
-        return "Unknow";
-    }
+  static int getDaysInMonth(int year, int month) {
+    int nextMonth = month == 12 ? 1 : month + 1;
+    int nextMonthYear = month == 12 ? year + 1 : year;
+
+    DateTime firstDayNextMonth = DateTime(nextMonthYear, nextMonth, 1);
+    DateTime lastDayCurrentMonth =
+        firstDayNextMonth.subtract(Duration(days: 1));
+
+    return lastDayCurrentMonth.day;
   }
 
   static List<NumeroCotizacion> getDailyQuotesReport(

@@ -166,8 +166,9 @@ class Dialogs {
                                   ? (nuevaCotizacion.tarifaRealAdulto ?? "")
                                       .toString()
                                   : null,
-                              onChanged: (p0) => setState(() => nuevaCotizacion
-                                  .tarifaRealAdulto = double.tryParse(p0)),
+                              onChanged: (p0) => setState(() =>
+                                  nuevaCotizacion.tarifaRealAdulto =
+                                      double.tryParse(p0)),
                               isRequired: nuevaCotizacion.adultos! > 0),
                         ),
                       ),
@@ -217,8 +218,9 @@ class Dialogs {
                                   ? (nuevaCotizacion.tarifaRealMenor ?? "")
                                       .toString()
                                   : null,
-                              onChanged: (p0) => setState(() => nuevaCotizacion
-                                  .tarifaRealMenor = double.tryParse(p0)),
+                              onChanged: (p0) => setState(() =>
+                                  nuevaCotizacion.tarifaRealMenor =
+                                      double.tryParse(p0)),
                               isRequired: nuevaCotizacion.menores7a12! > 0),
                         ),
                       ),

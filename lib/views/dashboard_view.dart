@@ -33,7 +33,6 @@ class DashboardView extends ConsumerStatefulWidget {
 class _DashboardViewState extends ConsumerState<DashboardView> {
   bool isLoading = false;
   late TooltipBehavior _tooltipBehavior;
-  String dropdownValue = filtrosRegistro.first;
   final GlobalKey<TooltipState> messageKey = GlobalKey<TooltipState>();
 
   @override
@@ -50,6 +49,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
+    final typePeriod = ref.watch(filterReport);
     final reportesSync = ref.watch(
         reporteCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
     final cotizacionesDiariasSync = ref.watch(
@@ -118,14 +118,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           size: 16),
                                       CustomDropdown.dropdownMenuCustom(
                                           fontSize: 12,
-                                          initialSelection:
-                                              filtrosRegistro.first,
+                                          initialSelection: typePeriod,
                                           onSelected: (String? value) {
                                             setState(() {
-                                              dropdownValue = value!;
                                               ref
                                                   .read(filterReport.notifier)
-                                                  .update((state) => value);
+                                                  .update((state) => value!);
                                             });
                                           },
                                           elements: filtrosRegistro,
@@ -227,6 +225,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 ),
                                               ],
                                               primaryXAxis: CategoryAxis(
+                                                labelRotation: 45, //Opcional
                                                 labelStyle:
                                                     TextStyles.styleStandar(
                                                         size: 12),
