@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
-import 'package:generador_formato/services/send_mail_service.dart';
+import 'package:generador_formato/services/send_quote_service.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/providers/comprobante_provider.dart';
@@ -570,7 +570,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               GestureDetector(
                                 onTap: () async {
                                   SendQuoteService().sendQuoteWhatsApp(
-                                      comprobante, cotizaciones);
+                                      receiptQuotePresent, quotesPresent);
                                 },
                                 child: const Image(
                                     image: AssetImage(

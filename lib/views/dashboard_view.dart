@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/models/cotizacion_diaria_model.dart';
+import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -54,6 +56,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         cotizacionesDiariasProvider(const Tuple2<String, dynamic>('', '')));
     final ultimasCotizacionesSync = ref.watch(
         ultimaCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
+    final allQuotesSync =
+        ref.watch(allQuotesProvider(const Tuple2<String, dynamic>('', '')));
 
     return Scaffold(
       body: Padding(
@@ -119,6 +123,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           onSelected: (String? value) {
                                             setState(() {
                                               dropdownValue = value!;
+                                              ref
+                                                  .read(filterReport.notifier)
+                                                  .update((state) => value);
                                             });
                                           },
                                           elements: filtrosRegistro,
@@ -252,10 +259,29 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       ),
                       Expanded(
                         child: SizedBox(
-                          height: 500,
-                          child: const Card(
+                          height: 524,
+                          child: Card(
                             elevation: 5,
-                            child: SizedBox(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: allQuotesSync.when(
+                                data: (list) {
+                                  List<Widget> cards = [];
+                                  for (var element in list) {
+                                    cards.add(ItemRow.statusQuoteRow(element));
+                                  }
+
+                                  return Wrap(children: cards);
+                                },
+                                error: (error, stackTrace) {
+                                  return const SizedBox();
+                                },
+                                loading: () {
+                                  return ProgressIndicatorCustom(
+                                      screenHight * 0.4);
+                                },
+                              ),
+                            ),
                           )
                               .animate()
                               .fadeIn(delay: const Duration(milliseconds: 500)),
@@ -316,7 +342,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               position: LegendPosition.bottom,
                                             ),
                                             series: [
-                                              DoughnutSeries<CotizacionDiaria,
+                                              DoughnutSeries<NumeroCotizacion,
                                                   String>(
                                                 dataSource: list,
                                                 xValueMapper: (datum, index) =>
@@ -334,10 +360,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                             fontSize: 11)),
                                               ),
                                               if (!Utility.foundQuotes(list))
-                                                DoughnutSeries<CotizacionDiaria,
+                                                DoughnutSeries<NumeroCotizacion,
                                                     String>(
                                                   dataSource: [
-                                                    CotizacionDiaria(
+                                                    NumeroCotizacion(
                                                         tipoCotizacion:
                                                             "Sin resultados",
                                                         numCotizaciones: 1)

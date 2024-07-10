@@ -14,26 +14,33 @@ class CustomDropdown {
       double? screenWidth}) {
     return StatefulBuilder(
       builder: (context, setState) {
-        return DropdownMenu<String>(
-          width:
-              screenWidth == null ? null : Utility.getWidthDynamic(screenWidth),
-          requestFocusOnTap: false,
-          initialSelection: initialSelection,
-          onSelected: onSelected,
-          textStyle:
-              TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
-          dropdownMenuEntries:
-              elements.map<DropdownMenuEntry<String>>((String value) {
-            return DropdownMenuEntry<String>(
-              value: value,
-              label: value,
-              style: ButtonStyle(
-                textStyle: WidgetStatePropertyAll(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            double width = constraints.maxWidth * 0.5;
+            return DropdownMenu<String>(
+              width: screenWidth == null
+                  ? null
+                  : Utility.getWidthDynamic(screenWidth),
+              requestFocusOnTap: false,
+              initialSelection: initialSelection,
+              onSelected: onSelected,
+              textStyle:
                   TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
-                ),
-              ),
+              dropdownMenuEntries:
+                  elements.map<DropdownMenuEntry<String>>((String value) {
+                return DropdownMenuEntry<String>(
+                  value: value,
+                  label: value,
+                  style: ButtonStyle(
+                    textStyle: WidgetStatePropertyAll(
+                      TextStyle(
+                          fontFamily: "poppins_regular", fontSize: fontSize),
+                    ),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         );
       },
     );

@@ -12,11 +12,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utils/shared_preferences/preferences.dart';
+
 class SendQuoteService extends ChangeNotifier {
-  // var mailUser = Preferences.mail;
-  // var passwordUser = Preferences.passwordMail;
-  // var phoneUser = Preferences.phone;
-  // var username = Preferences.username;
+  var mailUser = Preferences.mail;
+  var passwordUser = Preferences.passwordMail;
+  var phoneUser = Preferences.phone;
+  var username = Preferences.username;
 
   Future<bool> sendQuoteMail(
     Document comprobantePDF,
@@ -58,7 +60,7 @@ class SendQuoteService extends ChangeNotifier {
       ..recipients.add(receiptQuotePresent.correo)
       ..subject =
           'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
-      ..html = FilesTemplate.getHTML()
+      ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
       ..attachments = [
         FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
       ];
@@ -90,7 +92,9 @@ class SendQuoteService extends ChangeNotifier {
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
     message += "\n\n";
     message += "Ocupación: ${Utility.getOcupattionMessage(cotizaciones)}";
+    message += "\n";
     message += "Estancia: ${Utility.getPeriodReservation(cotizaciones)}";
+    message += "\n";
     message +=
         "Noches: ${Utility.getDifferenceInDays(cotizaciones: cotizaciones)}";
     message += "\n\n";

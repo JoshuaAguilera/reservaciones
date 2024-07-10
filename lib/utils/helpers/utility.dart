@@ -2,10 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_diaria_model.dart';
+import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:intl/intl.dart';
+
+import 'web_colors.dart';
 
 class Utility {
   static String getTitleByIndex(int index) {
@@ -150,39 +153,83 @@ class Utility {
     return height;
   }
 
-  static List<ReporteCotizacion> getReportQuotes(List<QuoteData> cotizaciones) {
+  static List<ReporteCotizacion> getReportQuotes(
+      List<QuoteData> cotizaciones, String filter) {
     List<ReporteCotizacion> listCot = [];
+    DateTime now = DateTime.now();
 
-    for (var i = 1; i < 8; i++) {
-      ReporteCotizacion quoteDay = ReporteCotizacion(
-        numCotizacionesGrupales: 0,
-        numCotizacionesIndividual: 0,
-        numCotizacionesGrupalesPreventa: 0,
-        numCotizacionesIndividualPreventa: 0,
-      );
+    switch (filter) {
+      case "Semanal":
+        for (var i = 1; i < 8; i++) {
+          ReporteCotizacion quoteDay = ReporteCotizacion(
+            numCotizacionesGrupales: 0,
+            numCotizacionesIndividual: 0,
+            numCotizacionesGrupalesPreventa: 0,
+            numCotizacionesIndividualPreventa: 0,
+          );
 
-      List<QuoteData> quotes = cotizaciones
-          .where((element) => element.registerDate.weekday == i)
-          .toList();
+          List<QuoteData> quotes = cotizaciones
+              .where((element) => element.registerDate.weekday == i)
+              .toList();
 
-      for (var element in quotes) {
-        if (element.isGroup) {
-          if (element.isPresale) {
-            quoteDay.numCotizacionesGrupalesPreventa++;
-          } else {
-            quoteDay.numCotizacionesGrupales++;
+          for (var element in quotes) {
+            if (element.isGroup) {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesGrupalesPreventa++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesIndividualPreventa++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
+              }
+            }
           }
-        } else {
-          if (element.isPresale) {
-            quoteDay.numCotizacionesIndividualPreventa++;
-          } else {
-            quoteDay.numCotizacionesIndividual++;
-          }
+
+          quoteDay.dia = getNameDay(i);
+          listCot.add(quoteDay);
         }
-      }
+        break;
+      case "Mensual":
+        int difference =
+            now.difference(DateTime(now.year, now.month, 1)).inDays;
 
-      quoteDay.dia = getNameDay(i);
-      listCot.add(quoteDay);
+        for (var i = 1; i < difference + 1; i++) {
+          ReporteCotizacion quoteDay = ReporteCotizacion(
+            numCotizacionesGrupales: 0,
+            numCotizacionesIndividual: 0,
+            numCotizacionesGrupalesPreventa: 0,
+            numCotizacionesIndividualPreventa: 0,
+          );
+
+          List<QuoteData> quotes = cotizaciones
+              .where((element) => element.registerDate.weekday == i)
+              .toList();
+
+          for (var element in quotes) {
+            if (element.isGroup) {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesGrupalesPreventa++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesIndividualPreventa++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
+              }
+            }
+          }
+
+          quoteDay.dia = monthNames[i];
+          listCot.add(quoteDay);
+        }
+
+        break;
+      default:
     }
 
     return listCot;
@@ -209,20 +256,20 @@ class Utility {
     }
   }
 
-  static List<CotizacionDiaria> getDailyQuotesReport(
+  static List<NumeroCotizacion> getDailyQuotesReport(
       List<QuoteData> respToday) {
-    List<CotizacionDiaria> cot = [];
+    List<NumeroCotizacion> cot = [];
 
-    CotizacionDiaria cotizacionesGrupales =
-        CotizacionDiaria(tipoCotizacion: "Cotizaciones grupales");
+    NumeroCotizacion cotizacionesGrupales =
+        NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales");
 
-    CotizacionDiaria cotizacionesGrupalesPreventa =
-        CotizacionDiaria(tipoCotizacion: "Cotizaciones grupales en Preventa");
+    NumeroCotizacion cotizacionesGrupalesPreventa =
+        NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales en Preventa");
 
-    CotizacionDiaria cotizacionesIndividuales =
-        CotizacionDiaria(tipoCotizacion: "Cotizaciones individuales");
+    NumeroCotizacion cotizacionesIndividuales =
+        NumeroCotizacion(tipoCotizacion: "Cotizaciones individuales");
 
-    CotizacionDiaria cotizacionesIndividualesPreventa = CotizacionDiaria(
+    NumeroCotizacion cotizacionesIndividualesPreventa = NumeroCotizacion(
         tipoCotizacion: "Cotizaciones individuales en Preventa");
 
     for (var element in respToday) {
@@ -251,7 +298,7 @@ class Utility {
     return cot;
   }
 
-  static bool foundQuotes(List<CotizacionDiaria> todayQuotes) {
+  static bool foundQuotes(List<NumeroCotizacion> todayQuotes) {
     bool withQuotes = false;
 
     for (var element in todayQuotes) {
@@ -344,5 +391,67 @@ class Utility {
         .inDays;
 
     return days;
+  }
+
+  static IconData? getIconCardDashboard(String? tipoCotizacion) {
+    switch (tipoCotizacion) {
+      case "Cotizaciones grupales":
+        return CupertinoIcons.person_2_alt;
+      case "Cotizaciones grupales en Preventa":
+        return CupertinoIcons.person_2_alt;
+      case "Cotizaciones individuales":
+        return CupertinoIcons.person_alt;
+      case "Cotizaciones individuales en Preventa":
+        return CupertinoIcons.person_alt;
+      default:
+        return Icons.error_outline;
+    }
+  }
+
+  static List<Color> getGradientQuote(String? tipoCotizacion) {
+    switch (tipoCotizacion) {
+      case "Cotizaciones grupales":
+        return [
+          DesktopColors.cotGroupColor,
+          const Color.fromARGB(255, 149, 220, 255)
+        ];
+      case "Cotizaciones grupales en Preventa":
+        return [
+          DesktopColors.cotGroupPreColor,
+          const Color.fromARGB(255, 102, 232, 79)
+        ];
+      case "Cotizaciones individuales":
+        return [
+          DesktopColors.cotIndColor,
+          const Color.fromARGB(255, 73, 185, 255)
+        ];
+      case "Cotizaciones individuales en Preventa":
+        return [
+          DesktopColors.cotIndPreColor,
+          const Color.fromARGB(255, 255, 205, 124)
+        ];
+      default:
+        return [];
+    }
+  }
+
+  static DateTime calculatePeriodReport(String filter) {
+    DateTime initPeriod = DateTime.now();
+
+    switch (filter) {
+      case "Semanal":
+        int numDay = initPeriod.weekday;
+        initPeriod = initPeriod.subtract(Duration(days: numDay));
+        break;
+      case "Mensual":
+        initPeriod = initPeriod.subtract(Duration(days: initPeriod.day));
+        break;
+      case "Anual":
+        initPeriod = DateTime(initPeriod.year, 1, 1);
+        break;
+      default:
+    }
+
+    return initPeriod;
   }
 }

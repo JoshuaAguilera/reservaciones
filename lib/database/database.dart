@@ -125,12 +125,6 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<ReceiptQuoteData>> getReceiptQuotesRecent() {
     return (select(receiptQuote)
-          // ..limit(20, offset: 1)
-          // ..where(
-          // (t) => t.dateRegister.isBetweenValues(
-          //   DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
-          //   DateTime.now(),
-          // ),
           ..orderBy([
             (t) => OrderingTerm(
                 expression: t.dateRegister, mode: OrderingMode.desc)
@@ -157,6 +151,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future deleteQuotesByFolio(String folio) {
     return (delete(quote)..where((t) => t.folio.equals(folio))).go();
+  }
+
+  Future<List<QuoteData>> getHistoryQuotes() {
+    return (select(quote)).get();
   }
 
   //USER SECCION

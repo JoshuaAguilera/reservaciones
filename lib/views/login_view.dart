@@ -202,6 +202,8 @@ class _LoginViewState extends State<LoginView> {
                                         MaterialPageRoute(
                                             builder: (context) => HomeView()),
                                       );
+                                    } else {
+                                      setState(() => isLoading = false);
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(

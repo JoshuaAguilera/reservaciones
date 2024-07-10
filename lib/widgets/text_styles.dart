@@ -78,12 +78,13 @@ class TextStyles {
       {String text = "",
       Color? color,
       double size = 18,
-      TextAlign textAlign = TextAlign.start}) {
+      TextAlign textAlign = TextAlign.start,
+      bool isBold = true}) {
     return Text(text,
         textAlign: textAlign,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontFamily: "poppins_bold",
+          fontFamily: isBold ? "poppins_bold" : "poppins_medium",
           color: color ?? DesktopColors.cerulean,
           fontWeight: FontWeight.bold,
           fontSize: size,
@@ -112,15 +113,19 @@ class TextStyles {
 
   static Text TextTitleList({
     required int index,
+    Color? color,
+    double size = 22,
+    bool isBold = true,
   }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(index);
 
     return titleText(
         text: numeroFormateado,
-        size: 22,
+        size: size,
         textAlign: TextAlign.center,
-        color: DesktopColors.ceruleanOscure);
+        color: color ?? DesktopColors.ceruleanOscure,
+        isBold: isBold);
   }
 
   static Text titlePagText(
@@ -180,15 +185,36 @@ class TextStyles {
   }
 
   static RichText TextAsociative(String title, String content,
-      {bool isInverted = false, double size = 12}) {
+      {bool isInverted = false, double size = 12, Color? color}) {
     return RichText(
       text: TextSpan(children: [
         if (!isInverted)
-          TextSpan(text: title, style: styleStandar(isBold: true, size: size)),
-        TextSpan(text: content, style: styleStandar(size: size)),
+          TextSpan(
+              text: title,
+              style: styleStandar(isBold: true, size: size, color: color)),
+        TextSpan(text: content, style: styleStandar(size: size, color: color)),
         if (isInverted)
-          TextSpan(text: title, style: styleStandar(isBold: true, size: size)),
+          TextSpan(
+              text: title,
+              style: styleStandar(isBold: true, size: size, color: color)),
       ]),
+    );
+  }
+
+  static Text mediumText(
+      {String text = "",
+      TextAlign aling = TextAlign.left,
+      double size = 14,
+      Color? color}) {
+    return Text(
+      text,
+      textAlign: aling,
+      style: TextStyle(
+        color: color ?? DesktopColors.turqueza,
+        fontSize: size,
+        fontWeight: FontWeight.bold,
+        fontFamily: "poppins_medium",
+      ),
     );
   }
 }
