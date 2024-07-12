@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../models/prefijo_telefonico_model.dart';
 
 const List<String> categorias = <String>[
@@ -138,4 +140,43 @@ const List<String> textFont = <String>[
   'News Gothic',
   'Gilroy',
   'Univers',
+];
+
+const List<Text> textofFont = <Text>[
+  Text(
+    'Calibri',
+    style: TextStyle(fontFamily: 'calibri_regular'),
+  ),
+  Text(
+    "Poppins",
+    style: TextStyle(fontFamily: 'poppins_regular'),
+  ),
+  Text(
+    "Bodoni Moda",
+    style: TextStyle(fontFamily: 'bodoniModa-regular'),
+  ),
+  Text(
+    "Times New Roman",
+    style: TextStyle(fontFamily: 'timeNewRomanregular'),
+  ),
+  Text(
+    "Lubalin Graph",
+    style: TextStyle(fontFamily: 'lubalinGraph_regular'),
+  ),
+  Text(
+    "Georgia",
+    style: TextStyle(fontFamily: 'georgia_regular'),
+  ),
+  Text(
+    "Helvetica",
+    style: TextStyle(fontFamily: 'helvetica_regular'),
+  ),
+  // 'Futura',
+  // 'Franklin Gothic',
+  // 'Avenir',
+  // 'Montserrat',
+  // 'Frutiger',
+  // 'News Gothic',
+  // 'Gilroy',
+  // 'Univers',
 ];

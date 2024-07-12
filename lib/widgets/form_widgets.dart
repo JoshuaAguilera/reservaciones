@@ -8,12 +8,14 @@ import 'text_styles.dart';
 
 class FormWidgets {
   static Widget inputColor(
-      {required String nameInput, required Color primaryColor}) {
+      {required String nameInput,
+      required Color primaryColor,
+      double verticalPadding = 6}) {
     Color pickerColor = primaryColor;
     Color currentColor = primaryColor;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: StatefulBuilder(
         builder: (context, setState) {
           void changeColor(Color color) {
@@ -72,24 +74,21 @@ class FormWidgets {
 
   static Widget inputImage({required String nameInput}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: StatefulBuilder(
         builder: (context, setState) {
           return SizedBox(
             height: 52,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            child: Wrap(
               children: [
                 TextStyles.standardText(text: nameInput),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "coralbluelogo.png",
-                        msgError: "",
-                        blocked: true,
-                        icon: const Icon(Icons.upload)),
-                  ),
+                GestureDetector(
+                  onTap: () {},
+                  child: TextFormFieldCustom.textFormFieldwithBorder(
+                      name: "coralbluelogo.png",
+                      msgError: "",
+                      blocked: true,
+                      icon: const Icon(Icons.upload)),
                 ),
               ],
             ),

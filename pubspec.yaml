@@ -59,7 +59,7 @@ dependencies:
   tuple: ^2.0.2
   flutter_colorpicker: ^1.1.0
   carousel_slider: ^4.2.1
-  dropdown_search: ^5.0.6
+  animated_custom_dropdown: ^3.1.1
 
 dev_dependencies:
   flutter_test:
@@ -130,6 +130,40 @@ flutter:
         - asset: assets/fonts/calibri-bold.ttf
         - asset: assets/fonts/calibri-bold-italic.ttf
           style: italic
+    - family: univers_regular
+      fonts:
+        - asset: assets/fonts/univers-regular.ttf
+    - family: gilroy_regular
+      fonts:
+        - asset: assets/fonts/gilroy-regular.ttf
+    - family: frutiger_regular
+      fonts:
+        - asset: assets/fonts/frutiger-regular.ttf
+    - family: montserrat_regular
+      fonts:
+        - asset: assets/fonts/montserrat-regular.ttf
+    - family: helvetica_regular
+      fonts:
+        - asset: assets/fonts/helvetica-regular.ttf
+    - family: georgia_regular
+      fonts:
+        - asset: assets/fonts/georgia-regular.ttf
+    - family: libalinGraph_regular
+      fonts:
+        - asset: assets/fonts/lubalinGraph-regular.ttf
+    - family: timesNewRoman_regular
+      fonts:
+        - asset: assets/fonts/timesNewRoman-regular.ttf
+    - family: bodoniModa_regular
+      fonts:
+        - asset: assets/fonts/bodoniModa-regular.ttf
+    - family: EBGaramond_regular
+      fonts:
+        - asset: assets/fonts/EBGaramond-regular.ttf
+    - family: libreBaskerville_regular
+      fonts:
+        - asset: assets/fonts/libreBaskerville-regular.ttf
+    
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
