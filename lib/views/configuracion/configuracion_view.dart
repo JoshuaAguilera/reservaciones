@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/views/configuracion/config_formato_view.dart';
 import 'package:generador_formato/views/configuracion/config_general_view.dart';
+import 'package:generador_formato/widgets/carousel_widget.dart';
 
 import '../../ui/buttons.dart';
 import '../../widgets/text_styles.dart';
@@ -63,7 +65,8 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
                                     },
                                     child: Text(
                                       typeSettings[index],
-                                      style: TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 );
@@ -74,18 +77,19 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: StatefulBuilder(
-                  builder: (context, setState) {
-                    switch (typeSettings) {
-                      case "Generales":
-                        return ConfigGeneralView();
-                      default:
-                        return ConfigGeneralView();
-                    }
-                  },
-                ),
+              StatefulBuilder(
+                builder: (context, setState) {
+                  switch (setting) {
+                    case "Generales":
+                      return ConfigGeneralView();
+                    case "Formato de documento":
+                      return ConfigFormatoView();
+                    case "Planes y categorias":
+                      return CarouselWidget();
+                    default:
+                      return ConfigGeneralView();
+                  }
+                },
               ),
             ],
           ),

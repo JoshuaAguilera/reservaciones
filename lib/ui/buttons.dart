@@ -67,13 +67,27 @@ class _SelectableButtonState extends State<SelectableButton> {
                   borderRadius: BorderRadius.circular(widget.round!),
                 ),
               ),
-              
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(),
               ),
               foregroundColor: WidgetStatePropertyAll(Colors.grey[700])),
       onPressed: widget.onPressed,
       child: widget.child,
+    );
+  }
+}
+
+class Buttons {
+  static ElevatedButton commonButton(
+      {required void Function()? onPressed, Color? color, String text = ""}) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+          elevation: 4, backgroundColor: color ?? DesktopColors.ceruleanOscure),
+      child: Text(
+        text,
+        style: const TextStyle(fontFamily: "poppins_bold"),
+      ),
     );
   }
 }

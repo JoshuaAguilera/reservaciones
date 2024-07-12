@@ -22,6 +22,7 @@ class TextFormFieldCustom {
     TextEditingController? controller,
     bool enabled = true,
     double? maxWidth,
+    Icon? icon,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -108,7 +109,7 @@ class TextFormFieldCustom {
                               });
                             },
                           )
-                        : null,
+                        : icon,
                     labelText: name,
                     errorStyle: TextStyle(
                       fontFamily: "poppins_regular",
@@ -178,7 +179,7 @@ class TextFormFieldCustom {
                     showDatePicker(
                       context: context,
                       initialDate: DateTime.parse(dateController.text),
-                      firstDate:  fechaLimite.isNotEmpty
+                      firstDate: fechaLimite.isNotEmpty
                           ? DateTime.parse(fechaLimite)
                               .add(const Duration(days: 1))
                           : DateTime(DateTime.now().year - 2),

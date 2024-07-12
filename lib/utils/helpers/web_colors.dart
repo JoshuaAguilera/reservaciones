@@ -26,4 +26,8 @@ class DesktopColors {
   static Color cotGroupPreColor = Color.fromARGB(255, 36, 142, 18);
   static Color cotGroupColor = Color.fromARGB(255, 76, 162, 205);
   static Color notFound = const Color.fromARGB(255, 204, 202, 202);
+
+  //Colors Settings Default
+  static Color colorLogo = const Color.fromARGB(255, 6, 174, 181);
+  static Color colorTables = const Color.fromARGB(255, 0, 153, 153);
 }

@@ -39,11 +39,11 @@ class FilesTemplate {
       case 11:
         return "Para poder realizar su reservación le solicitamos el depósito de la primera noche como garantía, el resto de su estancia lo liquida a su llegada.";
       case 12:
-        return "Temporada baja: 3 días sin penalidad, 2 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
+        return "3 días sin penalidad, 2 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
       case 13:
-        return "Temporada media: 5 días sin penalidad, 4 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
+        return "5 días sin penalidad, 4 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
       case 14:
-        return "Temporada alta: 15 días sin penalidad, 14 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
+        return "15 días sin penalidad, 14 días genera el cargo de una noche, no show pago total, salidas anticipadas cargo total de estancia.";
       case 15:
         return "El hotel es 100% libre de humo. No se permite fumar en habitaciones o en otras áreas del hotel.";
       case 16:
@@ -87,13 +87,13 @@ class FilesTemplate {
       case 35:
         return "Late check out: sujeto a disponibilidad del hotel genera costo extra según la temporada.";
       case 49:
-        return "Desayuno servido en el área de restaurante en horario de 8:00 – 11:30 hrs.";
+        return "servido en el área de restaurante en horario de 8:00 – 11:30 hrs.";
       case 36:
-        return "Comidas disponibles en la zona del restaurante en horario de 13:00 – 17:00 hrs.";
+        return "disponibles en la zona del restaurante en horario de 13:00 – 17:00 hrs.";
       case 37:
-        return "Bar Tortuga abierto de 12:00 – 22:30 hrs. Barra libre en bebidas nacionales para todo incluido.";
+        return "abierto de 12:00 – 22:30 hrs. Barra libre en bebidas nacionales para todo incluido.";
       case 38:
-        return "Cenas en horario de 19:00 – 22:00 hrs., código de vestimenta para el horario de cena: casual – playa, (no traje de baño, no salidas de baño)";
+        return "en horario de 19:00 – 22:00 hrs., código de vestimenta para el horario de cena: casual – playa, (no traje de baño, no salidas de baño)";
       case 39:
         return "Cena de especialidades: ";
       case 40:
@@ -113,19 +113,19 @@ class FilesTemplate {
       case 47:
         return "Los alimentos quedan sujeto a ocupación para ser montados en tipo buffet, o bien el cliente podrá tener la opción de elegir de los menús estipulados por el hotel, con previa reservación, garantizando así otorgar el plan todo incluido (para quien reserveen dicho plan) dentro de los horarios previamente mencionados, pero no obligado a montar buffet como parte del servicio.";
       case 48:
-        return "Room service de 12:00 – 21:00 hrs. (cargo extra del 20%)";
+        return "de 12:00 – 21:00 hrs. (cargo extra del 20%)";
       case 50:
-        return "Alberca adultos abierta de 8:00 – 21:00 hrs.";
+        return "abierta de 8:00 – 21:00 hrs.";
       case 51:
-        return "Parque acuático para niños abierta de 8:00 – 21:00 hrs.";
+        return "abierta de 8:00 – 21:00 hrs.";
       case 52:
-        return "Actividades acuáticas no motorizadas incluidas. (sujetas a disponibilidad)";
+        return "acuáticas no motorizadas incluidas. (sujetas a disponibilidad)";
       case 53:
-        return "Área de juegos disponible de 18:00 – 22:00 hrs.";
+        return "disponible de 18:00 – 22:00 hrs.";
       case 54:
-        return "GYM disponible de 07:00 – 22:00 hrs.";
+        return "disponible de 07:00 – 22:00 hrs.";
       case 55:
-        return "La Octava área de trabajo con acceso ilimitado a WIFI.";
+        return "área de trabajo con acceso ilimitado a WIFI.";
       case 56:
         return "Nos reservamos el derecho de admisión. ";
       case 57:
@@ -138,6 +138,35 @@ class FilesTemplate {
         return "Esperamos con entusiasmo su visita y estamos comprometidos a hacer de su estancia una experiencia excepcional. ¡Gracias por elegirnos!";
       case 61:
         return "Cordialmente";
+      case 120:
+        return "Temporada baja: ";
+      case 130:
+        return "Temporada media: ";
+      case 140:
+        return "Temporada alta: ";
+      case 149:
+        return "Desayuno ";
+      case 136:
+        return "Comidas ";
+      case 137:
+        return "Bar Tortuga ";
+      case 138:
+        return "Cenas ";
+      case 148:
+        return "Room service ";
+      case 150:
+        return "Alberca adultos ";
+      case 151:
+        return "Parque acuático para niños ";
+      case 152:
+        return "Actividades ";
+      case 153:
+        return "Área de juegos ";
+      case 154:
+        return "GYM ";
+      case 155:
+        return "La Octava ";
+
       default:
         return "Not found";
     }
@@ -237,10 +266,21 @@ class FilesTemplate {
     required List<int> idsText,
     bool withRound = false,
     bool isSubIndice = false,
+    List<pw.Widget>? widgets,
+    bool widgetFirst = false,
   }) {
     return pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
+          if (widgets != null && widgetFirst)
+            for (pw.Widget widg in widgets)
+              textIndice(
+                  text: "",
+                  styleText: styleLight,
+                  styleIndice: styleIndice,
+                  withRound: withRound,
+                  isSubindice: isSubIndice,
+                  widget: widg),
           for (var element in idsText)
             if (element == 39)
               textIndice(
@@ -263,6 +303,15 @@ class FilesTemplate {
                   styleIndice: styleIndice,
                   withRound: withRound,
                   isSubindice: isSubIndice),
+          if (widgets != null && !widgetFirst)
+            for (pw.Widget widg in widgets)
+              textIndice(
+                  text: "",
+                  styleText: styleLight,
+                  styleIndice: styleIndice,
+                  withRound: withRound,
+                  isSubindice: isSubIndice,
+                  widget: widg),
         ]);
   }
 
@@ -273,6 +322,7 @@ class FilesTemplate {
     String nameIndice = "",
     bool withRound = false,
     bool isSubindice = false,
+    pw.Widget? widget,
   }) {
     return pw.Padding(
       padding: pw.EdgeInsets.only(
@@ -301,11 +351,12 @@ class FilesTemplate {
                 : withRound
                     ? 406
                     : 395,
-            child: pw.Text(
-              text,
-              style: styleText,
-              overflow: pw.TextOverflow.clip,
-            ),
+            child: widget ??
+                pw.Text(
+                  text,
+                  style: styleText,
+                  overflow: pw.TextOverflow.clip,
+                ),
           ),
         ],
       ),

@@ -201,6 +201,24 @@ class TextStyles {
     );
   }
 
+  static Future<pw.RichText> pwTextAsotiation({
+    String title = "",
+    String content = "",
+    bool isInverted = false,
+    double size = 12,
+  }) async {
+    return pw.RichText(
+        text: pw.TextSpan(children: [
+      if (!isInverted)
+        pw.TextSpan(
+            text: title, style: await pwStylePDF(isBold: true, size: size)),
+      pw.TextSpan(text: content, style: await pwStylePDF(size: size)),
+      if (isInverted)
+        pw.TextSpan(
+            text: title, style: await pwStylePDF(isBold: true, size: size)),
+    ]));
+  }
+
   static Text mediumText(
       {String text = "",
       TextAlign aling = TextAlign.left,

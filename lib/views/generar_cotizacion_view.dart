@@ -24,6 +24,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../models/prefijo_telefonico_model.dart';
+import '../ui/buttons.dart';
 import '../utils/helpers/constants.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
@@ -213,41 +214,33 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: SizedBox(
-                                      width: 200,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return (dropdownValue ==
-                                                      "Cotización Individual")
-                                                  ? Dialogs()
-                                                      .habitacionIndividualDialog(
-                                                          buildContext: context)
-                                                  : Dialogs()
-                                                      .habitacionGrupoDialog(
-                                                          buildContext:
-                                                              context);
-                                            },
-                                          ).then((value) {
-                                            if (value != null) {
-                                              setState(() =>
-                                                  cotizaciones.add(value));
-                                            }
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 4,
-                                            backgroundColor:
-                                                DesktopColors.ceruleanOscure),
-                                        child: const Text(
-                                          "Agregar cotización",
-                                          style: TextStyle(
-                                              fontFamily: "poppins_bold"),
-                                        ),
-                                      ),
-                                    ),
+                                        width: 200,
+                                        height: 40,
+                                        child: Buttons.commonButton(
+                                          text: "Agregar cotización",
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return (dropdownValue ==
+                                                        "Cotización Individual")
+                                                    ? Dialogs()
+                                                        .habitacionIndividualDialog(
+                                                            buildContext:
+                                                                context)
+                                                    : Dialogs()
+                                                        .habitacionGrupoDialog(
+                                                            buildContext:
+                                                                context);
+                                              },
+                                            ).then((value) {
+                                              if (value != null) {
+                                                setState(() =>
+                                                    cotizaciones.add(value));
+                                              }
+                                            });
+                                          },
+                                        )),
                                   ),
                                   const SizedBox(height: 12),
                                   if (!Utility.isResizable(
@@ -415,81 +408,89 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               child: SizedBox(
                                 width: 200,
                                 height: 40,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    if (_formKeyCotizacion.currentState!
-                                        .validate()) {
-                                      if (cotizaciones.isEmpty) {
-                                        showSnackBar(
-                                          type: "alert",
-                                          context: context,
-                                          title: "Cotizaciones no registradas",
-                                          message:
-                                              "Se requiere al menos una cotización",
-                                        );
-                                        return;
-                                      }
+                                child: Buttons.commonButton(
+                                        onPressed: () async {
+                                          if (_formKeyCotizacion.currentState!
+                                              .validate()) {
+                                            if (cotizaciones.isEmpty) {
+                                              showSnackBar(
+                                                type: "alert",
+                                                context: context,
+                                                title:
+                                                    "Cotizaciones no registradas",
+                                                message:
+                                                    "Se requiere al menos una cotización",
+                                              );
+                                              return;
+                                            }
 
-                                      setState(() => isLoading = true);
+                                            setState(() => isLoading = true);
 
-                                      if (!(await ComprobanteService()
-                                          .createComprobante(
-                                              comprobante,
-                                              cotizaciones,
-                                              folio,
-                                              prefijoInit))) {
-                                        if (!context.mounted) return;
-                                        showSnackBar(
-                                          type: "danger",
-                                          context: context,
-                                          title:
-                                              "Error al registrar la cotizacion",
-                                          message:
-                                              "Se produjo un error al insertar la nueva cotización.",
-                                        );
-                                        return;
-                                      }
+                                            if (!(await ComprobanteService()
+                                                .createComprobante(
+                                                    comprobante,
+                                                    cotizaciones,
+                                                    folio,
+                                                    prefijoInit))) {
+                                              if (!context.mounted) return;
+                                              showSnackBar(
+                                                type: "danger",
+                                                context: context,
+                                                title:
+                                                    "Error al registrar la cotizacion",
+                                                message:
+                                                    "Se produjo un error al insertar la nueva cotización.",
+                                              );
+                                              return;
+                                            }
 
-                                      receiptQuotePresent = comprobante;
-                                      receiptQuotePresent.folioCuotas = folio;
-                                      quotesPresent = cotizaciones;
+                                            receiptQuotePresent = comprobante;
+                                            receiptQuotePresent.folioCuotas =
+                                                folio;
+                                            quotesPresent = cotizaciones;
 
-                                      comprobantePDF = await ref
-                                          .watch(CotizacionIndividualProvider
-                                              .provider.notifier)
-                                          .generarComprobante(comprobante);
+                                            comprobantePDF = await ref
+                                                .watch(
+                                                    CotizacionIndividualProvider
+                                                        .provider.notifier)
+                                                .generarComprobante(
+                                                    comprobante);
 
-                                      ref
-                                          .read(comprobanteProvider.notifier)
-                                          .update((state) =>
-                                              ComprobanteCotizacion());
-                                      ref
-                                          .watch(CotizacionIndividualProvider
-                                              .provider.notifier)
-                                          .clear();
-                                      ref
-                                          .read(uniqueFolioProvider.notifier)
-                                          .update((state) =>
-                                              UniqueKey().hashCode.toString());
+                                            ref
+                                                .read(comprobanteProvider
+                                                    .notifier)
+                                                .update((state) =>
+                                                    ComprobanteCotizacion());
+                                            ref
+                                                .watch(
+                                                    CotizacionIndividualProvider
+                                                        .provider.notifier)
+                                                .clear();
+                                            ref
+                                                .read(uniqueFolioProvider
+                                                    .notifier)
+                                                .update((state) => UniqueKey()
+                                                    .hashCode
+                                                    .toString());
 
-                                      ref.read(changeProvider.notifier).update(
-                                          (state) => UniqueKey().hashCode);
+                                            ref
+                                                .read(changeProvider.notifier)
+                                                .update((state) =>
+                                                    UniqueKey().hashCode);
 
-                                      if (!context.mounted) return;
-                                      Future.delayed(
-                                          Durations.long2,
-                                          () =>
-                                              setState(() => isFinish = true));
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      elevation: 4,
-                                      backgroundColor:
-                                          DesktopColors.prussianBlue),
-                                  child: TextStyles.buttonTextStyle(
-                                      text: "Generar cotización"),
-                                ).animate().fadeIn(
-                                    delay: const Duration(milliseconds: 1000)),
+                                            if (!context.mounted) return;
+                                            Future.delayed(
+                                                Durations.long2,
+                                                () => setState(
+                                                    () => isFinish = true));
+                                          }
+                                        },
+                                        text: "Generar cotización",
+                                        color: DesktopColors.prussianBlue)
+                                    .animate()
+                                    .fadeIn(
+                                        delay:
+                                            const Duration(milliseconds: 1000)),
                               ),
                             ),
                           ),

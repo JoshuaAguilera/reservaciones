@@ -119,3 +119,23 @@ const List<String> typeSettings = [
   "Formato de documento",
   "Planes y categorias",
 ];
+
+const List<String> textFont = <String>[
+  'Calibri',
+  'Poppins',
+  'Bodoni Moda',
+  'Times New Roman',
+  'New York',
+  'Lubalin Graph',
+  'Minion pro',
+  'Georgia',
+  'Helvetica',
+  'Futura',
+  'Franklin Gothic',
+  'Avenir',
+  'Montserrat',
+  'Frutiger',
+  'News Gothic',
+  'Gilroy',
+  'Univers',
+];

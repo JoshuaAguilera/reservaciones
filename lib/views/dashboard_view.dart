@@ -148,7 +148,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             height: 450,
                                             child: SfCartesianChart(
                                               plotAreaBorderWidth: 0,

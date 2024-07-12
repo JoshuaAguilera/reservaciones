@@ -56,6 +56,67 @@ class GeneradorDocService extends ChangeNotifier {
     pw.TextStyle styleRegular =
         await TextStyles.pwStylePDF(size: 8.4, isBold: true);
 
+    // text Asotiative
+    pw.RichText cancelPolity1 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(120),
+        content: FilesTemplate.StructureDoc(12),
+        size: 8);
+    pw.RichText cancelPolity2 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(130),
+        content: FilesTemplate.StructureDoc(13),
+        size: 8);
+    pw.RichText cancelPolity3 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(140),
+        content: FilesTemplate.StructureDoc(14),
+        size: 8);
+
+    pw.RichText service1 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(149),
+        content: FilesTemplate.StructureDoc(49),
+        size: 8);
+    pw.RichText service2 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(136),
+        content: FilesTemplate.StructureDoc(36),
+        size: 8);
+    pw.RichText service3 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(137),
+        content: FilesTemplate.StructureDoc(37),
+        size: 8);
+    pw.RichText service4 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(138),
+        content: FilesTemplate.StructureDoc(38),
+        size: 8);
+    pw.RichText service5 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(148),
+        content: FilesTemplate.StructureDoc(48),
+        size: 8);
+
+    //facilities
+    pw.RichText ease1 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(150),
+        content: FilesTemplate.StructureDoc(50),
+        size: 8);
+    pw.RichText ease2 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(151),
+        content: FilesTemplate.StructureDoc(51),
+        size: 8);
+    pw.RichText ease3 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(152),
+        content: FilesTemplate.StructureDoc(52),
+        size: 8);
+    pw.RichText ease4 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(153),
+        content: FilesTemplate.StructureDoc(53),
+        size: 8);
+    pw.RichText ease5 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(154),
+        content: FilesTemplate.StructureDoc(54),
+        size: 8);
+    pw.RichText ease6 = await TextStyles.pwTextAsotiation(
+        title: FilesTemplate.StructureDoc(155),
+        content: FilesTemplate.StructureDoc(55),
+        size: 8);
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: pageFormatDefault,
@@ -119,7 +180,8 @@ class GeneradorDocService extends ChangeNotifier {
                   FilesTemplate.getListDocument(
                       styleLight: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [12, 13, 14]),
+                      idsText: [],
+                      widgets: [cancelPolity1, cancelPolity2, cancelPolity3]),
                   pw.SizedBox(height: 10),
                   pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
                       style: styleBoldUnderline),
@@ -154,7 +216,9 @@ class GeneradorDocService extends ChangeNotifier {
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [49, 36, 37, 38, 39]),
+                      widgets: [service1, service2, service3, service4],
+                      widgetFirst: true,
+                      idsText: [39]),
                   pw.SizedBox(height: 8),
                   FilesTemplate.getListDocument(
                       withRound: true,
@@ -167,7 +231,8 @@ class GeneradorDocService extends ChangeNotifier {
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [47, 48]),
+                      idsText: [47],
+                      widgets: [service5]),
                   pw.SizedBox(height: 14),
                   pw.Text("FACILIDADES", style: styleBold),
                   pw.SizedBox(height: 13),
@@ -175,7 +240,8 @@ class GeneradorDocService extends ChangeNotifier {
                       withRound: true,
                       styleLight: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [50, 51, 52, 53, 54, 55]),
+                      idsText: [],
+                      widgets: [ease1, ease2, ease3, ease4, ease5, ease6]),
                   pw.SizedBox(height: 9),
                   pw.Text(FilesTemplate.StructureDoc(56), style: styleBold),
                   pw.Text(FilesTemplate.StructureDoc(57), style: styleLigth),
@@ -198,7 +264,7 @@ class GeneradorDocService extends ChangeNotifier {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 15),
                 pw.Text(
                     "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
                     style: styleFooter),

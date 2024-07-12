@@ -15,6 +15,7 @@ class CustomDropdown {
     return StatefulBuilder(
       builder: (context, setState) {
         return DropdownMenu<String>(
+          menuHeight: 200,
           width:
               screenWidth == null ? null : Utility.getWidthDynamic(screenWidth),
           requestFocusOnTap: false,
@@ -52,6 +53,7 @@ class CustomDropdown {
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,
+          
           menuHeight: 150,
           label: Row(
             children: [

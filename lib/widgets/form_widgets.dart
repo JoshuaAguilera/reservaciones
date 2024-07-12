@@ -1,65 +1,51 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/widgets/textformfield_custom.dart';
 
 import 'text_styles.dart';
 
 class FormWidgets {
-  static Widget inputColor({required String nameInput, required Color color}) {
+  static Widget inputColor(
+      {required String nameInput, required Color primaryColor}) {
+    Color pickerColor = primaryColor;
+    Color currentColor = primaryColor;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: StatefulBuilder(
         builder: (context, setState) {
-          return Row(
+          void changeColor(Color color) {
+            setState(() => pickerColor = color);
+          }
+
+          return Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               TextStyles.standardText(text: nameInput),
               GestureDetector(
                 onTap: () {
-                  Color pickerColor = Color(0xff443a49);
-                  Color currentColor = Color(0xff443a49);
-
-                  void changeColor(Color color) {
-                    setState(() => pickerColor = color);
-                  }
-
                   showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('Pick a color!'),
+                        title: TextStyles.titleText(
+                            text: "Selecciona un color", color: Colors.black87),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
+                          child: MaterialPicker(
                             pickerColor: pickerColor,
                             onColorChanged: changeColor,
+                            enableLabel: true,
                           ),
-                          // Use Material color picker:
-                          //
-                          // child: MaterialPicker(
-                          //   pickerColor: pickerColor,
-                          //   onColorChanged: changeColor,
-                          //   showLabel: true, // only on portrait mode
-                          // ),
-                          //
-                          // Use Block color picker:
-                          //
-                          // child: BlockPicker(
-                          //   pickerColor: currentColor,
-                          //   onColorChanged: changeColor,
-                          // ),
-                          //
-                          // child: MultipleChoiceBlockPicker(
-                          //   pickerColors: currentColors,
-                          //   onColorsChanged: changeColors,
-                          // ),
                         ),
                         actions: <Widget>[
-                          ElevatedButton(
-                            child: const Text('Got it'),
-                            onPressed: () {
-                              setState(() => currentColor = pickerColor);
-                              Navigator.of(context).pop();
-                            },
-                          ),
+                          Buttons.commonButton(
+                              onPressed: () {
+                                setState(() => currentColor = pickerColor);
+                                Navigator.of(context).pop();
+                              },
+                              text: "Aceptar"),
                         ],
                       );
                     },
@@ -70,7 +56,7 @@ class FormWidgets {
                   child: Padding(
                     padding: const EdgeInsets.all(3.5),
                     child: Container(
-                      color: color,
+                      color: currentColor,
                       width: 35,
                       height: 12,
                     ),
@@ -81,6 +67,56 @@ class FormWidgets {
           );
         },
       ),
+    );
+  }
+
+  static Widget inputImage({required String nameInput}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return SizedBox(
+            height: 52,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextStyles.standardText(text: nameInput),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: TextFormFieldCustom.textFormFieldwithBorder(
+                        name: "coralbluelogo.png",
+                        msgError: "",
+                        blocked: true,
+                        icon: const Icon(Icons.upload)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  static Widget inputSwitch(
+      {String name = "",
+      required bool value,
+      bool isModeDark = false,
+      Color? activeColor,
+      void Function(bool)? onChanged}) {
+    return Wrap(
+      children: [
+        TextStyles.standardText(text: name),
+        Switch(
+          value: value,
+          activeColor: activeColor ?? Colors.white,
+          inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
+          inactiveThumbColor: !isModeDark ? null : Colors.amber,
+          activeTrackColor: !isModeDark ? null : Colors.black54,
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 }
