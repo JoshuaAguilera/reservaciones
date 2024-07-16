@@ -105,6 +105,7 @@ class FormWidgets {
       Color? activeColor,
       void Function(bool)? onChanged}) {
     return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         TextStyles.standardText(text: name),
         Switch(

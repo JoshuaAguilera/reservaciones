@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
+import '../../widgets/form_widgets.dart';
 
 class ConfigGeneralView extends StatefulWidget {
   @override

@@ -10,6 +10,7 @@ const List<String> categorias = <String>[
 const List<String> planes = <String>[
   'PLAN TODO INCLUIDO',
   'SOLO HOSPEDAJE',
+  'PLAN SIN ALIMENTOS'
 ];
 
 const List<String> cotizacionesList = <String>[
@@ -127,19 +128,21 @@ const List<String> textFont = <String>[
   'Poppins',
   'Bodoni Moda',
   'Times New Roman',
-  'New York',
+  // 'New York',
   'Lubalin Graph',
-  'Minion pro',
+  // 'Minion pro',
   'Georgia',
   'Helvetica',
-  'Futura',
-  'Franklin Gothic',
-  'Avenir',
+  // 'Futura',
+  // 'Franklin Gothic',
+  // 'Avenir',
   'Montserrat',
   'Frutiger',
-  'News Gothic',
+  // 'News Gothic',
   'Gilroy',
   'Univers',
+  'EB Garamond',
+  'Libre Baskerville'
 ];
 
 const List<Text> textofFont = <Text>[

@@ -60,6 +60,7 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   carousel_slider: ^4.2.1
   animated_custom_dropdown: ^3.1.1
+  file_picker: ^8.0.6
 
 dev_dependencies:
   flutter_test:
@@ -148,19 +149,19 @@ flutter:
     - family: georgia_regular
       fonts:
         - asset: assets/fonts/georgia-regular.ttf
-    - family: libalinGraph_regular
+    - family: lubalingraph_regular
       fonts:
         - asset: assets/fonts/lubalinGraph-regular.ttf
-    - family: timesNewRoman_regular
+    - family: timesnewroman_regular
       fonts:
         - asset: assets/fonts/timesNewRoman-regular.ttf
-    - family: bodoniModa_regular
+    - family: bodonimoda_regular
       fonts:
         - asset: assets/fonts/bodoniModa-regular.ttf
-    - family: EBGaramond_regular
+    - family: ebgaramond_regular
       fonts:
         - asset: assets/fonts/EBGaramond-regular.ttf
-    - family: libreBaskerville_regular
+    - family: librebaskerville_regular
       fonts:
         - asset: assets/fonts/libreBaskerville-regular.ttf
     

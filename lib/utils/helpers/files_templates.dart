@@ -138,6 +138,36 @@ class FilesTemplate {
         return "Esperamos con entusiasmo su visita y estamos comprometidos a hacer de su estancia una experiencia excepcional. ¡Gracias por elegirnos!";
       case 61:
         return "Cordialmente";
+      case 62:
+        return "El hotel Coral Blue Huatulco puede albergar de acuerdo con su disponibilidad un total de 326 adultos y hasta 119 menores. Cada habitacion tiene un sofá cama para su mejor distribución con un total de 445 personas entre adultos y menores";
+      case 63:
+        return "Menores de 0 a 6 años son gratis y menores de 13 años en adelante pagan como adultos. ";
+      case 64:
+        return "Para realizará el bloqueo de sus habitaciones se requiere un depósito inicial de \$10,000.00 pesos NO REEMBOLSABLES, posteriormente se realizará un programa de pagos hasta cubrir el total de su estancia, mínimo 10 días antes de su llegada.";
+      case 65:
+        return "Tarifa en MXN, por ocupación, por noche. Precios sujetos a cambios sin previo aviso ";
+      case 66:
+        return "Favor de evitar realizar cualquier pago antes de realizar su reservación.";
+      case 67:
+        return "Por cada 15 habitaciones se otorga una en cortesía. ";
+      case 68:
+        return "cotización vigente 15 días";
+      case 69:
+        return "CAMBIOS DE FECHA: ";
+      case 70:
+        return "Deberá ser solicitado al departamento de ventas con mínimo 30 días antes de su llegada, de lo contrario se realizará un cargo del 50% del total de la estancia. Se aplicará la tarifa de las nuevas fechas.";
+      case 71:
+        return "CANCELACION: ";
+      case 72:
+        return "Deberá solicitarlo al departamento de ventas con mínimo 45 días antes de su llegada, de lo contrario se realizará un cargo del 50% del total de la estancia";
+      case 73:
+        return "NO SHOW: ";
+      case 74:
+        return "No presentarse al hotel tendrá penalidad del cargo del 100% del total de la estancia. ";
+      case 75:
+        return "El coordinador del grupo deberá dejar en garantía \$15,000 MXN (que puede ser en efectivo o tarjeta de crédito mediante la creación de un voucher abierto) que servirá para cubrir alguna penalidad en caso de perdida o extravio de llaves, toallas o alguna amenidad dentro de las habitaciones. La garantía de pago será devuelta al huésped al momento de hacer check out (salida de su reservación) y previa revisión al cuarto ocupado sin haber hallado algo roto, dañado, manchado o extraviado.";
+      case 76:
+        return "En caso de requerir una salida posterior o una llegada previa a la hora marcada generará un cargo de early check in o late check out, sujeto a disponibilidad del hotel.";
       case 120:
         return "Temporada baja: ";
       case 130:
@@ -179,6 +209,7 @@ class FilesTemplate {
     required pw.TextStyle styleHeader,
     required pw.TextStyle styleBold,
     bool requiredPreventa = false,
+    String? colorHeader,
   }) {
     List<List<String>> contenido = [];
 
@@ -205,8 +236,8 @@ class FilesTemplate {
           border: pw.TableBorder.all(width: 0.7),
           headerStyle: styleHeader,
           cellPadding: const pw.EdgeInsets.all(4),
-          headerCellDecoration:
-              pw.BoxDecoration(color: PdfColor.fromHex("#009999")),
+          headerCellDecoration: pw.BoxDecoration(
+              color: PdfColor.fromHex(colorHeader ?? "#009999")),
           headers: [nameTable],
           data: []),
       pw.TableHelper.fromTextArray(
@@ -216,7 +247,6 @@ class FilesTemplate {
         cellPadding:
             const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 0.5),
         headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 2.5, 1.5, 1),
-        cellAlignment: pw.Alignment.center,
         columnWidths: {
           0: const pw.FixedColumnWidth(10),
           1: const pw.FixedColumnWidth(40),
@@ -243,8 +273,8 @@ class FilesTemplate {
             },
             cellPadding:
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
-            headerCellDecoration:
-                pw.BoxDecoration(color: PdfColor.fromHex("#009999")),
+            headerCellDecoration: pw.BoxDecoration(
+                color: PdfColor.fromHex(colorHeader ?? "#009999")),
             headers: [
               "TOTAL DE ESTANCIA",
               Utility.formatterNumber(
@@ -256,6 +286,74 @@ class FilesTemplate {
             ],
             data: []),
       )
+    ]);
+  }
+
+  static pw.Widget getTablesCotGroup({
+    required List<Cotizacion> cotizaciones,
+    required String nameTable,
+    required pw.TextStyle styleGeneral,
+    required pw.TextStyle styleHeader,
+    required pw.TextStyle styleBold,
+    bool requiredPreventa = false,
+    String? colorHeader,
+  }) {
+    List<String> headers = [
+      'TIPO DE HABITACION',
+      '1 O 2 ADULTOS',
+      '3 ADULTOS',
+      '4 ADULTOS',
+      'MENORES 7 A 12 AÑOS',
+    ];
+
+    List<List<String>> contenido = [];
+
+    contenido = [
+      <String>[
+        'DELUXE DOBLE VISTA A LA\nRESERVA',
+        '\$3,240',
+        '\$4,500',
+        '\$5,760',
+        '\$750',
+      ],
+      <String>[
+        'DELUXE DOBLE VISTA PARCIAL\nAL MAR',
+        '\$3,720',
+        '\$5,220',
+        '\$6,720',
+        '\$840',
+      ]
+    ];
+
+    return pw.Column(children: [
+      pw.TableHelper.fromTextArray(
+          border: pw.TableBorder.all(width: 1.5),
+          headerStyle: styleBold,
+          cellPadding: const pw.EdgeInsets.all(4),
+          headers: [nameTable],
+          data: []),
+      pw.TableHelper.fromTextArray(
+        cellStyle: styleGeneral,
+        border: pw.TableBorder.all(width: 1.5),
+        headerStyle: styleGeneral,
+        headerAlignment: pw.Alignment.center,
+        headerHeight: 39,
+        headers: headers,
+        headerCellDecoration:
+            pw.BoxDecoration(color: PdfColor.fromHex(colorHeader ?? "#33CCCC")),
+        cellPadding: const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 2.5, 1.5, 1),
+        cellHeight: 23.5,
+        cellAlignment: pw.Alignment.center,
+        columnWidths: {
+          0: const pw.FixedColumnWidth(45),
+          1: const pw.FixedColumnWidth(30),
+          2: const pw.FixedColumnWidth(30),
+          3: const pw.FixedColumnWidth(30),
+          4: const pw.FixedColumnWidth(20),
+        },
+        data: contenido,
+      ),
     ]);
   }
 
@@ -282,7 +380,7 @@ class FilesTemplate {
                   isSubindice: isSubIndice,
                   widget: widg),
           for (var element in idsText)
-            if (element == 39)
+            if (element == 39 || element == 64 || element == 65)
               textIndice(
                 text: StructureDoc(element),
                 styleText: styleIndice,

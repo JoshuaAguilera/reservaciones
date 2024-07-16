@@ -34,11 +34,65 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final docIndividualSync = ref.watch(documentQuoteIndProvider(""));
+    final docGroupSync = ref.watch(documentQuoteGroupProvider(""));
 
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          docGroupSync.when(
+            data: (document) {
+              return SizedBox(
+                height: screenHight * 0.85,
+                child: PdfPreview(
+                  build: (format) => document.save(),
+                  actionBarTheme: PdfActionBarTheme(
+                    backgroundColor: DesktopColors.ceruleanOscure,
+                  ),
+                  canChangeOrientation: false,
+                  canChangePageFormat: false,
+                  canDebug: false,
+                  allowSharing: false,
+                  allowPrinting: false,
+                  pdfFileName:
+                      "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+                  actions: [
+                    IconButton(
+                      onPressed: () async {
+                        await Printing.sharePdf(
+                          filename:
+                              "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+                          bytes: await document.save(),
+                        );
+                      },
+                      icon: const Icon(
+                        CupertinoIcons.share,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          ref
+                              .read(changeDocGroupProvider.notifier)
+                              .update((state) => UniqueKey().hashCode);
+                        },
+                        icon: const Icon(Icons.change_circle_outlined))
+                  ],
+                ),
+              );
+            },
+            error: (error, stackTrace) {
+              print(error.toString());
+              return const Text('No se encontraron resultados');
+            },
+            loading: () {
+              return SizedBox(
+                  width: screenWidth * 0.5,
+                  child: ProgressIndicatorCustom(screenHight * 0.2));
+            },
+          ),
+          /*
           Row(
             children: [
               Expanded(
@@ -77,14 +131,14 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoView> {
                                   TextStyles.standardText(
                                       text: "Fuente de texto:"),
                                   SizedBox(
-                                    child: CustomDropdown<Text>.search(
+                                    child: CustomDropdown<String>.search(
                                       searchHintText: "Buscar",
                                       hintText:
                                           "Selecciona la nueva fuente del documento",
                                       closedHeaderPadding:
                                           const EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 10),
-                                      items: textofFont,
+                                      items: textFont,
                                       decoration: CustomDropdownDecoration(
                                           closedBorderRadius:
                                               const BorderRadius.all(
@@ -94,8 +148,24 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoView> {
                                                   Radius.circular(4)),
                                           closedBorder:
                                               Border.all(color: Colors.grey)),
-                                      initialItem: textofFont.first,
+                                      initialItem: textFont.first,
                                       onChanged: (p0) {},
+                                      headerBuilder:
+                                          (context, selectedItem, enabled) =>
+                                              Text(
+                                        selectedItem,
+                                        style: TextStyle(
+                                            fontFamily:
+                                                "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular"),
+                                      ),
+                                      listItemBuilder: (context, item,
+                                              isSelected, onItemSelect) =>
+                                          Text(
+                                        item,
+                                        style: TextStyle(
+                                            fontFamily:
+                                                "${item.toLowerCase().replaceAll(' ', '')}_regular"),
+                                      ),
                                     ),
                                   )
                                 ],
@@ -188,6 +258,55 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoView> {
                                 nameInput: "Color de tablas: "),
                             Padding(
                               padding:
+                                  const EdgeInsets.symmetric(vertical: 5.0),
+                              child: Wrap(
+                                // crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  TextStyles.standardText(
+                                      text: "Fuente de texto:"),
+                                  SizedBox(
+                                    child: CustomDropdown<String>.search(
+                                      searchHintText: "Buscar",
+                                      hintText:
+                                          "Selecciona la nueva fuente del documento",
+                                      closedHeaderPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 10),
+                                      items: textFont,
+                                      decoration: CustomDropdownDecoration(
+                                          closedBorderRadius:
+                                              const BorderRadius.all(
+                                                  Radius.circular(5)),
+                                          expandedBorderRadius:
+                                              const BorderRadius.all(
+                                                  Radius.circular(4)),
+                                          closedBorder:
+                                              Border.all(color: Colors.grey)),
+                                      initialItem: textFont.first,
+                                      onChanged: (p0) {},
+                                      headerBuilder:
+                                          (context, selectedItem, enabled) =>
+                                              Text(
+                                        selectedItem,
+                                        style: TextStyle(
+                                            fontFamily:
+                                                "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular"),
+                                      ),
+                                      listItemBuilder: (context, item,
+                                              isSelected, onItemSelect) =>
+                                          Text(
+                                        item,
+                                        style: TextStyle(
+                                            fontFamily:
+                                                "${item.toLowerCase().replaceAll(' ', '')}_regular"),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
                                   const EdgeInsets.only(top: 20, bottom: 5),
                               child: TextStyles.standardText(
                                   text: "Imagenes adjuntas:"),
@@ -247,9 +366,10 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoView> {
                       width: screenWidth * 0.5,
                       child: ProgressIndicatorCustom(screenHight * 0.2));
                 },
-              )
+              ),
             ],
           ),
+          */
         ],
       ),
     );
