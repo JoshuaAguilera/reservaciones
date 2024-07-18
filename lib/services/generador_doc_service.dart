@@ -30,11 +30,12 @@ class GeneradorDocService extends ChangeNotifier {
       marginLeft: 3 * PdfPageFormat.cm,
       marginRight: 3 * PdfPageFormat.cm,
     );
-    
+
     //Header
     final imgenLogo = await rootBundle.load('assets/image/logo_header.png');
     final imageBytes = imgenLogo.buffer.asUint8List();
-    pw.Image logoHeaderImage = pw.Image(pw.MemoryImage(imageBytes), width: 131);
+    pw.MemoryImage logoImage = pw.MemoryImage(imageBytes);
+    pw.Image logoHeaderImage = pw.Image(logoImage, width: 131);
 
     //Footer
     final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
@@ -154,7 +155,8 @@ class GeneradorDocService extends ChangeNotifier {
                       cotizaciones: cotizaciones,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
-                      styleBoldTable: styleBoldTable, color: themeDefault ? "#818282" : null),
+                      styleBoldTable: styleBoldTable,
+                      color: themeDefault ? "#818282" : null),
                   pw.Text("NOTAS", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
                   pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
@@ -387,31 +389,30 @@ class GeneradorDocService extends ChangeNotifier {
       pw.MultiPage(
         pageFormat: pageFormatDefault,
         header: (context) {
-          return pw.Padding(
+          return pw.Column(children: [
+            pw.Padding(
               padding: const pw.EdgeInsets.symmetric(
                   horizontal: 2.7 * PdfPageFormat.cm),
-              child: pw.Column(
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      logoHeaderImage,
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.only(bottom: 0),
-                        child: pw.Text(
-                            "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
-                            style: styleLigthHeader),
-                      ),
-                    ],
+                  logoHeaderImage,
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(bottom: 0),
+                    child: pw.Text(
+                        "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
+                        style: styleLigthHeader),
                   ),
-                  pw.SizedBox(height: 10),
                 ],
-              ));
+              ),
+            ),
+            pw.SizedBox(height: 10),
+          ]);
         },
         build: (context) => [
           pw.Padding(
-            padding:
-                pw.EdgeInsets.symmetric(horizontal: 2.7 * PdfPageFormat.cm),
+            padding: const pw.EdgeInsets.symmetric(
+                horizontal: 2.7 * PdfPageFormat.cm),
             child: pw.SizedBox(
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,

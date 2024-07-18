@@ -241,6 +241,7 @@ class FilesTemplate {
           data: []),
       pw.TableHelper.fromTextArray(
         cellStyle: styleGeneral,
+        cellAlignment: pw.Alignment.center,
         border: pw.TableBorder.all(width: 0.9),
         headerStyle: styleBold,
         cellPadding:

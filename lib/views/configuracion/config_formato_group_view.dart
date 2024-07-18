@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/configuracion_provider.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -50,108 +51,99 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
               SizedBox(
                 width: screenWidth < 1100 ? screenWidth : screenWidth * 0.33,
                 height: screenWidth < 1100 ? null : screenHight * 0.85,
-                child: Card(
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(14.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                child: CustomWidgets.containerCard(
+                  maxAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    TextStyles.mediumText(
+                        text: "Formato de cotizaciones grupales",
+                        color: DesktopColors.prussianBlue),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 10,
                       children: [
-                        const SizedBox(height: 5),
-                        TextStyles.mediumText(
-                            text: "Formato de cotizaciones grupales",
-                            color: DesktopColors.prussianBlue),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 10,
-                          children: [
-                            FormWidgets.inputColor(
-                                primaryColor: colorLogoInd,
-                                nameInput: "Color de logotipo: "),
-                            FormWidgets.inputColor(
-                                primaryColor: colorTableInd,
-                                nameInput: "Color de tablas: ",
-                                verticalPadding: 12),
-                          ],
-                        ),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 15,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 300,
-                              child: FormWidgets.inputImage(
-                                  nameInput: "Imagen de logotipo: "),
-                            ),
-                            SizedBox(
-                              width: 300,
-                              child: Wrap(
-                                children: [
-                                  TextStyles.standardText(
-                                      text: "Fuente de texto:"),
-                                  SizedBox(
-                                    child: CustomDropdown<String>.search(
-                                      searchHintText: "Buscar",
-                                      hintText:
-                                          "Selecciona la nueva fuente del documento",
-                                      closedHeaderPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 13),
-                                      items: textFont,
-                                      decoration: CustomDropdownDecoration(
-                                          closedBorderRadius:
-                                              const BorderRadius.all(
-                                                  Radius.circular(5)),
-                                          expandedBorderRadius:
-                                              const BorderRadius.all(
-                                                  Radius.circular(4)),
-                                          closedBorder:
-                                              Border.all(color: Colors.grey)),
-                                      initialItem: textFont.first,
-                                      onChanged: (p0) {},
-                                      headerBuilder:
-                                          (context, selectedItem, enabled) =>
-                                              Text(
-                                        selectedItem,
-                                        style: TextStyle(
-                                            fontFamily:
-                                                "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular"),
-                                      ),
-                                      listItemBuilder: (context, item,
-                                              isSelected, onItemSelect) =>
-                                          Text(
-                                        item,
-                                        style: TextStyle(
-                                            fontFamily:
-                                                "${item.toLowerCase().replaceAll(' ', '')}_regular"),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: Utility.getWidthDynamicCarrousel(screenWidth),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 15, bottom: 5),
-                                child: TextStyles.standardText(
-                                    text: "Imagenes adjuntas:"),
-                              ),
-                              CarouselWidget(),
-                            ],
-                          ),
-                        ),
+                        FormWidgets.inputColor(
+                            primaryColor: colorLogoInd,
+                            nameInput: "Color de logotipo: "),
+                        FormWidgets.inputColor(
+                            primaryColor: colorTableInd,
+                            nameInput: "Color de tablas: ",
+                            verticalPadding: 12),
                       ],
                     ),
-                  ),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 15,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          child: FormWidgets.inputImage(
+                              nameInput: "Imagen de logotipo: "),
+                        ),
+                        SizedBox(
+                          width: 300,
+                          child: Wrap(
+                            children: [
+                              TextStyles.standardText(text: "Fuente de texto:"),
+                              SizedBox(
+                                child: CustomDropdown<String>.search(
+                                  searchHintText: "Buscar",
+                                  hintText:
+                                      "Selecciona la nueva fuente del documento",
+                                  closedHeaderPadding:
+                                      const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 13),
+                                  items: textFont,
+                                  decoration: CustomDropdownDecoration(
+                                      closedBorderRadius:
+                                          const BorderRadius.all(
+                                              Radius.circular(5)),
+                                      expandedBorderRadius:
+                                          const BorderRadius.all(
+                                              Radius.circular(4)),
+                                      closedBorder:
+                                          Border.all(color: Colors.grey)),
+                                  initialItem: textFont.first,
+                                  onChanged: (p0) {},
+                                  headerBuilder:
+                                      (context, selectedItem, enabled) => Text(
+                                    selectedItem,
+                                    style: TextStyle(
+                                        fontFamily:
+                                            "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular"),
+                                  ),
+                                  listItemBuilder: (context, item, isSelected,
+                                          onItemSelect) =>
+                                      Text(
+                                    item,
+                                    style: TextStyle(
+                                        fontFamily:
+                                            "${item.toLowerCase().replaceAll(' ', '')}_regular"),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: Utility.getWidthDynamicCarrousel(screenWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 5),
+                            child: TextStyles.standardText(
+                                text: "Imagenes adjuntas:"),
+                          ),
+                          CarouselWidget(),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               docGroupSync.when(

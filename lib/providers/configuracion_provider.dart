@@ -116,5 +116,5 @@ final changeDocGroupProvider = StateProvider<int>((ref) {
 });
 
 final themeDefaultIndProvider = StateProvider<bool>((ref) {
-  return true;
+  return false;
 });

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/configuracion_provider.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -24,7 +26,6 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
   Color colorLogoInd = DesktopColors.colorLogo;
   Color colorTableInd = DesktopColors.colorTablesInd;
   String font = textFont.first;
-  bool whiteBlack = false;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final docIndividualSync = ref.watch(documentQuoteIndProvider(""));
+    final applyWhitBlack = ref.watch(themeDefaultIndProvider);
 
     return SingleChildScrollView(
       child: Column(
@@ -48,11 +50,9 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
               SizedBox(
                 width: screenWidth < 1100 ? screenWidth : screenWidth * 0.33,
                 height: screenWidth < 1100 ? null : screenHight * 0.85,
-                child: Card(
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
+                child: CustomWidgets.containerCard(
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 5),
@@ -67,20 +67,19 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                             FormWidgets.inputColor(
                               primaryColor: colorLogoInd,
                               nameInput: "Color de logotipo: ",
-                              blocked: whiteBlack,
+                              blocked: applyWhitBlack,
                             ),
                             FormWidgets.inputColor(
                               primaryColor: colorTableInd,
                               nameInput: "Color de tablas: ",
                               verticalPadding: 12,
-                              blocked: whiteBlack,
+                              blocked: applyWhitBlack,
                             ),
                             FormWidgets.inputSwitch(
-                                value: whiteBlack,
+                                value: applyWhitBlack,
                                 activeColor: Colors.grey[900],
                                 name: "Blanco y negro",
                                 onChanged: (p0) {
-                                  setState(() => whiteBlack = p0);
                                   ref
                                       .read(themeDefaultIndProvider.notifier)
                                       .update((state) => p0);
@@ -106,7 +105,12 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                         ),
                       ],
                     ),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Buttons.commonButton(
+                          onPressed: () {}, text: "  Guardar  "),
+                    )
+                  ],
                 ),
               ),
               docIndividualSync.when(
