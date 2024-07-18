@@ -196,7 +196,6 @@ class FilesTemplate {
         return "GYM ";
       case 155:
         return "La Octava ";
-
       default:
         return "Not found";
     }
@@ -298,31 +297,55 @@ class FilesTemplate {
     bool requiredPreventa = false,
     String? colorHeader,
   }) {
-    List<String> headers = [
-      'TIPO DE HABITACION',
-      '1 O 2 ADULTOS',
-      '3 ADULTOS',
-      '4 ADULTOS',
-      'MENORES 7 A 12 AÑOS',
+    List<pw.Widget> headers = [
+      pw.Text(
+        'TIPO DE HABITACION',
+        style: styleGeneral,
+      ),
+      pw.Text(
+        '1 O 2 ADULTOS',
+        style: styleGeneral,
+      ),
+      pw.Text(
+        '3 ADULTOS',
+        style: styleGeneral,
+      ),
+      pw.Text(
+        '4 ADULTOS',
+        style: styleGeneral,
+      ),
+      pw.Text(
+        'MENORES\n7 A 12 AÑOS',
+        style: styleGeneral,
+        textAlign: pw.TextAlign.center,
+      ),
     ];
 
-    List<List<String>> contenido = [];
+    List<List<pw.Widget>> contenido = [];
 
     contenido = [
-      <String>[
-        'DELUXE DOBLE VISTA A LA\nRESERVA',
-        '\$3,240',
-        '\$4,500',
-        '\$5,760',
-        '\$750',
+      <pw.Widget>[
+        pw.Align(
+          alignment: pw.Alignment.centerLeft,
+          child:
+              pw.Text('DELUXE DOBLE VISTA A LA\nRESERVA', style: styleGeneral),
+        ),
+        pw.Text('\$3,240', style: styleBold),
+        pw.Text('\$4,500', style: styleBold),
+        pw.Text('\$5,760', style: styleBold),
+        pw.Text('\$750', style: styleBold),
       ],
-      <String>[
-        'DELUXE DOBLE VISTA PARCIAL\nAL MAR',
-        '\$3,720',
-        '\$5,220',
-        '\$6,720',
-        '\$840',
-      ]
+      <pw.Widget>[
+        pw.Align(
+          alignment: pw.Alignment.centerLeft,
+          child: pw.Text('DELUXE DOBLE VISTA PARCIAL\nAL MAR',
+              style: styleGeneral),
+        ),
+        pw.Text('\$3,720', style: styleBold),
+        pw.Text('\$5,220', style: styleBold),
+        pw.Text('\$6,720', style: styleBold),
+        pw.Text('\$840', style: styleBold),
+      ],
     ];
 
     return pw.Column(children: [
@@ -333,9 +356,7 @@ class FilesTemplate {
           headers: [nameTable],
           data: []),
       pw.TableHelper.fromTextArray(
-        cellStyle: styleGeneral,
         border: pw.TableBorder.all(width: 1.5),
-        headerStyle: styleGeneral,
         headerAlignment: pw.Alignment.center,
         headerHeight: 39,
         headers: headers,
@@ -346,11 +367,11 @@ class FilesTemplate {
         cellHeight: 23.5,
         cellAlignment: pw.Alignment.center,
         columnWidths: {
-          0: const pw.FixedColumnWidth(45),
+          0: const pw.FixedColumnWidth(40),
           1: const pw.FixedColumnWidth(30),
           2: const pw.FixedColumnWidth(30),
           3: const pw.FixedColumnWidth(30),
-          4: const pw.FixedColumnWidth(20),
+          4: const pw.FixedColumnWidth(25),
         },
         data: contenido,
       ),
@@ -456,6 +477,34 @@ class FilesTemplate {
                   overflow: pw.TextOverflow.clip,
                 ),
           ),
+        ],
+      ),
+    );
+  }
+
+  static pw.Widget footerPage(
+      {required pw.TextStyle styleFooter, required pw.Image whatsAppIcon}) {
+    return pw.Center(
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.center,
+        children: [
+          pw.SizedBox(height: 15),
+          pw.Text(
+              "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
+              style: styleFooter),
+          pw.Padding(
+            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: [
+                pw.Text("Correo: reservas@coralbluehuatulco.mx  ",
+                    style: styleFooter),
+                whatsAppIcon,
+                pw.Text(" 958 186 8767", style: styleFooter)
+              ],
+            ),
+          ),
+          pw.Text("Teléfono:  958 525 2061 Ext. 708", style: styleFooter)
         ],
       ),
     );

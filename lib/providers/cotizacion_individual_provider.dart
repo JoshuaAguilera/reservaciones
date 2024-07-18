@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -30,9 +28,11 @@ class CotizacionIndividualProvider extends StateNotifier<List<Cotizacion>> {
     state = [];
   }
 
-  Future<pw.Document> generarComprobante(ComprobanteCotizacion comprobante) async {
-    pdfPrinc =
-        await GeneradorDocService().generarComprobanteCotizacionIndividual(state, comprobante);
+  Future<pw.Document> generarComprobante(
+      ComprobanteCotizacion comprobante) async {
+    pdfPrinc = await GeneradorDocService()
+        .generarComprobanteCotizacionIndividual(
+            cotizaciones: state, comprobante: comprobante);
     return pdfPrinc;
   }
 }

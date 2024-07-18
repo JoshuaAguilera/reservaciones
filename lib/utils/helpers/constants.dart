@@ -119,7 +119,8 @@ const List<String> dayNames = [
 
 const List<String> typeSettings = [
   "Generales",
-  "Formato de documento",
+  "Formato Individual",
+  "Formato Grupal",
   "Planes y categorias",
 ];
 

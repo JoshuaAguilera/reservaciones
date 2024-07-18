@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/views/configuracion/config_formato_view.dart';
+import 'package:generador_formato/views/configuracion/config_formato_group_view.dart';
 import 'package:generador_formato/views/configuracion/config_general_view.dart';
 import 'package:generador_formato/widgets/carousel_widget.dart';
+import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/buttons.dart';
 import '../../widgets/text_styles.dart';
+import 'config_formato_ind_view.dart';
 
 class ConfiguracionView extends StatefulWidget {
-  const ConfiguracionView({super.key});
+  const ConfiguracionView({super.key, required this.sideController});
+
+  final SidebarXController sideController;
 
   @override
   State<ConfiguracionView> createState() => _ConfiguracionViewState();
@@ -77,19 +81,26 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
                   ),
                 ),
               ),
-              StatefulBuilder(
-                builder: (context, setState) {
-                  switch (setting) {
-                    case "Generales":
-                      return ConfigGeneralView();
-                    case "Formato de documento":
-                      return ConfigFormatoView();
-                    case "Planes y categorias":
-                      return CarouselWidget();
-                    default:
-                      return ConfigGeneralView();
-                  }
-                },
+              SizedBox(
+                width: double.infinity,
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    switch (setting) {
+                      case "Generales":
+                        return ConfigGeneralView();
+                      case "Formato Individual":
+                        return ConfigFormatoIndView(
+                            sideController: widget.sideController);
+                      case "Formato Grupal":
+                        return ConfigFormatoGroupView(
+                            sideController: widget.sideController);
+                      case "Planes y categorias":
+                        return CarouselWidget();
+                      default:
+                        return ConfigGeneralView();
+                    }
+                  },
+                ),
               ),
             ],
           ),

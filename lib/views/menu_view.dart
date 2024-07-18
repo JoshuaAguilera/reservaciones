@@ -36,7 +36,7 @@ class _MenuViewState extends State<MenuView> {
           case 2:
             return HistorialView(sideController: widget.controller);
           case 3:
-            return ConfiguracionView();
+            return ConfiguracionView(sideController: widget.controller);
           case 12:
             return ComprobanteDetalleView(sideController: widget.controller);
           default:

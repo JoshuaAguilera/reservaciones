@@ -17,7 +17,9 @@ class GeneradorDocService extends ChangeNotifier {
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
   Future<pw.Document> generarComprobanteCotizacionIndividual(
-      List<Cotizacion> cotizaciones, ComprobanteCotizacion comprobante) async {
+      {required List<Cotizacion> cotizaciones,
+      required ComprobanteCotizacion comprobante,
+      bool themeDefault = false}) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
@@ -28,10 +30,10 @@ class GeneradorDocService extends ChangeNotifier {
       marginLeft: 3 * PdfPageFormat.cm,
       marginRight: 3 * PdfPageFormat.cm,
     );
-
+    
     //Header
-    final img = await rootBundle.load('assets/image/logo_header.png');
-    final imageBytes = img.buffer.asUint8List();
+    final imgenLogo = await rootBundle.load('assets/image/logo_header.png');
+    final imageBytes = imgenLogo.buffer.asUint8List();
     pw.Image logoHeaderImage = pw.Image(pw.MemoryImage(imageBytes), width: 131);
 
     //Footer
@@ -152,7 +154,7 @@ class GeneradorDocService extends ChangeNotifier {
                       cotizaciones: cotizaciones,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
-                      styleBoldTable: styleBoldTable),
+                      styleBoldTable: styleBoldTable, color: themeDefault ? "#818282" : null),
                   pw.Text("NOTAS", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
                   pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
@@ -263,30 +265,8 @@ class GeneradorDocService extends ChangeNotifier {
           ),
         ],
         footer: (context) {
-          return pw.Center(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                pw.SizedBox(height: 15),
-                pw.Text(
-                    "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
-                    style: styleFooter),
-                pw.Padding(
-                  padding: const pw.EdgeInsets.symmetric(vertical: 2),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
-                    children: [
-                      pw.Text("Correo: reservas@coralbluehuatulco.mx  ",
-                          style: styleFooter),
-                      whatsAppImage,
-                      pw.Text(" 958 186 8767", style: styleFooter)
-                    ],
-                  ),
-                ),
-                pw.Text("Teléfono:  958 525 2061 Ext. 708", style: styleFooter)
-              ],
-            ),
-          );
+          return FilesTemplate.footerPage(
+              styleFooter: styleFooter, whatsAppIcon: whatsAppImage);
         },
       ),
     );
@@ -303,8 +283,8 @@ class GeneradorDocService extends ChangeNotifier {
       27.94 * PdfPageFormat.cm,
       marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
       marginTop: (3.13 * 0.393) * PdfPageFormat.cm,
-      marginLeft: 3 * PdfPageFormat.cm,
-      marginRight: 3 * PdfPageFormat.cm,
+      marginLeft: 0.3 * PdfPageFormat.cm,
+      marginRight: 0.3 * PdfPageFormat.cm,
     );
 
     //Header img
@@ -407,191 +387,183 @@ class GeneradorDocService extends ChangeNotifier {
       pw.MultiPage(
         pageFormat: pageFormatDefault,
         header: (context) {
-          return pw.Column(
-            children: [
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          return pw.Padding(
+              padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 2.7 * PdfPageFormat.cm),
+              child: pw.Column(
                 children: [
-                  logoHeaderImage,
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.only(bottom: 0),
-                    child: pw.Text(
-                        "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
-                        style: styleLigthHeader),
-                  ),
-                ],
-              ),
-              pw.SizedBox(height: 10),
-            ],
-          );
-        },
-        build: (context) => [
-          pw.SizedBox(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 8),
-                pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
-                pw.SizedBox(height: 3),
-                pw.Text("TELÉFONO: ${comprobante.telefono}", style: styleBold),
-                pw.SizedBox(height: 3),
-                pw.Text("CORREO: ${comprobante.correo}", style: styleBold),
-                pw.SizedBox(height: 3),
-                pw.Text("FECHAS DE ESTANCIA: ${comprobante.fechaRegistro}",
-                    style: styleBold),
-                pw.SizedBox(height: 3),
-                pw.Text("HABITACIONES: ${comprobante.nombre}",
-                    style: styleBold),
-                pw.SizedBox(height: 22),
-                pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
-                pw.SizedBox(height: 12),
-                generateTables(
-                    cotizaciones: cotizaciones,
-                    styleLigth: styleLigth,
-                    styleLigthHeaderTable: styleLigthHeaderTable,
-                    styleBoldTable: styleBoldTable,
-                    color: "#33CCCC"),
-                pw.SizedBox(height: 10),
-                pw.Center(
-                  child: pw.Text(FilesTemplate.StructureDoc(4),
-                      style: styleItalic),
-                ),
-                pw.Center(
-                  child: pw.Text(FilesTemplate.StructureDoc(5),
-                      style: styleItalic),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Text("POLÍTICAS PARA RESERVACIÓN",
-                    style: styleBoldUnderline),
-                pw.SizedBox(height: 3),
-                FilesTemplate.getListDocument(
-                    styleItalic: styleItalic,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [62, 63, 64, 65, 66, 67, 68]),
-                pw.SizedBox(height: 8),
-                pw.Text("POLÍTICAS DE CANCELACIÓN", style: styleBoldUnderline),
-                pw.SizedBox(height: 10),
-                FilesTemplate.getListDocument(
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [],
-                    widgets: [cancelPolity1, cancelPolity2, cancelPolity3]),
-                pw.SizedBox(height: 8),
-                pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
-                    style: styleBoldUnderline),
-                pw.SizedBox(height: 12),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [15, 75, 17, 18, 19, 20]),
-                pw.SizedBox(height: 8),
-                pw.Text("CARACTERÍSTICAS DE LAS HABITACIONES",
-                    style: styleBoldUnderline),
-                pw.SizedBox(height: 5),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]),
-                pw.SizedBox(height: 8),
-                pw.Text("GENERALES", style: styleBoldUnderline),
-                pw.SizedBox(height: 5),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [31, 32, 33, 34, 35]),
-                pw.SizedBox(height: 8),
-                pw.Text("HORARIOS Y SERVICIOS RESTAURANTE CORALES:",
-                    style: styleBold),
-                pw.SizedBox(height: 5),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    widgets: [service1, service2, service3, service4],
-                    widgetFirst: true,
-                    idsText: [39]),
-                pw.SizedBox(height: 8),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    isSubIndice: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [40, 41, 42, 43, 44, 45, 46]),
-                pw.SizedBox(height: 10),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [47],
-                    widgets: [service5]),
-                pw.SizedBox(height: 14),
-                pw.Text("FACILIDADES", style: styleBold),
-                pw.SizedBox(height: 13),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [],
-                    widgets: [ease1, ease2, ease3, ease4, ease5, ease6]),
-                pw.SizedBox(height: 9),
-                pw.Text(FilesTemplate.StructureDoc(56), style: styleBold),
-                pw.Text(FilesTemplate.StructureDoc(57), style: styleLigth),
-                pw.SizedBox(height: 13),
-                FilesTemplate.getListDocument(
-                    withRound: true,
-                    styleLight: styleLigth,
-                    styleIndice: styleBold,
-                    idsText: [58, 59]),
-                pw.SizedBox(height: 11),
-                pw.Text(FilesTemplate.StructureDoc(60), style: styleLigth),
-                pw.SizedBox(height: 10),
-                pw.Text(FilesTemplate.StructureDoc(61), style: styleLigth),
-                pw.SizedBox(height: 10),
-                pw.Text("spaceName", style: styleLigth),
-                pw.SizedBox(height: 25),
-                pw.Row(children: [
-                  oneImage,
-                  secImage,
-                  threeImage,
-                ]),
-                pw.Row(children: [
-                  fourImage,
-                  fiveImage,
-                  sixImage,
-                ]),
-              ],
-            ),
-          ),
-        ],
-        footer: (context) {
-          return pw.Center(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                pw.SizedBox(height: 15),
-                pw.Text(
-                    "Dirección: Manzana 3, Lote 8, Sector Mirador Chahué, Huatulco, Oaxaca, México",
-                    style: styleFooter),
-                pw.Padding(
-                  padding: const pw.EdgeInsets.symmetric(vertical: 2),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Correo: reservas@coralbluehuatulco.mx  ",
-                          style: styleFooter),
-                      whatsAppImage,
-                      pw.Text(" 958 186 8767", style: styleFooter)
+                      logoHeaderImage,
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.only(bottom: 0),
+                        child: pw.Text(
+                            "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
+                            style: styleLigthHeader),
+                      ),
                     ],
                   ),
-                ),
-                pw.Text("Teléfono:  958 525 2061 Ext. 708", style: styleFooter)
-              ],
+                  pw.SizedBox(height: 10),
+                ],
+              ));
+        },
+        build: (context) => [
+          pw.Padding(
+            padding:
+                pw.EdgeInsets.symmetric(horizontal: 2.7 * PdfPageFormat.cm),
+            child: pw.SizedBox(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(height: 8),
+                  pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
+                  pw.SizedBox(height: 3),
+                  pw.Text("TELÉFONO: ${comprobante.telefono}",
+                      style: styleBold),
+                  pw.SizedBox(height: 3),
+                  pw.Text("CORREO: ${comprobante.correo}", style: styleBold),
+                  pw.SizedBox(height: 3),
+                  pw.Text("FECHAS DE ESTANCIA: ${comprobante.fechaRegistro}",
+                      style: styleBold),
+                  pw.SizedBox(height: 3),
+                  pw.Text("HABITACIONES: ${comprobante.nombre}",
+                      style: styleBold),
+                  pw.SizedBox(height: 22),
+                  pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
+                  pw.SizedBox(height: 12),
+                  generateTables(
+                      cotizaciones: cotizaciones,
+                      styleLigth: styleLigth,
+                      styleLigthHeaderTable: styleLigthHeaderTable,
+                      styleBoldTable: styleBoldTable,
+                      color: "#33CCCC"),
+                  pw.SizedBox(height: 10),
+                  pw.Center(
+                    child: pw.Text(FilesTemplate.StructureDoc(4),
+                        style: styleItalic),
+                  ),
+                  pw.Center(
+                    child: pw.Text(FilesTemplate.StructureDoc(5),
+                        style: styleItalic),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Text("POLÍTICAS PARA RESERVACIÓN",
+                      style: styleBoldUnderline),
+                  pw.SizedBox(height: 3),
+                  FilesTemplate.getListDocument(
+                      styleItalic: styleItalic,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [62, 63, 64, 65, 66, 67, 68]),
+                  pw.SizedBox(height: 8),
+                  pw.Text("POLÍTICAS DE CANCELACIÓN",
+                      style: styleBoldUnderline),
+                  pw.SizedBox(height: 10),
+                  FilesTemplate.getListDocument(
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [],
+                      widgets: [cancelPolity1, cancelPolity2, cancelPolity3]),
+                  pw.SizedBox(height: 8),
+                  pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
+                      style: styleBoldUnderline),
+                  pw.SizedBox(height: 12),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [15, 75, 17, 18, 19, 20]),
+                  pw.SizedBox(height: 8),
+                  pw.Text("CARACTERÍSTICAS DE LAS HABITACIONES",
+                      style: styleBoldUnderline),
+                  pw.SizedBox(height: 5),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]),
+                  pw.SizedBox(height: 8),
+                  pw.Text("GENERALES", style: styleBoldUnderline),
+                  pw.SizedBox(height: 5),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [31, 32, 33, 34, 35]),
+                  pw.SizedBox(height: 8),
+                  pw.Text("HORARIOS Y SERVICIOS RESTAURANTE CORALES:",
+                      style: styleBold),
+                  pw.SizedBox(height: 5),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      widgets: [service1, service2, service3, service4],
+                      widgetFirst: true,
+                      idsText: [39]),
+                  pw.SizedBox(height: 8),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      isSubIndice: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [40, 41, 42, 43, 44, 45, 46]),
+                  pw.SizedBox(height: 10),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [47],
+                      widgets: [service5]),
+                  pw.SizedBox(height: 5),
+                  pw.Text("FACILIDADES", style: styleBold),
+                  pw.SizedBox(height: 13),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [],
+                      widgets: [ease1, ease2, ease3, ease4, ease5, ease6]),
+                  pw.SizedBox(height: 9),
+                  pw.Text(FilesTemplate.StructureDoc(56), style: styleBold),
+                  pw.Text(FilesTemplate.StructureDoc(57), style: styleLigth),
+                  pw.SizedBox(height: 13),
+                  FilesTemplate.getListDocument(
+                      withRound: true,
+                      styleLight: styleLigth,
+                      styleIndice: styleBold,
+                      idsText: [58, 59]),
+                  pw.SizedBox(height: 11),
+                  pw.Text(FilesTemplate.StructureDoc(60), style: styleLigth),
+                  pw.SizedBox(height: 10),
+                  pw.Text(FilesTemplate.StructureDoc(61), style: styleLigth),
+                  pw.SizedBox(height: 10),
+                  pw.Text("spaceName", style: styleLigth),
+                  pw.SizedBox(height: 48),
+                ],
+              ),
             ),
-          );
+          ),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              children: [
+                oneImage,
+                secImage,
+                threeImage,
+              ]),
+          pw.SizedBox(height: 10),
+          pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              children: [
+                fourImage,
+                fiveImage,
+                sixImage,
+              ]),
+        ],
+        footer: (context) {
+          return FilesTemplate.footerPage(
+              styleFooter: styleFooter, whatsAppIcon: whatsAppImage);
         },
       ),
     );
@@ -720,6 +692,6 @@ class GeneradorDocService extends ChangeNotifier {
     final image = await rootBundle.load('assets/image/$route');
     final imageBytes = image.buffer.asUint8List();
     return pw.Image(pw.MemoryImage(imageBytes),
-        width: 145, height: 95, fit: pw.BoxFit.fill);
+        width: 194, height: 128, fit: pw.BoxFit.fill);
   }
 }

@@ -23,6 +23,7 @@ class TextFormFieldCustom {
     bool enabled = true,
     double? maxWidth,
     Icon? icon,
+    double maxHeight = 100,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -36,7 +37,7 @@ class TextFormFieldCustom {
           constraints: BoxConstraints(
             minWidth: 270,
             minHeight: 25.0,
-            maxHeight: 100.0,
+            maxHeight: maxHeight,
             maxWidth: maxWidth ?? double.infinity,
           ),
           child: Stack(

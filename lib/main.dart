@@ -49,10 +49,10 @@ class MyApp extends StatelessWidget {
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: false,
       ),
-      // darkTheme: ThemeData(
-      //     //Se indica que el tema tiene un brillo oscuro
-      //     brightness: Brightness.dark,
-      //     useMaterial3: false),
+      darkTheme: ThemeData(
+          //Se indica que el tema tiene un brillo oscuro
+          brightness: Brightness.dark,
+          useMaterial3: false),
       routes: {
         'home': (_) => HomeView(),
         'login': (_) => const LoginView(),

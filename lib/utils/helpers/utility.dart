@@ -478,4 +478,23 @@ class Utility {
 
     return initPeriod;
   }
+
+  static double getWidthDynamicCarrousel(double screenWidth) {
+    double width = screenWidth;
+
+    switch (screenWidth) {
+      case >= 400 && <= 799:
+        width *= 0.7;
+        break;
+      case >= 800 && <= 1099:
+        width *= 0.5;
+        break;
+      case >= 1100:
+        width *= 0.3;
+        break;
+      default:
+    }
+
+    return width;
+  }
 }

@@ -205,7 +205,8 @@ class _ComprobanteDetalleViewState
 
                             comprobantePDF = await GeneradorDocService()
                                 .generarComprobanteCotizacionIndividual(
-                                    comprobante.cotizaciones!, comprobante);
+                                    cotizaciones: comprobante.cotizaciones!,
+                                    comprobante: comprobante);
 
                             Future.delayed(
                               Durations.long2,

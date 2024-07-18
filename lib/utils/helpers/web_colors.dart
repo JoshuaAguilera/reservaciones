@@ -29,5 +29,6 @@ class DesktopColors {
 
   //Colors Settings Default
   static Color colorLogo = const Color.fromARGB(255, 6, 174, 181);
-  static Color colorTables = const Color.fromARGB(255, 0, 153, 153);
+  static Color colorTablesInd = const Color.fromARGB(255, 0, 153, 153);
+  static Color colorTablesGroup = const Color.fromARGB(255, 51, 204, 204);
 }
