@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
+import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -166,9 +168,8 @@ class Dialogs {
                                   ? (nuevaCotizacion.tarifaRealAdulto ?? "")
                                       .toString()
                                   : null,
-                              onChanged: (p0) => setState(() =>
-                                  nuevaCotizacion.tarifaRealAdulto =
-                                      double.tryParse(p0)),
+                              onChanged: (p0) => setState(() => nuevaCotizacion
+                                  .tarifaRealAdulto = double.tryParse(p0)),
                               isRequired: nuevaCotizacion.adultos! > 0),
                         ),
                       ),
@@ -218,9 +219,8 @@ class Dialogs {
                                   ? (nuevaCotizacion.tarifaRealMenor ?? "")
                                       .toString()
                                   : null,
-                              onChanged: (p0) => setState(() =>
-                                  nuevaCotizacion.tarifaRealMenor =
-                                      double.tryParse(p0)),
+                              onChanged: (p0) => setState(() => nuevaCotizacion
+                                  .tarifaRealMenor = double.tryParse(p0)),
                               isRequired: nuevaCotizacion.menores7a12! > 0),
                         ),
                       ),
@@ -348,10 +348,21 @@ class Dialogs {
         text: cotizacion != null
             ? cotizacion.fechaEntrada
             : DateTime.now().toString().substring(0, 10));
+    TextEditingController _fechaSalida = TextEditingController(
+        text: cotizacion != null
+            ? cotizacion.fechaSalida
+            : DateTime.now()
+                .add(const Duration(days: 1))
+                .toString()
+                .substring(0, 10));
     TextEditingController _subtotalController = TextEditingController(
         text: cotizacion != null
             ? Utility.formatterNumber(nuevaCotizacion.subtotal!)
             : Utility.formatterNumber(0));
+    List<int> habitaciones = [];
+    TextEditingController _habitacionController = TextEditingController();
+    final _formKeyHabit = GlobalKey<FormState>();
+
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
@@ -409,113 +420,190 @@ class Dialogs {
                             TextFormFieldCustom.textFormFieldwithBorderCalendar(
                           name: "Fecha de entrada",
                           msgError: "Campo requerido*",
+                          fechaLimite: DateTime.now()
+                              .subtract(const Duration(days: 1))
+                              .toIso8601String()
+                              .substring(0, 10),
                           dateController: _fechaEntrada,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                  ),
-                  Table(
-                    children: [
-                      TableRow(children: [
-                        TextStyles.standardText(
-                            text: "Pax", aling: TextAlign.center),
-                        TextStyles.standardText(
-                            text: "Adultos", aling: TextAlign.center),
-                        TextStyles.standardText(
-                            text: "Menores 7-12", aling: TextAlign.center),
-                      ]),
-                      TableRow(children: [
-                        NumberInputWithIncrementDecrement(
-                          onChanged: (p0) {
-                            if (int.parse(p0) < 5) {
-                              pax = int.tryParse(p0)!;
-                            }
-                          },
-                          initialValue: cotizacion != null
-                              ? cotizacion.pax.toString()
-                              : "1",
-                          minimalValue: 1,
-                          maxValue: 4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: NumberInputWithIncrementDecrement(
-                            onChanged: (p0) {
-                              if (int.parse(p0) < 5) {
-                                nuevaCotizacion.adultos = int.tryParse(p0)!;
-                                setState(() => tryAdulto = false);
-                              } else {
-                                setState(() => tryAdulto = true);
-                              }
+                          onChanged: () => setState(
+                            () {
+                              _fechaSalida.text =
+                                  Utility.getNextDay(_fechaEntrada.text);
                             },
-                            initialValue: cotizacion?.adultos!.toString(),
                           ),
-                        ),
-                        NumberInputWithIncrementDecrement(
-                          onChanged: (p0) {
-                            nuevaCotizacion.menores7a12 = int.tryParse(p0);
-                          },
-                          initialValue: cotizacion?.menores7a12!.toString(),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        const SizedBox(),
-                        if (tryAdulto)
-                          SizedBox(
-                            height: 25,
-                            child: TextStyles.errorText(
-                                text: "Limite alcanzado*",
-                                aling: TextAlign.center),
-                          )
-                        else
-                          const SizedBox(),
-                        const SizedBox(),
-                        // TextStyles.errorText(
-                        //     text: "Limite alcanzado*", aling: TextAlign.center),
-                      ]),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Tarifa noche",
-                          msgError: "Campo requerido*",
-                          isNumeric: true,
-                          isDecimal: true,
-                          isMoneda: true,
-                          initialValue: cotizacion != null
-                              ? nuevaCotizacion.tarifaNoche!.toString()
-                              : null,
-                          onChanged: (p0) {
-                            nuevaCotizacion.tarifaNoche = double.tryParse(p0);
-                            _subtotalController.text = Utility.calculateTotal(
-                              7,
-                              nuevaCotizacion.tarifaNoche,
-                            );
-                          },
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Subtotal",
-                          msgError: "",
-                          isRequired: false,
-                          isNumeric: true,
-                          isDecimal: true,
-                          isMoneda: true,
-                          blocked: true,
-                          controller: _subtotalController,
-                          onChanged: (p0) {
-                            nuevaCotizacion.subtotal = double.tryParse(p0);
-                          },
+                        child:
+                            TextFormFieldCustom.textFormFieldwithBorderCalendar(
+                          name: "Fecha de salida",
+                          msgError: "Campo requerido*",
+                          dateController: _fechaSalida,
+                          fechaLimite: _fechaEntrada.text,
                         ),
                       ),
                     ],
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: TextStyles.titleText(
+                        text: "Tarífas:",
+                        size: 15,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "1 O 2 ADULTOS",
+                          isDecimal: true,
+                          isNumeric: true,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "3 ADULTOS",
+                          isDecimal: true,
+                          isNumeric: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "4 ADULTO",
+                          isDecimal: true,
+                          isNumeric: true,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "MENORES 7 A 12 AÑOS",
+                          isDecimal: true,
+                          isNumeric: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextStyles.titleText(
+                          text: "Habitaciones:",
+                          size: 15,
+                        ),
+                        Form(
+                          key: _formKeyHabit,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 35,
+                                width: 100,
+                                child: FormWidgets.textFormFieldResizable(
+                                  name: "Num.",
+                                  isNumeric: true,
+                                  controller: _habitacionController,
+                                  verticalPadding: 5,
+                                  validator: (p0) {
+                                    if (p0 != null &&
+                                        p0.isNotEmpty &&
+                                        habitaciones.any((element) =>
+                                            element == int.parse(p0!))) {
+                                      return "Ya se registro";
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              SizedBox(
+                                height: 35,
+                                child: Buttons.commonButton(
+                                    onPressed: () {
+                                      if (!_formKeyHabit.currentState!
+                                          .validate()) {
+                                        return;
+                                      }
+
+                                      setState(
+                                        () {
+                                          if (_habitacionController
+                                              .text.isNotEmpty) {
+                                            habitaciones.add(int.parse(
+                                                _habitacionController.text));
+                                            _habitacionController.text = '';
+                                          }
+                                        },
+                                      );
+                                    },
+                                    text: "Agregar",
+                                    color: DesktopColors.mentaOscure),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Wrap(
+                    runSpacing: 10,
+                    spacing: 10,
+                    children: [
+                      for (var element in habitaciones) Text("$element"),
+                    ],
                   )
+                  // Row(
+                  //   children: [
+                  //     SizedBox(
+                  //       width: 150,
+                  //       child: TextFormFieldCustom.textFormFieldwithBorder(
+                  //         name: "Tarifa noche",
+                  //         msgError: "Campo requerido*",
+                  //         isNumeric: true,
+                  //         isDecimal: true,
+                  //         isMoneda: true,
+                  //         initialValue: cotizacion != null
+                  //             ? nuevaCotizacion.tarifaNoche!.toString()
+                  //             : null,
+                  //         onChanged: (p0) {
+                  //           nuevaCotizacion.tarifaNoche = double.tryParse(p0);
+                  //           _subtotalController.text = Utility.calculateTotal(
+                  //             7,
+                  //             nuevaCotizacion.tarifaNoche,
+                  //           );
+                  //         },
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 10),
+                  //     Expanded(
+                  //       child: TextFormFieldCustom.textFormFieldwithBorder(
+                  //         name: "Subtotal",
+                  //         msgError: "",
+                  //         isRequired: false,
+                  //         isNumeric: true,
+                  //         isDecimal: true,
+                  //         isMoneda: true,
+                  //         blocked: true,
+                  //         controller: _subtotalController,
+                  //         onChanged: (p0) {
+                  //           nuevaCotizacion.subtotal = double.tryParse(p0);
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ],
+                  // )
                 ],
               ),
             ),

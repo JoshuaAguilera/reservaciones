@@ -9,7 +9,7 @@ import 'text_styles.dart';
 class TextFormFieldCustom {
   static Widget textFormFieldwithBorder({
     required String name,
-    required String msgError,
+     String msgError = "Campo requerido*",
     bool isPassword = false,
     bool passwordVisible = false,
     bool isNumeric = false,

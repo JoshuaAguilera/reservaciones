@@ -370,18 +370,18 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 6.0),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: TextStyles.titleText(
-                                        text:
-                                            "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
-                                        size: 16,
-                                        color: DesktopColors.prussianBlue,
-                                      ),
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(top: 6.0),
+                                  //   child: Align(
+                                  //     alignment: Alignment.centerRight,
+                                  //     child: TextStyles.titleText(
+                                  //       text:
+                                  //           "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                  //       size: 16,
+                                  //       color: DesktopColors.prussianBlue,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 3.0),
                                     child: Align(

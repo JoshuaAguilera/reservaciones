@@ -201,9 +201,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                   return const Text('No se encontraron resultados');
                 },
                 loading: () {
-                  return SizedBox(
-                      width: screenWidth * 0.5,
-                      child: ProgressIndicatorCustom(screenHight * 0.2));
+                  return ProgressIndicatorCustom(screenHight * 0.2);
                 },
               ),
             ],

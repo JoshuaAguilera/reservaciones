@@ -121,7 +121,7 @@ const List<String> typeSettings = [
   "Generales",
   "Formato Individual",
   "Formato Grupal",
-  "Planes y categorias",
+ // "Planes y categorias",
 ];
 
 const List<String> textFont = <String>[

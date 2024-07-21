@@ -47,7 +47,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final receiptQuoteQuery = ref.watch(receiptQuoteQueryProvider(""));
-    final filter = ref.watch(filtroProvider);
+    var filter = ref.watch(filtroProvider);
 
     return PopScope(
       onPopInvoked: (didPop) {
@@ -117,14 +117,15 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 child: SelectableButton(
                                   selected: filter == filtros[index],
                                   onPressed: () {
+                                    // ref
+                                    //     .read(filtroProvider.notifier)
+                                    //     .update((state) => filtros[index]);
+                                    filter = filtros[index];
+
                                     ref
                                         .read(searchProvider.notifier)
                                         .update((state) => "");
                                     snapshot(() {
-                                      ref
-                                          .read(filtroProvider.notifier)
-                                          .update((state) => filtros[index]);
-
                                       if (filter == "Personalizado") {
                                         showDialog(
                                           context: context,

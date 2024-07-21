@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 import '../utils/helpers/constants.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class FormWidgets {
@@ -192,6 +194,103 @@ class FormWidgets {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  static Widget textFormFieldResizable({
+    required String name,
+    String msgError = "Campo requerido*",
+    bool isPassword = false,
+    bool passwordVisible = false,
+    bool isNumeric = false,
+    bool isDecimal = false,
+    bool isMoneda = false,
+    void Function(String)? onChanged,
+    bool isRequired = true,
+    String? initialValue,
+    bool blocked = false,
+    TextEditingController? controller,
+    bool enabled = true,
+    double? maxWidth,
+    Icon? icon,
+    double maxHeight = 100,
+    double verticalPadding = 10,
+    String? Function(String?)? validator,
+  }) {
+    bool withContent = false;
+
+    validator ??= (value) {
+        if ((value == null || value.isEmpty)) {
+          return msgError;
+        }
+      };
+
+    return AbsorbPointer(
+      absorbing: blocked,
+      child: TextFormField(
+        enabled: enabled,
+        controller: controller,
+        onChanged: (value) {
+          if (value.isEmpty) {
+            withContent = false;
+          } else {
+            withContent = true;
+          }
+          if (onChanged != null) onChanged.call(value);
+        },
+        obscureText: passwordVisible,
+        validator: (value) {
+          if (isRequired) {
+            validator!.call(value);
+          }
+          return null;
+        },
+        style: const TextStyle(
+          fontFamily: "poppins_regular",
+          fontSize: 13,
+        ),
+        keyboardType: isNumeric
+            ? TextInputType.numberWithOptions(
+                decimal: isDecimal,
+                signed: isNumeric,
+              )
+            : TextInputType.name,
+        inputFormatters: <TextInputFormatter>[
+          isDecimal
+              ? FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+[.]?[0-9]*'))
+              : isNumeric
+                  ? FilteringTextInputFormatter.digitsOnly
+                  : FilteringTextInputFormatter.singleLineFormatter
+        ],
+        textAlign: isMoneda ? TextAlign.right : TextAlign.left,
+        decoration: InputDecoration(
+          contentPadding:
+              EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 10),
+          border: const OutlineInputBorder(),
+          labelStyle: const TextStyle(
+            fontFamily: "poppins_regular",
+            fontSize: 13,
+          ),
+          suffixIcon: isPassword
+              ? IconButton(
+                  icon: Icon(
+                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: DesktopColors.azulCielo,
+                  ),
+                  onPressed: () {
+                    passwordVisible = !passwordVisible;
+                  },
+                )
+              : icon,
+          labelText: name,
+          errorStyle: TextStyle(
+            fontFamily: "poppins_regular",
+            color: Colors.red[800],
+            fontSize: 10,
+          ),
+        ),
+        initialValue: initialValue,
       ),
     );
   }
