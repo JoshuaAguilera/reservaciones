@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
@@ -15,7 +16,7 @@ import '../models/cotizacion_model.dart';
 
 class Dialogs {
   Widget habitacionIndividualDialog(
-      {required BuildContext buildContext, Cotizacion? cotizacion}) {
+      {required BuildContext buildContext, Cotizacion? cotizacion, void Function(Cotizacion?)? onInsert}) {
     Cotizacion nuevaCotizacion = cotizacion ??
         Cotizacion(
           categoria: categorias.first,
@@ -97,14 +98,15 @@ class Dialogs {
                             text: "Plan: ", overClip: true)),
                     const SizedBox(width: 15),
                     CustomDropdown.dropdownMenuCustom(
-                        initialSelection: cotizacion != null
-                            ? cotizacion.plan!
-                            : planes.first,
-                        onSelected: (String? value) {
-                          nuevaCotizacion.plan = value!;
-                        },
-                        elements: planes,
-                        screenWidth: MediaQuery.of(context).size.width),
+                      initialSelection:
+                          cotizacion != null ? cotizacion.plan! : planes.first,
+                      onSelected: (String? value) {
+                        nuevaCotizacion.plan = value!;
+                      },
+                      elements: planes,
+                      screenWidth: MediaQuery.of(context).size.width,
+                      removeItem: "PLAN SIN ALIMENTOS",
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -321,28 +323,22 @@ class Dialogs {
               child: TextStyles.buttonText(
                   text: cotizacion != null ? "Editar" : "Agregar")),
           TextButton(
-              onPressed: () {
-                Navigator.pop(buildContext);
-              },
-              child: TextStyles.buttonText(text: "Cancelar"))
+            onPressed: () {
+              Navigator.pop(buildContext);
+            },
+            child: TextStyles.buttonText(text: "Cancelar"),
+          ),
         ],
       );
     });
   }
 
   Widget habitacionGrupoDialog(
-      {required BuildContext buildContext, Cotizacion? cotizacion}) {
-    Cotizacion nuevaCotizacion = cotizacion ??
-        Cotizacion(
-          tipoHabitacion: tipoHabitacion.first,
-          plan: planes.first,
-          fechaEntrada: DateTime.now().toString().substring(0, 10),
-          adultos: 0,
-          menores7a12: 0,
-        );
-    int pax = 1;
-    bool tryAdulto = false;
-    bool tryMenores = false;
+      {required BuildContext buildContext, CotizacionGrupal? cotizacion}) {
+    //data Quote
+    String type = tipoHabitacion.first;
+    String plan = planes.first;
+
     final _formKeyHabitacion = GlobalKey<FormState>();
     TextEditingController _fechaEntrada = TextEditingController(
         text: cotizacion != null
@@ -355,13 +351,11 @@ class Dialogs {
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    TextEditingController _subtotalController = TextEditingController(
-        text: cotizacion != null
-            ? Utility.formatterNumber(nuevaCotizacion.subtotal!)
-            : Utility.formatterNumber(0));
-    List<int> habitaciones = [];
     TextEditingController _habitacionController = TextEditingController();
-    final _formKeyHabit = GlobalKey<FormState>();
+    TextEditingController _adults1_2Controller = TextEditingController();
+    TextEditingController _adults3Controller = TextEditingController();
+    TextEditingController _adults4Controller = TextEditingController();
+    TextEditingController _minors7_12Controller = TextEditingController();
 
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
@@ -383,11 +377,10 @@ class Dialogs {
                               text: "Tipo de habitacion: ", overClip: true)),
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
-                          initialSelection: cotizacion != null
-                              ? cotizacion.tipoHabitacion!
-                              : tipoHabitacion.first,
+                          initialSelection:
+                              cotizacion != null ? cotizacion.categoria! : type,
                           onSelected: (String? value) {
-                            nuevaCotizacion.tipoHabitacion = value!;
+                            type = value!;
                           },
                           elements: tipoHabitacion,
                           screenWidth: MediaQuery.of(context).size.width),
@@ -402,14 +395,15 @@ class Dialogs {
                               text: "Plan: ", overClip: true)),
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
-                          initialSelection: cotizacion != null
-                              ? cotizacion.plan!
-                              : planes.first,
-                          onSelected: (String? value) {
-                            nuevaCotizacion.plan = value!;
-                          },
-                          elements: planes,
-                          screenWidth: MediaQuery.of(context).size.width),
+                        initialSelection:
+                            cotizacion != null ? cotizacion.plan! : plan,
+                        onSelected: (String? value) {
+                          plan = value!;
+                        },
+                        elements: planes,
+                        screenWidth: MediaQuery.of(context).size.width,
+                        removeItem: "SOLO HOSPEDAJE",
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -445,10 +439,25 @@ class Dialogs {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                            name: "Numero de habitaciones",
+                            isNumeric: true,
+                            isDecimal: true,
+                            controller: _habitacionController,
+                            icon: Icon(
+                              CupertinoIcons.bed_double_fill,
+                              color: DesktopColors.ceruleanOscure,
+                            )),
+                      ),
+                    ],
+                  ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       child: TextStyles.titleText(
                         text: "Tarífas:",
                         size: 15,
@@ -462,6 +471,8 @@ class Dialogs {
                           name: "1 O 2 ADULTOS",
                           isDecimal: true,
                           isNumeric: true,
+                          isMoneda: true,
+                          controller: _adults1_2Controller,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -470,6 +481,8 @@ class Dialogs {
                           name: "3 ADULTOS",
                           isDecimal: true,
                           isNumeric: true,
+                          isMoneda: true,
+                          controller: _adults3Controller,
                         ),
                       ),
                     ],
@@ -482,6 +495,8 @@ class Dialogs {
                           name: "4 ADULTO",
                           isDecimal: true,
                           isNumeric: true,
+                          isMoneda: true,
+                          controller: _adults4Controller,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -490,120 +505,12 @@ class Dialogs {
                           name: "MENORES 7 A 12 AÑOS",
                           isDecimal: true,
                           isNumeric: true,
+                          isMoneda: true,
+                          controller: _minors7_12Controller,
                         ),
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextStyles.titleText(
-                          text: "Habitaciones:",
-                          size: 15,
-                        ),
-                        Form(
-                          key: _formKeyHabit,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 35,
-                                width: 100,
-                                child: FormWidgets.textFormFieldResizable(
-                                  name: "Num.",
-                                  isNumeric: true,
-                                  controller: _habitacionController,
-                                  verticalPadding: 5,
-                                  validator: (p0) {
-                                    if (p0 != null &&
-                                        p0.isNotEmpty &&
-                                        habitaciones.any((element) =>
-                                            element == int.parse(p0!))) {
-                                      return "Ya se registro";
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              SizedBox(
-                                height: 35,
-                                child: Buttons.commonButton(
-                                    onPressed: () {
-                                      if (!_formKeyHabit.currentState!
-                                          .validate()) {
-                                        return;
-                                      }
-
-                                      setState(
-                                        () {
-                                          if (_habitacionController
-                                              .text.isNotEmpty) {
-                                            habitaciones.add(int.parse(
-                                                _habitacionController.text));
-                                            _habitacionController.text = '';
-                                          }
-                                        },
-                                      );
-                                    },
-                                    text: "Agregar",
-                                    color: DesktopColors.mentaOscure),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Wrap(
-                    runSpacing: 10,
-                    spacing: 10,
-                    children: [
-                      for (var element in habitaciones) Text("$element"),
-                    ],
-                  )
-                  // Row(
-                  //   children: [
-                  //     SizedBox(
-                  //       width: 150,
-                  //       child: TextFormFieldCustom.textFormFieldwithBorder(
-                  //         name: "Tarifa noche",
-                  //         msgError: "Campo requerido*",
-                  //         isNumeric: true,
-                  //         isDecimal: true,
-                  //         isMoneda: true,
-                  //         initialValue: cotizacion != null
-                  //             ? nuevaCotizacion.tarifaNoche!.toString()
-                  //             : null,
-                  //         onChanged: (p0) {
-                  //           nuevaCotizacion.tarifaNoche = double.tryParse(p0);
-                  //           _subtotalController.text = Utility.calculateTotal(
-                  //             7,
-                  //             nuevaCotizacion.tarifaNoche,
-                  //           );
-                  //         },
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 10),
-                  //     Expanded(
-                  //       child: TextFormFieldCustom.textFormFieldwithBorder(
-                  //         name: "Subtotal",
-                  //         msgError: "",
-                  //         isRequired: false,
-                  //         isNumeric: true,
-                  //         isDecimal: true,
-                  //         isMoneda: true,
-                  //         blocked: true,
-                  //         controller: _subtotalController,
-                  //         onChanged: (p0) {
-                  //           nuevaCotizacion.subtotal = double.tryParse(p0);
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // )
                 ],
               ),
             ),
@@ -614,11 +521,7 @@ class Dialogs {
         TextButton(
             onPressed: () {
               if (_formKeyHabitacion.currentState!.validate()) {
-                nuevaCotizacion.fechaEntrada = _fechaEntrada.text;
-                nuevaCotizacion.subtotal = double.parse(
-                    _subtotalController.text.replaceAll(RegExp(r"[$,]"), ""));
-                nuevaCotizacion.pax = pax;
-                Navigator.of(buildContext).pop(nuevaCotizacion);
+                Navigator.of(buildContext).pop();
               }
             },
             child: TextStyles.buttonText(
@@ -630,24 +533,6 @@ class Dialogs {
             child: TextStyles.buttonText(text: "Cancelar"))
       ],
     );
-  }
-
-  String getPax(int pax) {
-    String paxName = "";
-
-    switch (pax) {
-      case 1 || 2:
-        paxName = "1 o 2";
-        break;
-      case 3:
-        paxName = "3";
-        break;
-      case 4:
-        paxName = "4";
-        break;
-      default:
-    }
-    return paxName;
   }
 
   static AlertDialog customAlertDialog({

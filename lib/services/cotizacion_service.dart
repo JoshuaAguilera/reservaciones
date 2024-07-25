@@ -13,7 +13,6 @@ class CotizacionService extends ChangeNotifier {
 
       for (var element in resp) {
         cotizaciones.add(Cotizacion(
-          esGrupo: element.isGroup,
           categoria: element.category,
           plan: element.plan,
           fechaEntrada: element.enterDate,

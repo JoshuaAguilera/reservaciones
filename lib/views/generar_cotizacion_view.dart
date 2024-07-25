@@ -110,14 +110,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: CustomDropdown.dropdownMenuCustom(
-                                initialSelection: cotizacionesList.first,
-                                onSelected: (String? value) {
-                                  setState(() {
-                                    dropdownValue = value!;
-                                  });
-                                },
-                                elements: cotizacionesList,
-                                screenWidth: null),
+                              initialSelection: cotizacionesList.first,
+                              onSelected: (String? value) {
+                                setState(() {
+                                  dropdownValue = value!;
+                                });
+                              },
+                              elements: cotizacionesList,
+                              screenWidth: null,
+                            ),
                           ),
                           const SizedBox(height: 15),
                           Card(
@@ -251,36 +252,52 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           10, 10, 10, 5),
                                       child: Table(
                                         columnWidths: {
-                                          0: const FractionColumnWidth(.05),
-                                          1: const FractionColumnWidth(.15),
+                                          0: FractionColumnWidth(
+                                              (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? .05
+                                                  : .2),
+                                          1: FractionColumnWidth(
+                                              (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? .15
+                                                  : 0.22),
                                           2: const FractionColumnWidth(.1),
-                                          3: const FractionColumnWidth(.1),
+                                          3: FractionColumnWidth(
+                                              (dropdownValue ==
+                                                      "Cotización Individual")
+                                                  ? .1
+                                                  : 0.22),
                                           4: const FractionColumnWidth(.1),
                                           5: FractionColumnWidth(
                                               (dropdownValue ==
                                                       "Cotización Individual")
                                                   ? .1
-                                                  : 0.22),
+                                                  : 0.15),
                                           6: FractionColumnWidth(
                                               (dropdownValue ==
                                                       "Cotización Individual")
                                                   ? .21
-                                                  : .1),
+                                                  : .15),
                                         },
                                         children: [
                                           TableRow(children: [
-                                            TextStyles.standardText(
-                                                text: "#",
-                                                aling: TextAlign.center,
-                                                overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Individual")
+                                              TextStyles.standardText(
+                                                  text: "#",
+                                                  aling: TextAlign.center,
+                                                  overClip: true),
                                             TextStyles.standardText(
                                                 text: "Fechas de estancia",
                                                 aling: TextAlign.center,
                                                 overClip: true),
-                                            TextStyles.standardText(
-                                                text: "Adultos",
-                                                aling: TextAlign.center,
-                                                overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Individual")
+                                              TextStyles.standardText(
+                                                  text: "Adultos",
+                                                  aling: TextAlign.center,
+                                                  overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Individual")
                                               TextStyles.standardText(
@@ -288,33 +305,41 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   aling: TextAlign.center,
                                                   overClip: true),
                                             TextStyles.standardText(
-                                                text: "Menores 7-12",
+                                                text: (dropdownValue ==
+                                                        "Cotización Individual")
+                                                    ? "Menores 7-12"
+                                                    : "1 o 2 Adultos",
                                                 aling: TextAlign.center,
                                                 overClip: true),
                                             TextStyles.standardText(
                                                 text: (dropdownValue ==
                                                         "Cotización Individual")
                                                     ? "Tarifa \nReal"
-                                                    : "Tarifa por noche",
-                                                aling: TextAlign.center,
-                                                overClip: true),
-                                            TextStyles.standardText(
-                                                text: (dropdownValue ==
-                                                        "Cotización Individual")
-                                                    ? "Tarifa de preventa oferta por tiempo limitado"
-                                                    : "Habitaciones",
+                                                    : "3 Adultos",
                                                 aling: TextAlign.center,
                                                 overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Grupos")
                                               TextStyles.standardText(
-                                                  text: "Subtotal",
+                                                  text: "  4 Adultos  ",
                                                   aling: TextAlign.center,
-                                                  overClip: true)
-                                            else
+                                                  overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Grupos")
                                               TextStyles.standardText(
-                                                  text: "Opciones",
-                                                  aling: TextAlign.center)
+                                                  text: "Menores 7 a 12 Años",
+                                                  aling: TextAlign.center,
+                                                  overClip: true),
+                                            if (dropdownValue ==
+                                                "Cotización Individual")
+                                              TextStyles.standardText(
+                                                  text:
+                                                      "Tarifa de preventa oferta por tiempo limitado",
+                                                  aling: TextAlign.center,
+                                                  overClip: true),
+                                            TextStyles.standardText(
+                                                text: "Opciones",
+                                                aling: TextAlign.center)
                                           ]),
                                         ],
                                       ),

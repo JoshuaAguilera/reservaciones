@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../utils/helpers/web_colors.dart';
@@ -8,17 +9,17 @@ import '../utils/helpers/utility.dart';
 
 class CotizacionGrupoCard extends StatefulWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final CotizacionGrupal? cotGroup;
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   const CotizacionGrupoCard({
     super.key,
     required this.index,
-    required this.cotizacion,
     required this.compact,
     required this.onPressedEdit,
     required this.onPressedDelete,
+    this.cotGroup,
   });
 
   @override
@@ -34,7 +35,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
           ? selected
               ? _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.cotGroup!,
                   onPressedDelete: null,
                   onPressedEdit: null,
                 )
@@ -43,7 +44,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.cotGroup!,
                   onPressedDelete: () {
                     setState(() {
                       selected = !selected;
@@ -56,7 +57,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
           : selected
               ? _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.cotGroup!,
                   onPressedDelete: null,
                   onPressedEdit: null,
                 )
@@ -65,7 +66,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.cotGroup!,
                   onPressedDelete: () {
                     setState(() {
                       selected = !selected;
@@ -84,7 +85,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
 
 class _TableRowCotizacion extends StatelessWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final CotizacionGrupal cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   const _TableRowCotizacion({
@@ -120,33 +121,25 @@ class _TableRowCotizacion extends StatelessWidget {
                 TableRow(
                   children: [
                     TextStyles.standardText(
-                      text: cotizacion.pax.toString(),
+                      text:
+                          "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
                       aling: TextAlign.center,
                       overClip: true,
                     ),
                     TextStyles.standardText(
-                      text: Utility.getLengthStay(cotizacion.fechaEntrada, 23),
-                      aling: TextAlign.center,
-                      overClip: true,
-                    ),
-                    TextStyles.standardText(
-                        text: cotizacion.adultos.toString(),
+                        text: cotizacion.tarifaAdulto1_2.toString(),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: cotizacion.menores7a12.toString(),
+                        text: cotizacion.tarifaAdulto3.toString(),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: Utility.formatterNumber(cotizacion.tarifaNoche!),
+                        text: cotizacion.tarifaAdulto4.toString(),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: cotizacion.adultos.toString(),
-                        aling: TextAlign.center,
-                        overClip: true),
-                    TextStyles.standardText(
-                        text: Utility.formatterNumber(cotizacion.subtotal!),
+                        text: cotizacion.tarifaMenor.toString(),
                         aling: TextAlign.center,
                         overClip: true),
                     Row(
@@ -173,7 +166,7 @@ class _TableRowCotizacion extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextStyles.standardText(
-                  text: "Tipo Habitación: ${cotizacion.tipoHabitacion!} /" +
+                  text: "Tipo Habitación: ${cotizacion.categoria!} /" +
                       " Plan: ${cotizacion.plan!}",
                   isBold: true),
             )
@@ -186,7 +179,7 @@ class _TableRowCotizacion extends StatelessWidget {
 
 class _ListTileCotizacion extends StatelessWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final CotizacionGrupal cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
 
@@ -204,23 +197,29 @@ class _ListTileCotizacion extends StatelessWidget {
       elevation: 3,
       child: ListTile(
         leading: TextStyles.TextSpecial(
-            day: index + 1,
-            title: Utility.getPax(cotizacion.pax!),
-            subtitle: "PAX"),
+            day: index + 1, title: "TDI", subtitle: "PLAN"),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
-            text: "${cotizacion.tipoHabitacion} / ${cotizacion.plan}",
-            isBold: true),
+            text: "${cotizacion.categoria}", isBold: true),
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
-            text: Utility.getLengthStay(cotizacion.fechaEntrada, 2),
+            text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
           ),
           TextStyles.standardText(
               text:
-                  "Tarifa por noche: ${Utility.formatterNumber(cotizacion.tarifaNoche!)}"),
+                  "Tarifa ad1-2: ${Utility.formatterNumber(cotizacion.tarifaAdulto1_2!)}"),
           TextStyles.standardText(
-            text: "Subtotal: ${Utility.formatterNumber(cotizacion.subtotal!)}",
+            text:
+                "Tarifa ad3: ${Utility.formatterNumber(cotizacion.tarifaAdulto3!)}",
+          ),
+          TextStyles.standardText(
+            text:
+                "Tarifa ad4: ${Utility.formatterNumber(cotizacion.tarifaAdulto4!)}",
+          ),
+          TextStyles.standardText(
+            text:
+                "Tarifa men7-12: ${Utility.formatterNumber(cotizacion.tarifaAdulto3!)}",
           )
         ]),
         trailing: PopupMenuButton<ListTileTitleAlignment>(

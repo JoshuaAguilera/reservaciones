@@ -19,7 +19,6 @@ class ComprobanteService extends ChangeNotifier {
         () async {
           for (var element in cotizaciones) {
             await database.into(database.quote).insert(QuoteCompanion.insert(
-                  isGroup: false,
                   isPresale: element.esPreVenta!,
                   folio: folio,
                   category: element.categoria ?? '',

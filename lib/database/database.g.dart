@@ -713,15 +713,6 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   late final GeneratedColumn<String> folio = GeneratedColumn<String>(
       'folio', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _isGroupMeta =
-      const VerificationMeta('isGroup');
-  @override
-  late final GeneratedColumn<bool> isGroup = GeneratedColumn<bool>(
-      'is_group', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_group" IN (0, 1))'));
   static const VerificationMeta _isPresaleMeta =
       const VerificationMeta('isPresale');
   @override
@@ -805,7 +796,6 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   List<GeneratedColumn> get $columns => [
         id,
         folio,
-        isGroup,
         isPresale,
         category,
         plan,
@@ -838,12 +828,6 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
           _folioMeta, folio.isAcceptableOrUnknown(data['folio']!, _folioMeta));
     } else if (isInserting) {
       context.missing(_folioMeta);
-    }
-    if (data.containsKey('is_group')) {
-      context.handle(_isGroupMeta,
-          isGroup.isAcceptableOrUnknown(data['is_group']!, _isGroupMeta));
-    } else if (isInserting) {
-      context.missing(_isGroupMeta);
     }
     if (data.containsKey('is_presale')) {
       context.handle(_isPresaleMeta,
@@ -946,8 +930,6 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       folio: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
-      isGroup: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_group'])!,
       isPresale: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_presale'])!,
       category: attachedDatabase.typeMapping
@@ -986,7 +968,6 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
 class QuoteData extends DataClass implements Insertable<QuoteData> {
   final int id;
   final String folio;
-  final bool isGroup;
   final bool isPresale;
   final String category;
   final String plan;
@@ -1003,7 +984,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   const QuoteData(
       {required this.id,
       required this.folio,
-      required this.isGroup,
       required this.isPresale,
       required this.category,
       required this.plan,
@@ -1022,7 +1002,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['folio'] = Variable<String>(folio);
-    map['is_group'] = Variable<bool>(isGroup);
     map['is_presale'] = Variable<bool>(isPresale);
     map['category'] = Variable<String>(category);
     map['plan'] = Variable<String>(plan);
@@ -1043,7 +1022,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     return QuoteCompanion(
       id: Value(id),
       folio: Value(folio),
-      isGroup: Value(isGroup),
       isPresale: Value(isPresale),
       category: Value(category),
       plan: Value(plan),
@@ -1066,7 +1044,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     return QuoteData(
       id: serializer.fromJson<int>(json['id']),
       folio: serializer.fromJson<String>(json['folio']),
-      isGroup: serializer.fromJson<bool>(json['isGroup']),
       isPresale: serializer.fromJson<bool>(json['isPresale']),
       category: serializer.fromJson<String>(json['category']),
       plan: serializer.fromJson<String>(json['plan']),
@@ -1088,7 +1065,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'folio': serializer.toJson<String>(folio),
-      'isGroup': serializer.toJson<bool>(isGroup),
       'isPresale': serializer.toJson<bool>(isPresale),
       'category': serializer.toJson<String>(category),
       'plan': serializer.toJson<String>(plan),
@@ -1108,7 +1084,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   QuoteData copyWith(
           {int? id,
           String? folio,
-          bool? isGroup,
           bool? isPresale,
           String? category,
           String? plan,
@@ -1125,7 +1100,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       QuoteData(
         id: id ?? this.id,
         folio: folio ?? this.folio,
-        isGroup: isGroup ?? this.isGroup,
         isPresale: isPresale ?? this.isPresale,
         category: category ?? this.category,
         plan: plan ?? this.plan,
@@ -1145,7 +1119,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     return (StringBuffer('QuoteData(')
           ..write('id: $id, ')
           ..write('folio: $folio, ')
-          ..write('isGroup: $isGroup, ')
           ..write('isPresale: $isPresale, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
@@ -1167,7 +1140,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   int get hashCode => Object.hash(
       id,
       folio,
-      isGroup,
       isPresale,
       category,
       plan,
@@ -1187,7 +1159,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
       (other is QuoteData &&
           other.id == this.id &&
           other.folio == this.folio &&
-          other.isGroup == this.isGroup &&
           other.isPresale == this.isPresale &&
           other.category == this.category &&
           other.plan == this.plan &&
@@ -1206,7 +1177,6 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
 class QuoteCompanion extends UpdateCompanion<QuoteData> {
   final Value<int> id;
   final Value<String> folio;
-  final Value<bool> isGroup;
   final Value<bool> isPresale;
   final Value<String> category;
   final Value<String> plan;
@@ -1223,7 +1193,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   const QuoteCompanion({
     this.id = const Value.absent(),
     this.folio = const Value.absent(),
-    this.isGroup = const Value.absent(),
     this.isPresale = const Value.absent(),
     this.category = const Value.absent(),
     this.plan = const Value.absent(),
@@ -1241,7 +1210,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   QuoteCompanion.insert({
     this.id = const Value.absent(),
     required String folio,
-    required bool isGroup,
     required bool isPresale,
     required String category,
     required String plan,
@@ -1256,7 +1224,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     required double rateRealMinor,
     required double ratePresaleMinor,
   })  : folio = Value(folio),
-        isGroup = Value(isGroup),
         isPresale = Value(isPresale),
         category = Value(category),
         plan = Value(plan),
@@ -1273,7 +1240,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   static Insertable<QuoteData> custom({
     Expression<int>? id,
     Expression<String>? folio,
-    Expression<bool>? isGroup,
     Expression<bool>? isPresale,
     Expression<String>? category,
     Expression<String>? plan,
@@ -1291,7 +1257,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (folio != null) 'folio': folio,
-      if (isGroup != null) 'is_group': isGroup,
       if (isPresale != null) 'is_presale': isPresale,
       if (category != null) 'category': category,
       if (plan != null) 'plan': plan,
@@ -1311,7 +1276,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   QuoteCompanion copyWith(
       {Value<int>? id,
       Value<String>? folio,
-      Value<bool>? isGroup,
       Value<bool>? isPresale,
       Value<String>? category,
       Value<String>? plan,
@@ -1328,7 +1292,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     return QuoteCompanion(
       id: id ?? this.id,
       folio: folio ?? this.folio,
-      isGroup: isGroup ?? this.isGroup,
       isPresale: isPresale ?? this.isPresale,
       category: category ?? this.category,
       plan: plan ?? this.plan,
@@ -1353,9 +1316,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     }
     if (folio.present) {
       map['folio'] = Variable<String>(folio.value);
-    }
-    if (isGroup.present) {
-      map['is_group'] = Variable<bool>(isGroup.value);
     }
     if (isPresale.present) {
       map['is_presale'] = Variable<bool>(isPresale.value);
@@ -1404,7 +1364,6 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     return (StringBuffer('QuoteCompanion(')
           ..write('id: $id, ')
           ..write('folio: $folio, ')
-          ..write('isGroup: $isGroup, ')
           ..write('isPresale: $isPresale, ')
           ..write('category: $category, ')
           ..write('plan: $plan, ')
@@ -1423,18 +1382,593 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
   }
 }
 
+class $QuoteGroupTable extends QuoteGroup
+    with TableInfo<$QuoteGroupTable, QuoteGroupData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuoteGroupTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _folioMeta = const VerificationMeta('folio');
+  @override
+  late final GeneratedColumn<String> folio = GeneratedColumn<String>(
+      'folio', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isPresaleMeta =
+      const VerificationMeta('isPresale');
+  @override
+  late final GeneratedColumn<bool> isPresale = GeneratedColumn<bool>(
+      'is_presale', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_presale" IN (0, 1))'));
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _planMeta = const VerificationMeta('plan');
+  @override
+  late final GeneratedColumn<String> plan = GeneratedColumn<String>(
+      'plan', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _registerDateMeta =
+      const VerificationMeta('registerDate');
+  @override
+  late final GeneratedColumn<DateTime> registerDate = GeneratedColumn<DateTime>(
+      'register_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _enterDateMeta =
+      const VerificationMeta('enterDate');
+  @override
+  late final GeneratedColumn<String> enterDate = GeneratedColumn<String>(
+      'enter_date', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _outDateMeta =
+      const VerificationMeta('outDate');
+  @override
+  late final GeneratedColumn<String> outDate = GeneratedColumn<String>(
+      'out_date', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _rateAdult1_2Meta =
+      const VerificationMeta('rateAdult1_2');
+  @override
+  late final GeneratedColumn<double> rateAdult1_2 = GeneratedColumn<double>(
+      'rate_adult1_2', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _rateAdult3Meta =
+      const VerificationMeta('rateAdult3');
+  @override
+  late final GeneratedColumn<double> rateAdult3 = GeneratedColumn<double>(
+      'rate_adult3', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _rateAdult4Meta =
+      const VerificationMeta('rateAdult4');
+  @override
+  late final GeneratedColumn<double> rateAdult4 = GeneratedColumn<double>(
+      'rate_adult4', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _rateMinorMeta =
+      const VerificationMeta('rateMinor');
+  @override
+  late final GeneratedColumn<double> rateMinor = GeneratedColumn<double>(
+      'rate_minor', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        folio,
+        isPresale,
+        category,
+        plan,
+        registerDate,
+        enterDate,
+        outDate,
+        rateAdult1_2,
+        rateAdult3,
+        rateAdult4,
+        rateMinor
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'quote_group';
+  @override
+  VerificationContext validateIntegrity(Insertable<QuoteGroupData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('folio')) {
+      context.handle(
+          _folioMeta, folio.isAcceptableOrUnknown(data['folio']!, _folioMeta));
+    } else if (isInserting) {
+      context.missing(_folioMeta);
+    }
+    if (data.containsKey('is_presale')) {
+      context.handle(_isPresaleMeta,
+          isPresale.isAcceptableOrUnknown(data['is_presale']!, _isPresaleMeta));
+    } else if (isInserting) {
+      context.missing(_isPresaleMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('plan')) {
+      context.handle(
+          _planMeta, plan.isAcceptableOrUnknown(data['plan']!, _planMeta));
+    } else if (isInserting) {
+      context.missing(_planMeta);
+    }
+    if (data.containsKey('register_date')) {
+      context.handle(
+          _registerDateMeta,
+          registerDate.isAcceptableOrUnknown(
+              data['register_date']!, _registerDateMeta));
+    } else if (isInserting) {
+      context.missing(_registerDateMeta);
+    }
+    if (data.containsKey('enter_date')) {
+      context.handle(_enterDateMeta,
+          enterDate.isAcceptableOrUnknown(data['enter_date']!, _enterDateMeta));
+    } else if (isInserting) {
+      context.missing(_enterDateMeta);
+    }
+    if (data.containsKey('out_date')) {
+      context.handle(_outDateMeta,
+          outDate.isAcceptableOrUnknown(data['out_date']!, _outDateMeta));
+    } else if (isInserting) {
+      context.missing(_outDateMeta);
+    }
+    if (data.containsKey('rate_adult1_2')) {
+      context.handle(
+          _rateAdult1_2Meta,
+          rateAdult1_2.isAcceptableOrUnknown(
+              data['rate_adult1_2']!, _rateAdult1_2Meta));
+    } else if (isInserting) {
+      context.missing(_rateAdult1_2Meta);
+    }
+    if (data.containsKey('rate_adult3')) {
+      context.handle(
+          _rateAdult3Meta,
+          rateAdult3.isAcceptableOrUnknown(
+              data['rate_adult3']!, _rateAdult3Meta));
+    } else if (isInserting) {
+      context.missing(_rateAdult3Meta);
+    }
+    if (data.containsKey('rate_adult4')) {
+      context.handle(
+          _rateAdult4Meta,
+          rateAdult4.isAcceptableOrUnknown(
+              data['rate_adult4']!, _rateAdult4Meta));
+    } else if (isInserting) {
+      context.missing(_rateAdult4Meta);
+    }
+    if (data.containsKey('rate_minor')) {
+      context.handle(_rateMinorMeta,
+          rateMinor.isAcceptableOrUnknown(data['rate_minor']!, _rateMinorMeta));
+    } else if (isInserting) {
+      context.missing(_rateMinorMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuoteGroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuoteGroupData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      folio: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
+      isPresale: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_presale'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      plan: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}plan'])!,
+      registerDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}register_date'])!,
+      enterDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}enter_date'])!,
+      outDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}out_date'])!,
+      rateAdult1_2: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult1_2'])!,
+      rateAdult3: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult3'])!,
+      rateAdult4: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult4'])!,
+      rateMinor: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}rate_minor'])!,
+    );
+  }
+
+  @override
+  $QuoteGroupTable createAlias(String alias) {
+    return $QuoteGroupTable(attachedDatabase, alias);
+  }
+}
+
+class QuoteGroupData extends DataClass implements Insertable<QuoteGroupData> {
+  final int id;
+  final String folio;
+  final bool isPresale;
+  final String category;
+  final String plan;
+  final DateTime registerDate;
+  final String enterDate;
+  final String outDate;
+  final double rateAdult1_2;
+  final double rateAdult3;
+  final double rateAdult4;
+  final double rateMinor;
+  const QuoteGroupData(
+      {required this.id,
+      required this.folio,
+      required this.isPresale,
+      required this.category,
+      required this.plan,
+      required this.registerDate,
+      required this.enterDate,
+      required this.outDate,
+      required this.rateAdult1_2,
+      required this.rateAdult3,
+      required this.rateAdult4,
+      required this.rateMinor});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['folio'] = Variable<String>(folio);
+    map['is_presale'] = Variable<bool>(isPresale);
+    map['category'] = Variable<String>(category);
+    map['plan'] = Variable<String>(plan);
+    map['register_date'] = Variable<DateTime>(registerDate);
+    map['enter_date'] = Variable<String>(enterDate);
+    map['out_date'] = Variable<String>(outDate);
+    map['rate_adult1_2'] = Variable<double>(rateAdult1_2);
+    map['rate_adult3'] = Variable<double>(rateAdult3);
+    map['rate_adult4'] = Variable<double>(rateAdult4);
+    map['rate_minor'] = Variable<double>(rateMinor);
+    return map;
+  }
+
+  QuoteGroupCompanion toCompanion(bool nullToAbsent) {
+    return QuoteGroupCompanion(
+      id: Value(id),
+      folio: Value(folio),
+      isPresale: Value(isPresale),
+      category: Value(category),
+      plan: Value(plan),
+      registerDate: Value(registerDate),
+      enterDate: Value(enterDate),
+      outDate: Value(outDate),
+      rateAdult1_2: Value(rateAdult1_2),
+      rateAdult3: Value(rateAdult3),
+      rateAdult4: Value(rateAdult4),
+      rateMinor: Value(rateMinor),
+    );
+  }
+
+  factory QuoteGroupData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuoteGroupData(
+      id: serializer.fromJson<int>(json['id']),
+      folio: serializer.fromJson<String>(json['folio']),
+      isPresale: serializer.fromJson<bool>(json['isPresale']),
+      category: serializer.fromJson<String>(json['category']),
+      plan: serializer.fromJson<String>(json['plan']),
+      registerDate: serializer.fromJson<DateTime>(json['registerDate']),
+      enterDate: serializer.fromJson<String>(json['enterDate']),
+      outDate: serializer.fromJson<String>(json['outDate']),
+      rateAdult1_2: serializer.fromJson<double>(json['rateAdult1_2']),
+      rateAdult3: serializer.fromJson<double>(json['rateAdult3']),
+      rateAdult4: serializer.fromJson<double>(json['rateAdult4']),
+      rateMinor: serializer.fromJson<double>(json['rateMinor']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'folio': serializer.toJson<String>(folio),
+      'isPresale': serializer.toJson<bool>(isPresale),
+      'category': serializer.toJson<String>(category),
+      'plan': serializer.toJson<String>(plan),
+      'registerDate': serializer.toJson<DateTime>(registerDate),
+      'enterDate': serializer.toJson<String>(enterDate),
+      'outDate': serializer.toJson<String>(outDate),
+      'rateAdult1_2': serializer.toJson<double>(rateAdult1_2),
+      'rateAdult3': serializer.toJson<double>(rateAdult3),
+      'rateAdult4': serializer.toJson<double>(rateAdult4),
+      'rateMinor': serializer.toJson<double>(rateMinor),
+    };
+  }
+
+  QuoteGroupData copyWith(
+          {int? id,
+          String? folio,
+          bool? isPresale,
+          String? category,
+          String? plan,
+          DateTime? registerDate,
+          String? enterDate,
+          String? outDate,
+          double? rateAdult1_2,
+          double? rateAdult3,
+          double? rateAdult4,
+          double? rateMinor}) =>
+      QuoteGroupData(
+        id: id ?? this.id,
+        folio: folio ?? this.folio,
+        isPresale: isPresale ?? this.isPresale,
+        category: category ?? this.category,
+        plan: plan ?? this.plan,
+        registerDate: registerDate ?? this.registerDate,
+        enterDate: enterDate ?? this.enterDate,
+        outDate: outDate ?? this.outDate,
+        rateAdult1_2: rateAdult1_2 ?? this.rateAdult1_2,
+        rateAdult3: rateAdult3 ?? this.rateAdult3,
+        rateAdult4: rateAdult4 ?? this.rateAdult4,
+        rateMinor: rateMinor ?? this.rateMinor,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuoteGroupData(')
+          ..write('id: $id, ')
+          ..write('folio: $folio, ')
+          ..write('isPresale: $isPresale, ')
+          ..write('category: $category, ')
+          ..write('plan: $plan, ')
+          ..write('registerDate: $registerDate, ')
+          ..write('enterDate: $enterDate, ')
+          ..write('outDate: $outDate, ')
+          ..write('rateAdult1_2: $rateAdult1_2, ')
+          ..write('rateAdult3: $rateAdult3, ')
+          ..write('rateAdult4: $rateAdult4, ')
+          ..write('rateMinor: $rateMinor')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      folio,
+      isPresale,
+      category,
+      plan,
+      registerDate,
+      enterDate,
+      outDate,
+      rateAdult1_2,
+      rateAdult3,
+      rateAdult4,
+      rateMinor);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuoteGroupData &&
+          other.id == this.id &&
+          other.folio == this.folio &&
+          other.isPresale == this.isPresale &&
+          other.category == this.category &&
+          other.plan == this.plan &&
+          other.registerDate == this.registerDate &&
+          other.enterDate == this.enterDate &&
+          other.outDate == this.outDate &&
+          other.rateAdult1_2 == this.rateAdult1_2 &&
+          other.rateAdult3 == this.rateAdult3 &&
+          other.rateAdult4 == this.rateAdult4 &&
+          other.rateMinor == this.rateMinor);
+}
+
+class QuoteGroupCompanion extends UpdateCompanion<QuoteGroupData> {
+  final Value<int> id;
+  final Value<String> folio;
+  final Value<bool> isPresale;
+  final Value<String> category;
+  final Value<String> plan;
+  final Value<DateTime> registerDate;
+  final Value<String> enterDate;
+  final Value<String> outDate;
+  final Value<double> rateAdult1_2;
+  final Value<double> rateAdult3;
+  final Value<double> rateAdult4;
+  final Value<double> rateMinor;
+  const QuoteGroupCompanion({
+    this.id = const Value.absent(),
+    this.folio = const Value.absent(),
+    this.isPresale = const Value.absent(),
+    this.category = const Value.absent(),
+    this.plan = const Value.absent(),
+    this.registerDate = const Value.absent(),
+    this.enterDate = const Value.absent(),
+    this.outDate = const Value.absent(),
+    this.rateAdult1_2 = const Value.absent(),
+    this.rateAdult3 = const Value.absent(),
+    this.rateAdult4 = const Value.absent(),
+    this.rateMinor = const Value.absent(),
+  });
+  QuoteGroupCompanion.insert({
+    this.id = const Value.absent(),
+    required String folio,
+    required bool isPresale,
+    required String category,
+    required String plan,
+    required DateTime registerDate,
+    required String enterDate,
+    required String outDate,
+    required double rateAdult1_2,
+    required double rateAdult3,
+    required double rateAdult4,
+    required double rateMinor,
+  })  : folio = Value(folio),
+        isPresale = Value(isPresale),
+        category = Value(category),
+        plan = Value(plan),
+        registerDate = Value(registerDate),
+        enterDate = Value(enterDate),
+        outDate = Value(outDate),
+        rateAdult1_2 = Value(rateAdult1_2),
+        rateAdult3 = Value(rateAdult3),
+        rateAdult4 = Value(rateAdult4),
+        rateMinor = Value(rateMinor);
+  static Insertable<QuoteGroupData> custom({
+    Expression<int>? id,
+    Expression<String>? folio,
+    Expression<bool>? isPresale,
+    Expression<String>? category,
+    Expression<String>? plan,
+    Expression<DateTime>? registerDate,
+    Expression<String>? enterDate,
+    Expression<String>? outDate,
+    Expression<double>? rateAdult1_2,
+    Expression<double>? rateAdult3,
+    Expression<double>? rateAdult4,
+    Expression<double>? rateMinor,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (folio != null) 'folio': folio,
+      if (isPresale != null) 'is_presale': isPresale,
+      if (category != null) 'category': category,
+      if (plan != null) 'plan': plan,
+      if (registerDate != null) 'register_date': registerDate,
+      if (enterDate != null) 'enter_date': enterDate,
+      if (outDate != null) 'out_date': outDate,
+      if (rateAdult1_2 != null) 'rate_adult1_2': rateAdult1_2,
+      if (rateAdult3 != null) 'rate_adult3': rateAdult3,
+      if (rateAdult4 != null) 'rate_adult4': rateAdult4,
+      if (rateMinor != null) 'rate_minor': rateMinor,
+    });
+  }
+
+  QuoteGroupCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? folio,
+      Value<bool>? isPresale,
+      Value<String>? category,
+      Value<String>? plan,
+      Value<DateTime>? registerDate,
+      Value<String>? enterDate,
+      Value<String>? outDate,
+      Value<double>? rateAdult1_2,
+      Value<double>? rateAdult3,
+      Value<double>? rateAdult4,
+      Value<double>? rateMinor}) {
+    return QuoteGroupCompanion(
+      id: id ?? this.id,
+      folio: folio ?? this.folio,
+      isPresale: isPresale ?? this.isPresale,
+      category: category ?? this.category,
+      plan: plan ?? this.plan,
+      registerDate: registerDate ?? this.registerDate,
+      enterDate: enterDate ?? this.enterDate,
+      outDate: outDate ?? this.outDate,
+      rateAdult1_2: rateAdult1_2 ?? this.rateAdult1_2,
+      rateAdult3: rateAdult3 ?? this.rateAdult3,
+      rateAdult4: rateAdult4 ?? this.rateAdult4,
+      rateMinor: rateMinor ?? this.rateMinor,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (folio.present) {
+      map['folio'] = Variable<String>(folio.value);
+    }
+    if (isPresale.present) {
+      map['is_presale'] = Variable<bool>(isPresale.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (plan.present) {
+      map['plan'] = Variable<String>(plan.value);
+    }
+    if (registerDate.present) {
+      map['register_date'] = Variable<DateTime>(registerDate.value);
+    }
+    if (enterDate.present) {
+      map['enter_date'] = Variable<String>(enterDate.value);
+    }
+    if (outDate.present) {
+      map['out_date'] = Variable<String>(outDate.value);
+    }
+    if (rateAdult1_2.present) {
+      map['rate_adult1_2'] = Variable<double>(rateAdult1_2.value);
+    }
+    if (rateAdult3.present) {
+      map['rate_adult3'] = Variable<double>(rateAdult3.value);
+    }
+    if (rateAdult4.present) {
+      map['rate_adult4'] = Variable<double>(rateAdult4.value);
+    }
+    if (rateMinor.present) {
+      map['rate_minor'] = Variable<double>(rateMinor.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuoteGroupCompanion(')
+          ..write('id: $id, ')
+          ..write('folio: $folio, ')
+          ..write('isPresale: $isPresale, ')
+          ..write('category: $category, ')
+          ..write('plan: $plan, ')
+          ..write('registerDate: $registerDate, ')
+          ..write('enterDate: $enterDate, ')
+          ..write('outDate: $outDate, ')
+          ..write('rateAdult1_2: $rateAdult1_2, ')
+          ..write('rateAdult3: $rateAdult3, ')
+          ..write('rateAdult4: $rateAdult4, ')
+          ..write('rateMinor: $rateMinor')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
   late final $UsersTable users = $UsersTable(this);
   late final $ReceiptQuoteTable receiptQuote = $ReceiptQuoteTable(this);
   late final $QuoteTable quote = $QuoteTable(this);
+  late final $QuoteGroupTable quoteGroup = $QuoteGroupTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [users, receiptQuote, quote];
+      [users, receiptQuote, quote, quoteGroup];
 }
 
 typedef $$UsersTableInsertCompanionBuilder = UsersCompanion Function({
@@ -1759,7 +2293,6 @@ class $$ReceiptQuoteTableOrderingComposer
 typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
   required String folio,
-  required bool isGroup,
   required bool isPresale,
   required String category,
   required String plan,
@@ -1777,7 +2310,6 @@ typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
 typedef $$QuoteTableUpdateCompanionBuilder = QuoteCompanion Function({
   Value<int> id,
   Value<String> folio,
-  Value<bool> isGroup,
   Value<bool> isPresale,
   Value<String> category,
   Value<String> plan,
@@ -1814,7 +2346,6 @@ class $$QuoteTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String> folio = const Value.absent(),
-            Value<bool> isGroup = const Value.absent(),
             Value<bool> isPresale = const Value.absent(),
             Value<String> category = const Value.absent(),
             Value<String> plan = const Value.absent(),
@@ -1832,7 +2363,6 @@ class $$QuoteTableTableManager extends RootTableManager<
               QuoteCompanion(
             id: id,
             folio: folio,
-            isGroup: isGroup,
             isPresale: isPresale,
             category: category,
             plan: plan,
@@ -1850,7 +2380,6 @@ class $$QuoteTableTableManager extends RootTableManager<
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             required String folio,
-            required bool isGroup,
             required bool isPresale,
             required String category,
             required String plan,
@@ -1868,7 +2397,6 @@ class $$QuoteTableTableManager extends RootTableManager<
               QuoteCompanion.insert(
             id: id,
             folio: folio,
-            isGroup: isGroup,
             isPresale: isPresale,
             category: category,
             plan: plan,
@@ -1908,11 +2436,6 @@ class $$QuoteTableFilterComposer
 
   ColumnFilters<String> get folio => $state.composableBuilder(
       column: $state.table.folio,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isGroup => $state.composableBuilder(
-      column: $state.table.isGroup,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1995,11 +2518,6 @@ class $$QuoteTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get isGroup => $state.composableBuilder(
-      column: $state.table.isGroup,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<bool> get isPresale => $state.composableBuilder(
       column: $state.table.isPresale,
       builder: (column, joinBuilders) =>
@@ -2066,6 +2584,253 @@ class $$QuoteTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+typedef $$QuoteGroupTableInsertCompanionBuilder = QuoteGroupCompanion Function({
+  Value<int> id,
+  required String folio,
+  required bool isPresale,
+  required String category,
+  required String plan,
+  required DateTime registerDate,
+  required String enterDate,
+  required String outDate,
+  required double rateAdult1_2,
+  required double rateAdult3,
+  required double rateAdult4,
+  required double rateMinor,
+});
+typedef $$QuoteGroupTableUpdateCompanionBuilder = QuoteGroupCompanion Function({
+  Value<int> id,
+  Value<String> folio,
+  Value<bool> isPresale,
+  Value<String> category,
+  Value<String> plan,
+  Value<DateTime> registerDate,
+  Value<String> enterDate,
+  Value<String> outDate,
+  Value<double> rateAdult1_2,
+  Value<double> rateAdult3,
+  Value<double> rateAdult4,
+  Value<double> rateMinor,
+});
+
+class $$QuoteGroupTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $QuoteGroupTable,
+    QuoteGroupData,
+    $$QuoteGroupTableFilterComposer,
+    $$QuoteGroupTableOrderingComposer,
+    $$QuoteGroupTableProcessedTableManager,
+    $$QuoteGroupTableInsertCompanionBuilder,
+    $$QuoteGroupTableUpdateCompanionBuilder> {
+  $$QuoteGroupTableTableManager(_$AppDatabase db, $QuoteGroupTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuoteGroupTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuoteGroupTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$QuoteGroupTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> folio = const Value.absent(),
+            Value<bool> isPresale = const Value.absent(),
+            Value<String> category = const Value.absent(),
+            Value<String> plan = const Value.absent(),
+            Value<DateTime> registerDate = const Value.absent(),
+            Value<String> enterDate = const Value.absent(),
+            Value<String> outDate = const Value.absent(),
+            Value<double> rateAdult1_2 = const Value.absent(),
+            Value<double> rateAdult3 = const Value.absent(),
+            Value<double> rateAdult4 = const Value.absent(),
+            Value<double> rateMinor = const Value.absent(),
+          }) =>
+              QuoteGroupCompanion(
+            id: id,
+            folio: folio,
+            isPresale: isPresale,
+            category: category,
+            plan: plan,
+            registerDate: registerDate,
+            enterDate: enterDate,
+            outDate: outDate,
+            rateAdult1_2: rateAdult1_2,
+            rateAdult3: rateAdult3,
+            rateAdult4: rateAdult4,
+            rateMinor: rateMinor,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String folio,
+            required bool isPresale,
+            required String category,
+            required String plan,
+            required DateTime registerDate,
+            required String enterDate,
+            required String outDate,
+            required double rateAdult1_2,
+            required double rateAdult3,
+            required double rateAdult4,
+            required double rateMinor,
+          }) =>
+              QuoteGroupCompanion.insert(
+            id: id,
+            folio: folio,
+            isPresale: isPresale,
+            category: category,
+            plan: plan,
+            registerDate: registerDate,
+            enterDate: enterDate,
+            outDate: outDate,
+            rateAdult1_2: rateAdult1_2,
+            rateAdult3: rateAdult3,
+            rateAdult4: rateAdult4,
+            rateMinor: rateMinor,
+          ),
+        ));
+}
+
+class $$QuoteGroupTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $QuoteGroupTable,
+    QuoteGroupData,
+    $$QuoteGroupTableFilterComposer,
+    $$QuoteGroupTableOrderingComposer,
+    $$QuoteGroupTableProcessedTableManager,
+    $$QuoteGroupTableInsertCompanionBuilder,
+    $$QuoteGroupTableUpdateCompanionBuilder> {
+  $$QuoteGroupTableProcessedTableManager(super.$state);
+}
+
+class $$QuoteGroupTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $QuoteGroupTable> {
+  $$QuoteGroupTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get folio => $state.composableBuilder(
+      column: $state.table.folio,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isPresale => $state.composableBuilder(
+      column: $state.table.isPresale,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get plan => $state.composableBuilder(
+      column: $state.table.plan,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get registerDate => $state.composableBuilder(
+      column: $state.table.registerDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get enterDate => $state.composableBuilder(
+      column: $state.table.enterDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get outDate => $state.composableBuilder(
+      column: $state.table.outDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get rateAdult1_2 => $state.composableBuilder(
+      column: $state.table.rateAdult1_2,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get rateAdult3 => $state.composableBuilder(
+      column: $state.table.rateAdult3,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get rateAdult4 => $state.composableBuilder(
+      column: $state.table.rateAdult4,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get rateMinor => $state.composableBuilder(
+      column: $state.table.rateMinor,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$QuoteGroupTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $QuoteGroupTable> {
+  $$QuoteGroupTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get folio => $state.composableBuilder(
+      column: $state.table.folio,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isPresale => $state.composableBuilder(
+      column: $state.table.isPresale,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get plan => $state.composableBuilder(
+      column: $state.table.plan,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get registerDate => $state.composableBuilder(
+      column: $state.table.registerDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get enterDate => $state.composableBuilder(
+      column: $state.table.enterDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get outDate => $state.composableBuilder(
+      column: $state.table.outDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get rateAdult1_2 => $state.composableBuilder(
+      column: $state.table.rateAdult1_2,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get rateAdult3 => $state.composableBuilder(
+      column: $state.table.rateAdult3,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get rateAdult4 => $state.composableBuilder(
+      column: $state.table.rateAdult4,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get rateMinor => $state.composableBuilder(
+      column: $state.table.rateMinor,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
@@ -2075,4 +2840,6 @@ class _$AppDatabaseManager {
       $$ReceiptQuoteTableTableManager(_db, _db.receiptQuote);
   $$QuoteTableTableManager get quote =>
       $$QuoteTableTableManager(_db, _db.quote);
+  $$QuoteGroupTableTableManager get quoteGroup =>
+      $$QuoteGroupTableTableManager(_db, _db.quoteGroup);
 }

@@ -4,7 +4,6 @@ class Quote extends Table {
   //Cotizacion individual
   IntColumn get id => integer().autoIncrement()();
   TextColumn get folio => text()();
-  BoolColumn get isGroup => boolean()();
   BoolColumn get isPresale => boolean()();
   TextColumn get category => text()();
   TextColumn get plan => text()();

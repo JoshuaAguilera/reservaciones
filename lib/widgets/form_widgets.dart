@@ -221,10 +221,10 @@ class FormWidgets {
     bool withContent = false;
 
     validator ??= (value) {
-        if ((value == null || value.isEmpty)) {
-          return msgError;
-        }
-      };
+      if ((value == null || value.isEmpty)) {
+        return msgError;
+      }
+    };
 
     return AbsorbPointer(
       absorbing: blocked,
@@ -242,9 +242,10 @@ class FormWidgets {
         obscureText: passwordVisible,
         validator: (value) {
           if (isRequired) {
-            validator!.call(value);
+            return validator!.call(value);
+          } else {
+            return null;
           }
-          return null;
         },
         style: const TextStyle(
           fontFamily: "poppins_regular",
@@ -265,6 +266,9 @@ class FormWidgets {
         ],
         textAlign: isMoneda ? TextAlign.right : TextAlign.left,
         decoration: InputDecoration(
+          alignLabelWithHint: true,
+          floatingLabelAlignment:
+              isMoneda ? FloatingLabelAlignment.center : null,
           contentPadding:
               EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 10),
           border: const OutlineInputBorder(),
@@ -272,6 +276,7 @@ class FormWidgets {
             fontFamily: "poppins_regular",
             fontSize: 13,
           ),
+          prefixIcon: isMoneda ? const Icon(CupertinoIcons.money_dollar) : null,
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(

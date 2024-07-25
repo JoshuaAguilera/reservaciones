@@ -174,19 +174,19 @@ class Utility {
                 .toList();
 
             for (var element in quotes) {
-              if (element.isGroup) {
-                if (element.isPresale) {
-                  quoteDay.numCotizacionesGrupalesPreventa++;
-                } else {
-                  quoteDay.numCotizacionesGrupales++;
-                }
-              } else {
+              // if (element.isGroup) {
+              //   if (element.isPresale) {
+              //     quoteDay.numCotizacionesGrupalesPreventa++;
+              //   } else {
+              //     quoteDay.numCotizacionesGrupales++;
+              //   }
+              // } else {
                 if (element.isPresale) {
                   quoteDay.numCotizacionesIndividualPreventa++;
                 } else {
                   quoteDay.numCotizacionesIndividual++;
                 }
-              }
+              // }
             }
 
             quoteDay.dia = dayNames[i - 1];
@@ -210,19 +210,19 @@ class Utility {
               .toList();
 
           for (var element in quotes) {
-            if (element.isGroup) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesGrupalesPreventa++;
-              } else {
-                quoteDay.numCotizacionesGrupales++;
-              }
-            } else {
+            // if (element.isGroup) {
+            //   if (element.isPresale) {
+            //     quoteDay.numCotizacionesGrupalesPreventa++;
+            //   } else {
+            //     quoteDay.numCotizacionesGrupales++;
+            //   }
+            // } else {
               if (element.isPresale) {
                 quoteDay.numCotizacionesIndividualPreventa++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
               }
-            }
+            // }
           }
 
           quoteDay.dia = "$i";
@@ -243,19 +243,19 @@ class Utility {
               .toList();
 
           for (var element in quotes) {
-            if (element.isGroup) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesGrupalesPreventa++;
-              } else {
-                quoteDay.numCotizacionesGrupales++;
-              }
-            } else {
+            // if (element.isGroup) {
+            //   if (element.isPresale) {
+            //     quoteDay.numCotizacionesGrupalesPreventa++;
+            //   } else {
+            //     quoteDay.numCotizacionesGrupales++;
+            //   }
+            // } else {
               if (element.isPresale) {
                 quoteDay.numCotizacionesIndividualPreventa++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
               }
-            }
+            // }
           }
 
           quoteDay.dia = monthNames[i - 1];
@@ -297,19 +297,19 @@ class Utility {
         tipoCotizacion: "Cotizaciones individuales en Preventa");
 
     for (var element in respToday) {
-      if (element.isGroup) {
-        if (element.isPresale) {
-          cotizacionesGrupalesPreventa.numCotizaciones++;
-        } else {
-          cotizacionesGrupales.numCotizaciones++;
-        }
-      } else {
+      // if (element.isGroup) {
+      //   if (element.isPresale) {
+      //     cotizacionesGrupalesPreventa.numCotizaciones++;
+      //   } else {
+      //     cotizacionesGrupales.numCotizaciones++;
+      //   }
+      // } else {
         if (element.isPresale) {
           cotizacionesIndividualesPreventa.numCotizaciones++;
         } else {
           cotizacionesIndividuales.numCotizaciones++;
         }
-      }
+      // }
     }
 
     cot.addAll([

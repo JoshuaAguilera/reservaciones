@@ -6,12 +6,20 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import '../models/prefijo_telefonico_model.dart';
 
 class CustomDropdown {
-  static Widget dropdownMenuCustom(
-      {required String initialSelection,
-      required void Function(String?)? onSelected,
-      required List<String> elements,
-      double fontSize = 13,
-      double? screenWidth}) {
+  static Widget dropdownMenuCustom({
+    required String initialSelection,
+    required void Function(String?)? onSelected,
+    required List<String> elements,
+    double fontSize = 13,
+    double? screenWidth,
+    String removeItem = '',
+  }) {
+    List<String> items = elements.toList();
+
+    if (removeItem.isNotEmpty) {
+      items.removeWhere((element) => element == removeItem);
+    }
+
     return StatefulBuilder(
       builder: (context, setState) {
         return DropdownMenu<String>(
@@ -24,7 +32,7 @@ class CustomDropdown {
           textStyle:
               TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
           dropdownMenuEntries:
-              elements.map<DropdownMenuEntry<String>>((String value) {
+              items.map<DropdownMenuEntry<String>>((String value) {
             return DropdownMenuEntry<String>(
               value: value,
               label: value,
@@ -53,7 +61,6 @@ class CustomDropdown {
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,
-          
           menuHeight: 150,
           label: Row(
             children: [
