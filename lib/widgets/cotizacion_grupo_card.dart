@@ -107,13 +107,12 @@ class _TableRowCotizacion extends StatelessWidget {
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               columnWidths: const {
-                0: FractionColumnWidth(.05),
-                1: FractionColumnWidth(.15),
+                0: FractionColumnWidth(.2),
+                1: FractionColumnWidth(.22),
                 2: FractionColumnWidth(.1),
-                3: FractionColumnWidth(.1),
-                4: FractionColumnWidth(.1),
-                5: FractionColumnWidth(.1),
-                6: FractionColumnWidth(.21),
+                3: FractionColumnWidth(.22),
+                4: FractionColumnWidth(.15),
+                5: FractionColumnWidth(.15),
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),

@@ -16,7 +16,9 @@ import '../models/cotizacion_model.dart';
 
 class Dialogs {
   Widget habitacionIndividualDialog(
-      {required BuildContext buildContext, Cotizacion? cotizacion, void Function(Cotizacion?)? onInsert}) {
+      {required BuildContext buildContext,
+      Cotizacion? cotizacion,
+      void Function(Cotizacion?)? onInsert}) {
     Cotizacion nuevaCotizacion = cotizacion ??
         Cotizacion(
           categoria: categorias.first,
@@ -334,7 +336,9 @@ class Dialogs {
   }
 
   Widget habitacionGrupoDialog(
-      {required BuildContext buildContext, CotizacionGrupal? cotizacion}) {
+      {required BuildContext buildContext,
+      CotizacionGrupal? cotizacion,
+      void Function(CotizacionGrupal?)? onInsert}) {
     //data Quote
     String type = tipoHabitacion.first;
     String plan = planes.first;
@@ -351,7 +355,6 @@ class Dialogs {
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    TextEditingController _habitacionController = TextEditingController();
     TextEditingController _adults1_2Controller = TextEditingController();
     TextEditingController _adults3Controller = TextEditingController();
     TextEditingController _adults4Controller = TextEditingController();
@@ -439,21 +442,6 @@ class Dialogs {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FormWidgets.textFormFieldResizable(
-                            name: "Numero de habitaciones",
-                            isNumeric: true,
-                            isDecimal: true,
-                            controller: _habitacionController,
-                            icon: Icon(
-                              CupertinoIcons.bed_double_fill,
-                              color: DesktopColors.ceruleanOscure,
-                            )),
-                      ),
-                    ],
-                  ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -520,9 +508,25 @@ class Dialogs {
       actions: [
         TextButton(
             onPressed: () {
-              if (_formKeyHabitacion.currentState!.validate()) {
-                Navigator.of(buildContext).pop();
+              if (!_formKeyHabitacion.currentState!.validate()) {
+                return;
               }
+
+              CotizacionGrupal cotGrup = CotizacionGrupal();
+              cotGrup.categoria = type;
+              cotGrup.plan = plan;
+              cotGrup.fechaEntrada = _fechaEntrada.text;
+              cotGrup.fechaSalida = _fechaSalida.text;
+              cotGrup.tarifaAdulto1_2 = double.parse(_adults1_2Controller.text);
+              cotGrup.tarifaAdulto3 = double.parse(_adults3Controller.text);
+              cotGrup.tarifaAdulto4 = double.parse(_adults4Controller.text);
+              cotGrup.tarifaMenor = double.parse(_minors7_12Controller.text);
+
+              if (onInsert != null) {
+                onInsert.call(cotGrup);
+              }
+
+              Navigator.of(buildContext).pop();
             },
             child: TextStyles.buttonText(
                 text: cotizacion != null ? "Editar" : "Agregar")),

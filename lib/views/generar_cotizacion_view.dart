@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/providers/cotizacion_grupal_provider.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/services/send_quote_service.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -13,6 +14,7 @@ import 'package:generador_formato/providers/cotizacion_individual_provider.dart'
 import 'package:generador_formato/services/comprobante_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
+import 'package:generador_formato/widgets/cotizacion_grupo_card.dart';
 import 'package:generador_formato/widgets/cotizacion_indiv_card.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -60,7 +62,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   @override
   Widget build(BuildContext context) {
     double screenHight = MediaQuery.of(context).size.height;
-    final cotizaciones = ref.watch(CotizacionIndividualProvider.provider);
+    final cotizacionesIndividuales =
+        ref.watch(CotizacionIndividualProvider.provider);
+    final cotizacionesGrupales = ref.watch(CotizacionGrupalProvider.provider);
     final comprobante = ref.watch(comprobanteProvider);
     final folio = ref.watch(uniqueFolioProvider);
     return Scaffold(
@@ -231,13 +235,19 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                                 context)
                                                     : Dialogs()
                                                         .habitacionGrupoDialog(
-                                                            buildContext:
-                                                                context);
+                                                        buildContext: context,
+                                                        onInsert: (p0) =>
+                                                            setState(() {
+                                                          cotizacionesGrupales
+                                                              .add(p0!);
+                                                        }),
+                                                      );
                                               },
                                             ).then((value) {
                                               if (value != null) {
                                                 setState(() =>
-                                                    cotizaciones.add(value));
+                                                    cotizacionesIndividuales
+                                                        .add(value));
                                               }
                                             });
                                           },
@@ -345,56 +355,125 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       ),
                                     ),
                                   const Divider(color: Colors.black54),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: SizedBox(
-                                      height: Utility.limitHeightList(
-                                          cotizaciones.length),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: cotizaciones.length,
-                                        itemBuilder: (context, index) {
-                                          if (index < cotizaciones.length) {
-                                            return CotizacionIndividualCard(
-                                              key: ObjectKey(
-                                                  cotizaciones[index].hashCode),
-                                              index: index,
-                                              cotizacion: cotizaciones[index],
-                                              compact: !Utility.isResizable(
-                                                  extended: widget
-                                                      .sideController.extended,
-                                                  context: context),
-                                              onPressedDelete: () => setState(
-                                                  () => cotizaciones.remove(
-                                                      cotizaciones[index])),
-                                              onPressedEdit: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return Dialogs()
-                                                        .habitacionIndividualDialog(
-                                                            buildContext:
-                                                                context,
-                                                            cotizacion:
-                                                                cotizaciones[
-                                                                    index]);
-                                                  },
-                                                ).then((value) {
-                                                  if (value != null) {
-                                                    setState(() {
-                                                      cotizaciones[index] =
-                                                          value;
-                                                    });
-                                                  }
-                                                });
-                                              },
-                                            );
-                                          }
-                                        },
+                                  if (dropdownValue == "Cotización Individual")
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: SizedBox(
+                                        height: Utility.limitHeightList(
+                                            cotizacionesIndividuales.length),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          itemCount:
+                                              cotizacionesIndividuales.length,
+                                          itemBuilder: (context, index) {
+                                            if (index <
+                                                cotizacionesIndividuales
+                                                    .length) {
+                                              return CotizacionIndividualCard(
+                                                key: ObjectKey(
+                                                    cotizacionesIndividuales[
+                                                            index]
+                                                        .hashCode),
+                                                index: index,
+                                                cotizacion:
+                                                    cotizacionesIndividuales[
+                                                        index],
+                                                compact: !Utility.isResizable(
+                                                    extended: widget
+                                                        .sideController
+                                                        .extended,
+                                                    context: context),
+                                                onPressedDelete: () => setState(
+                                                    () => cotizacionesIndividuales
+                                                        .remove(
+                                                            cotizacionesIndividuales[
+                                                                index])),
+                                                onPressedEdit: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialogs()
+                                                          .habitacionIndividualDialog(
+                                                              buildContext:
+                                                                  context,
+                                                              cotizacion:
+                                                                  cotizacionesIndividuales[
+                                                                      index]);
+                                                    },
+                                                  ).then((value) {
+                                                    if (value != null) {
+                                                      setState(() {
+                                                        cotizacionesIndividuales[
+                                                            index] = value;
+                                                      });
+                                                    }
+                                                  });
+                                                },
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: SizedBox(
+                                        height: Utility.limitHeightList(
+                                            cotizacionesGrupales.length),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          itemCount:
+                                              cotizacionesGrupales.length,
+                                          itemBuilder: (context, index) {
+                                            if (index <
+                                                cotizacionesGrupales.length) {
+                                              return CotizacionGrupoCard(
+                                                key: ObjectKey(
+                                                    cotizacionesGrupales[index]
+                                                        .hashCode),
+                                                index: index,
+                                                cotGroup:
+                                                    cotizacionesGrupales[index],
+                                                compact: !Utility.isResizable(
+                                                    extended: widget
+                                                        .sideController
+                                                        .extended,
+                                                    context: context),
+                                                onPressedDelete: () => setState(
+                                                    () => cotizacionesIndividuales
+                                                        .remove(
+                                                            cotizacionesIndividuales[
+                                                                index])),
+                                                onPressedEdit: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialogs()
+                                                          .habitacionIndividualDialog(
+                                                              buildContext:
+                                                                  context,
+                                                              cotizacion:
+                                                                  cotizacionesIndividuales[
+                                                                      index]);
+                                                    },
+                                                  ).then((value) {
+                                                    if (value != null) {
+                                                      setState(() {
+                                                        cotizacionesIndividuales[
+                                                            index] = value;
+                                                      });
+                                                    }
+                                                  });
+                                                },
+                                              );
+                                            }
+                                          },
+                                        ),
                                       ),
                                     ),
-                                  ),
                                   // Padding(
                                   //   padding: const EdgeInsets.only(top: 6.0),
                                   //   child: Align(
@@ -413,7 +492,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       alignment: Alignment.centerRight,
                                       child: TextStyles.titleText(
                                         text:
-                                            "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
+                                            "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacionesIndividuales))}",
                                         size: 16,
                                         color: DesktopColors.prussianBlue,
                                       ),
@@ -437,7 +516,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         onPressed: () async {
                                           if (_formKeyCotizacion.currentState!
                                               .validate()) {
-                                            if (cotizaciones.isEmpty) {
+                                            if (cotizacionesIndividuales
+                                                .isEmpty) {
                                               showSnackBar(
                                                 type: "alert",
                                                 context: context,
@@ -454,7 +534,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             if (!(await ComprobanteService()
                                                 .createComprobante(
                                                     comprobante,
-                                                    cotizaciones,
+                                                    cotizacionesIndividuales,
                                                     folio,
                                                     prefijoInit))) {
                                               if (!context.mounted) return;
@@ -472,7 +552,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             receiptQuotePresent = comprobante;
                                             receiptQuotePresent.folioCuotas =
                                                 folio;
-                                            quotesPresent = cotizaciones;
+                                            quotesPresent =
+                                                cotizacionesIndividuales;
 
                                             comprobantePDF = await ref
                                                 .watch(
