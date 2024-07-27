@@ -1,4 +1,5 @@
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:pdf/pdf.dart';
@@ -290,7 +291,7 @@ class FilesTemplate {
   }
 
   static pw.Widget getTablesCotGroup({
-    required List<Cotizacion> cotizaciones,
+    required List<CotizacionGrupal> cotizaciones,
     required String nameTable,
     required pw.TextStyle styleGeneral,
     required pw.TextStyle styleHeader,
@@ -325,28 +326,21 @@ class FilesTemplate {
     List<List<pw.Widget>> contenido = [];
 
     contenido = [
-      <pw.Widget>[
-        pw.Align(
-          alignment: pw.Alignment.centerLeft,
-          child:
-              pw.Text('DELUXE DOBLE VISTA A LA\nRESERVA', style: styleGeneral),
-        ),
-        pw.Text('\$3,240', style: styleBold),
-        pw.Text('\$4,500', style: styleBold),
-        pw.Text('\$5,760', style: styleBold),
-        pw.Text('\$750', style: styleBold),
-      ],
-      <pw.Widget>[
-        pw.Align(
-          alignment: pw.Alignment.centerLeft,
-          child: pw.Text('DELUXE DOBLE VISTA PARCIAL\nAL MAR',
-              style: styleGeneral),
-        ),
-        pw.Text('\$3,720', style: styleBold),
-        pw.Text('\$5,220', style: styleBold),
-        pw.Text('\$6,720', style: styleBold),
-        pw.Text('\$840', style: styleBold),
-      ],
+      for (var cotizacion in cotizaciones)
+        <pw.Widget>[
+          pw.Align(
+            alignment: pw.Alignment.centerLeft,
+            child: pw.Text(cotizacion.categoria ?? '', style: styleGeneral),
+          ),
+          pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto1_2 ?? 0),
+              style: styleBold),
+          pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto3 ?? 0),
+              style: styleBold),
+          pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto4 ?? 0),
+              style: styleBold),
+          pw.Text(Utility.formatterNumber(cotizacion.tarifaMenor ?? 0),
+              style: styleBold),
+        ],
     ];
 
     return pw.Column(children: [

@@ -36,12 +36,12 @@ class CotizacionService extends ChangeNotifier {
     }
   }
 
-  Future<List<QuoteData>> getCotizacionesTimePeriod(
+  Future<List<QuoteData>> getCotizacionesIndTimePeriod(
       DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
     try {
       List<QuoteData> resp =
-          await dataBase.getQuotesTimePeriod(initTime, lastTime);
+          await dataBase.getQuotesIndTimePeriod(initTime, lastTime);
 
       await dataBase.close();
       return resp;
@@ -50,10 +50,12 @@ class CotizacionService extends ChangeNotifier {
     }
   }
 
-  Future<List<QuoteData>> getCotizacionesActuales() async {
+  Future<List<QuoteGroupData>> getCotizacionesGroupTimePeriod(
+      DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
     try {
-      List<QuoteData> resp = await dataBase.getQuotesToday();
+      List<QuoteGroupData> resp =
+          await dataBase.getQuotesGroupTimePeriod(initTime, lastTime);
 
       await dataBase.close();
       return resp;
@@ -62,10 +64,46 @@ class CotizacionService extends ChangeNotifier {
     }
   }
 
-  Future<List<QuoteData>> getAllQuote() async {
+  Future<List<QuoteData>> getCotizacionesIndActuales() async {
     final dataBase = AppDatabase();
     try {
-      List<QuoteData> resp = await dataBase.getHistoryQuotes();
+      List<QuoteData> resp = await dataBase.getQuotesIndToday();
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
+  }
+
+  Future<List<QuoteGroupData>> getCotizacionesGroupActuales() async {
+    final dataBase = AppDatabase();
+    try {
+      List<QuoteGroupData> resp = await dataBase.getQuotesGroupToday();
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
+  }
+
+  Future<List<QuoteData>> getAllQuoteInd() async {
+    final dataBase = AppDatabase();
+    try {
+      List<QuoteData> resp = await dataBase.getHistoryQuotesInd();
+
+      await dataBase.close();
+      return resp;
+    } catch (e) {
+      return List.empty();
+    }
+  }
+
+  Future<List<QuoteGroupData>> getAllQuoteGroup() async {
+    final dataBase = AppDatabase();
+    try {
+      List<QuoteGroupData> resp = await dataBase.getHistoryQuotesGroup();
 
       await dataBase.close();
       return resp;

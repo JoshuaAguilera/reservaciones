@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
@@ -15,10 +14,12 @@ import '../utils/helpers/constants.dart';
 import '../models/cotizacion_model.dart';
 
 class Dialogs {
-  Widget habitacionIndividualDialog(
-      {required BuildContext buildContext,
-      Cotizacion? cotizacion,
-      void Function(Cotizacion?)? onInsert}) {
+  Widget habitacionIndividualDialog({
+    required BuildContext buildContext,
+    Cotizacion? cotizacion,
+    void Function(Cotizacion?)? onInsert,
+    void Function(Cotizacion?)? onUpdate,
+  }) {
     Cotizacion nuevaCotizacion = cotizacion ??
         Cotizacion(
           categoria: categorias.first,
@@ -319,6 +320,10 @@ class Dialogs {
                     setState(() => isError = false);
                   }
 
+                  if (onUpdate != null) {
+                    onUpdate.call(nuevaCotizacion);
+                  }
+
                   Navigator.of(buildContext).pop(nuevaCotizacion);
                 }
               },
@@ -335,10 +340,12 @@ class Dialogs {
     });
   }
 
-  Widget habitacionGrupoDialog(
-      {required BuildContext buildContext,
-      CotizacionGrupal? cotizacion,
-      void Function(CotizacionGrupal?)? onInsert}) {
+  Widget habitacionGrupoDialog({
+    required BuildContext buildContext,
+    CotizacionGrupal? cotizacion,
+    void Function(CotizacionGrupal?)? onInsert,
+    void Function(CotizacionGrupal?)? onUpdate,
+  }) {
     //data Quote
     String type = tipoHabitacion.first;
     String plan = planes.first;
@@ -355,10 +362,14 @@ class Dialogs {
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    TextEditingController _adults1_2Controller = TextEditingController();
-    TextEditingController _adults3Controller = TextEditingController();
-    TextEditingController _adults4Controller = TextEditingController();
-    TextEditingController _minors7_12Controller = TextEditingController();
+    TextEditingController _adults1_2Controller = TextEditingController(
+        text: cotizacion != null ? cotizacion.tarifaAdulto1_2.toString() : '');
+    TextEditingController _adults3Controller = TextEditingController(
+        text: cotizacion != null ? cotizacion.tarifaAdulto3.toString() : '');
+    TextEditingController _adults4Controller = TextEditingController(
+        text: cotizacion != null ? cotizacion.tarifaAdulto4.toString() : '');
+    TextEditingController _minors7_12Controller = TextEditingController(
+        text: cotizacion != null ? cotizacion.tarifaMenor.toString() : '');
 
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
@@ -524,6 +535,10 @@ class Dialogs {
 
               if (onInsert != null) {
                 onInsert.call(cotGrup);
+              }
+
+              if (onUpdate != null) {
+                onUpdate.call(cotGrup);
               }
 
               Navigator.of(buildContext).pop();

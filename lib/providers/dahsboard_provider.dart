@@ -8,15 +8,18 @@ import '../services/comprobante_service.dart';
 import '../services/cotizacion_service.dart';
 import '../utils/helpers/utility.dart';
 
-final reporteCotizacionesProvider =
+final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, Tuple2<String, dynamic>>(
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filter = ref.watch(filterReport);
   final list = Utility.getReportQuotes(
-      await CotizacionService().getCotizacionesTimePeriod(
-          Utility.calculatePeriodReport(filter), DateTime.now()),
-      filter);
+    cotizacionesInd: await CotizacionService().getCotizacionesIndTimePeriod(
+        Utility.calculatePeriodReport(filter), DateTime.now()),
+    filter: filter,
+    cotizacionesGroup: await CotizacionService().getCotizacionesGroupTimePeriod(
+        Utility.calculatePeriodReport(filter), DateTime.now()),
+  );
   return list;
 });
 
@@ -25,7 +28,8 @@ final cotizacionesDiariasProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = Utility.getDailyQuotesReport(
-      await CotizacionService().getCotizacionesActuales());
+      respIndToday: await CotizacionService().getCotizacionesIndActuales(),
+      respGroupToday: await CotizacionService().getCotizacionesGroupActuales());
   return list;
 });
 
@@ -42,7 +46,8 @@ final allQuotesProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await Utility.getDailyQuotesReport(
-      await CotizacionService().getAllQuote());
+      respIndToday: await CotizacionService().getAllQuoteInd(),
+      respGroupToday: await CotizacionService().getAllQuoteGroup());
   return list;
 });
 

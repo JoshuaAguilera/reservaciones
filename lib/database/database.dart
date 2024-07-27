@@ -113,8 +113,19 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  Future<List<QuoteData>> getQuotesToday() {
+  Future<List<QuoteData>> getQuotesIndToday() {
     return (select(quote)
+          ..where(
+            (t) => t.registerDate.isBetweenValues(
+              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+              DateTime.now(),
+            ),
+          ))
+        .get();
+  }
+
+  Future<List<QuoteGroupData>> getQuotesGroupToday() {
+    return (select(quoteGroup)
           ..where(
             (t) => t.registerDate.isBetweenValues(
               DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
@@ -133,11 +144,23 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<QuoteData>> getQuotesTimePeriod(
+  Future<List<QuoteData>> getQuotesIndTimePeriod(
     DateTime initTime,
     DateTime lastTime,
   ) {
     return (select(quote)
+          ..where((t) => t.registerDate.isBetweenValues(
+                initTime,
+                lastTime,
+              )))
+        .get();
+  }
+
+  Future<List<QuoteGroupData>> getQuotesGroupTimePeriod(
+    DateTime initTime,
+    DateTime lastTime,
+  ) {
+    return (select(quoteGroup)
           ..where((t) => t.registerDate.isBetweenValues(
                 initTime,
                 lastTime,
@@ -154,8 +177,12 @@ class AppDatabase extends _$AppDatabase {
     return (delete(quote)..where((t) => t.folio.equals(folio))).go();
   }
 
-  Future<List<QuoteData>> getHistoryQuotes() {
+  Future<List<QuoteData>> getHistoryQuotesInd() {
     return (select(quote)).get();
+  }
+
+  Future<List<QuoteGroupData>> getHistoryQuotesGroup() {
+    return (select(quoteGroup)).get();
   }
 
   //USER SECCION

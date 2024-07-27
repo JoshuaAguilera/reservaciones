@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -154,7 +155,9 @@ class Utility {
   }
 
   static List<ReporteCotizacion> getReportQuotes(
-      List<QuoteData> cotizaciones, String filter) {
+      {List<QuoteData>? cotizacionesInd,
+      required String filter,
+      List<QuoteGroupData>? cotizacionesGroup}) {
     List<ReporteCotizacion> listCot = [];
     DateTime now = DateTime.now();
 
@@ -169,24 +172,33 @@ class Utility {
               numCotizacionesIndividualPreventa: 0,
             );
 
-            List<QuoteData> quotes = cotizaciones
-                .where((element) => element.registerDate.weekday == i)
-                .toList();
+            if (cotizacionesInd != null) {
+              List<QuoteData> quotesInd = cotizacionesInd
+                  .where((element) => element.registerDate.weekday == i)
+                  .toList();
 
-            for (var element in quotes) {
-              // if (element.isGroup) {
-              //   if (element.isPresale) {
-              //     quoteDay.numCotizacionesGrupalesPreventa++;
-              //   } else {
-              //     quoteDay.numCotizacionesGrupales++;
-              //   }
-              // } else {
+              for (var element in quotesInd) {
                 if (element.isPresale) {
                   quoteDay.numCotizacionesIndividualPreventa++;
                 } else {
                   quoteDay.numCotizacionesIndividual++;
                 }
-              // }
+              }
+            }
+
+            if (cotizacionesGroup != null) {
+              List<QuoteGroupData> quotesInd = cotizacionesGroup
+                  .where((element) => element.registerDate.weekday == i)
+                  .toList();
+
+              for (var element in quotesInd) {
+                if (element.isPresale) {
+                  quoteDay.numCotizacionesGrupalesPreventa++;
+                } else {
+                  quoteDay.numCotizacionesGrupales++;
+                }
+                // }
+              }
             }
 
             quoteDay.dia = dayNames[i - 1];
@@ -205,24 +217,34 @@ class Utility {
             numCotizacionesIndividualPreventa: 0,
           );
 
-          List<QuoteData> quotes = cotizaciones
-              .where((element) => element.registerDate.day == i)
-              .toList();
+          if (cotizacionesInd != null) {
+            List<QuoteData> quotes = cotizacionesInd
+                .where((element) => element.registerDate.day == i)
+                .toList();
 
-          for (var element in quotes) {
-            // if (element.isGroup) {
-            //   if (element.isPresale) {
-            //     quoteDay.numCotizacionesGrupalesPreventa++;
-            //   } else {
-            //     quoteDay.numCotizacionesGrupales++;
-            //   }
-            // } else {
+            for (var element in quotes) {
               if (element.isPresale) {
                 quoteDay.numCotizacionesIndividualPreventa++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
               }
-            // }
+              // }
+            }
+          }
+
+          if (cotizacionesGroup != null) {
+            List<QuoteGroupData> quotes = cotizacionesGroup
+                .where((element) => element.registerDate.day == i)
+                .toList();
+
+            for (var element in quotes) {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesGrupalesPreventa++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+              // }
+            }
           }
 
           quoteDay.dia = "$i";
@@ -238,24 +260,33 @@ class Utility {
             numCotizacionesIndividualPreventa: 0,
           );
 
-          List<QuoteData> quotes = cotizaciones
-              .where((element) => element.registerDate.month == i)
-              .toList();
+          if (cotizacionesInd != null) {
+            List<QuoteData> quotes = cotizacionesInd
+                .where((element) => element.registerDate.month == i)
+                .toList();
 
-          for (var element in quotes) {
-            // if (element.isGroup) {
-            //   if (element.isPresale) {
-            //     quoteDay.numCotizacionesGrupalesPreventa++;
-            //   } else {
-            //     quoteDay.numCotizacionesGrupales++;
-            //   }
-            // } else {
+            for (var element in quotes) {
               if (element.isPresale) {
                 quoteDay.numCotizacionesIndividualPreventa++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
               }
-            // }
+              // }
+            }
+          }
+
+          if (cotizacionesGroup != null) {
+            List<QuoteGroupData> quotes = cotizacionesGroup
+                .where((element) => element.registerDate.month == i)
+                .toList();
+
+            for (var element in quotes) {
+              if (element.isPresale) {
+                quoteDay.numCotizacionesGrupalesPreventa++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+            }
           }
 
           quoteDay.dia = monthNames[i - 1];
@@ -281,14 +312,14 @@ class Utility {
   }
 
   static List<NumeroCotizacion> getDailyQuotesReport(
-      List<QuoteData> respToday) {
+      {List<QuoteData>? respIndToday, List<QuoteGroupData>? respGroupToday}) {
     List<NumeroCotizacion> cot = [];
 
     NumeroCotizacion cotizacionesGrupales =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales");
 
-    NumeroCotizacion cotizacionesGrupalesPreventa =
-        NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales en Preventa");
+    // NumeroCotizacion cotizacionesGrupalesPreventa =
+    //     NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales en Preventa");
 
     NumeroCotizacion cotizacionesIndividuales =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones individuales");
@@ -296,26 +327,26 @@ class Utility {
     NumeroCotizacion cotizacionesIndividualesPreventa = NumeroCotizacion(
         tipoCotizacion: "Cotizaciones individuales en Preventa");
 
-    for (var element in respToday) {
-      // if (element.isGroup) {
-      //   if (element.isPresale) {
-      //     cotizacionesGrupalesPreventa.numCotizaciones++;
-      //   } else {
-      //     cotizacionesGrupales.numCotizaciones++;
-      //   }
-      // } else {
-        if (element.isPresale) {
-          cotizacionesIndividualesPreventa.numCotizaciones++;
-        } else {
-          cotizacionesIndividuales.numCotizaciones++;
-        }
-      // }
+    for (var element in respIndToday!) {
+      if (element.isPresale) {
+        cotizacionesIndividualesPreventa.numCotizaciones++;
+      } else {
+        cotizacionesIndividuales.numCotizaciones++;
+      }
+    }
+
+    for (var element in respGroupToday!) {
+      if (element.isPresale) {
+        // cotizacionesGrupalesPreventa.numCotizaciones++;
+      } else {
+        cotizacionesGrupales.numCotizaciones++;
+      }
     }
 
     cot.addAll([
       cotizacionesGrupales,
       cotizacionesIndividuales,
-      cotizacionesGrupalesPreventa,
+      // cotizacionesGrupalesPreventa,
       cotizacionesIndividualesPreventa,
     ]);
 
@@ -420,13 +451,13 @@ class Utility {
   static IconData? getIconCardDashboard(String? tipoCotizacion) {
     switch (tipoCotizacion) {
       case "Cotizaciones grupales":
-        return CupertinoIcons.person_2_alt;
+        return CupertinoIcons.person_2;
       case "Cotizaciones grupales en Preventa":
-        return CupertinoIcons.person_2_alt;
+        return CupertinoIcons.person_2_fill;
       case "Cotizaciones individuales":
-        return CupertinoIcons.person_alt;
+        return CupertinoIcons.person;
       case "Cotizaciones individuales en Preventa":
-        return CupertinoIcons.person_alt;
+        return CupertinoIcons.person_fill;
       default:
         return Icons.error_outline;
     }
@@ -437,7 +468,7 @@ class Utility {
       case "Cotizaciones grupales":
         return [
           DesktopColors.cotGroupColor,
-          const Color.fromARGB(255, 149, 220, 255)
+          Color.fromARGB(255, 140, 207, 240)
         ];
       case "Cotizaciones grupales en Preventa":
         return [
@@ -496,5 +527,30 @@ class Utility {
     }
 
     return width;
+  }
+
+  static String getDatesStay(List<CotizacionGrupal> cotizaciones) {
+    String dates = '';
+
+    for (var element in cotizaciones) {
+      dates += "${element.fechaEntrada!} - ${element.fechaSalida!}, ";
+    }
+
+    return dates;
+  }
+
+  static Color getColorRegisterQuote(String type) {
+    switch (type) {
+      case "Cotizaciones grupales":
+        return DesktopColors.cotGroupColor;
+      case "Cotizaciones grupales en Preventa":
+        return DesktopColors.cotGroupPreColor;
+      case "Cotizaciones individuales":
+        return DesktopColors.cotIndColor;
+      case "Cotizaciones individuales en Preventa":
+        return DesktopColors.cotIndPreColor;
+      default:
+        return Colors.white;
+    }
   }
 }

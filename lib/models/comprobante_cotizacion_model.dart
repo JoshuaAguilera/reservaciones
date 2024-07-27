@@ -9,6 +9,7 @@ class ComprobanteCotizacion {
   String? fechaRegistro;
   double? tarifaDiaria;
   double? total;
+  int? habitaciones;
   List<Cotizacion>? cotizaciones;
 
   ComprobanteCotizacion({
@@ -21,6 +22,7 @@ class ComprobanteCotizacion {
     this.folioCuotas,
     this.tarifaDiaria,
     this.total,
+    this.habitaciones,
   });
 
   //Pendiente diseñar tomap.tostring de cotizaciones

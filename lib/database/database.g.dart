@@ -307,6 +307,20 @@ class $ReceiptQuoteTable extends ReceiptQuote
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
       'total', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _roomsMeta = const VerificationMeta('rooms');
+  @override
+  late final GeneratedColumn<int> rooms = GeneratedColumn<int>(
+      'rooms', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _isGroupMeta =
+      const VerificationMeta('isGroup');
+  @override
+  late final GeneratedColumn<bool> isGroup = GeneratedColumn<bool>(
+      'is_group', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_group" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -317,7 +331,9 @@ class $ReceiptQuoteTable extends ReceiptQuote
         userId,
         dateRegister,
         rateDay,
-        total
+        total,
+        rooms,
+        isGroup
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -386,6 +402,18 @@ class $ReceiptQuoteTable extends ReceiptQuote
     } else if (isInserting) {
       context.missing(_totalMeta);
     }
+    if (data.containsKey('rooms')) {
+      context.handle(
+          _roomsMeta, rooms.isAcceptableOrUnknown(data['rooms']!, _roomsMeta));
+    } else if (isInserting) {
+      context.missing(_roomsMeta);
+    }
+    if (data.containsKey('is_group')) {
+      context.handle(_isGroupMeta,
+          isGroup.isAcceptableOrUnknown(data['is_group']!, _isGroupMeta));
+    } else if (isInserting) {
+      context.missing(_isGroupMeta);
+    }
     return context;
   }
 
@@ -413,6 +441,10 @@ class $ReceiptQuoteTable extends ReceiptQuote
           .read(DriftSqlType.double, data['${effectivePrefix}rate_day'])!,
       total: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
+      rooms: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}rooms'])!,
+      isGroup: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_group'])!,
     );
   }
 
@@ -433,6 +465,8 @@ class ReceiptQuoteData extends DataClass
   final DateTime dateRegister;
   final double rateDay;
   final double total;
+  final int rooms;
+  final bool isGroup;
   const ReceiptQuoteData(
       {required this.id,
       required this.nameCustomer,
@@ -442,7 +476,9 @@ class ReceiptQuoteData extends DataClass
       required this.userId,
       required this.dateRegister,
       required this.rateDay,
-      required this.total});
+      required this.total,
+      required this.rooms,
+      required this.isGroup});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -455,6 +491,8 @@ class ReceiptQuoteData extends DataClass
     map['date_register'] = Variable<DateTime>(dateRegister);
     map['rate_day'] = Variable<double>(rateDay);
     map['total'] = Variable<double>(total);
+    map['rooms'] = Variable<int>(rooms);
+    map['is_group'] = Variable<bool>(isGroup);
     return map;
   }
 
@@ -469,6 +507,8 @@ class ReceiptQuoteData extends DataClass
       dateRegister: Value(dateRegister),
       rateDay: Value(rateDay),
       total: Value(total),
+      rooms: Value(rooms),
+      isGroup: Value(isGroup),
     );
   }
 
@@ -485,6 +525,8 @@ class ReceiptQuoteData extends DataClass
       dateRegister: serializer.fromJson<DateTime>(json['dateRegister']),
       rateDay: serializer.fromJson<double>(json['rateDay']),
       total: serializer.fromJson<double>(json['total']),
+      rooms: serializer.fromJson<int>(json['rooms']),
+      isGroup: serializer.fromJson<bool>(json['isGroup']),
     );
   }
   @override
@@ -500,6 +542,8 @@ class ReceiptQuoteData extends DataClass
       'dateRegister': serializer.toJson<DateTime>(dateRegister),
       'rateDay': serializer.toJson<double>(rateDay),
       'total': serializer.toJson<double>(total),
+      'rooms': serializer.toJson<int>(rooms),
+      'isGroup': serializer.toJson<bool>(isGroup),
     };
   }
 
@@ -512,7 +556,9 @@ class ReceiptQuoteData extends DataClass
           int? userId,
           DateTime? dateRegister,
           double? rateDay,
-          double? total}) =>
+          double? total,
+          int? rooms,
+          bool? isGroup}) =>
       ReceiptQuoteData(
         id: id ?? this.id,
         nameCustomer: nameCustomer ?? this.nameCustomer,
@@ -523,6 +569,8 @@ class ReceiptQuoteData extends DataClass
         dateRegister: dateRegister ?? this.dateRegister,
         rateDay: rateDay ?? this.rateDay,
         total: total ?? this.total,
+        rooms: rooms ?? this.rooms,
+        isGroup: isGroup ?? this.isGroup,
       );
   @override
   String toString() {
@@ -535,14 +583,16 @@ class ReceiptQuoteData extends DataClass
           ..write('userId: $userId, ')
           ..write('dateRegister: $dateRegister, ')
           ..write('rateDay: $rateDay, ')
-          ..write('total: $total')
+          ..write('total: $total, ')
+          ..write('rooms: $rooms, ')
+          ..write('isGroup: $isGroup')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, nameCustomer, numPhone, mail, folioQuotes,
-      userId, dateRegister, rateDay, total);
+      userId, dateRegister, rateDay, total, rooms, isGroup);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -555,7 +605,9 @@ class ReceiptQuoteData extends DataClass
           other.userId == this.userId &&
           other.dateRegister == this.dateRegister &&
           other.rateDay == this.rateDay &&
-          other.total == this.total);
+          other.total == this.total &&
+          other.rooms == this.rooms &&
+          other.isGroup == this.isGroup);
 }
 
 class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
@@ -568,6 +620,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
   final Value<DateTime> dateRegister;
   final Value<double> rateDay;
   final Value<double> total;
+  final Value<int> rooms;
+  final Value<bool> isGroup;
   const ReceiptQuoteCompanion({
     this.id = const Value.absent(),
     this.nameCustomer = const Value.absent(),
@@ -578,6 +632,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     this.dateRegister = const Value.absent(),
     this.rateDay = const Value.absent(),
     this.total = const Value.absent(),
+    this.rooms = const Value.absent(),
+    this.isGroup = const Value.absent(),
   });
   ReceiptQuoteCompanion.insert({
     this.id = const Value.absent(),
@@ -589,6 +645,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     required DateTime dateRegister,
     required double rateDay,
     required double total,
+    required int rooms,
+    required bool isGroup,
   })  : nameCustomer = Value(nameCustomer),
         numPhone = Value(numPhone),
         mail = Value(mail),
@@ -596,7 +654,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
         userId = Value(userId),
         dateRegister = Value(dateRegister),
         rateDay = Value(rateDay),
-        total = Value(total);
+        total = Value(total),
+        rooms = Value(rooms),
+        isGroup = Value(isGroup);
   static Insertable<ReceiptQuoteData> custom({
     Expression<int>? id,
     Expression<String>? nameCustomer,
@@ -607,6 +667,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     Expression<DateTime>? dateRegister,
     Expression<double>? rateDay,
     Expression<double>? total,
+    Expression<int>? rooms,
+    Expression<bool>? isGroup,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -618,6 +680,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       if (dateRegister != null) 'date_register': dateRegister,
       if (rateDay != null) 'rate_day': rateDay,
       if (total != null) 'total': total,
+      if (rooms != null) 'rooms': rooms,
+      if (isGroup != null) 'is_group': isGroup,
     });
   }
 
@@ -630,7 +694,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       Value<int>? userId,
       Value<DateTime>? dateRegister,
       Value<double>? rateDay,
-      Value<double>? total}) {
+      Value<double>? total,
+      Value<int>? rooms,
+      Value<bool>? isGroup}) {
     return ReceiptQuoteCompanion(
       id: id ?? this.id,
       nameCustomer: nameCustomer ?? this.nameCustomer,
@@ -641,6 +707,8 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
       dateRegister: dateRegister ?? this.dateRegister,
       rateDay: rateDay ?? this.rateDay,
       total: total ?? this.total,
+      rooms: rooms ?? this.rooms,
+      isGroup: isGroup ?? this.isGroup,
     );
   }
 
@@ -674,6 +742,12 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     if (total.present) {
       map['total'] = Variable<double>(total.value);
     }
+    if (rooms.present) {
+      map['rooms'] = Variable<int>(rooms.value);
+    }
+    if (isGroup.present) {
+      map['is_group'] = Variable<bool>(isGroup.value);
+    }
     return map;
   }
 
@@ -688,7 +762,9 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
           ..write('userId: $userId, ')
           ..write('dateRegister: $dateRegister, ')
           ..write('rateDay: $rateDay, ')
-          ..write('total: $total')
+          ..write('total: $total, ')
+          ..write('rooms: $rooms, ')
+          ..write('isGroup: $isGroup')
           ..write(')'))
         .toString();
   }
@@ -2100,6 +2176,8 @@ typedef $$ReceiptQuoteTableInsertCompanionBuilder = ReceiptQuoteCompanion
   required DateTime dateRegister,
   required double rateDay,
   required double total,
+  required int rooms,
+  required bool isGroup,
 });
 typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
     Function({
@@ -2112,6 +2190,8 @@ typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
   Value<DateTime> dateRegister,
   Value<double> rateDay,
   Value<double> total,
+  Value<int> rooms,
+  Value<bool> isGroup,
 });
 
 class $$ReceiptQuoteTableTableManager extends RootTableManager<
@@ -2143,6 +2223,8 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             Value<DateTime> dateRegister = const Value.absent(),
             Value<double> rateDay = const Value.absent(),
             Value<double> total = const Value.absent(),
+            Value<int> rooms = const Value.absent(),
+            Value<bool> isGroup = const Value.absent(),
           }) =>
               ReceiptQuoteCompanion(
             id: id,
@@ -2154,6 +2236,8 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             dateRegister: dateRegister,
             rateDay: rateDay,
             total: total,
+            rooms: rooms,
+            isGroup: isGroup,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -2165,6 +2249,8 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             required DateTime dateRegister,
             required double rateDay,
             required double total,
+            required int rooms,
+            required bool isGroup,
           }) =>
               ReceiptQuoteCompanion.insert(
             id: id,
@@ -2176,6 +2262,8 @@ class $$ReceiptQuoteTableTableManager extends RootTableManager<
             dateRegister: dateRegister,
             rateDay: rateDay,
             total: total,
+            rooms: rooms,
+            isGroup: isGroup,
           ),
         ));
 }
@@ -2239,6 +2327,16 @@ class $$ReceiptQuoteTableFilterComposer
       column: $state.table.total,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get rooms => $state.composableBuilder(
+      column: $state.table.rooms,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isGroup => $state.composableBuilder(
+      column: $state.table.isGroup,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$ReceiptQuoteTableOrderingComposer
@@ -2286,6 +2384,16 @@ class $$ReceiptQuoteTableOrderingComposer
 
   ColumnOrderings<double> get total => $state.composableBuilder(
       column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get rooms => $state.composableBuilder(
+      column: $state.table.rooms,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isGroup => $state.composableBuilder(
+      column: $state.table.isGroup,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

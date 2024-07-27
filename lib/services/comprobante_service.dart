@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
@@ -7,48 +8,77 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import '../database/database.dart';
 
 class ComprobanteService extends ChangeNotifier {
-  Future<bool> createComprobante(
-      ComprobanteCotizacion comprobante,
-      List<Cotizacion> cotizaciones,
-      String folio,
-      PrefijoTelefonico prefijoInit) async {
+  Future<bool> createComprobante({
+    required ComprobanteCotizacion comprobante,
+    List<Cotizacion>? cotizacionesInd,
+    List<CotizacionGrupal>? cotizacionesGrup,
+    required String folio,
+    required PrefijoTelefonico prefijoInit,
+    bool isQuoteGroup = false,
+  }) async {
     final database = AppDatabase();
 
     try {
       database.transaction(
         () async {
-          for (var element in cotizaciones) {
-            await database.into(database.quote).insert(QuoteCompanion.insert(
-                  isPresale: element.esPreVenta!,
-                  folio: folio,
-                  category: element.categoria ?? '',
-                  plan: element.plan ?? '',
-                  registerDate: DateTime.now(),
-                  enterDate: element.fechaEntrada ?? '',
-                  outDate: element.fechaSalida ?? '',
-                  adults: element.adultos!,
-                  minor0a6: element.menores0a6!,
-                  minor7a12: element.menores7a12!,
-                  rateRealAdult: element.tarifaRealAdulto ?? 0,
-                  ratePresaleAdult: element.tarifaPreventaAdulto ?? 0,
-                  rateRealMinor: element.tarifaRealMenor ?? 0,
-                  ratePresaleMinor: element.tarifaPreventaMenor ?? 0,
-                ));
+          if (!isQuoteGroup) {
+            for (var element in cotizacionesInd!) {
+              await database.into(database.quote).insert(QuoteCompanion.insert(
+                    isPresale: element.esPreVenta!,
+                    folio: folio,
+                    category: element.categoria ?? '',
+                    plan: element.plan ?? '',
+                    registerDate: DateTime.now(),
+                    enterDate: element.fechaEntrada ?? '',
+                    outDate: element.fechaSalida ?? '',
+                    adults: element.adultos!,
+                    minor0a6: element.menores0a6!,
+                    minor7a12: element.menores7a12!,
+                    rateRealAdult: element.tarifaRealAdulto ?? 0,
+                    ratePresaleAdult: element.tarifaPreventaAdulto ?? 0,
+                    rateRealMinor: element.tarifaRealMenor ?? 0,
+                    ratePresaleMinor: element.tarifaPreventaMenor ?? 0,
+                  ));
+            }
+          } else {
+            for (var element in cotizacionesGrup!) {
+              await database
+                  .into(database.quoteGroup)
+                  .insert(QuoteGroupCompanion.insert(
+                    isPresale: false,
+                    folio: folio,
+                    category: element.categoria ?? '',
+                    plan: element.plan ?? '',
+                    registerDate: DateTime.now(),
+                    enterDate: element.fechaEntrada ?? '',
+                    outDate: element.fechaSalida ?? '',
+                    rateAdult1_2: element.tarifaAdulto1_2 ?? 0,
+                    rateAdult3: element.tarifaAdulto3 ?? 0,
+                    rateAdult4: element.tarifaAdulto4 ?? 0,
+                    rateMinor: element.tarifaMenor ?? 0,
+                  ));
+            }
           }
 
-          await database
-              .into(database.receiptQuote)
-              .insert(ReceiptQuoteCompanion.insert(
-                folioQuotes: folio,
-                mail: comprobante.correo!,
-                nameCustomer: comprobante.nombre!,
-                numPhone: prefijoInit.prefijo + comprobante.telefono!,
-                userId: 1,
-                dateRegister: DateTime.now(),
-                rateDay: Utility.calculateTarifaDiaria(
-                    cotizacion: cotizaciones.first),
-                total: Utility.calculateTarifaTotal(cotizaciones),
-              ));
+          await database.into(database.receiptQuote).insert(
+                ReceiptQuoteCompanion.insert(
+                  folioQuotes: folio,
+                  mail: comprobante.correo!,
+                  nameCustomer: comprobante.nombre!,
+                  numPhone: prefijoInit.prefijo + comprobante.telefono!,
+                  userId: 1,
+                  dateRegister: DateTime.now(),
+                  rateDay: !isQuoteGroup
+                      ? Utility.calculateTarifaDiaria(
+                          cotizacion: cotizacionesInd!.first)
+                      : 0,
+                  total: !isQuoteGroup
+                      ? Utility.calculateTarifaTotal(cotizacionesInd!)
+                      : 0,
+                  rooms: comprobante.habitaciones ?? 0,
+                  isGroup: isQuoteGroup,
+                ),
+              );
         },
       );
       await database.close();

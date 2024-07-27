@@ -32,7 +32,7 @@ class CotizacionIndividualProvider extends StateNotifier<List<Cotizacion>> {
       ComprobanteCotizacion comprobante) async {
     pdfPrinc = await GeneradorDocService()
         .generarComprobanteCotizacionIndividual(
-            cotizaciones: state, comprobante: comprobante);
+            cotizacionesInd: state, comprobante: comprobante);
     return pdfPrinc;
   }
 }

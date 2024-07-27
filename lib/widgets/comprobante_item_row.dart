@@ -33,6 +33,26 @@ class ComprobanteItemRow extends StatefulWidget {
 
 class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   bool isLoading = false;
+  Color? colorText;
+  Color? colorTextIndice;
+  Color? colorIconDetail;
+  Color? colorIconDelete;
+
+  @override
+  void initState() {
+    super.initState();
+    colorText = !widget.comprobante.isGroup
+        ? DesktopColors.azulUltClaro
+        : DesktopColors.prussianBlue;
+    colorTextIndice =
+        !widget.comprobante.isGroup ? DesktopColors.azulUltClaro : null;
+    colorIconDelete = !widget.comprobante.isGroup
+        ? DesktopColors.azulCielo
+        : DesktopColors.ceruleanOscure;
+    colorIconDetail = !widget.comprobante.isGroup
+        ? DesktopColors.azulClaro
+        : DesktopColors.ceruleanOscure;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,39 +61,34 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
       child: Card(
         margin: const EdgeInsets.all(0),
         elevation: 3,
-        color: Colors.blue[200],
+        color: widget.comprobante.isGroup
+            ? DesktopColors.cotGroupColor
+            : DesktopColors.cotIndColor,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,
           leading: widget.isQuery
               ? null
-              : TextStyles.TextTitleList(index: widget.index + 1),
+              : TextStyles.TextTitleList(
+                  index: widget.index + 1, color: colorTextIndice),
           title: TextStyles.titleText(
-              color: DesktopColors.prussianBlue,
+              color: colorText,
               text: "Huesped: ${widget.comprobante.nameCustomer}",
               size: widget.isQuery ? 13 : 16),
           subtitle: Wrap(
             spacing: 10,
             children: [
               TextStyles.TextAsociative(
-                "Folio: ",
-                widget.comprobante.folioQuotes,
-                size: widget.isQuery ? 11 : 12,
-              ),
+                  "Folio: ", widget.comprobante.folioQuotes,
+                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
+              TextStyles.TextAsociative("Fecha: ",
+                  "${widget.comprobante.dateRegister.toIso8601String().substring(0, 10)} ${widget.comprobante.dateRegister.toIso8601String().substring(11, 16)}",
+                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
+              TextStyles.TextAsociative("Tarifa: ",
+                  Utility.formatterNumber(widget.comprobante.rateDay),
+                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative(
-                "Fecha: ",
-                "${widget.comprobante.dateRegister.toIso8601String().substring(0, 10)} ${widget.comprobante.dateRegister.toIso8601String().substring(11, 16)}",
-                size: widget.isQuery ? 11 : 12,
-              ),
-              TextStyles.TextAsociative(
-                "Tarifa: ",
-                Utility.formatterNumber(widget.comprobante.rateDay),
-                size: widget.isQuery ? 11 : 12,
-              ),
-              TextStyles.TextAsociative(
-                "Total: ",
-                Utility.formatterNumber(widget.comprobante.total),
-                size: widget.isQuery ? 11 : 12,
-              ),
+                  "Total: ", Utility.formatterNumber(widget.comprobante.total),
+                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),
           trailing: widget.isQuery
@@ -89,22 +104,25 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                           });
                         },
                         icon: Icon(
-                          color: DesktopColors.ceruleanOscure,
+                          color: colorIconDetail,
                           CupertinoIcons.eye,
                         ),
                       )
                     else
                       SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator(
-                            color: DesktopColors.ceruleanOscure,
-                          )),
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(
+                          color: DesktopColors.ceruleanOscure,
+                        ),
+                      ),
                     IconButton(
-                        onPressed: widget.deleteReceipt,
-                        icon: Icon(
-                            color: DesktopColors.ceruleanOscure,
-                            CupertinoIcons.delete_solid))
+                      onPressed: widget.deleteReceipt,
+                      icon: Icon(
+                        color: colorIconDelete,
+                        CupertinoIcons.delete_solid,
+                      ),
+                    ),
                   ],
                 ),
         ),

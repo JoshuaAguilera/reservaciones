@@ -95,6 +95,8 @@ class TextStyles {
     required int day,
     String? title,
     String subtitle = "Num",
+    Color? colorTitle,
+    Color? colorsubTitle,
   }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
@@ -106,8 +108,13 @@ class TextStyles {
           titleText(
               text: title ?? numeroFormateado,
               size: 22,
+              color: colorTitle,
               textAlign: TextAlign.center),
-          if (subtitle != "NUM") standardText(text: subtitle),
+          if (subtitle != "NUM")
+            standardText(
+              text: subtitle,
+              color: colorsubTitle,
+            ),
         ]);
   }
 

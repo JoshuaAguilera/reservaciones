@@ -7,6 +7,7 @@ class DesktopColors {
   static Color prussianBlue = Color.fromARGB(255, 0, 50, 73);
   static Color azulCielo = Color.fromARGB(255, 128, 206, 215);
   static Color azulClaro = Color.fromARGB(255, 154, 209, 212);
+  static Color azulUltClaro = Color.fromARGB(255, 176, 239, 242);
   static Color turqueza = Color.fromARGB(255, 0, 192, 144);
   static Color turquezaOscure = Color.fromARGB(255, 3, 130, 98);
   static Color mentaOscure = Color.fromARGB(255, 82, 170, 138);

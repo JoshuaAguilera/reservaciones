@@ -1,3 +1,4 @@
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -13,7 +14,7 @@ final documentQuoteIndProvider =
 
   pw.Document comprobantePDF =
       await GeneradorDocService().generarComprobanteCotizacionIndividual(
-    cotizaciones: [
+    cotizacionesInd: [
       Cotizacion(
         adultos: 1,
         categoria: categorias.first,
@@ -75,27 +76,45 @@ final documentQuoteGroupProvider =
   pw.Document comprobantePDF = await GeneradorDocService()
       .generarComprobanteCotizacionGrupal(
           [
-        Cotizacion(
-          adultos: 1,
-          categoria: "",
+        CotizacionGrupal(
+          categoria: tipoHabitacion.first,
+          fechaEntrada: "2021-01-01",
+          fechaSalida: "2021-01-05",
           plan: planes.first,
-          tarifaRealAdulto: 0,
-          esPreVenta: false,
-          fechaEntrada: "2021-01-01",
-          fechaSalida: "2021-01-05",
-          menores0a6: 0,
-          menores7a12: 0,
+          tarifaAdulto1_2: 3240,
+          tarifaAdulto3: 4500,
+          tarifaAdulto4: 5760,
+          tarifaMenor: 750,
         ),
-        Cotizacion(
-          adultos: 1,
-          categoria: "",
-          plan: planes[2],
-          tarifaRealAdulto: 0,
-          esPreVenta: false,
+        CotizacionGrupal(
+          categoria: tipoHabitacion[1],
           fechaEntrada: "2021-01-01",
           fechaSalida: "2021-01-05",
-          menores0a6: 0,
-          menores7a12: 0,
+          plan: planes.first,
+          tarifaAdulto1_2: 3720,
+          tarifaAdulto3: 5220,
+          tarifaAdulto4: 6720,
+          tarifaMenor: 840,
+        ),
+        CotizacionGrupal(
+          categoria: tipoHabitacion.first,
+          fechaEntrada: "2021-01-01",
+          fechaSalida: "2021-01-05",
+          plan: planes[2],
+          tarifaAdulto1_2: 2340,
+          tarifaAdulto3: 2970,
+          tarifaAdulto4: 3600,
+          tarifaMenor: 390,
+        ),
+        CotizacionGrupal(
+          categoria: tipoHabitacion[1],
+          fechaEntrada: "2021-01-01",
+          fechaSalida: "2021-01-05",
+          plan: planes[2],
+          tarifaAdulto1_2: 2820,
+          tarifaAdulto3: 3690,
+          tarifaAdulto4: 4560,
+          tarifaMenor: 480,
         ),
       ],
           ComprobanteCotizacion(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
@@ -17,7 +18,7 @@ class GeneradorDocService extends ChangeNotifier {
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
   Future<pw.Document> generarComprobanteCotizacionIndividual(
-      {required List<Cotizacion> cotizaciones,
+      {required List<Cotizacion> cotizacionesInd,
       required ComprobanteCotizacion comprobante,
       bool themeDefault = false}) async {
     //PDF generation
@@ -152,7 +153,7 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.Text(FilesTemplate.StructureDoc(2), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(
-                      cotizaciones: cotizaciones,
+                      cotizacionesInd: cotizacionesInd,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
                       styleBoldTable: styleBoldTable,
@@ -277,7 +278,8 @@ class GeneradorDocService extends ChangeNotifier {
   }
 
   Future<pw.Document> generarComprobanteCotizacionGrupal(
-      List<Cotizacion> cotizaciones, ComprobanteCotizacion comprobante) async {
+      List<CotizacionGrupal> cotizaciones,
+      ComprobanteCotizacion comprobante) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
@@ -398,7 +400,7 @@ class GeneradorDocService extends ChangeNotifier {
                 children: [
                   logoHeaderImage,
                   pw.Padding(
-                    padding: const pw.EdgeInsets.only(bottom: 0),
+                    padding: const pw.EdgeInsets.only(bottom: 10),
                     child: pw.Text(
                         "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
                         style: styleLigthHeader),
@@ -425,16 +427,17 @@ class GeneradorDocService extends ChangeNotifier {
                   pw.SizedBox(height: 3),
                   pw.Text("CORREO: ${comprobante.correo}", style: styleBold),
                   pw.SizedBox(height: 3),
-                  pw.Text("FECHAS DE ESTANCIA: ${comprobante.fechaRegistro}",
+                  pw.Text(
+                      "FECHAS DE ESTANCIA: ${Utility.getDatesStay(cotizaciones)}",
                       style: styleBold),
                   pw.SizedBox(height: 3),
-                  pw.Text("HABITACIONES: ${comprobante.nombre}",
+                  pw.Text("HABITACIONES: ${comprobante.habitaciones}",
                       style: styleBold),
                   pw.SizedBox(height: 22),
                   pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(
-                      cotizaciones: cotizaciones,
+                      cotizacionesGrup: cotizaciones,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
                       styleBoldTable: styleBoldTable,
@@ -573,119 +576,128 @@ class GeneradorDocService extends ChangeNotifier {
   }
 
   pw.Column generateTables(
-      {required List<Cotizacion> cotizaciones,
+      {List<Cotizacion>? cotizacionesInd,
+      List<CotizacionGrupal>? cotizacionesGrup,
       required pw.TextStyle styleLigth,
       required pw.TextStyle styleLigthHeaderTable,
       required pw.TextStyle styleBoldTable,
       String? color}) {
     List<pw.Widget> tablas = [];
 
-    if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO") &&
-        cotizaciones.any((element) => element.categoria!.isEmpty)) {
-      tablas.add(FilesTemplate.getTablesCotGroup(
-        nameTable: "PLAN TODO INCLUIDO",
-        cotizaciones: cotizaciones
-            .where((element) => element.plan == "PLAN TODO INCLUIDO")
-            .toList(),
-        styleGeneral: styleLigth,
-        styleHeader: styleLigthHeaderTable,
-        styleBold: styleBoldTable,
-        colorHeader: color,
-      ));
-      tablas.add(pw.SizedBox(height: 5));
+    if (cotizacionesGrup != null) {
+      if (cotizacionesGrup!
+          .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
+        tablas.add(FilesTemplate.getTablesCotGroup(
+          nameTable: "PLAN TODO INCLUIDO",
+          cotizaciones: cotizacionesGrup
+              .where((element) => element.plan == "PLAN TODO INCLUIDO")
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+          colorHeader: color,
+        ));
+        tablas.add(pw.SizedBox(height: 5));
+      }
+
+      if (cotizacionesGrup
+          .any((element) => element.plan == "PLAN SIN ALIMENTOS")) {
+        tablas.add(FilesTemplate.getTablesCotGroup(
+          nameTable: "PLAN SIN ALIMENTOS",
+          cotizaciones: cotizacionesGrup
+              .where((element) => element.plan == "PLAN SIN ALIMENTOS")
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+          colorHeader: color,
+        ));
+        tablas.add(pw.SizedBox(height: 5));
+      }
     }
 
-    if (cotizaciones.any((element) => element.plan == "PLAN SIN ALIMENTOS") &&
-        cotizaciones.any((element) => element.categoria!.isEmpty)) {
-      tablas.add(FilesTemplate.getTablesCotGroup(
-        nameTable: "PLAN SIN ALIMENTOS",
-        cotizaciones: cotizaciones
-            .where((element) => element.plan == "PLAN SIN ALIMENTOS")
-            .toList(),
-        styleGeneral: styleLigth,
-        styleHeader: styleLigthHeaderTable,
-        styleBold: styleBoldTable,
-        colorHeader: color,
-      ));
-      tablas.add(pw.SizedBox(height: 5));
-    }
-
-    if (cotizaciones
-        .any((element) => element.categoria == "HABITACIÓN DELUXE DOBLE")) {
-      if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
-        tablas.add(
-          FilesTemplate.getTablesCotIndiv(
+    if (cotizacionesInd != null) {
+      if (cotizacionesInd
+          .any((element) => element.categoria == "HABITACIÓN DELUXE DOBLE")) {
+        if (cotizacionesInd
+            .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
+          tablas.add(
+            FilesTemplate.getTablesCotIndiv(
+              nameTable:
+                  "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
+              cotizaciones: cotizacionesInd
+                  .where((element) =>
+                      element.plan == "PLAN TODO INCLUIDO" &&
+                      element.categoria == "HABITACIÓN DELUXE DOBLE")
+                  .toList(),
+              styleGeneral: styleLigth,
+              styleHeader: styleLigthHeaderTable,
+              styleBold: styleBoldTable,
+              colorHeader: color,
+            ),
+          );
+          tablas.add(pw.SizedBox(height: 20));
+        }
+        if (cotizacionesInd
+            .any((element) => element.plan == "SOLO HOSPEDAJE")) {
+          tablas.add(FilesTemplate.getTablesCotIndiv(
             nameTable:
-                "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-            cotizaciones: cotizaciones
+                "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
+            cotizaciones: cotizacionesInd
                 .where((element) =>
-                    element.plan == "PLAN TODO INCLUIDO" &&
+                    element.plan == "SOLO HOSPEDAJE" &&
                     element.categoria == "HABITACIÓN DELUXE DOBLE")
                 .toList(),
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
             styleBold: styleBoldTable,
             colorHeader: color,
-          ),
-        );
-        tablas.add(pw.SizedBox(height: 20));
+          ));
+          tablas.add(pw.SizedBox(height: 20));
+        }
       }
-      if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
-        tablas.add(FilesTemplate.getTablesCotIndiv(
-          nameTable:
-              "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
-          cotizaciones: cotizaciones
-              .where((element) =>
-                  element.plan == "SOLO HOSPEDAJE" &&
-                  element.categoria == "HABITACIÓN DELUXE DOBLE")
-              .toList(),
-          styleGeneral: styleLigth,
-          styleHeader: styleLigthHeaderTable,
-          styleBold: styleBoldTable,
-          colorHeader: color,
-        ));
-        tablas.add(pw.SizedBox(height: 20));
-      }
-    }
 
-    if (cotizaciones.any((element) =>
-        element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")) {
-      if (cotizaciones.any((element) => element.plan == "PLAN TODO INCLUIDO")) {
-        tablas.add(
-          FilesTemplate.getTablesCotIndiv(
+      if (cotizacionesInd.any((element) =>
+          element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")) {
+        if (cotizacionesInd
+            .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
+          tablas.add(
+            FilesTemplate.getTablesCotIndiv(
+              nameTable:
+                  "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
+              cotizaciones: cotizacionesInd
+                  .where((element) =>
+                      element.plan == "PLAN TODO INCLUIDO" &&
+                      element.categoria ==
+                          "HABITACIÓN DELUXE DOBLE O KING SIZE")
+                  .toList(),
+              styleGeneral: styleLigth,
+              styleHeader: styleLigthHeaderTable,
+              styleBold: styleBoldTable,
+              colorHeader: color,
+            ),
+          );
+          tablas.add(pw.SizedBox(height: 20));
+        }
+        if (cotizacionesInd
+            .any((element) => element.plan == "SOLO HOSPEDAJE")) {
+          tablas.add(FilesTemplate.getTablesCotIndiv(
             nameTable:
-                "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-            cotizaciones: cotizaciones
+                "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
+            cotizaciones: cotizacionesInd
                 .where((element) =>
-                    element.plan == "PLAN TODO INCLUIDO" &&
+                    element.plan == "SOLO HOSPEDAJE" &&
                     element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")
                 .toList(),
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
             styleBold: styleBoldTable,
             colorHeader: color,
-          ),
-        );
-        tablas.add(pw.SizedBox(height: 20));
-      }
-      if (cotizaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
-        tablas.add(FilesTemplate.getTablesCotIndiv(
-          nameTable:
-              "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
-          cotizaciones: cotizaciones
-              .where((element) =>
-                  element.plan == "SOLO HOSPEDAJE" &&
-                  element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")
-              .toList(),
-          styleGeneral: styleLigth,
-          styleHeader: styleLigthHeaderTable,
-          styleBold: styleBoldTable,
-          colorHeader: color,
-        ));
-        tablas.add(pw.SizedBox(height: 20));
+          ));
+          tablas.add(pw.SizedBox(height: 20));
+        }
       }
     }
-
     return pw.Column(children: tablas);
   }
 

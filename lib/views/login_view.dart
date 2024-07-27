@@ -197,6 +197,7 @@ class _LoginViewState extends State<LoginView> {
                                         return;
                                       }
 
+                                      if (!context.mounted) return;
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(

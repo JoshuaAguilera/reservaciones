@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_grupal_provider.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
@@ -46,7 +47,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   bool isFinish = false;
   bool isSendingEmail = false;
   ComprobanteCotizacion receiptQuotePresent = ComprobanteCotizacion();
-  List<Cotizacion> quotesPresent = [];
+  List<Cotizacion> quotesIndPresent = [];
+  List<CotizacionGrupal> quotesGroupPresent = [];
+
   PrefijoTelefonico prefijoInit = getPrefijosTelefonicos().first;
 
   @override
@@ -139,14 +142,50 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         textAlign: TextAlign.start),
                                   ),
                                   const SizedBox(height: 15),
-                                  TextFormFieldCustom.textFormFieldwithBorder(
-                                    name: "Nombre completo",
-                                    msgError: "Campo requerido*",
-                                    initialValue: comprobante.nombre,
-                                    isRequired: true,
-                                    onChanged: (p0) {
-                                      comprobante.nombre = p0;
-                                    },
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: TextFormFieldCustom
+                                            .textFormFieldwithBorder(
+                                          name: "Nombre completo",
+                                          msgError: "Campo requerido*",
+                                          initialValue: comprobante.nombre,
+                                          isRequired: true,
+                                          onChanged: (p0) {
+                                            comprobante.nombre = p0;
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: dropdownValue ==
+                                                  'Cotización Grupos'
+                                              ? 12
+                                              : 0),
+                                      if (dropdownValue == 'Cotización Grupos')
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Habitaciones",
+                                            msgError: "Campo requerido*",
+                                            initialValue:
+                                                (comprobante.habitaciones ?? '')
+                                                    .toString(),
+                                            isRequired: true,
+                                            onChanged: (p0) {
+                                              comprobante.habitaciones =
+                                                  int.tryParse(p0);
+                                            },
+                                            isNumeric: true,
+                                            icon: Icon(
+                                              CupertinoIcons.bed_double_fill,
+                                              color:
+                                                  DesktopColors.ceruleanOscure,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                   Row(
                                     children: [
@@ -390,16 +429,26 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                             cotizacionesIndividuales[
                                                                 index])),
                                                 onPressedEdit: () {
+                                                  print(dropdownValue);
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) {
-                                                      return Dialogs()
-                                                          .habitacionIndividualDialog(
-                                                              buildContext:
-                                                                  context,
-                                                              cotizacion:
-                                                                  cotizacionesIndividuales[
-                                                                      index]);
+                                                      return (dropdownValue ==
+                                                              "Cotización Individual")
+                                                          ? Dialogs()
+                                                              .habitacionIndividualDialog(
+                                                                  buildContext:
+                                                                      context,
+                                                                  cotizacion:
+                                                                      cotizacionesIndividuales[
+                                                                          index])
+                                                          : Dialogs()
+                                                              .habitacionGrupoDialog(
+                                                                  buildContext:
+                                                                      context,
+                                                                  cotizacion:
+                                                                      cotizacionesGrupales[
+                                                                          index]);
                                                     },
                                                   ).then((value) {
                                                     if (value != null) {
@@ -443,30 +492,27 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                         .extended,
                                                     context: context),
                                                 onPressedDelete: () => setState(
-                                                    () => cotizacionesIndividuales
+                                                    () => cotizacionesGrupales
                                                         .remove(
-                                                            cotizacionesIndividuales[
+                                                            cotizacionesGrupales[
                                                                 index])),
                                                 onPressedEdit: () {
                                                   showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return Dialogs()
-                                                          .habitacionIndividualDialog(
-                                                              buildContext:
-                                                                  context,
-                                                              cotizacion:
-                                                                  cotizacionesIndividuales[
-                                                                      index]);
-                                                    },
-                                                  ).then((value) {
-                                                    if (value != null) {
-                                                      setState(() {
-                                                        cotizacionesIndividuales[
-                                                            index] = value;
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return Dialogs()
+                                                            .habitacionGrupoDialog(
+                                                          buildContext: context,
+                                                          cotizacion:
+                                                              cotizacionesGrupales[
+                                                                  index],
+                                                          onUpdate: (p0) =>
+                                                              setState(() {
+                                                            cotizacionesGrupales[
+                                                                index] = p0!;
+                                                          }),
+                                                        );
                                                       });
-                                                    }
-                                                  });
                                                 },
                                               );
                                             }
@@ -486,18 +532,19 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   //     ),
                                   //   ),
                                   // ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 3.0),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: TextStyles.titleText(
-                                        text:
-                                            "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacionesIndividuales))}",
-                                        size: 16,
-                                        color: DesktopColors.prussianBlue,
+                                  if (dropdownValue == 'Cotización Individual')
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextStyles.titleText(
+                                          text:
+                                              "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacionesIndividuales))}",
+                                          size: 16,
+                                          color: DesktopColors.prussianBlue,
+                                        ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -517,7 +564,23 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           if (_formKeyCotizacion.currentState!
                                               .validate()) {
                                             if (cotizacionesIndividuales
-                                                .isEmpty) {
+                                                    .isEmpty &&
+                                                dropdownValue ==
+                                                    'Cotización Individual') {
+                                              showSnackBar(
+                                                type: "alert",
+                                                context: context,
+                                                title:
+                                                    "Cotizaciones no registradas",
+                                                message:
+                                                    "Se requiere al menos una cotización",
+                                              );
+                                              return;
+                                            }
+
+                                            if (cotizacionesGrupales.isEmpty &&
+                                                dropdownValue ==
+                                                    'Cotización Grupos') {
                                               showSnackBar(
                                                 type: "alert",
                                                 context: context,
@@ -533,10 +596,21 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                                             if (!(await ComprobanteService()
                                                 .createComprobante(
-                                                    comprobante,
-                                                    cotizacionesIndividuales,
-                                                    folio,
-                                                    prefijoInit))) {
+                                                    comprobante: comprobante,
+                                                    cotizacionesInd:
+                                                        cotizacionesIndividuales
+                                                                .isNotEmpty
+                                                            ? cotizacionesIndividuales
+                                                            : null,
+                                                    cotizacionesGrup:
+                                                        cotizacionesGrupales
+                                                                .isNotEmpty
+                                                            ? cotizacionesGrupales
+                                                            : null,
+                                                    folio: folio,
+                                                    prefijoInit: prefijoInit,
+                                                    isQuoteGroup: dropdownValue ==
+                                                        'Cotización Grupos'))) {
                                               if (!context.mounted) return;
                                               showSnackBar(
                                                 type: "danger",
@@ -552,15 +626,27 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             receiptQuotePresent = comprobante;
                                             receiptQuotePresent.folioCuotas =
                                                 folio;
-                                            quotesPresent =
+                                            quotesIndPresent =
                                                 cotizacionesIndividuales;
+                                            quotesGroupPresent =
+                                                cotizacionesGrupales;
 
-                                            comprobantePDF = await ref
-                                                .watch(
-                                                    CotizacionIndividualProvider
-                                                        .provider.notifier)
-                                                .generarComprobante(
-                                                    comprobante);
+                                            if (dropdownValue ==
+                                                'Cotización Individual') {
+                                              comprobantePDF = await ref
+                                                  .watch(
+                                                      CotizacionIndividualProvider
+                                                          .provider.notifier)
+                                                  .generarComprobante(
+                                                      comprobante);
+                                            } else {
+                                              comprobantePDF = await ref
+                                                  .watch(
+                                                      CotizacionGrupalProvider
+                                                          .provider.notifier)
+                                                  .generarComprobante(
+                                                      comprobante);
+                                            }
 
                                             ref
                                                 .read(comprobanteProvider
@@ -571,6 +657,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 .watch(
                                                     CotizacionIndividualProvider
                                                         .provider.notifier)
+                                                .clear();
+                                            ref
+                                                .watch(CotizacionGrupalProvider
+                                                    .provider.notifier)
                                                 .clear();
                                             ref
                                                 .read(uniqueFolioProvider
@@ -650,7 +740,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     if (await SendQuoteService().sendQuoteMail(
                                       comprobantePDF,
                                       receiptQuotePresent,
-                                      quotesPresent,
+                                      quotesIndPresent,
                                     )) {
                                       if (!mounted) return;
                                       showDialog(
@@ -681,7 +771,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               GestureDetector(
                                 onTap: () async {
                                   SendQuoteService().sendQuoteWhatsApp(
-                                      receiptQuotePresent, quotesPresent);
+                                      receiptQuotePresent, quotesIndPresent);
                                 },
                                 child: const Image(
                                     image: AssetImage(

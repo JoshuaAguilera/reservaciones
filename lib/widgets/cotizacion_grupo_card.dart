@@ -1,7 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/cotizacion_grupal_model.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -99,6 +99,7 @@ class _TableRowCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: DesktopColors.cotGroupColor,
       elevation: 3,
       child: Container(
         padding: const EdgeInsets.all(10.0),
@@ -111,8 +112,9 @@ class _TableRowCotizacion extends StatelessWidget {
                 1: FractionColumnWidth(.22),
                 2: FractionColumnWidth(.1),
                 3: FractionColumnWidth(.22),
-                4: FractionColumnWidth(.15),
-                5: FractionColumnWidth(.15),
+                4: FractionColumnWidth(.12),
+                5: FractionColumnWidth(.12),
+                6: FractionColumnWidth(.12),
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),
@@ -126,36 +128,41 @@ class _TableRowCotizacion extends StatelessWidget {
                       overClip: true,
                     ),
                     TextStyles.standardText(
-                        text: cotizacion.tarifaAdulto1_2.toString(),
+                        text: Utility.formatterNumber(
+                            cotizacion.tarifaAdulto1_2 ?? 0),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: cotizacion.tarifaAdulto3.toString(),
+                        text: Utility.formatterNumber(
+                            cotizacion.tarifaAdulto3 ?? 0),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: cotizacion.tarifaAdulto4.toString(),
+                        text: Utility.formatterNumber(
+                            cotizacion.tarifaAdulto4 ?? 0),
                         aling: TextAlign.center,
                         overClip: true),
                     TextStyles.standardText(
-                        text: cotizacion.tarifaMenor.toString(),
+                        text: Utility.formatterNumber(
+                            cotizacion.tarifaMenor ?? 0),
                         aling: TextAlign.center,
                         overClip: true),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    Wrap(
                       children: [
                         IconButton(
-                            onPressed: onPressedEdit,
-                            icon: Icon(
-                              Icons.edit,
-                              color: DesktopColors.turqueza,
-                            )),
+                          onPressed: onPressedEdit,
+                          icon: Icon(
+                            Icons.edit,
+                            color: DesktopColors.ceruleanOscure,
+                          ),
+                        ),
                         IconButton(
-                            onPressed: onPressedDelete,
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.red[800],
-                            )),
+                          onPressed: onPressedDelete,
+                          icon: Icon(
+                            Icons.delete,
+                            color: DesktopColors.prussianBlue,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -193,34 +200,72 @@ class _ListTileCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: DesktopColors.cotGroupColor,
       elevation: 3,
       child: ListTile(
         leading: TextStyles.TextSpecial(
-            day: index + 1, title: "TDI", subtitle: "PLAN"),
+          day: index + 1,
+          title: cotizacion.plan == "PLAN TODO INCLUIDO" ? "TDI" : "EP",
+          subtitle: "PLAN",
+          colorTitle: DesktopColors.azulUltClaro,
+        ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
             text: "${cotizacion.categoria}", isBold: true),
-        subtitle:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          TextStyles.standardText(
-            text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
-          ),
-          TextStyles.standardText(
-              text:
-                  "Tarifa ad1-2: ${Utility.formatterNumber(cotizacion.tarifaAdulto1_2!)}"),
-          TextStyles.standardText(
-            text:
-                "Tarifa ad3: ${Utility.formatterNumber(cotizacion.tarifaAdulto3!)}",
-          ),
-          TextStyles.standardText(
-            text:
-                "Tarifa ad4: ${Utility.formatterNumber(cotizacion.tarifaAdulto4!)}",
-          ),
-          TextStyles.standardText(
-            text:
-                "Tarifa men7-12: ${Utility.formatterNumber(cotizacion.tarifaAdulto3!)}",
-          )
-        ]),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextStyles.standardText(
+              text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
+            ),
+            Wrap(
+              spacing: 5,
+              runSpacing: 2,
+              children: [
+                SizedBox(
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.person_fill, size: 20),
+                      TextStyles.standardText(text: " - ", isBold: true),
+                      Icon(CupertinoIcons.person_2_fill),
+                      TextStyles.standardText(
+                          text:
+                              "   ${Utility.formatterNumber(cotizacion.tarifaAdulto1_2!)}"),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    const Icon(CupertinoIcons.person_3_fill, size: 32),
+                    TextStyles.standardText(
+                        text:
+                            "   ${Utility.formatterNumber(cotizacion.tarifaAdulto3!)}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(CupertinoIcons.person_2_fill),
+                    Icon(CupertinoIcons.person_2_fill),
+                    TextStyles.standardText(
+                        text:
+                            "   ${Utility.formatterNumber(cotizacion.tarifaAdulto4!)}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person_4_sharp,
+                      size: 22,
+                    ),
+                    TextStyles.standardText(
+                        text:
+                            "(7-12)   ${Utility.formatterNumber(cotizacion.tarifaMenor!)}"),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
         trailing: PopupMenuButton<ListTileTitleAlignment>(
           itemBuilder: (BuildContext context) =>
               <PopupMenuEntry<ListTileTitleAlignment>>[

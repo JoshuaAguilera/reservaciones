@@ -5,12 +5,12 @@ import 'package:pdf/widgets.dart' as pw;
 import '../models/comprobante_cotizacion_model.dart';
 import '../services/generador_doc_service.dart';
 
-class CotizacionGrupalProvider
-    extends StateNotifier<List<CotizacionGrupal>> {
+class CotizacionGrupalProvider extends StateNotifier<List<CotizacionGrupal>> {
   CotizacionGrupalProvider() : super([]);
 
-  static final provider = StateNotifierProvider<CotizacionGrupalProvider,
-      List<CotizacionGrupal>>((ref) => CotizacionGrupalProvider());
+  static final provider =
+      StateNotifierProvider<CotizacionGrupalProvider, List<CotizacionGrupal>>(
+          (ref) => CotizacionGrupalProvider());
 
   CotizacionGrupal _current = CotizacionGrupal();
   CotizacionGrupal get current => _current;
@@ -31,9 +31,8 @@ class CotizacionGrupalProvider
 
   Future<pw.Document> generarComprobante(
       ComprobanteCotizacion comprobante) async {
-    // pdfPrinc = await GeneradorDocService()
-    //     .generarComprobanteCotizacionIndividual(
-    //         cotizaciones: state, comprobante: comprobante);
+    pdfPrinc = await GeneradorDocService()
+        .generarComprobanteCotizacionGrupal(state, comprobante);
     return pdfPrinc;
   }
 }

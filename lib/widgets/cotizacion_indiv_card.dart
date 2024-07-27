@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
 import '../utils/helpers/web_colors.dart';
@@ -109,7 +108,9 @@ class _TableRowCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blue[100],
+      color: cotizacion.esPreVenta!
+          ? DesktopColors.cotIndPreColor
+          : DesktopColors.cotIndColor,
       elevation: 5,
       child: Container(
         padding: const EdgeInsets.all(10.0),
@@ -135,38 +136,64 @@ class _TableRowCotizacion extends StatelessWidget {
                       text: (index + 1).toString(),
                       aling: TextAlign.center,
                       overClip: true,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
                     ),
                     TextStyles.standardText(
                       text:
                           "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
                       aling: TextAlign.center,
                       overClip: true,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
                     ),
                     TextStyles.standardText(
-                        text: cotizacion.adultos.toString(),
-                        aling: TextAlign.center,
-                        overClip: true),
+                      text: cotizacion.adultos.toString(),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
                     TextStyles.standardText(
-                        text: cotizacion.menores0a6.toString(),
-                        aling: TextAlign.center,
-                        overClip: true),
+                      text: cotizacion.menores0a6.toString(),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
                     TextStyles.standardText(
-                        text: cotizacion.menores7a12.toString(),
-                        aling: TextAlign.center,
-                        overClip: true),
+                      text: cotizacion.menores7a12.toString(),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
                     TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            Utility.calculateTarifaDiaria(
-                                cotizacion: cotizacion)),
-                        aling: TextAlign.center,
-                        overClip: true),
+                      text: Utility.formatterNumber(
+                          Utility.calculateTarifaDiaria(
+                              cotizacion: cotizacion)),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
                     TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            Utility.calculateTarifaDiaria(
-                                cotizacion: cotizacion,
-                                esPreventa: cotizacion.esPreVenta!)),
-                        aling: TextAlign.center,
-                        overClip: true),
+                      text: Utility.formatterNumber(
+                          Utility.calculateTarifaDiaria(
+                              cotizacion: cotizacion,
+                              esPreventa: cotizacion.esPreVenta!)),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreVenta!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
                     if (!esDetalle)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -175,14 +202,18 @@ class _TableRowCotizacion extends StatelessWidget {
                             onPressed: onPressedEdit,
                             icon: Icon(
                               Icons.edit,
-                              color: DesktopColors.cerulean,
+                              color: cotizacion.esPreVenta!
+                                  ? DesktopColors.ceruleanOscure
+                                  : DesktopColors.azulClaro,
                             ),
                           ),
                           IconButton(
                             onPressed: onPressedDelete,
                             icon: Icon(
                               Icons.delete,
-                              color: DesktopColors.ceruleanOscure,
+                              color: cotizacion.esPreVenta!
+                                  ? DesktopColors.prussianBlue
+                                  : DesktopColors.azulCielo,
                             ),
                           ),
                         ],
@@ -194,9 +225,12 @@ class _TableRowCotizacion extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextStyles.standardText(
-                  text: "Categoría: ${cotizacion.categoria!} /" +
-                      " Plan: ${cotizacion.plan!}",
-                  isBold: true),
+                text: "Categoría: ${cotizacion.categoria!} /" +
+                    " Plan: ${cotizacion.plan!}",
+                isBold: true,
+                color:
+                    cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+              ),
             )
           ],
         ),
@@ -224,33 +258,53 @@ class _ListTileCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blue[100],
+      color: cotizacion.esPreVenta!
+          ? DesktopColors.cotIndPreColor
+          : DesktopColors.cotIndColor,
       elevation: 5,
       child: ListTile(
-        leading: TextStyles.TextSpecial(day: index + 1),
+        leading: TextStyles.TextSpecial(
+          day: index + 1,
+          colorTitle:
+              cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+          colorsubTitle:
+              cotizacion.esPreVenta! ? null : DesktopColors.azulCielo,
+        ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
-            text: "${cotizacion.categoria} / ${cotizacion.plan}", isBold: true),
+          text: "${cotizacion.categoria} / ${cotizacion.plan}",
+          isBold: true,
+          color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+        ),
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
-              text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}"),
+            text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
+            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+          ),
           TextStyles.TextAsociative(
-              "Tarifa real:",
-              Utility.formatterNumber(
-                  Utility.calculateTarifaDiaria(cotizacion: cotizacion))),
+            "Tarifa real:",
+            Utility.formatterNumber(
+                Utility.calculateTarifaDiaria(cotizacion: cotizacion)),
+            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+          ),
           TextStyles.TextAsociative(
-              "Tarifa preventa: ",
-              Utility.formatterNumber(Utility.calculateTarifaDiaria(
-                  cotizacion: cotizacion, esPreventa: true))),
+            "Tarifa preventa: ",
+            Utility.formatterNumber(Utility.calculateTarifaDiaria(
+                cotizacion: cotizacion, esPreventa: true)),
+            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+          ),
           if (esDetalle)
             Wrap(
               children: [
                 TextStyles.TextAsociative(
-                    'Menores 0-6: ', "${cotizacion.menores0a6}    "),
+                    'Menores 0-6: ', "${cotizacion.menores0a6}    ",
+                    color: DesktopColors.azulUltClaro),
                 TextStyles.TextAsociative(
-                    'Menores 7-12: ', "${cotizacion.menores7a12}    "),
-                TextStyles.TextAsociative('Adultos: ', "${cotizacion.adultos}"),
+                    'Menores 7-12: ', "${cotizacion.menores7a12}    ",
+                    color: DesktopColors.azulUltClaro),
+                TextStyles.TextAsociative('Adultos: ', "${cotizacion.adultos}",
+                    color: DesktopColors.azulUltClaro),
               ],
             ),
         ]),

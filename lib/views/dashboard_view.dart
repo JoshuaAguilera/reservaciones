@@ -13,6 +13,7 @@ import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tuple/tuple.dart';
@@ -51,7 +52,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final notificaciones = ref.watch(NotificacionProvider.provider);
     final typePeriod = ref.watch(filterReport);
     final reportesSync = ref.watch(
-        reporteCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
+        reporteCotizacionesIndProvider(const Tuple2<String, dynamic>('', '')));
     final cotizacionesDiariasSync = ref.watch(
         cotizacionesDiariasProvider(const Tuple2<String, dynamic>('', '')));
     final ultimasCotizacionesSync = ref.watch(
@@ -156,7 +157,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               palette: [
                                                 DesktopColors.cotGroupColor,
                                                 DesktopColors.cotIndColor,
-                                                DesktopColors.cotGroupPreColor,
+                                                // DesktopColors.cotGroupPreColor,
                                                 DesktopColors.cotIndPreColor
                                               ],
                                               legend: Legend(
@@ -195,20 +196,20 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   name:
                                                       "Cotizaciones Individuales",
                                                 ),
-                                                SplineSeries<ReporteCotizacion,
-                                                    String>(
-                                                  splineType:
-                                                      SplineType.monotonic,
-                                                  dataSource: list,
-                                                  xValueMapper:
-                                                      (datum, index) =>
-                                                          datum.dia,
-                                                  yValueMapper:
-                                                      (datum, index) => datum
-                                                          .numCotizacionesGrupalesPreventa,
-                                                  name:
-                                                      "Cotizaciones grupales oferta",
-                                                ),
+                                                // SplineSeries<ReporteCotizacion,
+                                                //     String>(
+                                                //   splineType:
+                                                //       SplineType.monotonic,
+                                                //   dataSource: list,
+                                                //   xValueMapper:
+                                                //       (datum, index) =>
+                                                //           datum.dia,
+                                                //   yValueMapper:
+                                                //       (datum, index) => datum
+                                                //           .numCotizacionesGrupalesPreventa,
+                                                //   name:
+                                                //       "Cotizaciones grupales oferta",
+                                                // ),
                                                 SplineSeries<ReporteCotizacion,
                                                     String>(
                                                   splineType:
@@ -247,8 +248,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   },
                                   loading: () {
                                     return SizedBox(
-                                        height: 450,
-                                        child: ProgressIndicatorCustom(250));
+                                      height: 450,
+                                      child: Center(
+                                        child: LoadingAnimationWidget
+                                            .fourRotatingDots(
+                                          color: Colors.grey,
+                                          size: 45,
+                                        ),
+                                      ),
+                                    );
                                   },
                                 )
                               ],
@@ -256,35 +264,39 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           ),
                         ).animate().fadeIn(),
                       ),
-                      Expanded(
-                        child: SizedBox(
-                          height: 524,
-                          child: Card(
-                            elevation: 5,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: allQuotesSync.when(
-                                data: (list) {
-                                  List<Widget> cards = [];
-                                  for (var element in list) {
-                                    cards.add(ItemRow.statusQuoteRow(element));
-                                  }
+                      SizedBox(
+                        height: 524,
+                        width: screenWidth > 1000 ? screenWidth * 0.2 : 200,
+                        child: Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: allQuotesSync.when(
+                              data: (list) {
+                                List<Widget> cards = [];
+                                for (var element in list) {
+                                  cards.add(ItemRow.statusQuoteRow(element));
+                                }
 
-                                  return Wrap(children: cards);
-                                },
-                                error: (error, stackTrace) {
-                                  return const SizedBox();
-                                },
-                                loading: () {
-                                  return ProgressIndicatorCustom(
-                                      screenHight * 0.4);
-                                },
-                              ),
+                                return Wrap(children: cards);
+                              },
+                              error: (error, stackTrace) {
+                                return const SizedBox();
+                              },
+                              loading: () {
+                                return Center(
+                                        child: LoadingAnimationWidget
+                                            .fourRotatingDots(
+                                          color: Colors.grey,
+                                          size: 45,
+                                        ),
+                                      );
+                              },
                             ),
-                          )
-                              .animate()
-                              .fadeIn(delay: const Duration(milliseconds: 500)),
-                        ),
+                          ),
+                        )
+                            .animate()
+                            .fadeIn(delay: const Duration(milliseconds: 500)),
                       )
                     ],
                   ),
@@ -328,7 +340,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             palette: [
                                               DesktopColors.cotGroupColor,
                                               DesktopColors.cotIndColor,
-                                              DesktopColors.cotGroupPreColor,
+                                              // DesktopColors.cotGroupPreColor,
                                               DesktopColors.cotIndPreColor
                                             ],
                                             legend: Legend(
@@ -381,8 +393,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           return const SizedBox();
                                         },
                                         loading: () {
-                                          return ProgressIndicatorCustom(
-                                              screenHight * 0.4);
+                                          return Center(
+                                            child: LoadingAnimationWidget
+                                                .fourRotatingDots(
+                                              color: Colors.grey,
+                                              size: 45,
+                                            ),
+                                          );
                                         },
                                       )
                                     ],
@@ -488,8 +505,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       "No se encontraron cotizaciones"));
                                         },
                                         loading: () {
-                                          return ProgressIndicatorCustom(
-                                              screenHight * 0.4);
+                                          return Center(
+                                            child: LoadingAnimationWidget
+                                                .fourRotatingDots(
+                                              color: Colors.grey,
+                                              size: 45,
+                                            ),
+                                          );
                                         },
                                       )
                                     ],

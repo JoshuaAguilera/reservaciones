@@ -10,4 +10,6 @@ class ReceiptQuote extends Table {
   DateTimeColumn get dateRegister => dateTime()();
   RealColumn get rateDay => real()();
   RealColumn get total => real()();
+  IntColumn get rooms => integer()();
+  BoolColumn get isGroup => boolean()();
 }
