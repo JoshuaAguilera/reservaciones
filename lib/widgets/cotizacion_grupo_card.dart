@@ -13,13 +13,15 @@ class CotizacionGrupoCard extends StatefulWidget {
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool isDetail;
   const CotizacionGrupoCard({
     super.key,
     required this.index,
     required this.compact,
-    required this.onPressedEdit,
-    required this.onPressedDelete,
+    this.onPressedEdit,
+    this.onPressedDelete,
     this.cotGroup,
+    this.isDetail = false,
   });
 
   @override
@@ -38,6 +40,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
                   cotizacion: widget.cotGroup!,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  esDetalle: widget.isDetail,
                 )
                   .animate()
                   .fadeOut()
@@ -53,6 +56,7 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
                         Durations.extralong2, widget.onPressedDelete);
                   },
                   onPressedEdit: widget.onPressedEdit,
+                  esDetalle: widget.isDetail,
                 )
           : selected
               ? _TableRowCotizacion(
@@ -60,12 +64,14 @@ class _CotizacionGrupoCardState extends State<CotizacionGrupoCard> {
                   cotizacion: widget.cotGroup!,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  esDetalle: widget.isDetail,
                 )
                   .animate()
                   .fadeOut()
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _TableRowCotizacion(
                   index: widget.index,
+                  esDetalle: widget.isDetail,
                   cotizacion: widget.cotGroup!,
                   onPressedDelete: () {
                     setState(() {
@@ -88,12 +94,14 @@ class _TableRowCotizacion extends StatelessWidget {
   final CotizacionGrupal cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool esDetalle;
   const _TableRowCotizacion({
     super.key,
     required this.index,
     required this.cotizacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    this.esDetalle = false,
   });
 
   @override
@@ -147,24 +155,25 @@ class _TableRowCotizacion extends StatelessWidget {
                             cotizacion.tarifaMenor ?? 0),
                         aling: TextAlign.center,
                         overClip: true),
-                    Wrap(
-                      children: [
-                        IconButton(
-                          onPressed: onPressedEdit,
-                          icon: Icon(
-                            Icons.edit,
-                            color: DesktopColors.ceruleanOscure,
+                    if (!esDetalle)
+                      Wrap(
+                        children: [
+                          IconButton(
+                            onPressed: onPressedEdit,
+                            icon: Icon(
+                              Icons.edit,
+                              color: DesktopColors.ceruleanOscure,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: onPressedDelete,
-                          icon: Icon(
-                            Icons.delete,
-                            color: DesktopColors.prussianBlue,
+                          IconButton(
+                            onPressed: onPressedDelete,
+                            icon: Icon(
+                              Icons.delete,
+                              color: DesktopColors.prussianBlue,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                   ],
                 ),
               ],
@@ -188,6 +197,7 @@ class _ListTileCotizacion extends StatelessWidget {
   final CotizacionGrupal cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final bool esDetalle;
 
   const _ListTileCotizacion({
     super.key,
@@ -195,6 +205,7 @@ class _ListTileCotizacion extends StatelessWidget {
     required this.cotizacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    this.esDetalle = false,
   });
 
   @override
@@ -266,33 +277,35 @@ class _ListTileCotizacion extends StatelessWidget {
             ),
           ],
         ),
-        trailing: PopupMenuButton<ListTileTitleAlignment>(
-          itemBuilder: (BuildContext context) =>
-              <PopupMenuEntry<ListTileTitleAlignment>>[
-            PopupMenuItem<ListTileTitleAlignment>(
-              value: ListTileTitleAlignment.threeLine,
-              onTap: onPressedEdit,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.edit, color: DesktopColors.turqueza),
-                  TextStyles.standardText(text: "Editar")
+        trailing: esDetalle
+            ? null
+            : PopupMenuButton<ListTileTitleAlignment>(
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<ListTileTitleAlignment>>[
+                  PopupMenuItem<ListTileTitleAlignment>(
+                    value: ListTileTitleAlignment.threeLine,
+                    onTap: onPressedEdit,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.edit, color: DesktopColors.turqueza),
+                        TextStyles.standardText(text: "Editar")
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<ListTileTitleAlignment>(
+                    value: ListTileTitleAlignment.titleHeight,
+                    onTap: onPressedDelete,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.delete, color: Colors.red[800]),
+                        TextStyles.standardText(text: "Eliminar")
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-            PopupMenuItem<ListTileTitleAlignment>(
-              value: ListTileTitleAlignment.titleHeight,
-              onTap: onPressedDelete,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.delete, color: Colors.red[800]),
-                  TextStyles.standardText(text: "Eliminar")
-                ],
-              ),
-            ),
-          ],
-        ),
         isThreeLine: true,
       ),
     );

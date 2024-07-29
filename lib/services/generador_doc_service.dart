@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
@@ -9,7 +8,9 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class GeneradorDocService extends ChangeNotifier {
+import 'base_service.dart';
+
+class GeneradorDocService extends BaseService {
   late pw.Document pdfPrinc;
   pw.Document get pdfPrincget => this.pdfPrinc;
 

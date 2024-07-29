@@ -33,8 +33,25 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
       'rol', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _mailMeta = const VerificationMeta('mail');
   @override
-  List<GeneratedColumn> get $columns => [id, name, password, rol];
+  late final GeneratedColumn<String> mail = GeneratedColumn<String>(
+      'mail', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _passwordMailMeta =
+      const VerificationMeta('passwordMail');
+  @override
+  late final GeneratedColumn<String> passwordMail = GeneratedColumn<String>(
+      'password_mail', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+      'phone', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, password, rol, mail, passwordMail, phone];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -66,6 +83,26 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     } else if (isInserting) {
       context.missing(_rolMeta);
     }
+    if (data.containsKey('mail')) {
+      context.handle(
+          _mailMeta, mail.isAcceptableOrUnknown(data['mail']!, _mailMeta));
+    } else if (isInserting) {
+      context.missing(_mailMeta);
+    }
+    if (data.containsKey('password_mail')) {
+      context.handle(
+          _passwordMailMeta,
+          passwordMail.isAcceptableOrUnknown(
+              data['password_mail']!, _passwordMailMeta));
+    } else if (isInserting) {
+      context.missing(_passwordMailMeta);
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+          _phoneMeta, phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta));
+    } else if (isInserting) {
+      context.missing(_phoneMeta);
+    }
     return context;
   }
 
@@ -83,6 +120,12 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
           .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
       rol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rol'])!,
+      mail: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}mail'])!,
+      passwordMail: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}password_mail'])!,
+      phone: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}phone'])!,
     );
   }
 
@@ -97,11 +140,17 @@ class User extends DataClass implements Insertable<User> {
   final String name;
   final String password;
   final String rol;
+  final String mail;
+  final String passwordMail;
+  final String phone;
   const User(
       {required this.id,
       required this.name,
       required this.password,
-      required this.rol});
+      required this.rol,
+      required this.mail,
+      required this.passwordMail,
+      required this.phone});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -109,6 +158,9 @@ class User extends DataClass implements Insertable<User> {
     map['name'] = Variable<String>(name);
     map['password'] = Variable<String>(password);
     map['rol'] = Variable<String>(rol);
+    map['mail'] = Variable<String>(mail);
+    map['password_mail'] = Variable<String>(passwordMail);
+    map['phone'] = Variable<String>(phone);
     return map;
   }
 
@@ -118,6 +170,9 @@ class User extends DataClass implements Insertable<User> {
       name: Value(name),
       password: Value(password),
       rol: Value(rol),
+      mail: Value(mail),
+      passwordMail: Value(passwordMail),
+      phone: Value(phone),
     );
   }
 
@@ -129,6 +184,9 @@ class User extends DataClass implements Insertable<User> {
       name: serializer.fromJson<String>(json['name']),
       password: serializer.fromJson<String>(json['password']),
       rol: serializer.fromJson<String>(json['rol']),
+      mail: serializer.fromJson<String>(json['mail']),
+      passwordMail: serializer.fromJson<String>(json['passwordMail']),
+      phone: serializer.fromJson<String>(json['phone']),
     );
   }
   @override
@@ -139,14 +197,28 @@ class User extends DataClass implements Insertable<User> {
       'name': serializer.toJson<String>(name),
       'password': serializer.toJson<String>(password),
       'rol': serializer.toJson<String>(rol),
+      'mail': serializer.toJson<String>(mail),
+      'passwordMail': serializer.toJson<String>(passwordMail),
+      'phone': serializer.toJson<String>(phone),
     };
   }
 
-  User copyWith({int? id, String? name, String? password, String? rol}) => User(
+  User copyWith(
+          {int? id,
+          String? name,
+          String? password,
+          String? rol,
+          String? mail,
+          String? passwordMail,
+          String? phone}) =>
+      User(
         id: id ?? this.id,
         name: name ?? this.name,
         password: password ?? this.password,
         rol: rol ?? this.rol,
+        mail: mail ?? this.mail,
+        passwordMail: passwordMail ?? this.passwordMail,
+        phone: phone ?? this.phone,
       );
   @override
   String toString() {
@@ -154,13 +226,17 @@ class User extends DataClass implements Insertable<User> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('password: $password, ')
-          ..write('rol: $rol')
+          ..write('rol: $rol, ')
+          ..write('mail: $mail, ')
+          ..write('passwordMail: $passwordMail, ')
+          ..write('phone: $phone')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, password, rol);
+  int get hashCode =>
+      Object.hash(id, name, password, rol, mail, passwordMail, phone);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -168,7 +244,10 @@ class User extends DataClass implements Insertable<User> {
           other.id == this.id &&
           other.name == this.name &&
           other.password == this.password &&
-          other.rol == this.rol);
+          other.rol == this.rol &&
+          other.mail == this.mail &&
+          other.passwordMail == this.passwordMail &&
+          other.phone == this.phone);
 }
 
 class UsersCompanion extends UpdateCompanion<User> {
@@ -176,31 +255,49 @@ class UsersCompanion extends UpdateCompanion<User> {
   final Value<String> name;
   final Value<String> password;
   final Value<String> rol;
+  final Value<String> mail;
+  final Value<String> passwordMail;
+  final Value<String> phone;
   const UsersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
+    this.mail = const Value.absent(),
+    this.passwordMail = const Value.absent(),
+    this.phone = const Value.absent(),
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String password,
     required String rol,
+    required String mail,
+    required String passwordMail,
+    required String phone,
   })  : name = Value(name),
         password = Value(password),
-        rol = Value(rol);
+        rol = Value(rol),
+        mail = Value(mail),
+        passwordMail = Value(passwordMail),
+        phone = Value(phone);
   static Insertable<User> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? password,
     Expression<String>? rol,
+    Expression<String>? mail,
+    Expression<String>? passwordMail,
+    Expression<String>? phone,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (password != null) 'password': password,
       if (rol != null) 'rol': rol,
+      if (mail != null) 'mail': mail,
+      if (passwordMail != null) 'password_mail': passwordMail,
+      if (phone != null) 'phone': phone,
     });
   }
 
@@ -208,12 +305,18 @@ class UsersCompanion extends UpdateCompanion<User> {
       {Value<int>? id,
       Value<String>? name,
       Value<String>? password,
-      Value<String>? rol}) {
+      Value<String>? rol,
+      Value<String>? mail,
+      Value<String>? passwordMail,
+      Value<String>? phone}) {
     return UsersCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       password: password ?? this.password,
       rol: rol ?? this.rol,
+      mail: mail ?? this.mail,
+      passwordMail: passwordMail ?? this.passwordMail,
+      phone: phone ?? this.phone,
     );
   }
 
@@ -232,6 +335,15 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (rol.present) {
       map['rol'] = Variable<String>(rol.value);
     }
+    if (mail.present) {
+      map['mail'] = Variable<String>(mail.value);
+    }
+    if (passwordMail.present) {
+      map['password_mail'] = Variable<String>(passwordMail.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
     return map;
   }
 
@@ -241,7 +353,10 @@ class UsersCompanion extends UpdateCompanion<User> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('password: $password, ')
-          ..write('rol: $rol')
+          ..write('rol: $rol, ')
+          ..write('mail: $mail, ')
+          ..write('passwordMail: $passwordMail, ')
+          ..write('phone: $phone')
           ..write(')'))
         .toString();
   }
@@ -2052,12 +2167,18 @@ typedef $$UsersTableInsertCompanionBuilder = UsersCompanion Function({
   required String name,
   required String password,
   required String rol,
+  required String mail,
+  required String passwordMail,
+  required String phone,
 });
 typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
   Value<int> id,
   Value<String> name,
   Value<String> password,
   Value<String> rol,
+  Value<String> mail,
+  Value<String> passwordMail,
+  Value<String> phone,
 });
 
 class $$UsersTableTableManager extends RootTableManager<
@@ -2083,24 +2204,36 @@ class $$UsersTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String> password = const Value.absent(),
             Value<String> rol = const Value.absent(),
+            Value<String> mail = const Value.absent(),
+            Value<String> passwordMail = const Value.absent(),
+            Value<String> phone = const Value.absent(),
           }) =>
               UsersCompanion(
             id: id,
             name: name,
             password: password,
             rol: rol,
+            mail: mail,
+            passwordMail: passwordMail,
+            phone: phone,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             required String name,
             required String password,
             required String rol,
+            required String mail,
+            required String passwordMail,
+            required String phone,
           }) =>
               UsersCompanion.insert(
             id: id,
             name: name,
             password: password,
             rol: rol,
+            mail: mail,
+            passwordMail: passwordMail,
+            phone: phone,
           ),
         ));
 }
@@ -2139,6 +2272,21 @@ class $$UsersTableFilterComposer
       column: $state.table.rol,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get mail => $state.composableBuilder(
+      column: $state.table.mail,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get passwordMail => $state.composableBuilder(
+      column: $state.table.passwordMail,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get phone => $state.composableBuilder(
+      column: $state.table.phone,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$UsersTableOrderingComposer
@@ -2161,6 +2309,21 @@ class $$UsersTableOrderingComposer
 
   ColumnOrderings<String> get rol => $state.composableBuilder(
       column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get mail => $state.composableBuilder(
+      column: $state.table.mail,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get passwordMail => $state.composableBuilder(
+      column: $state.table.passwordMail,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get phone => $state.composableBuilder(
+      column: $state.table.phone,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

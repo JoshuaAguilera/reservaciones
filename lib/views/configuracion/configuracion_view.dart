@@ -33,12 +33,19 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                TextStyles.titlePagText(text: "Configuración"),
+                TextStyles.titlePagText(
+                  text: "Configuración",
+                  color: Theme.of(context).primaryColor,
+                ),
               ]),
               TextStyles.standardText(
-                  text:
-                      "Administrar la configuración y preferencias de su cuenta"),
-              const Divider(color: Colors.black54),
+                text:
+                    "Administrar la configuración y preferencias de su cuenta",
+                color: Theme.of(context).primaryColor,
+              ),
+              Divider(
+                color: Theme.of(context).primaryColor,
+              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Card(

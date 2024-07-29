@@ -27,8 +27,12 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<List<QuoteData>> getQuotesbyFolio(String folioQuotes) {
+  Future<List<QuoteData>> getQuotesIndbyFolio(String folioQuotes) {
     return (select(quote)..where((t) => t.folio.equals(folioQuotes))).get();
+  }
+
+   Future<List<QuoteGroupData>> getQuotesGroupbyFolio(String folioQuotes) {
+    return (select(quoteGroup)..where((t) => t.folio.equals(folioQuotes))).get();
   }
 
   Future<List<ReceiptQuoteData>> getReceiptQuotesSearch(String search) {

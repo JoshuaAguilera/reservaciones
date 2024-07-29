@@ -48,8 +48,9 @@ class Dialogs {
       return AlertDialog(
         insetPadding: const EdgeInsets.all(10),
         title: TextStyles.titleText(
-            text: cotizacion != null ? "Editar" : "Agregar" " cotización",
-            color: DesktopColors.prussianBlue),
+          text: cotizacion != null ? "Editar" : "Agregar" " cotización",
+          color: Theme.of(context).primaryColor,
+        ),
         content: SingleChildScrollView(
           child: Form(
             key: _formKeyHabitacion,
@@ -57,8 +58,9 @@ class Dialogs {
               children: [
                 CheckboxListTile.adaptive(
                   title: TextStyles.standardText(
-                      text:
-                          "Cotización con preventa oferta de tiempo limitado"),
+                    text: "Cotización con preventa oferta de tiempo limitado",
+                    color: Theme.of(context).primaryColor,
+                  ),
                   value: esOferta,
                   onChanged: (value) {
                     setState(() {
@@ -79,7 +81,10 @@ class Dialogs {
                   children: [
                     Expanded(
                         child: TextStyles.standardText(
-                            text: "Categoría: ", overClip: true)),
+                      text: "Categoría: ",
+                      overClip: true,
+                      color: Theme.of(context).primaryColor,
+                    )),
                     const SizedBox(width: 15),
                     CustomDropdown.dropdownMenuCustom(
                         initialSelection: cotizacion != null
@@ -98,7 +103,10 @@ class Dialogs {
                   children: [
                     Expanded(
                         child: TextStyles.standardText(
-                            text: "Plan: ", overClip: true)),
+                      text: "Plan: ",
+                      overClip: true,
+                      color: Theme.of(context).primaryColor,
+                    )),
                     const SizedBox(width: 15),
                     CustomDropdown.dropdownMenuCustom(
                       initialSelection:
@@ -149,7 +157,10 @@ class Dialogs {
                   children: [
                     TableRow(children: [
                       TextStyles.standardText(
-                          text: "Adultos", aling: TextAlign.center),
+                        text: "Adultos",
+                        aling: TextAlign.center,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       const SizedBox(),
                       const SizedBox()
                     ]),
@@ -200,7 +211,10 @@ class Dialogs {
                     ]),
                     TableRow(children: [
                       TextStyles.standardText(
-                          text: "Menores 7-12", aling: TextAlign.center),
+                        text: "Menores 7-12",
+                        aling: TextAlign.center,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       const SizedBox(),
                       const SizedBox()
                     ]),
@@ -251,7 +265,10 @@ class Dialogs {
                     ]),
                     TableRow(children: [
                       TextStyles.standardText(
-                          text: "Menores 0-6", aling: TextAlign.center),
+                        text: "Menores 0-6",
+                        aling: TextAlign.center,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       const SizedBox(),
                       const SizedBox()
                     ]),
@@ -273,6 +290,7 @@ class Dialogs {
                                     text:
                                         "Tarifa preventa diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion, esPreventa: true))}",
                                     isBold: true,
+                                    color: Theme.of(context).primaryColor,
                                   )
                                 : const SizedBox(),
                           ),
@@ -288,6 +306,7 @@ class Dialogs {
                             text:
                                 "Tarifa real diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion))}",
                             isBold: true,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       )
@@ -345,6 +364,7 @@ class Dialogs {
     CotizacionGrupal? cotizacion,
     void Function(CotizacionGrupal?)? onInsert,
     void Function(CotizacionGrupal?)? onUpdate,
+    required BuildContext context,
   }) {
     //data Quote
     String type = tipoHabitacion.first;
@@ -375,7 +395,7 @@ class Dialogs {
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
           text: cotizacion != null ? "Editar habitación" : "Agregar habitación",
-          color: DesktopColors.prussianBlue),
+          color: Theme.of(context).primaryColor),
       content: StatefulBuilder(
         builder: (context, setState) {
           return SingleChildScrollView(
@@ -388,7 +408,9 @@ class Dialogs {
                     children: [
                       Expanded(
                           child: TextStyles.standardText(
-                              text: "Tipo de habitacion: ", overClip: true)),
+                              text: "Tipo de habitacion: ",
+                              overClip: true,
+                              color: Theme.of(context).primaryColor)),
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
                           initialSelection:
@@ -405,8 +427,11 @@ class Dialogs {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                          child: TextStyles.standardText(
-                              text: "Plan: ", overClip: true)),
+                        child: TextStyles.standardText(
+                            text: "Plan: ",
+                            overClip: true,
+                            color: Theme.of(context).primaryColor),
+                      ),
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
                         initialSelection:
@@ -576,10 +601,13 @@ class Dialogs {
             color: iconColor ?? DesktopColors.ceruleanOscure,
           ),
         const SizedBox(width: 10),
-        Expanded(child: TextStyles.titleText(text: title, size: 18))
+        Expanded(
+            child: TextStyles.titleText(
+                text: title, size: 18, color: Theme.of(context).primaryColor))
       ]),
       content: TextStyles.TextAsociative(contentBold ?? "", content,
-          isInverted: contentBold != null),
+          isInverted: contentBold != null,
+          color: Theme.of(context).primaryColor),
       actions: [
         if (withButtonCancel)
           TextButton(
@@ -624,7 +652,7 @@ class Dialogs {
         Expanded(
             child: TextStyles.titleText(
           text: "Filtrar por fechas",
-          color: DesktopColors.prussianBlue,
+          color: Theme.of(context).primaryColor,
           size: 18,
         ))
       ]),
@@ -635,7 +663,8 @@ class Dialogs {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextStyles.standardText(
-                    text: "Seleccione un periodo de tiempo:"),
+                    text: "Seleccione un periodo de tiempo:",
+                    color: Theme.of(context).primaryColor),
                 const SizedBox(height: 15),
                 TextFormFieldCustom.textFormFieldwithBorderCalendar(
                   name: "Fecha inicial",

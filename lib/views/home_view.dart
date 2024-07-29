@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -31,43 +32,45 @@ class _HomeViewState extends State<HomeView> {
       startflow = false;
     }
 
-    return Scaffold(
-      key: _key,
-      appBar: isSmallScreen
-          ? AppBar(
-              backgroundColor: DesktopColors.canvasColor,
-              title: TextStyles.titleText(
-                  color: Colors.white,
-                  text: Utility.getTitleByIndex(_controller.selectedIndex)),
-              leading: IconButton(
-                onPressed: () {
-                  // if (!Platform.isAndroid && !Platform.isIOS) {
-                  //   _controller.setExtended(true);
-                  // }
-                  _key.currentState?.openDrawer();
-                },
-                icon: const Icon(Icons.menu),
-              ),
-            )
-          : null,
-      drawer: SideBar(
-        controller: _controller,
-        isExpanded: true,
-      ),
-      body: Row(
-        children: [
-          if (!isSmallScreen)
-            SideBar(
-              controller: _controller,
-            ),
-          Expanded(
-            child: Center(
-              child: MenuView(
+    return ThemeSwitchingArea(
+      child: Scaffold(
+        key: _key,
+        appBar: isSmallScreen
+            ? AppBar(
+                backgroundColor: DesktopColors.canvasColor,
+                title: TextStyles.titleText(
+                    color: Colors.white,
+                    text: Utility.getTitleByIndex(_controller.selectedIndex)),
+                leading: IconButton(
+                  onPressed: () {
+                    // if (!Platform.isAndroid && !Platform.isIOS) {
+                    //   _controller.setExtended(true);
+                    // }
+                    _key.currentState?.openDrawer();
+                  },
+                  icon: const Icon(Icons.menu),
+                ),
+              )
+            : null,
+        drawer: SideBar(
+          controller: _controller,
+          isExpanded: true,
+        ),
+        body: Row(
+          children: [
+            if (!isSmallScreen)
+              SideBar(
                 controller: _controller,
               ),
+            Expanded(
+              child: Center(
+                child: MenuView(
+                  controller: _controller,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

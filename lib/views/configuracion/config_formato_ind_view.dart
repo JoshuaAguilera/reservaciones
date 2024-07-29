@@ -57,8 +57,9 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                       children: [
                         const SizedBox(height: 5),
                         TextStyles.mediumText(
-                            text: "Formato de cotizaciones individuales",
-                            color: DesktopColors.prussianBlue),
+                          text: "Formato de cotizaciones individuales",
+                          color: Theme.of(context).primaryColor,
+                        ),
                         const SizedBox(height: 10),
                         Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
@@ -68,22 +69,26 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                               primaryColor: colorLogoInd,
                               nameInput: "Color de logotipo: ",
                               blocked: applyWhitBlack,
+                              colorText: Theme.of(context).primaryColor,
                             ),
                             FormWidgets.inputColor(
                               primaryColor: colorTableInd,
                               nameInput: "Color de tablas: ",
                               verticalPadding: 12,
                               blocked: applyWhitBlack,
+                              colorText: Theme.of(context).primaryColor,
                             ),
                             FormWidgets.inputSwitch(
-                                value: applyWhitBlack,
-                                activeColor: Colors.grey[900],
-                                name: "Blanco y negro",
-                                onChanged: (p0) {
-                                  ref
-                                      .read(themeDefaultIndProvider.notifier)
-                                      .update((state) => p0);
-                                })
+                              value: applyWhitBlack,
+                              activeColor: Colors.grey[900],
+                              name: "Blanco y negro",
+                              onChanged: (p0) {
+                                ref
+                                    .read(themeDefaultIndProvider.notifier)
+                                    .update((state) => p0);
+                              },
+                              context: context,
+                            )
                           ],
                         ),
                         Wrap(
@@ -94,19 +99,29 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                             SizedBox(
                               width: 300,
                               child: FormWidgets.inputImage(
-                                  nameInput: "Imagen de logotipo: "),
+                                nameInput: "Imagen de logotipo: ",
+                                colorText: Theme.of(context).primaryColor,
+                              ),
                             ),
                             SizedBox(
                               width: 300,
                               child: FormWidgets.inputDropdownFont(
-                                  title: "Fuente de texto:", font: font),
+                                title: "Fuente de texto:",
+                                font: font,
+                                textColor: Theme.of(context).primaryColor,
+                                contentColor:
+                                    Theme.of(context).primaryColorDark,
+                                textFontColor:
+                                    Theme.of(context).primaryColorLight,
+                              ),
                             )
                           ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
                     Align(
-                      alignment: Alignment.bottomLeft,
+                      alignment: Alignment.bottomRight,
                       child: Buttons.commonButton(
                           onPressed: () {}, text: "  Guardar  "),
                     )

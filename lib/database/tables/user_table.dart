@@ -5,4 +5,7 @@ class Users extends Table {
   TextColumn get name => text()();
   TextColumn get password => text()();
   TextColumn get rol => text()();
+  TextColumn get mail => text()();
+  TextColumn get passwordMail => text()();
+  TextColumn get phone => text()();
 }

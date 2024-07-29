@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/argumento_model.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -15,6 +15,7 @@ import 'package:sidebarx/sidebarx.dart';
 import '../../providers/comprobante_provider.dart';
 import '../../services/comprobante_service.dart';
 import '../../ui/buttons.dart';
+import '../../ui/custom_widgets.dart';
 import '../../widgets/comprobante_item_row.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
@@ -64,7 +65,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextStyles.titlePagText(text: "Historial"),
+                    TextStyles.titlePagText(
+                      text: "Historial",
+                      color: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       height: 35,
                       width: screenWidth * 0.3,
@@ -104,75 +108,143 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: SizedBox(
                       height: 30,
-                      child: StatefulBuilder(
-                        builder: (context, snapshot) {
-                          return ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: filtros.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: SelectableButton(
-                                  selected: filter == filtros[index],
-                                  onPressed: () {
-                                    // ref
-                                    //     .read(filtroProvider.notifier)
-                                    //     .update((state) => filtros[index]);
-                                    filter = filtros[index];
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: StatefulBuilder(
+                              builder: (context, snapshot) {
+                                return ListView.builder(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  itemCount: filtros.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 2),
+                                      child: SelectableButton(
+                                        selected: filter == filtros[index],
+                                        onPressed: () {
+                                          // ref
+                                          //     .read(filtroProvider.notifier)
+                                          //     .update((state) => filtros[index]);
+                                          filter = filtros[index];
 
-                                    ref
-                                        .read(searchProvider.notifier)
-                                        .update((state) => "");
-                                    snapshot(() {
-                                      if (filter == "Personalizado") {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialogs.filterDateDialog(
-                                              context: context,
-                                              funtionMain: () {},
-                                            );
-                                          },
-                                        ).then(
-                                          (value) {
-                                            if (value != null) {
+                                          ref
+                                              .read(searchProvider.notifier)
+                                              .update((state) => "");
+                                          snapshot(() {
+                                            if (filter == "Personalizado") {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Dialogs
+                                                      .filterDateDialog(
+                                                    context: context,
+                                                    funtionMain: () {},
+                                                  );
+                                                },
+                                              ).then(
+                                                (value) {
+                                                  if (value != null) {
+                                                    ref
+                                                        .read(periodoProvider
+                                                            .notifier)
+                                                        .update(
+                                                            (state) => value);
+                                                  }
+                                                },
+                                              );
+                                            } else {
+                                              ref
+                                                  .read(filtroProvider.notifier)
+                                                  .update((state) =>
+                                                      filtros[index]);
                                               ref
                                                   .read(
                                                       periodoProvider.notifier)
-                                                  .update((state) => value);
+                                                  .update((state) => "");
                                             }
-                                          },
-                                        );
-                                      } else {
-                                        ref
-                                            .read(filtroProvider.notifier)
-                                            .update((state) => filtros[index]);
-                                        ref
-                                            .read(periodoProvider.notifier)
-                                            .update((state) => "");
-                                      }
-                                    });
+                                          });
 
-                                    ref
-                                        .read(isEmptyProvider.notifier)
-                                        .update((state) => false);
+                                          ref
+                                              .read(isEmptyProvider.notifier)
+                                              .update((state) => false);
+                                        },
+                                        child: Text(filtros[index]),
+                                      ),
+                                    );
                                   },
-                                  child: Text(filtros[index]),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: screenWidth * 0.3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: DesktopColors.cotIndColor,
+                                      size: 26,
+                                    ),
+                                    Container(
+                                      width: screenWidth > 400
+                                          ? screenWidth * 0.07
+                                          : 15,
+                                      child: TextStyles.standardText(
+                                        text: screenWidth > 650
+                                            ? "  Cot. Individual"
+                                            : screenWidth > 400
+                                                ? "  C. I."
+                                                : " I",
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                          );
-                        },
+                                const SizedBox(width: 5),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: DesktopColors.cotGroupColor,
+                                      size: 26,
+                                    ),
+                                    Container(
+                                      width: screenWidth > 400
+                                          ? screenWidth * 0.07
+                                          : 15,
+                                      child: TextStyles.standardText(
+                                        text: screenWidth > 650
+                                            ? "  Cot. Grupal"
+                                            : screenWidth > 400
+                                                ? "  C. G."
+                                                : " G",
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       )),
                 ),
                 receiptQuoteQuery.when(
                   data: (list) {
                     print("cargado");
                     return list.isEmpty
-                        ? TextStyles.standardText(
-                            text: "No se han encontraron resultados.", size: 14)
+                        ? SizedBox(
+                            height: screenHight * 0.5,
+                            child: CustomWidgets.messageNotResult(
+                                sizeMessage: 15, context: context),
+                          )
                         : SizedBox(
                             width: screenWidth,
                             child: ListView.builder(
@@ -188,15 +260,29 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                     ref
                                         .read(isEmptyProvider.notifier)
                                         .update((state) => true);
-                                    List<Cotizacion> respCotizaciones =
-                                        await CotizacionService()
-                                            .getCotizacionesByFolio(
-                                                list[index].folioQuotes);
+
+                                    List<Cotizacion> respCotizaciones = [];
+                                    List<CotizacionGrupal>
+                                        respCotizacionesGrup = [];
+
+                                    if (list[index].isGroup) {
+                                      respCotizacionesGrup =
+                                          await CotizacionService()
+                                              .getCotizacionesGrupByFolio(
+                                                  list[index].folioQuotes);
+                                    } else {
+                                      respCotizaciones =
+                                          await CotizacionService()
+                                              .getCotizacionesIndByFolio(
+                                                  list[index].folioQuotes);
+                                    }
+
                                     if (!mounted) return;
 
                                     ComprobanteCotizacion newComprobante =
                                         ComprobanteCotizacion(
                                       nombre: list[index].nameCustomer,
+                                      esGrupal: list[index].isGroup,
                                       correo: list[index].mail,
                                       telefono: list[index].numPhone,
                                       fechaRegistro:
@@ -204,7 +290,14 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       folioCuotas: list[index].folioQuotes,
                                       tarifaDiaria: list[index].rateDay,
                                       total: list[index].total,
-                                      cotizaciones: respCotizaciones,
+                                      cotizacionesInd:
+                                          respCotizaciones.isNotEmpty
+                                              ? respCotizaciones
+                                              : null,
+                                      cotizacionesGrup:
+                                          respCotizacionesGrup.isNotEmpty
+                                              ? respCotizacionesGrup
+                                              : null,
                                     );
 
                                     ref
@@ -251,8 +344,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                           );
                   },
                   error: (error, stackTrace) {
-                    return TextStyles.standardText(
-                        text: "No se han encontraron resultados.", size: 14);
+                    return SizedBox(
+                      height: screenHight * 0.5,
+                      child: CustomWidgets.messageNotResult(
+                          sizeMessage: 15, context: context),
+                    );
                   },
                   loading: () {
                     return ProgressIndicatorCustom(screenHight);

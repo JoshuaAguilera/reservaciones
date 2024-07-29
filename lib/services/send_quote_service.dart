@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
 import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
@@ -13,8 +11,9 @@ import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/shared_preferences/preferences.dart';
+import 'base_service.dart';
 
-class SendQuoteService extends ChangeNotifier {
+class SendQuoteService extends BaseService {
   var mailUser = Preferences.mail;
   var passwordUser = Preferences.passwordMail;
   var phoneUser = Preferences.phone;

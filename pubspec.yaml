@@ -63,6 +63,7 @@ dependencies:
   file_picker: ^8.0.6
   image: ^4.2.0
   loading_animation_widget: ^1.2.1
+  animated_theme_switcher: ^2.0.10
 
 dev_dependencies:
   flutter_test:

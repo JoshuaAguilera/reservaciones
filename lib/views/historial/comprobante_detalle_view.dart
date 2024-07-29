@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/comprobante_provider.dart';
+import 'package:generador_formato/widgets/cotizacion_grupo_card.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -58,7 +60,7 @@ class _ComprobanteDetalleViewState
                       },
                       icon: Icon(
                         CupertinoIcons.chevron_left_circle,
-                        color: DesktopColors.prussianBlue,
+                        color: Theme.of(context).primaryColor,
                         size: 30,
                       )),
                   Expanded(
@@ -66,6 +68,7 @@ class _ComprobanteDetalleViewState
                       text:
                           "Detalles de cotización - ${comprobante.folioCuotas}",
                       overflow: TextOverflow.ellipsis,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ],
@@ -89,13 +92,15 @@ class _ComprobanteDetalleViewState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextStyles.standardText(
-                                text: "Nombre: ${comprobante.nombre!}"),
-                            TextStyles.standardText(
-                                text:
-                                    "Correo electronico: ${comprobante.correo!}"),
-                            TextStyles.standardText(
-                                text: "Telefono: ${comprobante.telefono!}"),
+                            TextStyles.TextAsociative(
+                                "Nombre: ", comprobante.nombre!,
+                                size: 13),
+                            TextStyles.TextAsociative(
+                                "Correo electronico: ", comprobante.correo!,
+                                size: 13),
+                            TextStyles.TextAsociative(
+                                "Telefono: ", comprobante.telefono!,
+                                size: 13),
                           ],
                         ),
                       ),
@@ -109,87 +114,142 @@ class _ComprobanteDetalleViewState
                     if (!Utility.isResizable(
                         extended: widget.sideController.extended,
                         context: context))
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                          child: Table(
+                            columnWidths: {
+                              0: FractionColumnWidth(
+                                  (!comprobante.esGrupal!) ? .05 : .18),
+                              1: FractionColumnWidth(
+                                  (!comprobante.esGrupal!) ? .15 : 0.22),
+                              2: const FractionColumnWidth(0.09),
+                              3: FractionColumnWidth(
+                                  (!comprobante.esGrupal!) ? .1 : 0.22),
+                              4: const FractionColumnWidth(.1),
+                              5: FractionColumnWidth(
+                                  (!comprobante.esGrupal!) ? .1 : 0.15),
+                            },
+                            children: [
+                              TableRow(children: [
+                                if (!comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text: "#",
+                                      aling: TextAlign.center,
+                                      color: Theme.of(context).primaryColor,
+                                      overClip: true),
+                                TextStyles.standardText(
+                                    text: "Fechas de estancia",
+                                    aling: TextAlign.center,
+                                    color: Theme.of(context).primaryColor,
+                                    overClip: true),
+                                if (!comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text: "Adultos",
+                                      aling: TextAlign.center,
+                                      color: Theme.of(context).primaryColor,
+                                      overClip: true),
+                                if (!comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text: "Menores 0-6",
+                                      aling: TextAlign.center,
+                                      color: Theme.of(context).primaryColor,
+                                      overClip: true),
+                                TextStyles.standardText(
+                                    text: (!comprobante.esGrupal!)
+                                        ? "Menores 7-12"
+                                        : "1 o 2 Adultos",
+                                    aling: TextAlign.center,
+                                    color: Theme.of(context).primaryColor,
+                                    overClip: true),
+                                TextStyles.standardText(
+                                    text: (!comprobante.esGrupal!)
+                                        ? "Tarifa \nReal"
+                                        : "3 Adultos",
+                                    aling: TextAlign.center,
+                                    color: Theme.of(context).primaryColor,
+                                    overClip: true),
+                                if (comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text: "  4 Adultos  ",
+                                      aling: TextAlign.center,
+                                      color: Theme.of(context).primaryColor,
+                                      overClip: true),
+                                if (comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text: "Menores 7 a 12 Años",
+                                      color: Theme.of(context).primaryColor,
+                                      aling: TextAlign.center,
+                                      overClip: true),
+                                if (!comprobante.esGrupal!)
+                                  TextStyles.standardText(
+                                      text:
+                                          "Tarifa de preventa oferta por tiempo limitado",
+                                      color: Theme.of(context).primaryColor,
+                                      aling: TextAlign.center,
+                                      overClip: true),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (!comprobante.esGrupal!)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                        child: Table(
-                          columnWidths: const {
-                            0: FractionColumnWidth(.05),
-                            1: FractionColumnWidth(.15),
-                            2: FractionColumnWidth(.1),
-                            3: FractionColumnWidth(.1),
-                            4: FractionColumnWidth(.1),
-                            5: FractionColumnWidth(.1),
-                          },
-                          children: [
-                            TableRow(children: [
-                              TextStyles.standardText(
-                                  text: "#",
-                                  // (dropdownValue == "Cotización Individual")
-                                  //     ? "Día"
-                                  //     : "PAX",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: "Fechas de estancia",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: "Adultos",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              // if (dropdownValue == "Cotización Individual")
-                              TextStyles.standardText(
-                                  text: "Menores 0-6",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: "Menores 7-12",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text: "Tarifa por noche",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              TextStyles.standardText(
-                                  text:
-                                      "Tarifa de preventa oferta por tiempo limitado",
-                                  aling: TextAlign.center,
-                                  overClip: true),
-                              // if (dropdownValue == "Cotización Grupos")
-                              //   TextStyles.standardText(
-                              //       text: "Subtotal",
-                              //       aling: TextAlign.center,
-                              //       overClip: true),
-                            ]),
-                          ],
+                        padding: const EdgeInsets.only(top: 5),
+                        child: SizedBox(
+                          height: Utility.limitHeightList(
+                              comprobante.cotizacionesInd!.length),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: comprobante.cotizacionesInd!.length,
+                            itemBuilder: (context, index) {
+                              if (index < comprobante.cotizacionesInd!.length) {
+                                return CotizacionIndividualCard(
+                                  key: ObjectKey(comprobante
+                                      .cotizacionesInd![index].hashCode),
+                                  index: index,
+                                  cotizacion:
+                                      comprobante.cotizacionesInd![index],
+                                  compact: !Utility.isResizable(
+                                      extended: widget.sideController.extended,
+                                      context: context),
+                                  esDetalle: true,
+                                );
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: SizedBox(
-                        height: Utility.limitHeightList(
-                            comprobante.cotizaciones!.length),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: comprobante.cotizaciones!.length,
-                          itemBuilder: (context, index) {
-                            if (index < comprobante.cotizaciones!.length) {
-                              return CotizacionIndividualCard(
-                                key: ObjectKey(
-                                    comprobante.cotizaciones![index].hashCode),
-                                index: index,
-                                cotizacion: comprobante.cotizaciones![index],
-                                compact: !Utility.isResizable(
-                                    extended: widget.sideController.extended,
-                                    context: context),
-                                esDetalle: true,
-                              );
-                            }
-                          },
+                    if (comprobante.esGrupal!)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: SizedBox(
+                          height: Utility.limitHeightList(
+                              comprobante.cotizacionesGrup!.length),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: comprobante.cotizacionesGrup!.length,
+                            itemBuilder: (context, index) {
+                              if (index <
+                                  comprobante.cotizacionesGrup!.length) {
+                                return CotizacionGrupoCard(
+                                  key: ObjectKey(comprobante
+                                      .cotizacionesGrup![index].hashCode),
+                                  index: index,
+                                  cotGroup:
+                                      comprobante.cotizacionesGrup![index],
+                                  compact: !Utility.isResizable(
+                                      extended: widget.sideController.extended,
+                                      context: context),
+                                  isDetail: true,
+                                );
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ),
                     const Padding(
                       padding: EdgeInsets.only(bottom: 12, top: 8),
                       child: Divider(color: Colors.black54),
@@ -203,10 +263,18 @@ class _ComprobanteDetalleViewState
                           onPressed: () async {
                             setState(() => isLoading = true);
 
-                            comprobantePDF = await GeneradorDocService()
-                                .generarComprobanteCotizacionIndividual(
-                                    cotizacionesInd: comprobante.cotizaciones!,
-                                    comprobante: comprobante);
+                            if (comprobante.esGrupal!) {
+                              comprobantePDF = await GeneradorDocService()
+                                  .generarComprobanteCotizacionGrupal(
+                                      comprobante.cotizacionesGrup!,
+                                      comprobante);
+                            } else {
+                              comprobantePDF = await GeneradorDocService()
+                                  .generarComprobanteCotizacionIndividual(
+                                      cotizacionesInd:
+                                          comprobante.cotizacionesInd!,
+                                      comprobante: comprobante);
+                            }
 
                             Future.delayed(
                               Durations.long2,
@@ -233,11 +301,18 @@ class _ComprobanteDetalleViewState
                       build: (format) => comprobantePDF.save(),
                       actionBarTheme: PdfActionBarTheme(
                         backgroundColor: DesktopColors.ceruleanOscure,
+                        iconColor: Theme.of(context).primaryColor,
                       ),
                       canChangeOrientation: false,
                       canChangePageFormat: false,
                       canDebug: false,
                       allowSharing: false,
+                      loadingWidget: Center(
+                        child: LoadingAnimationWidget.fourRotatingDots(
+                          color: Colors.grey,
+                          size: 45,
+                        ),
+                      ),
                       pdfFileName:
                           "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
                       actions: [
@@ -249,9 +324,9 @@ class _ComprobanteDetalleViewState
                               bytes: await comprobantePDF.save(),
                             );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             CupertinoIcons.arrow_down_doc_fill,
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColor,
                             size: 22,
                           ),
                         ),

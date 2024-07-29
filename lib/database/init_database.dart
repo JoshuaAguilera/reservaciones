@@ -9,9 +9,13 @@ class InitDatabase {
     if (allUsers.isEmpty) {
       await db.into(db.users).insert(
             UsersCompanion.insert(
-                name: 'admin',
-                password: EncrypterTool.encryptData("12345678", null),
-                rol: "SUPERADMIN"),
+              name: 'admin',
+              password: EncrypterTool.encryptData("12345678", null),
+              rol: "SUPERADMIN",
+              mail: "sys2@coralbluehuatulco.mx",
+              passwordMail: EncrypterTool.encryptData("Sys2024CB", null),
+              phone: "+529581875040",
+            ),
           );
     }
 

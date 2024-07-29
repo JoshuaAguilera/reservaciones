@@ -16,6 +16,7 @@ class FormWidgets {
     required Color primaryColor,
     double verticalPadding = 6,
     bool blocked = false,
+    required Color colorText,
   }) {
     Color pickerColor = primaryColor;
     Color currentColor = primaryColor;
@@ -35,7 +36,7 @@ class FormWidgets {
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  TextStyles.standardText(text: nameInput),
+                  TextStyles.standardText(text: nameInput, color: colorText),
                   GestureDetector(
                     onTap: () {
                       showDialog(
@@ -88,6 +89,7 @@ class FormWidgets {
   static Widget inputImage({
     required String nameInput,
     bool bloked = false,
+    required Color colorText,
   }) {
     return Opacity(
       opacity: bloked ? 0.6 : 1,
@@ -99,7 +101,7 @@ class FormWidgets {
               height: 65,
               child: Wrap(
                 children: [
-                  TextStyles.standardText(text: nameInput),
+                  TextStyles.standardText(text: nameInput, color: colorText),
                   GestureDetector(
                     onTap: () {},
                     child: TextFormFieldCustom.textFormFieldwithBorder(
@@ -122,6 +124,9 @@ class FormWidgets {
     required String title,
     required String font,
     bool blocked = false,
+    required Color textColor,
+    required Color contentColor,
+    required Color textFontColor,
   }) {
     return Opacity(
       opacity: blocked ? 0.6 : 1,
@@ -129,7 +134,7 @@ class FormWidgets {
         absorbing: blocked,
         child: Wrap(
           children: [
-            TextStyles.standardText(text: title),
+            TextStyles.standardText(text: title, color: textColor),
             SizedBox(
               child: CustomDropdown<String>.search(
                 searchHintText: "Buscar",
@@ -138,6 +143,9 @@ class FormWidgets {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
                 items: textFont,
                 decoration: CustomDropdownDecoration(
+                    closedFillColor: contentColor,
+                    expandedFillColor: contentColor,
+                    searchFieldDecoration: SearchFieldDecoration( fillColor: contentColor),
                     closedBorderRadius:
                         const BorderRadius.all(Radius.circular(5)),
                     expandedBorderRadius:
@@ -151,14 +159,16 @@ class FormWidgets {
                   selectedItem,
                   style: TextStyle(
                       fontFamily:
-                          "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular"),
+                          "${selectedItem.toLowerCase().replaceAll(' ', '')}_regular",
+                      color: textFontColor),
                 ),
                 listItemBuilder: (context, item, isSelected, onItemSelect) =>
                     Text(
                   item,
                   style: TextStyle(
                       fontFamily:
-                          "${item.toLowerCase().replaceAll(' ', '')}_regular"),
+                          "${item.toLowerCase().replaceAll(' ', '')}_regular",
+                      color: textFontColor),
                 ),
               ),
             )
@@ -175,6 +185,7 @@ class FormWidgets {
     Color? activeColor,
     void Function(bool)? onChanged,
     bool bloked = false,
+    required BuildContext context,
   }) {
     return Opacity(
       opacity: bloked ? 0.6 : 1,
@@ -183,12 +194,19 @@ class FormWidgets {
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            TextStyles.standardText(text: name),
+            TextStyles.standardText(
+              text: name,
+              color: Theme.of(context).primaryColor,
+            ),
             Switch(
               value: value,
               activeColor: activeColor ?? Colors.white,
               inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
-              inactiveThumbColor: !isModeDark ? null : Colors.amber,
+              inactiveThumbColor: !isModeDark
+                  ? null
+                  : value
+                      ? Colors.white
+                      : Colors.amber,
               activeTrackColor: !isModeDark ? null : Colors.black54,
               onChanged: onChanged,
             ),

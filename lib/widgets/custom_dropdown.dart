@@ -48,12 +48,13 @@ class CustomDropdown {
     );
   }
 
-  static Widget dropdownPrefijoNumerico(
-      {required PrefijoTelefonico initialSelection,
-      required void Function(PrefijoTelefonico?)? onSelected,
-      required List<PrefijoTelefonico> elements,
-      double fontSize = 13,
-      double? screenWidth}) {
+  static Widget dropdownPrefijoNumerico({
+    required PrefijoTelefonico initialSelection,
+    required void Function(PrefijoTelefonico?)? onSelected,
+    required List<PrefijoTelefonico> elements,
+    double fontSize = 13,
+    double? screenWidth,
+  }) {
     return StatefulBuilder(
       builder: (context, setState) {
         return DropdownMenu<PrefijoTelefonico>(
@@ -69,11 +70,16 @@ class CustomDropdown {
                 width: 20,
               ),
               const SizedBox(width: 10),
-              TextStyles.standardText(text: initialSelection.prefijo),
+              TextStyles.standardText(
+                text: initialSelection.prefijo,
+                color: Theme.of(context).primaryColor,
+              ),
             ],
           ),
-          textStyle:
-              TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
+          textStyle: TextStyle(
+              fontFamily: "poppins_regular",
+              fontSize: fontSize,
+              color: Theme.of(context).primaryColor),
           dropdownMenuEntries: elements
               .map<DropdownMenuEntry<PrefijoTelefonico>>(
                   (PrefijoTelefonico value) {
@@ -81,9 +87,13 @@ class CustomDropdown {
               value: value,
               label: "",
               labelWidget: Tooltip(
-                decoration: BoxDecoration(color: Colors.grey[100]),
+                decoration:
+                    BoxDecoration(color: Theme.of(context).primaryColorDark),
                 richMessage: WidgetSpan(
-                    child: TextStyles.standardText(text: value.nombre)),
+                    child: TextStyles.standardText(
+                  text: value.nombre,
+                  color: Theme.of(context).primaryColor,
+                )),
                 child: Row(
                   children: [
                     Image(
@@ -91,13 +101,19 @@ class CustomDropdown {
                       width: 20,
                     ),
                     const SizedBox(width: 10),
-                    TextStyles.standardText(text: value.prefijo),
+                    TextStyles.standardText(
+                      text: value.prefijo,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
               ),
               style: ButtonStyle(
                 textStyle: WidgetStatePropertyAll(
-                  TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
+                  TextStyle(
+                      fontFamily: "poppins_regular",
+                      fontSize: fontSize,
+                      color: Theme.of(context).primaryColor),
                 ),
               ),
             );

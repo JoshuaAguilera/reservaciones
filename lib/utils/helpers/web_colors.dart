@@ -11,6 +11,8 @@ class DesktopColors {
   static Color turqueza = Color.fromARGB(255, 0, 192, 144);
   static Color turquezaOscure = Color.fromARGB(255, 3, 130, 98);
   static Color mentaOscure = Color.fromARGB(255, 82, 170, 138);
+  static Color grisSemiPalido = Color.fromARGB(255, 85, 85, 85);
+  static Color grisPalido = Color.fromARGB(255, 162, 162, 162);
 
   //Colors sidebar
   static Color primaryColor = Color(0xFF685BFF);

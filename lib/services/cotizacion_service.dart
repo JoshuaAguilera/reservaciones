@@ -1,18 +1,21 @@
-import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 
-class CotizacionService extends ChangeNotifier {
-  List<Cotizacion> cotizaciones = [];
+import 'base_service.dart';
 
-  Future<List<Cotizacion>> getCotizacionesByFolio(String folio) async {
+class CotizacionService extends BaseService {
+  List<Cotizacion> cotizacionesInd = [];
+  List<CotizacionGrupal> cotizacionesGrup = [];
+
+  Future<List<Cotizacion>> getCotizacionesIndByFolio(String folio) async {
     final database = AppDatabase();
 
     try {
-      List<QuoteData> resp = await database.getQuotesbyFolio(folio);
+      List<QuoteData> resp = await database.getQuotesIndbyFolio(folio);
 
       for (var element in resp) {
-        cotizaciones.add(Cotizacion(
+        cotizacionesInd.add(Cotizacion(
           categoria: element.category,
           plan: element.plan,
           fechaEntrada: element.enterDate,
@@ -28,7 +31,36 @@ class CotizacionService extends ChangeNotifier {
         ));
       }
       await database.close();
-      return cotizaciones;
+      return cotizacionesInd;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return List.empty();
+    }
+  }
+
+  Future<List<CotizacionGrupal>> getCotizacionesGrupByFolio(
+      String folio) async {
+    final database = AppDatabase();
+
+    try {
+      List<QuoteGroupData> resp = await database.getQuotesGroupbyFolio(folio);
+
+      for (var element in resp) {
+        cotizacionesGrup.add(CotizacionGrupal(
+          categoria: element.category,
+          plan: element.plan,
+          fechaEntrada: element.enterDate,
+          fechaSalida: element.outDate,
+          esPreVenta: element.isPresale,
+          tarifaAdulto1_2: element.rateAdult1_2,
+          tarifaAdulto3: element.rateAdult3,
+          tarifaAdulto4: element.rateAdult4,
+          tarifaMenor: element.rateMinor,
+        ));
+      }
+      await database.close();
+      return cotizacionesGrup;
     } catch (e) {
       print(e);
       await database.close();

@@ -1,9 +1,11 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -38,15 +40,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   void initState() {
-    _tooltipBehavior = TooltipBehavior(
-        enable: true,
-        duration: 1000,
-        textStyle: TextStyles.styleStandar(color: Colors.white, size: 11));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
@@ -71,7 +70,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextStyles.titlePagText(text: "Dashboard"),
+                  TextStyles.titlePagText(
+                      text: "Dashboard", color: Theme.of(context).primaryColor),
                   Row(
                     children: [
                       NotificationWidget.notificationsWidget(
@@ -116,6 +116,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           isBold: true,
                                           text: "Reporte de cotizaciones",
                                           overClip: true,
+                                          color: Theme.of(context).primaryColor,
                                           size: 16),
                                       CustomDropdown.dropdownMenuCustom(
                                           fontSize: 12,
@@ -145,7 +146,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             padding:
                                                 const EdgeInsets.only(top: 8.0),
                                             child: TextStyles.standardText(
-                                                text: "Cotizaciones", size: 12),
+                                              text: "Cotizaciones",
+                                              size: 12,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
                                           ),
                                         ),
                                         Expanded(
@@ -153,7 +158,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             height: 450,
                                             child: SfCartesianChart(
                                               plotAreaBorderWidth: 0,
-                                              tooltipBehavior: _tooltipBehavior,
+                                              tooltipBehavior: TooltipBehavior(
+                                                enable: true,
+                                                duration: 1000,
+                                                textStyle:
+                                                    TextStyles.styleStandar(
+                                                  size: 11,
+                                                  color: brightness ==
+                                                          Brightness.light
+                                                      ? Colors.white
+                                                      : DesktopColors
+                                                          .prussianBlue,
+                                                ),
+                                              ),
                                               palette: [
                                                 DesktopColors.cotGroupColor,
                                                 DesktopColors.cotIndColor,
@@ -170,7 +187,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       LegendPosition.bottom,
                                                   textStyle:
                                                       TextStyles.styleStandar(
-                                                          size: 11),
+                                                    size: 11,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
                                                   overflowMode:
                                                       LegendItemOverflowMode
                                                           .wrap),
@@ -229,7 +249,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 labelRotation: 45, //Opcional
                                                 labelStyle:
                                                     TextStyles.styleStandar(
-                                                        size: 12),
+                                                  size: 12,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                ),
                                                 axisLine:
                                                     const AxisLine(width: 2),
                                                 majorGridLines:
@@ -243,8 +266,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     );
                                   },
                                   error: (error, stackTrace) {
-                                    return const Text(
-                                        'No se encontraron resultados');
+                                    return TextStyles.standardText(
+                                      text: "No se han encontrado resultados",
+                                      color: Theme.of(context).primaryColor,
+                                    );
                                   },
                                   loading: () {
                                     return SizedBox(
@@ -284,13 +309,16 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 return const SizedBox();
                               },
                               loading: () {
-                                return Center(
-                                        child: LoadingAnimationWidget
-                                            .fourRotatingDots(
-                                          color: Colors.grey,
-                                          size: 45,
-                                        ),
-                                      );
+                                return SizedBox(
+                                  height: 524,
+                                  child: Center(
+                                    child:
+                                        LoadingAnimationWidget.fourRotatingDots(
+                                      color: Colors.grey,
+                                      size: 45,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ),
@@ -328,15 +356,28 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           isBold: true,
                                           text: "Reporte de hoy",
                                           size: 16,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                       ),
                                       cotizacionesDiariasSync.when(
                                         data: (list) {
                                           return SfCircularChart(
-                                            tooltipBehavior:
-                                                !Utility.foundQuotes(list)
-                                                    ? null
-                                                    : _tooltipBehavior,
+                                            tooltipBehavior: !Utility
+                                                    .foundQuotes(list)
+                                                ? null
+                                                : TooltipBehavior(
+                                                    enable: true,
+                                                    duration: 1000,
+                                                    textStyle:
+                                                        TextStyles.styleStandar(
+                                                      size: 11,
+                                                      color: brightness ==
+                                                              Brightness.light
+                                                          ? Colors.white
+                                                          : DesktopColors
+                                                              .prussianBlue,
+                                                    ),
+                                                  ),
                                             palette: [
                                               DesktopColors.cotGroupColor,
                                               DesktopColors.cotIndColor,
@@ -347,7 +388,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               isVisible: true,
                                               textStyle:
                                                   TextStyles.styleStandar(
-                                                      size: 11),
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                size: 11,
+                                              ),
                                               overflowMode:
                                                   LegendItemOverflowMode.wrap,
                                               position: LegendPosition.bottom,
@@ -393,11 +437,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           return const SizedBox();
                                         },
                                         loading: () {
-                                          return Center(
-                                            child: LoadingAnimationWidget
-                                                .fourRotatingDots(
-                                              color: Colors.grey,
-                                              size: 45,
+                                          return SizedBox(
+                                            height: 350,
+                                            child: Center(
+                                              child: LoadingAnimationWidget
+                                                  .fourRotatingDots(
+                                                color: Colors.grey,
+                                                size: 45,
+                                              ),
                                             ),
                                           );
                                         },
@@ -414,8 +461,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             const EdgeInsets.only(bottom: 85.0),
                                         child: Center(
                                             child: TextStyles.standardText(
-                                                text: "Sin resultados",
-                                                size: 11)),
+                                          text: "Sin resultados",
+                                          size: 11,
+                                          color: Theme.of(context).primaryColor,
+                                        )),
                                       ).animate().fadeIn(
                                           delay: const Duration(
                                               milliseconds: 850));
@@ -457,6 +506,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             TextStyles.standardText(
                                                 isBold: true,
                                                 text: "Ultimas cotizaciones",
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                                 size: 16),
                                             TextButton(
                                               onPressed: () {
@@ -473,10 +524,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       ultimasCotizacionesSync.when(
                                         data: (list) {
                                           if (list.isEmpty) {
-                                            return Center(
-                                                child: TextStyles.standardText(
-                                                    text:
-                                                        "No se encontraron cotizaciones"));
+                                            return SizedBox(
+                                              height: 280,
+                                              child: CustomWidgets
+                                                  .messageNotResult(
+                                                      context: context),
+                                            );
                                           } else {
                                             return SizedBox(
                                               width: screenWidth,
@@ -499,17 +552,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           }
                                         },
                                         error: (error, stackTrace) {
-                                          return Center(
-                                              child: TextStyles.standardText(
-                                                  text:
-                                                      "No se encontraron cotizaciones"));
+                                          return SizedBox(
+                                            height: 280,
+                                            child:
+                                                CustomWidgets.messageNotResult(
+                                                    context: context),
+                                          );
                                         },
                                         loading: () {
-                                          return Center(
-                                            child: LoadingAnimationWidget
-                                                .fourRotatingDots(
-                                              color: Colors.grey,
-                                              size: 45,
+                                          return SizedBox(
+                                            height: 320,
+                                            child: Center(
+                                              child: LoadingAnimationWidget
+                                                  .fourRotatingDots(
+                                                color: Colors.grey,
+                                                size: 45,
+                                              ),
                                             ),
                                           );
                                         },

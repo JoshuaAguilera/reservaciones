@@ -84,7 +84,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextStyles.titlePagText(text: "Generar cotización"),
+                        TextStyles.titlePagText(
+                          text: "Generar cotización",
+                          color: Theme.of(context).primaryColor,
+                        ),
                         if (isFinish)
                           ElevatedButton(
                             onPressed: () {
@@ -196,18 +199,17 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 bottom: 8.0),
                                             child: CustomDropdown
                                                 .dropdownPrefijoNumerico(
-                                                    initialSelection:
-                                                        prefijoInit,
-                                                    onSelected:
-                                                        (PrefijoTelefonico?
-                                                            value) {
-                                                      setState(() {
-                                                        prefijoInit = value!;
-                                                      });
-                                                    },
-                                                    elements:
-                                                        getPrefijosTelefonicos(),
-                                                    screenWidth: null),
+                                              initialSelection: prefijoInit,
+                                              onSelected:
+                                                  (PrefijoTelefonico? value) {
+                                                setState(() {
+                                                  prefijoInit = value!;
+                                                });
+                                              },
+                                              elements:
+                                                  getPrefijosTelefonicos(),
+                                              screenWidth: null,
+                                            ),
                                           )),
                                       const SizedBox(width: 10),
                                       Expanded(
@@ -272,15 +274,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                         .habitacionIndividualDialog(
                                                             buildContext:
                                                                 context)
-                                                    : Dialogs()
-                                                        .habitacionGrupoDialog(
+                                                    : Dialogs().habitacionGrupoDialog(
                                                         buildContext: context,
                                                         onInsert: (p0) =>
-                                                            setState(() {
-                                                          cotizacionesGrupales
-                                                              .add(p0!);
-                                                        }),
-                                                      );
+                                                            setState(() =>
+                                                                cotizacionesGrupales
+                                                                    .add(p0!)),
+                                                        context: context);
                                               },
                                             ).then((value) {
                                               if (value != null) {
@@ -336,22 +336,30 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               TextStyles.standardText(
                                                   text: "#",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             TextStyles.standardText(
                                                 text: "Fechas de estancia",
                                                 aling: TextAlign.center,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                                 overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Individual")
                                               TextStyles.standardText(
                                                   text: "Adultos",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Individual")
                                               TextStyles.standardText(
                                                   text: "Menores 0-6",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             TextStyles.standardText(
                                                 text: (dropdownValue ==
@@ -359,6 +367,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     ? "Menores 7-12"
                                                     : "1 o 2 Adultos",
                                                 aling: TextAlign.center,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                                 overClip: true),
                                             TextStyles.standardText(
                                                 text: (dropdownValue ==
@@ -366,18 +376,24 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     ? "Tarifa \nReal"
                                                     : "3 Adultos",
                                                 aling: TextAlign.center,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                                 overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Grupos")
                                               TextStyles.standardText(
                                                   text: "  4 Adultos  ",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Grupos")
                                               TextStyles.standardText(
                                                   text: "Menores 7 a 12 Años",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             if (dropdownValue ==
                                                 "Cotización Individual")
@@ -385,9 +401,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   text:
                                                       "Tarifa de preventa oferta por tiempo limitado",
                                                   aling: TextAlign.center,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
                                                   overClip: true),
                                             TextStyles.standardText(
                                                 text: "Opciones",
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                                 aling: TextAlign.center)
                                           ]),
                                         ],
@@ -444,11 +464,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                                           index])
                                                           : Dialogs()
                                                               .habitacionGrupoDialog(
-                                                                  buildContext:
-                                                                      context,
-                                                                  cotizacion:
-                                                                      cotizacionesGrupales[
-                                                                          index]);
+                                                              buildContext:
+                                                                  context,
+                                                              cotizacion:
+                                                                  cotizacionesGrupales[
+                                                                      index],
+                                                              context: context,
+                                                            );
                                                     },
                                                   ).then((value) {
                                                     if (value != null) {
@@ -507,10 +529,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                               cotizacionesGrupales[
                                                                   index],
                                                           onUpdate: (p0) =>
-                                                              setState(() {
-                                                            cotizacionesGrupales[
-                                                                index] = p0!;
-                                                          }),
+                                                              setState(() =>
+                                                                  cotizacionesGrupales[
+                                                                          index] =
+                                                                      p0!),
+                                                          context: context,
                                                         );
                                                       });
                                                 },
@@ -541,7 +564,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           text:
                                               "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacionesIndividuales))}",
                                           size: 16,
-                                          color: DesktopColors.prussianBlue,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                       ),
                                     ),

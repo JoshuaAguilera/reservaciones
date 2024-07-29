@@ -136,14 +136,16 @@ class TextStyles {
   }
 
   static Text titlePagText(
-      {required String text, TextOverflow overflow = TextOverflow.ellipsis}) {
+      {required String text,
+      TextOverflow overflow = TextOverflow.ellipsis,
+      Color? color}) {
     return Text(
       text,
       textAlign: TextAlign.start,
       overflow: overflow,
       style: TextStyle(
         fontFamily: "poppins_bold",
-        color: DesktopColors.prussianBlue,
+        color: color ?? DesktopColors.prussianBlue,
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),

@@ -11,7 +11,7 @@ class Preferences {
   static String _passwordMail = '';
   static String _urlApi = '';
   static String _aplication = '';
-  static bool _isOnline = false;
+  static bool _modeDark = false;
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -90,12 +90,12 @@ class Preferences {
     _prefs.setString('urlApi', value);
   }
 
-  static bool get isOnline {
-    return _prefs.getBool('isOnline') ?? _isOnline;
+  static bool get modeDark {
+    return _prefs.getBool('modeDark') ?? _modeDark;
   }
 
-  static set isOnline(bool value) {
-    _isOnline = value;
-    _prefs.setBool('isOnline', value);
+  static set modeDark(bool value) {
+    _modeDark = value;
+    _prefs.setBool('modeDark', value);
   }
 }

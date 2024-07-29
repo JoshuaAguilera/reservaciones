@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
@@ -198,6 +199,7 @@ class _LoginViewState extends State<LoginView> {
                                       }
 
                                       if (!context.mounted) return;
+                                      await AuthService().savePerfil(userNameController.text, passwordController.text); 
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
