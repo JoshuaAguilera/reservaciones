@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
@@ -80,10 +79,11 @@ class _LoginViewState extends State<LoginView> {
                                 image: const AssetImage(
                                     "assets/image/logo_lobby.png"),
                                 width: screenWidth > 350 ? 220 : 170,
+                                color: Theme.of(context).primaryColor,
                               ),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
-                                color: DesktopColors.prussianBlue,
+                                color: Theme.of(context).primaryColor,
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
                               Container(
@@ -150,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
                                           _passwordVisible
                                               ? CupertinoIcons.eye_solid
                                               : CupertinoIcons.eye_slash_fill,
-                                          color: DesktopColors.cerulean,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                         onPressed: () {
                                           setState(() {
@@ -199,12 +199,19 @@ class _LoginViewState extends State<LoginView> {
                                       }
 
                                       if (!context.mounted) return;
-                                      await AuthService().savePerfil(userNameController.text, passwordController.text); 
-                                      Navigator.pushReplacement(
+                                      await AuthService().savePerfil(
+                                          userNameController.text,
+                                          passwordController.text);
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => HomeView()),
                                       );
+                                      _passwordVisible = false;
+                                      isLoading = false;
+                                      userNameController.text = '';
+                                      passwordController.text = '';
+                                      setState(() {});
                                     } else {
                                       setState(() => isLoading = false);
                                     }

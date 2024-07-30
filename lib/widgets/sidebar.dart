@@ -98,13 +98,13 @@ class SideBar extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => _controller.selectIndex(4),
+                onTap: () => _controller.selectIndex(99),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
                   child: Container(
                       padding: const EdgeInsets.all(5),
-                      decoration: _controller.selectedIndex == 4
+                      decoration: _controller.selectedIndex == 99
                           ? BoxDecoration(
                               border: Border.all(
                                 color:
@@ -185,12 +185,12 @@ class SideBar extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => _controller.selectIndex(4),
+                onTap: () => _controller.selectIndex(99),
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: Container(
                     padding: const EdgeInsets.all(5),
-                    decoration: _controller.selectedIndex == 4
+                    decoration: _controller.selectedIndex == 99
                         ? BoxDecoration(
                             border: Border.all(
                               color:

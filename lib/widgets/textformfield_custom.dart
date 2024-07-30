@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 
+import '../utils/helpers/utility.dart';
 import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class TextFormFieldCustom {
   static Widget textFormFieldwithBorder({
     required String name,
-     String msgError = "Campo requerido*",
+    String msgError = "Campo requerido*",
     bool isPassword = false,
     bool passwordVisible = false,
     bool isNumeric = false,
@@ -24,6 +25,7 @@ class TextFormFieldCustom {
     double? maxWidth,
     Icon? icon,
     double maxHeight = 100,
+    bool readOnly = false,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -48,6 +50,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: blocked,
                 child: TextFormField(
+                  readOnly: readOnly,
                   enabled: enabled,
                   controller: controller,
                   onChanged: (value) {
@@ -135,6 +138,10 @@ class TextFormFieldCustom {
     void Function()? onChanged,
     String fechaLimite = "",
     bool esInvertido = false,
+    int firstYear = 2,
+    int lastYear = 2,
+    bool nowLastYear = false,
+    bool changed = false,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -158,9 +165,19 @@ class TextFormFieldCustom {
                     if (value == null || value.isEmpty) {
                       return msgError;
                     }
+
+                    if (changed && value.isNotEmpty) {
+                      return msgError;
+                    }
                     return null;
                   },
-                  controller: dateController,
+                  controller: TextEditingController(
+                    text: Utility.getCompleteDate(
+                      data: DateTime.parse(
+                        dateController.text,
+                      ),
+                    ),
+                  ),
                   style: const TextStyle(
                     fontSize: 13,
                     fontFamily: "poppins_regular",
@@ -183,18 +200,22 @@ class TextFormFieldCustom {
                       firstDate: fechaLimite.isNotEmpty
                           ? DateTime.parse(fechaLimite)
                               .add(const Duration(days: 1))
-                          : DateTime(DateTime.now().year - 2),
-                      lastDate: DateTime((DateTime.now().year + 2)),
+                          : DateTime(DateTime.now().year - firstYear),
+                      lastDate: nowLastYear
+                          ? DateTime.now()
+                          : DateTime((DateTime.now().year + lastYear)),
                       locale: const Locale('es', 'ES'),
-                    ).then((date) {
-                      if (date != null) {
-                        setState(() {
-                          dateController.text =
-                              date.toIso8601String().substring(0, 10);
-                          if (onChanged != null) onChanged.call();
-                        });
-                      }
-                    });
+                    ).then(
+                      (date) {
+                        if (date != null) {
+                          setState(() {
+                            dateController.text =
+                                date.toIso8601String().substring(0, 10);
+                            if (onChanged != null) onChanged.call();
+                          });
+                        }
+                      },
+                    );
                   },
                 ),
               ),

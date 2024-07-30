@@ -31,8 +31,9 @@ class AppDatabase extends _$AppDatabase {
     return (select(quote)..where((t) => t.folio.equals(folioQuotes))).get();
   }
 
-   Future<List<QuoteGroupData>> getQuotesGroupbyFolio(String folioQuotes) {
-    return (select(quoteGroup)..where((t) => t.folio.equals(folioQuotes))).get();
+  Future<List<QuoteGroupData>> getQuotesGroupbyFolio(String folioQuotes) {
+    return (select(quoteGroup)..where((t) => t.folio.equals(folioQuotes)))
+        .get();
   }
 
   Future<List<ReceiptQuoteData>> getReceiptQuotesSearch(String search) {
@@ -201,6 +202,11 @@ class AppDatabase extends _$AppDatabase {
             (tbl) => tbl.password.equals(password),
           ))
         .get();
+  }
+
+  Future<int> updateInfoUser(User usuario) {
+    return (update(users)..where((t) => t.id.equals(usuario.id)))
+        .write(usuario);
   }
 }
 

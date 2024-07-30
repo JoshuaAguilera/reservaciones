@@ -2,6 +2,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import '../../utils/helpers/themes.dart';
 import '../../widgets/form_widgets.dart';
 
@@ -16,6 +17,7 @@ class _ConfigGeneralViewState extends State<ConfigGeneralView> {
   @override
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SingleChildScrollView(
@@ -27,9 +29,6 @@ class _ConfigGeneralViewState extends State<ConfigGeneralView> {
               builder: (context) {
                 return GestureDetector(
                   onTapDown: (details) {
-                    setState(
-                        () => activeModeDark = brightness == Brightness.light);
-
                     ThemeSwitcher.of(context).changeTheme(
                       theme: brightness == Brightness.light
                           ? Themes().darkMode()
@@ -37,9 +36,10 @@ class _ConfigGeneralViewState extends State<ConfigGeneralView> {
                       offset: details.localPosition,
                       isReversed: brightness == Brightness.dark ? true : false,
                     );
+                    Preferences.modeDark = !Preferences.modeDark;
                   },
                   child: FormWidgets.inputSwitch(
-                    value: activeModeDark,
+                    value: Preferences.modeDark,
                     activeColor: Colors.white,
                     isModeDark: true,
                     name: "Modo Oscuro: ",

@@ -5,6 +5,7 @@ import 'package:generador_formato/views/configuracion/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';
 import 'package:generador_formato/views/generar_cotizacion_view.dart';
 import 'package:generador_formato/views/historial/historial_view.dart';
+import 'package:generador_formato/views/perfil_view.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 class MenuView extends StatefulWidget {
@@ -37,6 +38,10 @@ class _MenuViewState extends State<MenuView> {
             return HistorialView(sideController: widget.controller);
           case 3:
             return ConfiguracionView(sideController: widget.controller);
+          case 4:
+            return Text("Good Bye!", style: theme.textTheme.headlineSmall);
+          case 99:
+            return PerfilView(sideController: widget.controller);
           case 12:
             return ComprobanteDetalleView(sideController: widget.controller);
           default:

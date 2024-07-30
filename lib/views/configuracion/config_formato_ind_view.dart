@@ -149,6 +149,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                       canDebug: false,
                       allowSharing: false,
                       allowPrinting: false,
+                      loadingWidget: ProgressIndicatorCustom(0),
                       pdfFileName:
                           "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
                       actions: [

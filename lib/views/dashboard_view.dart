@@ -15,7 +15,6 @@ import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tuple/tuple.dart';
@@ -35,7 +34,6 @@ class DashboardView extends ConsumerStatefulWidget {
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
   bool isLoading = false;
-  late TooltipBehavior _tooltipBehavior;
   final GlobalKey<TooltipState> messageKey = GlobalKey<TooltipState>();
 
   @override
@@ -274,13 +272,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   loading: () {
                                     return SizedBox(
                                       height: 450,
-                                      child: Center(
-                                        child: LoadingAnimationWidget
-                                            .fourRotatingDots(
-                                          color: Colors.grey,
-                                          size: 45,
-                                        ),
-                                      ),
+                                      child: ProgressIndicatorCustom(0),
                                     );
                                   },
                                 )
@@ -309,16 +301,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 return const SizedBox();
                               },
                               loading: () {
-                                return SizedBox(
-                                  height: 524,
-                                  child: Center(
-                                    child:
-                                        LoadingAnimationWidget.fourRotatingDots(
-                                      color: Colors.grey,
-                                      size: 45,
-                                    ),
-                                  ),
-                                );
+                                return ProgressIndicatorCustom(80);
                               },
                             ),
                           ),
@@ -437,16 +420,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           return const SizedBox();
                                         },
                                         loading: () {
-                                          return SizedBox(
-                                            height: 350,
-                                            child: Center(
-                                              child: LoadingAnimationWidget
-                                                  .fourRotatingDots(
-                                                color: Colors.grey,
-                                                size: 45,
-                                              ),
-                                            ),
-                                          );
+                                          return ProgressIndicatorCustom(350);
                                         },
                                       )
                                     ],
@@ -560,16 +534,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           );
                                         },
                                         loading: () {
-                                          return SizedBox(
-                                            height: 320,
-                                            child: Center(
-                                              child: LoadingAnimationWidget
-                                                  .fourRotatingDots(
-                                                color: Colors.grey,
-                                                size: 45,
-                                              ),
-                                            ),
-                                          );
+                                          return ProgressIndicatorCustom(320);
                                         },
                                       )
                                     ],

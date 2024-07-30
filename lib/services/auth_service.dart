@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/services/base_service.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
@@ -28,10 +27,25 @@ class AuthService extends BaseService {
 
     Preferences.mail = users.first.mail;
     Preferences.passwordMail = users.first.passwordMail;
-    Preferences.phone = int.parse(users.first.phone);
+    Preferences.phone = users.first.phone;
     Preferences.rol = users.first.rol;
     Preferences.username = users.first.name;
+    Preferences.password = users.first.password;
 
+    Preferences.firstName = users.first.firstName ?? '';
+    Preferences.lastName = users.first.secondName ?? '';
+    Preferences.birthDate = users.first.birthDate ?? '';
     db.close();
+  }
+
+  Future<bool> updateUser(User user) async {
+    bool success = false;
+
+    final db = AppDatabase();
+    int response = await db.updateInfoUser(user);
+    success = db == 1;
+    db.close();
+
+    return success;
   }
 }

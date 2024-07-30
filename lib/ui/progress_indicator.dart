@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
-
-import '../utils/helpers/web_colors.dart';
-import '../widgets/text_styles.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 Widget ProgressIndicatorCustom(double screenHight) {
   return Center(
     child: Padding(
       padding: EdgeInsets.only(top: screenHight * 0.37),
-      child: Column(
-        children: [
-          CircularProgressIndicator(
-            color: DesktopColors.prussianBlue,
-          ),
-          TextStyles.standardText(
-            text: "Espere",
-            size: 15,
-          ),
-        ],
+      child: Center(
+        child: LoadingAnimationWidget.fourRotatingDots(
+          color: Colors.grey,
+          size: 45,
+        ),
       ),
     ),
   );

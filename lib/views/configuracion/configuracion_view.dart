@@ -3,7 +3,6 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/configuracion/config_formato_group_view.dart';
 import 'package:generador_formato/views/configuracion/config_general_view.dart';
 import 'package:generador_formato/views/configuracion/preferencias_config_view.dart';
-import 'package:generador_formato/widgets/carousel_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/buttons.dart';
@@ -40,7 +39,7 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
               ]),
               TextStyles.standardText(
                 text:
-                    "Administrar la configuración y preferencias de su cuenta",
+                    "Administrar la configuración y preferencias de su interfaz y documentos.",
                 color: Theme.of(context).primaryColor,
               ),
               Divider(

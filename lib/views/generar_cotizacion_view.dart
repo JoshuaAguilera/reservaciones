@@ -22,6 +22,7 @@ import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -723,6 +724,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         child: SizedBox(
                           height: screenHight * 0.89,
                           child: PdfPreview(
+                            loadingWidget: Center(
+                              child: LoadingAnimationWidget.fourRotatingDots(
+                                color: Colors.grey,
+                                size: 45,
+                              ),
+                            ),
                             build: (format) => comprobantePDF.save(),
                             actionBarTheme: PdfActionBarTheme(
                               backgroundColor: DesktopColors.ceruleanOscure,

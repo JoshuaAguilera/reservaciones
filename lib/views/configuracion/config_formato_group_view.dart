@@ -159,6 +159,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                       canChangeOrientation: false,
                       canChangePageFormat: false,
                       canDebug: false,
+                      loadingWidget: ProgressIndicatorCustom(0),
                       allowSharing: false,
                       allowPrinting: false,
                       pdfFileName:

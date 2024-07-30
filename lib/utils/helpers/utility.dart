@@ -20,7 +20,9 @@ class Utility {
         return 'Generar Cotización';
       case 2:
         return 'Historial';
-      case 4:
+      case 3:
+        return 'Configuracion';
+      case 99:
         return 'Perfil';
       // case 4:
       //   return 'Custom iconWidget';

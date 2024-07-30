@@ -13,7 +13,7 @@ class TextFormFieldStyle {
       errorStyle: TextStyle(
         fontFamily: "poppins_regular",
         color: Colors.red[800],
-        fontSize: 13,
+        fontSize: 10,
       ),
     );
   }
@@ -35,7 +35,7 @@ class TextFormFieldStyle {
       errorStyle: TextStyle(
         fontFamily: "poppins_regular",
         color: Colors.red[800],
-        fontSize: 13,
+        fontSize: 10,
       ),
       suffixIcon: GestureDetector(
         onTap: function,

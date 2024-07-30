@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     final isPlatformDark =
         WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
     final initTheme =
-        isPlatformDark ? Themes().darkMode() : Themes().lightMode();
+        Preferences.modeDark ? Themes().darkMode() : Themes().lightMode();
 
     return ThemeProvider(
         initTheme: initTheme,

@@ -5,10 +5,14 @@ class Preferences {
 
   static String _token = '';
   static String _username = '';
+  static String _lastName = '';
+  static String _firstName = '';
+  static String _birthDate = '';
   static String _mail = '';
-  static int _phone = 0;
+  static String _phone = '';
   static String _rol = '';
   static String _passwordMail = '';
+  static String _password = '';
   static String _urlApi = '';
   static String _aplication = '';
   static bool _modeDark = false;
@@ -35,6 +39,33 @@ class Preferences {
     _prefs.setString('username', value);
   }
 
+  static String get firstName {
+    return _prefs.getString('firstName') ?? _firstName;
+  }
+
+  static set firstName(String value) {
+    _firstName = value;
+    _prefs.setString('firstName', value);
+  }
+
+  static String get lastName {
+    return _prefs.getString('lastName') ?? _lastName;
+  }
+
+  static set lastName(String value) {
+    _lastName = value;
+    _prefs.setString('lastName', value);
+  }
+
+  static String get birthDate {
+    return _prefs.getString('birthDate') ?? _birthDate;
+  }
+
+  static set birthDate(String value) {
+    _birthDate = value;
+    _prefs.setString('birthDate', value);
+  }
+
   static String get mail {
     return _prefs.getString('mail') ?? _mail;
   }
@@ -43,16 +74,16 @@ class Preferences {
     _mail = value;
     _prefs.setString('mail', value);
   }
-  
-  static int get phone {
-    return _prefs.getInt('phone') ?? _phone;
+
+  static String get phone {
+    return _prefs.getString('phoneUser') ?? _phone;
   }
 
-  static set phone(int value) {
+  static set phone(String value) {
     _phone = value;
-    _prefs.setInt('phone', value);
+    _prefs.setString('phoneUser', value);
   }
-  
+
   static String get rol {
     return _prefs.getString('rol') ?? _rol;
   }
@@ -71,6 +102,14 @@ class Preferences {
     _prefs.setString('passwordMail', value);
   }
 
+  static String get password {
+    return _prefs.getString('password') ?? _password;
+  }
+
+  static set password(String value) {
+    _password = value;
+    _prefs.setString('password', value);
+  }
 
   static String get sucursal {
     return _prefs.getString('sucursal') ?? _aplication;

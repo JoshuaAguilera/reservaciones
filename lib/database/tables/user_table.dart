@@ -8,4 +8,7 @@ class Users extends Table {
   TextColumn get mail => text()();
   TextColumn get passwordMail => text()();
   TextColumn get phone => text()();
+  TextColumn get birthDate => text().nullable()();
+  TextColumn get firstName => text().nullable()();
+  TextColumn get secondName => text().nullable()();
 }

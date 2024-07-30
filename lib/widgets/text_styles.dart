@@ -34,12 +34,15 @@ class TextStyles {
   }
 
   static Text buttonText(
-      {String text = "", TextAlign aling = TextAlign.left, double size = 14}) {
+      {String text = "",
+      TextAlign aling = TextAlign.left,
+      double size = 14,
+      Color? color}) {
     return Text(
       text,
       textAlign: aling,
       style: TextStyle(
-        color: DesktopColors.turqueza,
+        color: color ?? DesktopColors.turqueza,
         fontSize: size,
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_regular",

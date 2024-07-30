@@ -14,7 +14,7 @@ class InitDatabase {
               rol: "SUPERADMIN",
               mail: "sys2@coralbluehuatulco.mx",
               passwordMail: EncrypterTool.encryptData("Sys2024CB", null),
-              phone: "+529581875040",
+              phone: "\+529581875040",
             ),
           );
     }

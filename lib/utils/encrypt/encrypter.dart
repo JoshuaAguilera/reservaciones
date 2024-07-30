@@ -17,7 +17,7 @@ class EncrypterTool {
     return encrypted.base64;
   }
 
-  static decryptData(String text, enc.AESMode _aesmode) {
+  static decryptData(String text, enc.AESMode? _aesmode) {
     final key = enc.Key.fromUtf8(EncryptionData.encryptionKey);
 
     final iv = enc.IV.fromUtf8(EncryptionData.encryptionIV);
@@ -26,7 +26,7 @@ class EncrypterTool {
         mode: _aesmode ?? enc.AESMode.cbc,
         padding: EncryptionModes.AESPADDING));
 
-    final decrypted = encrypter.decrypt(enc.Encrypted.fromUtf8(text), iv: iv);
+    final decrypted = encrypter.decrypt(enc.Encrypted.fromBase64(text), iv: iv);
 
     return decrypted;
   }
