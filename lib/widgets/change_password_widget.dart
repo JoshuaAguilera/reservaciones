@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/ui/show_snackbar.dart';
+import 'package:generador_formato/utils/encrypt/encrypter.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
+import '../ui/buttons.dart';
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 import 'textformfield_custom.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
-  const ChangePasswordWidget({super.key});
+  const ChangePasswordWidget({
+    super.key,
+    required this.passwordController,
+    required this.isChanged,
+    required this.userId,
+    required this.isPasswordMail,
+  });
+
+  final TextEditingController passwordController;
+  final void Function(bool value) isChanged;
+  final int userId;
+  final bool isPasswordMail;
 
   @override
   State<ChangePasswordWidget> createState() => _ChangePasswordWidgetState();
@@ -14,16 +31,32 @@ class ChangePasswordWidget extends StatefulWidget {
 class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
   bool canChangedKeyMail = false;
   bool cancelChangedKeyMail = false;
+  final TextEditingController passwordMailNewController =
+      TextEditingController();
+  final TextEditingController passwordMailConfirmController =
+      TextEditingController();
+  final _formKeyPassword = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+      SizedBox(
+        width: double.infinity,
+        child: TextFormFieldCustom.textFormFieldwithBorder(
+          isPassword: true,
+          passwordVisible: true,
+          name: "Contraseña de correo",
+          controller: widget.passwordController,
+          readOnly: true,
+        ),
+      ),
       SizedBox(
         height: canChangedKeyMail ? 0 : null,
         child: Align(
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () {
+              widget.isChanged.call(true);
               setState(() => canChangedKeyMail = true);
               Future.delayed(Durations.long1,
                   () => setState(() => cancelChangedKeyMail = true));
@@ -46,34 +79,110 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 size: 11,
               ),
             ),
-            /*
-            Wrap(
-              children: [
-                TextFormFieldCustom.textFormFieldwithBorder(
-                  name: "Nueva Contraseña",
-                  controller: passwordMailNewController,
-                ),
-                TextFormFieldCustom.textFormFieldwithBorder(
-                  name: "Confirmar Contraseña",
-                  controller: passwordMailConfirmController,
-                ),
-              ],
+            Form(
+              key: _formKeyPassword,
+              child: Wrap(
+                children: [
+                  TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Nueva Contraseña",
+                    controller: passwordMailNewController,
+                    validator: (p0) {
+                      if (p0 == null || p0!.isEmpty || p0.length < 4) {
+                        return "La contraseña debe de tener al menos 4 caracteres*";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Confirmar Contraseña",
+                    controller: passwordMailConfirmController,
+                    validator: (p0) {
+                      if (passwordMailNewController.text.length > 0) {
+                        if (p0 == null ||
+                            p0!.isEmpty ||
+                            p0 != passwordMailNewController.text) {
+                          return "La contraseña debe ser la misma*";
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Buttons.commonButton(
                     onPressed: () {
+                      widget.isChanged.call(false);
+                      setState(() => cancelChangedKeyMail = false);
+                      Future.delayed(Durations.long1,
+                          () => setState(() => canChangedKeyMail = false));
+                      passwordMailConfirmController.text = "";
+                      passwordMailNewController.text = "";
+                    },
+                    color: DesktopColors.mentaOscure,
+                    text: "Cancelar"),
+                Buttons.commonButton(
+                    onPressed: () async {
+                      if (!_formKeyPassword.currentState!.validate()) {
+                        return;
+                      }
+
+                      if (widget.isPasswordMail) {
+                        if (await AuthService().updatePasswordMail(
+                            widget.userId,
+                            EncrypterTool.encryptData(
+                                passwordMailConfirmController.text, null))) {
+                          showSnackBar(
+                              context: context,
+                              title: "Error de actualización",
+                              message:
+                                  "No se proceso el cambio de contraseña de correo correctamente",
+                              type: 'danger');
+                          return;
+                        }
+
+                        Preferences.passwordMail = EncrypterTool.encryptData(
+                            passwordMailConfirmController.text, null);
+                      } else {
+                        if (await AuthService().updatePasswordUser(
+                            widget.userId,
+                            EncrypterTool.encryptData(
+                                passwordMailConfirmController.text, null))) {
+                          showSnackBar(
+                              context: context,
+                              title: "Error de actualización",
+                              message:
+                                  "No se proceso el cambio de contraseña correctamente",
+                              type: 'danger');
+                          return;
+                        }
+
+                        Preferences.password = EncrypterTool.encryptData(
+                            passwordMailConfirmController.text, null);
+                      }
+
+                      showSnackBar(
+                          context: context,
+                          title: "Contraseña actualizada",
+                          message: "Se actualizó la contraseña correctamente.",
+                          type: 'success');
+
+                      widget.passwordController.text =
+                          passwordMailConfirmController.text;
+                      passwordMailConfirmController.text = "";
+                      passwordMailNewController.text = "";
+
+                      widget.isChanged.call(false);
                       setState(() => cancelChangedKeyMail = false);
                       Future.delayed(Durations.long1,
                           () => setState(() => canChangedKeyMail = false));
                     },
-                    color: DesktopColors.mentaOscure,
-                    text: "Cancelar"),
-                Buttons.commonButton(onPressed: () {}, text: "Guardar")
+                    text: "Guardar"),
               ],
             )
-            */
           ],
         )
             .animate(target: cancelChangedKeyMail ? 1 : 0)

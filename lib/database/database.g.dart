@@ -20,35 +20,35 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _passwordMeta =
       const VerificationMeta('password');
   @override
   late final GeneratedColumn<String> password = GeneratedColumn<String>(
-      'password', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'password', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _rolMeta = const VerificationMeta('rol');
   @override
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
-      'rol', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'rol', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _mailMeta = const VerificationMeta('mail');
   @override
   late final GeneratedColumn<String> mail = GeneratedColumn<String>(
-      'mail', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'mail', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _passwordMailMeta =
       const VerificationMeta('passwordMail');
   @override
   late final GeneratedColumn<String> passwordMail = GeneratedColumn<String>(
-      'password_mail', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'password_mail', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-      'phone', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'phone', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _birthDateMeta =
       const VerificationMeta('birthDate');
   @override
@@ -96,40 +96,28 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
-    } else if (isInserting) {
-      context.missing(_nameMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
           password.isAcceptableOrUnknown(data['password']!, _passwordMeta));
-    } else if (isInserting) {
-      context.missing(_passwordMeta);
     }
     if (data.containsKey('rol')) {
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
-    } else if (isInserting) {
-      context.missing(_rolMeta);
     }
     if (data.containsKey('mail')) {
       context.handle(
           _mailMeta, mail.isAcceptableOrUnknown(data['mail']!, _mailMeta));
-    } else if (isInserting) {
-      context.missing(_mailMeta);
     }
     if (data.containsKey('password_mail')) {
       context.handle(
           _passwordMailMeta,
           passwordMail.isAcceptableOrUnknown(
               data['password_mail']!, _passwordMailMeta));
-    } else if (isInserting) {
-      context.missing(_passwordMailMeta);
     }
     if (data.containsKey('phone')) {
       context.handle(
           _phoneMeta, phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta));
-    } else if (isInserting) {
-      context.missing(_phoneMeta);
     }
     if (data.containsKey('birth_date')) {
       context.handle(_birthDateMeta,
@@ -157,17 +145,17 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}name']),
       password: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}rol'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}rol']),
       mail: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}mail'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}mail']),
       passwordMail: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}password_mail'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}password_mail']),
       phone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}phone'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}phone']),
       birthDate: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}birth_date']),
       firstName: attachedDatabase.typeMapping
@@ -185,23 +173,23 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
 
 class User extends DataClass implements Insertable<User> {
   final int id;
-  final String name;
-  final String password;
-  final String rol;
-  final String mail;
-  final String passwordMail;
-  final String phone;
+  final String? name;
+  final String? password;
+  final String? rol;
+  final String? mail;
+  final String? passwordMail;
+  final String? phone;
   final String? birthDate;
   final String? firstName;
   final String? secondName;
   const User(
       {required this.id,
-      required this.name,
-      required this.password,
-      required this.rol,
-      required this.mail,
-      required this.passwordMail,
-      required this.phone,
+      this.name,
+      this.password,
+      this.rol,
+      this.mail,
+      this.passwordMail,
+      this.phone,
       this.birthDate,
       this.firstName,
       this.secondName});
@@ -209,12 +197,24 @@ class User extends DataClass implements Insertable<User> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    map['password'] = Variable<String>(password);
-    map['rol'] = Variable<String>(rol);
-    map['mail'] = Variable<String>(mail);
-    map['password_mail'] = Variable<String>(passwordMail);
-    map['phone'] = Variable<String>(phone);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || password != null) {
+      map['password'] = Variable<String>(password);
+    }
+    if (!nullToAbsent || rol != null) {
+      map['rol'] = Variable<String>(rol);
+    }
+    if (!nullToAbsent || mail != null) {
+      map['mail'] = Variable<String>(mail);
+    }
+    if (!nullToAbsent || passwordMail != null) {
+      map['password_mail'] = Variable<String>(passwordMail);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
     if (!nullToAbsent || birthDate != null) {
       map['birth_date'] = Variable<String>(birthDate);
     }
@@ -230,12 +230,17 @@ class User extends DataClass implements Insertable<User> {
   UsersCompanion toCompanion(bool nullToAbsent) {
     return UsersCompanion(
       id: Value(id),
-      name: Value(name),
-      password: Value(password),
-      rol: Value(rol),
-      mail: Value(mail),
-      passwordMail: Value(passwordMail),
-      phone: Value(phone),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      password: password == null && nullToAbsent
+          ? const Value.absent()
+          : Value(password),
+      rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
+      mail: mail == null && nullToAbsent ? const Value.absent() : Value(mail),
+      passwordMail: passwordMail == null && nullToAbsent
+          ? const Value.absent()
+          : Value(passwordMail),
+      phone:
+          phone == null && nullToAbsent ? const Value.absent() : Value(phone),
       birthDate: birthDate == null && nullToAbsent
           ? const Value.absent()
           : Value(birthDate),
@@ -253,12 +258,12 @@ class User extends DataClass implements Insertable<User> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return User(
       id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      password: serializer.fromJson<String>(json['password']),
-      rol: serializer.fromJson<String>(json['rol']),
-      mail: serializer.fromJson<String>(json['mail']),
-      passwordMail: serializer.fromJson<String>(json['passwordMail']),
-      phone: serializer.fromJson<String>(json['phone']),
+      name: serializer.fromJson<String?>(json['name']),
+      password: serializer.fromJson<String?>(json['password']),
+      rol: serializer.fromJson<String?>(json['rol']),
+      mail: serializer.fromJson<String?>(json['mail']),
+      passwordMail: serializer.fromJson<String?>(json['passwordMail']),
+      phone: serializer.fromJson<String?>(json['phone']),
       birthDate: serializer.fromJson<String?>(json['birthDate']),
       firstName: serializer.fromJson<String?>(json['firstName']),
       secondName: serializer.fromJson<String?>(json['secondName']),
@@ -269,12 +274,12 @@ class User extends DataClass implements Insertable<User> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-      'password': serializer.toJson<String>(password),
-      'rol': serializer.toJson<String>(rol),
-      'mail': serializer.toJson<String>(mail),
-      'passwordMail': serializer.toJson<String>(passwordMail),
-      'phone': serializer.toJson<String>(phone),
+      'name': serializer.toJson<String?>(name),
+      'password': serializer.toJson<String?>(password),
+      'rol': serializer.toJson<String?>(rol),
+      'mail': serializer.toJson<String?>(mail),
+      'passwordMail': serializer.toJson<String?>(passwordMail),
+      'phone': serializer.toJson<String?>(phone),
       'birthDate': serializer.toJson<String?>(birthDate),
       'firstName': serializer.toJson<String?>(firstName),
       'secondName': serializer.toJson<String?>(secondName),
@@ -283,23 +288,24 @@ class User extends DataClass implements Insertable<User> {
 
   User copyWith(
           {int? id,
-          String? name,
-          String? password,
-          String? rol,
-          String? mail,
-          String? passwordMail,
-          String? phone,
+          Value<String?> name = const Value.absent(),
+          Value<String?> password = const Value.absent(),
+          Value<String?> rol = const Value.absent(),
+          Value<String?> mail = const Value.absent(),
+          Value<String?> passwordMail = const Value.absent(),
+          Value<String?> phone = const Value.absent(),
           Value<String?> birthDate = const Value.absent(),
           Value<String?> firstName = const Value.absent(),
           Value<String?> secondName = const Value.absent()}) =>
       User(
         id: id ?? this.id,
-        name: name ?? this.name,
-        password: password ?? this.password,
-        rol: rol ?? this.rol,
-        mail: mail ?? this.mail,
-        passwordMail: passwordMail ?? this.passwordMail,
-        phone: phone ?? this.phone,
+        name: name.present ? name.value : this.name,
+        password: password.present ? password.value : this.password,
+        rol: rol.present ? rol.value : this.rol,
+        mail: mail.present ? mail.value : this.mail,
+        passwordMail:
+            passwordMail.present ? passwordMail.value : this.passwordMail,
+        phone: phone.present ? phone.value : this.phone,
         birthDate: birthDate.present ? birthDate.value : this.birthDate,
         firstName: firstName.present ? firstName.value : this.firstName,
         secondName: secondName.present ? secondName.value : this.secondName,
@@ -342,12 +348,12 @@ class User extends DataClass implements Insertable<User> {
 
 class UsersCompanion extends UpdateCompanion<User> {
   final Value<int> id;
-  final Value<String> name;
-  final Value<String> password;
-  final Value<String> rol;
-  final Value<String> mail;
-  final Value<String> passwordMail;
-  final Value<String> phone;
+  final Value<String?> name;
+  final Value<String?> password;
+  final Value<String?> rol;
+  final Value<String?> mail;
+  final Value<String?> passwordMail;
+  final Value<String?> phone;
   final Value<String?> birthDate;
   final Value<String?> firstName;
   final Value<String?> secondName;
@@ -365,21 +371,16 @@ class UsersCompanion extends UpdateCompanion<User> {
   });
   UsersCompanion.insert({
     this.id = const Value.absent(),
-    required String name,
-    required String password,
-    required String rol,
-    required String mail,
-    required String passwordMail,
-    required String phone,
+    this.name = const Value.absent(),
+    this.password = const Value.absent(),
+    this.rol = const Value.absent(),
+    this.mail = const Value.absent(),
+    this.passwordMail = const Value.absent(),
+    this.phone = const Value.absent(),
     this.birthDate = const Value.absent(),
     this.firstName = const Value.absent(),
     this.secondName = const Value.absent(),
-  })  : name = Value(name),
-        password = Value(password),
-        rol = Value(rol),
-        mail = Value(mail),
-        passwordMail = Value(passwordMail),
-        phone = Value(phone);
+  });
   static Insertable<User> custom({
     Expression<int>? id,
     Expression<String>? name,
@@ -408,12 +409,12 @@ class UsersCompanion extends UpdateCompanion<User> {
 
   UsersCompanion copyWith(
       {Value<int>? id,
-      Value<String>? name,
-      Value<String>? password,
-      Value<String>? rol,
-      Value<String>? mail,
-      Value<String>? passwordMail,
-      Value<String>? phone,
+      Value<String?>? name,
+      Value<String?>? password,
+      Value<String?>? rol,
+      Value<String?>? mail,
+      Value<String?>? passwordMail,
+      Value<String?>? phone,
       Value<String?>? birthDate,
       Value<String?>? firstName,
       Value<String?>? secondName}) {
@@ -2287,24 +2288,24 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$UsersTableInsertCompanionBuilder = UsersCompanion Function({
   Value<int> id,
-  required String name,
-  required String password,
-  required String rol,
-  required String mail,
-  required String passwordMail,
-  required String phone,
+  Value<String?> name,
+  Value<String?> password,
+  Value<String?> rol,
+  Value<String?> mail,
+  Value<String?> passwordMail,
+  Value<String?> phone,
   Value<String?> birthDate,
   Value<String?> firstName,
   Value<String?> secondName,
 });
 typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
   Value<int> id,
-  Value<String> name,
-  Value<String> password,
-  Value<String> rol,
-  Value<String> mail,
-  Value<String> passwordMail,
-  Value<String> phone,
+  Value<String?> name,
+  Value<String?> password,
+  Value<String?> rol,
+  Value<String?> mail,
+  Value<String?> passwordMail,
+  Value<String?> phone,
   Value<String?> birthDate,
   Value<String?> firstName,
   Value<String?> secondName,
@@ -2330,12 +2331,12 @@ class $$UsersTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$UsersTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> password = const Value.absent(),
-            Value<String> rol = const Value.absent(),
-            Value<String> mail = const Value.absent(),
-            Value<String> passwordMail = const Value.absent(),
-            Value<String> phone = const Value.absent(),
+            Value<String?> name = const Value.absent(),
+            Value<String?> password = const Value.absent(),
+            Value<String?> rol = const Value.absent(),
+            Value<String?> mail = const Value.absent(),
+            Value<String?> passwordMail = const Value.absent(),
+            Value<String?> phone = const Value.absent(),
             Value<String?> birthDate = const Value.absent(),
             Value<String?> firstName = const Value.absent(),
             Value<String?> secondName = const Value.absent(),
@@ -2354,12 +2355,12 @@ class $$UsersTableTableManager extends RootTableManager<
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String name,
-            required String password,
-            required String rol,
-            required String mail,
-            required String passwordMail,
-            required String phone,
+            Value<String?> name = const Value.absent(),
+            Value<String?> password = const Value.absent(),
+            Value<String?> rol = const Value.absent(),
+            Value<String?> mail = const Value.absent(),
+            Value<String?> passwordMail = const Value.absent(),
+            Value<String?> phone = const Value.absent(),
             Value<String?> birthDate = const Value.absent(),
             Value<String?> firstName = const Value.absent(),
             Value<String?> secondName = const Value.absent(),

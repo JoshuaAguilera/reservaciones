@@ -26,6 +26,7 @@ class TextFormFieldCustom {
     Icon? icon,
     double maxHeight = 100,
     bool readOnly = false,
+    String? Function(String?)? validator,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -66,14 +67,15 @@ class TextFormFieldCustom {
                     if (onChanged != null) onChanged.call(value);
                   },
                   obscureText: passwordVisible,
-                  validator: (value) {
-                    if (isRequired) {
-                      if ((value == null || value.isEmpty)) {
-                        return msgError;
-                      }
-                    }
-                    return null;
-                  },
+                  validator: validator ??
+                      (value) {
+                        if (isRequired) {
+                          if ((value == null || value.isEmpty)) {
+                            return msgError;
+                          }
+                        }
+                        return null;
+                      },
                   style: const TextStyle(
                     fontFamily: "poppins_regular",
                     fontSize: 13,

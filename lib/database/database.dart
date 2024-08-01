@@ -208,6 +208,16 @@ class AppDatabase extends _$AppDatabase {
     return (update(users)..where((t) => t.id.equals(usuario.id)))
         .write(usuario);
   }
+
+  Future<int> updatePasswordUser(int userId, String newPassword) {
+    return (update(users)..where((t) => t.id.equals(userId)))
+        .write(User(id: userId, password: newPassword));
+  }
+
+   Future<int> updatePasswordMailUser(int userId, String newPassword) {
+    return (update(users)..where((t) => t.id.equals(userId)))
+        .write(User(id: userId, passwordMail: newPassword));
+  }
 }
 
 LazyDatabase _openConnection() {

@@ -1,24 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/providers/usuario_provider.dart';
+import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/widgets/change_password_widget.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../ui/show_snackbar.dart';
 import '../widgets/text_styles.dart';
 
-class PerfilView extends StatefulWidget {
+class PerfilView extends ConsumerStatefulWidget {
   const PerfilView({super.key, required this.sideController});
 
   final SidebarXController sideController;
   @override
-  State<PerfilView> createState() => _PerfilViewState();
+  _PerfilViewState createState() => _PerfilViewState();
 }
 
-class _PerfilViewState extends State<PerfilView> {
+class _PerfilViewState extends ConsumerState<PerfilView> {
   final TextEditingController dateController =
       TextEditingController(text: DateTime.now().toString().substring(0, 10));
   final TextEditingController usernameController = TextEditingController();
@@ -28,15 +34,10 @@ class _PerfilViewState extends State<PerfilView> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController mailController = TextEditingController();
   final TextEditingController passwordMailController = TextEditingController();
-  final TextEditingController passwordMailNewController =
-      TextEditingController();
-  final TextEditingController passwordMailConfirmController =
-      TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool changeDate = false;
   bool canChangedKey = false;
   bool canChangedKeyMail = false;
-  bool cancelChangedKeyMail = false;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _PerfilViewState extends State<PerfilView> {
         EncrypterTool.decryptData(Preferences.passwordMail, null);
     if (Preferences.birthDate.isNotEmpty) {
       dateController.text = Preferences.birthDate;
+      changeDate = true;
     }
   }
 
@@ -72,6 +74,7 @@ class _PerfilViewState extends State<PerfilView> {
   Widget build(BuildContext context) {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    final usuario = ref.watch(userProvider);
 
     return Scaffold(
       floatingActionButton: screenWidth < 800
@@ -80,9 +83,11 @@ class _PerfilViewState extends State<PerfilView> {
               height: 35,
               width: 120,
               child: Buttons.commonButton(
-                  onPressed: () {
-                    updateUser.call();
-                  },
+                  onPressed: (canChangedKey || canChangedKeyMail)
+                      ? null
+                      : () async {
+                          await updateUser.call(usuario.id);
+                        },
                   text: "Guardar"),
             ),
       body: Padding(
@@ -92,14 +97,8 @@ class _PerfilViewState extends State<PerfilView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextStyles.titlePagText(
-                      text: "Perfil", color: Theme.of(context).primaryColor),
-                  Row(children: [])
-                ],
-              ),
+              TextStyles.titlePagText(
+                  text: "Perfil", color: Theme.of(context).primaryColor),
               TextStyles.standardText(
                 text: "Gestiona y personaliza la información de tu cuenta.",
                 color: Theme.of(context).primaryColor,
@@ -161,17 +160,19 @@ class _PerfilViewState extends State<PerfilView> {
                                 child: TextButton(
                                   onPressed: () {},
                                   child: TextStyles.buttonText(
-                                      text: "Rol de usuario",
-                                      size: 14,
-                                      color: DesktopColors.cerulean),
+                                    text: Preferences.rol,
+                                    size: 14,
+                                    color: Utility.getColorTypeUser(
+                                        Preferences.rol),
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               TextFormFieldCustom.textFormFieldwithBorder(
                                 name: "Nombre de usuario",
                                 controller: usernameController,
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               SizedBox(
                                 width: double.infinity,
                                 child: Wrap(
@@ -206,30 +207,13 @@ class _PerfilViewState extends State<PerfilView> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              SizedBox(
-                                width: double.infinity,
-                                child:
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                  isPassword: true,
-                                  passwordVisible: true,
-                                  //    initialValue: Preferences.passwordMail,
-                                  name: "Contraseña",
-                                  readOnly: true,
-                                  controller: passwordController,
-                                ),
+                              ChangePasswordWidget(
+                                passwordController: passwordController,
+                                isChanged: (value) =>
+                                    setState(() => canChangedKey = value),
+                                userId: usuario.id,
+                                isPasswordMail: false,
                               ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() => canChangedKey = true);
-                                  },
-                                  child: TextStyles.buttonText(
-                                      text: "Cambiar contraseña", size: 12),
-                                ),
-                              )
-                                  .animate(target: canChangedKey ? 0 : 1)
-                                  .fadeIn(delay: 300.ms),
                               const SizedBox(height: 7),
                             ],
                           ),
@@ -279,91 +263,12 @@ class _PerfilViewState extends State<PerfilView> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              SizedBox(
-                                width: double.infinity,
-                                child:
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                  isPassword: true,
-                                  passwordVisible: true,
-                                  name: "Contraseña de correo",
-                                  controller: passwordMailController,
-                                  readOnly: true,
-                                ),
-                              ),
-                              SizedBox(
-                                height: canChangedKeyMail ? 0 : null,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      setState(() => canChangedKeyMail = true);
-                                      Future.delayed(
-                                          Durations.long1,
-                                          () => setState(() =>
-                                              cancelChangedKeyMail = true));
-                                    },
-                                    child: TextStyles.buttonText(
-                                        text: "Cambiar contraseña  de correo",
-                                        size: 12),
-                                  ),
-                                )
-                                    .animate(target: canChangedKeyMail ? 0 : 1)
-                                    .fadeIn(delay: 300.ms),
-                              ),
-                              SizedBox(
-                                height: cancelChangedKeyMail ? null : 0,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: TextStyles.standardText(
-                                        text: "Modificación de contraseña",
-                                        color: Theme.of(context).primaryColor,
-                                        size: 11,
-                                      ),
-                                    ),
-                                    Wrap(
-                                      children: [
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Nueva Contraseña",
-                                          controller: passwordMailNewController,
-                                        ),
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Confirmar Contraseña",
-                                          controller:
-                                              passwordMailConfirmController,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Buttons.commonButton(
-                                            onPressed: () {
-                                              setState(() =>
-                                                  cancelChangedKeyMail = false);
-                                              Future.delayed(
-                                                  Durations.long1,
-                                                  () => setState(() =>
-                                                      canChangedKeyMail =
-                                                          false));
-                                            },
-                                            color: DesktopColors.mentaOscure,
-                                            text: "Cancelar"),
-                                        Buttons.commonButton(
-                                            onPressed: () {}, text: "Guardar")
-                                      ],
-                                    )
-                                  ],
-                                )
-                                    .animate(
-                                        target: cancelChangedKeyMail ? 1 : 0)
-                                    .fadeIn(duration: 500.ms),
+                              ChangePasswordWidget(
+                                passwordController: passwordMailController,
+                                isChanged: (value) =>
+                                    setState(() => canChangedKeyMail = value),
+                                userId: usuario.id,
+                                isPasswordMail: true,
                               ),
                               const SizedBox(height: 7),
                               if (screenWidth < 800)
@@ -373,9 +278,13 @@ class _PerfilViewState extends State<PerfilView> {
                                     height: 35,
                                     width: 120,
                                     child: Buttons.commonButton(
-                                        onPressed: () {
-                                          updateUser.call();
-                                        },
+                                        onPressed:
+                                            (canChangedKey || canChangedKeyMail)
+                                                ? null
+                                                : () async {
+                                                    await updateUser
+                                                        .call(usuario.id);
+                                                  },
                                         text: "Guardar"),
                                   ),
                                 ),
@@ -394,9 +303,42 @@ class _PerfilViewState extends State<PerfilView> {
     );
   }
 
-  updateUser() {
+  Future updateUser(int userId) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    User usuario = User(
+      id: userId,
+      name: usernameController.text,
+      firstName: firstnameController.text,
+      secondName: lastnameController.text,
+      birthDate: dateController.text,
+      mail: mailController.text,
+      phone: "+52${phoneController.text}",
+    );
+
+    if (await AuthService().updateUser(usuario)) {
+      showSnackBar(
+          context: context,
+          title: "Error de actualización",
+          message:
+              "No se proceso el cambio de contraseña de correo correctamente",
+          type: 'danger');
+      return;
+    }
+
+    Preferences.birthDate = dateController.text;
+    Preferences.username = usernameController.text;
+    Preferences.firstName = firstnameController.text;
+    Preferences.lastName = lastnameController.text;
+    Preferences.mail = mailController.text;
+    Preferences.phone = "+52${phoneController.text}";
+
+    showSnackBar(
+        context: context,
+        title: "Perfil actualizado",
+        message: "Se actualizaron los campos solicitados.",
+        type: 'success');
   }
 }

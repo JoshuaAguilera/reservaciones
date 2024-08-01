@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/views/gestion_usuarios_view.dart';
 import 'package:generador_formato/views/historial/comprobante_detalle_view.dart';
 import 'package:generador_formato/views/configuracion/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';
@@ -39,7 +40,7 @@ class _MenuViewState extends State<MenuView> {
           case 3:
             return ConfiguracionView(sideController: widget.controller);
           case 4:
-            return Text("Good Bye!", style: theme.textTheme.headlineSmall);
+            return const GestionUsuariosView();
           case 99:
             return PerfilView(sideController: widget.controller);
           case 12:

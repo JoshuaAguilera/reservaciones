@@ -1,20 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
+import '../database/database.dart';
 import '../ui/show_snackbar.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends ConsumerStatefulWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  _LoginViewState createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends ConsumerState<LoginView> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKeyLogin = GlobalKey<FormState>();
@@ -199,9 +202,15 @@ class _LoginViewState extends State<LoginView> {
                                       }
 
                                       if (!context.mounted) return;
-                                      await AuthService().savePerfil(
-                                          userNameController.text,
-                                          passwordController.text);
+                                      User usuario = await AuthService()
+                                          .savePerfil(userNameController.text,
+                                              passwordController.text);
+
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .update((state) => usuario);
+
+                                          
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

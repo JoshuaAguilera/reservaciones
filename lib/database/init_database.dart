@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import '../utils/encrypt/encrypter.dart';
 import 'database.dart';
 
@@ -9,12 +11,12 @@ class InitDatabase {
     if (allUsers.isEmpty) {
       await db.into(db.users).insert(
             UsersCompanion.insert(
-              name: 'admin',
-              password: EncrypterTool.encryptData("12345678", null),
-              rol: "SUPERADMIN",
-              mail: "sys2@coralbluehuatulco.mx",
-              passwordMail: EncrypterTool.encryptData("Sys2024CB", null),
-              phone: "\+529581875040",
+              name: const Value('admin'),
+              password: Value(EncrypterTool.encryptData("12345678", null)),
+              rol: const Value("SUPERADMIN"),
+              mail: const Value("sys2@coralbluehuatulco.mx"),
+              passwordMail: Value(EncrypterTool.encryptData("Sys2024CB", null)),
+              phone: const Value("\+529581875040"),
             ),
           );
     }

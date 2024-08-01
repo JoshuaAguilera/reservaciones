@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../utils/helpers/web_colors.dart';
@@ -141,23 +142,23 @@ class SideBar extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             flex: 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Username",
+                                  Preferences.username,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontFamily: "poppins_regular",
                                       fontSize: 14,
                                       color: Colors.white),
                                 ),
                                 Text(
-                                  "188 cotizaciones",
+                                  Preferences.rol,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontFamily: "poppins_regular",
                                       color: Colors.white,
                                       fontSize: 11),
@@ -246,6 +247,10 @@ class SideBar extends StatelessWidget {
         SidebarXItem(
           icon: Icons.settings,
           label: 'Configuracion',
+        ),
+        SidebarXItem(
+          icon: CupertinoIcons.rectangle_stack_person_crop,
+          label: 'Gestión de usuarios',
         ),
       ],
       footerItems: const [

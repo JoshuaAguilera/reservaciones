@@ -555,4 +555,16 @@ class Utility {
         return Colors.white;
     }
   }
+
+  static Color? getColorTypeUser(String rol) {
+    switch (rol) {
+      case "SUPERADMIN":
+        return const Color.fromARGB(255, 255, 192, 1);
+      case "ADMIN":
+        return const Color.fromARGB(255, 202, 202, 202);
+      case "SELLER":
+        return const Color.fromARGB(255, 186, 70, 32);
+      default:
+    }
+  }
 }
