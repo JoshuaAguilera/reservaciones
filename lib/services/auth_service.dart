@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/services/base_service.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
@@ -71,5 +72,35 @@ class AuthService extends BaseService {
     db.close();
 
     return success;
+  }
+
+  Future<List<User>> getUsers() async {
+    List<User> users = [];
+
+    final db = AppDatabase();
+    users = await db.getListUser();
+    db.close();
+
+    return users;
+  }
+
+  Future<bool> saveUsers(User? user) async {
+    final database = AppDatabase();
+
+    try {
+      await database.into(database.users).insert(
+            UsersCompanion.insert(
+              name: Value(user?.name ?? ''),
+              password: Value(user?.password ?? ''),
+              rol: Value(user?.rol ?? ''),
+            ),
+          );
+      await database.close();
+      return true;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return false;
+    }
   }
 }

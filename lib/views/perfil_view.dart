@@ -38,6 +38,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   bool changeDate = false;
   bool canChangedKey = false;
   bool canChangedKeyMail = false;
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -47,10 +48,13 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     lastnameController.text = Preferences.lastName;
     passwordController.text =
         EncrypterTool.decryptData(Preferences.password, null);
-    phoneController.text = Preferences.phone.toString().substring(3);
+    phoneController.text = Preferences.phone.isNotEmpty
+        ? Preferences.phone.toString().substring(3)
+        : '';
     mailController.text = Preferences.mail;
-    passwordMailController.text =
-        EncrypterTool.decryptData(Preferences.passwordMail, null);
+    passwordMailController.text = Preferences.passwordMail.isNotEmpty
+        ? EncrypterTool.decryptData(Preferences.passwordMail, null)
+        : '';
     if (Preferences.birthDate.isNotEmpty) {
       dateController.text = Preferences.birthDate;
       changeDate = true;
@@ -83,10 +87,13 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
               height: 35,
               width: 120,
               child: Buttons.commonButton(
+                  isLoading: isSaving,
                   onPressed: (canChangedKey || canChangedKeyMail)
                       ? null
                       : () async {
+                          setState(() => isSaving = true);
                           await updateUser.call(usuario.id);
+                          setState(() => isSaving = false);
                         },
                   text: "Guardar"),
             ),
@@ -171,6 +178,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                               TextFormFieldCustom.textFormFieldwithBorder(
                                 name: "Nombre de usuario",
                                 controller: usernameController,
+                                textInputAction: TextInputAction.next,
                               ),
                               const SizedBox(height: 6),
                               SizedBox(
@@ -180,11 +188,17 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   spacing: 10,
                                   children: [
                                     TextFormFieldCustom.textFormFieldwithBorder(
-                                        name: "Nombre",
-                                        controller: firstnameController),
+                                      name: "Nombre",
+                                      controller: firstnameController,
+                                      textInputAction: TextInputAction.next,
+                                      isRequired: false,
+                                    ),
                                     TextFormFieldCustom.textFormFieldwithBorder(
-                                        name: "Apellido",
-                                        controller: lastnameController),
+                                      name: "Apellido",
+                                      controller: lastnameController,
+                                      textInputAction: TextInputAction.done,
+                                      isRequired: false,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -198,7 +212,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   dateController: dateController,
                                   nowLastYear: true,
                                   fechaLimite: "1900-01-01",
-                                  changed: !changeDate,
+                                  // changed: !changeDate,
                                   onChanged: () {
                                     setState(() {
                                       changeDate = true;
@@ -253,12 +267,30 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   children: [
                                     TextFormFieldCustom.textFormFieldwithBorder(
                                       name: "Teléfono",
+                                      isRequired: true,
                                       controller: phoneController,
                                       isNumeric: true,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (p0) {
+                                        if (p0 != null &&
+                                            p0.isNotEmpty &&
+                                            p0.length > 10) {
+                                          return "Número no valido";
+                                        }
+
+                                        if (p0 != null &&
+                                            p0.isNotEmpty &&
+                                            p0.length < 10) {
+                                          return "Número no valido";
+                                        }
+                                        return null;
+                                      },
                                     ),
                                     TextFormFieldCustom.textFormFieldwithBorder(
-                                        name: "Correo electrónico",
-                                        controller: mailController),
+                                      name: "Correo electrónico",
+                                      controller: mailController,
+                                      textInputAction: TextInputAction.done,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -278,13 +310,17 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                     height: 35,
                                     width: 120,
                                     child: Buttons.commonButton(
-                                        onPressed:
-                                            (canChangedKey || canChangedKeyMail)
-                                                ? null
-                                                : () async {
-                                                    await updateUser
-                                                        .call(usuario.id);
-                                                  },
+                                        isLoading: isSaving,
+                                        onPressed: (canChangedKey ||
+                                                canChangedKeyMail)
+                                            ? null
+                                            : () async {
+                                                setState(() => isSaving = true);
+                                                await updateUser
+                                                    .call(usuario.id);
+                                                setState(
+                                                    () => isSaving = false);
+                                              },
                                         text: "Guardar"),
                                   ),
                                 ),
@@ -308,12 +344,22 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       return;
     }
 
+    if (usernameController.text.isEmpty) {
+      showSnackBar(
+          context: context,
+          title: "Error de actualización",
+          message:
+              "No se puede actualizar ningun dato sin el nombre del usuario.",
+          type: 'danger');
+      return;
+    }
+
     User usuario = User(
       id: userId,
       name: usernameController.text,
       firstName: firstnameController.text,
       secondName: lastnameController.text,
-      birthDate: dateController.text,
+      birthDate: changeDate ? dateController.text : '',
       mail: mailController.text,
       phone: "+52${phoneController.text}",
     );

@@ -17,12 +17,14 @@ class ChangePasswordWidget extends StatefulWidget {
     required this.isChanged,
     required this.userId,
     required this.isPasswordMail,
+    this.notAskChange = false,
   });
 
   final TextEditingController passwordController;
   final void Function(bool value) isChanged;
   final int userId;
   final bool isPasswordMail;
+  final bool notAskChange;
 
   @override
   State<ChangePasswordWidget> createState() => _ChangePasswordWidgetState();
@@ -45,11 +47,14 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
         child: TextFormFieldCustom.textFormFieldwithBorder(
           isPassword: true,
           passwordVisible: true,
-          name: "Contraseña de correo",
+          name: widget.isPasswordMail
+              ? "Contraseña de correo"
+              : "Contraseña de cuenta",
           controller: widget.passwordController,
           readOnly: true,
         ),
       ),
+      if(!widget.notAskChange)
       SizedBox(
         height: canChangedKeyMail ? 0 : null,
         child: Align(

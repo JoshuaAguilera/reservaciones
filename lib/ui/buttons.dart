@@ -78,15 +78,30 @@ class _SelectableButtonState extends State<SelectableButton> {
 }
 
 class Buttons {
-  static ElevatedButton commonButton(
-      {required void Function()? onPressed, Color? color, String text = ""}) {
+  static ElevatedButton commonButton({
+    required void Function()? onPressed,
+    Color? color,
+    String text = "",
+    bool isLoading = false,
+  }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
           elevation: 4, backgroundColor: color ?? DesktopColors.ceruleanOscure),
-      child: Text(
-        text,
-        style: const TextStyle(fontFamily: "poppins_bold"),
+      child: Row(
+        mainAxisAlignment: isLoading
+            ? MainAxisAlignment.spaceAround
+            : MainAxisAlignment.center,
+        children: [
+          if (isLoading)
+            const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: Colors.white),
+            ),
+          TextStyles.buttonTextStyle(text: !isLoading ? text : "Espere"),
+        ],
       ),
     );
   }

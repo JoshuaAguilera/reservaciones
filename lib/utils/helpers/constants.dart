@@ -30,6 +30,12 @@ const List<String> paxes = <String>[
   '4',
 ];
 
+const List<String> roles = <String>[
+  'SUPERADMIN',
+  'ADMIN',
+  'VENTAS',
+];
+
 const List<String> filtros = <String>[
   'Todos',
   'Hace un dia',
@@ -121,7 +127,7 @@ const List<String> typeSettings = [
   "Generales",
   "Formato Individual",
   "Formato Grupal",
- // "Planes y categorias",
+  // "Planes y categorias",
 ];
 
 const List<String> textFont = <String>[

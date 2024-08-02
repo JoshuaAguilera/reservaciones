@@ -1,8 +1,14 @@
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/cotizacion_grupal_model.dart';
+import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/ui/show_snackbar.dart';
+import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/widgets/change_password_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -577,6 +583,224 @@ class Dialogs {
             child: TextStyles.buttonText(text: "Cancelar"))
       ],
     );
+  }
+
+  Widget userFormDialog({
+    required BuildContext buildContext,
+    User? usuario,
+    void Function(User?)? onInsert,
+    void Function(User?)? onUpdate,
+  }) {
+    String rol = roles.first;
+    bool inProcess = false;
+
+    final _formKeyUsuario = GlobalKey<FormState>();
+    final TextEditingController nameController =
+        TextEditingController(text: usuario != null ? usuario.name : '');
+    final TextEditingController mailController =
+        TextEditingController(text: usuario != null ? usuario.mail : '');
+    final TextEditingController passwordNewController = TextEditingController();
+    final TextEditingController passwordConfirmController =
+        TextEditingController();
+
+    final TextEditingController passwordEditController = TextEditingController(
+        text: usuario != null
+            ? EncrypterTool.decryptData(usuario.password!, null)
+            : '');
+
+    final TextEditingController passwordMailEditController =
+        TextEditingController(
+            text: usuario != null
+                ? (usuario.passwordMail != null &&
+                        usuario.passwordMail!.isNotEmpty)
+                    ? EncrypterTool.decryptData(usuario.passwordMail!, null)
+                    : ''
+                : '');
+    return StatefulBuilder(builder: (context, setState) {
+      return AlertDialog(
+        insetPadding: const EdgeInsets.all(10),
+        title: TextStyles.titleText(
+            text: usuario != null ? "Editar Usuario" : "Agregar Usuario",
+            color: Theme.of(buildContext).primaryColor),
+        content: SizedBox(
+          width: 550,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKeyUsuario,
+              child: Column(
+                children: [
+                  TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Nombre de usuario",
+                    controller: nameController,
+                    validator: (value) {
+                      if ((value == null || value.isEmpty)) {
+                        return "Campo requirido*";
+                      }
+
+                      return null;
+                    },
+                  ),
+                  if (usuario != null)
+                    TextFormFieldCustom.textFormFieldwithBorder(
+                      name: "Correo electrónico",
+                      controller: mailController,
+                      validator: (value) {
+                        if ((value == null || value.isEmpty)) {
+                          return "Campo requirido*";
+                        }
+
+                        return null;
+                      },
+                    ),
+                  if (usuario != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: ChangePasswordWidget(
+                                passwordController: passwordEditController,
+                                isChanged: (value) {},
+                                userId: usuario.id,
+                                isPasswordMail: false,
+                                notAskChange:
+                                    passwordEditController.text.isEmpty,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ChangePasswordWidget(
+                                passwordController: passwordMailEditController,
+                                isChanged: (value) {},
+                                userId: usuario.id,
+                                isPasswordMail: true,
+                                notAskChange:
+                                    passwordMailEditController.text.isEmpty,
+                              ),
+                            ),
+                          ]),
+                    ),
+                  if (usuario == null)
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Contraseña",
+                              passwordVisible: true,
+                              isPassword: true,
+                              controller: passwordNewController,
+                              validator: (p0) {
+                                if (p0 == null || p0.isEmpty || p0.length < 4) {
+                                  return "La contraseña debe de tener al menos 4 caracteres*";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Confirmar contraseña",
+                              isPassword: true,
+                              passwordVisible: true,
+                              controller: passwordConfirmController,
+                              validator: (p0) {
+                                if (passwordNewController.text.length > 0) {
+                                  if (p0 == null ||
+                                      p0.isEmpty ||
+                                      p0 != passwordNewController.text) {
+                                    return "La contraseña debe ser la misma*";
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ]),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextStyles.standardText(
+                          text: "Rol del usuario: ",
+                          overClip: true,
+                          color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 15),
+                      CustomDropdown.dropdownMenuCustom(
+                        initialSelection: rol,
+                        onSelected: (String? value) {
+                          rol = value!;
+                        },
+                        elements: roles,
+                        screenWidth: MediaQuery.of(context).size.width * 0.75,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              if (!_formKeyUsuario.currentState!.validate()) {
+                return;
+              }
+
+              setState(() => inProcess = true);
+
+              if (await AuthService().foundUserName(nameController.text)) {
+                showSnackBar(
+                    context: buildContext,
+                    title: "Nombre no valido",
+                    message:
+                        "Este usuario ya existe, cambie el nombre de usuario",
+                    type: "alert");
+                setState(() => inProcess = false);
+                return;
+              }
+
+              User usuario = User(
+                id: 0,
+                name: nameController.text,
+                password:
+                    EncrypterTool.encryptData(passwordNewController.text, null),
+                rol: rol,
+              );
+
+              if (onInsert != null) {
+                onInsert.call(usuario);
+              }
+
+              if (onUpdate != null) {
+                onUpdate.call(usuario);
+              }
+              setState(() => inProcess = false);
+
+              Navigator.of(buildContext).pop();
+            },
+            child: inProcess
+                ? const SizedBox(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(),
+                  )
+                : TextStyles.buttonText(
+                    text: usuario != null ? "Editar" : "Agregar",
+                  ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(buildContext);
+            },
+            child: TextStyles.buttonText(text: "Cancelar"),
+          ),
+        ],
+      );
+    });
   }
 
   static AlertDialog customAlertDialog({

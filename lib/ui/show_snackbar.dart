@@ -23,22 +23,28 @@ void showSnackBar({
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextStyles.buttonTextStyle(text: title, size: 17),
-                TextStyles.standardText(
-                    text: message,
-                    overClip: true,
-                    color: Colors.white,
-                    size: 12.5)
-              ],
+            Expanded(
+              flex: 5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextStyles.buttonTextStyle(text: title, size: 17),
+                  TextStyles.standardText(
+                      text: message,
+                      overClip: true,
+                      color: Colors.white,
+                      size: 12.5)
+                ],
+              ),
             ),
-            Icon(
-              Utility.getIconNavbar(type),
-              size: 50,
-              color: Colors.white,
+            Expanded(
+              flex: 1,
+              child: Icon(
+                Utility.getIconNavbar(type),
+                size: 50,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

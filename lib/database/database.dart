@@ -214,9 +214,13 @@ class AppDatabase extends _$AppDatabase {
         .write(User(id: userId, password: newPassword));
   }
 
-   Future<int> updatePasswordMailUser(int userId, String newPassword) {
+  Future<int> updatePasswordMailUser(int userId, String newPassword) {
     return (update(users)..where((t) => t.id.equals(userId)))
         .write(User(id: userId, passwordMail: newPassword));
+  }
+
+  Future<List<User>> getListUser() {
+    return (select(users)).get();
   }
 }
 
@@ -225,6 +229,10 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
+
+    //final dbFolder = "/";//DesCommit when release
+    //final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
 

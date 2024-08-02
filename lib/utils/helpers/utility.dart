@@ -562,8 +562,8 @@ class Utility {
         return const Color.fromARGB(255, 255, 192, 1);
       case "ADMIN":
         return const Color.fromARGB(255, 202, 202, 202);
-      case "SELLER":
-        return const Color.fromARGB(255, 186, 70, 32);
+      case "VENTAS":
+        return Color.fromARGB(255, 10, 166, 180);
       default:
     }
   }

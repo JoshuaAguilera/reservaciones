@@ -27,6 +27,7 @@ class TextFormFieldCustom {
     double maxHeight = 100,
     bool readOnly = false,
     String? Function(String?)? validator,
+    TextInputAction? textInputAction,
   }) {
     bool withContent = false;
     return StatefulBuilder(
@@ -52,6 +53,7 @@ class TextFormFieldCustom {
                 absorbing: blocked,
                 child: TextFormField(
                   readOnly: readOnly,
+                  textInputAction: textInputAction,
                   enabled: enabled,
                   controller: controller,
                   onChanged: (value) {

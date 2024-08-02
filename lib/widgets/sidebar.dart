@@ -136,8 +136,8 @@ class SideBar extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 color: Colors.white,
                                 image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage('assets/image/Logo.png'),
+                               
+                                  image: AssetImage('assets/image/usuario.png'),
                                 ),
                               ),
                             ),
@@ -219,8 +219,7 @@ class SideBar extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: Colors.white,
                         image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage('assets/image/Logo.png'),
+                          image: AssetImage('assets/image/usuario.png'),
                         ),
                       ),
                     ),

@@ -103,6 +103,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ),
                                 child: TextFormField(
                                   enabled: !isLoading,
+                                  onFieldSubmitted: (value) async {
+                                    await submitData.call();
+                                  },
                                   controller: userNameController,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -134,6 +137,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ),
                                 child: TextFormField(
                                   enabled: !isLoading,
+                                  onFieldSubmitted: (value) async {
+                                    await submitData.call();
+                                  },
                                   controller: passwordController,
                                   obscureText: _passwordVisible,
                                   validator: (value) {
@@ -170,60 +176,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 height: screenWidth > 350 ? 40 : 35,
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    setState(() => isLoading = true);
-                                    if (_formKeyLogin.currentState!
-                                        .validate()) {
-                                      if (!await AuthService().foundUserName(
-                                          userNameController.text)) {
-                                        setState(() => isLoading = false);
-                                        showSnackBar(
-                                          type: "alert",
-                                          context: context,
-                                          title: "Usuario no encontrado",
-                                          message:
-                                              "No se tiene registro del usuario: ${userNameController.text}",
-                                        );
-                                        return;
-                                      }
-
-                                      if (!await AuthService().loginUser(
-                                          userNameController.text,
-                                          passwordController.text)) {
-                                        setState(() => isLoading = false);
-                                        showSnackBar(
-                                          type: "danger",
-                                          context: context,
-                                          title:
-                                              "Usuario y contraseña incorrectos",
-                                          message:
-                                              "Nombre de usuario o contraseña no válidos",
-                                        );
-                                        return;
-                                      }
-
-                                      if (!context.mounted) return;
-                                      User usuario = await AuthService()
-                                          .savePerfil(userNameController.text,
-                                              passwordController.text);
-
-                                      ref
-                                          .read(userProvider.notifier)
-                                          .update((state) => usuario);
-
-                                          
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomeView()),
-                                      );
-                                      _passwordVisible = false;
-                                      isLoading = false;
-                                      userNameController.text = '';
-                                      passwordController.text = '';
-                                      setState(() {});
-                                    } else {
-                                      setState(() => isLoading = false);
-                                    }
+                                    await submitData.call();
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: isLoading
@@ -276,5 +229,52 @@ class _LoginViewState extends ConsumerState<LoginView> {
         ),
       ],
     );
+  }
+
+  submitData() async {
+    setState(() => isLoading = true);
+    if (_formKeyLogin.currentState!.validate()) {
+      if (!await AuthService().foundUserName(userNameController.text)) {
+        setState(() => isLoading = false);
+        showSnackBar(
+          type: "alert",
+          context: context,
+          title: "Usuario no encontrado",
+          message:
+              "No se tiene registro del usuario: ${userNameController.text}",
+        );
+        return;
+      }
+
+      if (!await AuthService()
+          .loginUser(userNameController.text, passwordController.text)) {
+        setState(() => isLoading = false);
+        showSnackBar(
+          type: "danger",
+          context: context,
+          title: "Usuario y contraseña incorrectos",
+          message: "Nombre de usuario o contraseña no válidos",
+        );
+        return;
+      }
+
+      if (!context.mounted) return;
+      User usuario = await AuthService()
+          .savePerfil(userNameController.text, passwordController.text);
+
+      ref.read(userProvider.notifier).update((state) => usuario);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeView()),
+      );
+      _passwordVisible = false;
+      isLoading = false;
+      userNameController.text = '';
+      passwordController.text = '';
+      setState(() {});
+    } else {
+      setState(() => isLoading = false);
+    }
   }
 }
