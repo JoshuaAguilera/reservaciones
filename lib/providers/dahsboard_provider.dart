@@ -4,7 +4,6 @@ import 'package:tuple/tuple.dart';
 
 import '../database/database.dart';
 import '../models/numero_cotizacion_model.dart';
-import '../services/comprobante_service.dart';
 import '../services/cotizacion_service.dart';
 import '../utils/helpers/utility.dart';
 
@@ -13,13 +12,10 @@ final reporteCotizacionesIndProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filter = ref.watch(filterReport);
-  final list = Utility.getReportQuotes(
-    cotizacionesInd: await CotizacionService().getCotizacionesIndTimePeriod(
-        Utility.calculatePeriodReport(filter), DateTime.now()),
-    filter: filter,
-    cotizacionesGroup: await CotizacionService().getCotizacionesGroupTimePeriod(
-        Utility.calculatePeriodReport(filter), DateTime.now()),
-  );
+  final list = Utility.getCotizacionQuotes(
+      cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
+          Utility.calculatePeriodReport(filter), DateTime.now()),
+      filter: filter);
   return list;
 });
 
@@ -28,16 +24,15 @@ final cotizacionesDiariasProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = Utility.getDailyQuotesReport(
-      respIndToday: await CotizacionService().getCotizacionesIndActuales(),
-      respGroupToday: await CotizacionService().getCotizacionesGroupActuales());
+      respIndToday: await CotizacionService().getCotizacionesActuales());
   return list;
 });
 
 final ultimaCotizacionesProvider =
-    FutureProvider.family<List<ReceiptQuoteData>, Tuple2<String, dynamic>>(
+    FutureProvider.family<List<CotizacionData>, Tuple2<String, dynamic>>(
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
-  final list = await ComprobanteService().getComprobantesRecientes();
+  final list = await CotizacionService().getCotizacionesRecientes();
   return list;
 });
 
@@ -46,8 +41,7 @@ final allQuotesProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await Utility.getDailyQuotesReport(
-      respIndToday: await CotizacionService().getAllQuoteInd(),
-      respGroupToday: await CotizacionService().getAllQuoteGroup());
+      respIndToday: await CotizacionService().getAllCotizaciones());
   return list;
 });
 

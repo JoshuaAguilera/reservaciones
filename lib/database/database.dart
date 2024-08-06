@@ -1,25 +1,37 @@
 import 'dart:io';
 import 'package:drift/native.dart';
-import 'package:generador_formato/database/tables/quote_group_table.dart';
+import 'package:generador_formato/database/tables/tarifa_real_table.dart';
+import 'package:generador_formato/database/tables/tarifa_table.dart';
+import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
-import 'tables/quote_table.dart';
-import 'tables/receipt_quotes_table.dart';
-import 'tables/user_table.dart';
+import 'tables/habitacion_table.dart';
+import 'tables/cotizaciones_table.dart';
+import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
-// @DriftDatabase(tables: [Users, ReceiptQuote, Quote, QuoteGroup])
+// @DriftDatabase(tables: [
+//   Usuario,
+//   Cotizacion,
+//   Habitacion,
+//   TarifaXDia,
+//   Tarifa,
+//   TarifaReal,
+// ])
 // class AppDatabase extends _$AppDatabase {}
 
+
 @DriftDatabase(tables: [
-  Users,
-  ReceiptQuote,
-  Quote,
-  QuoteGroup,
+  Usuario,
+  Cotizacion,
+  Habitacion,
+  TarifaXDia,
+  Tarifa,
+  TarifaReal,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -27,101 +39,92 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<List<QuoteData>> getQuotesIndbyFolio(String folioQuotes) {
-    return (select(quote)..where((t) => t.folio.equals(folioQuotes))).get();
-  }
-
-  Future<List<QuoteGroupData>> getQuotesGroupbyFolio(String folioQuotes) {
-    return (select(quoteGroup)..where((t) => t.folio.equals(folioQuotes)))
+  //cotizaciones Dao
+  Future<List<CotizacionData>> getCotizacionesByFolio(String folioQuotes) {
+    return (select(cotizacion)
+          ..where((t) => t.folioPrincipal.equals(folioQuotes)))
         .get();
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesSearch(String search) {
-    return (select(receiptQuote)..where((t) => t.nameCustomer.contains(search)))
+  Future<List<CotizacionData>> getCotizacionesSearch(String search) {
+    return (select(cotizacion)..where((t) => t.nombreHuesped.contains(search)))
         .get();
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastDay({String search = ""}) {
+  Future<List<CotizacionData>> getCotizacionesUltimoDia({String search = ""}) {
     if (search.isEmpty) {
-      return (select(receiptQuote)
+      return (select(cotizacion)
             ..where(
-              (t) => t.dateRegister.isBetweenValues(
+              (t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 1)),
                 DateTime.now(),
               ),
             ))
           .get();
     } else {
-      return (select(receiptQuote)
-            ..where((t) => t.nameCustomer.contains(search))
-            ..where((t) => t.dateRegister.isBetweenValues(
+      return (select(cotizacion)
+            ..where((t) => t.nombreHuesped.contains(search))
+            ..where((t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 1)),
                 DateTime.now())))
           .get();
     }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastWeek(
+  Future<List<CotizacionData>> getCotizacionesUltimaSemana(
       {String search = ""}) {
     if (search.isEmpty) {
-      return (select(receiptQuote)
-            ..where((t) => t.dateRegister.isBetweenValues(
+      return (select(cotizacion)
+            ..where((t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 7)),
                 DateTime.now())))
           .get();
     } else {
-      return (select(receiptQuote)
-            ..where((t) => t.nameCustomer.contains(search))
-            ..where((t) => t.dateRegister.isBetweenValues(
+      return (select(cotizacion)
+            ..where((t) => t.nombreHuesped.contains(search))
+            ..where((t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 7)),
                 DateTime.now())))
           .get();
     }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesLastMont(
-      {String search = ""}) {
+  Future<List<CotizacionData>> getCotizacionesUltimoMes({String search = ""}) {
     if (search.isEmpty) {
-      return (select(receiptQuote)
-            ..where((t) => t.dateRegister.isBetweenValues(
+      return (select(cotizacion)
+            ..where((t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 30)),
                 DateTime.now())))
           .get();
     } else {
-      return (select(receiptQuote)
-            ..where((t) => t.nameCustomer.contains(search))
-            ..where((t) => t.dateRegister.isBetweenValues(
+      return (select(cotizacion)
+            ..where((t) => t.nombreHuesped.contains(search))
+            ..where((t) => t.fecha.isBetweenValues(
                 DateTime.now().subtract(const Duration(days: 30)),
                 DateTime.now())))
           .get();
     }
   }
 
-  Future<List<ReceiptQuoteData>> getReceiptQuotesTimePeriod(
+  Future<List<CotizacionData>> getCotizacionesPeriodo(
       DateTime initTime, DateTime lastTime,
       {String search = ""}) {
     if (search.isEmpty) {
-      return (select(receiptQuote)
-            ..where((t) => t.dateRegister.isBetweenValues(
-                  initTime,
-                  lastTime,
-                )))
+      return (select(cotizacion)
+            ..where((t) => t.fecha.isBetweenValues(initTime, lastTime)))
           .get();
     } else {
-      return (select(receiptQuote)
-            ..where((t) => t.nameCustomer.contains(search))
-            ..where((t) => t.dateRegister.isBetweenValues(
-                  initTime,
-                  lastTime,
-                )))
+      return (select(cotizacion)
+            ..where((t) => t.nombreHuesped.contains(search))
+            ..where((t) => t.fecha.isBetweenValues(initTime, lastTime)))
           .get();
     }
   }
 
-  Future<List<QuoteData>> getQuotesIndToday() {
-    return (select(quote)
+  Future<List<CotizacionData>> getCotizacionesHoy() {
+    return (select(cotizacion)
           ..where(
-            (t) => t.registerDate.isBetweenValues(
+            (t) => t.fecha.isBetweenValues(
               DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
               DateTime.now(),
             ),
@@ -129,98 +132,127 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<QuoteGroupData>> getQuotesGroupToday() {
-    return (select(quoteGroup)
-          ..where(
-            (t) => t.registerDate.isBetweenValues(
-              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
-              DateTime.now(),
-            ),
-          ))
-        .get();
-  }
-
-  Future<List<ReceiptQuoteData>> getReceiptQuotesRecent() {
-    return (select(receiptQuote)
+  Future<List<CotizacionData>> getCotizacionesRecientes() {
+    return (select(cotizacion)
           ..orderBy([
-            (t) => OrderingTerm(
-                expression: t.dateRegister, mode: OrderingMode.desc)
+            (t) => OrderingTerm(expression: t.fecha, mode: OrderingMode.desc)
           ]))
         .get();
   }
 
-  Future<List<QuoteData>> getQuotesIndTimePeriod(
-    DateTime initTime,
-    DateTime lastTime,
-  ) {
-    return (select(quote)
-          ..where((t) => t.registerDate.isBetweenValues(
-                initTime,
-                lastTime,
-              )))
-        .get();
+  Future<List<CotizacionData>> getHistorialCotizaciones() {
+    return (select(cotizacion)).get();
   }
 
-  Future<List<QuoteGroupData>> getQuotesGroupTimePeriod(
-    DateTime initTime,
-    DateTime lastTime,
-  ) {
-    return (select(quoteGroup)
-          ..where((t) => t.registerDate.isBetweenValues(
-                initTime,
-                lastTime,
-              )))
-        .get();
-  }
-
-  Future deleteReceiptQuoteByFolio(String folio) {
-    return (delete(receiptQuote)..where((t) => t.folioQuotes.equals(folio)))
+  Future deleteCotizacionByFolio(String folio) {
+    return (delete(cotizacion)..where((t) => t.folioPrincipal.equals(folio)))
         .go();
   }
 
-  Future deleteQuotesByFolio(String folio) {
-    return (delete(quote)..where((t) => t.folio.equals(folio))).go();
-  }
-
-  Future<List<QuoteData>> getHistoryQuotesInd() {
-    return (select(quote)).get();
-  }
-
-  Future<List<QuoteGroupData>> getHistoryQuotesGroup() {
-    return (select(quoteGroup)).get();
-  }
-
-  //USER SECCION
-  Future<List<User>> foundUserByName(String userName) async {
-    return await (select(users)..where((t) => t.name.equals(userName))).get();
-  }
-
-  Future<List<User>> loginUser(String userName, String password) async {
-    return await (select(users)
-          ..where((t) => t.name.equals(userName))
+  Future<List<CotizacionData>> getCotizacionByPeriod(
+    DateTime initTime,
+    DateTime lastTime,
+  ) {
+    return (select(cotizacion)
           ..where(
-            (tbl) => tbl.password.equals(password),
+            (t) => t.fecha.isBetweenValues(initTime, lastTime),
           ))
         .get();
   }
 
-  Future<int> updateInfoUser(User usuario) {
-    return (update(users)..where((t) => t.id.equals(usuario.id)))
-        .write(usuario);
+  //habitacion DAO
+
+  Future<List<HabitacionData>> getAllHabitaciones() {
+    return (select(habitacion)).get();
   }
 
-  Future<int> updatePasswordUser(int userId, String newPassword) {
-    return (update(users)..where((t) => t.id.equals(userId)))
-        .write(User(id: userId, password: newPassword));
+  Future<List<HabitacionData>> getHabitacionesByFolio(String folio) {
+    return (select(habitacion)..where((t) => t.folioHabitacion.equals(folio)))
+        .get();
   }
 
-  Future<int> updatePasswordMailUser(int userId, String newPassword) {
-    return (update(users)..where((t) => t.id.equals(userId)))
-        .write(User(id: userId, passwordMail: newPassword));
+  Future<List<HabitacionData>> getHabitacionesByPeriod(
+    DateTime initTime,
+    DateTime lastTime,
+  ) {
+    return (select(habitacion)
+          ..where((t) => t.fecha.isBetweenValues(initTime, lastTime)))
+        .get();
   }
 
-  Future<List<User>> getListUser() {
-    return (select(users)).get();
+  Future<List<HabitacionData>> getHabitacionesHoy() {
+    return (select(habitacion)
+          ..where((t) => t.fecha.isBetweenValues(
+              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+              DateTime.now())))
+        .get();
+  }
+
+  Future<int> updateHabitacion(HabitacionData hab) {
+    return (update(habitacion)..where((t) => t.id.equals(hab.id))).write(hab);
+  }
+
+  Future deleteHabitacionByFolio(String folio) {
+    return (delete(habitacion)..where((t) => t.folioHabitacion.equals(folio)))
+        .go();
+  }
+
+  //tarifaXdia DAO
+
+  Future<List<TarifaXDiaData>> getTarifaXDiaByFolio(String folio) {
+    return (select(tarifaXDia)..where((t) => t.subfolio.equals(folio))).get();
+  }
+
+  Future<int> updateTarifaXDia(TarifaXDiaData tarifa) {
+    return (update(tarifaXDia)..where((t) => t.id.equals(tarifa.id)))
+        .write(tarifa);
+  }
+
+  Future deleteTarifaXDiaByFolio(String folio) {
+    return (delete(tarifaXDia)..where((t) => t.subfolio.equals(folio))).go();
+  }
+
+  //usuario dao
+
+  Future<List<UsuarioData>> getUsuariosByUsername(String userName) async {
+    return await (select(usuario)..where((t) => t.username.equals(userName)))
+        .get();
+  }
+
+  Future<List<UsuarioData>> getUsuarioByUsernameAndID(
+      String userName, int id) async {
+    return await (select(usuario)
+          ..where((t) => t.username.equals(userName))
+          ..where((tbl) => tbl.id.equals(id)))
+        .get();
+  }
+
+  Future<List<UsuarioData>> loginUser(String userName, String password) async {
+    return await (select(usuario)
+          ..where((t) => t.username.equals(userName))
+          ..where((tbl) => tbl.password.equals(password)))
+        .get();
+  }
+
+  Future<int> updateUsuario(UsuarioData user) {
+    return (update(usuario)..where((t) => t.id.equals(user.id))).write(user);
+  }
+
+  Future<int> updatePasswordUser(
+      int userId, String username, String newPassword) {
+    return (update(usuario)..where((t) => t.id.equals(userId))).write(
+        UsuarioData(id: userId, username: username, password: newPassword));
+  }
+
+  Future<int> updatePasswordMailUser(
+      int userId, String username, String newPassword) {
+    return (update(usuario)..where((t) => t.id.equals(userId))).write(
+        UsuarioData(
+            id: userId, username: username, passwordCorreo: newPassword));
+  }
+
+  Future<List<UsuarioData>> getListUser() {
+    return (select(usuario)).get();
   }
 }
 
@@ -251,3 +283,4 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
+

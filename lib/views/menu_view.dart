@@ -4,7 +4,7 @@ import 'package:generador_formato/views/gestion_usuarios_view.dart';
 import 'package:generador_formato/views/historial/comprobante_detalle_view.dart';
 import 'package:generador_formato/views/configuracion/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';
-import 'package:generador_formato/views/generar_cotizacion_view.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/generar_cotizacion_view.dart';
 import 'package:generador_formato/views/historial/historial_view.dart';
 import 'package:generador_formato/views/perfil_view.dart';
 import 'package:sidebarx/sidebarx.dart';

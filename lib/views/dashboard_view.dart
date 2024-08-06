@@ -19,7 +19,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tuple/tuple.dart';
 
-import '../widgets/comprobante_item_row.dart';
+import '../widgets/cotizacion_item_row.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/text_styles.dart';
 
@@ -141,8 +141,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         RotatedBox(
                                           quarterTurns: 3,
                                           child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0, left: 110),
                                             child: TextStyles.standardText(
                                               text: "Cotizaciones",
                                               size: 12,
@@ -368,7 +368,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               DesktopColors.cotIndPreColor
                                             ],
                                             legend: Legend(
-                                              isVisible: true,
+                                              isVisible:
+                                                  Utility.foundQuotes(list),
                                               textStyle:
                                                   TextStyles.styleStandar(
                                                 color: Theme.of(context)
@@ -380,24 +381,27 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               position: LegendPosition.bottom,
                                             ),
                                             series: [
-                                              DoughnutSeries<NumeroCotizacion,
-                                                  String>(
-                                                dataSource: list,
-                                                xValueMapper: (datum, index) =>
-                                                    datum.tipoCotizacion,
-                                                yValueMapper: (datum, index) =>
-                                                    datum.numCotizaciones,
-                                                enableTooltip: true,
-                                                dataLabelSettings:
-                                                    const DataLabelSettings(
-                                                        isVisible: true,
-                                                        showZeroValue: false,
-                                                        textStyle: TextStyle(
-                                                            fontFamily:
-                                                                "poppins_regular",
-                                                            fontSize: 11)),
-                                              ),
-                                              if (!Utility.foundQuotes(list))
+                                              if (Utility.foundQuotes(list))
+                                                DoughnutSeries<NumeroCotizacion,
+                                                    String>(
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.tipoCotizacion,
+                                                  yValueMapper:
+                                                      (datum, index) =>
+                                                          datum.numCotizaciones,
+                                                  enableTooltip: true,
+                                                  dataLabelSettings:
+                                                      const DataLabelSettings(
+                                                          isVisible: true,
+                                                          showZeroValue: false,
+                                                          textStyle: TextStyle(
+                                                              fontFamily:
+                                                                  "poppins_regular",
+                                                              fontSize: 11)),
+                                                )
+                                              else
                                                 DoughnutSeries<NumeroCotizacion,
                                                     String>(
                                                   dataSource: [
@@ -430,16 +434,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 cotizacionesDiariasSync.when(
                                   data: (list) {
                                     if (!Utility.foundQuotes(list)) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 85.0),
-                                        child: Center(
-                                            child: TextStyles.standardText(
-                                          text: "Sin resultados",
-                                          size: 11,
-                                          color: Theme.of(context).primaryColor,
-                                        )),
-                                      ).animate().fadeIn(
+                                      return Center(
+                                          child: TextStyles.standardText(
+                                        text: "Sin resultados",
+                                        size: 11,
+                                        color: Theme.of(context).primaryColor,
+                                      )).animate().fadeIn(
                                           delay: const Duration(
                                               milliseconds: 850));
                                     } else {
@@ -515,7 +515,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   return ComprobanteItemRow(
                                                     delay: index,
                                                     key: UniqueKey(),
-                                                    comprobante: list[index],
+                                                    cotizacion: list[index],
                                                     index: index,
                                                     screenWidth: screenWidth,
                                                     isQuery: true,

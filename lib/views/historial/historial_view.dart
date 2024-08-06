@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/services/cotizacion_service.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/services/habitacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -12,11 +11,11 @@ import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../providers/comprobante_provider.dart';
-import '../../services/comprobante_service.dart';
+import '../../providers/cotizacion_provider.dart';
+import '../../services/cotizacion_service.dart';
 import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
-import '../../widgets/comprobante_item_row.dart';
+import '../../widgets/cotizacion_item_row.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -238,7 +237,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                 ),
                 receiptQuoteQuery.when(
                   data: (list) {
-                    print("cargado");
                     return list.isEmpty
                         ? SizedBox(
                             height: screenHight * 0.5,
@@ -253,7 +251,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                               itemBuilder: (context, index) {
                                 return ComprobanteItemRow(
                                   key: UniqueKey(),
-                                  comprobante: list[index],
+                                  cotizacion: list[index],
                                   index: index,
                                   screenWidth: screenWidth,
                                   seeReceipt: () async {
@@ -261,48 +259,32 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                         .read(isEmptyProvider.notifier)
                                         .update((state) => true);
 
-                                    List<Cotizacion> respCotizaciones = [];
-                                    List<CotizacionGrupal>
-                                        respCotizacionesGrup = [];
+                                    List<Habitacion> respHabitaciones = [];
 
-                                    if (list[index].isGroup) {
-                                      respCotizacionesGrup =
-                                          await CotizacionService()
-                                              .getCotizacionesGrupByFolio(
-                                                  list[index].folioQuotes);
-                                    } else {
-                                      respCotizaciones =
-                                          await CotizacionService()
-                                              .getCotizacionesIndByFolio(
-                                                  list[index].folioQuotes);
-                                    }
+                                    respHabitaciones = await HabitacionService()
+                                        .getHabitacionesByFolio(
+                                            list[index].folioPrincipal ?? '');
 
                                     if (!mounted) return;
 
-                                    ComprobanteCotizacion newComprobante =
-                                        ComprobanteCotizacion(
-                                      nombre: list[index].nameCustomer,
-                                      esGrupal: list[index].isGroup,
-                                      correo: list[index].mail,
-                                      telefono: list[index].numPhone,
-                                      fechaRegistro:
-                                          list[index].dateRegister.toString(),
-                                      folioCuotas: list[index].folioQuotes,
-                                      tarifaDiaria: list[index].rateDay,
+                                    Cotizacion newComprobante = Cotizacion(
+                                      nombreHuesped: list[index].nombreHuesped,
+                                      esGrupo: list[index].esGrupo,
+                                      correoElectronico:
+                                          list[index].correoElectrico,
+                                      numeroTelefonico:
+                                          list[index].numeroTelefonico,
+                                      fecha: list[index].fecha.toString(),
+                                      folioPrincipal:
+                                          list[index].folioPrincipal,
+                                      descuento: list[index].descuento,
                                       total: list[index].total,
-                                      cotizacionesInd:
-                                          respCotizaciones.isNotEmpty
-                                              ? respCotizaciones
-                                              : null,
-                                      cotizacionesGrup:
-                                          respCotizacionesGrup.isNotEmpty
-                                              ? respCotizacionesGrup
-                                              : null,
+                                      habitaciones: respHabitaciones,
                                     );
 
                                     ref
                                         .read(
-                                            comprobanteDetalleProvider.notifier)
+                                            cotizacionDetalleProvider.notifier)
                                         .update((state) => newComprobante);
 
                                     widget.sideController.selectIndex(12);
@@ -316,13 +298,13 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                         context: context,
                                         title: "Eliminar comprobante",
                                         content:
-                                            "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nameCustomer}?",
+                                            "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
                                         nameButtonMain: "Aceptar",
                                         funtionMain: () async {
-                                          debugPrint(list[index].folioQuotes);
-                                          if (await ComprobanteService()
-                                              .eliminarComprobante(
-                                                  list[index].folioQuotes)) {}
+                                          debugPrint(list[index].folioPrincipal);
+                                          if (await CotizacionService()
+                                              .eliminarCotizacion(
+                                                  list[index].folioPrincipal ?? '')) {}
                                         },
                                         nameButtonCancel: "Cancelar",
                                         withButtonCancel: true,

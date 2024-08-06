@@ -1,21 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class CotizacionIndividualProvider extends StateNotifier<List<Cotizacion>> {
-  CotizacionIndividualProvider() : super([]);
+class HabitacionProvider extends StateNotifier<List<Habitacion>> {
+  HabitacionProvider() : super([]);
 
   static final provider =
-      StateNotifierProvider<CotizacionIndividualProvider, List<Cotizacion>>(
-          (ref) => CotizacionIndividualProvider());
+      StateNotifierProvider<HabitacionProvider, List<Habitacion>>(
+          (ref) => HabitacionProvider());
 
-  Cotizacion _current = Cotizacion();
-  Cotizacion get current => _current;
+  Habitacion _current = Habitacion();
+  Habitacion get current => _current;
   late pw.Document pdfPrinc;
 
-  void addItem(Cotizacion item) {
+  void addItem(Habitacion item) {
     _current = item;
     state = [...state, item];
   }
@@ -28,11 +28,10 @@ class CotizacionIndividualProvider extends StateNotifier<List<Cotizacion>> {
     state = [];
   }
 
-  Future<pw.Document> generarComprobante(
-      ComprobanteCotizacion comprobante) async {
+  Future<pw.Document> generarComprobante(Cotizacion cotizacion) async {
     pdfPrinc = await GeneradorDocService()
         .generarComprobanteCotizacionIndividual(
-            cotizacionesInd: state, comprobante: comprobante);
+            habitaciones: state, cotizacion: cotizacion);
     return pdfPrinc;
   }
 }

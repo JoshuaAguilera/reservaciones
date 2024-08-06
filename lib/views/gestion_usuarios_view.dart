@@ -88,7 +88,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                                   context: context,
                                   title: "Usuario creado correctamente",
                                   message:
-                                      "Se creo el nuevo usuario: ${p0!.name}",
+                                      "Se creo el nuevo usuario: ${p0!.username}",
                                   type: "success");
                               ref
                                   .read(changeUsersProvider.notifier)
@@ -266,19 +266,19 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                                   //     child: const Icon(
                                   //         CupertinoIcons.person_circle)),
                                   TextStyles.standardText(
-                                      text: data.name ?? '',
+                                      text: data.username ?? '',
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
                                       overClip: true),
                                   if (screenWidth > 1000)
                                     TextStyles.standardText(
-                                        text: data.mail ?? '-',
+                                        text: data.correoElectronico ?? '-',
                                         aling: TextAlign.center,
                                         color: Theme.of(context).primaryColor,
                                         overClip: true),
                                   if (screenWidth > 1200)
                                     TextStyles.standardText(
-                                        text: data.phone ?? '-',
+                                        text: data.telefono ?? '-',
                                         aling: TextAlign.center,
                                         color: Theme.of(context).primaryColor,
                                         overClip: true),
@@ -317,7 +317,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                                                   buildContext: contextBL,
                                                   usuario: data,
                                                   onUpdate: (p0) async {
-                                                    if (!await AuthService()
+                                                    if (await AuthService()
                                                         .updateUser(p0!)) {
                                                       showSnackBar(
                                                           context: context,
@@ -333,7 +333,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                                                         title:
                                                             "Usuario actualizado correctamente",
                                                         message:
-                                                            "Se actualizo el usuario: ${p0!.name}",
+                                                            "Se actualizo el usuario: ${p0!.username}",
                                                         type: "success");
                                                     ref
                                                         .read(

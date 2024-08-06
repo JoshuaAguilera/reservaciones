@@ -2,10 +2,10 @@ import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_grupal_model.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:intl/intl.dart';
 
@@ -91,17 +91,17 @@ class Utility {
   }
 
   static double calculateTarifaDiaria(
-      {required Cotizacion cotizacion, bool esPreventa = false}) {
+      {required Habitacion cotizacion, bool esPreventa = false}) {
     double tarifaTotal = 0;
-    double tarifaAdulto = esPreventa
-        ? cotizacion.tarifaPreventaAdulto ?? 0
-        : cotizacion.tarifaRealAdulto ?? 0;
-    double tarifaMenores = esPreventa
-        ? cotizacion.tarifaPreventaMenor ?? 0
-        : cotizacion.tarifaRealMenor ?? 0;
+    // double tarifaAdulto = esPreventa
+    //     ? cotizacion.tarifaPreventaAdulto ?? 0
+    //     : cotizacion.tarifaRealAdulto ?? 0;
+    // double tarifaMenores = esPreventa
+    //     ? cotizacion.tarifaPreventaMenor ?? 0
+    //     : cotizacion.tarifaRealMenor ?? 0;
 
-    tarifaTotal = (cotizacion.adultos! * tarifaAdulto) +
-        (cotizacion.menores7a12! * tarifaMenores);
+    // tarifaTotal = (cotizacion.adultos! * tarifaAdulto) +
+    //     (cotizacion.menores7a12! * tarifaMenores);
 
     return tarifaTotal;
   }
@@ -133,12 +133,12 @@ class Utility {
     return isVisible;
   }
 
-  static double calculateTarifaTotal(List<Cotizacion> cotizaciones,
+  static double calculateTarifaTotal(List<Habitacion> cotizaciones,
       {bool esPreventa = false}) {
     double tarifaTotal = 0;
     for (var element in cotizaciones) {
-      int days = DateTime.parse(element.fechaSalida!)
-          .difference(DateTime.parse(element.fechaEntrada!))
+      int days = DateTime.parse(element.fechaCheckOut!)
+          .difference(DateTime.parse(element.fechaCheckIn!))
           .inDays;
       tarifaTotal +=
           calculateTarifaDiaria(cotizacion: element, esPreventa: esPreventa) *
@@ -156,10 +156,10 @@ class Utility {
     return height;
   }
 
-  static List<ReporteCotizacion> getReportQuotes(
-      {List<QuoteData>? cotizacionesInd,
-      required String filter,
-      List<QuoteGroupData>? cotizacionesGroup}) {
+  static List<ReporteCotizacion> getCotizacionQuotes({
+    List<CotizacionData>? cotizaciones,
+    required String filter,
+  }) {
     List<ReporteCotizacion> listCot = [];
     DateTime now = DateTime.now();
 
@@ -174,32 +174,17 @@ class Utility {
               numCotizacionesIndividualPreventa: 0,
             );
 
-            if (cotizacionesInd != null) {
-              List<QuoteData> quotesInd = cotizacionesInd
-                  .where((element) => element.registerDate.weekday == i)
+            if (cotizaciones != null) {
+              List<CotizacionData> quotesInd = cotizaciones
+                  .where((element) => element.fecha.weekday == i)
                   .toList();
 
               for (var element in quotesInd) {
-                if (element.isPresale) {
-                  quoteDay.numCotizacionesIndividualPreventa++;
+                if (element.esGrupo!) {
+                  quoteDay.numCotizacionesGrupales++;
                 } else {
                   quoteDay.numCotizacionesIndividual++;
                 }
-              }
-            }
-
-            if (cotizacionesGroup != null) {
-              List<QuoteGroupData> quotesInd = cotizacionesGroup
-                  .where((element) => element.registerDate.weekday == i)
-                  .toList();
-
-              for (var element in quotesInd) {
-                if (element.isPresale) {
-                  quoteDay.numCotizacionesGrupalesPreventa++;
-                } else {
-                  quoteDay.numCotizacionesGrupales++;
-                }
-                // }
               }
             }
 
@@ -219,31 +204,16 @@ class Utility {
             numCotizacionesIndividualPreventa: 0,
           );
 
-          if (cotizacionesInd != null) {
-            List<QuoteData> quotes = cotizacionesInd
-                .where((element) => element.registerDate.day == i)
+          if (cotizaciones != null) {
+            List<CotizacionData> quotes = cotizaciones
+                .where((element) => element.fecha.day == i)
                 .toList();
 
             for (var element in quotes) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesIndividualPreventa++;
+              if (element.esGrupo!) {
+                quoteDay.numCotizacionesGrupales++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
-              }
-              // }
-            }
-          }
-
-          if (cotizacionesGroup != null) {
-            List<QuoteGroupData> quotes = cotizacionesGroup
-                .where((element) => element.registerDate.day == i)
-                .toList();
-
-            for (var element in quotes) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesGrupalesPreventa++;
-              } else {
-                quoteDay.numCotizacionesGrupales++;
               }
               // }
             }
@@ -262,32 +232,18 @@ class Utility {
             numCotizacionesIndividualPreventa: 0,
           );
 
-          if (cotizacionesInd != null) {
-            List<QuoteData> quotes = cotizacionesInd
-                .where((element) => element.registerDate.month == i)
+          if (cotizaciones != null) {
+            List<CotizacionData> quotes = cotizaciones
+                .where((element) => element.fecha.month == i)
                 .toList();
 
             for (var element in quotes) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesIndividualPreventa++;
+              if (element.esGrupo!) {
+                quoteDay.numCotizacionesGrupales++;
               } else {
                 quoteDay.numCotizacionesIndividual++;
               }
               // }
-            }
-          }
-
-          if (cotizacionesGroup != null) {
-            List<QuoteGroupData> quotes = cotizacionesGroup
-                .where((element) => element.registerDate.month == i)
-                .toList();
-
-            for (var element in quotes) {
-              if (element.isPresale) {
-                quoteDay.numCotizacionesGrupalesPreventa++;
-              } else {
-                quoteDay.numCotizacionesGrupales++;
-              }
             }
           }
 
@@ -314,7 +270,7 @@ class Utility {
   }
 
   static List<NumeroCotizacion> getDailyQuotesReport(
-      {List<QuoteData>? respIndToday, List<QuoteGroupData>? respGroupToday}) {
+      {List<CotizacionData>? respIndToday}) {
     List<NumeroCotizacion> cot = [];
 
     NumeroCotizacion cotizacionesGrupales =
@@ -330,18 +286,10 @@ class Utility {
         tipoCotizacion: "Cotizaciones individuales en Preventa");
 
     for (var element in respIndToday!) {
-      if (element.isPresale) {
-        cotizacionesIndividualesPreventa.numCotizaciones++;
+      if (element.esGrupo!) {
+        cotizacionesGrupales.numCotizaciones++;
       } else {
         cotizacionesIndividuales.numCotizaciones++;
-      }
-    }
-
-    for (var element in respGroupToday!) {
-      if (element.isPresale) {
-        // cotizacionesGrupalesPreventa.numCotizaciones++;
-      } else {
-        cotizacionesGrupales.numCotizaciones++;
       }
     }
 
@@ -395,17 +343,17 @@ class Utility {
     }
   }
 
-  static String getOcupattionMessage(List<Cotizacion> cotizaciones) {
+  static String getOcupattionMessage(List<Habitacion> cotizaciones) {
     String occupation = "";
     int adultos = 0;
     int menores0a6 = 0;
     int menores7a12 = 0;
 
-    for (var element in cotizaciones) {
-      adultos += element.adultos!;
-      menores0a6 += element.menores0a6!;
-      menores7a12 += element.menores7a12!;
-    }
+    // for (var element in cotizaciones) {
+    //   adultos += element.adultos!;
+    //   menores0a6 += element.menores0a6!;
+    //   menores7a12 += element.menores7a12!;
+    // }
 
     if (adultos > 0) {
       occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
@@ -424,12 +372,12 @@ class Utility {
     return occupation;
   }
 
-  static String getPeriodReservation(List<Cotizacion> cotizaciones) {
+  static String getPeriodReservation(List<Habitacion> cotizaciones) {
     String period = "";
     Intl.defaultLocale = "es_ES";
 
-    DateTime initTime = DateTime.parse(cotizaciones.first.fechaEntrada!);
-    DateTime lastTime = DateTime.parse(cotizaciones.first.fechaSalida!);
+    DateTime initTime = DateTime.parse(cotizaciones.first.fechaCheckIn!);
+    DateTime lastTime = DateTime.parse(cotizaciones.first.fechaCheckOut!);
     DateFormat formatter = DateFormat('MMMM');
 
     if (lastTime.month == initTime.month) {
@@ -442,9 +390,9 @@ class Utility {
     return period;
   }
 
-  static int getDifferenceInDays({List<Cotizacion>? cotizaciones}) {
-    int days = DateTime.parse(cotizaciones!.first.fechaSalida!)
-        .difference(DateTime.parse(cotizaciones!.last.fechaEntrada!))
+  static int getDifferenceInDays({List<Habitacion>? cotizaciones}) {
+    int days = DateTime.parse(cotizaciones!.first.fechaCheckOut!)
+        .difference(DateTime.parse(cotizaciones!.last.fechaCheckIn!))
         .inDays;
 
     return days;
@@ -531,11 +479,11 @@ class Utility {
     return width;
   }
 
-  static String getDatesStay(List<CotizacionGrupal> cotizaciones) {
+  static String getDatesStay(List<Habitacion> habitaciones) {
     String dates = '';
 
-    for (var element in cotizaciones) {
-      dates += "${element.fechaEntrada!} - ${element.fechaSalida!}, ";
+    for (var element in habitaciones) {
+      dates += "${element.fechaCheckIn!} - ${element.fechaCheckOut!}, ";
     }
 
     return dates;

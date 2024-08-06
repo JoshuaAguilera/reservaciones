@@ -226,6 +226,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 isChanged: (value) =>
                                     setState(() => canChangedKey = value),
                                 userId: usuario.id,
+                                username: usuario.username,
                                 isPasswordMail: false,
                               ),
                               const SizedBox(height: 7),
@@ -300,6 +301,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 isChanged: (value) =>
                                     setState(() => canChangedKeyMail = value),
                                 userId: usuario.id,
+                                username: usuario.username,
                                 isPasswordMail: true,
                               ),
                               const SizedBox(height: 7),
@@ -354,14 +356,14 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       return;
     }
 
-    User usuario = User(
+    UsuarioData usuario = UsuarioData(
       id: userId,
-      name: usernameController.text,
-      firstName: firstnameController.text,
-      secondName: lastnameController.text,
-      birthDate: changeDate ? dateController.text : '',
-      mail: mailController.text,
-      phone: "+52${phoneController.text}",
+      username: usernameController.text,
+      nombre: firstnameController.text,
+      apellido: lastnameController.text,
+      fechaNacimiento: changeDate ? dateController.text : '',
+      correoElectronico: mailController.text,
+      telefono: "+52${phoneController.text}",
     );
 
     if (await AuthService().updateUser(usuario)) {

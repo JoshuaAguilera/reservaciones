@@ -1,9 +1,8 @@
 import 'package:flutter/services.dart';
-import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -19,8 +18,8 @@ class GeneradorDocService extends BaseService {
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
   Future<pw.Document> generarComprobanteCotizacionIndividual(
-      {required List<Cotizacion> cotizacionesInd,
-      required ComprobanteCotizacion comprobante,
+      {required List<Habitacion> habitaciones,
+      required Cotizacion cotizacion,
       bool themeDefault = false}) async {
     //PDF generation
     final pdf = pw.Document();
@@ -147,14 +146,15 @@ class GeneradorDocService extends BaseService {
             child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
+                  pw.Text("ESTIMAD@: ${cotizacion.nombreHuesped}",
+                      style: styleBold),
                   pw.SizedBox(height: 13),
                   pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
                   pw.SizedBox(height: 14),
                   pw.Text(FilesTemplate.StructureDoc(2), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(
-                      cotizacionesInd: cotizacionesInd,
+                      habitaciones: habitaciones,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
                       styleBoldTable: styleBoldTable,
@@ -279,8 +279,7 @@ class GeneradorDocService extends BaseService {
   }
 
   Future<pw.Document> generarComprobanteCotizacionGrupal(
-      List<CotizacionGrupal> cotizaciones,
-      ComprobanteCotizacion comprobante) async {
+      List<Habitacion> habitaciones, Cotizacion comprobante) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
@@ -421,15 +420,17 @@ class GeneradorDocService extends BaseService {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.SizedBox(height: 8),
-                  pw.Text("ESTIMAD@: ${comprobante.nombre}", style: styleBold),
-                  pw.SizedBox(height: 3),
-                  pw.Text("TELÉFONO: ${comprobante.telefono}",
+                  pw.Text("ESTIMAD@: ${comprobante.nombreHuesped}",
                       style: styleBold),
                   pw.SizedBox(height: 3),
-                  pw.Text("CORREO: ${comprobante.correo}", style: styleBold),
+                  pw.Text("TELÉFONO: ${comprobante.numeroTelefonico}",
+                      style: styleBold),
+                  pw.SizedBox(height: 3),
+                  pw.Text("CORREO: ${comprobante.correoElectronico}",
+                      style: styleBold),
                   pw.SizedBox(height: 3),
                   pw.Text(
-                      "FECHAS DE ESTANCIA: ${Utility.getDatesStay(cotizaciones)}",
+                      "FECHAS DE ESTANCIA: ${Utility.getDatesStay(habitaciones)}",
                       style: styleBold),
                   pw.SizedBox(height: 3),
                   pw.Text("HABITACIONES: ${comprobante.habitaciones}",
@@ -438,7 +439,6 @@ class GeneradorDocService extends BaseService {
                   pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(
-                      cotizacionesGrup: cotizaciones,
                       styleLigth: styleLigth,
                       styleLigthHeaderTable: styleLigthHeaderTable,
                       styleBoldTable: styleBoldTable,
@@ -577,20 +577,19 @@ class GeneradorDocService extends BaseService {
   }
 
   pw.Column generateTables(
-      {List<Cotizacion>? cotizacionesInd,
-      List<CotizacionGrupal>? cotizacionesGrup,
+      {List<Habitacion>? habitaciones,
       required pw.TextStyle styleLigth,
       required pw.TextStyle styleLigthHeaderTable,
       required pw.TextStyle styleBoldTable,
       String? color}) {
     List<pw.Widget> tablas = [];
 
-    if (cotizacionesGrup != null) {
-      if (cotizacionesGrup!
+    if (habitaciones != null) {
+      if (habitaciones!
           .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
         tablas.add(FilesTemplate.getTablesCotGroup(
           nameTable: "PLAN TODO INCLUIDO",
-          cotizaciones: cotizacionesGrup
+          habitaciones: habitaciones
               .where((element) => element.plan == "PLAN TODO INCLUIDO")
               .toList(),
           styleGeneral: styleLigth,
@@ -601,11 +600,10 @@ class GeneradorDocService extends BaseService {
         tablas.add(pw.SizedBox(height: 5));
       }
 
-      if (cotizacionesGrup
-          .any((element) => element.plan == "PLAN SIN ALIMENTOS")) {
+      if (habitaciones.any((element) => element.plan == "PLAN SIN ALIMENTOS")) {
         tablas.add(FilesTemplate.getTablesCotGroup(
           nameTable: "PLAN SIN ALIMENTOS",
-          cotizaciones: cotizacionesGrup
+          habitaciones: habitaciones
               .where((element) => element.plan == "PLAN SIN ALIMENTOS")
               .toList(),
           styleGeneral: styleLigth,
@@ -615,18 +613,16 @@ class GeneradorDocService extends BaseService {
         ));
         tablas.add(pw.SizedBox(height: 5));
       }
-    }
 
-    if (cotizacionesInd != null) {
-      if (cotizacionesInd
+      if (habitaciones
           .any((element) => element.categoria == "HABITACIÓN DELUXE DOBLE")) {
-        if (cotizacionesInd
+        if (habitaciones
             .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
           tablas.add(
             FilesTemplate.getTablesCotIndiv(
               nameTable:
                   "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-              cotizaciones: cotizacionesInd
+              cotizaciones: habitaciones
                   .where((element) =>
                       element.plan == "PLAN TODO INCLUIDO" &&
                       element.categoria == "HABITACIÓN DELUXE DOBLE")
@@ -639,12 +635,11 @@ class GeneradorDocService extends BaseService {
           );
           tablas.add(pw.SizedBox(height: 20));
         }
-        if (cotizacionesInd
-            .any((element) => element.plan == "SOLO HOSPEDAJE")) {
+        if (habitaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
           tablas.add(FilesTemplate.getTablesCotIndiv(
             nameTable:
                 "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – SOLO HOSPEDAJE",
-            cotizaciones: cotizacionesInd
+            cotizaciones: habitaciones
                 .where((element) =>
                     element.plan == "SOLO HOSPEDAJE" &&
                     element.categoria == "HABITACIÓN DELUXE DOBLE")
@@ -658,15 +653,15 @@ class GeneradorDocService extends BaseService {
         }
       }
 
-      if (cotizacionesInd.any((element) =>
+      if (habitaciones.any((element) =>
           element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")) {
-        if (cotizacionesInd
+        if (habitaciones
             .any((element) => element.plan == "PLAN TODO INCLUIDO")) {
           tablas.add(
             FilesTemplate.getTablesCotIndiv(
               nameTable:
                   "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-              cotizaciones: cotizacionesInd
+              cotizaciones: habitaciones
                   .where((element) =>
                       element.plan == "PLAN TODO INCLUIDO" &&
                       element.categoria ==
@@ -680,12 +675,11 @@ class GeneradorDocService extends BaseService {
           );
           tablas.add(pw.SizedBox(height: 20));
         }
-        if (cotizacionesInd
-            .any((element) => element.plan == "SOLO HOSPEDAJE")) {
+        if (habitaciones.any((element) => element.plan == "SOLO HOSPEDAJE")) {
           tablas.add(FilesTemplate.getTablesCotIndiv(
             nameTable:
                 "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – SOLO HOSPEDAJE ",
-            cotizaciones: cotizacionesInd
+            cotizaciones: habitaciones
                 .where((element) =>
                     element.plan == "SOLO HOSPEDAJE" &&
                     element.categoria == "HABITACIÓN DELUXE DOBLE O KING SIZE")

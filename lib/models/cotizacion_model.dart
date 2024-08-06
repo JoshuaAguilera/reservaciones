@@ -1,62 +1,33 @@
+import 'package:generador_formato/models/habitacion_model.dart';
+
 class Cotizacion {
   int? id;
-  bool? esPreVenta;
-  String? categoria;
-  String? plan;
-  String? fechaEntrada;
-  String? fechaSalida;
-  int? adultos;
-  int? menores0a6;
-  int? menores7a12;
-  double? tarifaRealAdulto;
-  double? tarifaPreventaAdulto;
-  double? tarifaRealMenor;
-  double? tarifaPreventaMenor;
+  String? folioPrincipal;
+  String? nombreHuesped;
+  String? numeroTelefonico;
+  String? correoElectronico;
+  String? tipo;
+  String? fecha;
+  int? responsableId;
+  double? total;
+  double? descuento;
+  bool? esGrupo;
+  bool? esConcretado;
+  List<Habitacion>? habitaciones;
 
   Cotizacion({
     this.id,
-    this.esPreVenta,
-    this.categoria,
-    this.plan,
-    this.fechaEntrada,
-    this.fechaSalida,
-    this.adultos,
-    this.menores0a6,
-    this.menores7a12,
-    this.tarifaRealAdulto,
-    this.tarifaPreventaAdulto,
-    this.tarifaPreventaMenor,
-    this.tarifaRealMenor,
+    this.esGrupo,
+    this.nombreHuesped,
+    this.numeroTelefonico,
+    this.correoElectronico,
+    this.fecha,
+    this.folioPrincipal,
+    this.descuento,
+    this.total,
+    this.habitaciones,
+    this.responsableId,
+    this.tipo,
+    this.esConcretado,
   });
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "esPreventa": esPreVenta,
-        "categoria": categoria,
-        "plan": plan,
-        "fechaEntrada": fechaEntrada,
-        "noches": fechaSalida,
-        "adultos": adultos,
-        "menores0a6": menores0a6,
-        "menores7a12": menores7a12,
-        "tarifaReal": tarifaRealAdulto,
-        "tarifaPreventa": tarifaPreventaAdulto,
-        "tarifaRealMenor": tarifaRealMenor,
-        "tarifaPreventaMenor": tarifaPreventaMenor,
-      };
-
-  Map<String, dynamic> toMapUpdate() => {
-        "esPreventa": esPreVenta,
-        "categoria": categoria,
-        "plan": plan,
-        "fechaEntrada": fechaEntrada,
-        "noches": fechaSalida,
-        "adultos": adultos,
-        "menores0a6": menores0a6,
-        "menores7a12": menores7a12,
-        "tarifaRealAdulto": tarifaRealAdulto,
-        "tarifaPreventaAdulto": tarifaPreventaAdulto,
-        "tarifaRealMenor": tarifaRealMenor,
-        "tarifaPreventaMenor": tarifaPreventaMenor,
-      };
 }

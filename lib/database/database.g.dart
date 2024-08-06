@@ -3,11 +3,11 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $UsersTable extends Users with TableInfo<$UsersTable, User> {
+class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $UsersTable(this.attachedDatabase, [this._alias]);
+  $UsuarioTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -17,11 +17,14 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _passwordMeta =
       const VerificationMeta('password');
   @override
@@ -33,69 +36,81 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
       'rol', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _mailMeta = const VerificationMeta('mail');
+  static const VerificationMeta _correoElectronicoMeta =
+      const VerificationMeta('correoElectronico');
   @override
-  late final GeneratedColumn<String> mail = GeneratedColumn<String>(
-      'mail', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _passwordMailMeta =
-      const VerificationMeta('passwordMail');
+  late final GeneratedColumn<String> correoElectronico =
+      GeneratedColumn<String>('correo_electronico', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _passwordCorreoMeta =
+      const VerificationMeta('passwordCorreo');
   @override
-  late final GeneratedColumn<String> passwordMail = GeneratedColumn<String>(
-      'password_mail', aliasedName, true,
+  late final GeneratedColumn<String> passwordCorreo = GeneratedColumn<String>(
+      'password_correo', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  static const VerificationMeta _telefonoMeta =
+      const VerificationMeta('telefono');
   @override
-  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-      'phone', aliasedName, true,
+  late final GeneratedColumn<String> telefono = GeneratedColumn<String>(
+      'telefono', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _birthDateMeta =
-      const VerificationMeta('birthDate');
+  static const VerificationMeta _fechaNacimientoMeta =
+      const VerificationMeta('fechaNacimiento');
   @override
-  late final GeneratedColumn<String> birthDate = GeneratedColumn<String>(
-      'birth_date', aliasedName, true,
+  late final GeneratedColumn<String> fechaNacimiento = GeneratedColumn<String>(
+      'fecha_nacimiento', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _firstNameMeta =
-      const VerificationMeta('firstName');
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
   @override
-  late final GeneratedColumn<String> firstName = GeneratedColumn<String>(
-      'first_name', aliasedName, true,
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+      'nombre', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _secondNameMeta =
-      const VerificationMeta('secondName');
+  static const VerificationMeta _apellidoMeta =
+      const VerificationMeta('apellido');
   @override
-  late final GeneratedColumn<String> secondName = GeneratedColumn<String>(
-      'second_name', aliasedName, true,
+  late final GeneratedColumn<String> apellido = GeneratedColumn<String>(
+      'apellido', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _numCotizacionesMeta =
+      const VerificationMeta('numCotizaciones');
+  @override
+  late final GeneratedColumn<int> numCotizaciones = GeneratedColumn<int>(
+      'num_cotizaciones', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        name,
+        username,
         password,
         rol,
-        mail,
-        passwordMail,
-        phone,
-        birthDate,
-        firstName,
-        secondName
+        correoElectronico,
+        passwordCorreo,
+        telefono,
+        fechaNacimiento,
+        nombre,
+        apellido,
+        numCotizaciones
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'users';
+  static const String $name = 'usuario';
   @override
-  VerificationContext validateIntegrity(Insertable<User> instance,
+  VerificationContext validateIntegrity(Insertable<UsuarioData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
+    } else if (isInserting) {
+      context.missing(_usernameMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
@@ -105,33 +120,41 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
     }
-    if (data.containsKey('mail')) {
+    if (data.containsKey('correo_electronico')) {
       context.handle(
-          _mailMeta, mail.isAcceptableOrUnknown(data['mail']!, _mailMeta));
+          _correoElectronicoMeta,
+          correoElectronico.isAcceptableOrUnknown(
+              data['correo_electronico']!, _correoElectronicoMeta));
     }
-    if (data.containsKey('password_mail')) {
+    if (data.containsKey('password_correo')) {
       context.handle(
-          _passwordMailMeta,
-          passwordMail.isAcceptableOrUnknown(
-              data['password_mail']!, _passwordMailMeta));
+          _passwordCorreoMeta,
+          passwordCorreo.isAcceptableOrUnknown(
+              data['password_correo']!, _passwordCorreoMeta));
     }
-    if (data.containsKey('phone')) {
+    if (data.containsKey('telefono')) {
+      context.handle(_telefonoMeta,
+          telefono.isAcceptableOrUnknown(data['telefono']!, _telefonoMeta));
+    }
+    if (data.containsKey('fecha_nacimiento')) {
       context.handle(
-          _phoneMeta, phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta));
+          _fechaNacimientoMeta,
+          fechaNacimiento.isAcceptableOrUnknown(
+              data['fecha_nacimiento']!, _fechaNacimientoMeta));
     }
-    if (data.containsKey('birth_date')) {
-      context.handle(_birthDateMeta,
-          birthDate.isAcceptableOrUnknown(data['birth_date']!, _birthDateMeta));
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
     }
-    if (data.containsKey('first_name')) {
-      context.handle(_firstNameMeta,
-          firstName.isAcceptableOrUnknown(data['first_name']!, _firstNameMeta));
+    if (data.containsKey('apellido')) {
+      context.handle(_apellidoMeta,
+          apellido.isAcceptableOrUnknown(data['apellido']!, _apellidoMeta));
     }
-    if (data.containsKey('second_name')) {
+    if (data.containsKey('num_cotizaciones')) {
       context.handle(
-          _secondNameMeta,
-          secondName.isAcceptableOrUnknown(
-              data['second_name']!, _secondNameMeta));
+          _numCotizacionesMeta,
+          numCotizaciones.isAcceptableOrUnknown(
+              data['num_cotizaciones']!, _numCotizacionesMeta));
     }
     return context;
   }
@@ -139,134 +162,146 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  User map(Map<String, dynamic> data, {String? tablePrefix}) {
+  UsuarioData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return User(
+    return UsuarioData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name']),
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rol']),
-      mail: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}mail']),
-      passwordMail: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}password_mail']),
-      phone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}phone']),
-      birthDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}birth_date']),
-      firstName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}first_name']),
-      secondName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}second_name']),
+      correoElectronico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}correo_electronico']),
+      passwordCorreo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}password_correo']),
+      telefono: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}telefono']),
+      fechaNacimiento: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}fecha_nacimiento']),
+      nombre: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
+      apellido: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
+      numCotizaciones: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}num_cotizaciones']),
     );
   }
 
   @override
-  $UsersTable createAlias(String alias) {
-    return $UsersTable(attachedDatabase, alias);
+  $UsuarioTable createAlias(String alias) {
+    return $UsuarioTable(attachedDatabase, alias);
   }
 }
 
-class User extends DataClass implements Insertable<User> {
+class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final int id;
-  final String? name;
+  final String username;
   final String? password;
   final String? rol;
-  final String? mail;
-  final String? passwordMail;
-  final String? phone;
-  final String? birthDate;
-  final String? firstName;
-  final String? secondName;
-  const User(
+  final String? correoElectronico;
+  final String? passwordCorreo;
+  final String? telefono;
+  final String? fechaNacimiento;
+  final String? nombre;
+  final String? apellido;
+  final int? numCotizaciones;
+  const UsuarioData(
       {required this.id,
-      this.name,
+      required this.username,
       this.password,
       this.rol,
-      this.mail,
-      this.passwordMail,
-      this.phone,
-      this.birthDate,
-      this.firstName,
-      this.secondName});
+      this.correoElectronico,
+      this.passwordCorreo,
+      this.telefono,
+      this.fechaNacimiento,
+      this.nombre,
+      this.apellido,
+      this.numCotizaciones});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
-    }
+    map['username'] = Variable<String>(username);
     if (!nullToAbsent || password != null) {
       map['password'] = Variable<String>(password);
     }
     if (!nullToAbsent || rol != null) {
       map['rol'] = Variable<String>(rol);
     }
-    if (!nullToAbsent || mail != null) {
-      map['mail'] = Variable<String>(mail);
+    if (!nullToAbsent || correoElectronico != null) {
+      map['correo_electronico'] = Variable<String>(correoElectronico);
     }
-    if (!nullToAbsent || passwordMail != null) {
-      map['password_mail'] = Variable<String>(passwordMail);
+    if (!nullToAbsent || passwordCorreo != null) {
+      map['password_correo'] = Variable<String>(passwordCorreo);
     }
-    if (!nullToAbsent || phone != null) {
-      map['phone'] = Variable<String>(phone);
+    if (!nullToAbsent || telefono != null) {
+      map['telefono'] = Variable<String>(telefono);
     }
-    if (!nullToAbsent || birthDate != null) {
-      map['birth_date'] = Variable<String>(birthDate);
+    if (!nullToAbsent || fechaNacimiento != null) {
+      map['fecha_nacimiento'] = Variable<String>(fechaNacimiento);
     }
-    if (!nullToAbsent || firstName != null) {
-      map['first_name'] = Variable<String>(firstName);
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String>(nombre);
     }
-    if (!nullToAbsent || secondName != null) {
-      map['second_name'] = Variable<String>(secondName);
+    if (!nullToAbsent || apellido != null) {
+      map['apellido'] = Variable<String>(apellido);
+    }
+    if (!nullToAbsent || numCotizaciones != null) {
+      map['num_cotizaciones'] = Variable<int>(numCotizaciones);
     }
     return map;
   }
 
-  UsersCompanion toCompanion(bool nullToAbsent) {
-    return UsersCompanion(
+  UsuarioCompanion toCompanion(bool nullToAbsent) {
+    return UsuarioCompanion(
       id: Value(id),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      username: Value(username),
       password: password == null && nullToAbsent
           ? const Value.absent()
           : Value(password),
       rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
-      mail: mail == null && nullToAbsent ? const Value.absent() : Value(mail),
-      passwordMail: passwordMail == null && nullToAbsent
+      correoElectronico: correoElectronico == null && nullToAbsent
           ? const Value.absent()
-          : Value(passwordMail),
-      phone:
-          phone == null && nullToAbsent ? const Value.absent() : Value(phone),
-      birthDate: birthDate == null && nullToAbsent
+          : Value(correoElectronico),
+      passwordCorreo: passwordCorreo == null && nullToAbsent
           ? const Value.absent()
-          : Value(birthDate),
-      firstName: firstName == null && nullToAbsent
+          : Value(passwordCorreo),
+      telefono: telefono == null && nullToAbsent
           ? const Value.absent()
-          : Value(firstName),
-      secondName: secondName == null && nullToAbsent
+          : Value(telefono),
+      fechaNacimiento: fechaNacimiento == null && nullToAbsent
           ? const Value.absent()
-          : Value(secondName),
+          : Value(fechaNacimiento),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      apellido: apellido == null && nullToAbsent
+          ? const Value.absent()
+          : Value(apellido),
+      numCotizaciones: numCotizaciones == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numCotizaciones),
     );
   }
 
-  factory User.fromJson(Map<String, dynamic> json,
+  factory UsuarioData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return User(
+    return UsuarioData(
       id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String?>(json['name']),
+      username: serializer.fromJson<String>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
       rol: serializer.fromJson<String?>(json['rol']),
-      mail: serializer.fromJson<String?>(json['mail']),
-      passwordMail: serializer.fromJson<String?>(json['passwordMail']),
-      phone: serializer.fromJson<String?>(json['phone']),
-      birthDate: serializer.fromJson<String?>(json['birthDate']),
-      firstName: serializer.fromJson<String?>(json['firstName']),
-      secondName: serializer.fromJson<String?>(json['secondName']),
+      correoElectronico:
+          serializer.fromJson<String?>(json['correoElectronico']),
+      passwordCorreo: serializer.fromJson<String?>(json['passwordCorreo']),
+      telefono: serializer.fromJson<String?>(json['telefono']),
+      fechaNacimiento: serializer.fromJson<String?>(json['fechaNacimiento']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      apellido: serializer.fromJson<String?>(json['apellido']),
+      numCotizaciones: serializer.fromJson<int?>(json['numCotizaciones']),
     );
   }
   @override
@@ -274,161 +309,189 @@ class User extends DataClass implements Insertable<User> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String?>(name),
+      'username': serializer.toJson<String>(username),
       'password': serializer.toJson<String?>(password),
       'rol': serializer.toJson<String?>(rol),
-      'mail': serializer.toJson<String?>(mail),
-      'passwordMail': serializer.toJson<String?>(passwordMail),
-      'phone': serializer.toJson<String?>(phone),
-      'birthDate': serializer.toJson<String?>(birthDate),
-      'firstName': serializer.toJson<String?>(firstName),
-      'secondName': serializer.toJson<String?>(secondName),
+      'correoElectronico': serializer.toJson<String?>(correoElectronico),
+      'passwordCorreo': serializer.toJson<String?>(passwordCorreo),
+      'telefono': serializer.toJson<String?>(telefono),
+      'fechaNacimiento': serializer.toJson<String?>(fechaNacimiento),
+      'nombre': serializer.toJson<String?>(nombre),
+      'apellido': serializer.toJson<String?>(apellido),
+      'numCotizaciones': serializer.toJson<int?>(numCotizaciones),
     };
   }
 
-  User copyWith(
+  UsuarioData copyWith(
           {int? id,
-          Value<String?> name = const Value.absent(),
+          String? username,
           Value<String?> password = const Value.absent(),
           Value<String?> rol = const Value.absent(),
-          Value<String?> mail = const Value.absent(),
-          Value<String?> passwordMail = const Value.absent(),
-          Value<String?> phone = const Value.absent(),
-          Value<String?> birthDate = const Value.absent(),
-          Value<String?> firstName = const Value.absent(),
-          Value<String?> secondName = const Value.absent()}) =>
-      User(
+          Value<String?> correoElectronico = const Value.absent(),
+          Value<String?> passwordCorreo = const Value.absent(),
+          Value<String?> telefono = const Value.absent(),
+          Value<String?> fechaNacimiento = const Value.absent(),
+          Value<String?> nombre = const Value.absent(),
+          Value<String?> apellido = const Value.absent(),
+          Value<int?> numCotizaciones = const Value.absent()}) =>
+      UsuarioData(
         id: id ?? this.id,
-        name: name.present ? name.value : this.name,
+        username: username ?? this.username,
         password: password.present ? password.value : this.password,
         rol: rol.present ? rol.value : this.rol,
-        mail: mail.present ? mail.value : this.mail,
-        passwordMail:
-            passwordMail.present ? passwordMail.value : this.passwordMail,
-        phone: phone.present ? phone.value : this.phone,
-        birthDate: birthDate.present ? birthDate.value : this.birthDate,
-        firstName: firstName.present ? firstName.value : this.firstName,
-        secondName: secondName.present ? secondName.value : this.secondName,
+        correoElectronico: correoElectronico.present
+            ? correoElectronico.value
+            : this.correoElectronico,
+        passwordCorreo:
+            passwordCorreo.present ? passwordCorreo.value : this.passwordCorreo,
+        telefono: telefono.present ? telefono.value : this.telefono,
+        fechaNacimiento: fechaNacimiento.present
+            ? fechaNacimiento.value
+            : this.fechaNacimiento,
+        nombre: nombre.present ? nombre.value : this.nombre,
+        apellido: apellido.present ? apellido.value : this.apellido,
+        numCotizaciones: numCotizaciones.present
+            ? numCotizaciones.value
+            : this.numCotizaciones,
       );
   @override
   String toString() {
-    return (StringBuffer('User(')
+    return (StringBuffer('UsuarioData(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
+          ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
-          ..write('mail: $mail, ')
-          ..write('passwordMail: $passwordMail, ')
-          ..write('phone: $phone, ')
-          ..write('birthDate: $birthDate, ')
-          ..write('firstName: $firstName, ')
-          ..write('secondName: $secondName')
+          ..write('correoElectronico: $correoElectronico, ')
+          ..write('passwordCorreo: $passwordCorreo, ')
+          ..write('telefono: $telefono, ')
+          ..write('fechaNacimiento: $fechaNacimiento, ')
+          ..write('nombre: $nombre, ')
+          ..write('apellido: $apellido, ')
+          ..write('numCotizaciones: $numCotizaciones')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, password, rol, mail, passwordMail,
-      phone, birthDate, firstName, secondName);
+  int get hashCode => Object.hash(
+      id,
+      username,
+      password,
+      rol,
+      correoElectronico,
+      passwordCorreo,
+      telefono,
+      fechaNacimiento,
+      nombre,
+      apellido,
+      numCotizaciones);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is User &&
+      (other is UsuarioData &&
           other.id == this.id &&
-          other.name == this.name &&
+          other.username == this.username &&
           other.password == this.password &&
           other.rol == this.rol &&
-          other.mail == this.mail &&
-          other.passwordMail == this.passwordMail &&
-          other.phone == this.phone &&
-          other.birthDate == this.birthDate &&
-          other.firstName == this.firstName &&
-          other.secondName == this.secondName);
+          other.correoElectronico == this.correoElectronico &&
+          other.passwordCorreo == this.passwordCorreo &&
+          other.telefono == this.telefono &&
+          other.fechaNacimiento == this.fechaNacimiento &&
+          other.nombre == this.nombre &&
+          other.apellido == this.apellido &&
+          other.numCotizaciones == this.numCotizaciones);
 }
 
-class UsersCompanion extends UpdateCompanion<User> {
+class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<int> id;
-  final Value<String?> name;
+  final Value<String> username;
   final Value<String?> password;
   final Value<String?> rol;
-  final Value<String?> mail;
-  final Value<String?> passwordMail;
-  final Value<String?> phone;
-  final Value<String?> birthDate;
-  final Value<String?> firstName;
-  final Value<String?> secondName;
-  const UsersCompanion({
+  final Value<String?> correoElectronico;
+  final Value<String?> passwordCorreo;
+  final Value<String?> telefono;
+  final Value<String?> fechaNacimiento;
+  final Value<String?> nombre;
+  final Value<String?> apellido;
+  final Value<int?> numCotizaciones;
+  const UsuarioCompanion({
     this.id = const Value.absent(),
-    this.name = const Value.absent(),
+    this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
-    this.mail = const Value.absent(),
-    this.passwordMail = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.birthDate = const Value.absent(),
-    this.firstName = const Value.absent(),
-    this.secondName = const Value.absent(),
+    this.correoElectronico = const Value.absent(),
+    this.passwordCorreo = const Value.absent(),
+    this.telefono = const Value.absent(),
+    this.fechaNacimiento = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.apellido = const Value.absent(),
+    this.numCotizaciones = const Value.absent(),
   });
-  UsersCompanion.insert({
+  UsuarioCompanion.insert({
     this.id = const Value.absent(),
-    this.name = const Value.absent(),
+    required String username,
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
-    this.mail = const Value.absent(),
-    this.passwordMail = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.birthDate = const Value.absent(),
-    this.firstName = const Value.absent(),
-    this.secondName = const Value.absent(),
-  });
-  static Insertable<User> custom({
+    this.correoElectronico = const Value.absent(),
+    this.passwordCorreo = const Value.absent(),
+    this.telefono = const Value.absent(),
+    this.fechaNacimiento = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.apellido = const Value.absent(),
+    this.numCotizaciones = const Value.absent(),
+  }) : username = Value(username);
+  static Insertable<UsuarioData> custom({
     Expression<int>? id,
-    Expression<String>? name,
+    Expression<String>? username,
     Expression<String>? password,
     Expression<String>? rol,
-    Expression<String>? mail,
-    Expression<String>? passwordMail,
-    Expression<String>? phone,
-    Expression<String>? birthDate,
-    Expression<String>? firstName,
-    Expression<String>? secondName,
+    Expression<String>? correoElectronico,
+    Expression<String>? passwordCorreo,
+    Expression<String>? telefono,
+    Expression<String>? fechaNacimiento,
+    Expression<String>? nombre,
+    Expression<String>? apellido,
+    Expression<int>? numCotizaciones,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (name != null) 'name': name,
+      if (username != null) 'username': username,
       if (password != null) 'password': password,
       if (rol != null) 'rol': rol,
-      if (mail != null) 'mail': mail,
-      if (passwordMail != null) 'password_mail': passwordMail,
-      if (phone != null) 'phone': phone,
-      if (birthDate != null) 'birth_date': birthDate,
-      if (firstName != null) 'first_name': firstName,
-      if (secondName != null) 'second_name': secondName,
+      if (correoElectronico != null) 'correo_electronico': correoElectronico,
+      if (passwordCorreo != null) 'password_correo': passwordCorreo,
+      if (telefono != null) 'telefono': telefono,
+      if (fechaNacimiento != null) 'fecha_nacimiento': fechaNacimiento,
+      if (nombre != null) 'nombre': nombre,
+      if (apellido != null) 'apellido': apellido,
+      if (numCotizaciones != null) 'num_cotizaciones': numCotizaciones,
     });
   }
 
-  UsersCompanion copyWith(
+  UsuarioCompanion copyWith(
       {Value<int>? id,
-      Value<String?>? name,
+      Value<String>? username,
       Value<String?>? password,
       Value<String?>? rol,
-      Value<String?>? mail,
-      Value<String?>? passwordMail,
-      Value<String?>? phone,
-      Value<String?>? birthDate,
-      Value<String?>? firstName,
-      Value<String?>? secondName}) {
-    return UsersCompanion(
+      Value<String?>? correoElectronico,
+      Value<String?>? passwordCorreo,
+      Value<String?>? telefono,
+      Value<String?>? fechaNacimiento,
+      Value<String?>? nombre,
+      Value<String?>? apellido,
+      Value<int?>? numCotizaciones}) {
+    return UsuarioCompanion(
       id: id ?? this.id,
-      name: name ?? this.name,
+      username: username ?? this.username,
       password: password ?? this.password,
       rol: rol ?? this.rol,
-      mail: mail ?? this.mail,
-      passwordMail: passwordMail ?? this.passwordMail,
-      phone: phone ?? this.phone,
-      birthDate: birthDate ?? this.birthDate,
-      firstName: firstName ?? this.firstName,
-      secondName: secondName ?? this.secondName,
+      correoElectronico: correoElectronico ?? this.correoElectronico,
+      passwordCorreo: passwordCorreo ?? this.passwordCorreo,
+      telefono: telefono ?? this.telefono,
+      fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
+      nombre: nombre ?? this.nombre,
+      apellido: apellido ?? this.apellido,
+      numCotizaciones: numCotizaciones ?? this.numCotizaciones,
     );
   }
 
@@ -438,8 +501,8 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
     }
     if (password.present) {
       map['password'] = Variable<String>(password.value);
@@ -447,51 +510,55 @@ class UsersCompanion extends UpdateCompanion<User> {
     if (rol.present) {
       map['rol'] = Variable<String>(rol.value);
     }
-    if (mail.present) {
-      map['mail'] = Variable<String>(mail.value);
+    if (correoElectronico.present) {
+      map['correo_electronico'] = Variable<String>(correoElectronico.value);
     }
-    if (passwordMail.present) {
-      map['password_mail'] = Variable<String>(passwordMail.value);
+    if (passwordCorreo.present) {
+      map['password_correo'] = Variable<String>(passwordCorreo.value);
     }
-    if (phone.present) {
-      map['phone'] = Variable<String>(phone.value);
+    if (telefono.present) {
+      map['telefono'] = Variable<String>(telefono.value);
     }
-    if (birthDate.present) {
-      map['birth_date'] = Variable<String>(birthDate.value);
+    if (fechaNacimiento.present) {
+      map['fecha_nacimiento'] = Variable<String>(fechaNacimiento.value);
     }
-    if (firstName.present) {
-      map['first_name'] = Variable<String>(firstName.value);
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
     }
-    if (secondName.present) {
-      map['second_name'] = Variable<String>(secondName.value);
+    if (apellido.present) {
+      map['apellido'] = Variable<String>(apellido.value);
+    }
+    if (numCotizaciones.present) {
+      map['num_cotizaciones'] = Variable<int>(numCotizaciones.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('UsersCompanion(')
+    return (StringBuffer('UsuarioCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
+          ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
-          ..write('mail: $mail, ')
-          ..write('passwordMail: $passwordMail, ')
-          ..write('phone: $phone, ')
-          ..write('birthDate: $birthDate, ')
-          ..write('firstName: $firstName, ')
-          ..write('secondName: $secondName')
+          ..write('correoElectronico: $correoElectronico, ')
+          ..write('passwordCorreo: $passwordCorreo, ')
+          ..write('telefono: $telefono, ')
+          ..write('fechaNacimiento: $fechaNacimiento, ')
+          ..write('nombre: $nombre, ')
+          ..write('apellido: $apellido, ')
+          ..write('numCotizaciones: $numCotizaciones')
           ..write(')'))
         .toString();
   }
 }
 
-class $ReceiptQuoteTable extends ReceiptQuote
-    with TableInfo<$ReceiptQuoteTable, ReceiptQuoteData> {
+class $CotizacionTable extends Cotizacion
+    with TableInfo<$CotizacionTable, CotizacionData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ReceiptQuoteTable(this.attachedDatabase, [this._alias]);
+  $CotizacionTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -501,157 +568,173 @@ class $ReceiptQuoteTable extends ReceiptQuote
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _nameCustomerMeta =
-      const VerificationMeta('nameCustomer');
+  static const VerificationMeta _folioPrincipalMeta =
+      const VerificationMeta('folioPrincipal');
   @override
-  late final GeneratedColumn<String> nameCustomer = GeneratedColumn<String>(
-      'name_customer', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _numPhoneMeta =
-      const VerificationMeta('numPhone');
+  late final GeneratedColumn<String> folioPrincipal = GeneratedColumn<String>(
+      'folio_principal', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nombreHuespedMeta =
+      const VerificationMeta('nombreHuesped');
   @override
-  late final GeneratedColumn<String> numPhone = GeneratedColumn<String>(
-      'num_phone', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _mailMeta = const VerificationMeta('mail');
+  late final GeneratedColumn<String> nombreHuesped = GeneratedColumn<String>(
+      'nombre_huesped', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _numeroTelefonicoMeta =
+      const VerificationMeta('numeroTelefonico');
   @override
-  late final GeneratedColumn<String> mail = GeneratedColumn<String>(
-      'mail', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _folioQuotesMeta =
-      const VerificationMeta('folioQuotes');
+  late final GeneratedColumn<String> numeroTelefonico = GeneratedColumn<String>(
+      'numero_telefonico', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _correoElectricoMeta =
+      const VerificationMeta('correoElectrico');
   @override
-  late final GeneratedColumn<String> folioQuotes = GeneratedColumn<String>(
-      'folio_quotes', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  late final GeneratedColumn<String> correoElectrico = GeneratedColumn<String>(
+      'correo_electrico', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
   @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
-      'user_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _dateRegisterMeta =
-      const VerificationMeta('dateRegister');
+  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
+      'tipo', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
-  late final GeneratedColumn<DateTime> dateRegister = GeneratedColumn<DateTime>(
-      'date_register', aliasedName, false,
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+      'fecha', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _rateDayMeta =
-      const VerificationMeta('rateDay');
+  static const VerificationMeta _responsableIDMeta =
+      const VerificationMeta('responsableID');
   @override
-  late final GeneratedColumn<double> rateDay = GeneratedColumn<double>(
-      'rate_day', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+  late final GeneratedColumn<int> responsableID = GeneratedColumn<int>(
+      'responsable_i_d', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
-      'total', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _roomsMeta = const VerificationMeta('rooms');
+      'total', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _descuentoMeta =
+      const VerificationMeta('descuento');
   @override
-  late final GeneratedColumn<int> rooms = GeneratedColumn<int>(
-      'rooms', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _isGroupMeta =
-      const VerificationMeta('isGroup');
+  late final GeneratedColumn<double> descuento = GeneratedColumn<double>(
+      'descuento', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _esGrupoMeta =
+      const VerificationMeta('esGrupo');
   @override
-  late final GeneratedColumn<bool> isGroup = GeneratedColumn<bool>(
-      'is_group', aliasedName, false,
+  late final GeneratedColumn<bool> esGrupo = GeneratedColumn<bool>(
+      'es_grupo', aliasedName, true,
       type: DriftSqlType.bool,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_group" IN (0, 1))'));
+          GeneratedColumn.constraintIsAlways('CHECK ("es_grupo" IN (0, 1))'));
+  static const VerificationMeta _esConcretadoMeta =
+      const VerificationMeta('esConcretado');
+  @override
+  late final GeneratedColumn<bool> esConcretado = GeneratedColumn<bool>(
+      'es_concretado', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("es_concretado" IN (0, 1))'));
+  static const VerificationMeta _habitacionesMeta =
+      const VerificationMeta('habitaciones');
+  @override
+  late final GeneratedColumn<int> habitaciones = GeneratedColumn<int>(
+      'habitaciones', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        nameCustomer,
-        numPhone,
-        mail,
-        folioQuotes,
-        userId,
-        dateRegister,
-        rateDay,
+        folioPrincipal,
+        nombreHuesped,
+        numeroTelefonico,
+        correoElectrico,
+        tipo,
+        fecha,
+        responsableID,
         total,
-        rooms,
-        isGroup
+        descuento,
+        esGrupo,
+        esConcretado,
+        habitaciones
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'receipt_quote';
+  static const String $name = 'cotizacion';
   @override
-  VerificationContext validateIntegrity(Insertable<ReceiptQuoteData> instance,
+  VerificationContext validateIntegrity(Insertable<CotizacionData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('name_customer')) {
+    if (data.containsKey('folio_principal')) {
       context.handle(
-          _nameCustomerMeta,
-          nameCustomer.isAcceptableOrUnknown(
-              data['name_customer']!, _nameCustomerMeta));
-    } else if (isInserting) {
-      context.missing(_nameCustomerMeta);
+          _folioPrincipalMeta,
+          folioPrincipal.isAcceptableOrUnknown(
+              data['folio_principal']!, _folioPrincipalMeta));
     }
-    if (data.containsKey('num_phone')) {
-      context.handle(_numPhoneMeta,
-          numPhone.isAcceptableOrUnknown(data['num_phone']!, _numPhoneMeta));
-    } else if (isInserting) {
-      context.missing(_numPhoneMeta);
-    }
-    if (data.containsKey('mail')) {
+    if (data.containsKey('nombre_huesped')) {
       context.handle(
-          _mailMeta, mail.isAcceptableOrUnknown(data['mail']!, _mailMeta));
-    } else if (isInserting) {
-      context.missing(_mailMeta);
+          _nombreHuespedMeta,
+          nombreHuesped.isAcceptableOrUnknown(
+              data['nombre_huesped']!, _nombreHuespedMeta));
     }
-    if (data.containsKey('folio_quotes')) {
+    if (data.containsKey('numero_telefonico')) {
       context.handle(
-          _folioQuotesMeta,
-          folioQuotes.isAcceptableOrUnknown(
-              data['folio_quotes']!, _folioQuotesMeta));
-    } else if (isInserting) {
-      context.missing(_folioQuotesMeta);
+          _numeroTelefonicoMeta,
+          numeroTelefonico.isAcceptableOrUnknown(
+              data['numero_telefonico']!, _numeroTelefonicoMeta));
     }
-    if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('date_register')) {
+    if (data.containsKey('correo_electrico')) {
       context.handle(
-          _dateRegisterMeta,
-          dateRegister.isAcceptableOrUnknown(
-              data['date_register']!, _dateRegisterMeta));
-    } else if (isInserting) {
-      context.missing(_dateRegisterMeta);
+          _correoElectricoMeta,
+          correoElectrico.isAcceptableOrUnknown(
+              data['correo_electrico']!, _correoElectricoMeta));
     }
-    if (data.containsKey('rate_day')) {
-      context.handle(_rateDayMeta,
-          rateDay.isAcceptableOrUnknown(data['rate_day']!, _rateDayMeta));
+    if (data.containsKey('tipo')) {
+      context.handle(
+          _tipoMeta, tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta));
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
     } else if (isInserting) {
-      context.missing(_rateDayMeta);
+      context.missing(_fechaMeta);
+    }
+    if (data.containsKey('responsable_i_d')) {
+      context.handle(
+          _responsableIDMeta,
+          responsableID.isAcceptableOrUnknown(
+              data['responsable_i_d']!, _responsableIDMeta));
     }
     if (data.containsKey('total')) {
       context.handle(
           _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
-    } else if (isInserting) {
-      context.missing(_totalMeta);
     }
-    if (data.containsKey('rooms')) {
+    if (data.containsKey('descuento')) {
+      context.handle(_descuentoMeta,
+          descuento.isAcceptableOrUnknown(data['descuento']!, _descuentoMeta));
+    }
+    if (data.containsKey('es_grupo')) {
+      context.handle(_esGrupoMeta,
+          esGrupo.isAcceptableOrUnknown(data['es_grupo']!, _esGrupoMeta));
+    }
+    if (data.containsKey('es_concretado')) {
       context.handle(
-          _roomsMeta, rooms.isAcceptableOrUnknown(data['rooms']!, _roomsMeta));
-    } else if (isInserting) {
-      context.missing(_roomsMeta);
+          _esConcretadoMeta,
+          esConcretado.isAcceptableOrUnknown(
+              data['es_concretado']!, _esConcretadoMeta));
     }
-    if (data.containsKey('is_group')) {
-      context.handle(_isGroupMeta,
-          isGroup.isAcceptableOrUnknown(data['is_group']!, _isGroupMeta));
-    } else if (isInserting) {
-      context.missing(_isGroupMeta);
+    if (data.containsKey('habitaciones')) {
+      context.handle(
+          _habitacionesMeta,
+          habitaciones.isAcceptableOrUnknown(
+              data['habitaciones']!, _habitacionesMeta));
     }
     return context;
   }
@@ -659,113 +742,167 @@ class $ReceiptQuoteTable extends ReceiptQuote
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ReceiptQuoteData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  CotizacionData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ReceiptQuoteData(
+    return CotizacionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      nameCustomer: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name_customer'])!,
-      numPhone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}num_phone'])!,
-      mail: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}mail'])!,
-      folioQuotes: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}folio_quotes'])!,
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
-      dateRegister: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}date_register'])!,
-      rateDay: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}rate_day'])!,
+      folioPrincipal: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}folio_principal']),
+      nombreHuesped: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nombre_huesped']),
+      numeroTelefonico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}numero_telefonico']),
+      correoElectrico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
+      tipo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tipo']),
+      fecha: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+      responsableID: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}responsable_i_d']),
       total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
-      rooms: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}rooms'])!,
-      isGroup: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_group'])!,
+          .read(DriftSqlType.double, data['${effectivePrefix}total']),
+      descuento: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}descuento']),
+      esGrupo: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
+      esConcretado: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}es_concretado']),
+      habitaciones: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}habitaciones']),
     );
   }
 
   @override
-  $ReceiptQuoteTable createAlias(String alias) {
-    return $ReceiptQuoteTable(attachedDatabase, alias);
+  $CotizacionTable createAlias(String alias) {
+    return $CotizacionTable(attachedDatabase, alias);
   }
 }
 
-class ReceiptQuoteData extends DataClass
-    implements Insertable<ReceiptQuoteData> {
+class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final int id;
-  final String nameCustomer;
-  final String numPhone;
-  final String mail;
-  final String folioQuotes;
-  final int userId;
-  final DateTime dateRegister;
-  final double rateDay;
-  final double total;
-  final int rooms;
-  final bool isGroup;
-  const ReceiptQuoteData(
+  final String? folioPrincipal;
+  final String? nombreHuesped;
+  final String? numeroTelefonico;
+  final String? correoElectrico;
+  final String? tipo;
+  final DateTime fecha;
+  final int? responsableID;
+  final double? total;
+  final double? descuento;
+  final bool? esGrupo;
+  final bool? esConcretado;
+  final int? habitaciones;
+  const CotizacionData(
       {required this.id,
-      required this.nameCustomer,
-      required this.numPhone,
-      required this.mail,
-      required this.folioQuotes,
-      required this.userId,
-      required this.dateRegister,
-      required this.rateDay,
-      required this.total,
-      required this.rooms,
-      required this.isGroup});
+      this.folioPrincipal,
+      this.nombreHuesped,
+      this.numeroTelefonico,
+      this.correoElectrico,
+      this.tipo,
+      required this.fecha,
+      this.responsableID,
+      this.total,
+      this.descuento,
+      this.esGrupo,
+      this.esConcretado,
+      this.habitaciones});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['name_customer'] = Variable<String>(nameCustomer);
-    map['num_phone'] = Variable<String>(numPhone);
-    map['mail'] = Variable<String>(mail);
-    map['folio_quotes'] = Variable<String>(folioQuotes);
-    map['user_id'] = Variable<int>(userId);
-    map['date_register'] = Variable<DateTime>(dateRegister);
-    map['rate_day'] = Variable<double>(rateDay);
-    map['total'] = Variable<double>(total);
-    map['rooms'] = Variable<int>(rooms);
-    map['is_group'] = Variable<bool>(isGroup);
+    if (!nullToAbsent || folioPrincipal != null) {
+      map['folio_principal'] = Variable<String>(folioPrincipal);
+    }
+    if (!nullToAbsent || nombreHuesped != null) {
+      map['nombre_huesped'] = Variable<String>(nombreHuesped);
+    }
+    if (!nullToAbsent || numeroTelefonico != null) {
+      map['numero_telefonico'] = Variable<String>(numeroTelefonico);
+    }
+    if (!nullToAbsent || correoElectrico != null) {
+      map['correo_electrico'] = Variable<String>(correoElectrico);
+    }
+    if (!nullToAbsent || tipo != null) {
+      map['tipo'] = Variable<String>(tipo);
+    }
+    map['fecha'] = Variable<DateTime>(fecha);
+    if (!nullToAbsent || responsableID != null) {
+      map['responsable_i_d'] = Variable<int>(responsableID);
+    }
+    if (!nullToAbsent || total != null) {
+      map['total'] = Variable<double>(total);
+    }
+    if (!nullToAbsent || descuento != null) {
+      map['descuento'] = Variable<double>(descuento);
+    }
+    if (!nullToAbsent || esGrupo != null) {
+      map['es_grupo'] = Variable<bool>(esGrupo);
+    }
+    if (!nullToAbsent || esConcretado != null) {
+      map['es_concretado'] = Variable<bool>(esConcretado);
+    }
+    if (!nullToAbsent || habitaciones != null) {
+      map['habitaciones'] = Variable<int>(habitaciones);
+    }
     return map;
   }
 
-  ReceiptQuoteCompanion toCompanion(bool nullToAbsent) {
-    return ReceiptQuoteCompanion(
+  CotizacionCompanion toCompanion(bool nullToAbsent) {
+    return CotizacionCompanion(
       id: Value(id),
-      nameCustomer: Value(nameCustomer),
-      numPhone: Value(numPhone),
-      mail: Value(mail),
-      folioQuotes: Value(folioQuotes),
-      userId: Value(userId),
-      dateRegister: Value(dateRegister),
-      rateDay: Value(rateDay),
-      total: Value(total),
-      rooms: Value(rooms),
-      isGroup: Value(isGroup),
+      folioPrincipal: folioPrincipal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(folioPrincipal),
+      nombreHuesped: nombreHuesped == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nombreHuesped),
+      numeroTelefonico: numeroTelefonico == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numeroTelefonico),
+      correoElectrico: correoElectrico == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correoElectrico),
+      tipo: tipo == null && nullToAbsent ? const Value.absent() : Value(tipo),
+      fecha: Value(fecha),
+      responsableID: responsableID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(responsableID),
+      total:
+          total == null && nullToAbsent ? const Value.absent() : Value(total),
+      descuento: descuento == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descuento),
+      esGrupo: esGrupo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(esGrupo),
+      esConcretado: esConcretado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(esConcretado),
+      habitaciones: habitaciones == null && nullToAbsent
+          ? const Value.absent()
+          : Value(habitaciones),
     );
   }
 
-  factory ReceiptQuoteData.fromJson(Map<String, dynamic> json,
+  factory CotizacionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ReceiptQuoteData(
+    return CotizacionData(
       id: serializer.fromJson<int>(json['id']),
-      nameCustomer: serializer.fromJson<String>(json['nameCustomer']),
-      numPhone: serializer.fromJson<String>(json['numPhone']),
-      mail: serializer.fromJson<String>(json['mail']),
-      folioQuotes: serializer.fromJson<String>(json['folioQuotes']),
-      userId: serializer.fromJson<int>(json['userId']),
-      dateRegister: serializer.fromJson<DateTime>(json['dateRegister']),
-      rateDay: serializer.fromJson<double>(json['rateDay']),
-      total: serializer.fromJson<double>(json['total']),
-      rooms: serializer.fromJson<int>(json['rooms']),
-      isGroup: serializer.fromJson<bool>(json['isGroup']),
+      folioPrincipal: serializer.fromJson<String?>(json['folioPrincipal']),
+      nombreHuesped: serializer.fromJson<String?>(json['nombreHuesped']),
+      numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
+      correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
+      tipo: serializer.fromJson<String?>(json['tipo']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      responsableID: serializer.fromJson<int?>(json['responsableID']),
+      total: serializer.fromJson<double?>(json['total']),
+      descuento: serializer.fromJson<double?>(json['descuento']),
+      esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
+      esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
+      habitaciones: serializer.fromJson<int?>(json['habitaciones']),
     );
   }
   @override
@@ -773,181 +910,217 @@ class ReceiptQuoteData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'nameCustomer': serializer.toJson<String>(nameCustomer),
-      'numPhone': serializer.toJson<String>(numPhone),
-      'mail': serializer.toJson<String>(mail),
-      'folioQuotes': serializer.toJson<String>(folioQuotes),
-      'userId': serializer.toJson<int>(userId),
-      'dateRegister': serializer.toJson<DateTime>(dateRegister),
-      'rateDay': serializer.toJson<double>(rateDay),
-      'total': serializer.toJson<double>(total),
-      'rooms': serializer.toJson<int>(rooms),
-      'isGroup': serializer.toJson<bool>(isGroup),
+      'folioPrincipal': serializer.toJson<String?>(folioPrincipal),
+      'nombreHuesped': serializer.toJson<String?>(nombreHuesped),
+      'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
+      'correoElectrico': serializer.toJson<String?>(correoElectrico),
+      'tipo': serializer.toJson<String?>(tipo),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'responsableID': serializer.toJson<int?>(responsableID),
+      'total': serializer.toJson<double?>(total),
+      'descuento': serializer.toJson<double?>(descuento),
+      'esGrupo': serializer.toJson<bool?>(esGrupo),
+      'esConcretado': serializer.toJson<bool?>(esConcretado),
+      'habitaciones': serializer.toJson<int?>(habitaciones),
     };
   }
 
-  ReceiptQuoteData copyWith(
+  CotizacionData copyWith(
           {int? id,
-          String? nameCustomer,
-          String? numPhone,
-          String? mail,
-          String? folioQuotes,
-          int? userId,
-          DateTime? dateRegister,
-          double? rateDay,
-          double? total,
-          int? rooms,
-          bool? isGroup}) =>
-      ReceiptQuoteData(
+          Value<String?> folioPrincipal = const Value.absent(),
+          Value<String?> nombreHuesped = const Value.absent(),
+          Value<String?> numeroTelefonico = const Value.absent(),
+          Value<String?> correoElectrico = const Value.absent(),
+          Value<String?> tipo = const Value.absent(),
+          DateTime? fecha,
+          Value<int?> responsableID = const Value.absent(),
+          Value<double?> total = const Value.absent(),
+          Value<double?> descuento = const Value.absent(),
+          Value<bool?> esGrupo = const Value.absent(),
+          Value<bool?> esConcretado = const Value.absent(),
+          Value<int?> habitaciones = const Value.absent()}) =>
+      CotizacionData(
         id: id ?? this.id,
-        nameCustomer: nameCustomer ?? this.nameCustomer,
-        numPhone: numPhone ?? this.numPhone,
-        mail: mail ?? this.mail,
-        folioQuotes: folioQuotes ?? this.folioQuotes,
-        userId: userId ?? this.userId,
-        dateRegister: dateRegister ?? this.dateRegister,
-        rateDay: rateDay ?? this.rateDay,
-        total: total ?? this.total,
-        rooms: rooms ?? this.rooms,
-        isGroup: isGroup ?? this.isGroup,
+        folioPrincipal:
+            folioPrincipal.present ? folioPrincipal.value : this.folioPrincipal,
+        nombreHuesped:
+            nombreHuesped.present ? nombreHuesped.value : this.nombreHuesped,
+        numeroTelefonico: numeroTelefonico.present
+            ? numeroTelefonico.value
+            : this.numeroTelefonico,
+        correoElectrico: correoElectrico.present
+            ? correoElectrico.value
+            : this.correoElectrico,
+        tipo: tipo.present ? tipo.value : this.tipo,
+        fecha: fecha ?? this.fecha,
+        responsableID:
+            responsableID.present ? responsableID.value : this.responsableID,
+        total: total.present ? total.value : this.total,
+        descuento: descuento.present ? descuento.value : this.descuento,
+        esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
+        esConcretado:
+            esConcretado.present ? esConcretado.value : this.esConcretado,
+        habitaciones:
+            habitaciones.present ? habitaciones.value : this.habitaciones,
       );
   @override
   String toString() {
-    return (StringBuffer('ReceiptQuoteData(')
+    return (StringBuffer('CotizacionData(')
           ..write('id: $id, ')
-          ..write('nameCustomer: $nameCustomer, ')
-          ..write('numPhone: $numPhone, ')
-          ..write('mail: $mail, ')
-          ..write('folioQuotes: $folioQuotes, ')
-          ..write('userId: $userId, ')
-          ..write('dateRegister: $dateRegister, ')
-          ..write('rateDay: $rateDay, ')
+          ..write('folioPrincipal: $folioPrincipal, ')
+          ..write('nombreHuesped: $nombreHuesped, ')
+          ..write('numeroTelefonico: $numeroTelefonico, ')
+          ..write('correoElectrico: $correoElectrico, ')
+          ..write('tipo: $tipo, ')
+          ..write('fecha: $fecha, ')
+          ..write('responsableID: $responsableID, ')
           ..write('total: $total, ')
-          ..write('rooms: $rooms, ')
-          ..write('isGroup: $isGroup')
+          ..write('descuento: $descuento, ')
+          ..write('esGrupo: $esGrupo, ')
+          ..write('esConcretado: $esConcretado, ')
+          ..write('habitaciones: $habitaciones')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, nameCustomer, numPhone, mail, folioQuotes,
-      userId, dateRegister, rateDay, total, rooms, isGroup);
+  int get hashCode => Object.hash(
+      id,
+      folioPrincipal,
+      nombreHuesped,
+      numeroTelefonico,
+      correoElectrico,
+      tipo,
+      fecha,
+      responsableID,
+      total,
+      descuento,
+      esGrupo,
+      esConcretado,
+      habitaciones);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ReceiptQuoteData &&
+      (other is CotizacionData &&
           other.id == this.id &&
-          other.nameCustomer == this.nameCustomer &&
-          other.numPhone == this.numPhone &&
-          other.mail == this.mail &&
-          other.folioQuotes == this.folioQuotes &&
-          other.userId == this.userId &&
-          other.dateRegister == this.dateRegister &&
-          other.rateDay == this.rateDay &&
+          other.folioPrincipal == this.folioPrincipal &&
+          other.nombreHuesped == this.nombreHuesped &&
+          other.numeroTelefonico == this.numeroTelefonico &&
+          other.correoElectrico == this.correoElectrico &&
+          other.tipo == this.tipo &&
+          other.fecha == this.fecha &&
+          other.responsableID == this.responsableID &&
           other.total == this.total &&
-          other.rooms == this.rooms &&
-          other.isGroup == this.isGroup);
+          other.descuento == this.descuento &&
+          other.esGrupo == this.esGrupo &&
+          other.esConcretado == this.esConcretado &&
+          other.habitaciones == this.habitaciones);
 }
 
-class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
+class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<int> id;
-  final Value<String> nameCustomer;
-  final Value<String> numPhone;
-  final Value<String> mail;
-  final Value<String> folioQuotes;
-  final Value<int> userId;
-  final Value<DateTime> dateRegister;
-  final Value<double> rateDay;
-  final Value<double> total;
-  final Value<int> rooms;
-  final Value<bool> isGroup;
-  const ReceiptQuoteCompanion({
+  final Value<String?> folioPrincipal;
+  final Value<String?> nombreHuesped;
+  final Value<String?> numeroTelefonico;
+  final Value<String?> correoElectrico;
+  final Value<String?> tipo;
+  final Value<DateTime> fecha;
+  final Value<int?> responsableID;
+  final Value<double?> total;
+  final Value<double?> descuento;
+  final Value<bool?> esGrupo;
+  final Value<bool?> esConcretado;
+  final Value<int?> habitaciones;
+  const CotizacionCompanion({
     this.id = const Value.absent(),
-    this.nameCustomer = const Value.absent(),
-    this.numPhone = const Value.absent(),
-    this.mail = const Value.absent(),
-    this.folioQuotes = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.dateRegister = const Value.absent(),
-    this.rateDay = const Value.absent(),
+    this.folioPrincipal = const Value.absent(),
+    this.nombreHuesped = const Value.absent(),
+    this.numeroTelefonico = const Value.absent(),
+    this.correoElectrico = const Value.absent(),
+    this.tipo = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.responsableID = const Value.absent(),
     this.total = const Value.absent(),
-    this.rooms = const Value.absent(),
-    this.isGroup = const Value.absent(),
+    this.descuento = const Value.absent(),
+    this.esGrupo = const Value.absent(),
+    this.esConcretado = const Value.absent(),
+    this.habitaciones = const Value.absent(),
   });
-  ReceiptQuoteCompanion.insert({
+  CotizacionCompanion.insert({
     this.id = const Value.absent(),
-    required String nameCustomer,
-    required String numPhone,
-    required String mail,
-    required String folioQuotes,
-    required int userId,
-    required DateTime dateRegister,
-    required double rateDay,
-    required double total,
-    required int rooms,
-    required bool isGroup,
-  })  : nameCustomer = Value(nameCustomer),
-        numPhone = Value(numPhone),
-        mail = Value(mail),
-        folioQuotes = Value(folioQuotes),
-        userId = Value(userId),
-        dateRegister = Value(dateRegister),
-        rateDay = Value(rateDay),
-        total = Value(total),
-        rooms = Value(rooms),
-        isGroup = Value(isGroup);
-  static Insertable<ReceiptQuoteData> custom({
+    this.folioPrincipal = const Value.absent(),
+    this.nombreHuesped = const Value.absent(),
+    this.numeroTelefonico = const Value.absent(),
+    this.correoElectrico = const Value.absent(),
+    this.tipo = const Value.absent(),
+    required DateTime fecha,
+    this.responsableID = const Value.absent(),
+    this.total = const Value.absent(),
+    this.descuento = const Value.absent(),
+    this.esGrupo = const Value.absent(),
+    this.esConcretado = const Value.absent(),
+    this.habitaciones = const Value.absent(),
+  }) : fecha = Value(fecha);
+  static Insertable<CotizacionData> custom({
     Expression<int>? id,
-    Expression<String>? nameCustomer,
-    Expression<String>? numPhone,
-    Expression<String>? mail,
-    Expression<String>? folioQuotes,
-    Expression<int>? userId,
-    Expression<DateTime>? dateRegister,
-    Expression<double>? rateDay,
+    Expression<String>? folioPrincipal,
+    Expression<String>? nombreHuesped,
+    Expression<String>? numeroTelefonico,
+    Expression<String>? correoElectrico,
+    Expression<String>? tipo,
+    Expression<DateTime>? fecha,
+    Expression<int>? responsableID,
     Expression<double>? total,
-    Expression<int>? rooms,
-    Expression<bool>? isGroup,
+    Expression<double>? descuento,
+    Expression<bool>? esGrupo,
+    Expression<bool>? esConcretado,
+    Expression<int>? habitaciones,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (nameCustomer != null) 'name_customer': nameCustomer,
-      if (numPhone != null) 'num_phone': numPhone,
-      if (mail != null) 'mail': mail,
-      if (folioQuotes != null) 'folio_quotes': folioQuotes,
-      if (userId != null) 'user_id': userId,
-      if (dateRegister != null) 'date_register': dateRegister,
-      if (rateDay != null) 'rate_day': rateDay,
+      if (folioPrincipal != null) 'folio_principal': folioPrincipal,
+      if (nombreHuesped != null) 'nombre_huesped': nombreHuesped,
+      if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
+      if (correoElectrico != null) 'correo_electrico': correoElectrico,
+      if (tipo != null) 'tipo': tipo,
+      if (fecha != null) 'fecha': fecha,
+      if (responsableID != null) 'responsable_i_d': responsableID,
       if (total != null) 'total': total,
-      if (rooms != null) 'rooms': rooms,
-      if (isGroup != null) 'is_group': isGroup,
+      if (descuento != null) 'descuento': descuento,
+      if (esGrupo != null) 'es_grupo': esGrupo,
+      if (esConcretado != null) 'es_concretado': esConcretado,
+      if (habitaciones != null) 'habitaciones': habitaciones,
     });
   }
 
-  ReceiptQuoteCompanion copyWith(
+  CotizacionCompanion copyWith(
       {Value<int>? id,
-      Value<String>? nameCustomer,
-      Value<String>? numPhone,
-      Value<String>? mail,
-      Value<String>? folioQuotes,
-      Value<int>? userId,
-      Value<DateTime>? dateRegister,
-      Value<double>? rateDay,
-      Value<double>? total,
-      Value<int>? rooms,
-      Value<bool>? isGroup}) {
-    return ReceiptQuoteCompanion(
+      Value<String?>? folioPrincipal,
+      Value<String?>? nombreHuesped,
+      Value<String?>? numeroTelefonico,
+      Value<String?>? correoElectrico,
+      Value<String?>? tipo,
+      Value<DateTime>? fecha,
+      Value<int?>? responsableID,
+      Value<double?>? total,
+      Value<double?>? descuento,
+      Value<bool?>? esGrupo,
+      Value<bool?>? esConcretado,
+      Value<int?>? habitaciones}) {
+    return CotizacionCompanion(
       id: id ?? this.id,
-      nameCustomer: nameCustomer ?? this.nameCustomer,
-      numPhone: numPhone ?? this.numPhone,
-      mail: mail ?? this.mail,
-      folioQuotes: folioQuotes ?? this.folioQuotes,
-      userId: userId ?? this.userId,
-      dateRegister: dateRegister ?? this.dateRegister,
-      rateDay: rateDay ?? this.rateDay,
+      folioPrincipal: folioPrincipal ?? this.folioPrincipal,
+      nombreHuesped: nombreHuesped ?? this.nombreHuesped,
+      numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
+      correoElectrico: correoElectrico ?? this.correoElectrico,
+      tipo: tipo ?? this.tipo,
+      fecha: fecha ?? this.fecha,
+      responsableID: responsableID ?? this.responsableID,
       total: total ?? this.total,
-      rooms: rooms ?? this.rooms,
-      isGroup: isGroup ?? this.isGroup,
+      descuento: descuento ?? this.descuento,
+      esGrupo: esGrupo ?? this.esGrupo,
+      esConcretado: esConcretado ?? this.esConcretado,
+      habitaciones: habitaciones ?? this.habitaciones,
     );
   }
 
@@ -957,63 +1130,72 @@ class ReceiptQuoteCompanion extends UpdateCompanion<ReceiptQuoteData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (nameCustomer.present) {
-      map['name_customer'] = Variable<String>(nameCustomer.value);
+    if (folioPrincipal.present) {
+      map['folio_principal'] = Variable<String>(folioPrincipal.value);
     }
-    if (numPhone.present) {
-      map['num_phone'] = Variable<String>(numPhone.value);
+    if (nombreHuesped.present) {
+      map['nombre_huesped'] = Variable<String>(nombreHuesped.value);
     }
-    if (mail.present) {
-      map['mail'] = Variable<String>(mail.value);
+    if (numeroTelefonico.present) {
+      map['numero_telefonico'] = Variable<String>(numeroTelefonico.value);
     }
-    if (folioQuotes.present) {
-      map['folio_quotes'] = Variable<String>(folioQuotes.value);
+    if (correoElectrico.present) {
+      map['correo_electrico'] = Variable<String>(correoElectrico.value);
     }
-    if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
+    if (tipo.present) {
+      map['tipo'] = Variable<String>(tipo.value);
     }
-    if (dateRegister.present) {
-      map['date_register'] = Variable<DateTime>(dateRegister.value);
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
     }
-    if (rateDay.present) {
-      map['rate_day'] = Variable<double>(rateDay.value);
+    if (responsableID.present) {
+      map['responsable_i_d'] = Variable<int>(responsableID.value);
     }
     if (total.present) {
       map['total'] = Variable<double>(total.value);
     }
-    if (rooms.present) {
-      map['rooms'] = Variable<int>(rooms.value);
+    if (descuento.present) {
+      map['descuento'] = Variable<double>(descuento.value);
     }
-    if (isGroup.present) {
-      map['is_group'] = Variable<bool>(isGroup.value);
+    if (esGrupo.present) {
+      map['es_grupo'] = Variable<bool>(esGrupo.value);
+    }
+    if (esConcretado.present) {
+      map['es_concretado'] = Variable<bool>(esConcretado.value);
+    }
+    if (habitaciones.present) {
+      map['habitaciones'] = Variable<int>(habitaciones.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('ReceiptQuoteCompanion(')
+    return (StringBuffer('CotizacionCompanion(')
           ..write('id: $id, ')
-          ..write('nameCustomer: $nameCustomer, ')
-          ..write('numPhone: $numPhone, ')
-          ..write('mail: $mail, ')
-          ..write('folioQuotes: $folioQuotes, ')
-          ..write('userId: $userId, ')
-          ..write('dateRegister: $dateRegister, ')
-          ..write('rateDay: $rateDay, ')
+          ..write('folioPrincipal: $folioPrincipal, ')
+          ..write('nombreHuesped: $nombreHuesped, ')
+          ..write('numeroTelefonico: $numeroTelefonico, ')
+          ..write('correoElectrico: $correoElectrico, ')
+          ..write('tipo: $tipo, ')
+          ..write('fecha: $fecha, ')
+          ..write('responsableID: $responsableID, ')
           ..write('total: $total, ')
-          ..write('rooms: $rooms, ')
-          ..write('isGroup: $isGroup')
+          ..write('descuento: $descuento, ')
+          ..write('esGrupo: $esGrupo, ')
+          ..write('esConcretado: $esConcretado, ')
+          ..write('habitaciones: $habitaciones')
           ..write(')'))
         .toString();
   }
 }
 
-class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
+class $HabitacionTable extends Habitacion
+    with TableInfo<$HabitacionTable, HabitacionData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $QuoteTable(this.attachedDatabase, [this._alias]);
+  $HabitacionTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1023,138 +1205,127 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _folioMeta = const VerificationMeta('folio');
+  static const VerificationMeta _folioHabitacionMeta =
+      const VerificationMeta('folioHabitacion');
   @override
-  late final GeneratedColumn<String> folio = GeneratedColumn<String>(
-      'folio', aliasedName, false,
+  late final GeneratedColumn<String> folioHabitacion = GeneratedColumn<String>(
+      'folio_habitacion', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _isPresaleMeta =
-      const VerificationMeta('isPresale');
+  static const VerificationMeta _subfolioMeta =
+      const VerificationMeta('subfolio');
   @override
-  late final GeneratedColumn<bool> isPresale = GeneratedColumn<bool>(
-      'is_presale', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_presale" IN (0, 1))'));
-  static const VerificationMeta _categoryMeta =
-      const VerificationMeta('category');
+  late final GeneratedColumn<String> subfolio = GeneratedColumn<String>(
+      'subfolio', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _categoriaMeta =
+      const VerificationMeta('categoria');
   @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-      'category', aliasedName, false,
+  late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
+      'categoria', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _planMeta = const VerificationMeta('plan');
   @override
   late final GeneratedColumn<String> plan = GeneratedColumn<String>(
       'plan', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _registerDateMeta =
-      const VerificationMeta('registerDate');
+  static const VerificationMeta _esPreventaMeta =
+      const VerificationMeta('esPreventa');
   @override
-  late final GeneratedColumn<DateTime> registerDate = GeneratedColumn<DateTime>(
-      'register_date', aliasedName, false,
+  late final GeneratedColumn<bool> esPreventa = GeneratedColumn<bool>(
+      'es_preventa', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("es_preventa" IN (0, 1))'));
+  static const VerificationMeta _fechaCheckInMeta =
+      const VerificationMeta('fechaCheckIn');
+  @override
+  late final GeneratedColumn<String> fechaCheckIn = GeneratedColumn<String>(
+      'fecha_check_in', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fechaCheckOutMeta =
+      const VerificationMeta('fechaCheckOut');
+  @override
+  late final GeneratedColumn<String> fechaCheckOut = GeneratedColumn<String>(
+      'fecha_check_out', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+      'fecha', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _enterDateMeta =
-      const VerificationMeta('enterDate');
+  static const VerificationMeta _adultosMeta =
+      const VerificationMeta('adultos');
   @override
-  late final GeneratedColumn<String> enterDate = GeneratedColumn<String>(
-      'enter_date', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _outDateMeta =
-      const VerificationMeta('outDate');
+  late final GeneratedColumn<int> adultos = GeneratedColumn<int>(
+      'adultos', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _menores0a6Meta =
+      const VerificationMeta('menores0a6');
   @override
-  late final GeneratedColumn<String> outDate = GeneratedColumn<String>(
-      'out_date', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _adultsMeta = const VerificationMeta('adults');
+  late final GeneratedColumn<int> menores0a6 = GeneratedColumn<int>(
+      'menores0a6', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _menores7a12Meta =
+      const VerificationMeta('menores7a12');
   @override
-  late final GeneratedColumn<int> adults = GeneratedColumn<int>(
-      'adults', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _minor0a6Meta =
-      const VerificationMeta('minor0a6');
+  late final GeneratedColumn<int> menores7a12 = GeneratedColumn<int>(
+      'menores7a12', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _paxAdicMeta =
+      const VerificationMeta('paxAdic');
   @override
-  late final GeneratedColumn<int> minor0a6 = GeneratedColumn<int>(
-      'minor0a6', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _minor7a12Meta =
-      const VerificationMeta('minor7a12');
-  @override
-  late final GeneratedColumn<int> minor7a12 = GeneratedColumn<int>(
-      'minor7a12', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _rateRealAdultMeta =
-      const VerificationMeta('rateRealAdult');
-  @override
-  late final GeneratedColumn<double> rateRealAdult = GeneratedColumn<double>(
-      'rate_real_adult', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _ratePresaleAdultMeta =
-      const VerificationMeta('ratePresaleAdult');
-  @override
-  late final GeneratedColumn<double> ratePresaleAdult = GeneratedColumn<double>(
-      'rate_presale_adult', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _rateRealMinorMeta =
-      const VerificationMeta('rateRealMinor');
-  @override
-  late final GeneratedColumn<double> rateRealMinor = GeneratedColumn<double>(
-      'rate_real_minor', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _ratePresaleMinorMeta =
-      const VerificationMeta('ratePresaleMinor');
-  @override
-  late final GeneratedColumn<double> ratePresaleMinor = GeneratedColumn<double>(
-      'rate_presale_minor', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+  late final GeneratedColumn<int> paxAdic = GeneratedColumn<int>(
+      'pax_adic', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        folio,
-        isPresale,
-        category,
+        folioHabitacion,
+        subfolio,
+        categoria,
         plan,
-        registerDate,
-        enterDate,
-        outDate,
-        adults,
-        minor0a6,
-        minor7a12,
-        rateRealAdult,
-        ratePresaleAdult,
-        rateRealMinor,
-        ratePresaleMinor
+        esPreventa,
+        fechaCheckIn,
+        fechaCheckOut,
+        fecha,
+        adultos,
+        menores0a6,
+        menores7a12,
+        paxAdic
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'quote';
+  static const String $name = 'habitacion';
   @override
-  VerificationContext validateIntegrity(Insertable<QuoteData> instance,
+  VerificationContext validateIntegrity(Insertable<HabitacionData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('folio')) {
+    if (data.containsKey('folio_habitacion')) {
       context.handle(
-          _folioMeta, folio.isAcceptableOrUnknown(data['folio']!, _folioMeta));
+          _folioHabitacionMeta,
+          folioHabitacion.isAcceptableOrUnknown(
+              data['folio_habitacion']!, _folioHabitacionMeta));
     } else if (isInserting) {
-      context.missing(_folioMeta);
+      context.missing(_folioHabitacionMeta);
     }
-    if (data.containsKey('is_presale')) {
-      context.handle(_isPresaleMeta,
-          isPresale.isAcceptableOrUnknown(data['is_presale']!, _isPresaleMeta));
+    if (data.containsKey('subfolio')) {
+      context.handle(_subfolioMeta,
+          subfolio.isAcceptableOrUnknown(data['subfolio']!, _subfolioMeta));
     } else if (isInserting) {
-      context.missing(_isPresaleMeta);
+      context.missing(_subfolioMeta);
     }
-    if (data.containsKey('category')) {
-      context.handle(_categoryMeta,
-          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    if (data.containsKey('categoria')) {
+      context.handle(_categoriaMeta,
+          categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
     } else if (isInserting) {
-      context.missing(_categoryMeta);
+      context.missing(_categoriaMeta);
     }
     if (data.containsKey('plan')) {
       context.handle(
@@ -1162,75 +1333,55 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
     } else if (isInserting) {
       context.missing(_planMeta);
     }
-    if (data.containsKey('register_date')) {
+    if (data.containsKey('es_preventa')) {
       context.handle(
-          _registerDateMeta,
-          registerDate.isAcceptableOrUnknown(
-              data['register_date']!, _registerDateMeta));
+          _esPreventaMeta,
+          esPreventa.isAcceptableOrUnknown(
+              data['es_preventa']!, _esPreventaMeta));
     } else if (isInserting) {
-      context.missing(_registerDateMeta);
+      context.missing(_esPreventaMeta);
     }
-    if (data.containsKey('enter_date')) {
-      context.handle(_enterDateMeta,
-          enterDate.isAcceptableOrUnknown(data['enter_date']!, _enterDateMeta));
-    } else if (isInserting) {
-      context.missing(_enterDateMeta);
-    }
-    if (data.containsKey('out_date')) {
-      context.handle(_outDateMeta,
-          outDate.isAcceptableOrUnknown(data['out_date']!, _outDateMeta));
-    } else if (isInserting) {
-      context.missing(_outDateMeta);
-    }
-    if (data.containsKey('adults')) {
-      context.handle(_adultsMeta,
-          adults.isAcceptableOrUnknown(data['adults']!, _adultsMeta));
-    } else if (isInserting) {
-      context.missing(_adultsMeta);
-    }
-    if (data.containsKey('minor0a6')) {
-      context.handle(_minor0a6Meta,
-          minor0a6.isAcceptableOrUnknown(data['minor0a6']!, _minor0a6Meta));
-    } else if (isInserting) {
-      context.missing(_minor0a6Meta);
-    }
-    if (data.containsKey('minor7a12')) {
-      context.handle(_minor7a12Meta,
-          minor7a12.isAcceptableOrUnknown(data['minor7a12']!, _minor7a12Meta));
-    } else if (isInserting) {
-      context.missing(_minor7a12Meta);
-    }
-    if (data.containsKey('rate_real_adult')) {
+    if (data.containsKey('fecha_check_in')) {
       context.handle(
-          _rateRealAdultMeta,
-          rateRealAdult.isAcceptableOrUnknown(
-              data['rate_real_adult']!, _rateRealAdultMeta));
+          _fechaCheckInMeta,
+          fechaCheckIn.isAcceptableOrUnknown(
+              data['fecha_check_in']!, _fechaCheckInMeta));
     } else if (isInserting) {
-      context.missing(_rateRealAdultMeta);
+      context.missing(_fechaCheckInMeta);
     }
-    if (data.containsKey('rate_presale_adult')) {
+    if (data.containsKey('fecha_check_out')) {
       context.handle(
-          _ratePresaleAdultMeta,
-          ratePresaleAdult.isAcceptableOrUnknown(
-              data['rate_presale_adult']!, _ratePresaleAdultMeta));
+          _fechaCheckOutMeta,
+          fechaCheckOut.isAcceptableOrUnknown(
+              data['fecha_check_out']!, _fechaCheckOutMeta));
     } else if (isInserting) {
-      context.missing(_ratePresaleAdultMeta);
+      context.missing(_fechaCheckOutMeta);
     }
-    if (data.containsKey('rate_real_minor')) {
+    if (data.containsKey('fecha')) {
       context.handle(
-          _rateRealMinorMeta,
-          rateRealMinor.isAcceptableOrUnknown(
-              data['rate_real_minor']!, _rateRealMinorMeta));
+          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
     } else if (isInserting) {
-      context.missing(_rateRealMinorMeta);
+      context.missing(_fechaMeta);
     }
-    if (data.containsKey('rate_presale_minor')) {
+    if (data.containsKey('adultos')) {
+      context.handle(_adultosMeta,
+          adultos.isAcceptableOrUnknown(data['adultos']!, _adultosMeta));
+    }
+    if (data.containsKey('menores0a6')) {
       context.handle(
-          _ratePresaleMinorMeta,
-          ratePresaleMinor.isAcceptableOrUnknown(
-              data['rate_presale_minor']!, _ratePresaleMinorMeta));
-    } else if (isInserting) {
-      context.missing(_ratePresaleMinorMeta);
+          _menores0a6Meta,
+          menores0a6.isAcceptableOrUnknown(
+              data['menores0a6']!, _menores0a6Meta));
+    }
+    if (data.containsKey('menores7a12')) {
+      context.handle(
+          _menores7a12Meta,
+          menores7a12.isAcceptableOrUnknown(
+              data['menores7a12']!, _menores7a12Meta));
+    }
+    if (data.containsKey('pax_adic')) {
+      context.handle(_paxAdicMeta,
+          paxAdic.isAcceptableOrUnknown(data['pax_adic']!, _paxAdicMeta));
     }
     return context;
   }
@@ -1238,140 +1389,142 @@ class $QuoteTable extends Quote with TableInfo<$QuoteTable, QuoteData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  QuoteData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  HabitacionData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return QuoteData(
+    return HabitacionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      folio: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
-      isPresale: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_presale'])!,
-      category: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      folioHabitacion: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}folio_habitacion'])!,
+      subfolio: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subfolio'])!,
+      categoria: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}categoria'])!,
       plan: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}plan'])!,
-      registerDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}register_date'])!,
-      enterDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}enter_date'])!,
-      outDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}out_date'])!,
-      adults: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}adults'])!,
-      minor0a6: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}minor0a6'])!,
-      minor7a12: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}minor7a12'])!,
-      rateRealAdult: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}rate_real_adult'])!,
-      ratePresaleAdult: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}rate_presale_adult'])!,
-      rateRealMinor: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}rate_real_minor'])!,
-      ratePresaleMinor: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}rate_presale_minor'])!,
+      esPreventa: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}es_preventa'])!,
+      fechaCheckIn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fecha_check_in'])!,
+      fechaCheckOut: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}fecha_check_out'])!,
+      fecha: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+      adultos: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}adultos']),
+      menores0a6: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}menores0a6']),
+      menores7a12: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}menores7a12']),
+      paxAdic: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}pax_adic']),
     );
   }
 
   @override
-  $QuoteTable createAlias(String alias) {
-    return $QuoteTable(attachedDatabase, alias);
+  $HabitacionTable createAlias(String alias) {
+    return $HabitacionTable(attachedDatabase, alias);
   }
 }
 
-class QuoteData extends DataClass implements Insertable<QuoteData> {
+class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int id;
-  final String folio;
-  final bool isPresale;
-  final String category;
+  final String folioHabitacion;
+  final String subfolio;
+  final String categoria;
   final String plan;
-  final DateTime registerDate;
-  final String enterDate;
-  final String outDate;
-  final int adults;
-  final int minor0a6;
-  final int minor7a12;
-  final double rateRealAdult;
-  final double ratePresaleAdult;
-  final double rateRealMinor;
-  final double ratePresaleMinor;
-  const QuoteData(
+  final bool esPreventa;
+  final String fechaCheckIn;
+  final String fechaCheckOut;
+  final DateTime fecha;
+  final int? adultos;
+  final int? menores0a6;
+  final int? menores7a12;
+  final int? paxAdic;
+  const HabitacionData(
       {required this.id,
-      required this.folio,
-      required this.isPresale,
-      required this.category,
+      required this.folioHabitacion,
+      required this.subfolio,
+      required this.categoria,
       required this.plan,
-      required this.registerDate,
-      required this.enterDate,
-      required this.outDate,
-      required this.adults,
-      required this.minor0a6,
-      required this.minor7a12,
-      required this.rateRealAdult,
-      required this.ratePresaleAdult,
-      required this.rateRealMinor,
-      required this.ratePresaleMinor});
+      required this.esPreventa,
+      required this.fechaCheckIn,
+      required this.fechaCheckOut,
+      required this.fecha,
+      this.adultos,
+      this.menores0a6,
+      this.menores7a12,
+      this.paxAdic});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['folio'] = Variable<String>(folio);
-    map['is_presale'] = Variable<bool>(isPresale);
-    map['category'] = Variable<String>(category);
+    map['folio_habitacion'] = Variable<String>(folioHabitacion);
+    map['subfolio'] = Variable<String>(subfolio);
+    map['categoria'] = Variable<String>(categoria);
     map['plan'] = Variable<String>(plan);
-    map['register_date'] = Variable<DateTime>(registerDate);
-    map['enter_date'] = Variable<String>(enterDate);
-    map['out_date'] = Variable<String>(outDate);
-    map['adults'] = Variable<int>(adults);
-    map['minor0a6'] = Variable<int>(minor0a6);
-    map['minor7a12'] = Variable<int>(minor7a12);
-    map['rate_real_adult'] = Variable<double>(rateRealAdult);
-    map['rate_presale_adult'] = Variable<double>(ratePresaleAdult);
-    map['rate_real_minor'] = Variable<double>(rateRealMinor);
-    map['rate_presale_minor'] = Variable<double>(ratePresaleMinor);
+    map['es_preventa'] = Variable<bool>(esPreventa);
+    map['fecha_check_in'] = Variable<String>(fechaCheckIn);
+    map['fecha_check_out'] = Variable<String>(fechaCheckOut);
+    map['fecha'] = Variable<DateTime>(fecha);
+    if (!nullToAbsent || adultos != null) {
+      map['adultos'] = Variable<int>(adultos);
+    }
+    if (!nullToAbsent || menores0a6 != null) {
+      map['menores0a6'] = Variable<int>(menores0a6);
+    }
+    if (!nullToAbsent || menores7a12 != null) {
+      map['menores7a12'] = Variable<int>(menores7a12);
+    }
+    if (!nullToAbsent || paxAdic != null) {
+      map['pax_adic'] = Variable<int>(paxAdic);
+    }
     return map;
   }
 
-  QuoteCompanion toCompanion(bool nullToAbsent) {
-    return QuoteCompanion(
+  HabitacionCompanion toCompanion(bool nullToAbsent) {
+    return HabitacionCompanion(
       id: Value(id),
-      folio: Value(folio),
-      isPresale: Value(isPresale),
-      category: Value(category),
+      folioHabitacion: Value(folioHabitacion),
+      subfolio: Value(subfolio),
+      categoria: Value(categoria),
       plan: Value(plan),
-      registerDate: Value(registerDate),
-      enterDate: Value(enterDate),
-      outDate: Value(outDate),
-      adults: Value(adults),
-      minor0a6: Value(minor0a6),
-      minor7a12: Value(minor7a12),
-      rateRealAdult: Value(rateRealAdult),
-      ratePresaleAdult: Value(ratePresaleAdult),
-      rateRealMinor: Value(rateRealMinor),
-      ratePresaleMinor: Value(ratePresaleMinor),
+      esPreventa: Value(esPreventa),
+      fechaCheckIn: Value(fechaCheckIn),
+      fechaCheckOut: Value(fechaCheckOut),
+      fecha: Value(fecha),
+      adultos: adultos == null && nullToAbsent
+          ? const Value.absent()
+          : Value(adultos),
+      menores0a6: menores0a6 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(menores0a6),
+      menores7a12: menores7a12 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(menores7a12),
+      paxAdic: paxAdic == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paxAdic),
     );
   }
 
-  factory QuoteData.fromJson(Map<String, dynamic> json,
+  factory HabitacionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return QuoteData(
+    return HabitacionData(
       id: serializer.fromJson<int>(json['id']),
-      folio: serializer.fromJson<String>(json['folio']),
-      isPresale: serializer.fromJson<bool>(json['isPresale']),
-      category: serializer.fromJson<String>(json['category']),
+      folioHabitacion: serializer.fromJson<String>(json['folioHabitacion']),
+      subfolio: serializer.fromJson<String>(json['subfolio']),
+      categoria: serializer.fromJson<String>(json['categoria']),
       plan: serializer.fromJson<String>(json['plan']),
-      registerDate: serializer.fromJson<DateTime>(json['registerDate']),
-      enterDate: serializer.fromJson<String>(json['enterDate']),
-      outDate: serializer.fromJson<String>(json['outDate']),
-      adults: serializer.fromJson<int>(json['adults']),
-      minor0a6: serializer.fromJson<int>(json['minor0a6']),
-      minor7a12: serializer.fromJson<int>(json['minor7a12']),
-      rateRealAdult: serializer.fromJson<double>(json['rateRealAdult']),
-      ratePresaleAdult: serializer.fromJson<double>(json['ratePresaleAdult']),
-      rateRealMinor: serializer.fromJson<double>(json['rateRealMinor']),
-      ratePresaleMinor: serializer.fromJson<double>(json['ratePresaleMinor']),
+      esPreventa: serializer.fromJson<bool>(json['esPreventa']),
+      fechaCheckIn: serializer.fromJson<String>(json['fechaCheckIn']),
+      fechaCheckOut: serializer.fromJson<String>(json['fechaCheckOut']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      adultos: serializer.fromJson<int?>(json['adultos']),
+      menores0a6: serializer.fromJson<int?>(json['menores0a6']),
+      menores7a12: serializer.fromJson<int?>(json['menores7a12']),
+      paxAdic: serializer.fromJson<int?>(json['paxAdic']),
     );
   }
   @override
@@ -1379,74 +1532,66 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'folio': serializer.toJson<String>(folio),
-      'isPresale': serializer.toJson<bool>(isPresale),
-      'category': serializer.toJson<String>(category),
+      'folioHabitacion': serializer.toJson<String>(folioHabitacion),
+      'subfolio': serializer.toJson<String>(subfolio),
+      'categoria': serializer.toJson<String>(categoria),
       'plan': serializer.toJson<String>(plan),
-      'registerDate': serializer.toJson<DateTime>(registerDate),
-      'enterDate': serializer.toJson<String>(enterDate),
-      'outDate': serializer.toJson<String>(outDate),
-      'adults': serializer.toJson<int>(adults),
-      'minor0a6': serializer.toJson<int>(minor0a6),
-      'minor7a12': serializer.toJson<int>(minor7a12),
-      'rateRealAdult': serializer.toJson<double>(rateRealAdult),
-      'ratePresaleAdult': serializer.toJson<double>(ratePresaleAdult),
-      'rateRealMinor': serializer.toJson<double>(rateRealMinor),
-      'ratePresaleMinor': serializer.toJson<double>(ratePresaleMinor),
+      'esPreventa': serializer.toJson<bool>(esPreventa),
+      'fechaCheckIn': serializer.toJson<String>(fechaCheckIn),
+      'fechaCheckOut': serializer.toJson<String>(fechaCheckOut),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'adultos': serializer.toJson<int?>(adultos),
+      'menores0a6': serializer.toJson<int?>(menores0a6),
+      'menores7a12': serializer.toJson<int?>(menores7a12),
+      'paxAdic': serializer.toJson<int?>(paxAdic),
     };
   }
 
-  QuoteData copyWith(
+  HabitacionData copyWith(
           {int? id,
-          String? folio,
-          bool? isPresale,
-          String? category,
+          String? folioHabitacion,
+          String? subfolio,
+          String? categoria,
           String? plan,
-          DateTime? registerDate,
-          String? enterDate,
-          String? outDate,
-          int? adults,
-          int? minor0a6,
-          int? minor7a12,
-          double? rateRealAdult,
-          double? ratePresaleAdult,
-          double? rateRealMinor,
-          double? ratePresaleMinor}) =>
-      QuoteData(
+          bool? esPreventa,
+          String? fechaCheckIn,
+          String? fechaCheckOut,
+          DateTime? fecha,
+          Value<int?> adultos = const Value.absent(),
+          Value<int?> menores0a6 = const Value.absent(),
+          Value<int?> menores7a12 = const Value.absent(),
+          Value<int?> paxAdic = const Value.absent()}) =>
+      HabitacionData(
         id: id ?? this.id,
-        folio: folio ?? this.folio,
-        isPresale: isPresale ?? this.isPresale,
-        category: category ?? this.category,
+        folioHabitacion: folioHabitacion ?? this.folioHabitacion,
+        subfolio: subfolio ?? this.subfolio,
+        categoria: categoria ?? this.categoria,
         plan: plan ?? this.plan,
-        registerDate: registerDate ?? this.registerDate,
-        enterDate: enterDate ?? this.enterDate,
-        outDate: outDate ?? this.outDate,
-        adults: adults ?? this.adults,
-        minor0a6: minor0a6 ?? this.minor0a6,
-        minor7a12: minor7a12 ?? this.minor7a12,
-        rateRealAdult: rateRealAdult ?? this.rateRealAdult,
-        ratePresaleAdult: ratePresaleAdult ?? this.ratePresaleAdult,
-        rateRealMinor: rateRealMinor ?? this.rateRealMinor,
-        ratePresaleMinor: ratePresaleMinor ?? this.ratePresaleMinor,
+        esPreventa: esPreventa ?? this.esPreventa,
+        fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
+        fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
+        fecha: fecha ?? this.fecha,
+        adultos: adultos.present ? adultos.value : this.adultos,
+        menores0a6: menores0a6.present ? menores0a6.value : this.menores0a6,
+        menores7a12: menores7a12.present ? menores7a12.value : this.menores7a12,
+        paxAdic: paxAdic.present ? paxAdic.value : this.paxAdic,
       );
   @override
   String toString() {
-    return (StringBuffer('QuoteData(')
+    return (StringBuffer('HabitacionData(')
           ..write('id: $id, ')
-          ..write('folio: $folio, ')
-          ..write('isPresale: $isPresale, ')
-          ..write('category: $category, ')
+          ..write('folioHabitacion: $folioHabitacion, ')
+          ..write('subfolio: $subfolio, ')
+          ..write('categoria: $categoria, ')
           ..write('plan: $plan, ')
-          ..write('registerDate: $registerDate, ')
-          ..write('enterDate: $enterDate, ')
-          ..write('outDate: $outDate, ')
-          ..write('adults: $adults, ')
-          ..write('minor0a6: $minor0a6, ')
-          ..write('minor7a12: $minor7a12, ')
-          ..write('rateRealAdult: $rateRealAdult, ')
-          ..write('ratePresaleAdult: $ratePresaleAdult, ')
-          ..write('rateRealMinor: $rateRealMinor, ')
-          ..write('ratePresaleMinor: $ratePresaleMinor')
+          ..write('esPreventa: $esPreventa, ')
+          ..write('fechaCheckIn: $fechaCheckIn, ')
+          ..write('fechaCheckOut: $fechaCheckOut, ')
+          ..write('fecha: $fecha, ')
+          ..write('adultos: $adultos, ')
+          ..write('menores0a6: $menores0a6, ')
+          ..write('menores7a12: $menores7a12, ')
+          ..write('paxAdic: $paxAdic')
           ..write(')'))
         .toString();
   }
@@ -1454,172 +1599,148 @@ class QuoteData extends DataClass implements Insertable<QuoteData> {
   @override
   int get hashCode => Object.hash(
       id,
-      folio,
-      isPresale,
-      category,
+      folioHabitacion,
+      subfolio,
+      categoria,
       plan,
-      registerDate,
-      enterDate,
-      outDate,
-      adults,
-      minor0a6,
-      minor7a12,
-      rateRealAdult,
-      ratePresaleAdult,
-      rateRealMinor,
-      ratePresaleMinor);
+      esPreventa,
+      fechaCheckIn,
+      fechaCheckOut,
+      fecha,
+      adultos,
+      menores0a6,
+      menores7a12,
+      paxAdic);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is QuoteData &&
+      (other is HabitacionData &&
           other.id == this.id &&
-          other.folio == this.folio &&
-          other.isPresale == this.isPresale &&
-          other.category == this.category &&
+          other.folioHabitacion == this.folioHabitacion &&
+          other.subfolio == this.subfolio &&
+          other.categoria == this.categoria &&
           other.plan == this.plan &&
-          other.registerDate == this.registerDate &&
-          other.enterDate == this.enterDate &&
-          other.outDate == this.outDate &&
-          other.adults == this.adults &&
-          other.minor0a6 == this.minor0a6 &&
-          other.minor7a12 == this.minor7a12 &&
-          other.rateRealAdult == this.rateRealAdult &&
-          other.ratePresaleAdult == this.ratePresaleAdult &&
-          other.rateRealMinor == this.rateRealMinor &&
-          other.ratePresaleMinor == this.ratePresaleMinor);
+          other.esPreventa == this.esPreventa &&
+          other.fechaCheckIn == this.fechaCheckIn &&
+          other.fechaCheckOut == this.fechaCheckOut &&
+          other.fecha == this.fecha &&
+          other.adultos == this.adultos &&
+          other.menores0a6 == this.menores0a6 &&
+          other.menores7a12 == this.menores7a12 &&
+          other.paxAdic == this.paxAdic);
 }
 
-class QuoteCompanion extends UpdateCompanion<QuoteData> {
+class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int> id;
-  final Value<String> folio;
-  final Value<bool> isPresale;
-  final Value<String> category;
+  final Value<String> folioHabitacion;
+  final Value<String> subfolio;
+  final Value<String> categoria;
   final Value<String> plan;
-  final Value<DateTime> registerDate;
-  final Value<String> enterDate;
-  final Value<String> outDate;
-  final Value<int> adults;
-  final Value<int> minor0a6;
-  final Value<int> minor7a12;
-  final Value<double> rateRealAdult;
-  final Value<double> ratePresaleAdult;
-  final Value<double> rateRealMinor;
-  final Value<double> ratePresaleMinor;
-  const QuoteCompanion({
+  final Value<bool> esPreventa;
+  final Value<String> fechaCheckIn;
+  final Value<String> fechaCheckOut;
+  final Value<DateTime> fecha;
+  final Value<int?> adultos;
+  final Value<int?> menores0a6;
+  final Value<int?> menores7a12;
+  final Value<int?> paxAdic;
+  const HabitacionCompanion({
     this.id = const Value.absent(),
-    this.folio = const Value.absent(),
-    this.isPresale = const Value.absent(),
-    this.category = const Value.absent(),
+    this.folioHabitacion = const Value.absent(),
+    this.subfolio = const Value.absent(),
+    this.categoria = const Value.absent(),
     this.plan = const Value.absent(),
-    this.registerDate = const Value.absent(),
-    this.enterDate = const Value.absent(),
-    this.outDate = const Value.absent(),
-    this.adults = const Value.absent(),
-    this.minor0a6 = const Value.absent(),
-    this.minor7a12 = const Value.absent(),
-    this.rateRealAdult = const Value.absent(),
-    this.ratePresaleAdult = const Value.absent(),
-    this.rateRealMinor = const Value.absent(),
-    this.ratePresaleMinor = const Value.absent(),
+    this.esPreventa = const Value.absent(),
+    this.fechaCheckIn = const Value.absent(),
+    this.fechaCheckOut = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.adultos = const Value.absent(),
+    this.menores0a6 = const Value.absent(),
+    this.menores7a12 = const Value.absent(),
+    this.paxAdic = const Value.absent(),
   });
-  QuoteCompanion.insert({
+  HabitacionCompanion.insert({
     this.id = const Value.absent(),
-    required String folio,
-    required bool isPresale,
-    required String category,
+    required String folioHabitacion,
+    required String subfolio,
+    required String categoria,
     required String plan,
-    required DateTime registerDate,
-    required String enterDate,
-    required String outDate,
-    required int adults,
-    required int minor0a6,
-    required int minor7a12,
-    required double rateRealAdult,
-    required double ratePresaleAdult,
-    required double rateRealMinor,
-    required double ratePresaleMinor,
-  })  : folio = Value(folio),
-        isPresale = Value(isPresale),
-        category = Value(category),
+    required bool esPreventa,
+    required String fechaCheckIn,
+    required String fechaCheckOut,
+    required DateTime fecha,
+    this.adultos = const Value.absent(),
+    this.menores0a6 = const Value.absent(),
+    this.menores7a12 = const Value.absent(),
+    this.paxAdic = const Value.absent(),
+  })  : folioHabitacion = Value(folioHabitacion),
+        subfolio = Value(subfolio),
+        categoria = Value(categoria),
         plan = Value(plan),
-        registerDate = Value(registerDate),
-        enterDate = Value(enterDate),
-        outDate = Value(outDate),
-        adults = Value(adults),
-        minor0a6 = Value(minor0a6),
-        minor7a12 = Value(minor7a12),
-        rateRealAdult = Value(rateRealAdult),
-        ratePresaleAdult = Value(ratePresaleAdult),
-        rateRealMinor = Value(rateRealMinor),
-        ratePresaleMinor = Value(ratePresaleMinor);
-  static Insertable<QuoteData> custom({
+        esPreventa = Value(esPreventa),
+        fechaCheckIn = Value(fechaCheckIn),
+        fechaCheckOut = Value(fechaCheckOut),
+        fecha = Value(fecha);
+  static Insertable<HabitacionData> custom({
     Expression<int>? id,
-    Expression<String>? folio,
-    Expression<bool>? isPresale,
-    Expression<String>? category,
+    Expression<String>? folioHabitacion,
+    Expression<String>? subfolio,
+    Expression<String>? categoria,
     Expression<String>? plan,
-    Expression<DateTime>? registerDate,
-    Expression<String>? enterDate,
-    Expression<String>? outDate,
-    Expression<int>? adults,
-    Expression<int>? minor0a6,
-    Expression<int>? minor7a12,
-    Expression<double>? rateRealAdult,
-    Expression<double>? ratePresaleAdult,
-    Expression<double>? rateRealMinor,
-    Expression<double>? ratePresaleMinor,
+    Expression<bool>? esPreventa,
+    Expression<String>? fechaCheckIn,
+    Expression<String>? fechaCheckOut,
+    Expression<DateTime>? fecha,
+    Expression<int>? adultos,
+    Expression<int>? menores0a6,
+    Expression<int>? menores7a12,
+    Expression<int>? paxAdic,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (folio != null) 'folio': folio,
-      if (isPresale != null) 'is_presale': isPresale,
-      if (category != null) 'category': category,
+      if (folioHabitacion != null) 'folio_habitacion': folioHabitacion,
+      if (subfolio != null) 'subfolio': subfolio,
+      if (categoria != null) 'categoria': categoria,
       if (plan != null) 'plan': plan,
-      if (registerDate != null) 'register_date': registerDate,
-      if (enterDate != null) 'enter_date': enterDate,
-      if (outDate != null) 'out_date': outDate,
-      if (adults != null) 'adults': adults,
-      if (minor0a6 != null) 'minor0a6': minor0a6,
-      if (minor7a12 != null) 'minor7a12': minor7a12,
-      if (rateRealAdult != null) 'rate_real_adult': rateRealAdult,
-      if (ratePresaleAdult != null) 'rate_presale_adult': ratePresaleAdult,
-      if (rateRealMinor != null) 'rate_real_minor': rateRealMinor,
-      if (ratePresaleMinor != null) 'rate_presale_minor': ratePresaleMinor,
+      if (esPreventa != null) 'es_preventa': esPreventa,
+      if (fechaCheckIn != null) 'fecha_check_in': fechaCheckIn,
+      if (fechaCheckOut != null) 'fecha_check_out': fechaCheckOut,
+      if (fecha != null) 'fecha': fecha,
+      if (adultos != null) 'adultos': adultos,
+      if (menores0a6 != null) 'menores0a6': menores0a6,
+      if (menores7a12 != null) 'menores7a12': menores7a12,
+      if (paxAdic != null) 'pax_adic': paxAdic,
     });
   }
 
-  QuoteCompanion copyWith(
+  HabitacionCompanion copyWith(
       {Value<int>? id,
-      Value<String>? folio,
-      Value<bool>? isPresale,
-      Value<String>? category,
+      Value<String>? folioHabitacion,
+      Value<String>? subfolio,
+      Value<String>? categoria,
       Value<String>? plan,
-      Value<DateTime>? registerDate,
-      Value<String>? enterDate,
-      Value<String>? outDate,
-      Value<int>? adults,
-      Value<int>? minor0a6,
-      Value<int>? minor7a12,
-      Value<double>? rateRealAdult,
-      Value<double>? ratePresaleAdult,
-      Value<double>? rateRealMinor,
-      Value<double>? ratePresaleMinor}) {
-    return QuoteCompanion(
+      Value<bool>? esPreventa,
+      Value<String>? fechaCheckIn,
+      Value<String>? fechaCheckOut,
+      Value<DateTime>? fecha,
+      Value<int?>? adultos,
+      Value<int?>? menores0a6,
+      Value<int?>? menores7a12,
+      Value<int?>? paxAdic}) {
+    return HabitacionCompanion(
       id: id ?? this.id,
-      folio: folio ?? this.folio,
-      isPresale: isPresale ?? this.isPresale,
-      category: category ?? this.category,
+      folioHabitacion: folioHabitacion ?? this.folioHabitacion,
+      subfolio: subfolio ?? this.subfolio,
+      categoria: categoria ?? this.categoria,
       plan: plan ?? this.plan,
-      registerDate: registerDate ?? this.registerDate,
-      enterDate: enterDate ?? this.enterDate,
-      outDate: outDate ?? this.outDate,
-      adults: adults ?? this.adults,
-      minor0a6: minor0a6 ?? this.minor0a6,
-      minor7a12: minor7a12 ?? this.minor7a12,
-      rateRealAdult: rateRealAdult ?? this.rateRealAdult,
-      ratePresaleAdult: ratePresaleAdult ?? this.ratePresaleAdult,
-      rateRealMinor: rateRealMinor ?? this.rateRealMinor,
-      ratePresaleMinor: ratePresaleMinor ?? this.ratePresaleMinor,
+      esPreventa: esPreventa ?? this.esPreventa,
+      fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
+      fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
+      fecha: fecha ?? this.fecha,
+      adultos: adultos ?? this.adultos,
+      menores0a6: menores0a6 ?? this.menores0a6,
+      menores7a12: menores7a12 ?? this.menores7a12,
+      paxAdic: paxAdic ?? this.paxAdic,
     );
   }
 
@@ -1629,80 +1750,72 @@ class QuoteCompanion extends UpdateCompanion<QuoteData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (folio.present) {
-      map['folio'] = Variable<String>(folio.value);
+    if (folioHabitacion.present) {
+      map['folio_habitacion'] = Variable<String>(folioHabitacion.value);
     }
-    if (isPresale.present) {
-      map['is_presale'] = Variable<bool>(isPresale.value);
+    if (subfolio.present) {
+      map['subfolio'] = Variable<String>(subfolio.value);
     }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
+    if (categoria.present) {
+      map['categoria'] = Variable<String>(categoria.value);
     }
     if (plan.present) {
       map['plan'] = Variable<String>(plan.value);
     }
-    if (registerDate.present) {
-      map['register_date'] = Variable<DateTime>(registerDate.value);
+    if (esPreventa.present) {
+      map['es_preventa'] = Variable<bool>(esPreventa.value);
     }
-    if (enterDate.present) {
-      map['enter_date'] = Variable<String>(enterDate.value);
+    if (fechaCheckIn.present) {
+      map['fecha_check_in'] = Variable<String>(fechaCheckIn.value);
     }
-    if (outDate.present) {
-      map['out_date'] = Variable<String>(outDate.value);
+    if (fechaCheckOut.present) {
+      map['fecha_check_out'] = Variable<String>(fechaCheckOut.value);
     }
-    if (adults.present) {
-      map['adults'] = Variable<int>(adults.value);
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
     }
-    if (minor0a6.present) {
-      map['minor0a6'] = Variable<int>(minor0a6.value);
+    if (adultos.present) {
+      map['adultos'] = Variable<int>(adultos.value);
     }
-    if (minor7a12.present) {
-      map['minor7a12'] = Variable<int>(minor7a12.value);
+    if (menores0a6.present) {
+      map['menores0a6'] = Variable<int>(menores0a6.value);
     }
-    if (rateRealAdult.present) {
-      map['rate_real_adult'] = Variable<double>(rateRealAdult.value);
+    if (menores7a12.present) {
+      map['menores7a12'] = Variable<int>(menores7a12.value);
     }
-    if (ratePresaleAdult.present) {
-      map['rate_presale_adult'] = Variable<double>(ratePresaleAdult.value);
-    }
-    if (rateRealMinor.present) {
-      map['rate_real_minor'] = Variable<double>(rateRealMinor.value);
-    }
-    if (ratePresaleMinor.present) {
-      map['rate_presale_minor'] = Variable<double>(ratePresaleMinor.value);
+    if (paxAdic.present) {
+      map['pax_adic'] = Variable<int>(paxAdic.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('QuoteCompanion(')
+    return (StringBuffer('HabitacionCompanion(')
           ..write('id: $id, ')
-          ..write('folio: $folio, ')
-          ..write('isPresale: $isPresale, ')
-          ..write('category: $category, ')
+          ..write('folioHabitacion: $folioHabitacion, ')
+          ..write('subfolio: $subfolio, ')
+          ..write('categoria: $categoria, ')
           ..write('plan: $plan, ')
-          ..write('registerDate: $registerDate, ')
-          ..write('enterDate: $enterDate, ')
-          ..write('outDate: $outDate, ')
-          ..write('adults: $adults, ')
-          ..write('minor0a6: $minor0a6, ')
-          ..write('minor7a12: $minor7a12, ')
-          ..write('rateRealAdult: $rateRealAdult, ')
-          ..write('ratePresaleAdult: $ratePresaleAdult, ')
-          ..write('rateRealMinor: $rateRealMinor, ')
-          ..write('ratePresaleMinor: $ratePresaleMinor')
+          ..write('esPreventa: $esPreventa, ')
+          ..write('fechaCheckIn: $fechaCheckIn, ')
+          ..write('fechaCheckOut: $fechaCheckOut, ')
+          ..write('fecha: $fecha, ')
+          ..write('adultos: $adultos, ')
+          ..write('menores0a6: $menores0a6, ')
+          ..write('menores7a12: $menores7a12, ')
+          ..write('paxAdic: $paxAdic')
           ..write(')'))
         .toString();
   }
 }
 
-class $QuoteGroupTable extends QuoteGroup
-    with TableInfo<$QuoteGroupTable, QuoteGroupData> {
+class $TarifaXDiaTable extends TarifaXDia
+    with TableInfo<$TarifaXDiaTable, TarifaXDiaData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $QuoteGroupTable(this.attachedDatabase, [this._alias]);
+  $TarifaXDiaTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1712,174 +1825,147 @@ class $QuoteGroupTable extends QuoteGroup
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _folioMeta = const VerificationMeta('folio');
+  static const VerificationMeta _folioTarifaXDiaMeta =
+      const VerificationMeta('folioTarifaXDia');
   @override
-  late final GeneratedColumn<String> folio = GeneratedColumn<String>(
-      'folio', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _isPresaleMeta =
-      const VerificationMeta('isPresale');
+  late final GeneratedColumn<String> folioTarifaXDia = GeneratedColumn<String>(
+      'folio_tarifa_x_dia', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _subfolioMeta =
+      const VerificationMeta('subfolio');
   @override
-  late final GeneratedColumn<bool> isPresale = GeneratedColumn<bool>(
-      'is_presale', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_presale" IN (0, 1))'));
-  static const VerificationMeta _categoryMeta =
-      const VerificationMeta('category');
+  late final GeneratedColumn<String> subfolio = GeneratedColumn<String>(
+      'subfolio', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _diaMeta = const VerificationMeta('dia');
   @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-      'category', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _planMeta = const VerificationMeta('plan');
+  late final GeneratedColumn<int> dia = GeneratedColumn<int>(
+      'dia', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
-  late final GeneratedColumn<String> plan = GeneratedColumn<String>(
-      'plan', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _registerDateMeta =
-      const VerificationMeta('registerDate');
-  @override
-  late final GeneratedColumn<DateTime> registerDate = GeneratedColumn<DateTime>(
-      'register_date', aliasedName, false,
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+      'fecha', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _enterDateMeta =
-      const VerificationMeta('enterDate');
+  static const VerificationMeta _tarifaRealPaxAdicMeta =
+      const VerificationMeta('tarifaRealPaxAdic');
   @override
-  late final GeneratedColumn<String> enterDate = GeneratedColumn<String>(
-      'enter_date', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _outDateMeta =
-      const VerificationMeta('outDate');
+  late final GeneratedColumn<double> tarifaRealPaxAdic =
+      GeneratedColumn<double>('tarifa_real_pax_adic', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaPreventaPaxAdicMeta =
+      const VerificationMeta('tarifaPreventaPaxAdic');
   @override
-  late final GeneratedColumn<String> outDate = GeneratedColumn<String>(
-      'out_date', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _rateAdult1_2Meta =
-      const VerificationMeta('rateAdult1_2');
+  late final GeneratedColumn<double> tarifaPreventaPaxAdic =
+      GeneratedColumn<double>('tarifa_preventa_pax_adic', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaRealAdultoMeta =
+      const VerificationMeta('tarifaRealAdulto');
   @override
-  late final GeneratedColumn<double> rateAdult1_2 = GeneratedColumn<double>(
-      'rate_adult1_2', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _rateAdult3Meta =
-      const VerificationMeta('rateAdult3');
+  late final GeneratedColumn<double> tarifaRealAdulto = GeneratedColumn<double>(
+      'tarifa_real_adulto', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaPreventaAdultoMeta =
+      const VerificationMeta('tarifaPreventaAdulto');
   @override
-  late final GeneratedColumn<double> rateAdult3 = GeneratedColumn<double>(
-      'rate_adult3', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _rateAdult4Meta =
-      const VerificationMeta('rateAdult4');
+  late final GeneratedColumn<double> tarifaPreventaAdulto =
+      GeneratedColumn<double>('tarifa_preventa_adulto', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaRealMenores7a12Meta =
+      const VerificationMeta('tarifaRealMenores7a12');
   @override
-  late final GeneratedColumn<double> rateAdult4 = GeneratedColumn<double>(
-      'rate_adult4', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _rateMinorMeta =
-      const VerificationMeta('rateMinor');
+  late final GeneratedColumn<double> tarifaRealMenores7a12 =
+      GeneratedColumn<double>('tarifa_real_menores7a12', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaPreventaMenores7a12Meta =
+      const VerificationMeta('tarifaPreventaMenores7a12');
   @override
-  late final GeneratedColumn<double> rateMinor = GeneratedColumn<double>(
-      'rate_minor', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+  late final GeneratedColumn<double> tarifaPreventaMenores7a12 =
+      GeneratedColumn<double>('tarifa_preventa_menores7a12', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        folio,
-        isPresale,
-        category,
-        plan,
-        registerDate,
-        enterDate,
-        outDate,
-        rateAdult1_2,
-        rateAdult3,
-        rateAdult4,
-        rateMinor
+        folioTarifaXDia,
+        subfolio,
+        dia,
+        fecha,
+        tarifaRealPaxAdic,
+        tarifaPreventaPaxAdic,
+        tarifaRealAdulto,
+        tarifaPreventaAdulto,
+        tarifaRealMenores7a12,
+        tarifaPreventaMenores7a12
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'quote_group';
+  static const String $name = 'tarifa_x_dia';
   @override
-  VerificationContext validateIntegrity(Insertable<QuoteGroupData> instance,
+  VerificationContext validateIntegrity(Insertable<TarifaXDiaData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('folio')) {
+    if (data.containsKey('folio_tarifa_x_dia')) {
       context.handle(
-          _folioMeta, folio.isAcceptableOrUnknown(data['folio']!, _folioMeta));
-    } else if (isInserting) {
-      context.missing(_folioMeta);
+          _folioTarifaXDiaMeta,
+          folioTarifaXDia.isAcceptableOrUnknown(
+              data['folio_tarifa_x_dia']!, _folioTarifaXDiaMeta));
     }
-    if (data.containsKey('is_presale')) {
-      context.handle(_isPresaleMeta,
-          isPresale.isAcceptableOrUnknown(data['is_presale']!, _isPresaleMeta));
-    } else if (isInserting) {
-      context.missing(_isPresaleMeta);
+    if (data.containsKey('subfolio')) {
+      context.handle(_subfolioMeta,
+          subfolio.isAcceptableOrUnknown(data['subfolio']!, _subfolioMeta));
     }
-    if (data.containsKey('category')) {
-      context.handle(_categoryMeta,
-          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
-    } else if (isInserting) {
-      context.missing(_categoryMeta);
-    }
-    if (data.containsKey('plan')) {
+    if (data.containsKey('dia')) {
       context.handle(
-          _planMeta, plan.isAcceptableOrUnknown(data['plan']!, _planMeta));
-    } else if (isInserting) {
-      context.missing(_planMeta);
+          _diaMeta, dia.isAcceptableOrUnknown(data['dia']!, _diaMeta));
     }
-    if (data.containsKey('register_date')) {
+    if (data.containsKey('fecha')) {
       context.handle(
-          _registerDateMeta,
-          registerDate.isAcceptableOrUnknown(
-              data['register_date']!, _registerDateMeta));
+          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
     } else if (isInserting) {
-      context.missing(_registerDateMeta);
+      context.missing(_fechaMeta);
     }
-    if (data.containsKey('enter_date')) {
-      context.handle(_enterDateMeta,
-          enterDate.isAcceptableOrUnknown(data['enter_date']!, _enterDateMeta));
-    } else if (isInserting) {
-      context.missing(_enterDateMeta);
-    }
-    if (data.containsKey('out_date')) {
-      context.handle(_outDateMeta,
-          outDate.isAcceptableOrUnknown(data['out_date']!, _outDateMeta));
-    } else if (isInserting) {
-      context.missing(_outDateMeta);
-    }
-    if (data.containsKey('rate_adult1_2')) {
+    if (data.containsKey('tarifa_real_pax_adic')) {
       context.handle(
-          _rateAdult1_2Meta,
-          rateAdult1_2.isAcceptableOrUnknown(
-              data['rate_adult1_2']!, _rateAdult1_2Meta));
-    } else if (isInserting) {
-      context.missing(_rateAdult1_2Meta);
+          _tarifaRealPaxAdicMeta,
+          tarifaRealPaxAdic.isAcceptableOrUnknown(
+              data['tarifa_real_pax_adic']!, _tarifaRealPaxAdicMeta));
     }
-    if (data.containsKey('rate_adult3')) {
+    if (data.containsKey('tarifa_preventa_pax_adic')) {
       context.handle(
-          _rateAdult3Meta,
-          rateAdult3.isAcceptableOrUnknown(
-              data['rate_adult3']!, _rateAdult3Meta));
-    } else if (isInserting) {
-      context.missing(_rateAdult3Meta);
+          _tarifaPreventaPaxAdicMeta,
+          tarifaPreventaPaxAdic.isAcceptableOrUnknown(
+              data['tarifa_preventa_pax_adic']!, _tarifaPreventaPaxAdicMeta));
     }
-    if (data.containsKey('rate_adult4')) {
+    if (data.containsKey('tarifa_real_adulto')) {
       context.handle(
-          _rateAdult4Meta,
-          rateAdult4.isAcceptableOrUnknown(
-              data['rate_adult4']!, _rateAdult4Meta));
-    } else if (isInserting) {
-      context.missing(_rateAdult4Meta);
+          _tarifaRealAdultoMeta,
+          tarifaRealAdulto.isAcceptableOrUnknown(
+              data['tarifa_real_adulto']!, _tarifaRealAdultoMeta));
     }
-    if (data.containsKey('rate_minor')) {
-      context.handle(_rateMinorMeta,
-          rateMinor.isAcceptableOrUnknown(data['rate_minor']!, _rateMinorMeta));
-    } else if (isInserting) {
-      context.missing(_rateMinorMeta);
+    if (data.containsKey('tarifa_preventa_adulto')) {
+      context.handle(
+          _tarifaPreventaAdultoMeta,
+          tarifaPreventaAdulto.isAcceptableOrUnknown(
+              data['tarifa_preventa_adulto']!, _tarifaPreventaAdultoMeta));
+    }
+    if (data.containsKey('tarifa_real_menores7a12')) {
+      context.handle(
+          _tarifaRealMenores7a12Meta,
+          tarifaRealMenores7a12.isAcceptableOrUnknown(
+              data['tarifa_real_menores7a12']!, _tarifaRealMenores7a12Meta));
+    }
+    if (data.containsKey('tarifa_preventa_menores7a12')) {
+      context.handle(
+          _tarifaPreventaMenores7a12Meta,
+          tarifaPreventaMenores7a12.isAcceptableOrUnknown(
+              data['tarifa_preventa_menores7a12']!,
+              _tarifaPreventaMenores7a12Meta));
     }
     return context;
   }
@@ -1887,119 +1973,157 @@ class $QuoteGroupTable extends QuoteGroup
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  QuoteGroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TarifaXDiaData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return QuoteGroupData(
+    return TarifaXDiaData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      folio: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}folio'])!,
-      isPresale: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_presale'])!,
-      category: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
-      plan: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}plan'])!,
-      registerDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}register_date'])!,
-      enterDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}enter_date'])!,
-      outDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}out_date'])!,
-      rateAdult1_2: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult1_2'])!,
-      rateAdult3: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult3'])!,
-      rateAdult4: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}rate_adult4'])!,
-      rateMinor: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}rate_minor'])!,
+      folioTarifaXDia: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}folio_tarifa_x_dia']),
+      subfolio: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subfolio']),
+      dia: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}dia']),
+      fecha: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+      tarifaRealPaxAdic: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}tarifa_real_pax_adic']),
+      tarifaPreventaPaxAdic: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}tarifa_preventa_pax_adic']),
+      tarifaRealAdulto: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}tarifa_real_adulto']),
+      tarifaPreventaAdulto: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}tarifa_preventa_adulto']),
+      tarifaRealMenores7a12: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}tarifa_real_menores7a12']),
+      tarifaPreventaMenores7a12: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}tarifa_preventa_menores7a12']),
     );
   }
 
   @override
-  $QuoteGroupTable createAlias(String alias) {
-    return $QuoteGroupTable(attachedDatabase, alias);
+  $TarifaXDiaTable createAlias(String alias) {
+    return $TarifaXDiaTable(attachedDatabase, alias);
   }
 }
 
-class QuoteGroupData extends DataClass implements Insertable<QuoteGroupData> {
+class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
   final int id;
-  final String folio;
-  final bool isPresale;
-  final String category;
-  final String plan;
-  final DateTime registerDate;
-  final String enterDate;
-  final String outDate;
-  final double rateAdult1_2;
-  final double rateAdult3;
-  final double rateAdult4;
-  final double rateMinor;
-  const QuoteGroupData(
+  final String? folioTarifaXDia;
+  final String? subfolio;
+  final int? dia;
+  final DateTime fecha;
+  final double? tarifaRealPaxAdic;
+  final double? tarifaPreventaPaxAdic;
+  final double? tarifaRealAdulto;
+  final double? tarifaPreventaAdulto;
+  final double? tarifaRealMenores7a12;
+  final double? tarifaPreventaMenores7a12;
+  const TarifaXDiaData(
       {required this.id,
-      required this.folio,
-      required this.isPresale,
-      required this.category,
-      required this.plan,
-      required this.registerDate,
-      required this.enterDate,
-      required this.outDate,
-      required this.rateAdult1_2,
-      required this.rateAdult3,
-      required this.rateAdult4,
-      required this.rateMinor});
+      this.folioTarifaXDia,
+      this.subfolio,
+      this.dia,
+      required this.fecha,
+      this.tarifaRealPaxAdic,
+      this.tarifaPreventaPaxAdic,
+      this.tarifaRealAdulto,
+      this.tarifaPreventaAdulto,
+      this.tarifaRealMenores7a12,
+      this.tarifaPreventaMenores7a12});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['folio'] = Variable<String>(folio);
-    map['is_presale'] = Variable<bool>(isPresale);
-    map['category'] = Variable<String>(category);
-    map['plan'] = Variable<String>(plan);
-    map['register_date'] = Variable<DateTime>(registerDate);
-    map['enter_date'] = Variable<String>(enterDate);
-    map['out_date'] = Variable<String>(outDate);
-    map['rate_adult1_2'] = Variable<double>(rateAdult1_2);
-    map['rate_adult3'] = Variable<double>(rateAdult3);
-    map['rate_adult4'] = Variable<double>(rateAdult4);
-    map['rate_minor'] = Variable<double>(rateMinor);
+    if (!nullToAbsent || folioTarifaXDia != null) {
+      map['folio_tarifa_x_dia'] = Variable<String>(folioTarifaXDia);
+    }
+    if (!nullToAbsent || subfolio != null) {
+      map['subfolio'] = Variable<String>(subfolio);
+    }
+    if (!nullToAbsent || dia != null) {
+      map['dia'] = Variable<int>(dia);
+    }
+    map['fecha'] = Variable<DateTime>(fecha);
+    if (!nullToAbsent || tarifaRealPaxAdic != null) {
+      map['tarifa_real_pax_adic'] = Variable<double>(tarifaRealPaxAdic);
+    }
+    if (!nullToAbsent || tarifaPreventaPaxAdic != null) {
+      map['tarifa_preventa_pax_adic'] = Variable<double>(tarifaPreventaPaxAdic);
+    }
+    if (!nullToAbsent || tarifaRealAdulto != null) {
+      map['tarifa_real_adulto'] = Variable<double>(tarifaRealAdulto);
+    }
+    if (!nullToAbsent || tarifaPreventaAdulto != null) {
+      map['tarifa_preventa_adulto'] = Variable<double>(tarifaPreventaAdulto);
+    }
+    if (!nullToAbsent || tarifaRealMenores7a12 != null) {
+      map['tarifa_real_menores7a12'] = Variable<double>(tarifaRealMenores7a12);
+    }
+    if (!nullToAbsent || tarifaPreventaMenores7a12 != null) {
+      map['tarifa_preventa_menores7a12'] =
+          Variable<double>(tarifaPreventaMenores7a12);
+    }
     return map;
   }
 
-  QuoteGroupCompanion toCompanion(bool nullToAbsent) {
-    return QuoteGroupCompanion(
+  TarifaXDiaCompanion toCompanion(bool nullToAbsent) {
+    return TarifaXDiaCompanion(
       id: Value(id),
-      folio: Value(folio),
-      isPresale: Value(isPresale),
-      category: Value(category),
-      plan: Value(plan),
-      registerDate: Value(registerDate),
-      enterDate: Value(enterDate),
-      outDate: Value(outDate),
-      rateAdult1_2: Value(rateAdult1_2),
-      rateAdult3: Value(rateAdult3),
-      rateAdult4: Value(rateAdult4),
-      rateMinor: Value(rateMinor),
+      folioTarifaXDia: folioTarifaXDia == null && nullToAbsent
+          ? const Value.absent()
+          : Value(folioTarifaXDia),
+      subfolio: subfolio == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subfolio),
+      dia: dia == null && nullToAbsent ? const Value.absent() : Value(dia),
+      fecha: Value(fecha),
+      tarifaRealPaxAdic: tarifaRealPaxAdic == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaRealPaxAdic),
+      tarifaPreventaPaxAdic: tarifaPreventaPaxAdic == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPreventaPaxAdic),
+      tarifaRealAdulto: tarifaRealAdulto == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaRealAdulto),
+      tarifaPreventaAdulto: tarifaPreventaAdulto == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPreventaAdulto),
+      tarifaRealMenores7a12: tarifaRealMenores7a12 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaRealMenores7a12),
+      tarifaPreventaMenores7a12:
+          tarifaPreventaMenores7a12 == null && nullToAbsent
+              ? const Value.absent()
+              : Value(tarifaPreventaMenores7a12),
     );
   }
 
-  factory QuoteGroupData.fromJson(Map<String, dynamic> json,
+  factory TarifaXDiaData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return QuoteGroupData(
+    return TarifaXDiaData(
       id: serializer.fromJson<int>(json['id']),
-      folio: serializer.fromJson<String>(json['folio']),
-      isPresale: serializer.fromJson<bool>(json['isPresale']),
-      category: serializer.fromJson<String>(json['category']),
-      plan: serializer.fromJson<String>(json['plan']),
-      registerDate: serializer.fromJson<DateTime>(json['registerDate']),
-      enterDate: serializer.fromJson<String>(json['enterDate']),
-      outDate: serializer.fromJson<String>(json['outDate']),
-      rateAdult1_2: serializer.fromJson<double>(json['rateAdult1_2']),
-      rateAdult3: serializer.fromJson<double>(json['rateAdult3']),
-      rateAdult4: serializer.fromJson<double>(json['rateAdult4']),
-      rateMinor: serializer.fromJson<double>(json['rateMinor']),
+      folioTarifaXDia: serializer.fromJson<String?>(json['folioTarifaXDia']),
+      subfolio: serializer.fromJson<String?>(json['subfolio']),
+      dia: serializer.fromJson<int?>(json['dia']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      tarifaRealPaxAdic:
+          serializer.fromJson<double?>(json['tarifaRealPaxAdic']),
+      tarifaPreventaPaxAdic:
+          serializer.fromJson<double?>(json['tarifaPreventaPaxAdic']),
+      tarifaRealAdulto: serializer.fromJson<double?>(json['tarifaRealAdulto']),
+      tarifaPreventaAdulto:
+          serializer.fromJson<double?>(json['tarifaPreventaAdulto']),
+      tarifaRealMenores7a12:
+          serializer.fromJson<double?>(json['tarifaRealMenores7a12']),
+      tarifaPreventaMenores7a12:
+          serializer.fromJson<double?>(json['tarifaPreventaMenores7a12']),
     );
   }
   @override
@@ -2007,62 +2131,75 @@ class QuoteGroupData extends DataClass implements Insertable<QuoteGroupData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'folio': serializer.toJson<String>(folio),
-      'isPresale': serializer.toJson<bool>(isPresale),
-      'category': serializer.toJson<String>(category),
-      'plan': serializer.toJson<String>(plan),
-      'registerDate': serializer.toJson<DateTime>(registerDate),
-      'enterDate': serializer.toJson<String>(enterDate),
-      'outDate': serializer.toJson<String>(outDate),
-      'rateAdult1_2': serializer.toJson<double>(rateAdult1_2),
-      'rateAdult3': serializer.toJson<double>(rateAdult3),
-      'rateAdult4': serializer.toJson<double>(rateAdult4),
-      'rateMinor': serializer.toJson<double>(rateMinor),
+      'folioTarifaXDia': serializer.toJson<String?>(folioTarifaXDia),
+      'subfolio': serializer.toJson<String?>(subfolio),
+      'dia': serializer.toJson<int?>(dia),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'tarifaRealPaxAdic': serializer.toJson<double?>(tarifaRealPaxAdic),
+      'tarifaPreventaPaxAdic':
+          serializer.toJson<double?>(tarifaPreventaPaxAdic),
+      'tarifaRealAdulto': serializer.toJson<double?>(tarifaRealAdulto),
+      'tarifaPreventaAdulto': serializer.toJson<double?>(tarifaPreventaAdulto),
+      'tarifaRealMenores7a12':
+          serializer.toJson<double?>(tarifaRealMenores7a12),
+      'tarifaPreventaMenores7a12':
+          serializer.toJson<double?>(tarifaPreventaMenores7a12),
     };
   }
 
-  QuoteGroupData copyWith(
+  TarifaXDiaData copyWith(
           {int? id,
-          String? folio,
-          bool? isPresale,
-          String? category,
-          String? plan,
-          DateTime? registerDate,
-          String? enterDate,
-          String? outDate,
-          double? rateAdult1_2,
-          double? rateAdult3,
-          double? rateAdult4,
-          double? rateMinor}) =>
-      QuoteGroupData(
+          Value<String?> folioTarifaXDia = const Value.absent(),
+          Value<String?> subfolio = const Value.absent(),
+          Value<int?> dia = const Value.absent(),
+          DateTime? fecha,
+          Value<double?> tarifaRealPaxAdic = const Value.absent(),
+          Value<double?> tarifaPreventaPaxAdic = const Value.absent(),
+          Value<double?> tarifaRealAdulto = const Value.absent(),
+          Value<double?> tarifaPreventaAdulto = const Value.absent(),
+          Value<double?> tarifaRealMenores7a12 = const Value.absent(),
+          Value<double?> tarifaPreventaMenores7a12 = const Value.absent()}) =>
+      TarifaXDiaData(
         id: id ?? this.id,
-        folio: folio ?? this.folio,
-        isPresale: isPresale ?? this.isPresale,
-        category: category ?? this.category,
-        plan: plan ?? this.plan,
-        registerDate: registerDate ?? this.registerDate,
-        enterDate: enterDate ?? this.enterDate,
-        outDate: outDate ?? this.outDate,
-        rateAdult1_2: rateAdult1_2 ?? this.rateAdult1_2,
-        rateAdult3: rateAdult3 ?? this.rateAdult3,
-        rateAdult4: rateAdult4 ?? this.rateAdult4,
-        rateMinor: rateMinor ?? this.rateMinor,
+        folioTarifaXDia: folioTarifaXDia.present
+            ? folioTarifaXDia.value
+            : this.folioTarifaXDia,
+        subfolio: subfolio.present ? subfolio.value : this.subfolio,
+        dia: dia.present ? dia.value : this.dia,
+        fecha: fecha ?? this.fecha,
+        tarifaRealPaxAdic: tarifaRealPaxAdic.present
+            ? tarifaRealPaxAdic.value
+            : this.tarifaRealPaxAdic,
+        tarifaPreventaPaxAdic: tarifaPreventaPaxAdic.present
+            ? tarifaPreventaPaxAdic.value
+            : this.tarifaPreventaPaxAdic,
+        tarifaRealAdulto: tarifaRealAdulto.present
+            ? tarifaRealAdulto.value
+            : this.tarifaRealAdulto,
+        tarifaPreventaAdulto: tarifaPreventaAdulto.present
+            ? tarifaPreventaAdulto.value
+            : this.tarifaPreventaAdulto,
+        tarifaRealMenores7a12: tarifaRealMenores7a12.present
+            ? tarifaRealMenores7a12.value
+            : this.tarifaRealMenores7a12,
+        tarifaPreventaMenores7a12: tarifaPreventaMenores7a12.present
+            ? tarifaPreventaMenores7a12.value
+            : this.tarifaPreventaMenores7a12,
       );
   @override
   String toString() {
-    return (StringBuffer('QuoteGroupData(')
+    return (StringBuffer('TarifaXDiaData(')
           ..write('id: $id, ')
-          ..write('folio: $folio, ')
-          ..write('isPresale: $isPresale, ')
-          ..write('category: $category, ')
-          ..write('plan: $plan, ')
-          ..write('registerDate: $registerDate, ')
-          ..write('enterDate: $enterDate, ')
-          ..write('outDate: $outDate, ')
-          ..write('rateAdult1_2: $rateAdult1_2, ')
-          ..write('rateAdult3: $rateAdult3, ')
-          ..write('rateAdult4: $rateAdult4, ')
-          ..write('rateMinor: $rateMinor')
+          ..write('folioTarifaXDia: $folioTarifaXDia, ')
+          ..write('subfolio: $subfolio, ')
+          ..write('dia: $dia, ')
+          ..write('fecha: $fecha, ')
+          ..write('tarifaRealPaxAdic: $tarifaRealPaxAdic, ')
+          ..write('tarifaPreventaPaxAdic: $tarifaPreventaPaxAdic, ')
+          ..write('tarifaRealAdulto: $tarifaRealAdulto, ')
+          ..write('tarifaPreventaAdulto: $tarifaPreventaAdulto, ')
+          ..write('tarifaRealMenores7a12: $tarifaRealMenores7a12, ')
+          ..write('tarifaPreventaMenores7a12: $tarifaPreventaMenores7a12')
           ..write(')'))
         .toString();
   }
@@ -2070,142 +2207,130 @@ class QuoteGroupData extends DataClass implements Insertable<QuoteGroupData> {
   @override
   int get hashCode => Object.hash(
       id,
-      folio,
-      isPresale,
-      category,
-      plan,
-      registerDate,
-      enterDate,
-      outDate,
-      rateAdult1_2,
-      rateAdult3,
-      rateAdult4,
-      rateMinor);
+      folioTarifaXDia,
+      subfolio,
+      dia,
+      fecha,
+      tarifaRealPaxAdic,
+      tarifaPreventaPaxAdic,
+      tarifaRealAdulto,
+      tarifaPreventaAdulto,
+      tarifaRealMenores7a12,
+      tarifaPreventaMenores7a12);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is QuoteGroupData &&
+      (other is TarifaXDiaData &&
           other.id == this.id &&
-          other.folio == this.folio &&
-          other.isPresale == this.isPresale &&
-          other.category == this.category &&
-          other.plan == this.plan &&
-          other.registerDate == this.registerDate &&
-          other.enterDate == this.enterDate &&
-          other.outDate == this.outDate &&
-          other.rateAdult1_2 == this.rateAdult1_2 &&
-          other.rateAdult3 == this.rateAdult3 &&
-          other.rateAdult4 == this.rateAdult4 &&
-          other.rateMinor == this.rateMinor);
+          other.folioTarifaXDia == this.folioTarifaXDia &&
+          other.subfolio == this.subfolio &&
+          other.dia == this.dia &&
+          other.fecha == this.fecha &&
+          other.tarifaRealPaxAdic == this.tarifaRealPaxAdic &&
+          other.tarifaPreventaPaxAdic == this.tarifaPreventaPaxAdic &&
+          other.tarifaRealAdulto == this.tarifaRealAdulto &&
+          other.tarifaPreventaAdulto == this.tarifaPreventaAdulto &&
+          other.tarifaRealMenores7a12 == this.tarifaRealMenores7a12 &&
+          other.tarifaPreventaMenores7a12 == this.tarifaPreventaMenores7a12);
 }
 
-class QuoteGroupCompanion extends UpdateCompanion<QuoteGroupData> {
+class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
   final Value<int> id;
-  final Value<String> folio;
-  final Value<bool> isPresale;
-  final Value<String> category;
-  final Value<String> plan;
-  final Value<DateTime> registerDate;
-  final Value<String> enterDate;
-  final Value<String> outDate;
-  final Value<double> rateAdult1_2;
-  final Value<double> rateAdult3;
-  final Value<double> rateAdult4;
-  final Value<double> rateMinor;
-  const QuoteGroupCompanion({
+  final Value<String?> folioTarifaXDia;
+  final Value<String?> subfolio;
+  final Value<int?> dia;
+  final Value<DateTime> fecha;
+  final Value<double?> tarifaRealPaxAdic;
+  final Value<double?> tarifaPreventaPaxAdic;
+  final Value<double?> tarifaRealAdulto;
+  final Value<double?> tarifaPreventaAdulto;
+  final Value<double?> tarifaRealMenores7a12;
+  final Value<double?> tarifaPreventaMenores7a12;
+  const TarifaXDiaCompanion({
     this.id = const Value.absent(),
-    this.folio = const Value.absent(),
-    this.isPresale = const Value.absent(),
-    this.category = const Value.absent(),
-    this.plan = const Value.absent(),
-    this.registerDate = const Value.absent(),
-    this.enterDate = const Value.absent(),
-    this.outDate = const Value.absent(),
-    this.rateAdult1_2 = const Value.absent(),
-    this.rateAdult3 = const Value.absent(),
-    this.rateAdult4 = const Value.absent(),
-    this.rateMinor = const Value.absent(),
+    this.folioTarifaXDia = const Value.absent(),
+    this.subfolio = const Value.absent(),
+    this.dia = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.tarifaRealPaxAdic = const Value.absent(),
+    this.tarifaPreventaPaxAdic = const Value.absent(),
+    this.tarifaRealAdulto = const Value.absent(),
+    this.tarifaPreventaAdulto = const Value.absent(),
+    this.tarifaRealMenores7a12 = const Value.absent(),
+    this.tarifaPreventaMenores7a12 = const Value.absent(),
   });
-  QuoteGroupCompanion.insert({
+  TarifaXDiaCompanion.insert({
     this.id = const Value.absent(),
-    required String folio,
-    required bool isPresale,
-    required String category,
-    required String plan,
-    required DateTime registerDate,
-    required String enterDate,
-    required String outDate,
-    required double rateAdult1_2,
-    required double rateAdult3,
-    required double rateAdult4,
-    required double rateMinor,
-  })  : folio = Value(folio),
-        isPresale = Value(isPresale),
-        category = Value(category),
-        plan = Value(plan),
-        registerDate = Value(registerDate),
-        enterDate = Value(enterDate),
-        outDate = Value(outDate),
-        rateAdult1_2 = Value(rateAdult1_2),
-        rateAdult3 = Value(rateAdult3),
-        rateAdult4 = Value(rateAdult4),
-        rateMinor = Value(rateMinor);
-  static Insertable<QuoteGroupData> custom({
+    this.folioTarifaXDia = const Value.absent(),
+    this.subfolio = const Value.absent(),
+    this.dia = const Value.absent(),
+    required DateTime fecha,
+    this.tarifaRealPaxAdic = const Value.absent(),
+    this.tarifaPreventaPaxAdic = const Value.absent(),
+    this.tarifaRealAdulto = const Value.absent(),
+    this.tarifaPreventaAdulto = const Value.absent(),
+    this.tarifaRealMenores7a12 = const Value.absent(),
+    this.tarifaPreventaMenores7a12 = const Value.absent(),
+  }) : fecha = Value(fecha);
+  static Insertable<TarifaXDiaData> custom({
     Expression<int>? id,
-    Expression<String>? folio,
-    Expression<bool>? isPresale,
-    Expression<String>? category,
-    Expression<String>? plan,
-    Expression<DateTime>? registerDate,
-    Expression<String>? enterDate,
-    Expression<String>? outDate,
-    Expression<double>? rateAdult1_2,
-    Expression<double>? rateAdult3,
-    Expression<double>? rateAdult4,
-    Expression<double>? rateMinor,
+    Expression<String>? folioTarifaXDia,
+    Expression<String>? subfolio,
+    Expression<int>? dia,
+    Expression<DateTime>? fecha,
+    Expression<double>? tarifaRealPaxAdic,
+    Expression<double>? tarifaPreventaPaxAdic,
+    Expression<double>? tarifaRealAdulto,
+    Expression<double>? tarifaPreventaAdulto,
+    Expression<double>? tarifaRealMenores7a12,
+    Expression<double>? tarifaPreventaMenores7a12,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (folio != null) 'folio': folio,
-      if (isPresale != null) 'is_presale': isPresale,
-      if (category != null) 'category': category,
-      if (plan != null) 'plan': plan,
-      if (registerDate != null) 'register_date': registerDate,
-      if (enterDate != null) 'enter_date': enterDate,
-      if (outDate != null) 'out_date': outDate,
-      if (rateAdult1_2 != null) 'rate_adult1_2': rateAdult1_2,
-      if (rateAdult3 != null) 'rate_adult3': rateAdult3,
-      if (rateAdult4 != null) 'rate_adult4': rateAdult4,
-      if (rateMinor != null) 'rate_minor': rateMinor,
+      if (folioTarifaXDia != null) 'folio_tarifa_x_dia': folioTarifaXDia,
+      if (subfolio != null) 'subfolio': subfolio,
+      if (dia != null) 'dia': dia,
+      if (fecha != null) 'fecha': fecha,
+      if (tarifaRealPaxAdic != null) 'tarifa_real_pax_adic': tarifaRealPaxAdic,
+      if (tarifaPreventaPaxAdic != null)
+        'tarifa_preventa_pax_adic': tarifaPreventaPaxAdic,
+      if (tarifaRealAdulto != null) 'tarifa_real_adulto': tarifaRealAdulto,
+      if (tarifaPreventaAdulto != null)
+        'tarifa_preventa_adulto': tarifaPreventaAdulto,
+      if (tarifaRealMenores7a12 != null)
+        'tarifa_real_menores7a12': tarifaRealMenores7a12,
+      if (tarifaPreventaMenores7a12 != null)
+        'tarifa_preventa_menores7a12': tarifaPreventaMenores7a12,
     });
   }
 
-  QuoteGroupCompanion copyWith(
+  TarifaXDiaCompanion copyWith(
       {Value<int>? id,
-      Value<String>? folio,
-      Value<bool>? isPresale,
-      Value<String>? category,
-      Value<String>? plan,
-      Value<DateTime>? registerDate,
-      Value<String>? enterDate,
-      Value<String>? outDate,
-      Value<double>? rateAdult1_2,
-      Value<double>? rateAdult3,
-      Value<double>? rateAdult4,
-      Value<double>? rateMinor}) {
-    return QuoteGroupCompanion(
+      Value<String?>? folioTarifaXDia,
+      Value<String?>? subfolio,
+      Value<int?>? dia,
+      Value<DateTime>? fecha,
+      Value<double?>? tarifaRealPaxAdic,
+      Value<double?>? tarifaPreventaPaxAdic,
+      Value<double?>? tarifaRealAdulto,
+      Value<double?>? tarifaPreventaAdulto,
+      Value<double?>? tarifaRealMenores7a12,
+      Value<double?>? tarifaPreventaMenores7a12}) {
+    return TarifaXDiaCompanion(
       id: id ?? this.id,
-      folio: folio ?? this.folio,
-      isPresale: isPresale ?? this.isPresale,
-      category: category ?? this.category,
-      plan: plan ?? this.plan,
-      registerDate: registerDate ?? this.registerDate,
-      enterDate: enterDate ?? this.enterDate,
-      outDate: outDate ?? this.outDate,
-      rateAdult1_2: rateAdult1_2 ?? this.rateAdult1_2,
-      rateAdult3: rateAdult3 ?? this.rateAdult3,
-      rateAdult4: rateAdult4 ?? this.rateAdult4,
-      rateMinor: rateMinor ?? this.rateMinor,
+      folioTarifaXDia: folioTarifaXDia ?? this.folioTarifaXDia,
+      subfolio: subfolio ?? this.subfolio,
+      dia: dia ?? this.dia,
+      fecha: fecha ?? this.fecha,
+      tarifaRealPaxAdic: tarifaRealPaxAdic ?? this.tarifaRealPaxAdic,
+      tarifaPreventaPaxAdic:
+          tarifaPreventaPaxAdic ?? this.tarifaPreventaPaxAdic,
+      tarifaRealAdulto: tarifaRealAdulto ?? this.tarifaRealAdulto,
+      tarifaPreventaAdulto: tarifaPreventaAdulto ?? this.tarifaPreventaAdulto,
+      tarifaRealMenores7a12:
+          tarifaRealMenores7a12 ?? this.tarifaRealMenores7a12,
+      tarifaPreventaMenores7a12:
+          tarifaPreventaMenores7a12 ?? this.tarifaPreventaMenores7a12,
     );
   }
 
@@ -2215,57 +2340,850 @@ class QuoteGroupCompanion extends UpdateCompanion<QuoteGroupData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (folio.present) {
-      map['folio'] = Variable<String>(folio.value);
+    if (folioTarifaXDia.present) {
+      map['folio_tarifa_x_dia'] = Variable<String>(folioTarifaXDia.value);
     }
-    if (isPresale.present) {
-      map['is_presale'] = Variable<bool>(isPresale.value);
+    if (subfolio.present) {
+      map['subfolio'] = Variable<String>(subfolio.value);
     }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
+    if (dia.present) {
+      map['dia'] = Variable<int>(dia.value);
     }
-    if (plan.present) {
-      map['plan'] = Variable<String>(plan.value);
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
     }
-    if (registerDate.present) {
-      map['register_date'] = Variable<DateTime>(registerDate.value);
+    if (tarifaRealPaxAdic.present) {
+      map['tarifa_real_pax_adic'] = Variable<double>(tarifaRealPaxAdic.value);
     }
-    if (enterDate.present) {
-      map['enter_date'] = Variable<String>(enterDate.value);
+    if (tarifaPreventaPaxAdic.present) {
+      map['tarifa_preventa_pax_adic'] =
+          Variable<double>(tarifaPreventaPaxAdic.value);
     }
-    if (outDate.present) {
-      map['out_date'] = Variable<String>(outDate.value);
+    if (tarifaRealAdulto.present) {
+      map['tarifa_real_adulto'] = Variable<double>(tarifaRealAdulto.value);
     }
-    if (rateAdult1_2.present) {
-      map['rate_adult1_2'] = Variable<double>(rateAdult1_2.value);
+    if (tarifaPreventaAdulto.present) {
+      map['tarifa_preventa_adulto'] =
+          Variable<double>(tarifaPreventaAdulto.value);
     }
-    if (rateAdult3.present) {
-      map['rate_adult3'] = Variable<double>(rateAdult3.value);
+    if (tarifaRealMenores7a12.present) {
+      map['tarifa_real_menores7a12'] =
+          Variable<double>(tarifaRealMenores7a12.value);
     }
-    if (rateAdult4.present) {
-      map['rate_adult4'] = Variable<double>(rateAdult4.value);
-    }
-    if (rateMinor.present) {
-      map['rate_minor'] = Variable<double>(rateMinor.value);
+    if (tarifaPreventaMenores7a12.present) {
+      map['tarifa_preventa_menores7a12'] =
+          Variable<double>(tarifaPreventaMenores7a12.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('QuoteGroupCompanion(')
+    return (StringBuffer('TarifaXDiaCompanion(')
           ..write('id: $id, ')
-          ..write('folio: $folio, ')
-          ..write('isPresale: $isPresale, ')
-          ..write('category: $category, ')
-          ..write('plan: $plan, ')
-          ..write('registerDate: $registerDate, ')
-          ..write('enterDate: $enterDate, ')
-          ..write('outDate: $outDate, ')
-          ..write('rateAdult1_2: $rateAdult1_2, ')
-          ..write('rateAdult3: $rateAdult3, ')
-          ..write('rateAdult4: $rateAdult4, ')
-          ..write('rateMinor: $rateMinor')
+          ..write('folioTarifaXDia: $folioTarifaXDia, ')
+          ..write('subfolio: $subfolio, ')
+          ..write('dia: $dia, ')
+          ..write('fecha: $fecha, ')
+          ..write('tarifaRealPaxAdic: $tarifaRealPaxAdic, ')
+          ..write('tarifaPreventaPaxAdic: $tarifaPreventaPaxAdic, ')
+          ..write('tarifaRealAdulto: $tarifaRealAdulto, ')
+          ..write('tarifaPreventaAdulto: $tarifaPreventaAdulto, ')
+          ..write('tarifaRealMenores7a12: $tarifaRealMenores7a12, ')
+          ..write('tarifaPreventaMenores7a12: $tarifaPreventaMenores7a12')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TarifaTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+      'fecha', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _fechaInicioMeta =
+      const VerificationMeta('fechaInicio');
+  @override
+  late final GeneratedColumn<String> fechaInicio = GeneratedColumn<String>(
+      'fecha_inicio', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fechaFinMeta =
+      const VerificationMeta('fechaFin');
+  @override
+  late final GeneratedColumn<String> fechaFin = GeneratedColumn<String>(
+      'fecha_fin', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _tarifaRackMeta =
+      const VerificationMeta('tarifaRack');
+  @override
+  late final GeneratedColumn<String> tarifaRack = GeneratedColumn<String>(
+      'tarifa_rack', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _tarifaPreventaMeta =
+      const VerificationMeta('tarifaPreventa');
+  @override
+  late final GeneratedColumn<double> tarifaPreventa = GeneratedColumn<double>(
+      'tarifa_preventa', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _porcentajeDescuentoMeta =
+      const VerificationMeta('porcentajeDescuento');
+  @override
+  late final GeneratedColumn<double> porcentajeDescuento =
+      GeneratedColumn<double>('porcentaje_descuento', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _categoriaMeta =
+      const VerificationMeta('categoria');
+  @override
+  late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
+      'categoria', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _nivelMeta = const VerificationMeta('nivel');
+  @override
+  late final GeneratedColumn<int> nivel = GeneratedColumn<int>(
+      'nivel', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _tarifaRealIdMeta =
+      const VerificationMeta('tarifaRealId');
+  @override
+  late final GeneratedColumn<int> tarifaRealId = GeneratedColumn<int>(
+      'tarifa_real_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _responsableIdMeta =
+      const VerificationMeta('responsableId');
+  @override
+  late final GeneratedColumn<int> responsableId = GeneratedColumn<int>(
+      'responsable_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        fecha,
+        fechaInicio,
+        fechaFin,
+        tarifaRack,
+        tarifaPreventa,
+        porcentajeDescuento,
+        categoria,
+        nivel,
+        tarifaRealId,
+        responsableId
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tarifa';
+  @override
+  VerificationContext validateIntegrity(Insertable<TarifaData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
+    } else if (isInserting) {
+      context.missing(_fechaMeta);
+    }
+    if (data.containsKey('fecha_inicio')) {
+      context.handle(
+          _fechaInicioMeta,
+          fechaInicio.isAcceptableOrUnknown(
+              data['fecha_inicio']!, _fechaInicioMeta));
+    } else if (isInserting) {
+      context.missing(_fechaInicioMeta);
+    }
+    if (data.containsKey('fecha_fin')) {
+      context.handle(_fechaFinMeta,
+          fechaFin.isAcceptableOrUnknown(data['fecha_fin']!, _fechaFinMeta));
+    } else if (isInserting) {
+      context.missing(_fechaFinMeta);
+    }
+    if (data.containsKey('tarifa_rack')) {
+      context.handle(
+          _tarifaRackMeta,
+          tarifaRack.isAcceptableOrUnknown(
+              data['tarifa_rack']!, _tarifaRackMeta));
+    } else if (isInserting) {
+      context.missing(_tarifaRackMeta);
+    }
+    if (data.containsKey('tarifa_preventa')) {
+      context.handle(
+          _tarifaPreventaMeta,
+          tarifaPreventa.isAcceptableOrUnknown(
+              data['tarifa_preventa']!, _tarifaPreventaMeta));
+    }
+    if (data.containsKey('porcentaje_descuento')) {
+      context.handle(
+          _porcentajeDescuentoMeta,
+          porcentajeDescuento.isAcceptableOrUnknown(
+              data['porcentaje_descuento']!, _porcentajeDescuentoMeta));
+    }
+    if (data.containsKey('categoria')) {
+      context.handle(_categoriaMeta,
+          categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
+    } else if (isInserting) {
+      context.missing(_categoriaMeta);
+    }
+    if (data.containsKey('nivel')) {
+      context.handle(
+          _nivelMeta, nivel.isAcceptableOrUnknown(data['nivel']!, _nivelMeta));
+    } else if (isInserting) {
+      context.missing(_nivelMeta);
+    }
+    if (data.containsKey('tarifa_real_id')) {
+      context.handle(
+          _tarifaRealIdMeta,
+          tarifaRealId.isAcceptableOrUnknown(
+              data['tarifa_real_id']!, _tarifaRealIdMeta));
+    } else if (isInserting) {
+      context.missing(_tarifaRealIdMeta);
+    }
+    if (data.containsKey('responsable_id')) {
+      context.handle(
+          _responsableIdMeta,
+          responsableId.isAcceptableOrUnknown(
+              data['responsable_id']!, _responsableIdMeta));
+    } else if (isInserting) {
+      context.missing(_responsableIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TarifaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TarifaData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      fecha: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+      fechaInicio: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fecha_inicio'])!,
+      fechaFin: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fecha_fin'])!,
+      tarifaRack: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tarifa_rack'])!,
+      tarifaPreventa: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tarifa_preventa']),
+      porcentajeDescuento: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}porcentaje_descuento']),
+      categoria: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}categoria'])!,
+      nivel: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}nivel'])!,
+      tarifaRealId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_real_id'])!,
+      responsableId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}responsable_id'])!,
+    );
+  }
+
+  @override
+  $TarifaTable createAlias(String alias) {
+    return $TarifaTable(attachedDatabase, alias);
+  }
+}
+
+class TarifaData extends DataClass implements Insertable<TarifaData> {
+  final int id;
+  final DateTime fecha;
+  final String fechaInicio;
+  final String fechaFin;
+  final String tarifaRack;
+  final double? tarifaPreventa;
+  final double? porcentajeDescuento;
+  final String categoria;
+  final int nivel;
+  final int tarifaRealId;
+  final int responsableId;
+  const TarifaData(
+      {required this.id,
+      required this.fecha,
+      required this.fechaInicio,
+      required this.fechaFin,
+      required this.tarifaRack,
+      this.tarifaPreventa,
+      this.porcentajeDescuento,
+      required this.categoria,
+      required this.nivel,
+      required this.tarifaRealId,
+      required this.responsableId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['fecha'] = Variable<DateTime>(fecha);
+    map['fecha_inicio'] = Variable<String>(fechaInicio);
+    map['fecha_fin'] = Variable<String>(fechaFin);
+    map['tarifa_rack'] = Variable<String>(tarifaRack);
+    if (!nullToAbsent || tarifaPreventa != null) {
+      map['tarifa_preventa'] = Variable<double>(tarifaPreventa);
+    }
+    if (!nullToAbsent || porcentajeDescuento != null) {
+      map['porcentaje_descuento'] = Variable<double>(porcentajeDescuento);
+    }
+    map['categoria'] = Variable<String>(categoria);
+    map['nivel'] = Variable<int>(nivel);
+    map['tarifa_real_id'] = Variable<int>(tarifaRealId);
+    map['responsable_id'] = Variable<int>(responsableId);
+    return map;
+  }
+
+  TarifaCompanion toCompanion(bool nullToAbsent) {
+    return TarifaCompanion(
+      id: Value(id),
+      fecha: Value(fecha),
+      fechaInicio: Value(fechaInicio),
+      fechaFin: Value(fechaFin),
+      tarifaRack: Value(tarifaRack),
+      tarifaPreventa: tarifaPreventa == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPreventa),
+      porcentajeDescuento: porcentajeDescuento == null && nullToAbsent
+          ? const Value.absent()
+          : Value(porcentajeDescuento),
+      categoria: Value(categoria),
+      nivel: Value(nivel),
+      tarifaRealId: Value(tarifaRealId),
+      responsableId: Value(responsableId),
+    );
+  }
+
+  factory TarifaData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TarifaData(
+      id: serializer.fromJson<int>(json['id']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      fechaInicio: serializer.fromJson<String>(json['fechaInicio']),
+      fechaFin: serializer.fromJson<String>(json['fechaFin']),
+      tarifaRack: serializer.fromJson<String>(json['tarifaRack']),
+      tarifaPreventa: serializer.fromJson<double?>(json['tarifaPreventa']),
+      porcentajeDescuento:
+          serializer.fromJson<double?>(json['porcentajeDescuento']),
+      categoria: serializer.fromJson<String>(json['categoria']),
+      nivel: serializer.fromJson<int>(json['nivel']),
+      tarifaRealId: serializer.fromJson<int>(json['tarifaRealId']),
+      responsableId: serializer.fromJson<int>(json['responsableId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'fechaInicio': serializer.toJson<String>(fechaInicio),
+      'fechaFin': serializer.toJson<String>(fechaFin),
+      'tarifaRack': serializer.toJson<String>(tarifaRack),
+      'tarifaPreventa': serializer.toJson<double?>(tarifaPreventa),
+      'porcentajeDescuento': serializer.toJson<double?>(porcentajeDescuento),
+      'categoria': serializer.toJson<String>(categoria),
+      'nivel': serializer.toJson<int>(nivel),
+      'tarifaRealId': serializer.toJson<int>(tarifaRealId),
+      'responsableId': serializer.toJson<int>(responsableId),
+    };
+  }
+
+  TarifaData copyWith(
+          {int? id,
+          DateTime? fecha,
+          String? fechaInicio,
+          String? fechaFin,
+          String? tarifaRack,
+          Value<double?> tarifaPreventa = const Value.absent(),
+          Value<double?> porcentajeDescuento = const Value.absent(),
+          String? categoria,
+          int? nivel,
+          int? tarifaRealId,
+          int? responsableId}) =>
+      TarifaData(
+        id: id ?? this.id,
+        fecha: fecha ?? this.fecha,
+        fechaInicio: fechaInicio ?? this.fechaInicio,
+        fechaFin: fechaFin ?? this.fechaFin,
+        tarifaRack: tarifaRack ?? this.tarifaRack,
+        tarifaPreventa:
+            tarifaPreventa.present ? tarifaPreventa.value : this.tarifaPreventa,
+        porcentajeDescuento: porcentajeDescuento.present
+            ? porcentajeDescuento.value
+            : this.porcentajeDescuento,
+        categoria: categoria ?? this.categoria,
+        nivel: nivel ?? this.nivel,
+        tarifaRealId: tarifaRealId ?? this.tarifaRealId,
+        responsableId: responsableId ?? this.responsableId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TarifaData(')
+          ..write('id: $id, ')
+          ..write('fecha: $fecha, ')
+          ..write('fechaInicio: $fechaInicio, ')
+          ..write('fechaFin: $fechaFin, ')
+          ..write('tarifaRack: $tarifaRack, ')
+          ..write('tarifaPreventa: $tarifaPreventa, ')
+          ..write('porcentajeDescuento: $porcentajeDescuento, ')
+          ..write('categoria: $categoria, ')
+          ..write('nivel: $nivel, ')
+          ..write('tarifaRealId: $tarifaRealId, ')
+          ..write('responsableId: $responsableId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      fecha,
+      fechaInicio,
+      fechaFin,
+      tarifaRack,
+      tarifaPreventa,
+      porcentajeDescuento,
+      categoria,
+      nivel,
+      tarifaRealId,
+      responsableId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TarifaData &&
+          other.id == this.id &&
+          other.fecha == this.fecha &&
+          other.fechaInicio == this.fechaInicio &&
+          other.fechaFin == this.fechaFin &&
+          other.tarifaRack == this.tarifaRack &&
+          other.tarifaPreventa == this.tarifaPreventa &&
+          other.porcentajeDescuento == this.porcentajeDescuento &&
+          other.categoria == this.categoria &&
+          other.nivel == this.nivel &&
+          other.tarifaRealId == this.tarifaRealId &&
+          other.responsableId == this.responsableId);
+}
+
+class TarifaCompanion extends UpdateCompanion<TarifaData> {
+  final Value<int> id;
+  final Value<DateTime> fecha;
+  final Value<String> fechaInicio;
+  final Value<String> fechaFin;
+  final Value<String> tarifaRack;
+  final Value<double?> tarifaPreventa;
+  final Value<double?> porcentajeDescuento;
+  final Value<String> categoria;
+  final Value<int> nivel;
+  final Value<int> tarifaRealId;
+  final Value<int> responsableId;
+  const TarifaCompanion({
+    this.id = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.fechaInicio = const Value.absent(),
+    this.fechaFin = const Value.absent(),
+    this.tarifaRack = const Value.absent(),
+    this.tarifaPreventa = const Value.absent(),
+    this.porcentajeDescuento = const Value.absent(),
+    this.categoria = const Value.absent(),
+    this.nivel = const Value.absent(),
+    this.tarifaRealId = const Value.absent(),
+    this.responsableId = const Value.absent(),
+  });
+  TarifaCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime fecha,
+    required String fechaInicio,
+    required String fechaFin,
+    required String tarifaRack,
+    this.tarifaPreventa = const Value.absent(),
+    this.porcentajeDescuento = const Value.absent(),
+    required String categoria,
+    required int nivel,
+    required int tarifaRealId,
+    required int responsableId,
+  })  : fecha = Value(fecha),
+        fechaInicio = Value(fechaInicio),
+        fechaFin = Value(fechaFin),
+        tarifaRack = Value(tarifaRack),
+        categoria = Value(categoria),
+        nivel = Value(nivel),
+        tarifaRealId = Value(tarifaRealId),
+        responsableId = Value(responsableId);
+  static Insertable<TarifaData> custom({
+    Expression<int>? id,
+    Expression<DateTime>? fecha,
+    Expression<String>? fechaInicio,
+    Expression<String>? fechaFin,
+    Expression<String>? tarifaRack,
+    Expression<double>? tarifaPreventa,
+    Expression<double>? porcentajeDescuento,
+    Expression<String>? categoria,
+    Expression<int>? nivel,
+    Expression<int>? tarifaRealId,
+    Expression<int>? responsableId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fecha != null) 'fecha': fecha,
+      if (fechaInicio != null) 'fecha_inicio': fechaInicio,
+      if (fechaFin != null) 'fecha_fin': fechaFin,
+      if (tarifaRack != null) 'tarifa_rack': tarifaRack,
+      if (tarifaPreventa != null) 'tarifa_preventa': tarifaPreventa,
+      if (porcentajeDescuento != null)
+        'porcentaje_descuento': porcentajeDescuento,
+      if (categoria != null) 'categoria': categoria,
+      if (nivel != null) 'nivel': nivel,
+      if (tarifaRealId != null) 'tarifa_real_id': tarifaRealId,
+      if (responsableId != null) 'responsable_id': responsableId,
+    });
+  }
+
+  TarifaCompanion copyWith(
+      {Value<int>? id,
+      Value<DateTime>? fecha,
+      Value<String>? fechaInicio,
+      Value<String>? fechaFin,
+      Value<String>? tarifaRack,
+      Value<double?>? tarifaPreventa,
+      Value<double?>? porcentajeDescuento,
+      Value<String>? categoria,
+      Value<int>? nivel,
+      Value<int>? tarifaRealId,
+      Value<int>? responsableId}) {
+    return TarifaCompanion(
+      id: id ?? this.id,
+      fecha: fecha ?? this.fecha,
+      fechaInicio: fechaInicio ?? this.fechaInicio,
+      fechaFin: fechaFin ?? this.fechaFin,
+      tarifaRack: tarifaRack ?? this.tarifaRack,
+      tarifaPreventa: tarifaPreventa ?? this.tarifaPreventa,
+      porcentajeDescuento: porcentajeDescuento ?? this.porcentajeDescuento,
+      categoria: categoria ?? this.categoria,
+      nivel: nivel ?? this.nivel,
+      tarifaRealId: tarifaRealId ?? this.tarifaRealId,
+      responsableId: responsableId ?? this.responsableId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
+    }
+    if (fechaInicio.present) {
+      map['fecha_inicio'] = Variable<String>(fechaInicio.value);
+    }
+    if (fechaFin.present) {
+      map['fecha_fin'] = Variable<String>(fechaFin.value);
+    }
+    if (tarifaRack.present) {
+      map['tarifa_rack'] = Variable<String>(tarifaRack.value);
+    }
+    if (tarifaPreventa.present) {
+      map['tarifa_preventa'] = Variable<double>(tarifaPreventa.value);
+    }
+    if (porcentajeDescuento.present) {
+      map['porcentaje_descuento'] = Variable<double>(porcentajeDescuento.value);
+    }
+    if (categoria.present) {
+      map['categoria'] = Variable<String>(categoria.value);
+    }
+    if (nivel.present) {
+      map['nivel'] = Variable<int>(nivel.value);
+    }
+    if (tarifaRealId.present) {
+      map['tarifa_real_id'] = Variable<int>(tarifaRealId.value);
+    }
+    if (responsableId.present) {
+      map['responsable_id'] = Variable<int>(responsableId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarifaCompanion(')
+          ..write('id: $id, ')
+          ..write('fecha: $fecha, ')
+          ..write('fechaInicio: $fechaInicio, ')
+          ..write('fechaFin: $fechaFin, ')
+          ..write('tarifaRack: $tarifaRack, ')
+          ..write('tarifaPreventa: $tarifaPreventa, ')
+          ..write('porcentajeDescuento: $porcentajeDescuento, ')
+          ..write('categoria: $categoria, ')
+          ..write('nivel: $nivel, ')
+          ..write('tarifaRealId: $tarifaRealId, ')
+          ..write('responsableId: $responsableId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TarifaRealTable extends TarifaReal
+    with TableInfo<$TarifaRealTable, TarifaRealData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TarifaRealTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+      'fecha', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _tipoHuespedMeta =
+      const VerificationMeta('tipoHuesped');
+  @override
+  late final GeneratedColumn<String> tipoHuesped = GeneratedColumn<String>(
+      'tipo_huesped', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaMeta = const VerificationMeta('tarifa');
+  @override
+  late final GeneratedColumn<double> tarifa = GeneratedColumn<double>(
+      'tarifa', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [id, fecha, tipoHuesped, tarifa];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tarifa_real';
+  @override
+  VerificationContext validateIntegrity(Insertable<TarifaRealData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
+    } else if (isInserting) {
+      context.missing(_fechaMeta);
+    }
+    if (data.containsKey('tipo_huesped')) {
+      context.handle(
+          _tipoHuespedMeta,
+          tipoHuesped.isAcceptableOrUnknown(
+              data['tipo_huesped']!, _tipoHuespedMeta));
+    }
+    if (data.containsKey('tarifa')) {
+      context.handle(_tarifaMeta,
+          tarifa.isAcceptableOrUnknown(data['tarifa']!, _tarifaMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TarifaRealData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TarifaRealData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      fecha: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+      tipoHuesped: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tipo_huesped']),
+      tarifa: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tarifa']),
+    );
+  }
+
+  @override
+  $TarifaRealTable createAlias(String alias) {
+    return $TarifaRealTable(attachedDatabase, alias);
+  }
+}
+
+class TarifaRealData extends DataClass implements Insertable<TarifaRealData> {
+  final int id;
+  final DateTime fecha;
+  final String? tipoHuesped;
+  final double? tarifa;
+  const TarifaRealData(
+      {required this.id, required this.fecha, this.tipoHuesped, this.tarifa});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['fecha'] = Variable<DateTime>(fecha);
+    if (!nullToAbsent || tipoHuesped != null) {
+      map['tipo_huesped'] = Variable<String>(tipoHuesped);
+    }
+    if (!nullToAbsent || tarifa != null) {
+      map['tarifa'] = Variable<double>(tarifa);
+    }
+    return map;
+  }
+
+  TarifaRealCompanion toCompanion(bool nullToAbsent) {
+    return TarifaRealCompanion(
+      id: Value(id),
+      fecha: Value(fecha),
+      tipoHuesped: tipoHuesped == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tipoHuesped),
+      tarifa:
+          tarifa == null && nullToAbsent ? const Value.absent() : Value(tarifa),
+    );
+  }
+
+  factory TarifaRealData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TarifaRealData(
+      id: serializer.fromJson<int>(json['id']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      tipoHuesped: serializer.fromJson<String?>(json['tipoHuesped']),
+      tarifa: serializer.fromJson<double?>(json['tarifa']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'tipoHuesped': serializer.toJson<String?>(tipoHuesped),
+      'tarifa': serializer.toJson<double?>(tarifa),
+    };
+  }
+
+  TarifaRealData copyWith(
+          {int? id,
+          DateTime? fecha,
+          Value<String?> tipoHuesped = const Value.absent(),
+          Value<double?> tarifa = const Value.absent()}) =>
+      TarifaRealData(
+        id: id ?? this.id,
+        fecha: fecha ?? this.fecha,
+        tipoHuesped: tipoHuesped.present ? tipoHuesped.value : this.tipoHuesped,
+        tarifa: tarifa.present ? tarifa.value : this.tarifa,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TarifaRealData(')
+          ..write('id: $id, ')
+          ..write('fecha: $fecha, ')
+          ..write('tipoHuesped: $tipoHuesped, ')
+          ..write('tarifa: $tarifa')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, fecha, tipoHuesped, tarifa);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TarifaRealData &&
+          other.id == this.id &&
+          other.fecha == this.fecha &&
+          other.tipoHuesped == this.tipoHuesped &&
+          other.tarifa == this.tarifa);
+}
+
+class TarifaRealCompanion extends UpdateCompanion<TarifaRealData> {
+  final Value<int> id;
+  final Value<DateTime> fecha;
+  final Value<String?> tipoHuesped;
+  final Value<double?> tarifa;
+  const TarifaRealCompanion({
+    this.id = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.tipoHuesped = const Value.absent(),
+    this.tarifa = const Value.absent(),
+  });
+  TarifaRealCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime fecha,
+    this.tipoHuesped = const Value.absent(),
+    this.tarifa = const Value.absent(),
+  }) : fecha = Value(fecha);
+  static Insertable<TarifaRealData> custom({
+    Expression<int>? id,
+    Expression<DateTime>? fecha,
+    Expression<String>? tipoHuesped,
+    Expression<double>? tarifa,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fecha != null) 'fecha': fecha,
+      if (tipoHuesped != null) 'tipo_huesped': tipoHuesped,
+      if (tarifa != null) 'tarifa': tarifa,
+    });
+  }
+
+  TarifaRealCompanion copyWith(
+      {Value<int>? id,
+      Value<DateTime>? fecha,
+      Value<String?>? tipoHuesped,
+      Value<double?>? tarifa}) {
+    return TarifaRealCompanion(
+      id: id ?? this.id,
+      fecha: fecha ?? this.fecha,
+      tipoHuesped: tipoHuesped ?? this.tipoHuesped,
+      tarifa: tarifa ?? this.tarifa,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
+    }
+    if (tipoHuesped.present) {
+      map['tipo_huesped'] = Variable<String>(tipoHuesped.value);
+    }
+    if (tarifa.present) {
+      map['tarifa'] = Variable<double>(tarifa.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarifaRealCompanion(')
+          ..write('id: $id, ')
+          ..write('fecha: $fecha, ')
+          ..write('tipoHuesped: $tipoHuesped, ')
+          ..write('tarifa: $tarifa')
           ..write(')'))
         .toString();
   }
@@ -2274,134 +3192,142 @@ class QuoteGroupCompanion extends UpdateCompanion<QuoteGroupData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
-  late final $UsersTable users = $UsersTable(this);
-  late final $ReceiptQuoteTable receiptQuote = $ReceiptQuoteTable(this);
-  late final $QuoteTable quote = $QuoteTable(this);
-  late final $QuoteGroupTable quoteGroup = $QuoteGroupTable(this);
+  late final $UsuarioTable usuario = $UsuarioTable(this);
+  late final $CotizacionTable cotizacion = $CotizacionTable(this);
+  late final $HabitacionTable habitacion = $HabitacionTable(this);
+  late final $TarifaXDiaTable tarifaXDia = $TarifaXDiaTable(this);
+  late final $TarifaTable tarifa = $TarifaTable(this);
+  late final $TarifaRealTable tarifaReal = $TarifaRealTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [users, receiptQuote, quote, quoteGroup];
+      [usuario, cotizacion, habitacion, tarifaXDia, tarifa, tarifaReal];
 }
 
-typedef $$UsersTableInsertCompanionBuilder = UsersCompanion Function({
+typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
-  Value<String?> name,
+  required String username,
   Value<String?> password,
   Value<String?> rol,
-  Value<String?> mail,
-  Value<String?> passwordMail,
-  Value<String?> phone,
-  Value<String?> birthDate,
-  Value<String?> firstName,
-  Value<String?> secondName,
+  Value<String?> correoElectronico,
+  Value<String?> passwordCorreo,
+  Value<String?> telefono,
+  Value<String?> fechaNacimiento,
+  Value<String?> nombre,
+  Value<String?> apellido,
+  Value<int?> numCotizaciones,
 });
-typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
+typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
-  Value<String?> name,
+  Value<String> username,
   Value<String?> password,
   Value<String?> rol,
-  Value<String?> mail,
-  Value<String?> passwordMail,
-  Value<String?> phone,
-  Value<String?> birthDate,
-  Value<String?> firstName,
-  Value<String?> secondName,
+  Value<String?> correoElectronico,
+  Value<String?> passwordCorreo,
+  Value<String?> telefono,
+  Value<String?> fechaNacimiento,
+  Value<String?> nombre,
+  Value<String?> apellido,
+  Value<int?> numCotizaciones,
 });
 
-class $$UsersTableTableManager extends RootTableManager<
+class $$UsuarioTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $UsersTable,
-    User,
-    $$UsersTableFilterComposer,
-    $$UsersTableOrderingComposer,
-    $$UsersTableProcessedTableManager,
-    $$UsersTableInsertCompanionBuilder,
-    $$UsersTableUpdateCompanionBuilder> {
-  $$UsersTableTableManager(_$AppDatabase db, $UsersTable table)
+    $UsuarioTable,
+    UsuarioData,
+    $$UsuarioTableFilterComposer,
+    $$UsuarioTableOrderingComposer,
+    $$UsuarioTableProcessedTableManager,
+    $$UsuarioTableInsertCompanionBuilder,
+    $$UsuarioTableUpdateCompanionBuilder> {
+  $$UsuarioTableTableManager(_$AppDatabase db, $UsuarioTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$UsersTableFilterComposer(ComposerState(db, table)),
+              $$UsuarioTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$UsersTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$UsersTableProcessedTableManager(p),
+              $$UsuarioTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$UsuarioTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String?> name = const Value.absent(),
+            Value<String> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
-            Value<String?> mail = const Value.absent(),
-            Value<String?> passwordMail = const Value.absent(),
-            Value<String?> phone = const Value.absent(),
-            Value<String?> birthDate = const Value.absent(),
-            Value<String?> firstName = const Value.absent(),
-            Value<String?> secondName = const Value.absent(),
+            Value<String?> correoElectronico = const Value.absent(),
+            Value<String?> passwordCorreo = const Value.absent(),
+            Value<String?> telefono = const Value.absent(),
+            Value<String?> fechaNacimiento = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<String?> apellido = const Value.absent(),
+            Value<int?> numCotizaciones = const Value.absent(),
           }) =>
-              UsersCompanion(
+              UsuarioCompanion(
             id: id,
-            name: name,
+            username: username,
             password: password,
             rol: rol,
-            mail: mail,
-            passwordMail: passwordMail,
-            phone: phone,
-            birthDate: birthDate,
-            firstName: firstName,
-            secondName: secondName,
+            correoElectronico: correoElectronico,
+            passwordCorreo: passwordCorreo,
+            telefono: telefono,
+            fechaNacimiento: fechaNacimiento,
+            nombre: nombre,
+            apellido: apellido,
+            numCotizaciones: numCotizaciones,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String?> name = const Value.absent(),
+            required String username,
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
-            Value<String?> mail = const Value.absent(),
-            Value<String?> passwordMail = const Value.absent(),
-            Value<String?> phone = const Value.absent(),
-            Value<String?> birthDate = const Value.absent(),
-            Value<String?> firstName = const Value.absent(),
-            Value<String?> secondName = const Value.absent(),
+            Value<String?> correoElectronico = const Value.absent(),
+            Value<String?> passwordCorreo = const Value.absent(),
+            Value<String?> telefono = const Value.absent(),
+            Value<String?> fechaNacimiento = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<String?> apellido = const Value.absent(),
+            Value<int?> numCotizaciones = const Value.absent(),
           }) =>
-              UsersCompanion.insert(
+              UsuarioCompanion.insert(
             id: id,
-            name: name,
+            username: username,
             password: password,
             rol: rol,
-            mail: mail,
-            passwordMail: passwordMail,
-            phone: phone,
-            birthDate: birthDate,
-            firstName: firstName,
-            secondName: secondName,
+            correoElectronico: correoElectronico,
+            passwordCorreo: passwordCorreo,
+            telefono: telefono,
+            fechaNacimiento: fechaNacimiento,
+            nombre: nombre,
+            apellido: apellido,
+            numCotizaciones: numCotizaciones,
           ),
         ));
 }
 
-class $$UsersTableProcessedTableManager extends ProcessedTableManager<
+class $$UsuarioTableProcessedTableManager extends ProcessedTableManager<
     _$AppDatabase,
-    $UsersTable,
-    User,
-    $$UsersTableFilterComposer,
-    $$UsersTableOrderingComposer,
-    $$UsersTableProcessedTableManager,
-    $$UsersTableInsertCompanionBuilder,
-    $$UsersTableUpdateCompanionBuilder> {
-  $$UsersTableProcessedTableManager(super.$state);
+    $UsuarioTable,
+    UsuarioData,
+    $$UsuarioTableFilterComposer,
+    $$UsuarioTableOrderingComposer,
+    $$UsuarioTableProcessedTableManager,
+    $$UsuarioTableInsertCompanionBuilder,
+    $$UsuarioTableUpdateCompanionBuilder> {
+  $$UsuarioTableProcessedTableManager(super.$state);
 }
 
-class $$UsersTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $UsersTable> {
-  $$UsersTableFilterComposer(super.$state);
+class $$UsuarioTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $UsuarioTable> {
+  $$UsuarioTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get name => $state.composableBuilder(
-      column: $state.table.name,
+  ColumnFilters<String> get username => $state.composableBuilder(
+      column: $state.table.username,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -2415,47 +3341,52 @@ class $$UsersTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get mail => $state.composableBuilder(
-      column: $state.table.mail,
+  ColumnFilters<String> get correoElectronico => $state.composableBuilder(
+      column: $state.table.correoElectronico,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get passwordMail => $state.composableBuilder(
-      column: $state.table.passwordMail,
+  ColumnFilters<String> get passwordCorreo => $state.composableBuilder(
+      column: $state.table.passwordCorreo,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get phone => $state.composableBuilder(
-      column: $state.table.phone,
+  ColumnFilters<String> get telefono => $state.composableBuilder(
+      column: $state.table.telefono,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get birthDate => $state.composableBuilder(
-      column: $state.table.birthDate,
+  ColumnFilters<String> get fechaNacimiento => $state.composableBuilder(
+      column: $state.table.fechaNacimiento,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get firstName => $state.composableBuilder(
-      column: $state.table.firstName,
+  ColumnFilters<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get secondName => $state.composableBuilder(
-      column: $state.table.secondName,
+  ColumnFilters<String> get apellido => $state.composableBuilder(
+      column: $state.table.apellido,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get numCotizaciones => $state.composableBuilder(
+      column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$UsersTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $UsersTable> {
-  $$UsersTableOrderingComposer(super.$state);
+class $$UsuarioTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $UsuarioTable> {
+  $$UsuarioTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get name => $state.composableBuilder(
-      column: $state.table.name,
+  ColumnOrderings<String> get username => $state.composableBuilder(
+      column: $state.table.username,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -2469,192 +3400,207 @@ class $$UsersTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get mail => $state.composableBuilder(
-      column: $state.table.mail,
+  ColumnOrderings<String> get correoElectronico => $state.composableBuilder(
+      column: $state.table.correoElectronico,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get passwordMail => $state.composableBuilder(
-      column: $state.table.passwordMail,
+  ColumnOrderings<String> get passwordCorreo => $state.composableBuilder(
+      column: $state.table.passwordCorreo,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get phone => $state.composableBuilder(
-      column: $state.table.phone,
+  ColumnOrderings<String> get telefono => $state.composableBuilder(
+      column: $state.table.telefono,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get birthDate => $state.composableBuilder(
-      column: $state.table.birthDate,
+  ColumnOrderings<String> get fechaNacimiento => $state.composableBuilder(
+      column: $state.table.fechaNacimiento,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get firstName => $state.composableBuilder(
-      column: $state.table.firstName,
+  ColumnOrderings<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get secondName => $state.composableBuilder(
-      column: $state.table.secondName,
+  ColumnOrderings<String> get apellido => $state.composableBuilder(
+      column: $state.table.apellido,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get numCotizaciones => $state.composableBuilder(
+      column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$ReceiptQuoteTableInsertCompanionBuilder = ReceiptQuoteCompanion
-    Function({
+typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
-  required String nameCustomer,
-  required String numPhone,
-  required String mail,
-  required String folioQuotes,
-  required int userId,
-  required DateTime dateRegister,
-  required double rateDay,
-  required double total,
-  required int rooms,
-  required bool isGroup,
+  Value<String?> folioPrincipal,
+  Value<String?> nombreHuesped,
+  Value<String?> numeroTelefonico,
+  Value<String?> correoElectrico,
+  Value<String?> tipo,
+  required DateTime fecha,
+  Value<int?> responsableID,
+  Value<double?> total,
+  Value<double?> descuento,
+  Value<bool?> esGrupo,
+  Value<bool?> esConcretado,
+  Value<int?> habitaciones,
 });
-typedef $$ReceiptQuoteTableUpdateCompanionBuilder = ReceiptQuoteCompanion
-    Function({
+typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
-  Value<String> nameCustomer,
-  Value<String> numPhone,
-  Value<String> mail,
-  Value<String> folioQuotes,
-  Value<int> userId,
-  Value<DateTime> dateRegister,
-  Value<double> rateDay,
-  Value<double> total,
-  Value<int> rooms,
-  Value<bool> isGroup,
+  Value<String?> folioPrincipal,
+  Value<String?> nombreHuesped,
+  Value<String?> numeroTelefonico,
+  Value<String?> correoElectrico,
+  Value<String?> tipo,
+  Value<DateTime> fecha,
+  Value<int?> responsableID,
+  Value<double?> total,
+  Value<double?> descuento,
+  Value<bool?> esGrupo,
+  Value<bool?> esConcretado,
+  Value<int?> habitaciones,
 });
 
-class $$ReceiptQuoteTableTableManager extends RootTableManager<
+class $$CotizacionTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $ReceiptQuoteTable,
-    ReceiptQuoteData,
-    $$ReceiptQuoteTableFilterComposer,
-    $$ReceiptQuoteTableOrderingComposer,
-    $$ReceiptQuoteTableProcessedTableManager,
-    $$ReceiptQuoteTableInsertCompanionBuilder,
-    $$ReceiptQuoteTableUpdateCompanionBuilder> {
-  $$ReceiptQuoteTableTableManager(_$AppDatabase db, $ReceiptQuoteTable table)
+    $CotizacionTable,
+    CotizacionData,
+    $$CotizacionTableFilterComposer,
+    $$CotizacionTableOrderingComposer,
+    $$CotizacionTableProcessedTableManager,
+    $$CotizacionTableInsertCompanionBuilder,
+    $$CotizacionTableUpdateCompanionBuilder> {
+  $$CotizacionTableTableManager(_$AppDatabase db, $CotizacionTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$ReceiptQuoteTableFilterComposer(ComposerState(db, table)),
+              $$CotizacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$ReceiptQuoteTableOrderingComposer(ComposerState(db, table)),
+              $$CotizacionTableOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) =>
-              $$ReceiptQuoteTableProcessedTableManager(p),
+              $$CotizacionTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> nameCustomer = const Value.absent(),
-            Value<String> numPhone = const Value.absent(),
-            Value<String> mail = const Value.absent(),
-            Value<String> folioQuotes = const Value.absent(),
-            Value<int> userId = const Value.absent(),
-            Value<DateTime> dateRegister = const Value.absent(),
-            Value<double> rateDay = const Value.absent(),
-            Value<double> total = const Value.absent(),
-            Value<int> rooms = const Value.absent(),
-            Value<bool> isGroup = const Value.absent(),
+            Value<String?> folioPrincipal = const Value.absent(),
+            Value<String?> nombreHuesped = const Value.absent(),
+            Value<String?> numeroTelefonico = const Value.absent(),
+            Value<String?> correoElectrico = const Value.absent(),
+            Value<String?> tipo = const Value.absent(),
+            Value<DateTime> fecha = const Value.absent(),
+            Value<int?> responsableID = const Value.absent(),
+            Value<double?> total = const Value.absent(),
+            Value<double?> descuento = const Value.absent(),
+            Value<bool?> esGrupo = const Value.absent(),
+            Value<bool?> esConcretado = const Value.absent(),
+            Value<int?> habitaciones = const Value.absent(),
           }) =>
-              ReceiptQuoteCompanion(
+              CotizacionCompanion(
             id: id,
-            nameCustomer: nameCustomer,
-            numPhone: numPhone,
-            mail: mail,
-            folioQuotes: folioQuotes,
-            userId: userId,
-            dateRegister: dateRegister,
-            rateDay: rateDay,
+            folioPrincipal: folioPrincipal,
+            nombreHuesped: nombreHuesped,
+            numeroTelefonico: numeroTelefonico,
+            correoElectrico: correoElectrico,
+            tipo: tipo,
+            fecha: fecha,
+            responsableID: responsableID,
             total: total,
-            rooms: rooms,
-            isGroup: isGroup,
+            descuento: descuento,
+            esGrupo: esGrupo,
+            esConcretado: esConcretado,
+            habitaciones: habitaciones,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String nameCustomer,
-            required String numPhone,
-            required String mail,
-            required String folioQuotes,
-            required int userId,
-            required DateTime dateRegister,
-            required double rateDay,
-            required double total,
-            required int rooms,
-            required bool isGroup,
+            Value<String?> folioPrincipal = const Value.absent(),
+            Value<String?> nombreHuesped = const Value.absent(),
+            Value<String?> numeroTelefonico = const Value.absent(),
+            Value<String?> correoElectrico = const Value.absent(),
+            Value<String?> tipo = const Value.absent(),
+            required DateTime fecha,
+            Value<int?> responsableID = const Value.absent(),
+            Value<double?> total = const Value.absent(),
+            Value<double?> descuento = const Value.absent(),
+            Value<bool?> esGrupo = const Value.absent(),
+            Value<bool?> esConcretado = const Value.absent(),
+            Value<int?> habitaciones = const Value.absent(),
           }) =>
-              ReceiptQuoteCompanion.insert(
+              CotizacionCompanion.insert(
             id: id,
-            nameCustomer: nameCustomer,
-            numPhone: numPhone,
-            mail: mail,
-            folioQuotes: folioQuotes,
-            userId: userId,
-            dateRegister: dateRegister,
-            rateDay: rateDay,
+            folioPrincipal: folioPrincipal,
+            nombreHuesped: nombreHuesped,
+            numeroTelefonico: numeroTelefonico,
+            correoElectrico: correoElectrico,
+            tipo: tipo,
+            fecha: fecha,
+            responsableID: responsableID,
             total: total,
-            rooms: rooms,
-            isGroup: isGroup,
+            descuento: descuento,
+            esGrupo: esGrupo,
+            esConcretado: esConcretado,
+            habitaciones: habitaciones,
           ),
         ));
 }
 
-class $$ReceiptQuoteTableProcessedTableManager extends ProcessedTableManager<
+class $$CotizacionTableProcessedTableManager extends ProcessedTableManager<
     _$AppDatabase,
-    $ReceiptQuoteTable,
-    ReceiptQuoteData,
-    $$ReceiptQuoteTableFilterComposer,
-    $$ReceiptQuoteTableOrderingComposer,
-    $$ReceiptQuoteTableProcessedTableManager,
-    $$ReceiptQuoteTableInsertCompanionBuilder,
-    $$ReceiptQuoteTableUpdateCompanionBuilder> {
-  $$ReceiptQuoteTableProcessedTableManager(super.$state);
+    $CotizacionTable,
+    CotizacionData,
+    $$CotizacionTableFilterComposer,
+    $$CotizacionTableOrderingComposer,
+    $$CotizacionTableProcessedTableManager,
+    $$CotizacionTableInsertCompanionBuilder,
+    $$CotizacionTableUpdateCompanionBuilder> {
+  $$CotizacionTableProcessedTableManager(super.$state);
 }
 
-class $$ReceiptQuoteTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $ReceiptQuoteTable> {
-  $$ReceiptQuoteTableFilterComposer(super.$state);
+class $$CotizacionTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $CotizacionTable> {
+  $$CotizacionTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get nameCustomer => $state.composableBuilder(
-      column: $state.table.nameCustomer,
+  ColumnFilters<String> get folioPrincipal => $state.composableBuilder(
+      column: $state.table.folioPrincipal,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get numPhone => $state.composableBuilder(
-      column: $state.table.numPhone,
+  ColumnFilters<String> get nombreHuesped => $state.composableBuilder(
+      column: $state.table.nombreHuesped,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get mail => $state.composableBuilder(
-      column: $state.table.mail,
+  ColumnFilters<String> get numeroTelefonico => $state.composableBuilder(
+      column: $state.table.numeroTelefonico,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get folioQuotes => $state.composableBuilder(
-      column: $state.table.folioQuotes,
+  ColumnFilters<String> get correoElectrico => $state.composableBuilder(
+      column: $state.table.correoElectrico,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
+  ColumnFilters<String> get tipo => $state.composableBuilder(
+      column: $state.table.tipo,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<DateTime> get dateRegister => $state.composableBuilder(
-      column: $state.table.dateRegister,
+  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get rateDay => $state.composableBuilder(
-      column: $state.table.rateDay,
+  ColumnFilters<int> get responsableID => $state.composableBuilder(
+      column: $state.table.responsableID,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -2663,57 +3609,67 @@ class $$ReceiptQuoteTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get rooms => $state.composableBuilder(
-      column: $state.table.rooms,
+  ColumnFilters<double> get descuento => $state.composableBuilder(
+      column: $state.table.descuento,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<bool> get isGroup => $state.composableBuilder(
-      column: $state.table.isGroup,
+  ColumnFilters<bool> get esGrupo => $state.composableBuilder(
+      column: $state.table.esGrupo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get esConcretado => $state.composableBuilder(
+      column: $state.table.esConcretado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get habitaciones => $state.composableBuilder(
+      column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$ReceiptQuoteTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $ReceiptQuoteTable> {
-  $$ReceiptQuoteTableOrderingComposer(super.$state);
+class $$CotizacionTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $CotizacionTable> {
+  $$CotizacionTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get nameCustomer => $state.composableBuilder(
-      column: $state.table.nameCustomer,
+  ColumnOrderings<String> get folioPrincipal => $state.composableBuilder(
+      column: $state.table.folioPrincipal,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get numPhone => $state.composableBuilder(
-      column: $state.table.numPhone,
+  ColumnOrderings<String> get nombreHuesped => $state.composableBuilder(
+      column: $state.table.nombreHuesped,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get mail => $state.composableBuilder(
-      column: $state.table.mail,
+  ColumnOrderings<String> get numeroTelefonico => $state.composableBuilder(
+      column: $state.table.numeroTelefonico,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get folioQuotes => $state.composableBuilder(
-      column: $state.table.folioQuotes,
+  ColumnOrderings<String> get correoElectrico => $state.composableBuilder(
+      column: $state.table.correoElectrico,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
+  ColumnOrderings<String> get tipo => $state.composableBuilder(
+      column: $state.table.tipo,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<DateTime> get dateRegister => $state.composableBuilder(
-      column: $state.table.dateRegister,
+  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get rateDay => $state.composableBuilder(
-      column: $state.table.rateDay,
+  ColumnOrderings<int> get responsableID => $state.composableBuilder(
+      column: $state.table.responsableID,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -2722,450 +3678,172 @@ class $$ReceiptQuoteTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get rooms => $state.composableBuilder(
-      column: $state.table.rooms,
+  ColumnOrderings<double> get descuento => $state.composableBuilder(
+      column: $state.table.descuento,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get isGroup => $state.composableBuilder(
-      column: $state.table.isGroup,
+  ColumnOrderings<bool> get esGrupo => $state.composableBuilder(
+      column: $state.table.esGrupo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get esConcretado => $state.composableBuilder(
+      column: $state.table.esConcretado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get habitaciones => $state.composableBuilder(
+      column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$QuoteTableInsertCompanionBuilder = QuoteCompanion Function({
+typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
-  required String folio,
-  required bool isPresale,
-  required String category,
+  required String folioHabitacion,
+  required String subfolio,
+  required String categoria,
   required String plan,
-  required DateTime registerDate,
-  required String enterDate,
-  required String outDate,
-  required int adults,
-  required int minor0a6,
-  required int minor7a12,
-  required double rateRealAdult,
-  required double ratePresaleAdult,
-  required double rateRealMinor,
-  required double ratePresaleMinor,
+  required bool esPreventa,
+  required String fechaCheckIn,
+  required String fechaCheckOut,
+  required DateTime fecha,
+  Value<int?> adultos,
+  Value<int?> menores0a6,
+  Value<int?> menores7a12,
+  Value<int?> paxAdic,
 });
-typedef $$QuoteTableUpdateCompanionBuilder = QuoteCompanion Function({
+typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
-  Value<String> folio,
-  Value<bool> isPresale,
-  Value<String> category,
+  Value<String> folioHabitacion,
+  Value<String> subfolio,
+  Value<String> categoria,
   Value<String> plan,
-  Value<DateTime> registerDate,
-  Value<String> enterDate,
-  Value<String> outDate,
-  Value<int> adults,
-  Value<int> minor0a6,
-  Value<int> minor7a12,
-  Value<double> rateRealAdult,
-  Value<double> ratePresaleAdult,
-  Value<double> rateRealMinor,
-  Value<double> ratePresaleMinor,
+  Value<bool> esPreventa,
+  Value<String> fechaCheckIn,
+  Value<String> fechaCheckOut,
+  Value<DateTime> fecha,
+  Value<int?> adultos,
+  Value<int?> menores0a6,
+  Value<int?> menores7a12,
+  Value<int?> paxAdic,
 });
 
-class $$QuoteTableTableManager extends RootTableManager<
+class $$HabitacionTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $QuoteTable,
-    QuoteData,
-    $$QuoteTableFilterComposer,
-    $$QuoteTableOrderingComposer,
-    $$QuoteTableProcessedTableManager,
-    $$QuoteTableInsertCompanionBuilder,
-    $$QuoteTableUpdateCompanionBuilder> {
-  $$QuoteTableTableManager(_$AppDatabase db, $QuoteTable table)
+    $HabitacionTable,
+    HabitacionData,
+    $$HabitacionTableFilterComposer,
+    $$HabitacionTableOrderingComposer,
+    $$HabitacionTableProcessedTableManager,
+    $$HabitacionTableInsertCompanionBuilder,
+    $$HabitacionTableUpdateCompanionBuilder> {
+  $$HabitacionTableTableManager(_$AppDatabase db, $HabitacionTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$QuoteTableFilterComposer(ComposerState(db, table)),
+              $$HabitacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$QuoteTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$QuoteTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> folio = const Value.absent(),
-            Value<bool> isPresale = const Value.absent(),
-            Value<String> category = const Value.absent(),
-            Value<String> plan = const Value.absent(),
-            Value<DateTime> registerDate = const Value.absent(),
-            Value<String> enterDate = const Value.absent(),
-            Value<String> outDate = const Value.absent(),
-            Value<int> adults = const Value.absent(),
-            Value<int> minor0a6 = const Value.absent(),
-            Value<int> minor7a12 = const Value.absent(),
-            Value<double> rateRealAdult = const Value.absent(),
-            Value<double> ratePresaleAdult = const Value.absent(),
-            Value<double> rateRealMinor = const Value.absent(),
-            Value<double> ratePresaleMinor = const Value.absent(),
-          }) =>
-              QuoteCompanion(
-            id: id,
-            folio: folio,
-            isPresale: isPresale,
-            category: category,
-            plan: plan,
-            registerDate: registerDate,
-            enterDate: enterDate,
-            outDate: outDate,
-            adults: adults,
-            minor0a6: minor0a6,
-            minor7a12: minor7a12,
-            rateRealAdult: rateRealAdult,
-            ratePresaleAdult: ratePresaleAdult,
-            rateRealMinor: rateRealMinor,
-            ratePresaleMinor: ratePresaleMinor,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String folio,
-            required bool isPresale,
-            required String category,
-            required String plan,
-            required DateTime registerDate,
-            required String enterDate,
-            required String outDate,
-            required int adults,
-            required int minor0a6,
-            required int minor7a12,
-            required double rateRealAdult,
-            required double ratePresaleAdult,
-            required double rateRealMinor,
-            required double ratePresaleMinor,
-          }) =>
-              QuoteCompanion.insert(
-            id: id,
-            folio: folio,
-            isPresale: isPresale,
-            category: category,
-            plan: plan,
-            registerDate: registerDate,
-            enterDate: enterDate,
-            outDate: outDate,
-            adults: adults,
-            minor0a6: minor0a6,
-            minor7a12: minor7a12,
-            rateRealAdult: rateRealAdult,
-            ratePresaleAdult: ratePresaleAdult,
-            rateRealMinor: rateRealMinor,
-            ratePresaleMinor: ratePresaleMinor,
-          ),
-        ));
-}
-
-class $$QuoteTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $QuoteTable,
-    QuoteData,
-    $$QuoteTableFilterComposer,
-    $$QuoteTableOrderingComposer,
-    $$QuoteTableProcessedTableManager,
-    $$QuoteTableInsertCompanionBuilder,
-    $$QuoteTableUpdateCompanionBuilder> {
-  $$QuoteTableProcessedTableManager(super.$state);
-}
-
-class $$QuoteTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $QuoteTable> {
-  $$QuoteTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get folio => $state.composableBuilder(
-      column: $state.table.folio,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<bool> get isPresale => $state.composableBuilder(
-      column: $state.table.isPresale,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get category => $state.composableBuilder(
-      column: $state.table.category,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get plan => $state.composableBuilder(
-      column: $state.table.plan,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<DateTime> get registerDate => $state.composableBuilder(
-      column: $state.table.registerDate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get enterDate => $state.composableBuilder(
-      column: $state.table.enterDate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get outDate => $state.composableBuilder(
-      column: $state.table.outDate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get adults => $state.composableBuilder(
-      column: $state.table.adults,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get minor0a6 => $state.composableBuilder(
-      column: $state.table.minor0a6,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get minor7a12 => $state.composableBuilder(
-      column: $state.table.minor7a12,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get rateRealAdult => $state.composableBuilder(
-      column: $state.table.rateRealAdult,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get ratePresaleAdult => $state.composableBuilder(
-      column: $state.table.ratePresaleAdult,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get rateRealMinor => $state.composableBuilder(
-      column: $state.table.rateRealMinor,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get ratePresaleMinor => $state.composableBuilder(
-      column: $state.table.ratePresaleMinor,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-}
-
-class $$QuoteTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $QuoteTable> {
-  $$QuoteTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get folio => $state.composableBuilder(
-      column: $state.table.folio,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<bool> get isPresale => $state.composableBuilder(
-      column: $state.table.isPresale,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get category => $state.composableBuilder(
-      column: $state.table.category,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get plan => $state.composableBuilder(
-      column: $state.table.plan,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<DateTime> get registerDate => $state.composableBuilder(
-      column: $state.table.registerDate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get enterDate => $state.composableBuilder(
-      column: $state.table.enterDate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get outDate => $state.composableBuilder(
-      column: $state.table.outDate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get adults => $state.composableBuilder(
-      column: $state.table.adults,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get minor0a6 => $state.composableBuilder(
-      column: $state.table.minor0a6,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get minor7a12 => $state.composableBuilder(
-      column: $state.table.minor7a12,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get rateRealAdult => $state.composableBuilder(
-      column: $state.table.rateRealAdult,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get ratePresaleAdult => $state.composableBuilder(
-      column: $state.table.ratePresaleAdult,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get rateRealMinor => $state.composableBuilder(
-      column: $state.table.rateRealMinor,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get ratePresaleMinor => $state.composableBuilder(
-      column: $state.table.ratePresaleMinor,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-}
-
-typedef $$QuoteGroupTableInsertCompanionBuilder = QuoteGroupCompanion Function({
-  Value<int> id,
-  required String folio,
-  required bool isPresale,
-  required String category,
-  required String plan,
-  required DateTime registerDate,
-  required String enterDate,
-  required String outDate,
-  required double rateAdult1_2,
-  required double rateAdult3,
-  required double rateAdult4,
-  required double rateMinor,
-});
-typedef $$QuoteGroupTableUpdateCompanionBuilder = QuoteGroupCompanion Function({
-  Value<int> id,
-  Value<String> folio,
-  Value<bool> isPresale,
-  Value<String> category,
-  Value<String> plan,
-  Value<DateTime> registerDate,
-  Value<String> enterDate,
-  Value<String> outDate,
-  Value<double> rateAdult1_2,
-  Value<double> rateAdult3,
-  Value<double> rateAdult4,
-  Value<double> rateMinor,
-});
-
-class $$QuoteGroupTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $QuoteGroupTable,
-    QuoteGroupData,
-    $$QuoteGroupTableFilterComposer,
-    $$QuoteGroupTableOrderingComposer,
-    $$QuoteGroupTableProcessedTableManager,
-    $$QuoteGroupTableInsertCompanionBuilder,
-    $$QuoteGroupTableUpdateCompanionBuilder> {
-  $$QuoteGroupTableTableManager(_$AppDatabase db, $QuoteGroupTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$QuoteGroupTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$QuoteGroupTableOrderingComposer(ComposerState(db, table)),
+              $$HabitacionTableOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) =>
-              $$QuoteGroupTableProcessedTableManager(p),
+              $$HabitacionTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> folio = const Value.absent(),
-            Value<bool> isPresale = const Value.absent(),
-            Value<String> category = const Value.absent(),
+            Value<String> folioHabitacion = const Value.absent(),
+            Value<String> subfolio = const Value.absent(),
+            Value<String> categoria = const Value.absent(),
             Value<String> plan = const Value.absent(),
-            Value<DateTime> registerDate = const Value.absent(),
-            Value<String> enterDate = const Value.absent(),
-            Value<String> outDate = const Value.absent(),
-            Value<double> rateAdult1_2 = const Value.absent(),
-            Value<double> rateAdult3 = const Value.absent(),
-            Value<double> rateAdult4 = const Value.absent(),
-            Value<double> rateMinor = const Value.absent(),
+            Value<bool> esPreventa = const Value.absent(),
+            Value<String> fechaCheckIn = const Value.absent(),
+            Value<String> fechaCheckOut = const Value.absent(),
+            Value<DateTime> fecha = const Value.absent(),
+            Value<int?> adultos = const Value.absent(),
+            Value<int?> menores0a6 = const Value.absent(),
+            Value<int?> menores7a12 = const Value.absent(),
+            Value<int?> paxAdic = const Value.absent(),
           }) =>
-              QuoteGroupCompanion(
+              HabitacionCompanion(
             id: id,
-            folio: folio,
-            isPresale: isPresale,
-            category: category,
+            folioHabitacion: folioHabitacion,
+            subfolio: subfolio,
+            categoria: categoria,
             plan: plan,
-            registerDate: registerDate,
-            enterDate: enterDate,
-            outDate: outDate,
-            rateAdult1_2: rateAdult1_2,
-            rateAdult3: rateAdult3,
-            rateAdult4: rateAdult4,
-            rateMinor: rateMinor,
+            esPreventa: esPreventa,
+            fechaCheckIn: fechaCheckIn,
+            fechaCheckOut: fechaCheckOut,
+            fecha: fecha,
+            adultos: adultos,
+            menores0a6: menores0a6,
+            menores7a12: menores7a12,
+            paxAdic: paxAdic,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String folio,
-            required bool isPresale,
-            required String category,
+            required String folioHabitacion,
+            required String subfolio,
+            required String categoria,
             required String plan,
-            required DateTime registerDate,
-            required String enterDate,
-            required String outDate,
-            required double rateAdult1_2,
-            required double rateAdult3,
-            required double rateAdult4,
-            required double rateMinor,
+            required bool esPreventa,
+            required String fechaCheckIn,
+            required String fechaCheckOut,
+            required DateTime fecha,
+            Value<int?> adultos = const Value.absent(),
+            Value<int?> menores0a6 = const Value.absent(),
+            Value<int?> menores7a12 = const Value.absent(),
+            Value<int?> paxAdic = const Value.absent(),
           }) =>
-              QuoteGroupCompanion.insert(
+              HabitacionCompanion.insert(
             id: id,
-            folio: folio,
-            isPresale: isPresale,
-            category: category,
+            folioHabitacion: folioHabitacion,
+            subfolio: subfolio,
+            categoria: categoria,
             plan: plan,
-            registerDate: registerDate,
-            enterDate: enterDate,
-            outDate: outDate,
-            rateAdult1_2: rateAdult1_2,
-            rateAdult3: rateAdult3,
-            rateAdult4: rateAdult4,
-            rateMinor: rateMinor,
+            esPreventa: esPreventa,
+            fechaCheckIn: fechaCheckIn,
+            fechaCheckOut: fechaCheckOut,
+            fecha: fecha,
+            adultos: adultos,
+            menores0a6: menores0a6,
+            menores7a12: menores7a12,
+            paxAdic: paxAdic,
           ),
         ));
 }
 
-class $$QuoteGroupTableProcessedTableManager extends ProcessedTableManager<
+class $$HabitacionTableProcessedTableManager extends ProcessedTableManager<
     _$AppDatabase,
-    $QuoteGroupTable,
-    QuoteGroupData,
-    $$QuoteGroupTableFilterComposer,
-    $$QuoteGroupTableOrderingComposer,
-    $$QuoteGroupTableProcessedTableManager,
-    $$QuoteGroupTableInsertCompanionBuilder,
-    $$QuoteGroupTableUpdateCompanionBuilder> {
-  $$QuoteGroupTableProcessedTableManager(super.$state);
+    $HabitacionTable,
+    HabitacionData,
+    $$HabitacionTableFilterComposer,
+    $$HabitacionTableOrderingComposer,
+    $$HabitacionTableProcessedTableManager,
+    $$HabitacionTableInsertCompanionBuilder,
+    $$HabitacionTableUpdateCompanionBuilder> {
+  $$HabitacionTableProcessedTableManager(super.$state);
 }
 
-class $$QuoteGroupTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $QuoteGroupTable> {
-  $$QuoteGroupTableFilterComposer(super.$state);
+class $$HabitacionTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $HabitacionTable> {
+  $$HabitacionTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get folio => $state.composableBuilder(
-      column: $state.table.folio,
+  ColumnFilters<String> get folioHabitacion => $state.composableBuilder(
+      column: $state.table.folioHabitacion,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<bool> get isPresale => $state.composableBuilder(
-      column: $state.table.isPresale,
+  ColumnFilters<String> get subfolio => $state.composableBuilder(
+      column: $state.table.subfolio,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get category => $state.composableBuilder(
-      column: $state.table.category,
+  ColumnFilters<String> get categoria => $state.composableBuilder(
+      column: $state.table.categoria,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -3174,62 +3852,67 @@ class $$QuoteGroupTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<DateTime> get registerDate => $state.composableBuilder(
-      column: $state.table.registerDate,
+  ColumnFilters<bool> get esPreventa => $state.composableBuilder(
+      column: $state.table.esPreventa,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get enterDate => $state.composableBuilder(
-      column: $state.table.enterDate,
+  ColumnFilters<String> get fechaCheckIn => $state.composableBuilder(
+      column: $state.table.fechaCheckIn,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get outDate => $state.composableBuilder(
-      column: $state.table.outDate,
+  ColumnFilters<String> get fechaCheckOut => $state.composableBuilder(
+      column: $state.table.fechaCheckOut,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get rateAdult1_2 => $state.composableBuilder(
-      column: $state.table.rateAdult1_2,
+  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get rateAdult3 => $state.composableBuilder(
-      column: $state.table.rateAdult3,
+  ColumnFilters<int> get adultos => $state.composableBuilder(
+      column: $state.table.adultos,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get rateAdult4 => $state.composableBuilder(
-      column: $state.table.rateAdult4,
+  ColumnFilters<int> get menores0a6 => $state.composableBuilder(
+      column: $state.table.menores0a6,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get rateMinor => $state.composableBuilder(
-      column: $state.table.rateMinor,
+  ColumnFilters<int> get menores7a12 => $state.composableBuilder(
+      column: $state.table.menores7a12,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get paxAdic => $state.composableBuilder(
+      column: $state.table.paxAdic,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$QuoteGroupTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $QuoteGroupTable> {
-  $$QuoteGroupTableOrderingComposer(super.$state);
+class $$HabitacionTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $HabitacionTable> {
+  $$HabitacionTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get folio => $state.composableBuilder(
-      column: $state.table.folio,
+  ColumnOrderings<String> get folioHabitacion => $state.composableBuilder(
+      column: $state.table.folioHabitacion,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get isPresale => $state.composableBuilder(
-      column: $state.table.isPresale,
+  ColumnOrderings<String> get subfolio => $state.composableBuilder(
+      column: $state.table.subfolio,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get category => $state.composableBuilder(
-      column: $state.table.category,
+  ColumnOrderings<String> get categoria => $state.composableBuilder(
+      column: $state.table.categoria,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -3238,38 +3921,625 @@ class $$QuoteGroupTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<DateTime> get registerDate => $state.composableBuilder(
-      column: $state.table.registerDate,
+  ColumnOrderings<bool> get esPreventa => $state.composableBuilder(
+      column: $state.table.esPreventa,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get enterDate => $state.composableBuilder(
-      column: $state.table.enterDate,
+  ColumnOrderings<String> get fechaCheckIn => $state.composableBuilder(
+      column: $state.table.fechaCheckIn,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get outDate => $state.composableBuilder(
-      column: $state.table.outDate,
+  ColumnOrderings<String> get fechaCheckOut => $state.composableBuilder(
+      column: $state.table.fechaCheckOut,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get rateAdult1_2 => $state.composableBuilder(
-      column: $state.table.rateAdult1_2,
+  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get rateAdult3 => $state.composableBuilder(
-      column: $state.table.rateAdult3,
+  ColumnOrderings<int> get adultos => $state.composableBuilder(
+      column: $state.table.adultos,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get rateAdult4 => $state.composableBuilder(
-      column: $state.table.rateAdult4,
+  ColumnOrderings<int> get menores0a6 => $state.composableBuilder(
+      column: $state.table.menores0a6,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get rateMinor => $state.composableBuilder(
-      column: $state.table.rateMinor,
+  ColumnOrderings<int> get menores7a12 => $state.composableBuilder(
+      column: $state.table.menores7a12,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get paxAdic => $state.composableBuilder(
+      column: $state.table.paxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TarifaXDiaTableInsertCompanionBuilder = TarifaXDiaCompanion Function({
+  Value<int> id,
+  Value<String?> folioTarifaXDia,
+  Value<String?> subfolio,
+  Value<int?> dia,
+  required DateTime fecha,
+  Value<double?> tarifaRealPaxAdic,
+  Value<double?> tarifaPreventaPaxAdic,
+  Value<double?> tarifaRealAdulto,
+  Value<double?> tarifaPreventaAdulto,
+  Value<double?> tarifaRealMenores7a12,
+  Value<double?> tarifaPreventaMenores7a12,
+});
+typedef $$TarifaXDiaTableUpdateCompanionBuilder = TarifaXDiaCompanion Function({
+  Value<int> id,
+  Value<String?> folioTarifaXDia,
+  Value<String?> subfolio,
+  Value<int?> dia,
+  Value<DateTime> fecha,
+  Value<double?> tarifaRealPaxAdic,
+  Value<double?> tarifaPreventaPaxAdic,
+  Value<double?> tarifaRealAdulto,
+  Value<double?> tarifaPreventaAdulto,
+  Value<double?> tarifaRealMenores7a12,
+  Value<double?> tarifaPreventaMenores7a12,
+});
+
+class $$TarifaXDiaTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TarifaXDiaTable,
+    TarifaXDiaData,
+    $$TarifaXDiaTableFilterComposer,
+    $$TarifaXDiaTableOrderingComposer,
+    $$TarifaXDiaTableProcessedTableManager,
+    $$TarifaXDiaTableInsertCompanionBuilder,
+    $$TarifaXDiaTableUpdateCompanionBuilder> {
+  $$TarifaXDiaTableTableManager(_$AppDatabase db, $TarifaXDiaTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TarifaXDiaTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TarifaXDiaTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$TarifaXDiaTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> folioTarifaXDia = const Value.absent(),
+            Value<String?> subfolio = const Value.absent(),
+            Value<int?> dia = const Value.absent(),
+            Value<DateTime> fecha = const Value.absent(),
+            Value<double?> tarifaRealPaxAdic = const Value.absent(),
+            Value<double?> tarifaPreventaPaxAdic = const Value.absent(),
+            Value<double?> tarifaRealAdulto = const Value.absent(),
+            Value<double?> tarifaPreventaAdulto = const Value.absent(),
+            Value<double?> tarifaRealMenores7a12 = const Value.absent(),
+            Value<double?> tarifaPreventaMenores7a12 = const Value.absent(),
+          }) =>
+              TarifaXDiaCompanion(
+            id: id,
+            folioTarifaXDia: folioTarifaXDia,
+            subfolio: subfolio,
+            dia: dia,
+            fecha: fecha,
+            tarifaRealPaxAdic: tarifaRealPaxAdic,
+            tarifaPreventaPaxAdic: tarifaPreventaPaxAdic,
+            tarifaRealAdulto: tarifaRealAdulto,
+            tarifaPreventaAdulto: tarifaPreventaAdulto,
+            tarifaRealMenores7a12: tarifaRealMenores7a12,
+            tarifaPreventaMenores7a12: tarifaPreventaMenores7a12,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> folioTarifaXDia = const Value.absent(),
+            Value<String?> subfolio = const Value.absent(),
+            Value<int?> dia = const Value.absent(),
+            required DateTime fecha,
+            Value<double?> tarifaRealPaxAdic = const Value.absent(),
+            Value<double?> tarifaPreventaPaxAdic = const Value.absent(),
+            Value<double?> tarifaRealAdulto = const Value.absent(),
+            Value<double?> tarifaPreventaAdulto = const Value.absent(),
+            Value<double?> tarifaRealMenores7a12 = const Value.absent(),
+            Value<double?> tarifaPreventaMenores7a12 = const Value.absent(),
+          }) =>
+              TarifaXDiaCompanion.insert(
+            id: id,
+            folioTarifaXDia: folioTarifaXDia,
+            subfolio: subfolio,
+            dia: dia,
+            fecha: fecha,
+            tarifaRealPaxAdic: tarifaRealPaxAdic,
+            tarifaPreventaPaxAdic: tarifaPreventaPaxAdic,
+            tarifaRealAdulto: tarifaRealAdulto,
+            tarifaPreventaAdulto: tarifaPreventaAdulto,
+            tarifaRealMenores7a12: tarifaRealMenores7a12,
+            tarifaPreventaMenores7a12: tarifaPreventaMenores7a12,
+          ),
+        ));
+}
+
+class $$TarifaXDiaTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TarifaXDiaTable,
+    TarifaXDiaData,
+    $$TarifaXDiaTableFilterComposer,
+    $$TarifaXDiaTableOrderingComposer,
+    $$TarifaXDiaTableProcessedTableManager,
+    $$TarifaXDiaTableInsertCompanionBuilder,
+    $$TarifaXDiaTableUpdateCompanionBuilder> {
+  $$TarifaXDiaTableProcessedTableManager(super.$state);
+}
+
+class $$TarifaXDiaTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaXDiaTable> {
+  $$TarifaXDiaTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get folioTarifaXDia => $state.composableBuilder(
+      column: $state.table.folioTarifaXDia,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get subfolio => $state.composableBuilder(
+      column: $state.table.subfolio,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get dia => $state.composableBuilder(
+      column: $state.table.dia,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaRealPaxAdic => $state.composableBuilder(
+      column: $state.table.tarifaRealPaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaPreventaPaxAdic => $state.composableBuilder(
+      column: $state.table.tarifaPreventaPaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaRealAdulto => $state.composableBuilder(
+      column: $state.table.tarifaRealAdulto,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaPreventaAdulto => $state.composableBuilder(
+      column: $state.table.tarifaPreventaAdulto,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaRealMenores7a12 => $state.composableBuilder(
+      column: $state.table.tarifaRealMenores7a12,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaPreventaMenores7a12 =>
+      $state.composableBuilder(
+          column: $state.table.tarifaPreventaMenores7a12,
+          builder: (column, joinBuilders) =>
+              ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TarifaXDiaTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaXDiaTable> {
+  $$TarifaXDiaTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get folioTarifaXDia => $state.composableBuilder(
+      column: $state.table.folioTarifaXDia,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get subfolio => $state.composableBuilder(
+      column: $state.table.subfolio,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get dia => $state.composableBuilder(
+      column: $state.table.dia,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaRealPaxAdic => $state.composableBuilder(
+      column: $state.table.tarifaRealPaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaPreventaPaxAdic => $state.composableBuilder(
+      column: $state.table.tarifaPreventaPaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaRealAdulto => $state.composableBuilder(
+      column: $state.table.tarifaRealAdulto,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaPreventaAdulto => $state.composableBuilder(
+      column: $state.table.tarifaPreventaAdulto,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaRealMenores7a12 => $state.composableBuilder(
+      column: $state.table.tarifaRealMenores7a12,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaPreventaMenores7a12 => $state
+      .composableBuilder(
+          column: $state.table.tarifaPreventaMenores7a12,
+          builder: (column, joinBuilders) =>
+              ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
+  Value<int> id,
+  required DateTime fecha,
+  required String fechaInicio,
+  required String fechaFin,
+  required String tarifaRack,
+  Value<double?> tarifaPreventa,
+  Value<double?> porcentajeDescuento,
+  required String categoria,
+  required int nivel,
+  required int tarifaRealId,
+  required int responsableId,
+});
+typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
+  Value<int> id,
+  Value<DateTime> fecha,
+  Value<String> fechaInicio,
+  Value<String> fechaFin,
+  Value<String> tarifaRack,
+  Value<double?> tarifaPreventa,
+  Value<double?> porcentajeDescuento,
+  Value<String> categoria,
+  Value<int> nivel,
+  Value<int> tarifaRealId,
+  Value<int> responsableId,
+});
+
+class $$TarifaTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TarifaTable,
+    TarifaData,
+    $$TarifaTableFilterComposer,
+    $$TarifaTableOrderingComposer,
+    $$TarifaTableProcessedTableManager,
+    $$TarifaTableInsertCompanionBuilder,
+    $$TarifaTableUpdateCompanionBuilder> {
+  $$TarifaTableTableManager(_$AppDatabase db, $TarifaTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TarifaTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TarifaTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$TarifaTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<DateTime> fecha = const Value.absent(),
+            Value<String> fechaInicio = const Value.absent(),
+            Value<String> fechaFin = const Value.absent(),
+            Value<String> tarifaRack = const Value.absent(),
+            Value<double?> tarifaPreventa = const Value.absent(),
+            Value<double?> porcentajeDescuento = const Value.absent(),
+            Value<String> categoria = const Value.absent(),
+            Value<int> nivel = const Value.absent(),
+            Value<int> tarifaRealId = const Value.absent(),
+            Value<int> responsableId = const Value.absent(),
+          }) =>
+              TarifaCompanion(
+            id: id,
+            fecha: fecha,
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin,
+            tarifaRack: tarifaRack,
+            tarifaPreventa: tarifaPreventa,
+            porcentajeDescuento: porcentajeDescuento,
+            categoria: categoria,
+            nivel: nivel,
+            tarifaRealId: tarifaRealId,
+            responsableId: responsableId,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required DateTime fecha,
+            required String fechaInicio,
+            required String fechaFin,
+            required String tarifaRack,
+            Value<double?> tarifaPreventa = const Value.absent(),
+            Value<double?> porcentajeDescuento = const Value.absent(),
+            required String categoria,
+            required int nivel,
+            required int tarifaRealId,
+            required int responsableId,
+          }) =>
+              TarifaCompanion.insert(
+            id: id,
+            fecha: fecha,
+            fechaInicio: fechaInicio,
+            fechaFin: fechaFin,
+            tarifaRack: tarifaRack,
+            tarifaPreventa: tarifaPreventa,
+            porcentajeDescuento: porcentajeDescuento,
+            categoria: categoria,
+            nivel: nivel,
+            tarifaRealId: tarifaRealId,
+            responsableId: responsableId,
+          ),
+        ));
+}
+
+class $$TarifaTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TarifaTable,
+    TarifaData,
+    $$TarifaTableFilterComposer,
+    $$TarifaTableOrderingComposer,
+    $$TarifaTableProcessedTableManager,
+    $$TarifaTableInsertCompanionBuilder,
+    $$TarifaTableUpdateCompanionBuilder> {
+  $$TarifaTableProcessedTableManager(super.$state);
+}
+
+class $$TarifaTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaTable> {
+  $$TarifaTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get fechaInicio => $state.composableBuilder(
+      column: $state.table.fechaInicio,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get fechaFin => $state.composableBuilder(
+      column: $state.table.fechaFin,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tarifaRack => $state.composableBuilder(
+      column: $state.table.tarifaRack,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaPreventa => $state.composableBuilder(
+      column: $state.table.tarifaPreventa,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get porcentajeDescuento => $state.composableBuilder(
+      column: $state.table.porcentajeDescuento,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get categoria => $state.composableBuilder(
+      column: $state.table.categoria,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get nivel => $state.composableBuilder(
+      column: $state.table.nivel,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get tarifaRealId => $state.composableBuilder(
+      column: $state.table.tarifaRealId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get responsableId => $state.composableBuilder(
+      column: $state.table.responsableId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TarifaTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaTable> {
+  $$TarifaTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get fechaInicio => $state.composableBuilder(
+      column: $state.table.fechaInicio,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get fechaFin => $state.composableBuilder(
+      column: $state.table.fechaFin,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tarifaRack => $state.composableBuilder(
+      column: $state.table.tarifaRack,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaPreventa => $state.composableBuilder(
+      column: $state.table.tarifaPreventa,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get porcentajeDescuento => $state.composableBuilder(
+      column: $state.table.porcentajeDescuento,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get categoria => $state.composableBuilder(
+      column: $state.table.categoria,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get nivel => $state.composableBuilder(
+      column: $state.table.nivel,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get tarifaRealId => $state.composableBuilder(
+      column: $state.table.tarifaRealId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get responsableId => $state.composableBuilder(
+      column: $state.table.responsableId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TarifaRealTableInsertCompanionBuilder = TarifaRealCompanion Function({
+  Value<int> id,
+  required DateTime fecha,
+  Value<String?> tipoHuesped,
+  Value<double?> tarifa,
+});
+typedef $$TarifaRealTableUpdateCompanionBuilder = TarifaRealCompanion Function({
+  Value<int> id,
+  Value<DateTime> fecha,
+  Value<String?> tipoHuesped,
+  Value<double?> tarifa,
+});
+
+class $$TarifaRealTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TarifaRealTable,
+    TarifaRealData,
+    $$TarifaRealTableFilterComposer,
+    $$TarifaRealTableOrderingComposer,
+    $$TarifaRealTableProcessedTableManager,
+    $$TarifaRealTableInsertCompanionBuilder,
+    $$TarifaRealTableUpdateCompanionBuilder> {
+  $$TarifaRealTableTableManager(_$AppDatabase db, $TarifaRealTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TarifaRealTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TarifaRealTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$TarifaRealTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<DateTime> fecha = const Value.absent(),
+            Value<String?> tipoHuesped = const Value.absent(),
+            Value<double?> tarifa = const Value.absent(),
+          }) =>
+              TarifaRealCompanion(
+            id: id,
+            fecha: fecha,
+            tipoHuesped: tipoHuesped,
+            tarifa: tarifa,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required DateTime fecha,
+            Value<String?> tipoHuesped = const Value.absent(),
+            Value<double?> tarifa = const Value.absent(),
+          }) =>
+              TarifaRealCompanion.insert(
+            id: id,
+            fecha: fecha,
+            tipoHuesped: tipoHuesped,
+            tarifa: tarifa,
+          ),
+        ));
+}
+
+class $$TarifaRealTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TarifaRealTable,
+    TarifaRealData,
+    $$TarifaRealTableFilterComposer,
+    $$TarifaRealTableOrderingComposer,
+    $$TarifaRealTableProcessedTableManager,
+    $$TarifaRealTableInsertCompanionBuilder,
+    $$TarifaRealTableUpdateCompanionBuilder> {
+  $$TarifaRealTableProcessedTableManager(super.$state);
+}
+
+class $$TarifaRealTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaRealTable> {
+  $$TarifaRealTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tipoHuesped => $state.composableBuilder(
+      column: $state.table.tipoHuesped,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifa => $state.composableBuilder(
+      column: $state.table.tarifa,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$TarifaRealTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaRealTable> {
+  $$TarifaRealTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
+      column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tipoHuesped => $state.composableBuilder(
+      column: $state.table.tipoHuesped,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifa => $state.composableBuilder(
+      column: $state.table.tarifa,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
@@ -3277,12 +4547,16 @@ class $$QuoteGroupTableOrderingComposer
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
-  $$UsersTableTableManager get users =>
-      $$UsersTableTableManager(_db, _db.users);
-  $$ReceiptQuoteTableTableManager get receiptQuote =>
-      $$ReceiptQuoteTableTableManager(_db, _db.receiptQuote);
-  $$QuoteTableTableManager get quote =>
-      $$QuoteTableTableManager(_db, _db.quote);
-  $$QuoteGroupTableTableManager get quoteGroup =>
-      $$QuoteGroupTableTableManager(_db, _db.quoteGroup);
+  $$UsuarioTableTableManager get usuario =>
+      $$UsuarioTableTableManager(_db, _db.usuario);
+  $$CotizacionTableTableManager get cotizacion =>
+      $$CotizacionTableTableManager(_db, _db.cotizacion);
+  $$HabitacionTableTableManager get habitacion =>
+      $$HabitacionTableTableManager(_db, _db.habitacion);
+  $$TarifaXDiaTableTableManager get tarifaXDia =>
+      $$TarifaXDiaTableTableManager(_db, _db.tarifaXDia);
+  $$TarifaTableTableManager get tarifa =>
+      $$TarifaTableTableManager(_db, _db.tarifa);
+  $$TarifaRealTableTableManager get tarifaReal =>
+      $$TarifaRealTableTableManager(_db, _db.tarifaReal);
 }

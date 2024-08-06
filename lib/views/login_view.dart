@@ -78,11 +78,21 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ? CrossAxisAlignment.start
                                 : CrossAxisAlignment.center,
                             children: [
-                              Image(
-                                image: const AssetImage(
-                                    "assets/image/logo_lobby.png"),
-                                width: screenWidth > 350 ? 220 : 170,
-                                color: Theme.of(context).primaryColor,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Image(
+                                    image: const AssetImage(
+                                        "assets/image/logo_lobby.png"),
+                                    width: screenWidth > 350 ? 220 : 170,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  TextStyles.standardText(
+                                    text: "V 1.2",
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ],
                               ),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
@@ -259,7 +269,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
       }
 
       if (!context.mounted) return;
-      User usuario = await AuthService()
+      UsuarioData usuario = await AuthService()
           .savePerfil(userNameController.text, passwordController.text);
 
       ref.read(userProvider.notifier).update((state) => usuario);

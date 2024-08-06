@@ -9,6 +9,7 @@ class Themes {
       primaryColor: Colors.white,
       primaryColorDark: DesktopColors.grisSemiPalido,
       primaryColorLight: DesktopColors.grisPalido,
+      dividerColor: DesktopColors.azulCielo,
     );
   }
 
@@ -18,6 +19,7 @@ class Themes {
       primaryColor: DesktopColors.prussianBlue,
       primaryColorDark: Colors.white,
       primaryColorLight: Colors.black87,
+      dividerColor: DesktopColors.cerulean,
     );
   }
 }

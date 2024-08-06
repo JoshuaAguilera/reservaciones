@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:generador_formato/models/comprobante_cotizacion_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:mailer/mailer.dart';
@@ -21,8 +21,8 @@ class SendQuoteService extends BaseService {
 
   Future<bool> sendQuoteMail(
     Document comprobantePDF,
-    ComprobanteCotizacion receiptQuotePresent,
-    List<Cotizacion> quotesPresent,
+    Cotizacion receiptQuotePresent,
+    List<Habitacion> quotesPresent,
   ) async {
     bool isSent = false;
 
@@ -56,7 +56,7 @@ class SendQuoteService extends BaseService {
 
     final message = Message()
       ..from = Address(username, username)
-      ..recipients.add(receiptQuotePresent.correo)
+      ..recipients.add(receiptQuotePresent.correoElectronico)
       ..subject =
           'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
       ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
@@ -81,11 +81,11 @@ class SendQuoteService extends BaseService {
   }
 
   Future<bool> sendQuoteWhatsApp(
-      ComprobanteCotizacion comprobante, List<Cotizacion> cotizaciones) async {
+      Cotizacion comprobante, List<Habitacion> cotizaciones) async {
     bool status = false;
-    var phone = comprobante.telefono;
+    var phone = comprobante.numeroTelefonico;
 
-    var message = "Estimad@ ${comprobante.nombre}," + "\n";
+    var message = "Estimad@ ${comprobante.nombreHuesped}," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";

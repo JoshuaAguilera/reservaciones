@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 
 import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
 
-class CotizacionIndividualCard extends StatefulWidget {
+class HabitacionItemRow extends StatefulWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final Habitacion habitacion;
   final bool compact;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
-  const CotizacionIndividualCard({
+  const HabitacionItemRow({
     super.key,
     required this.index,
-    required this.cotizacion,
+    required this.habitacion,
     required this.compact,
     this.onPressedEdit,
     this.onPressedDelete,
@@ -24,11 +24,11 @@ class CotizacionIndividualCard extends StatefulWidget {
   });
 
   @override
-  State<CotizacionIndividualCard> createState() =>
-      _CotizacionIndividualCardState();
+  State<HabitacionItemRow> createState() =>
+      _HabitacionItemRowState();
 }
 
-class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
+class _HabitacionItemRowState extends State<HabitacionItemRow> {
   bool selected = false;
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
           ? selected
               ? _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
@@ -47,7 +47,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.habitacion,
                   onPressedDelete: () {
                     setState(() {
                       selected = !selected;
@@ -61,7 +61,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
           : selected
               ? _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
@@ -71,7 +71,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.cotizacion,
+                  cotizacion: widget.habitacion,
                   onPressedDelete: () {
                     setState(() {
                       selected = !selected;
@@ -91,7 +91,7 @@ class _CotizacionIndividualCardState extends State<CotizacionIndividualCard> {
 
 class _TableRowCotizacion extends StatelessWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final Habitacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
@@ -108,7 +108,7 @@ class _TableRowCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: cotizacion.esPreVenta!
+      color: cotizacion.esPreventa!
           ? DesktopColors.cotIndPreColor
           : DesktopColors.cotIndColor,
       elevation: 5,
@@ -136,39 +136,39 @@ class _TableRowCotizacion extends StatelessWidget {
                       text: (index + 1).toString(),
                       aling: TextAlign.center,
                       overClip: true,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                     ),
                     TextStyles.standardText(
                       text:
-                          "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
+                          "${cotizacion.fechaCheckIn} a ${cotizacion.fechaCheckOut}",
                       aling: TextAlign.center,
                       overClip: true,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                     ),
                     TextStyles.standardText(
-                      text: cotizacion.adultos.toString(),
+                      text: cotizacion.folioHabitacion.toString(),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreVenta!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
-                    ),
-                    TextStyles.standardText(
-                      text: cotizacion.menores0a6.toString(),
-                      aling: TextAlign.center,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                       overClip: true,
                     ),
                     TextStyles.standardText(
-                      text: cotizacion.menores7a12.toString(),
+                      text: cotizacion.folioHabitacion.toString(),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
+                          ? null
+                          : DesktopColors.azulUltClaro,
+                      overClip: true,
+                    ),
+                    TextStyles.standardText(
+                      text: cotizacion.folioHabitacion.toString(),
+                      aling: TextAlign.center,
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                       overClip: true,
@@ -178,7 +178,7 @@ class _TableRowCotizacion extends StatelessWidget {
                           Utility.calculateTarifaDiaria(
                               cotizacion: cotizacion)),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                       overClip: true,
@@ -187,9 +187,9 @@ class _TableRowCotizacion extends StatelessWidget {
                       text: Utility.formatterNumber(
                           Utility.calculateTarifaDiaria(
                               cotizacion: cotizacion,
-                              esPreventa: cotizacion.esPreVenta!)),
+                              esPreventa: cotizacion.esPreventa!)),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreVenta!
+                      color: cotizacion.esPreventa!
                           ? null
                           : DesktopColors.azulUltClaro,
                       overClip: true,
@@ -202,7 +202,7 @@ class _TableRowCotizacion extends StatelessWidget {
                             onPressed: onPressedEdit,
                             icon: Icon(
                               Icons.edit,
-                              color: cotizacion.esPreVenta!
+                              color: cotizacion.esPreventa!
                                   ? DesktopColors.ceruleanOscure
                                   : DesktopColors.azulClaro,
                             ),
@@ -211,7 +211,7 @@ class _TableRowCotizacion extends StatelessWidget {
                             onPressed: onPressedDelete,
                             icon: Icon(
                               Icons.delete,
-                              color: cotizacion.esPreVenta!
+                              color: cotizacion.esPreventa!
                                   ? DesktopColors.prussianBlue
                                   : DesktopColors.azulCielo,
                             ),
@@ -229,7 +229,7 @@ class _TableRowCotizacion extends StatelessWidget {
                     " Plan: ${cotizacion.plan!}",
                 isBold: true,
                 color:
-                    cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+                    cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
               ),
             )
           ],
@@ -241,7 +241,7 @@ class _TableRowCotizacion extends StatelessWidget {
 
 class _ListTileCotizacion extends StatelessWidget {
   final int index;
-  final Cotizacion cotizacion;
+  final Habitacion cotizacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
@@ -258,7 +258,7 @@ class _ListTileCotizacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: cotizacion.esPreVenta!
+      color: cotizacion.esPreventa!
           ? DesktopColors.cotIndPreColor
           : DesktopColors.cotIndColor,
       elevation: 5,
@@ -266,44 +266,44 @@ class _ListTileCotizacion extends StatelessWidget {
         leading: TextStyles.TextSpecial(
           day: index + 1,
           colorTitle:
-              cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+              cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
           colorsubTitle:
-              cotizacion.esPreVenta! ? null : DesktopColors.azulCielo,
+              cotizacion.esPreventa! ? null : DesktopColors.azulCielo,
         ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
           text: "${cotizacion.categoria} / ${cotizacion.plan}",
           isBold: true,
-          color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+          color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
         ),
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           TextStyles.standardText(
-            text: "${cotizacion.fechaEntrada} a ${cotizacion.fechaSalida}",
-            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+            text: "${cotizacion.fechaCheckIn} a ${cotizacion.fechaCheckOut}",
+            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
           ),
           TextStyles.TextAsociative(
             "Tarifa real:",
             Utility.formatterNumber(
                 Utility.calculateTarifaDiaria(cotizacion: cotizacion)),
-            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
           ),
           TextStyles.TextAsociative(
             "Tarifa preventa: ",
             Utility.formatterNumber(Utility.calculateTarifaDiaria(
                 cotizacion: cotizacion, esPreventa: true)),
-            color: cotizacion.esPreVenta! ? null : DesktopColors.azulUltClaro,
+            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
           ),
           if (esDetalle)
             Wrap(
               children: [
                 TextStyles.TextAsociative(
-                    'Menores 0-6: ', "${cotizacion.menores0a6}    ",
+                    'Menores 0-6: ', "${cotizacion.folioHabitacion}    ",
                     color: DesktopColors.azulUltClaro),
                 TextStyles.TextAsociative(
-                    'Menores 7-12: ', "${cotizacion.menores7a12}    ",
+                    'Menores 7-12: ', "${cotizacion.folioHabitacion}    ",
                     color: DesktopColors.azulUltClaro),
-                TextStyles.TextAsociative('Adultos: ', "${cotizacion.adultos}",
+                TextStyles.TextAsociative('Adultos: ', "${cotizacion.folioHabitacion}",
                     color: DesktopColors.azulUltClaro),
               ],
             ),
@@ -342,7 +342,7 @@ class _ListTileCotizacion extends StatelessWidget {
     );
   }
 
-  Widget statisticsCustomers(Cotizacion cotizacion) {
+  Widget statisticsCustomers(Habitacion cotizacion) {
     return const Column(children: [
       Row(
         children: [],

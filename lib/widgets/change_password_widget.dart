@@ -16,6 +16,7 @@ class ChangePasswordWidget extends StatefulWidget {
     required this.passwordController,
     required this.isChanged,
     required this.userId,
+    required this.username,
     required this.isPasswordMail,
     this.notAskChange = false,
   });
@@ -23,6 +24,7 @@ class ChangePasswordWidget extends StatefulWidget {
   final TextEditingController passwordController;
   final void Function(bool value) isChanged;
   final int userId;
+  final String username;
   final bool isPasswordMail;
   final bool notAskChange;
 
@@ -54,23 +56,23 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
           readOnly: true,
         ),
       ),
-      if(!widget.notAskChange)
-      SizedBox(
-        height: canChangedKeyMail ? 0 : null,
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {
-              widget.isChanged.call(true);
-              setState(() => canChangedKeyMail = true);
-              Future.delayed(Durations.long1,
-                  () => setState(() => cancelChangedKeyMail = true));
-            },
-            child: TextStyles.buttonText(
-                text: "Cambiar contraseña  de correo", size: 12),
-          ),
-        ).animate(target: canChangedKeyMail ? 0 : 1).fadeIn(delay: 300.ms),
-      ),
+      if (!widget.notAskChange)
+        SizedBox(
+          height: canChangedKeyMail ? 0 : null,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                widget.isChanged.call(true);
+                setState(() => canChangedKeyMail = true);
+                Future.delayed(Durations.long1,
+                    () => setState(() => cancelChangedKeyMail = true));
+              },
+              child: TextStyles.buttonText(
+                  text: "Cambiar contraseña  de correo", size: 12),
+            ),
+          ).animate(target: canChangedKeyMail ? 0 : 1).fadeIn(delay: 300.ms),
+        ),
       SizedBox(
         height: cancelChangedKeyMail ? null : 0,
         child: Column(
@@ -138,6 +140,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       if (widget.isPasswordMail) {
                         if (await AuthService().updatePasswordMail(
                             widget.userId,
+                            widget.username,
                             EncrypterTool.encryptData(
                                 passwordMailConfirmController.text, null))) {
                           showSnackBar(
@@ -154,6 +157,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                       } else {
                         if (await AuthService().updatePasswordUser(
                             widget.userId,
+                            widget.username,
                             EncrypterTool.encryptData(
                                 passwordMailConfirmController.text, null))) {
                           showSnackBar(

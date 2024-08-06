@@ -4,7 +4,7 @@ import '../../models/prefijo_telefonico_model.dart';
 
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',
-  'HABITACIÓN DELUXE DOBLE O KING SIZE',
+  'HABITACIÓN DELUXE KING SIZE',
 ];
 
 const List<String> planes = <String>[

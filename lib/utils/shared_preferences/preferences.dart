@@ -16,6 +16,8 @@ class Preferences {
   static String _urlApi = '';
   static String _aplication = '';
   static bool _modeDark = false;
+  static int _numberQuotes = 0;
+  static int _userId = 0;
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -136,5 +138,23 @@ class Preferences {
   static set modeDark(bool value) {
     _modeDark = value;
     _prefs.setBool('modeDark', value);
+  }
+
+  static int get numberQuotes {
+    return _prefs.getInt('numberQuotes') ?? _numberQuotes;
+  }
+
+  static set numberQuotes(int numberQuotes) {
+    _numberQuotes = numberQuotes;
+    _prefs.setInt('numberQuotes', numberQuotes);
+  }
+
+  static int get userId {
+    return _prefs.getInt('userId') ?? _userId;
+  }
+
+  static set userId(int userId) {
+    _userId = userId;
+    _prefs.setInt('userId', userId);
   }
 }

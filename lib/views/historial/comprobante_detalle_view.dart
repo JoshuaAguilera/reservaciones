@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/providers/comprobante_provider.dart';
-import 'package:generador_formato/widgets/cotizacion_grupo_card.dart';
+import 'package:generador_formato/providers/cotizacion_provider.dart';
+import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -11,7 +11,6 @@ import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
-import '../../widgets/cotizacion_indiv_card.dart';
 import '../../widgets/text_styles.dart';
 
 class ComprobanteDetalleView extends ConsumerStatefulWidget {
@@ -35,7 +34,7 @@ class _ComprobanteDetalleViewState
 
   @override
   Widget build(BuildContext context) {
-    final comprobante = ref.watch(comprobanteDetalleProvider);
+    final cotizacion = ref.watch(cotizacionDetalleProvider);
     double screenHight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Padding(
@@ -66,7 +65,7 @@ class _ComprobanteDetalleViewState
                   Expanded(
                     child: TextStyles.titlePagText(
                       text:
-                          "Detalles de cotización - ${comprobante.folioCuotas}",
+                          "Detalles de cotización - ${cotizacion.folioPrincipal}",
                       overflow: TextOverflow.ellipsis,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -93,13 +92,13 @@ class _ComprobanteDetalleViewState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextStyles.TextAsociative(
-                                "Nombre: ", comprobante.nombre!,
+                                "Nombre: ", cotizacion.nombreHuesped!,
+                                size: 13),
+                            TextStyles.TextAsociative("Correo electronico: ",
+                                cotizacion.correoElectronico!,
                                 size: 13),
                             TextStyles.TextAsociative(
-                                "Correo electronico: ", comprobante.correo!,
-                                size: 13),
-                            TextStyles.TextAsociative(
-                                "Telefono: ", comprobante.telefono!,
+                                "Telefono: ", cotizacion.numeroTelefonico!,
                                 size: 13),
                           ],
                         ),
@@ -120,19 +119,19 @@ class _ComprobanteDetalleViewState
                           child: Table(
                             columnWidths: {
                               0: FractionColumnWidth(
-                                  (!comprobante.esGrupal!) ? .05 : .18),
+                                  (!cotizacion.esGrupo!) ? .05 : .18),
                               1: FractionColumnWidth(
-                                  (!comprobante.esGrupal!) ? .15 : 0.22),
+                                  (!cotizacion.esGrupo!) ? .15 : 0.22),
                               2: const FractionColumnWidth(0.09),
                               3: FractionColumnWidth(
-                                  (!comprobante.esGrupal!) ? .1 : 0.22),
+                                  (!cotizacion.esGrupo!) ? .1 : 0.22),
                               4: const FractionColumnWidth(.1),
                               5: FractionColumnWidth(
-                                  (!comprobante.esGrupal!) ? .1 : 0.15),
+                                  (!cotizacion.esGrupo!) ? .1 : 0.15),
                             },
                             children: [
                               TableRow(children: [
-                                if (!comprobante.esGrupal!)
+                                if (!cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text: "#",
                                       aling: TextAlign.center,
@@ -143,45 +142,45 @@ class _ComprobanteDetalleViewState
                                     aling: TextAlign.center,
                                     color: Theme.of(context).primaryColor,
                                     overClip: true),
-                                if (!comprobante.esGrupal!)
+                                if (!cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text: "Adultos",
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
                                       overClip: true),
-                                if (!comprobante.esGrupal!)
+                                if (!cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text: "Menores 0-6",
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
                                       overClip: true),
                                 TextStyles.standardText(
-                                    text: (!comprobante.esGrupal!)
+                                    text: (!cotizacion.esGrupo!)
                                         ? "Menores 7-12"
                                         : "1 o 2 Adultos",
                                     aling: TextAlign.center,
                                     color: Theme.of(context).primaryColor,
                                     overClip: true),
                                 TextStyles.standardText(
-                                    text: (!comprobante.esGrupal!)
+                                    text: (!cotizacion.esGrupo!)
                                         ? "Tarifa \nReal"
                                         : "3 Adultos",
                                     aling: TextAlign.center,
                                     color: Theme.of(context).primaryColor,
                                     overClip: true),
-                                if (comprobante.esGrupal!)
+                                if (cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text: "  4 Adultos  ",
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
                                       overClip: true),
-                                if (comprobante.esGrupal!)
+                                if (cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text: "Menores 7 a 12 Años",
                                       color: Theme.of(context).primaryColor,
                                       aling: TextAlign.center,
                                       overClip: true),
-                                if (!comprobante.esGrupal!)
+                                if (!cotizacion.esGrupo!)
                                   TextStyles.standardText(
                                       text:
                                           "Tarifa de preventa oferta por tiempo limitado",
@@ -193,24 +192,23 @@ class _ComprobanteDetalleViewState
                           ),
                         ),
                       ),
-                    if (!comprobante.esGrupal!)
+                    if (!cotizacion.esGrupo!)
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: SizedBox(
                           height: Utility.limitHeightList(
-                              comprobante.cotizacionesInd!.length),
+                              cotizacion.habitaciones!.length),
                           child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            itemCount: comprobante.cotizacionesInd!.length,
+                            itemCount: cotizacion.habitaciones!.length,
                             itemBuilder: (context, index) {
-                              if (index < comprobante.cotizacionesInd!.length) {
-                                return CotizacionIndividualCard(
-                                  key: ObjectKey(comprobante
-                                      .cotizacionesInd![index].hashCode),
+                              if (index < cotizacion.habitaciones!.length) {
+                                return HabitacionItemRow(
+                                  key: ObjectKey(
+                                      cotizacion.habitaciones![index].hashCode),
                                   index: index,
-                                  cotizacion:
-                                      comprobante.cotizacionesInd![index],
+                                  habitacion: cotizacion.habitaciones![index],
                                   compact: !Utility.isResizable(
                                       extended: widget.sideController.extended,
                                       context: context),
@@ -221,29 +219,27 @@ class _ComprobanteDetalleViewState
                           ),
                         ),
                       ),
-                    if (comprobante.esGrupal!)
+                    if (cotizacion.esGrupo!)
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: SizedBox(
                           height: Utility.limitHeightList(
-                              comprobante.cotizacionesGrup!.length),
+                              cotizacion.habitaciones!.length),
                           child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            itemCount: comprobante.cotizacionesGrup!.length,
+                            itemCount: cotizacion.habitaciones!.length,
                             itemBuilder: (context, index) {
-                              if (index <
-                                  comprobante.cotizacionesGrup!.length) {
-                                return CotizacionGrupoCard(
-                                  key: ObjectKey(comprobante
-                                      .cotizacionesGrup![index].hashCode),
+                              if (index < cotizacion.habitaciones!.length) {
+                                return HabitacionItemRow(
+                                  key: ObjectKey(
+                                      cotizacion.habitaciones![index].hashCode),
                                   index: index,
-                                  cotGroup:
-                                      comprobante.cotizacionesGrup![index],
+                                  habitacion: cotizacion.habitaciones![index],
                                   compact: !Utility.isResizable(
                                       extended: widget.sideController.extended,
                                       context: context),
-                                  isDetail: true,
+                                  esDetalle: true,
                                 );
                               }
                             },
@@ -263,17 +259,15 @@ class _ComprobanteDetalleViewState
                           onPressed: () async {
                             setState(() => isLoading = true);
 
-                            if (comprobante.esGrupal!) {
+                            if (cotizacion.esGrupo!) {
                               comprobantePDF = await GeneradorDocService()
                                   .generarComprobanteCotizacionGrupal(
-                                      comprobante.cotizacionesGrup!,
-                                      comprobante);
+                                      cotizacion.habitaciones!, cotizacion);
                             } else {
                               comprobantePDF = await GeneradorDocService()
                                   .generarComprobanteCotizacionIndividual(
-                                      cotizacionesInd:
-                                          comprobante.cotizacionesInd!,
-                                      comprobante: comprobante);
+                                      habitaciones: cotizacion.habitaciones!,
+                                      cotizacion: cotizacion);
                             }
 
                             Future.delayed(

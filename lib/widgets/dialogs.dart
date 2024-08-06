@@ -1,9 +1,7 @@
-import 'package:encrypt/encrypt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_grupal_model.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
@@ -11,50 +9,51 @@ import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/widgets/number_input_with_increment_decrement.dart';
 
 import '../utils/helpers/constants.dart';
-import '../models/cotizacion_model.dart';
+import '../models/habitacion_model.dart';
 
 class Dialogs {
-  Widget habitacionIndividualDialog({
+  Widget habitacionDialog({
     required BuildContext buildContext,
-    Cotizacion? cotizacion,
-    void Function(Cotizacion?)? onInsert,
-    void Function(Cotizacion?)? onUpdate,
+    Habitacion? cotizacion,
+    void Function(Habitacion?)? onInsert,
+    void Function(Habitacion?)? onUpdate,
   }) {
-    Cotizacion nuevaCotizacion = cotizacion ??
-        Cotizacion(
+    Habitacion nuevaHabitacion = cotizacion ??
+        Habitacion(
           categoria: categorias.first,
           plan: planes.first,
-          fechaEntrada: DateTime.now().toString().substring(0, 10),
+          fechaCheckIn: DateTime.now().toString().substring(0, 10),
           adultos: 0,
           menores0a6: 0,
           menores7a12: 0,
+          paxAdic: 0,
         );
     final _formKeyHabitacion = GlobalKey<FormState>();
     TextEditingController _fechaEntrada = TextEditingController(
         text: cotizacion != null
-            ? cotizacion.fechaEntrada
+            ? cotizacion.fechaCheckIn
             : DateTime.now().toString().substring(0, 10));
     TextEditingController _fechaSalida = TextEditingController(
         text: cotizacion != null
-            ? cotizacion.fechaSalida
+            ? cotizacion.fechaCheckOut
             : DateTime.now()
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    bool esOferta = cotizacion != null ? cotizacion.esPreVenta! : false;
+    bool esOferta = cotizacion != null ? cotizacion.esPreventa! : false;
     bool isError = false;
 
     return StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
         insetPadding: const EdgeInsets.all(10),
         title: TextStyles.titleText(
-          text: cotizacion != null ? "Editar" : "Agregar" " cotización",
+          text: cotizacion != null ? "Editar" : "Agregar" " habitación",
           color: Theme.of(context).primaryColor,
         ),
         content: SingleChildScrollView(
@@ -62,26 +61,6 @@ class Dialogs {
             key: _formKeyHabitacion,
             child: Column(
               children: [
-                CheckboxListTile.adaptive(
-                  title: TextStyles.standardText(
-                    text: "Cotización con preventa oferta de tiempo limitado",
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  value: esOferta,
-                  onChanged: (value) {
-                    setState(() {
-                      esOferta = value!;
-                    });
-                    if (!value!) {
-                      Future.delayed(Durations.medium1, () {
-                        if (_formKeyHabitacion.currentState!.validate()) {}
-                      });
-                    }
-                  },
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                  contentPadding: const EdgeInsets.all(0),
-                ),
-                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -97,7 +76,7 @@ class Dialogs {
                             ? cotizacion.categoria!
                             : categorias.first,
                         onSelected: (String? value) {
-                          nuevaCotizacion.categoria = value!;
+                          nuevaHabitacion.categoria = value!;
                         },
                         elements: categorias,
                         screenWidth: MediaQuery.of(context).size.width),
@@ -118,7 +97,7 @@ class Dialogs {
                       initialSelection:
                           cotizacion != null ? cotizacion.plan! : planes.first,
                       onSelected: (String? value) {
-                        nuevaCotizacion.plan = value!;
+                        nuevaHabitacion.plan = value!;
                       },
                       elements: planes,
                       screenWidth: MediaQuery.of(context).size.width,
@@ -126,7 +105,7 @@ class Dialogs {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
@@ -163,160 +142,41 @@ class Dialogs {
                   children: [
                     TableRow(children: [
                       TextStyles.standardText(
-                        text: "Adultos",
-                        aling: TextAlign.center,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      const SizedBox(),
-                      const SizedBox()
+                          text: "Adultos",
+                          aling: TextAlign.center,
+                          color: Theme.of(context).primaryColor),
+                      TextStyles.standardText(
+                          text: "Menores 0-6",
+                          aling: TextAlign.center,
+                          color: Theme.of(context).primaryColor),
+                      TextStyles.standardText(
+                          text: "Menores 7-12",
+                          aling: TextAlign.center,
+                          color: Theme.of(context).primaryColor),
                     ]),
                     TableRow(children: [
                       NumberInputWithIncrementDecrement(
-                        onChanged: (p0) => setState(
-                            () => nuevaCotizacion.adultos = int.tryParse(p0)),
+                        onChanged: (p0) {
+                          nuevaHabitacion.adultos = int.tryParse(p0);
+                        },
                         initialValue: cotizacion?.adultos!.toString(),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: SizedBox(
-                          width: 150,
-                          child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa adulto",
-                              msgError: "Campo requerido*",
-                              isNumeric: true,
-                              isDecimal: true,
-                              isMoneda: true,
-                              initialValue: cotizacion != null
-                                  ? (nuevaCotizacion.tarifaRealAdulto ?? "")
-                                      .toString()
-                                  : null,
-                              onChanged: (p0) => setState(() => nuevaCotizacion
-                                  .tarifaRealAdulto = double.tryParse(p0)),
-                              isRequired: nuevaCotizacion.adultos! > 0),
+                        child: NumberInputWithIncrementDecrement(
+                          onChanged: (p0) {
+                            nuevaHabitacion.menores0a6 = int.tryParse(p0);
+                          },
+                          initialValue: cotizacion?.menores0a6!.toString(),
                         ),
                       ),
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Tarifa preventa adulto",
-                          msgError: "Campo requerido*",
-                          isNumeric: true,
-                          enabled: esOferta,
-                          isRequired:
-                              esOferta && (nuevaCotizacion.adultos! > 0),
-                          isDecimal: true,
-                          isMoneda: true,
-                          initialValue: cotizacion != null
-                              ? (cotizacion.tarifaPreventaAdulto ?? "")
-                                  .toString()
-                              : null,
-                          onChanged: (p0) => setState(() => nuevaCotizacion
-                              .tarifaPreventaAdulto = double.tryParse(p0)),
-                        ),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      TextStyles.standardText(
-                        text: "Menores 7-12",
-                        aling: TextAlign.center,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      const SizedBox(),
-                      const SizedBox()
-                    ]),
-                    TableRow(children: [
                       NumberInputWithIncrementDecrement(
-                        onChanged: (p0) => setState(() =>
-                            nuevaCotizacion.menores7a12 = int.tryParse(p0)),
+                        onChanged: (p0) {
+                          nuevaHabitacion.menores7a12 = int.tryParse(p0);
+                        },
                         initialValue: cotizacion?.menores7a12!.toString(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: SizedBox(
-                          width: 150,
-                          child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa menores",
-                              msgError: "Campo requerido*",
-                              isNumeric: true,
-                              isDecimal: true,
-                              isMoneda: true,
-                              initialValue: cotizacion != null
-                                  ? (nuevaCotizacion.tarifaRealMenor ?? "")
-                                      .toString()
-                                  : null,
-                              onChanged: (p0) => setState(() => nuevaCotizacion
-                                  .tarifaRealMenor = double.tryParse(p0)),
-                              isRequired: nuevaCotizacion.menores7a12! > 0),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 150,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Tarifa preventa menores",
-                          msgError: "Campo requerido*",
-                          isNumeric: true,
-                          isDecimal: true,
-                          isMoneda: true,
-                          isRequired:
-                              esOferta && (nuevaCotizacion.menores7a12! > 0),
-                          enabled: esOferta,
-                          initialValue: cotizacion != null
-                              ? (cotizacion.tarifaPreventaMenor ?? "")
-                                  .toString()
-                              : null,
-                          onChanged: (p0) => setState(() => nuevaCotizacion
-                              .tarifaPreventaMenor = double.tryParse(p0)),
-                        ),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      TextStyles.standardText(
-                        text: "Menores 0-6",
-                        aling: TextAlign.center,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      const SizedBox(),
-                      const SizedBox()
-                    ]),
-                    TableRow(children: [
-                      NumberInputWithIncrementDecrement(
-                        onChanged: (p0) => setState(() =>
-                            nuevaCotizacion.menores0a6 = int.tryParse(p0)),
-                        initialValue: cotizacion?.menores0a6!.toString(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18),
-                        child: SizedBox(
-                          child: Center(
-                            child: esOferta
-                                ? TextStyles.standardText(
-                                    aling: TextAlign.right,
-                                    size: 15,
-                                    overClip: true,
-                                    text:
-                                        "Tarifa preventa diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion, esPreventa: true))}",
-                                    isBold: true,
-                                    color: Theme.of(context).primaryColor,
-                                  )
-                                : const SizedBox(),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 18.0),
-                        child: SizedBox(
-                          child: TextStyles.standardText(
-                            aling: TextAlign.right,
-                            size: 15,
-                            overClip: true,
-                            text:
-                                "Tarifa real diaria: ${Utility.formatterNumber(Utility.calculateTarifaDiaria(cotizacion: nuevaCotizacion))}",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
                       )
-                    ])
+                    ]),
                   ],
                 ),
                 SizedBox(
@@ -335,10 +195,10 @@ class Dialogs {
           TextButton(
               onPressed: () {
                 if (_formKeyHabitacion.currentState!.validate()) {
-                  nuevaCotizacion.fechaEntrada = _fechaEntrada.text;
-                  nuevaCotizacion.fechaSalida = _fechaSalida.text;
-                  nuevaCotizacion.esPreVenta = esOferta;
-                  if (nuevaCotizacion.adultos == 0) {
+                  nuevaHabitacion.fechaCheckIn = _fechaEntrada.text;
+                  nuevaHabitacion.fechaCheckOut = _fechaSalida.text;
+                  nuevaHabitacion.esPreventa = esOferta;
+                  if (nuevaHabitacion.adultos == 0) {
                     setState(() => isError = true);
                     return;
                   } else {
@@ -346,10 +206,10 @@ class Dialogs {
                   }
 
                   if (onUpdate != null) {
-                    onUpdate.call(nuevaCotizacion);
+                    onUpdate.call(nuevaHabitacion);
                   }
 
-                  Navigator.of(buildContext).pop(nuevaCotizacion);
+                  Navigator.of(buildContext).pop(nuevaHabitacion);
                 }
               },
               child: TextStyles.buttonText(
@@ -367,9 +227,9 @@ class Dialogs {
 
   Widget habitacionGrupoDialog({
     required BuildContext buildContext,
-    CotizacionGrupal? cotizacion,
-    void Function(CotizacionGrupal?)? onInsert,
-    void Function(CotizacionGrupal?)? onUpdate,
+    Habitacion? habitacion,
+    void Function(Habitacion?)? onInsert,
+    void Function(Habitacion?)? onUpdate,
     required BuildContext context,
   }) {
     //data Quote
@@ -378,29 +238,30 @@ class Dialogs {
 
     final _formKeyHabitacion = GlobalKey<FormState>();
     TextEditingController _fechaEntrada = TextEditingController(
-        text: cotizacion != null
-            ? cotizacion.fechaEntrada
+        text: habitacion != null
+            ? habitacion.fechaCheckIn
             : DateTime.now().toString().substring(0, 10));
     TextEditingController _fechaSalida = TextEditingController(
-        text: cotizacion != null
-            ? cotizacion.fechaSalida
+        text: habitacion != null
+            ? habitacion.fechaCheckOut
             : DateTime.now()
                 .add(const Duration(days: 1))
                 .toString()
                 .substring(0, 10));
-    TextEditingController _adults1_2Controller = TextEditingController(
-        text: cotizacion != null ? cotizacion.tarifaAdulto1_2.toString() : '');
-    TextEditingController _adults3Controller = TextEditingController(
-        text: cotizacion != null ? cotizacion.tarifaAdulto3.toString() : '');
-    TextEditingController _adults4Controller = TextEditingController(
-        text: cotizacion != null ? cotizacion.tarifaAdulto4.toString() : '');
-    TextEditingController _minors7_12Controller = TextEditingController(
-        text: cotizacion != null ? cotizacion.tarifaMenor.toString() : '');
+    TextEditingController _adults1_2Controller = TextEditingController();
+    // text: habitacion != null ? habitacion.tarifaAdulto1_2.toString() : '');
+    TextEditingController _adults3Controller = TextEditingController();
+    // text: habitacion != null ? habitacion.tarifaAdulto3.toString() : '');
+    TextEditingController _adults4Controller = TextEditingController();
+    // text: habitacion != null ? habitacion.tarifaAdulto4.toString() : '');
+    TextEditingController _minors7_12Controller = TextEditingController();
+    // TextEditingController(
+    //     text: habitacion != null ? habitacion.tarifaMenor.toString() : '');
 
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
-          text: cotizacion != null ? "Editar habitación" : "Agregar habitación",
+          text: habitacion != null ? "Editar habitación" : "Agregar habitación",
           color: Theme.of(context).primaryColor),
       content: StatefulBuilder(
         builder: (context, setState) {
@@ -420,7 +281,7 @@ class Dialogs {
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
                           initialSelection:
-                              cotizacion != null ? cotizacion.categoria! : type,
+                              habitacion != null ? habitacion.categoria! : type,
                           onSelected: (String? value) {
                             type = value!;
                           },
@@ -441,7 +302,7 @@ class Dialogs {
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
                         initialSelection:
-                            cotizacion != null ? cotizacion.plan! : plan,
+                            habitacion != null ? habitacion.plan! : plan,
                         onSelected: (String? value) {
                           plan = value!;
                         },
@@ -554,28 +415,28 @@ class Dialogs {
                 return;
               }
 
-              CotizacionGrupal cotGrup = CotizacionGrupal();
-              cotGrup.categoria = type;
-              cotGrup.plan = plan;
-              cotGrup.fechaEntrada = _fechaEntrada.text;
-              cotGrup.fechaSalida = _fechaSalida.text;
-              cotGrup.tarifaAdulto1_2 = double.parse(_adults1_2Controller.text);
-              cotGrup.tarifaAdulto3 = double.parse(_adults3Controller.text);
-              cotGrup.tarifaAdulto4 = double.parse(_adults4Controller.text);
-              cotGrup.tarifaMenor = double.parse(_minors7_12Controller.text);
+              // Cotizacion cotGrup = CotizacionGrupal();
+              // cotGrup.categoria = type;
+              // cotGrup.plan = plan;
+              // cotGrup.fechaEntrada = _fechaEntrada.text;
+              // cotGrup.fechaSalida = _fechaSalida.text;
+              // cotGrup.tarifaAdulto1_2 = double.parse(_adults1_2Controller.text);
+              // cotGrup.tarifaAdulto3 = double.parse(_adults3Controller.text);
+              // cotGrup.tarifaAdulto4 = double.parse(_adults4Controller.text);
+              // cotGrup.tarifaMenor = double.parse(_minors7_12Controller.text);
 
-              if (onInsert != null) {
-                onInsert.call(cotGrup);
-              }
+              // if (onInsert != null) {
+              //   onInsert.call(cotGrup);
+              // }
 
-              if (onUpdate != null) {
-                onUpdate.call(cotGrup);
-              }
+              // if (onUpdate != null) {
+              //   onUpdate.call(cotGrup);
+              // }
 
               Navigator.of(buildContext).pop();
             },
             child: TextStyles.buttonText(
-                text: cotizacion != null ? "Editar" : "Agregar")),
+                text: habitacion != null ? "Editar" : "Agregar")),
         TextButton(
             onPressed: () {
               Navigator.pop(buildContext);
@@ -587,18 +448,18 @@ class Dialogs {
 
   Widget userFormDialog({
     required BuildContext buildContext,
-    User? usuario,
-    void Function(User?)? onInsert,
-    void Function(User?)? onUpdate,
+    UsuarioData? usuario,
+    void Function(UsuarioData?)? onInsert,
+    void Function(UsuarioData?)? onUpdate,
   }) {
     String rol = roles.first;
     bool inProcess = false;
 
     final _formKeyUsuario = GlobalKey<FormState>();
     final TextEditingController nameController =
-        TextEditingController(text: usuario != null ? usuario.name : '');
-    final TextEditingController mailController =
-        TextEditingController(text: usuario != null ? usuario.mail : '');
+        TextEditingController(text: usuario != null ? usuario.nombre : '');
+    final TextEditingController mailController = TextEditingController(
+        text: usuario != null ? usuario.correoElectronico : '');
     final TextEditingController passwordNewController = TextEditingController();
     final TextEditingController passwordConfirmController =
         TextEditingController();
@@ -611,9 +472,9 @@ class Dialogs {
     final TextEditingController passwordMailEditController =
         TextEditingController(
             text: usuario != null
-                ? (usuario.passwordMail != null &&
-                        usuario.passwordMail!.isNotEmpty)
-                    ? EncrypterTool.decryptData(usuario.passwordMail!, null)
+                ? (usuario.passwordCorreo != null &&
+                        usuario.passwordCorreo!.isNotEmpty)
+                    ? EncrypterTool.decryptData(usuario.passwordCorreo!, null)
                     : ''
                 : '');
     return StatefulBuilder(builder: (context, setState) {
@@ -663,22 +524,45 @@ class Dialogs {
                                 passwordController: passwordEditController,
                                 isChanged: (value) {},
                                 userId: usuario.id,
+                                username: usuario.username,
                                 isPasswordMail: false,
                                 notAskChange:
                                     passwordEditController.text.isEmpty,
                               ),
                             ),
                             const SizedBox(width: 10),
-                            Expanded(
-                              child: ChangePasswordWidget(
-                                passwordController: passwordMailEditController,
-                                isChanged: (value) {},
-                                userId: usuario.id,
-                                isPasswordMail: true,
-                                notAskChange:
-                                    passwordMailEditController.text.isEmpty,
+                            if (usuario != null &&
+                                passwordMailEditController.text.isEmpty)
+                              Expanded(
+                                child:
+                                    TextFormFieldCustom.textFormFieldwithBorder(
+                                  name: "Contraseña de correo",
+                                  passwordVisible: true,
+                                  isPassword: true,
+                                  controller: passwordMailEditController,
+                                  validator: (p0) {
+                                    if (p0 == null ||
+                                        p0.isEmpty ||
+                                        p0.length < 4) {
+                                      return "La contraseña debe de tener al menos 4 caracteres*";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              )
+                            else
+                              Expanded(
+                                child: ChangePasswordWidget(
+                                  passwordController:
+                                      passwordMailEditController,
+                                  isChanged: (value) {},
+                                  userId: usuario.id,
+                                  username: usuario.username,
+                                  isPasswordMail: true,
+                                  notAskChange:
+                                      passwordMailEditController.text.isEmpty,
+                                ),
                               ),
-                            ),
                           ]),
                     ),
                   if (usuario == null)
@@ -728,7 +612,7 @@ class Dialogs {
                           color: Theme.of(context).primaryColor),
                       const SizedBox(width: 15),
                       CustomDropdown.dropdownMenuCustom(
-                        initialSelection: rol,
+                        initialSelection: usuario != null ? usuario.rol! : rol,
                         onSelected: (String? value) {
                           rol = value!;
                         },
@@ -763,20 +647,29 @@ class Dialogs {
                 return;
               }
 
-              User usuario = User(
-                id: 0,
-                name: nameController.text,
-                password:
-                    EncrypterTool.encryptData(passwordNewController.text, null),
-                rol: rol,
-              );
+              UsuarioData user = usuario != null
+                  ? UsuarioData(
+                      id: usuario.id,
+                      username: nameController.text,
+                      correoElectronico: mailController.text,
+                      passwordCorreo: EncrypterTool.encryptData(
+                          passwordMailEditController.text, null),
+                      rol: rol,
+                    )
+                  : UsuarioData(
+                      id: 0,
+                      username: nameController.text,
+                      password: EncrypterTool.encryptData(
+                          passwordNewController.text, null),
+                      rol: rol,
+                    );
 
               if (onInsert != null) {
-                onInsert.call(usuario);
+                onInsert.call(user);
               }
 
               if (onUpdate != null) {
-                onUpdate.call(usuario);
+                onUpdate.call(user);
               }
               setState(() => inProcess = false);
 

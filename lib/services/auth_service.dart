@@ -6,76 +6,86 @@ import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import '../utils/encrypt/encrypter.dart';
 
 class AuthService extends BaseService {
-  Future<bool> foundUserName(String userName) async {
+  Future<bool> foundUserName(String userName, [int? id]) async {
     final db = AppDatabase();
-    List<User> users = await db.foundUserByName(userName);
+    List<UsuarioData> users = await db.getUsuariosByUsername(userName);
     db.close();
+
+    // if(id != null) {
+    //   return users.
+
+    // }
     return users.isNotEmpty;
   }
 
   Future<bool> loginUser(String userName, String password) async {
     final db = AppDatabase();
-    List<User> users =
+    List<UsuarioData> users =
         await db.loginUser(userName, EncrypterTool.encryptData(password, null));
     db.close();
     return users.isNotEmpty;
   }
 
-  Future<User> savePerfil(String user, String password) async {
+  Future<UsuarioData> savePerfil(String user, String password) async {
     final db = AppDatabase();
-    List<User> users =
+    List<UsuarioData> users =
         await db.loginUser(user, EncrypterTool.encryptData(password, null));
 
-    Preferences.mail = users.first.mail ?? '';
-    Preferences.passwordMail = users.first.passwordMail ?? '';
-    Preferences.phone = users.first.phone ?? '';
+    Preferences.mail = users.first.correoElectronico ?? '';
+    Preferences.passwordMail = users.first.passwordCorreo ?? '';
+    Preferences.phone = users.first.telefono ?? '';
     Preferences.rol = users.first.rol ?? '';
-    Preferences.username = users.first.name ?? '';
+    Preferences.username = users.first.username ?? '';
     Preferences.password = users.first.password ?? '';
 
-    Preferences.firstName = users.first.firstName ?? '';
-    Preferences.lastName = users.first.secondName ?? '';
-    Preferences.birthDate = users.first.birthDate ?? '';
+    Preferences.firstName = users.first.nombre ?? '';
+    Preferences.lastName = users.first.apellido ?? '';
+    Preferences.birthDate = users.first.fechaNacimiento ?? '';
+    Preferences.numberQuotes = users.first.numCotizaciones ?? 0;
+
     db.close();
 
     return users.first;
   }
 
-  Future<bool> updateUser(User user) async {
+  Future<bool> updateUser(UsuarioData user) async {
     bool success = false;
 
     final db = AppDatabase();
-    int response = await db.updateInfoUser(user);
+    int response = await db.updateUsuario(user);
     success = db == 1;
     db.close();
 
     return success;
   }
 
-  Future<bool> updatePasswordUser(int userId, String newPassword) async {
+  Future<bool> updatePasswordUser(
+      int userId, String username, String newPassword) async {
     bool success = false;
 
     final db = AppDatabase();
-    int response = await db.updatePasswordUser(userId, newPassword);
+    int response = await db.updatePasswordUser(userId, username, newPassword);
     success = db == 1;
     db.close();
 
     return success;
   }
 
-  Future<bool> updatePasswordMail(int userId, String newPassword) async {
+  Future<bool> updatePasswordMail(
+      int userId, String username, String newPassword) async {
     bool success = false;
 
     final db = AppDatabase();
-    int response = await db.updatePasswordMailUser(userId, newPassword);
+    int response =
+        await db.updatePasswordMailUser(userId, username, newPassword);
     success = db == 1;
     db.close();
 
     return success;
   }
 
-  Future<List<User>> getUsers() async {
-    List<User> users = [];
+  Future<List<UsuarioData>> getUsers() async {
+    List<UsuarioData> users = [];
 
     final db = AppDatabase();
     users = await db.getListUser();
@@ -84,13 +94,13 @@ class AuthService extends BaseService {
     return users;
   }
 
-  Future<bool> saveUsers(User? user) async {
+  Future<bool> saveUsers(UsuarioData? user) async {
     final database = AppDatabase();
 
     try {
-      await database.into(database.users).insert(
-            UsersCompanion.insert(
-              name: Value(user?.name ?? ''),
+      await database.into(database.usuario).insert(
+            UsuarioCompanion.insert(
+              username: user?.username ?? '',
               password: Value(user?.password ?? ''),
               rol: Value(user?.rol ?? ''),
             ),
