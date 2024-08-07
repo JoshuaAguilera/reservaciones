@@ -100,6 +100,8 @@ class TextStyles {
     String subtitle = "Num",
     Color? colorTitle,
     Color? colorsubTitle,
+    double sizeTitle = 22,
+    double sizeSubtitle = 13,
   }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
@@ -110,14 +112,12 @@ class TextStyles {
         children: [
           titleText(
               text: title ?? numeroFormateado,
-              size: 22,
+              size: sizeTitle,
               color: colorTitle,
               textAlign: TextAlign.center),
           if (subtitle != "NUM")
             standardText(
-              text: subtitle,
-              color: colorsubTitle,
-            ),
+                text: subtitle, color: colorsubTitle, size: sizeSubtitle),
         ]);
   }
 
@@ -197,18 +197,26 @@ class TextStyles {
   }
 
   static RichText TextAsociative(String title, String content,
-      {bool isInverted = false, double size = 12, Color? color}) {
+      {bool isInverted = false,
+      double size = 12,
+      Color? color,
+      bool boldInversed = false}) {
     return RichText(
       text: TextSpan(children: [
         if (!isInverted)
           TextSpan(
               text: title,
-              style: styleStandar(isBold: true, size: size, color: color)),
-        TextSpan(text: content, style: styleStandar(size: size, color: color)),
+              style: styleStandar(
+                  isBold: !boldInversed, size: size, color: color)),
+        TextSpan(
+            text: content,
+            style:
+                styleStandar(size: size, color: color, isBold: boldInversed)),
         if (isInverted)
           TextSpan(
               text: title,
-              style: styleStandar(isBold: true, size: size, color: color)),
+              style:
+                  styleStandar(isBold: !boldInversed, size: size, color: color)),
       ]),
     );
   }

@@ -49,21 +49,6 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   child: Buttons.commonButton(
                     text: "Agregar habitación",
                     onPressed: () {
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) {
-                      //     return Dialogs()
-                      //         .habitacionDialog(
-                      //             buildContext:
-                      //                 context);
-                      //   },
-                      // ).then((value) {
-                      //   if (value != null) {
-                      //     setState(() =>
-                      //         cotizacionesIndividuales
-                      //             .add(value));
-                      //   }
-                      // });
                       widget.nuevaHabitacion!.call();
                     },
                   )),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -39,7 +40,7 @@ class TextFormFieldCustom {
             borderRadius: BorderRadius.circular(2),
           ),
           constraints: BoxConstraints(
-            minWidth: 270,
+            minWidth: 110,
             minHeight: 25.0,
             maxHeight: maxHeight,
             maxWidth: maxWidth ?? double.infinity,
@@ -103,6 +104,14 @@ class TextFormFieldCustom {
                       fontFamily: "poppins_regular",
                       fontSize: 13,
                     ),
+                    prefixIcon: isMoneda
+                        ? const Icon(
+                            CupertinoIcons.money_dollar,
+                            size: 20,
+                          )
+                        : null,
+                    prefixIconConstraints:
+                        const BoxConstraints(maxWidth: 20, minWidth: 20),
                     suffixIcon: isPassword
                         ? IconButton(
                             icon: Icon(
