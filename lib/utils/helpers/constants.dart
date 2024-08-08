@@ -156,6 +156,13 @@ const List<String> dayNames = [
   "Viernes",
   "Sabado",
   "Domingo",
+  "Lunes",
+  "Martes",
+  "Miercoles",
+  "Jueves",
+  "Viernes",
+  "Sabado",
+  "Domingo",
 ];
 
 const List<String> typeSettings = [

@@ -24,13 +24,14 @@ class TextStyles {
       {double size = 13,
       bool isBold = false,
       bool overClip = false,
-      Color? color}) {
+      Color? color,
+      TextOverflow overflow = TextOverflow.ellipsis}) {
     return TextStyle(
         fontFamily: "poppins_regular",
         color: color ?? DesktopColors.prussianBlue,
         fontSize: size,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        overflow: overClip ? TextOverflow.clip : TextOverflow.ellipsis);
+        overflow: overClip ? TextOverflow.clip : overflow);
   }
 
   static Text buttonText(
@@ -200,23 +201,33 @@ class TextStyles {
       {bool isInverted = false,
       double size = 12,
       Color? color,
-      bool boldInversed = false}) {
+      bool boldInversed = false,
+      TextOverflow overflow = TextOverflow.ellipsis}) {
     return RichText(
       text: TextSpan(children: [
         if (!isInverted)
           TextSpan(
               text: title,
               style: styleStandar(
-                  isBold: !boldInversed, size: size, color: color)),
+                  isBold: !boldInversed,
+                  size: size,
+                  color: color,
+                  overflow: overflow)),
         TextSpan(
             text: content,
-            style:
-                styleStandar(size: size, color: color, isBold: boldInversed)),
+            style: styleStandar(
+                size: size,
+                color: color,
+                isBold: boldInversed,
+                overflow: overflow)),
         if (isInverted)
           TextSpan(
               text: title,
-              style:
-                  styleStandar(isBold: !boldInversed, size: size, color: color)),
+              style: styleStandar(
+                  isBold: !boldInversed,
+                  size: size,
+                  color: color,
+                  overflow: overflow)),
       ]),
     );
   }

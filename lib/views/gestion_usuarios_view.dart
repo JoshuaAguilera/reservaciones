@@ -24,13 +24,13 @@ class GestionUsuariosView extends ConsumerStatefulWidget {
   _GestionUsuariosViewState createState() => _GestionUsuariosViewState();
 }
 
-const List<Widget> fruits = <Widget>[
+const List<Widget> modesVisual = <Widget>[
   Icon(Icons.table_chart),
   Icon(Icons.dehaze_sharp),
 ];
 
 class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
-  final List<bool> _selectedFruits = <bool>[true, false];
+  final List<bool> _selectedMode = <bool>[true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -106,31 +106,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
               Divider(
                 color: Theme.of(context).primaryColor,
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ToggleButtons(
-                  direction: Axis.horizontal,
-                  onPressed: (int index) {
-                    setState(() {
-                      // The button that is tapped is set to true, and the others to false.
-                      for (int i = 0; i < _selectedFruits.length; i++) {
-                        _selectedFruits[i] = i == index;
-                      }
-                    });
-                  },
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  selectedBorderColor: DesktopColors.cerulean,
-                  selectedColor: DesktopColors.ceruleanOscure,
-                  // fillColor: Colors.red[200],
-                  color: Theme.of(context).primaryColor,
-                  constraints: const BoxConstraints(
-                    minHeight: 40.0,
-                    minWidth: 80.0,
-                  ),
-                  isSelected: _selectedFruits,
-                  children: fruits,
-                ),
-              ),
+              CustomWidgets.sectionButton(_selectedMode, modesVisual),
               if (!Utility.isResizable(
                   extended: widget.sideController.extended, context: context))
                 Padding(

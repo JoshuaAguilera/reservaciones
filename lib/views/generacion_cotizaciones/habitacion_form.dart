@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list.dart';
 
 import '../../ui/buttons.dart';
+import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/custom_dropdown.dart';
@@ -27,6 +29,18 @@ class _HabitacionFormState extends State<HabitacionForm> {
   TextEditingController _fechaEntrada = TextEditingController();
   TextEditingController _fechaSalida = TextEditingController();
   bool isError = false;
+  bool changedDate = false;
+  List<Widget> modesVisual = <Widget>[
+    const Icon(Icons.calendar_month_rounded),
+    const Icon(Icons.table_chart),
+    const Icon(Icons.dehaze_sharp),
+  ];
+
+  final List<bool> _selectedMode = <bool>[
+    true,
+    false,
+    false,
+  ];
 
   @override
   void initState() {
@@ -161,6 +175,11 @@ class _HabitacionFormState extends State<HabitacionForm> {
                                   () {
                                     _fechaSalida.text =
                                         Utility.getNextDay(_fechaEntrada.text);
+                                    setState(() => changedDate = true);
+                                    Future.delayed(
+                                        Durations.medium1,
+                                        () => setState(
+                                            () => changedDate = false));
                                   },
                                 ),
                               ),
@@ -173,6 +192,13 @@ class _HabitacionFormState extends State<HabitacionForm> {
                                 msgError: "Campo requerido*",
                                 dateController: _fechaSalida,
                                 fechaLimite: _fechaEntrada.text,
+                                onChanged: () {
+                                  setState(() => changedDate = true);
+                                  Future.delayed(
+                                      Durations.medium1,
+                                      () =>
+                                          setState(() => changedDate = false));
+                                },
                               ),
                             ),
                           ],
@@ -240,17 +266,24 @@ class _HabitacionFormState extends State<HabitacionForm> {
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextStyles.titleText(
-                text: "Tarifas por dia",
-                color: Theme.of(context).primaryColor,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextStyles.titleText(
+                  text: "Tarifas por dia",
+                  color: Theme.of(context).primaryColor,
+                ),
+                CustomWidgets.sectionButton(_selectedMode, modesVisual),
+              ],
             ),
             const Divider(),
-            SizedBox(
-              child: DiasList(),
-            ),
+            if (!changedDate)
+              SizedBox(
+                child: DiasList(
+                  initDay: _fechaEntrada.text,
+                  lastDay: _fechaSalida.text,
+                ),
+              ),
             Align(
               alignment: Alignment.centerRight,
               child: SizedBox(

@@ -55,71 +55,138 @@ class ItemRow {
     );
   }
 
-  static Widget dayRateRow(
-      {required BuildContext context,
-      required int day,
-      int? initDay,
-      int? lastDay}) {
+  static Widget dayRateRow({
+    required BuildContext context,
+    required int day,
+    int? daysMountAfter,
+    int? initDay,
+    int? lastDay,
+    required int checkIn,
+    required int checkOut,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: () {},
-        child: (initDay != null && (day + 1) < initDay) ||
-                (lastDay != null && (day + 1) > lastDay + 3)
-            ? SizedBox(
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    Positioned(
-                        child:
-                            TextStyles.TextSpecial(day: day + 1, subtitle: ""))
-                  ],
-                ),
-              )
-            : SizedBox(
-                width: double.infinity,
-                child: Card(
-                  elevation: 5,
-                  color: Theme.of(context).primaryColorDark,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+        child: (checkOut < checkIn)
+            ?   (lastDay != null && (day) <= lastDay + (initDay! - 1))
+                ? Container(
+                    width: double.infinity,
+                    height: 170,
+                    child: itemDateRow(context, day, initDay),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor)),
+                    height: 170,
+                    width: double.infinity,
+                    child: Stack(
                       children: [
-                        TextStyles.TextSpecial(
-                            day: (day + 1) - (initDay! - 1),
-                            subtitle: dayNames[day],
-                            sizeTitle: 28,
-                            colorsubTitle: Theme.of(context).primaryColor,
-                            colorTitle: Theme.of(context).dividerColor,
-                            sizeSubtitle: 15),
-                        const SizedBox(height: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextStyles.TextAsociative(
-                                "Adulto: ", Utility.formatterNumber(0),
-                                boldInversed: true,
-                                size: 11,
-                                color: Theme.of(context).primaryColor),
-                            TextStyles.TextAsociative(
-                                "Men. 7 a 12: ",
-                                boldInversed: true,
-                                size: 11,
-                                Utility.formatterNumber(0),
-                                color: Theme.of(context).primaryColor),
-                            TextStyles.TextAsociative(
-                                "Pax adic.: ",
-                                boldInversed: true,
-                                size: 11,
-                                Utility.formatterNumber(0),
-                                color: Theme.of(context).primaryColor),
-                          ],
+                        Positioned(
+                          top: 10,
+                          left: 15,
+                          child: TextStyles.TextSpecial(
+                              day: (day + 2) - initDay!, subtitle: ""),
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ),
+                  )
+            : (initDay != null && (day + 1) < initDay) ||
+                    (lastDay != null && (day + 1) > lastDay + (initDay! - 1))
+                ? Container(
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor)),
+                    width: double.infinity,
+                    height: 170,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 10,
+                          left: 15,
+                          child: TextStyles.TextSpecial(
+                            day: (lastDay != null &&
+                                    (day + 1) > (lastDay + (initDay - 1)))
+                                ? day - lastDay - (initDay - 2)
+                                : daysMountAfter != null
+                                    ? (daysMountAfter) - (initDay - day - 2)
+                                    : day + 1,
+                            subtitle: "",
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : (((day - initDay! + 2) >= checkIn) &&
+                        ((day - initDay + 2) <= checkOut))
+                    ? Container(
+                        width: double.infinity,
+                        height: 170,
+                        child: itemDateRow(context, day, initDay),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).dividerColor)),
+                        height: 170,
+                        width: double.infinity,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 10,
+                              left: 15,
+                              child: TextStyles.TextSpecial(
+                                  day: (day + 2) - initDay!, subtitle: ""),
+                            ),
+                          ],
+                        ),
+                      ),
+      ),
+    );
+  }
+
+  static Widget itemDateRow(BuildContext context, int day, int initDay) {
+    return Card(
+      margin: EdgeInsets.all(0),
+      elevation: 5,
+      color: Theme.of(context).primaryColorDark,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextStyles.TextSpecial(
+                day: (day + 1) - (initDay - 1),
+                subtitle: dayNames[day],
+                sizeTitle: 28,
+                colorsubTitle: Theme.of(context).primaryColor,
+                colorTitle: Theme.of(context).dividerColor,
+                sizeSubtitle: 15),
+            const SizedBox(height: 15),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextStyles.TextAsociative(
+                    "Adulto: ", Utility.formatterNumber(0),
+                    boldInversed: true,
+                    size: 11,
+                    color: Theme.of(context).primaryColor),
+                TextStyles.TextAsociative(
+                    "KID: ",
+                    boldInversed: true,
+                    size: 11,
+                    Utility.formatterNumber(0),
+                    color: Theme.of(context).primaryColor),
+                TextStyles.TextAsociative(
+                    "Pax adic: ",
+                    boldInversed: true,
+                    size: 11,
+                    Utility.formatterNumber(0),
+                    color: Theme.of(context).primaryColor),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

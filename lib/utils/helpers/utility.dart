@@ -93,15 +93,6 @@ class Utility {
   static double calculateTarifaDiaria(
       {required Habitacion cotizacion, bool esPreventa = false}) {
     double tarifaTotal = 0;
-    // double tarifaAdulto = esPreventa
-    //     ? cotizacion.tarifaPreventaAdulto ?? 0
-    //     : cotizacion.tarifaRealAdulto ?? 0;
-    // double tarifaMenores = esPreventa
-    //     ? cotizacion.tarifaPreventaMenor ?? 0
-    //     : cotizacion.tarifaRealMenor ?? 0;
-
-    // tarifaTotal = (cotizacion.adultos! * tarifaAdulto) +
-    //     (cotizacion.menores7a12! * tarifaMenores);
 
     return tarifaTotal;
   }
@@ -511,8 +502,88 @@ class Utility {
       case "ADMIN":
         return const Color.fromARGB(255, 202, 202, 202);
       case "VENTAS":
-        return Color.fromARGB(255, 10, 166, 180);
+        return const Color.fromARGB(255, 10, 166, 180);
       default:
+    }
+  }
+
+  static bool valueShowLimitDays(
+      int numDays, int dayCheckIn, int dayCheckOut, int afterDay, int lastDay) {
+    bool show = false;
+
+    if ((dayCheckOut) >= afterDay || (dayCheckOut + 9) >= afterDay) {
+      show = true;
+    }
+
+    return show;
+  }
+
+  static String defineMonthPeriod(String initDay, String lastDay) {
+    String period = "";
+    DateTime dataInit = DateTime.parse(initDay);
+    DateTime dataLast = DateTime.parse(lastDay);
+
+    if (dataInit.month == dataLast.month) {
+      period = monthNames[dataInit.month - 1];
+    } else {
+      period =
+          "${monthNames[dataInit.month - 1]} - ${monthNames[dataLast.month - 1]}";
+    }
+
+    return period;
+  }
+
+  static List<int> calcularMultiplos(int numero, int limite) {
+    List<int> multiplos = [0];
+    for (int i = 1; i <= limite; i++) {
+      multiplos.add(numero * i);
+    }
+    return multiplos;
+  }
+
+  static int getLimitDays(
+      int numDays, int dayWeekInit, int dayWeekLater, int numDayInit) {
+    int day = 0;
+    int daysExtras = 7 - dayWeekInit;
+    daysExtras += 7 - dayWeekLater;
+    int totalDays = numDayInit + numDays + daysExtras;
+    double ceil = (totalDays / 7);
+    day = ceil.ceil() + 2;
+    // List<int> listWeeks = calcularMultiplos(7, (totalDays/7).ceil());
+
+    return day;
+  }
+
+  static List<int> getLimitWeeks(
+      int numDays, int dayWeekInit, int dayWeekLater, int numDayInit) {
+    List<int> weeks = [];
+    int daysExtras = 7 - dayWeekInit;
+    daysExtras += 7 - dayWeekLater;
+    int totalDays = numDayInit + numDays + daysExtras;
+    double ceil = (totalDays / 7);
+    weeks = calcularMultiplos(7, (ceil).ceil() + 2);
+
+    return weeks;
+  }
+
+  static String getNameDay(int day) {
+    switch (day) {
+      case 1:
+        return "Lunes";
+      case 2:
+        return "Martes";
+      case 3:
+        return "Miercoles";
+      case 4:
+        return "Jueves";
+      case 5:
+        return "Viernes";
+      case 6:
+        return "Sabado";
+      case 7:
+        return "Domingo";
+      default:
+        return "Unknow";
     }
   }
 }
