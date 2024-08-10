@@ -1,5 +1,6 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -19,11 +20,10 @@ class _DiasListState extends State<DiasList> {
   int daysMonthAfter = 0;
   int daysMonthLater = 0;
   int dayWeekInit = 0;
+  int dayWeekFinish = 0;
   int dayCheckIn = 1;
   int dayCheckOut = 2;
   int numDays = 0;
-  int limitWeek = 0;
-  List<int> serieSemanal = [];
 
   //prepare V3
   int extraDays = 0;
@@ -62,23 +62,36 @@ class _DiasListState extends State<DiasList> {
                   childAspectRatio: 0.9,
                   children: [
                     for (var ink = 0;
-                        ink < (numDays + extraDays + checkIn.day);
+                        ink < (numDays + extraDays + daysMonth);
                         ink++)
-                      if (ink > (checkIn.day - checkIn.weekday - 5) &&
-                          ink < (checkOut.day + (7 - checkOut.weekday) + 10))
+                      if ((checkIn.day < checkOut.day) &&
+                          ink >
+                              (checkIn.day -
+                                  checkIn.weekday -
+                                  (7 - dayWeekInit + 2)) &&
+                          ink <
+                              (checkOut.day +
+                                  (7 - checkOut.weekday) +
+                                  ((checkIn.day >= 1 &&
+                                          checkIn.day <= (7 - dayWeekInit + 1))
+                                      ? (9 + (dayWeekInit - 3)) + 7
+                                      : (9 + (dayWeekInit - 3)))))
                         ItemRow.dayRateRow(
                           context: context,
-                          day: ink,
+                          day: (checkIn.day >= 1 &&
+                                  checkIn.day <= (7 - dayWeekInit + 1))
+                              ? ink - 7
+                              : ink,
                           initDay: dayWeekInit,
                           lastDay: daysMonth,
                           checkIn: dayCheckIn,
                           checkOut: dayCheckOut,
-                          daysMountAfter: daysMonthAfter,
+                          daysMonthAfter: daysMonthAfter,
                         )
                       else if ((checkIn.day > checkOut.day) &&
                           ink > (checkIn.day - checkIn.weekday - 5) &&
                           ink <
-                              ((checkOut.day + checkIn.day) +
+                              ((checkOut.day + daysMonth) +
                                   (7 - checkOut.weekday) +
                                   10))
                         ItemRow.dayRateRow(
@@ -88,7 +101,9 @@ class _DiasListState extends State<DiasList> {
                           lastDay: daysMonth,
                           checkIn: dayCheckIn,
                           checkOut: dayCheckOut,
-                          daysMountAfter: daysMonthAfter,
+                          daysMonthAfter: daysMonthAfter,
+                          dayWeekLater: 7 - checkOut.weekday,
+                          dayMonthLater: daysMonthLater,
                         )
                   ],
                 ),
@@ -135,12 +150,7 @@ class _DiasListState extends State<DiasList> {
     daysMonthAfter = Utility.getDaysInMonth(checkIn.year, checkIn.month - 1);
     daysMonthLater = Utility.getDaysInMonth(checkIn.year, checkIn.month + 1);
     dayWeekInit = DateTime(checkIn.year, checkIn.month, 1).weekday;
-    int dayWeekLast =
-        DateTime(checkIn.year, checkIn.month, dayCheckOut).weekday;
-    serieSemanal =
-        Utility.getLimitWeeks(numDays, dayWeekInit, dayWeekLast, checkIn.day);
-    limitWeek =
-        Utility.getLimitDays(numDays, dayWeekInit, dayWeekLast, checkIn.day);
+    dayWeekFinish = DateTime(checkIn.year, checkIn.month, 0).weekday;
 
     extraDays += 7 - (checkIn.weekday);
     extraDays += 7 - (checkOut.weekday - 1);

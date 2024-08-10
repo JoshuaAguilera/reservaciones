@@ -58,22 +58,25 @@ class ItemRow {
   static Widget dayRateRow({
     required BuildContext context,
     required int day,
-    int? daysMountAfter,
+    int? daysMonthAfter,
     int? initDay,
     int? lastDay,
     required int checkIn,
     required int checkOut,
+    int? dayWeekLater,
+    int? dayMonthLater,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: () {},
         child: (checkOut < checkIn)
-            ?   (lastDay != null && (day) <= lastDay + (initDay! - 1))
-                ? Container(
+            ? ((day - 2) >= checkIn && (day - 2 - lastDay!) <= checkOut)
+                ? SizedBox(
                     width: double.infinity,
                     height: 170,
-                    child: itemDateRow(context, day, initDay),
+                    child: itemDateRow(
+                        context, day, initDay!, lastDay, dayWeekLater),
                   )
                 : Container(
                     decoration: BoxDecoration(
@@ -87,7 +90,13 @@ class ItemRow {
                           top: 10,
                           left: 15,
                           child: TextStyles.TextSpecial(
-                              day: (day + 2) - initDay!, subtitle: ""),
+                              day: (lastDay != null &&
+                                      (day + 1) > (lastDay + (initDay! - 1)))
+                                  ? (day - lastDay - 2 > dayMonthLater!) ? day - dayMonthLater - lastDay - 2 : day - lastDay - 2
+                                  : (day < initDay!)
+                                      ? (daysMonthAfter! - initDay + 2) + day
+                                      : day - 2,
+                              subtitle: ""),
                         ),
                       ],
                     ),
@@ -109,8 +118,8 @@ class ItemRow {
                             day: (lastDay != null &&
                                     (day + 1) > (lastDay + (initDay - 1)))
                                 ? day - lastDay - (initDay - 2)
-                                : daysMountAfter != null
-                                    ? (daysMountAfter) - (initDay - day - 2)
+                                : daysMonthAfter != null
+                                    ? (daysMonthAfter) - (initDay - day - 2)
                                     : day + 1,
                             subtitle: "",
                           ),
@@ -120,7 +129,7 @@ class ItemRow {
                   )
                 : (((day - initDay! + 2) >= checkIn) &&
                         ((day - initDay + 2) <= checkOut))
-                    ? Container(
+                    ? SizedBox(
                         width: double.infinity,
                         height: 170,
                         child: itemDateRow(context, day, initDay),
@@ -146,9 +155,10 @@ class ItemRow {
     );
   }
 
-  static Widget itemDateRow(BuildContext context, int day, int initDay) {
+  static Widget itemDateRow(BuildContext context, int day, int initDay,
+      [int? daysMonth, int? weekDayLast]) {
     return Card(
-      margin: EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
       elevation: 5,
       color: Theme.of(context).primaryColorDark,
       child: Padding(
@@ -156,7 +166,11 @@ class ItemRow {
         child: Column(
           children: [
             TextStyles.TextSpecial(
-                day: (day + 1) - (initDay - 1),
+                day: (daysMonth != null)
+                    ? ((day - 2) <= daysMonth)
+                        ? (day - 2)
+                        : day - 2 - daysMonth
+                    : (day + 1) - (initDay - 1),
                 subtitle: dayNames[day],
                 sizeTitle: 28,
                 colorsubTitle: Theme.of(context).primaryColor,
