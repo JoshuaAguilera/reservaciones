@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
+import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
+import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class ItemRow {
@@ -76,7 +78,13 @@ class ItemRow {
                     width: double.infinity,
                     height: 170,
                     child: itemDateRow(
-                        context, day, initDay!, lastDay, dayWeekLater),
+                      context: context,
+                      day: day,
+                      initDay: initDay!,
+                      daysMonth: lastDay,
+                      weekDayLast: dayWeekLater,
+                      isMostMonth: (checkOut < checkIn),
+                    ),
                   )
                 : Container(
                     decoration: BoxDecoration(
@@ -92,7 +100,9 @@ class ItemRow {
                           child: TextStyles.TextSpecial(
                               day: (lastDay != null &&
                                       (day + 1) > (lastDay + (initDay! - 1)))
-                                  ? (day - lastDay - 2 > dayMonthLater!) ? day - dayMonthLater - lastDay - 2 : day - lastDay - 2
+                                  ? (day - lastDay - 2 > dayMonthLater!)
+                                      ? day - dayMonthLater - lastDay - 2
+                                      : day - lastDay - 2
                                   : (day < initDay!)
                                       ? (daysMonthAfter! - initDay + 2) + day
                                       : day - 2,
@@ -132,7 +142,11 @@ class ItemRow {
                     ? SizedBox(
                         width: double.infinity,
                         height: 170,
-                        child: itemDateRow(context, day, initDay),
+                        child: itemDateRow(
+                            context: context,
+                            isMostMonth: (checkOut < checkIn),
+                            day: day,
+                            initDay: initDay),
                       )
                     : Container(
                         decoration: BoxDecoration(
@@ -155,8 +169,13 @@ class ItemRow {
     );
   }
 
-  static Widget itemDateRow(BuildContext context, int day, int initDay,
-      [int? daysMonth, int? weekDayLast]) {
+  static Widget itemDateRow(
+      {required BuildContext context,
+      required int day,
+      required int initDay,
+      required bool isMostMonth,
+      int? daysMonth,
+      int? weekDayLast}) {
     return Card(
       margin: const EdgeInsets.all(0),
       elevation: 5,
@@ -170,8 +189,14 @@ class ItemRow {
                     ? ((day - 2) <= daysMonth)
                         ? (day - 2)
                         : day - 2 - daysMonth
-                    : (day + 1) - (initDay - 1),
-                subtitle: dayNames[day],
+                    : (day) - (initDay - 2),
+                subtitle: dayNames[isMostMonth
+                    ? (initDay == 4)
+                        ? day
+                        : (initDay < 4)
+                            ? day - (initDay)
+                            : day + (initDay - 4)
+                    : day],
                 sizeTitle: 28,
                 colorsubTitle: Theme.of(context).primaryColor,
                 colorTitle: Theme.of(context).dividerColor,
@@ -200,6 +225,79 @@ class ItemRow {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  static Widget itemTarifaDia(BuildContext context,
+      {required int day, required DateTime initDate, required bool isDetail}) {
+    return Card(
+      elevation: 5,
+      color: Theme.of(context).primaryColorDark,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          visualDensity: VisualDensity.comfortable,
+          leading: TextStyles.TextSpecial(
+              day: day + 1,
+              subtitle: "DIA",
+              sizeTitle: 22,
+              colorsubTitle: Theme.of(context).dividerColor),
+          title: TextStyles.TextAsociative(
+            "Fecha:  ",
+            DateTime(initDate.year, initDate.month, initDate.day)
+                .add(Duration(days: day))
+                .toString()
+                .substring(0, 10),
+            color: Theme.of(context).primaryColor,
+            size: 13.5,
+          ),
+          subtitle: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              TextStyles.TextAsociative(
+                "Tarifa de adultos:  ",
+                DateTime(initDate.year, initDate.month, initDate.day)
+                    .add(Duration(days: day))
+                    .toString()
+                    .substring(0, 10),
+                color: Theme.of(context).primaryColor,
+                size: 13.5,
+              ),
+              TextStyles.TextAsociative(
+                "Tarifa de Menores de 7 a 12:  ",
+                Utility.formatterNumber(0),
+                color: Theme.of(context).primaryColor,
+                size: 13.5,
+              ),
+              TextStyles.TextAsociative(
+                "Tarifa de Persona Adicional:  ",
+                Utility.formatterNumber(0),
+                color: Theme.of(context).primaryColor,
+                size: 13.5,
+              ),
+            ],
+          ),
+          trailing: isDetail
+              ? null
+              : (MediaQuery.of(context).size.width > 1400)
+                  ? SizedBox(
+                    width: 115,
+                    child: Buttons.commonButton(
+                        color: DesktopColors.mentaOscure,
+                        onPressed: () {},
+                        text: "Editar"),
+                  )
+                  : IconButton(
+                      onPressed: () {},
+                      tooltip: "Editar",
+                      icon: Icon(
+                        CupertinoIcons.pencil,
+                        color: DesktopColors.mentaOscure,
+                      ),
+                    ),
         ),
       ),
     );

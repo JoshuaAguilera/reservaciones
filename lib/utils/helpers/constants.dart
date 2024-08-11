@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
 
@@ -259,4 +260,10 @@ const List<Text> textofFont = <Text>[
   // 'News Gothic',
   // 'Gilroy',
   // 'Univers',
+];
+
+List<Widget> modesVisual = <Widget>[
+  const Icon(Icons.calendar_month_rounded),
+  const Icon(Icons.table_chart),
+  const Icon(Icons.dehaze_sharp),
 ];

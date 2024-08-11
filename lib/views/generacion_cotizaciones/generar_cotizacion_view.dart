@@ -16,7 +16,6 @@ import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
-import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -221,7 +220,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     nuevaHabitacion: () {
                                       setState(() => targetHabitaciones = 0);
                                       Future.delayed(
-                                        1200.ms,
+                                        800.ms,
                                         () => setState(
                                           () {
                                             inList = false;
@@ -246,12 +245,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       setState(
                                           () => targetDetalleHabitacion = 0);
                                       Future.delayed(
-                                          1200.ms,
-                                          () => setState(() {
-                                                inList = true;
-                                                inDetail = false;
-                                                targetHabitaciones = 1;
-                                              }));
+                                        800.ms,
+                                        () => setState(
+                                          () {
+                                            inList = true;
+                                            inDetail = false;
+                                            targetHabitaciones = 1;
+                                          },
+                                        ),
+                                      );
                                     },
                                   )
                                     .animate(target: targetDetalleHabitacion)

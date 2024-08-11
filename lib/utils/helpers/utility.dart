@@ -139,10 +139,10 @@ class Utility {
     return tarifaTotal;
   }
 
-  static double? limitHeightList(int length) {
+  static double? limitHeightList(int length, [int maxItems = 3, double maxHeight = 290]) {
     double? height;
-    if (length > 3) {
-      height = 290;
+    if (length > maxItems) {
+      height = maxHeight;
     }
     return height;
   }
@@ -585,5 +585,22 @@ class Utility {
       default:
         return "Unknow";
     }
+  }
+
+  static bool revisedLimitDateTime(DateTime checkIn, DateTime checkOut) {
+    bool isValide = true;
+    DateTime checkOutLimit = DateTime(checkIn.year, checkIn.month + 1, 1);
+
+    if ((checkOut.month != checkIn.month) &&
+        (checkOut.month != checkOutLimit.month)) {
+      isValide = false;
+    }
+
+    if ((checkOut.month == checkOutLimit.month) &&
+        (checkOut.day >= checkIn.day)) {
+      isValide = false;
+    }
+
+    return isValide;
   }
 }

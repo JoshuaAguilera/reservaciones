@@ -106,26 +106,31 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
               Divider(
                 color: Theme.of(context).primaryColor,
               ),
-              CustomWidgets.sectionButton(_selectedMode, modesVisual),
+              CustomWidgets.sectionButton(
+                _selectedMode,
+                modesVisual,
+                (p0, p1) {},
+              ),
               if (!Utility.isResizable(
                   extended: widget.sideController.extended, context: context))
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
                   child: Table(
                     columnWidths: {
-                      0: FractionColumnWidth(.05),
-                      1: FractionColumnWidth(0.16),
+                      0: const FractionColumnWidth(.05),
+                      1: const FractionColumnWidth(0.16),
                       2: (screenWidth > 1000)
-                          ? FractionColumnWidth(0.15)
-                          : FractionColumnWidth(0.3),
+                          ? const FractionColumnWidth(0.15)
+                          : const FractionColumnWidth(0.3),
                       3: (screenWidth > 1000)
-                          ? FractionColumnWidth(0.25)
-                          : FractionColumnWidth(0.25),
+                          ? const FractionColumnWidth(0.25)
+                          : const FractionColumnWidth(0.25),
                       4: (screenWidth > 1200)
-                          ? FractionColumnWidth(.15)
-                          : FractionColumnWidth(0.25),
-                      if (screenWidth > 1000) 5: FractionColumnWidth(0.12),
-                      if (screenWidth > 1200) 6: FractionColumnWidth(.14),
+                          ? const FractionColumnWidth(.15)
+                          : const FractionColumnWidth(0.25),
+                      if (screenWidth > 1000)
+                        5: const FractionColumnWidth(0.12),
+                      if (screenWidth > 1200) 6: const FractionColumnWidth(.14),
                     },
                     children: [
                       TableRow(

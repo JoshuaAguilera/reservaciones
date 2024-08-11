@@ -42,7 +42,8 @@ class CustomWidgets {
     );
   }
 
-  static Widget sectionButton(List<bool> listModes, List<Widget> modesVisual) {
+  static Widget sectionButton(List<bool> listModes, List<Widget> modesVisual,
+      void Function(int, int)? onChanged) {
     return StatefulBuilder(
       builder: (context, snapshot) {
         return Align(
@@ -50,11 +51,14 @@ class CustomWidgets {
           child: ToggleButtons(
             direction: Axis.horizontal,
             onPressed: (int index) {
-              snapshot(() {
-                for (int i = 0; i < listModes.length; i++) {
-                  listModes[i] = i == index;
-                }
-              });
+              snapshot(
+                () {
+                  for (int i = 0; i < listModes.length; i++) {
+                    listModes[i] = i == index;
+                    onChanged!.call(i, index);
+                  }
+                },
+              );
             },
             borderRadius: const BorderRadius.all(Radius.circular(4)),
             selectedBorderColor: DesktopColors.cerulean,

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../utils/helpers/web_colors.dart';
