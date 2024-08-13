@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/item_row.dart';
@@ -190,7 +187,7 @@ class _DiasListState extends State<DiasList> {
                               text: "Fecha",
                               isBold: true,
                               color: Theme.of(context).primaryColor,
-                              size: 15),
+                              size: 14),
                         ),
                       ),
                       Center(
@@ -198,35 +195,35 @@ class _DiasListState extends State<DiasList> {
                             text: "Tarifa Adultos",
                             isBold: true,
                             color: Theme.of(context).primaryColor,
-                            size: 15),
+                            size: 14),
                       ),
                       Center(
                         child: TextStyles.standardText(
                             text: "Tarifa Menores de 7 a 12 años",
                             isBold: true,
                             color: Theme.of(context).primaryColor,
-                            size: 15),
+                            size: 14),
                       ),
                       Center(
                         child: TextStyles.standardText(
                             text: "Tarifa de Pax Adicional",
                             isBold: true,
                             color: Theme.of(context).primaryColor,
-                            size: 15),
+                            size: 14),
                       ),
                       Center(
                         child: TextStyles.standardText(
                             text: "Tarifa Total",
                             isBold: true,
                             color: Theme.of(context).primaryColor,
-                            size: 15),
+                            size: 14),
                       ),
                       Center(
                         child: TextStyles.standardText(
                             text: "Opciones",
                             isBold: true,
                             color: Theme.of(context).primaryColor,
-                            size: 15),
+                            size: 14),
                       ),
                     ],
                   ),
@@ -242,63 +239,49 @@ class _DiasListState extends State<DiasList> {
                                     .toIso8601String()
                                     .substring(0, 10),
                                 color: Theme.of(context).primaryColor,
-                                size: 15),
+                                size: 14),
                           ),
                         ),
                         Center(
                           child: TextStyles.standardText(
                               text: Utility.formatterNumber(0),
                               color: Theme.of(context).primaryColor,
-                              size: 15),
+                              size: 14),
                         ),
                         Center(
                           child: TextStyles.standardText(
                               text: Utility.formatterNumber(0),
                               color: Theme.of(context).primaryColor,
-                              size: 15),
+                              size: 14),
                         ),
                         Center(
                           child: TextStyles.standardText(
                               text: Utility.formatterNumber(0),
                               color: Theme.of(context).primaryColor,
-                              size: 15),
+                              size: 14),
                         ),
                         Center(
                           child: TextStyles.standardText(
                               text: Utility.formatterNumber(0),
                               color: Theme.of(context).primaryColor,
-                              size: 15),
+                              size: 14),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (screenWidth > 1400)
                               Buttons.commonButton(
-                                  color: DesktopColors.mentaOscure,
-                                  onPressed: () {},
-                                  text: "Editar")
+                                  onPressed: () {}, text: "Editar")
                             else
                               IconButton(
                                 onPressed: () {},
                                 tooltip: "Editar",
                                 icon: Icon(
                                   CupertinoIcons.pencil,
-                                  color: DesktopColors.mentaOscure,
+                                  size: 30,
+                                  color: DesktopColors.cerulean,
                                 ),
                               ),
-                            // const SizedBox(width: 10),
-                            // if (screenWidth > 1400)
-                            //   Buttons.commonButton(
-                            //       onPressed: () {}, text: "Descartar")
-                            // else
-                            //   IconButton(
-                            //     onPressed: () {},
-                            //     tooltip: "Descartar",
-                            //     icon: Icon(
-                            //       CupertinoIcons.clear,
-                            //       color: DesktopColors.cerulean,
-                            //     ),
-                            //   ),
                           ],
                         )
                       ],
@@ -317,7 +300,7 @@ class _DiasListState extends State<DiasList> {
                       day: index, initDate: checkIn, isDetail: false);
                 },
               ),
-            ).animate().slideX(begin: 0.5, curve: Curves.easeInOutBack)
+            ).animate().shimmer(delay: 500.ms).fadeIn(),
         ],
       ),
     );

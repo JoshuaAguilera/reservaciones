@@ -83,11 +83,23 @@ class Buttons {
     Color? color,
     String text = "",
     bool isLoading = false,
+    double sizeText = 14,
+    bool isBold = false,
+    bool withRoundedBorder = false,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-          elevation: 4, backgroundColor: color ?? DesktopColors.ceruleanOscure),
+        elevation: 4,
+        backgroundColor: color ?? DesktopColors.ceruleanOscure,
+        shape: !withRoundedBorder
+            ? null
+            : const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15),
+                ),
+              ),
+      ),
       child: Row(
         mainAxisAlignment: isLoading
             ? MainAxisAlignment.spaceAround
@@ -100,7 +112,18 @@ class Buttons {
               child: CircularProgressIndicator(
                   strokeWidth: 2, color: Colors.white),
             ),
-          TextStyles.buttonTextStyle(text: !isLoading ? text : "Espere"),
+          isBold
+              ? TextStyles.standardText(
+                  text: !isLoading ? text : "Espere",
+                  aling: TextAlign.center,
+                  size: sizeText,
+                  isBold: true,
+                  color: Colors.white,
+                )
+              : TextStyles.buttonTextStyle(
+                  text: !isLoading ? text : "Espere",
+                  aling: TextAlign.center,
+                  size: sizeText),
         ],
       ),
     );

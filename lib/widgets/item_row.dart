@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/widgets/card_animation_widget.dart';
 
 import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -77,13 +79,12 @@ class ItemRow {
                 ? SizedBox(
                     width: double.infinity,
                     height: 170,
-                    child: itemDateRow(
-                      context: context,
+                    child: CardAnimationWidget(
                       day: day,
+                      isMostMonth: (checkOut < checkIn),
                       initDay: initDay!,
                       daysMonth: lastDay,
                       weekDayLast: dayWeekLater,
-                      isMostMonth: (checkOut < checkIn),
                     ),
                   )
                 : Container(
@@ -142,11 +143,11 @@ class ItemRow {
                     ? SizedBox(
                         width: double.infinity,
                         height: 170,
-                        child: itemDateRow(
-                            context: context,
-                            isMostMonth: (checkOut < checkIn),
-                            day: day,
-                            initDay: initDay),
+                        child: CardAnimationWidget(
+                          day: day,
+                          isMostMonth: (checkOut < checkIn),
+                          initDay: initDay,
+                        ),
                       )
                     : Container(
                         decoration: BoxDecoration(
@@ -165,67 +166,6 @@ class ItemRow {
                           ],
                         ),
                       ),
-      ),
-    );
-  }
-
-  static Widget itemDateRow(
-      {required BuildContext context,
-      required int day,
-      required int initDay,
-      required bool isMostMonth,
-      int? daysMonth,
-      int? weekDayLast}) {
-    return Card(
-      margin: const EdgeInsets.all(0),
-      elevation: 5,
-      color: Theme.of(context).primaryColorDark,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextStyles.TextSpecial(
-                day: (daysMonth != null)
-                    ? ((day - 2) <= daysMonth)
-                        ? (day - 2)
-                        : day - 2 - daysMonth
-                    : (day) - (initDay - 2),
-                subtitle: dayNames[isMostMonth
-                    ? (initDay == 4)
-                        ? day
-                        : (initDay < 4)
-                            ? day - (initDay)
-                            : day + (initDay - 4)
-                    : day],
-                sizeTitle: 28,
-                colorsubTitle: Theme.of(context).primaryColor,
-                colorTitle: Theme.of(context).dividerColor,
-                sizeSubtitle: 15),
-            const SizedBox(height: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextStyles.TextAsociative(
-                    "Adulto: ", Utility.formatterNumber(0),
-                    boldInversed: true,
-                    size: 11,
-                    color: Theme.of(context).primaryColor),
-                TextStyles.TextAsociative(
-                    "KID: ",
-                    boldInversed: true,
-                    size: 11,
-                    Utility.formatterNumber(0),
-                    color: Theme.of(context).primaryColor),
-                TextStyles.TextAsociative(
-                    "Pax adic: ",
-                    boldInversed: true,
-                    size: 11,
-                    Utility.formatterNumber(0),
-                    color: Theme.of(context).primaryColor),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -284,18 +224,17 @@ class ItemRow {
               ? null
               : (MediaQuery.of(context).size.width > 1400)
                   ? SizedBox(
-                    width: 115,
-                    child: Buttons.commonButton(
-                        color: DesktopColors.mentaOscure,
-                        onPressed: () {},
-                        text: "Editar"),
-                  )
+                      width: 115,
+                      child: Buttons.commonButton(
+                          onPressed: () {}, text: "Editar"),
+                    )
                   : IconButton(
                       onPressed: () {},
                       tooltip: "Editar",
                       icon: Icon(
                         CupertinoIcons.pencil,
-                        color: DesktopColors.mentaOscure,
+                        size: 30,
+                        color: DesktopColors.cerulean,
                       ),
                     ),
         ),
