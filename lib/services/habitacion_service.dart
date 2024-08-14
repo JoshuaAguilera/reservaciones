@@ -15,12 +15,10 @@ class HabitacionService extends BaseService {
       for (var element in resp) {
         habitaciones.add(Habitacion(
           categoria: element.categoria,
-          plan: element.plan,
           fechaCheckIn: element.fechaCheckIn,
           fechaCheckOut: element.fechaCheckOut,
-          esPreventa: element.esPreventa,
           fecha: element.fecha.toString(),
-          folioHabitacion: element.folioHabitacion,
+          folioHabitacion: element.subfolio,
           id: element.id,
         ));
       }

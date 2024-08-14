@@ -103,6 +103,7 @@ class TextStyles {
     Color? colorsubTitle,
     double sizeTitle = 22,
     double sizeSubtitle = 13,
+    bool compact = false,
   }) {
     NumberFormat formatter = NumberFormat('00');
     String numeroFormateado = formatter.format(day);
@@ -111,11 +112,14 @@ class TextStyles {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          titleText(
-              text: title ?? numeroFormateado,
-              size: sizeTitle,
-              color: colorTitle,
-              textAlign: TextAlign.center),
+          SizedBox(
+            height: compact ? 40 : null,
+            child: titleText(
+                text: title ?? numeroFormateado,
+                size: sizeTitle,
+                color: colorTitle,
+                textAlign: TextAlign.center),
+          ),
           if (subtitle != "NUM" && subtitle.isNotEmpty)
             standardText(
                 text: subtitle, color: colorsubTitle, size: sizeSubtitle),

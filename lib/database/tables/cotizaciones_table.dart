@@ -8,7 +8,7 @@ class Cotizacion extends Table {
   TextColumn get correoElectrico => text().nullable()();
   TextColumn get tipo => text().nullable()();
   DateTimeColumn get fecha => dateTime()();
-  IntColumn get responsableID => integer().nullable()();
+  IntColumn get usuarioID => integer().nullable()();
   RealColumn get total => real().nullable()();
   RealColumn get descuento => real().nullable()();
   BoolColumn get esGrupo => boolean().nullable()();

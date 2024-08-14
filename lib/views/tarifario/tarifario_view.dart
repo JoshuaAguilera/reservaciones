@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_view.dart';
@@ -8,16 +10,17 @@ import '../../ui/custom_widgets.dart';
 import '../../ui/title_page.dart';
 import '../../widgets/custom_dropdown.dart';
 
-class TarifarioView extends StatefulWidget {
+class TarifarioView extends ConsumerStatefulWidget {
   const TarifarioView({super.key, required this.sideController});
   final SidebarXController sideController;
 
   @override
-  State<TarifarioView> createState() => _TarifarioViewState();
+  _TarifarioViewState createState() => _TarifarioViewState();
 }
 
-class _TarifarioViewState extends State<TarifarioView> {
+class _TarifarioViewState extends ConsumerState<TarifarioView> {
   String typePeriod = filtrosRegistro.first;
+  bool target = false;
   final List<bool> selectedMode = <bool>[
     true,
     false,
@@ -26,6 +29,8 @@ class _TarifarioViewState extends State<TarifarioView> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -38,24 +43,59 @@ class _TarifarioViewState extends State<TarifarioView> {
                 title: "Tarifario",
                 subtitle:
                     "Contempla, analiza y define las principales tarifas de planes, habitaciones, PAX y promociones para complementar la generación de cotizaciones.",
-                childOptional: Buttons.commonButton(
-                  onPressed: () {},
-                  text: "Crear tarifa",
+                childOptional: SizedBox(
+                  height: 38,
+                  child: Buttons.commonButton(
+                    onPressed: () {},
+                    text: "Crear tarifa",
+                  ),
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomDropdown.dropdownMenuCustom(
-                      fontSize: 12,
-                      initialSelection: typePeriod,
-                      onSelected: (String? value) {
-                        setState(() {
-                          typePeriod = value!;
-                        });
-                      },
-                      elements: filtrosRegistro,
-                      screenWidth: null),
+                  Row(
+                    children: [
+                      if (screenWidth < 1280)
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              target = false;
+                            });
+                          },
+                          style: ButtonStyle(
+                            padding:
+                                const WidgetStatePropertyAll(EdgeInsets.zero),
+                            backgroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).cardColor,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Icon(
+                              Icons.menu_rounded,
+                              color: Theme.of(context).primaryColor,
+                              size: 30,
+                            ),
+                          ),
+                        )
+                            .animate(target: target ? 1 : 0)
+                            .slideX(begin: -0.2, duration: 550.ms)
+                            .fadeIn(delay: !target ? 0.ms : 400.ms),
+                      const SizedBox(width: 10),
+                        CustomDropdown.dropdownMenuCustom(
+                          fontSize: 12,
+                          initialSelection: typePeriod,
+                          onSelected: (String? value) {
+                            setState(() {
+                              typePeriod = value!;
+                            });
+                          },
+                          elements: filtrosRegistro,
+                          screenWidth: null),
+                    
+                    ],
+                  ),
                   CustomWidgets.sectionButton(
                     selectedMode,
                     modesVisual,
@@ -66,7 +106,14 @@ class _TarifarioViewState extends State<TarifarioView> {
                   ),
                 ],
               ),
-              TarifarioCalendaryView(),
+              TarifarioCalendaryView(
+                target: target,
+                onTarget: () {
+                  setState(() {
+                    target = true;
+                  });
+                },
+              ),
             ],
           ),
         ),

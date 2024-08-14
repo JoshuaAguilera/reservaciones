@@ -39,12 +39,9 @@ class CotizacionService extends BaseService {
                 .into(database.habitacion)
                 .insert(HabitacionCompanion.insert(
                   categoria: element.categoria ?? '',
-                  esPreventa: element.esPreventa ?? false,
                   fecha: DateTime.parse(element.fecha!),
                   fechaCheckIn: element.fechaCheckIn ?? '',
                   fechaCheckOut: element.fechaCheckOut ?? '',
-                  folioHabitacion: element.folioHabitacion ?? '',
-                  plan: element.plan ?? '',
                   subfolio: folio,
                 ));
           }
@@ -59,7 +56,7 @@ class CotizacionService extends BaseService {
                   habitaciones: Value(cotizacion.habitaciones!.length),
                   nombreHuesped: Value(cotizacion.nombreHuesped),
                   numeroTelefonico: Value(cotizacion.numeroTelefonico),
-                  responsableID: Value(userId),
+                  usuarioID: Value(userId),
                   tipo: Value(cotizacion.tipo),
                   total: Value(cotizacion.total),
                   // folioQuotes: folio,

@@ -68,13 +68,15 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
       });
 
       flipCard = Timer(widget.resetTime, () {
-        setState(
-          () {
-            if (!_isEditing) {
-              _showFrontSide = !_showFrontSide;
-            }
-          },
-        );
+        if (mounted) {
+          setState(
+            () {
+              if (!_isEditing) {
+                _showFrontSide = !_showFrontSide;
+              }
+            },
+          );
+        }
       });
 
       Future.delayed(

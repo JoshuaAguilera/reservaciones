@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -278,6 +280,146 @@ class ItemRow {
                       ),
                     ),
         ),
+      ),
+    );
+  }
+
+  static Widget tarifaItemRow(
+    BuildContext context, {
+    Color? colorIndicator,
+    required String nameRack,
+    void Function()? onEdit,
+    void Function()? onDelete,
+  }) {
+    return ListTile(
+      leading: Checkbox(
+        value: true,
+        onChanged: (value) {},
+        activeColor: colorIndicator ?? Colors.amber,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(3),
+          ),
+        ),
+      ),
+      title: TextStyles.standardText(
+          text: nameRack, color: Theme.of(context).primaryColor),
+      trailing: PopupMenuButton<ListTileTitleAlignment>(
+        position: PopupMenuPosition.under,
+        tooltip: "Opciones",
+        itemBuilder: (BuildContext context) =>
+            <PopupMenuEntry<ListTileTitleAlignment>>[
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.threeLine,
+            onTap: () {
+              if (onEdit != null) {
+                onEdit.call();
+              }
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.edit, color: DesktopColors.mentaOscure),
+                TextStyles.standardText(
+                    text: "Editar", color: Theme.of(context).primaryColor)
+              ],
+            ),
+          ),
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.titleHeight,
+            onTap: () {
+              if (onDelete != null) {
+                onDelete.call();
+              }
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.delete, color: DesktopColors.cerulean),
+                TextStyles.standardText(
+                    text: "Eliminar", color: Theme.of(context).primaryColor)
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget userTarifaItemRow(BuildContext context,
+      {required String nameUser, required String rolUser}) {
+    return ListTile(
+      leading: Checkbox(
+        value: true,
+        onChanged: (value) {},
+        activeColor: Colors.green[300],
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(3),
+          ),
+        ),
+      ),
+      trailing: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Icon(CupertinoIcons.person_circle),
+      ),
+      title: TextStyles.standardText(
+        text: nameUser,
+        color: Theme.of(context).primaryColor,
+      ),
+      subtitle: TextStyles.standardText(
+        text: rolUser,
+        size: 11,
+        color: Theme.of(context).primaryColor,
+      ),
+    );
+  }
+
+  static Widget getTitleDay(
+      {required int title,
+      required String subTitle,
+      required bool select,
+      required int index,
+      required Brightness brightness}) {
+    return Opacity(
+      opacity: select ? 1 : 0.35,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextStyles.TextSpecial(
+            compact: true,
+            day: title,
+            subtitle: subTitle,
+            sizeTitle: 34,
+            sizeSubtitle: 16,
+            colorTitle: brightness == Brightness.light
+                ? DesktopColors.prussianBlue
+                : DesktopColors.azulClaro,
+            colorsubTitle: brightness == Brightness.light
+                ? DesktopColors.prussianBlue
+                : DesktopColors.azulClaro,
+          )
+              .animate(delay: 200.ms * index)
+              .fadeIn(duration: 400.ms)
+              .scale(duration: 500.ms),
+          const SizedBox(height: 5),
+          const RotatedBox(
+            quarterTurns: 1,
+            child: SizedBox(
+              width: 12,
+              child: Divider(),
+            ),
+          ).animate(delay: 220.ms * index).fadeIn(),
+          if (select)
+            const Padding(
+              padding: EdgeInsets.only(top: 3),
+              child: Icon(
+                Icons.circle,
+                color: Colors.amber,
+                size: 7.5,
+              ),
+            ).animate(delay: 220.ms * index).fadeIn().scale(duration: 500.ms),
+        ],
       ),
     );
   }

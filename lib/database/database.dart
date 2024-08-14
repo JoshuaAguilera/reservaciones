@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:drift/native.dart';
-import 'package:generador_formato/database/tables/tarifa_real_table.dart';
 import 'package:generador_formato/database/tables/tarifa_table.dart';
+import 'package:generador_formato/database/tables/temporada_table.dart';
 import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
+import 'package:generador_formato/database/tables/user_activity_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,7 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 import 'tables/habitacion_table.dart';
 import 'tables/cotizaciones_table.dart';
+import 'tables/periodo_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
@@ -19,19 +21,22 @@ part 'database.g.dart';
 //   Cotizacion,
 //   Habitacion,
 //   TarifaXDia,
+//   Periodo,
+//   Temporada,
 //   Tarifa,
-//   TarifaReal,
+//   UserActivity,
 // ])
 // class AppDatabase extends _$AppDatabase {}
-
 
 @DriftDatabase(tables: [
   Usuario,
   Cotizacion,
   Habitacion,
   TarifaXDia,
+  Periodo,
+  Temporada,
   Tarifa,
-  TarifaReal,
+  UserActivity,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -167,7 +172,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<HabitacionData>> getHabitacionesByFolio(String folio) {
-    return (select(habitacion)..where((t) => t.folioHabitacion.equals(folio)))
+    return (select(habitacion)..where((t) => t.subfolio.equals(folio)))
         .get();
   }
 
@@ -193,7 +198,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future deleteHabitacionByFolio(String folio) {
-    return (delete(habitacion)..where((t) => t.folioHabitacion.equals(folio)))
+    return (delete(habitacion)..where((t) => t.subfolio.equals(folio)))
         .go();
   }
 
@@ -283,4 +288,3 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
-
