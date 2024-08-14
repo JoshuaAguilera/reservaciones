@@ -3,19 +3,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
+import '../../widgets/dialogs.dart';
+
 class DiasList extends StatefulWidget {
-  const DiasList(
-      {super.key,
-      required this.initDay,
-      required this.lastDay,
-      this.isCalendary = false,
-      this.isTable = false,
-      this.isCheckList = false});
+  const DiasList({
+    super.key,
+    required this.initDay,
+    required this.lastDay,
+    this.isCalendary = false,
+    this.isTable = false,
+    this.isCheckList = false,
+  });
 
   final String initDay;
   final String lastDay;
@@ -101,9 +105,10 @@ class _DiasListState extends State<DiasList> {
                                     : ink,
                                 initDay: dayWeekInit,
                                 lastDay: daysMonth,
-                                checkIn: dayCheckIn,
-                                checkOut: dayCheckOut,
+                                dayCheckIn: dayCheckIn,
+                                dayCheckOut: dayCheckOut,
                                 daysMonthAfter: daysMonthAfter,
+                                numMonthInit: checkIn.month,
                               )
                             else if ((checkIn.day > checkOut.day) &&
                                 ink > (checkIn.day - checkIn.weekday - 5) &&
@@ -116,11 +121,12 @@ class _DiasListState extends State<DiasList> {
                                 day: ink,
                                 initDay: dayWeekInit,
                                 lastDay: daysMonth,
-                                checkIn: dayCheckIn,
-                                checkOut: dayCheckOut,
+                                dayCheckIn: dayCheckIn,
+                                dayCheckOut: dayCheckOut,
                                 daysMonthAfter: daysMonthAfter,
                                 dayWeekLater: 7 - checkOut.weekday,
                                 dayMonthLater: daysMonthLater,
+                                numMonthInit: checkIn.month,
                               )
                         ],
                       ),
@@ -128,7 +134,9 @@ class _DiasListState extends State<DiasList> {
                     Positioned(
                       top: 0,
                       child: Container(
-                        height: 135,
+                        height: (MediaQuery.of(context).size.width > 1080)
+                            ? 135
+                            : 80,
                         width: 7800,
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -146,7 +154,9 @@ class _DiasListState extends State<DiasList> {
                     Positioned(
                       bottom: 0,
                       child: Container(
-                        height: 135,
+                        height: (MediaQuery.of(context).size.width > 1080)
+                            ? 135
+                            : 80,
                         width: 7800,
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -171,121 +181,177 @@ class _DiasListState extends State<DiasList> {
           if (widget.isTable)
             Padding(
               padding: const EdgeInsets.only(top: 15),
-              child: Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                border: TableBorder(
-                  horizontalInside:
-                      BorderSide(color: Theme.of(context).dividerColor),
-                ),
+              child: Column(
                 children: [
-                  TableRow(
+                  Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    border: TableBorder(
+                      horizontalInside:
+                          BorderSide(color: Theme.of(context).dividerColor),
+                    ),
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        child: Center(
-                          child: TextStyles.standardText(
-                              text: "Fecha",
-                              isBold: true,
-                              color: Theme.of(context).primaryColor,
-                              size: 14),
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                            text: "Tarifa Adultos",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                            size: 14),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                            text: "Tarifa Menores de 7 a 12 años",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                            size: 14),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                            text: "Tarifa de Pax Adicional",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                            size: 14),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                            text: "Tarifa Total",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                            size: 14),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                            text: "Opciones",
-                            isBold: true,
-                            color: Theme.of(context).primaryColor,
-                            size: 14),
-                      ),
-                    ],
-                  ),
-                  for (var i = 0; i < numDays + 1; i++)
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 11.0),
-                          child: Center(
+                      TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: Center(
+                              child: TextStyles.standardText(
+                                  text: "Fecha",
+                                  isBold: true,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 14),
+                            ),
+                          ),
+                          Center(
                             child: TextStyles.standardText(
-                                text: DateTime.parse(widget.initDay)
-                                    .add(Duration(days: i))
-                                    .toIso8601String()
-                                    .substring(0, 10),
+                                text: "Tarifa Adultos",
+                                isBold: true,
                                 color: Theme.of(context).primaryColor,
                                 size: 14),
                           ),
+                          Center(
+                            child: TextStyles.standardText(
+                                text: "Tarifa Menores de 7 a 12 años",
+                                isBold: true,
+                                color: Theme.of(context).primaryColor,
+                                size: 14),
+                          ),
+                          Center(
+                            child: TextStyles.standardText(
+                                text: "Tarifa de Pax Adicional",
+                                isBold: true,
+                                color: Theme.of(context).primaryColor,
+                                size: 14),
+                          ),
+                          Center(
+                            child: TextStyles.standardText(
+                                text: "Tarifa Total",
+                                isBold: true,
+                                color: Theme.of(context).primaryColor,
+                                size: 14),
+                          ),
+                          Center(
+                            child: TextStyles.standardText(
+                                text: "Opciones",
+                                isBold: true,
+                                color: Theme.of(context).primaryColor,
+                                size: 14),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: Utility.limitHeightList(numDays, 20, 450),
+                    child: SingleChildScrollView(
+                      child: Table(
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
+                        border: TableBorder(
+                          horizontalInside:
+                              BorderSide(color: Theme.of(context).dividerColor),
                         ),
-                        Center(
-                          child: TextStyles.standardText(
-                              text: Utility.formatterNumber(0),
-                              color: Theme.of(context).primaryColor,
-                              size: 14),
-                        ),
-                        Center(
-                          child: TextStyles.standardText(
-                              text: Utility.formatterNumber(0),
-                              color: Theme.of(context).primaryColor,
-                              size: 14),
-                        ),
-                        Center(
-                          child: TextStyles.standardText(
-                              text: Utility.formatterNumber(0),
-                              color: Theme.of(context).primaryColor,
-                              size: 14),
-                        ),
-                        Center(
-                          child: TextStyles.standardText(
-                              text: Utility.formatterNumber(0),
-                              color: Theme.of(context).primaryColor,
-                              size: 14),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (screenWidth > 1400)
-                              Buttons.commonButton(
-                                  onPressed: () {}, text: "Editar")
-                            else
-                              IconButton(
-                                onPressed: () {},
-                                tooltip: "Editar",
-                                icon: Icon(
-                                  CupertinoIcons.pencil,
-                                  size: 30,
-                                  color: DesktopColors.cerulean,
+                        children: [
+                          for (var i = 0; i < numDays + 1; i++)
+                            TableRow(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 11.0),
+                                  child: Center(
+                                    child: TextStyles.standardText(
+                                        text: DateTime.parse(widget.initDay)
+                                            .add(Duration(days: i))
+                                            .toIso8601String()
+                                            .substring(0, 10),
+                                        color: Theme.of(context).primaryColor,
+                                        size: 14),
+                                  ),
                                 ),
-                              ),
-                          ],
-                        )
-                      ],
+                                Center(
+                                  child: TextStyles.standardText(
+                                      text: Utility.formatterNumber(0),
+                                      color: Theme.of(context).primaryColor,
+                                      size: 14),
+                                ),
+                                Center(
+                                  child: TextStyles.standardText(
+                                      text: Utility.formatterNumber(0),
+                                      color: Theme.of(context).primaryColor,
+                                      size: 14),
+                                ),
+                                Center(
+                                  child: TextStyles.standardText(
+                                      text: Utility.formatterNumber(0),
+                                      color: Theme.of(context).primaryColor,
+                                      size: 14),
+                                ),
+                                Center(
+                                  child: TextStyles.standardText(
+                                      text: Utility.formatterNumber(0),
+                                      color: Theme.of(context).primaryColor,
+                                      size: 14),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (screenWidth > 1400)
+                                      Buttons.commonButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  Dialogs.taridaAlertDialog(
+                                                context: context,
+                                                title:
+                                                    "Modificar de tarifas ${DateTime.parse(widget.initDay).add(Duration(days: i)).day} / ${monthNames[DateTime.parse(widget.initDay).add(Duration(days: i)).month - 1]}",
+                                                iconData: CupertinoIcons
+                                                    .pencil_circle,
+                                                iconColor:
+                                                    DesktopColors.cerulean,
+                                                nameButtonMain: "ACEPTAR",
+                                                funtionMain: () {},
+                                                nameButtonCancel: "CANCELAR",
+                                                withButtonCancel: true,
+                                              ),
+                                            );
+                                          },
+                                          text: "Editar")
+                                    else
+                                      IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                Dialogs.taridaAlertDialog(
+                                              context: context,
+                                              title:
+                                                  "Modificar de tarifas ${DateTime.parse(widget.initDay).add(Duration(days: i)).day} / ${monthNames[DateTime.parse(widget.initDay).add(Duration(days: i)).month - 1]}",
+                                              iconData:
+                                                  CupertinoIcons.pencil_circle,
+                                              iconColor: DesktopColors.cerulean,
+                                              nameButtonMain: "ACEPTAR",
+                                              funtionMain: () {},
+                                              nameButtonCancel: "CANCELAR",
+                                              withButtonCancel: true,
+                                            ),
+                                          );
+                                        },
+                                        tooltip: "Editar",
+                                        icon: Icon(
+                                          CupertinoIcons.pencil,
+                                          size: 30,
+                                          color: DesktopColors.cerulean,
+                                        ),
+                                      ),
+                                  ],
+                                )
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
                 ],
               ),
             ).animate().fadeIn(duration: 700.ms),

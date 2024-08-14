@@ -136,7 +136,6 @@ class SideBar extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 color: Colors.white,
                                 image: DecorationImage(
-                               
                                   image: AssetImage('assets/image/usuario.png'),
                                 ),
                               ),
@@ -250,6 +249,10 @@ class SideBar extends StatelessWidget {
         SidebarXItem(
           icon: CupertinoIcons.rectangle_stack_person_crop,
           label: 'Gestión de usuarios',
+        ),
+        SidebarXItem(
+          icon: CupertinoIcons.book_fill,
+          label: 'Tarifario',
         ),
       ],
       footerItems: const [

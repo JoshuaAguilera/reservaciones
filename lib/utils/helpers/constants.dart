@@ -263,7 +263,7 @@ const List<Text> textofFont = <Text>[
 ];
 
 List<Widget> modesVisual = <Widget>[
-  const Icon(Icons.calendar_month_rounded),
+  const Icon(CupertinoIcons.calendar),
   const Icon(Icons.table_chart),
   const Icon(Icons.dehaze_sharp),
 ];

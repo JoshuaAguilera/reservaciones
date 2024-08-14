@@ -69,67 +69,70 @@ class _HabitacionesListState extends State<HabitacionesList> {
                     6: FractionColumnWidth(!widget.esGrupo ? .21 : .15),
                   },
                   children: [
-                    TableRow(children: [
-                      if (!widget.esGrupo)
+                    TableRow(
+                      children: [
+                        if (!widget.esGrupo)
+                          TextStyles.standardText(
+                              text: "#",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
                         TextStyles.standardText(
-                            text: "#",
+                            text: "Fechas de estancia",
                             aling: TextAlign.center,
                             color: Theme.of(context).primaryColor,
                             overClip: true),
-                      TextStyles.standardText(
-                          text: "Fechas de estancia",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor,
-                          overClip: true),
-                      if (!widget.esGrupo)
+                        if (!widget.esGrupo)
+                          TextStyles.standardText(
+                              text: "Adultos",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
+                        if (!widget.esGrupo)
+                          TextStyles.standardText(
+                              text: "Menores 0-6",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
                         TextStyles.standardText(
-                            text: "Adultos",
+                            text: (!widget.esGrupo)
+                                ? "Menores 7-12"
+                                : "1 o 2 Adultos",
                             aling: TextAlign.center,
                             color: Theme.of(context).primaryColor,
                             overClip: true),
-                      if (!widget.esGrupo)
                         TextStyles.standardText(
-                            text: "Menores 0-6",
+                            text: (!widget.esGrupo)
+                                ? "Tarifa \nReal"
+                                : "3 Adultos",
                             aling: TextAlign.center,
                             color: Theme.of(context).primaryColor,
                             overClip: true),
-                      TextStyles.standardText(
-                          text: (!widget.esGrupo)
-                              ? "Menores 7-12"
-                              : "1 o 2 Adultos",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor,
-                          overClip: true),
-                      TextStyles.standardText(
-                          text:
-                              (!widget.esGrupo) ? "Tarifa \nReal" : "3 Adultos",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor,
-                          overClip: true),
-                      if (widget.esGrupo)
+                        if (widget.esGrupo)
+                          TextStyles.standardText(
+                              text: "  4 Adultos  ",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
+                        if (widget.esGrupo)
+                          TextStyles.standardText(
+                              text: "Menores 7 a 12 Años",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
+                        if (!widget.esGrupo)
+                          TextStyles.standardText(
+                              text:
+                                  "Tarifa de preventa oferta por tiempo limitado",
+                              aling: TextAlign.center,
+                              color: Theme.of(context).primaryColor,
+                              overClip: true),
                         TextStyles.standardText(
-                            text: "  4 Adultos  ",
-                            aling: TextAlign.center,
+                            text: "Opciones",
                             color: Theme.of(context).primaryColor,
-                            overClip: true),
-                      if (widget.esGrupo)
-                        TextStyles.standardText(
-                            text: "Menores 7 a 12 Años",
-                            aling: TextAlign.center,
-                            color: Theme.of(context).primaryColor,
-                            overClip: true),
-                      if (!widget.esGrupo)
-                        TextStyles.standardText(
-                            text:
-                                "Tarifa de preventa oferta por tiempo limitado",
-                            aling: TextAlign.center,
-                            color: Theme.of(context).primaryColor,
-                            overClip: true),
-                      TextStyles.standardText(
-                          text: "Opciones",
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center)
-                    ]),
+                            aling: TextAlign.center)
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -177,90 +180,6 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   ),
                 ),
               ),
-            /*
-                                    else
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 5),
-                                        child: SizedBox(
-                                          height: Utility.limitHeightList(
-                                              cotizacionesGrupales.length),
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.vertical,
-                                            itemCount:
-                                                cotizacionesGrupales.length,
-                                            itemBuilder: (context, index) {
-                                              if (index <
-                                                  cotizacionesGrupales.length) {
-                                                return CotizacionGrupoCard(
-                                                  key: ObjectKey(
-                                                      cotizacionesGrupales[index]
-                                                          .hashCode),
-                                                  index: index,
-                                                  cotGroup:
-                                                      cotizacionesGrupales[index],
-                                                  compact: !Utility.isResizable(
-                                                      extended: widget
-                                                          .sideController
-                                                          .extended,
-                                                      context: context),
-                                                  onPressedDelete: () => setState(
-                                                      () => cotizacionesGrupales
-                                                          .remove(
-                                                              cotizacionesGrupales[
-                                                                  index])),
-                                                  onPressedEdit: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return Dialogs()
-                                                              .habitacionGrupoDialog(
-                                                            buildContext: context,
-                                                            cotizacion:
-                                                                cotizacionesGrupales[
-                                                                    index],
-                                                            onUpdate: (p0) =>
-                                                                setState(() =>
-                                                                    cotizacionesGrupales[
-                                                                            index] =
-                                                                        p0!),
-                                                            context: context,
-                                                          );
-                                                        });
-                                                  },
-                                                );
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      */
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 6.0),
-            //   child: Align(
-            //     alignment: Alignment.centerRight,
-            //     child: TextStyles.titleText(
-            //       text:
-            //           "Subtotal: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizaciones))}",
-            //       size: 16,
-            //       color: DesktopColors.prussianBlue,
-            //     ),
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.only(
-            //       top: 10.0),
-            //   child: Align(
-            //     alignment: Alignment.centerRight,
-            //     child: TextStyles.titleText(
-            //       text:
-            //           "Total: ${Utility.formatterNumber(Utility.calculateTarifaTotal(cotizacionesIndividuales))}",
-            //       size: 16,
-            //       color: Theme.of(context)
-            //           .primaryColor,
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

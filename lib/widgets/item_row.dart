@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
 
+import '../utils/helpers/constants.dart';
 import '../utils/helpers/web_colors.dart';
+import 'dialogs.dart';
 import 'text_styles.dart';
 
 class ItemRow {
@@ -65,26 +65,29 @@ class ItemRow {
     int? daysMonthAfter,
     int? initDay,
     int? lastDay,
-    required int checkIn,
-    required int checkOut,
+    required int dayCheckIn,
+    required int dayCheckOut,
     int? dayWeekLater,
     int? dayMonthLater,
+    required int numMonthInit,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: () {},
-        child: (checkOut < checkIn)
-            ? ((day - 2) >= checkIn && (day - 2 - lastDay!) <= checkOut)
+        child: (dayCheckOut < dayCheckIn)
+            ? ((day - 2) >= dayCheckIn && (day - 2 - lastDay!) <= dayCheckOut)
                 ? SizedBox(
                     width: double.infinity,
                     height: 170,
                     child: CardAnimationWidget(
+                      key: UniqueKey(),
                       day: day,
-                      isMostMonth: (checkOut < checkIn),
+                      isMostMonth: (dayCheckOut < dayCheckIn),
                       initDay: initDay!,
                       daysMonth: lastDay,
                       weekDayLast: dayWeekLater,
+                      initMonth: numMonthInit,
                     ),
                   )
                 : Container(
@@ -138,15 +141,17 @@ class ItemRow {
                       ],
                     ),
                   )
-                : (((day - initDay! + 2) >= checkIn) &&
-                        ((day - initDay + 2) <= checkOut))
+                : (((day - initDay! + 2) >= dayCheckIn) &&
+                        ((day - initDay + 2) <= dayCheckOut))
                     ? SizedBox(
                         width: double.infinity,
                         height: 170,
                         child: CardAnimationWidget(
                           day: day,
-                          isMostMonth: (checkOut < checkIn),
+                          isMostMonth: (dayCheckOut < dayCheckIn),
                           initDay: initDay,
+                          initMonth: numMonthInit,
+                          key: UniqueKey(),
                         ),
                       )
                     : Container(
@@ -161,7 +166,7 @@ class ItemRow {
                               top: 10,
                               left: 15,
                               child: TextStyles.TextSpecial(
-                                  day: (day + 2) - initDay!, subtitle: ""),
+                                  day: (day + 2) - initDay, subtitle: ""),
                             ),
                           ],
                         ),
@@ -172,6 +177,23 @@ class ItemRow {
 
   static Widget itemTarifaDia(BuildContext context,
       {required int day, required DateTime initDate, required bool isDetail}) {
+    void showDialogEditQuote() {
+      showDialog(
+        context: context,
+        builder: (context) => Dialogs.taridaAlertDialog(
+          context: context,
+          title:
+              "Modificar de tarifas ${initDate.add(Duration(days: day)).day} / ${monthNames[initDate.add(Duration(days: day)).month - 1]}",
+          iconData: CupertinoIcons.pencil_circle,
+          iconColor: DesktopColors.cerulean,
+          nameButtonMain: "ACEPTAR",
+          funtionMain: () {},
+          nameButtonCancel: "CANCELAR",
+          withButtonCancel: true,
+        ),
+      );
+    }
+
     return Card(
       elevation: 5,
       color: Theme.of(context).primaryColorDark,
@@ -184,18 +206,21 @@ class ItemRow {
               subtitle: "DIA",
               sizeTitle: 22,
               colorsubTitle: Theme.of(context).dividerColor),
-          title: TextStyles.TextAsociative(
-            "Fecha:  ",
-            DateTime(initDate.year, initDate.month, initDate.day)
-                .add(Duration(days: day))
-                .toString()
-                .substring(0, 10),
-            color: Theme.of(context).primaryColor,
-            size: 13.5,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: TextStyles.TextAsociative(
+              "Fecha:  ",
+              DateTime(initDate.year, initDate.month, initDate.day)
+                  .add(Duration(days: day))
+                  .toString()
+                  .substring(0, 10),
+              color: Theme.of(context).primaryColor,
+              size: 13.5,
+            ),
           ),
           subtitle: Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 20,
+            runSpacing: 5,
             children: [
               TextStyles.TextAsociative(
                 "Tarifa de adultos:  ",
@@ -218,6 +243,20 @@ class ItemRow {
                 color: Theme.of(context).primaryColor,
                 size: 13.5,
               ),
+              if (MediaQuery.of(context).size.width > 1300)
+                TextStyles.TextAsociative(
+                  "Periodo:  ",
+                  "Marzo - Abril",
+                  color: Theme.of(context).primaryColor,
+                  size: 13.5,
+                ),
+              if (MediaQuery.of(context).size.width > 1500)
+                TextStyles.TextAsociative(
+                  "Temporada:  ",
+                  "Alta",
+                  color: Theme.of(context).primaryColor,
+                  size: 13.5,
+                ),
             ],
           ),
           trailing: isDetail
@@ -226,10 +265,11 @@ class ItemRow {
                   ? SizedBox(
                       width: 115,
                       child: Buttons.commonButton(
-                          onPressed: () {}, text: "Editar"),
+                          onPressed: () => showDialogEditQuote(),
+                          text: "Editar"),
                     )
                   : IconButton(
-                      onPressed: () {},
+                      onPressed: () => showDialogEditQuote(),
                       tooltip: "Editar",
                       icon: Icon(
                         CupertinoIcons.pencil,

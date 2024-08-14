@@ -109,27 +109,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       color: Colors.white,
                                     ),
                             )
-                          : SizedBox(),
+                          : const SizedBox(),
                     ),
                     if (!isLoading)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /*
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: CustomDropdown.dropdownMenuCustom(
-                              initialSelection: cotizacionesList.first,
-                              onSelected: (String? value) {
-                                setState(() {
-                                  dropdownValue = value!;
-                                });
-                              },
-                              elements: cotizacionesList,
-                              screenWidth: null,
-                            ),
-                          ),
-                          */
                           const SizedBox(height: 15),
                           Card(
                             elevation: 6,
@@ -358,8 +343,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         color: DesktopColors.prussianBlue)
                                     .animate()
                                     .fadeIn(
-                                        delay:
-                                            const Duration(milliseconds: 1000)),
+                                      delay: const Duration(
+                                        milliseconds: 1000,
+                                      ),
+                                    ),
                               ),
                             ),
                           ),

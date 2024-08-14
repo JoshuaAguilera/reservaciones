@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
 
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/utility.dart';
@@ -15,6 +18,7 @@ class CardAnimationWidget extends StatefulWidget {
     required this.day,
     required this.isMostMonth,
     required this.initDay,
+    required this.initMonth,
     this.daysMonth,
     this.weekDayLast,
     this.resetTime = const Duration(milliseconds: 3500),
@@ -23,6 +27,7 @@ class CardAnimationWidget extends StatefulWidget {
   final int day;
   final bool isMostMonth;
   final int initDay;
+  final int initMonth;
   final int? daysMonth;
   final int? weekDayLast;
   final Duration resetTime;
@@ -35,6 +40,8 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
   bool _showFrontSide = false;
   bool _flipXAxis = false;
   bool _isLoading = false;
+  bool _isEditing = false;
+  late Timer flipCard;
 
   @override
   void initState() {
@@ -48,41 +55,55 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
     return Center(
       child: Container(
         constraints: BoxConstraints.tight(const Size.square(200.0)),
-        child:
-            AbsorbPointer(absorbing: _isLoading, child: _buildFlipAnimation()),
+        child: _buildFlipAnimation(),
       ),
     );
   }
 
   void _switchCard() {
-    setState(() {
-      _isLoading = true;
-      _showFrontSide = !_showFrontSide;
-    });
+    if (!_isLoading) {
+      setState(() {
+        _isLoading = true;
+        _showFrontSide = !_showFrontSide;
+      });
 
-    Future.delayed(
-        1100.ms,
-        () => setState(() {
-              _isLoading = false;
-            }));
-
-    Future.delayed(
-        widget.resetTime,
-        () => setState(() {
+      flipCard = Timer(widget.resetTime, () {
+        setState(
+          () {
+            if (!_isEditing) {
               _showFrontSide = !_showFrontSide;
-            }));
+            }
+          },
+        );
+      });
+
+      Future.delayed(
+        widget.resetTime + 800.ms,
+        () {
+          if (mounted) {
+            setState(
+              () {
+                if (!_isEditing) {
+                  _isLoading = false;
+                }
+              },
+            );
+          }
+        },
+      );
+    }
   }
 
   Widget _buildFlipAnimation() {
     return GestureDetector(
-      onTap: _isLoading ? null : _switchCard,
+      onTap: _switchCard,
       child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 800),
+        duration: const Duration(milliseconds: 800),
         transitionBuilder: __transitionBuilder,
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
-        child: _showFrontSide ? _buildFront() : _buildRear(),
         switchInCurve: Curves.easeInBack,
         switchOutCurve: Curves.easeInBack.flipped,
+        child: _showFrontSide ? _buildFront() : _buildRear(),
       ),
     );
   }
@@ -102,20 +123,21 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
           transform: _flipXAxis
               ? (Matrix4.rotationY(value)..setEntry(3, 0, tilt))
               : (Matrix4.rotationX(value)..setEntry(3, 1, tilt)),
-          child: widget,
           alignment: Alignment.center,
+          child: widget,
         );
       },
     );
   }
 
   Widget _buildFront() {
+    double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     return __buildLayout(
       key: ValueKey(true),
       backgroundColor: Theme.of(context).primaryColorDark,
       faceName: "Front",
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+        padding: EdgeInsets.fromLTRB(5, padding, 5, padding),
         child: Column(
           children: [
             TextStyles.TextSpecial(
@@ -123,39 +145,45 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
                     ? ((widget.day - 2) <= widget.daysMonth!)
                         ? (widget.day - 2)
                         : widget.day - 2 - widget.daysMonth!
-                    : (widget.day!) - (widget.initDay - 2),
-                subtitle: dayNames[widget.isMostMonth
-                    ? (widget.initDay == 4)
-                        ? widget.day
-                        : (widget.initDay < 4)
-                            ? widget.day - (widget.initDay)
-                            : widget.day + (widget.initDay - 4)
-                    : widget.day],
+                    : (widget.day) - (widget.initDay - 2),
+                subtitle: (MediaQuery.of(context).size.width > 960)
+                    ? dayNames[widget.isMostMonth
+                        ? (widget.initDay == 4)
+                            ? widget.day
+                            : (widget.initDay < 4)
+                                ? widget.day - (widget.initDay)
+                                : widget.day + (widget.initDay - 4)
+                        : widget.day]
+                    : '',
                 sizeTitle: 28,
                 colorsubTitle: Theme.of(context).primaryColor,
                 colorTitle: Theme.of(context).dividerColor,
                 sizeSubtitle: 15),
-            const SizedBox(height: 15),
+            if (MediaQuery.of(context).size.width > 960)
+              const SizedBox(height: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextStyles.TextAsociative(
-                    "Adulto: ", Utility.formatterNumber(0),
-                    boldInversed: true,
-                    size: 11,
-                    color: Theme.of(context).primaryColor),
-                TextStyles.TextAsociative(
-                    "KID: ",
-                    boldInversed: true,
-                    size: 11,
-                    Utility.formatterNumber(0),
-                    color: Theme.of(context).primaryColor),
-                TextStyles.TextAsociative(
-                    "Pax adic: ",
-                    boldInversed: true,
-                    size: 11,
-                    Utility.formatterNumber(0),
-                    color: Theme.of(context).primaryColor),
+                if (MediaQuery.of(context).size.width > 1080)
+                  TextStyles.TextAsociative(
+                      "Adulto: ", Utility.formatterNumber(0),
+                      boldInversed: true,
+                      size: 11,
+                      color: Theme.of(context).primaryColor),
+                if (MediaQuery.of(context).size.width > 1180)
+                  TextStyles.TextAsociative(
+                      "KID: ",
+                      boldInversed: true,
+                      size: 11,
+                      Utility.formatterNumber(0),
+                      color: Theme.of(context).primaryColor),
+                if (MediaQuery.of(context).size.width > 1280)
+                  TextStyles.TextAsociative(
+                      "Pax adic: ",
+                      boldInversed: true,
+                      size: 11,
+                      Utility.formatterNumber(0),
+                      color: Theme.of(context).primaryColor),
               ],
             ),
           ],
@@ -165,48 +193,132 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
   }
 
   Widget _buildRear() {
+    double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
+
     return __buildLayout(
       key: ValueKey(false),
       backgroundColor: DesktopColors.cerulean,
       faceName: "Rear",
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: EdgeInsets.fromLTRB(padding, 10, padding, 0),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextStyles.TextSpecial(
-                  day: (widget.daysMonth != null)
-                      ? ((widget.day - 2) <= widget.daysMonth!)
-                          ? (widget.day - 2)
-                          : widget.day - 2 - widget.daysMonth!
-                      : (widget.day!) - (widget.initDay - 2),
-                  subtitle: dayNames[widget.isMostMonth
-                      ? (widget.initDay == 4)
-                          ? widget.day
-                          : (widget.initDay < 4)
-                              ? widget.day - (widget.initDay)
-                              : widget.day + (widget.initDay - 4)
-                      : widget.day],
-                  sizeTitle: 28,
-                  colorsubTitle: Theme.of(context).primaryColor,
-                  colorTitle: Theme.of(context).dividerColor,
-                  sizeSubtitle: 15),
-              const SizedBox(height: 15),
-              SizedBox(
-                width: 105,
-                child: Buttons.commonButton(
-                  onPressed: () {},
-                  text: "Cambiar",
-                  sizeText: 12.5,
-                  isBold: true,
-                  withRoundedBorder: true,
+              if (MediaQuery.of(context).size.width > 850)
+                TextStyles.TextSpecial(
+                    day: getNumDay(),
+                    subtitle: (MediaQuery.of(context).size.width > 960)
+                        ? dayNames[widget.isMostMonth
+                            ? (widget.initDay == 4)
+                                ? widget.day
+                                : (widget.initDay < 4)
+                                    ? widget.day - (widget.initDay)
+                                    : widget.day + (widget.initDay - 4)
+                            : widget.day]
+                        : '',
+                    sizeTitle: (MediaQuery.of(context).size.width > 1080)
+                        ? 28
+                        : (MediaQuery.of(context).size.width > 850)
+                            ? 20
+                            : 28,
+                    colorsubTitle: Theme.of(context).primaryColor,
+                    colorTitle: Theme.of(context).dividerColor,
+                    sizeSubtitle: 15),
+              if (MediaQuery.of(context).size.width > 1180)
+                const SizedBox(height: 12),
+              if (MediaQuery.of(context).size.width > 1180)
+                TextStyles.TextAsociative(
+                  "Periodo: ",
+                  "Marzo-Abril",
+                  boldInversed: true,
+                  size: 11,
+                  color: Theme.of(context).primaryColor,
+                  overflow: (MediaQuery.of(context).size.width > 1280)
+                      ? TextOverflow.clip
+                      : TextOverflow.ellipsis,
                 ),
-              ),
+              if (MediaQuery.of(context).size.width > 1280)
+                TextStyles.TextAsociative(
+                  "Temporada: ",
+                  "Baja",
+                  boldInversed: true,
+                  size: 11,
+                  color: Theme.of(context).primaryColor,
+                ),
+              if (MediaQuery.of(context).size.width > 1180)
+                SizedBox(
+                  width:
+                      (MediaQuery.of(context).size.width > 1180) ? 105 : null,
+                  child: Buttons.commonButton(
+                    onPressed: () => showDialogEditQuote(),
+                    text: "Cambiar",
+                    sizeText: 11.5,
+                    isBold: true,
+                    withRoundedBorder: true,
+                  ),
+                ),
+              if (MediaQuery.of(context).size.width <= 1180)
+                IconButton(
+                  onPressed: () => showDialogEditQuote(),
+                  icon: Icon(
+                    Icons.mode_edit_outline_outlined,
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void showDialogEditQuote() {
+    setState(() {
+      flipCard.cancel;
+      _isEditing = true;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => Dialogs.taridaAlertDialog(
+        context: context,
+        title: "Modificar de tarifas ${getNumDay()} / ${getNameMonth()}",
+        iconData: CupertinoIcons.pencil_circle,
+        iconColor: DesktopColors.cerulean,
+        nameButtonMain: "ACEPTAR",
+        funtionMain: () {},
+        nameButtonCancel: "CANCELAR",
+        withButtonCancel: true,
+      ),
+    ).then(
+      (value) {
+        if (mounted) {
+          setState(
+            () {
+              flipCard.cancel();
+              if (!_showFrontSide) {
+                setState(() {
+                  _showFrontSide = !_showFrontSide;
+                });
+              }
+            },
+          );
+        }
+
+        Future.delayed(
+          1200.ms,
+          () {
+            if (mounted) {
+              setState(
+                () {
+                  _isLoading = false;
+                  _isEditing = false;
+                },
+              );
+            }
+          },
+        );
+      },
     );
   }
 
@@ -233,5 +345,21 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
         child: child,
       ),
     );
+  }
+
+  int getNumDay() {
+    return (widget.daysMonth != null)
+        ? ((widget.day - 2) <= widget.daysMonth!)
+            ? (widget.day - 2)
+            : widget.day - 2 - widget.daysMonth!
+        : (widget.day) - (widget.initDay - 2);
+  }
+
+  String getNameMonth() {
+    return (widget.daysMonth != null)
+        ? ((widget.day - 2) <= widget.daysMonth!)
+            ? monthNames[widget.initMonth - 1]
+            : monthNames[widget.initMonth]
+        : monthNames[widget.initMonth - 1];
   }
 }

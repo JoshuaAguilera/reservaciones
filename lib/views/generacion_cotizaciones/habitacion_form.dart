@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -111,12 +109,24 @@ class _HabitacionFormState extends State<HabitacionForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextStyles.titleText(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextStyles.titleText(
                     text: "Nueva Habitación",
                     color: Theme.of(context).dividerColor,
-                  )),
+                  ),
+                  SizedBox(
+                    width: 200,
+                    height: 40,
+                    child: Buttons.commonButton(
+                        onPressed: () {
+                          widget.cancelarFunction!.call();
+                        },
+                        text: "Cancelar"),
+                  ),
+                ],
+              ),
               const SizedBox(height: 15),
               Form(
                 key: _formKeyHabitacion,
@@ -336,18 +346,18 @@ class _HabitacionFormState extends State<HabitacionForm> {
                   ),
                 ),
               const SizedBox(height: 15),
-              Align(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  width: 200,
-                  height: 40,
-                  child: Buttons.commonButton(
-                      onPressed: () {
-                        widget.cancelarFunction!.call();
-                      },
-                      text: "Cancelar"),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: SizedBox(
+              //     width: 200,
+              //     height: 40,
+              //     child: Buttons.commonButton(
+              //         onPressed: () {
+              //           widget.cancelarFunction!.call();
+              //         },
+              //         text: "Cancelar"),
+              //   ),
+              // ),
             ],
           ),
         ),

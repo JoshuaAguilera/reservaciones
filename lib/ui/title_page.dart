@@ -34,10 +34,11 @@ class _TitlePageState extends State<TitlePage> {
                     text: widget.title,
                     color: Theme.of(context).primaryColor,
                   ),
-                  TextStyles.standardText(
-                    text: widget.subtitle,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                  if (widget.subtitle.isNotEmpty)
+                    TextStyles.standardText(
+                      text: widget.subtitle,
+                      color: Theme.of(context).primaryColor,
+                    ),
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
@@ -61,46 +62,41 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextStyles.titlePagText(
-                      text: "Historial",
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    SizedBox(
-                      height: 35,
-                      width: screenWidth * 0.3,
-                      child: TextField(
-                        onSubmitted: (value) {
-                          // pag = 1;
-                          // fetchData(empty: false);
+                TitlePage(
+                  title: "Historial",
+                  subtitle: "",
+                  childOptional: SizedBox(
+                    height: 35,
+                    width: screenWidth * 0.3,
+                    child: TextField(
+                      onSubmitted: (value) {
+                        // pag = 1;
+                        // fetchData(empty: false);
+                        ref
+                            .read(searchProvider.notifier)
+                            .update((state) => value);
+                        ref
+                            .read(isEmptyProvider.notifier)
+                            .update((state) => false);
+                      },
+                      controller: _searchController,
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: "poppins_regular",
+                          height: 1),
+                      decoration: TextFormFieldStyle.decorationFieldSearch(
+                        label: "Buscar",
+                        function: () {
                           ref
                               .read(searchProvider.notifier)
-                              .update((state) => value);
+                              .update((state) => _searchController.text);
                           ref
                               .read(isEmptyProvider.notifier)
                               .update((state) => false);
                         },
-                        controller: _searchController,
-                        style: const TextStyle(
-                            fontSize: 13,
-                            fontFamily: "poppins_regular",
-                            height: 1),
-                        decoration: TextFormFieldStyle.decorationFieldSearch(
-                          label: "Buscar",
-                          function: () {
-                            ref
-                                .read(searchProvider.notifier)
-                                .update((state) => _searchController.text);
-                            ref
-                                .read(isEmptyProvider.notifier)
-                                .update((state) => false);
-                          },
-                        ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 15),
                 Padding(
@@ -301,10 +297,12 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                             "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
                                         nameButtonMain: "Aceptar",
                                         funtionMain: () async {
-                                          debugPrint(list[index].folioPrincipal);
+                                          debugPrint(
+                                              list[index].folioPrincipal);
                                           if (await CotizacionService()
                                               .eliminarCotizacion(
-                                                  list[index].folioPrincipal ?? '')) {}
+                                                  list[index].folioPrincipal ??
+                                                      '')) {}
                                         },
                                         nameButtonCancel: "Cancelar",
                                         withButtonCancel: true,

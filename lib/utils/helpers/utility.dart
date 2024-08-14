@@ -139,7 +139,8 @@ class Utility {
     return tarifaTotal;
   }
 
-  static double? limitHeightList(int length, [int maxItems = 3, double maxHeight = 290]) {
+  static double? limitHeightList(int length,
+      [int maxItems = 3, double maxHeight = 290]) {
     double? height;
     if (length > maxItems) {
       height = maxHeight;
@@ -602,5 +603,21 @@ class Utility {
     }
 
     return isValide;
+  }
+
+  static String calculateRate(TextEditingController tarifaAdulto,
+      TextEditingController tarifaPaxAdicional, int numPaxAdic) {
+    String subtotalString = '0';
+    double subtotal = 0;
+    double tarifaAdultoNum =
+        double.parse(tarifaAdulto.text.isEmpty ? '0' : tarifaAdulto.text);
+    double tarifaPaxAdicNum = double.parse(
+        tarifaPaxAdicional.text.isEmpty ? '0' : tarifaPaxAdicional.text);
+
+    subtotal = tarifaAdultoNum + (tarifaPaxAdicNum * numPaxAdic);
+
+    subtotalString = subtotal.toStringAsFixed(2);
+
+    return subtotalString;
   }
 }

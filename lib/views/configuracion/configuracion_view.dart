@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/configuracion/config_formato_group_view.dart';
 import 'package:generador_formato/views/configuracion/config_general_view.dart';
@@ -31,20 +32,10 @@ class _ConfiguracionViewState extends State<ConfiguracionView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                TextStyles.titlePagText(
-                  text: "Configuración",
-                  color: Theme.of(context).primaryColor,
-                ),
-              ]),
-              TextStyles.standardText(
-                text:
-                    "Administrar la configuración y preferencias de su interfaz y documentos.",
-                color: Theme.of(context).primaryColor,
-              ),
-              Divider(
-                color: Theme.of(context).primaryColor,
-              ),
+              const TitlePage(
+                  title: "Configuración",
+                  subtitle:
+                      "Administrar la configuración y preferencias de su interfaz y documentos."),
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Card(

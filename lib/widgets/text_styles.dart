@@ -116,7 +116,7 @@ class TextStyles {
               size: sizeTitle,
               color: colorTitle,
               textAlign: TextAlign.center),
-          if (subtitle != "NUM")
+          if (subtitle != "NUM" && subtitle.isNotEmpty)
             standardText(
                 text: subtitle, color: colorsubTitle, size: sizeSubtitle),
         ]);
@@ -204,6 +204,7 @@ class TextStyles {
       bool boldInversed = false,
       TextOverflow overflow = TextOverflow.ellipsis}) {
     return RichText(
+      overflow: overflow,
       text: TextSpan(children: [
         if (!isInverted)
           TextSpan(

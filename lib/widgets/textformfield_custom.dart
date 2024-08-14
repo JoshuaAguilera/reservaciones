@@ -47,9 +47,6 @@ class TextFormFieldCustom {
           ),
           child: Stack(
             children: [
-              if (withContent && isMoneda)
-                Positioned(
-                    top: 15, child: TextStyles.standardText(text: "   \$")),
               AbsorbPointer(
                 absorbing: blocked,
                 child: TextFormField(
@@ -104,6 +101,7 @@ class TextFormFieldCustom {
                       fontFamily: "poppins_regular",
                       fontSize: 13,
                     ),
+                    alignLabelWithHint: true,
                     prefixIcon: isMoneda
                         ? const Icon(
                             CupertinoIcons.money_dollar,

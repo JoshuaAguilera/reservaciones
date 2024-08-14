@@ -65,8 +65,8 @@ class CustomWidgets {
             selectedColor: DesktopColors.ceruleanOscure,
             color: Theme.of(context).primaryColor,
             constraints: const BoxConstraints(
-              minHeight: 40.0,
-              minWidth: 80.0,
+              minHeight: 35.0,
+              minWidth: 70.0,
             ),
             isSelected: listModes,
             children: modesVisual,
