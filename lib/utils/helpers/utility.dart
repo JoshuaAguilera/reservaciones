@@ -7,6 +7,7 @@ import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 
 import 'web_colors.dart';
@@ -619,5 +620,16 @@ class Utility {
     subtotalString = subtotal.toStringAsFixed(2);
 
     return subtotalString;
+  }
+
+  static List<Widget> generateTextWidget(
+      List<String> list, Color? primaryColor) {
+    List<Widget> children = [];
+
+    for (var element in list) {
+      children.add(TextStyles.standardText(text: element, color: primaryColor));
+    }
+
+    return children;
   }
 }

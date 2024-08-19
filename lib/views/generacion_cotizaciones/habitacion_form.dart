@@ -317,17 +317,17 @@ class _HabitacionFormState extends State<HabitacionForm> {
                     color: Theme.of(context).primaryColor,
                   ),
                   CustomWidgets.sectionButton(
-                    Utility.revisedLimitDateTime(
+                    listModes: Utility.revisedLimitDateTime(
                             DateTime.parse(_fechaEntrada.text),
                             DateTime.parse(_fechaSalida.text))
                         ? selectedMode
                         : _selectedModeRange,
-                    Utility.revisedLimitDateTime(
+                    modesVisual: Utility.revisedLimitDateTime(
                             DateTime.parse(_fechaEntrada.text),
                             DateTime.parse(_fechaSalida.text))
                         ? modesVisual
                         : modesVisualRange,
-                    (p0, p1) {
+                    onChanged: (p0, p1) {
                       selectedMode[p0] = p0 == p1;
                       setState(() {});
                     },

@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/period_item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
-
-import '../../utils/helpers/web_colors.dart';
+import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 class TarifarioCalendaryView extends StatefulWidget {
-  const TarifarioCalendaryView(
-      {super.key, required this.target, required this.onTarget});
+  const TarifarioCalendaryView({
+    super.key,
+    required this.target,
+    required this.onTarget,
+    required this.inMenu,
+    required this.sideController,
+  });
+
   final bool target;
+  final bool inMenu;
   final void Function()? onTarget;
+  final SidebarXController sideController;
 
   @override
   State<TarifarioCalendaryView> createState() => _TarifarioCalendaryViewState();
@@ -43,6 +51,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Padding(
@@ -52,56 +61,43 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
           children: [
             Stack(
               children: [
+                SizedBox(height: screenHeight - 160),
                 Positioned(
                     top: 100,
-                    child: SizedBox(
-                      width: screenWidth,
-                      child: Table(
-                        columnWidths: {
-                          0: const FractionColumnWidth(.12),
-                        },
-                        border: TableBorder(
-                          horizontalInside:
-                              BorderSide(color: Theme.of(context).dividerColor),
-                          top:
-                              BorderSide(color: Theme.of(context).dividerColor),
-                          bottom:
-                              BorderSide(color: Theme.of(context).dividerColor),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: (screenWidth > 1280) ? 385 : 0,
+                      ),
+                      child: SizedBox(
+                        width: (screenWidth > 1280)
+                            ? (screenWidth -
+                                385 -
+                                (widget.sideController.extended ? 230 : 118))
+                            : screenWidth - 230,
+                        child: Table(
+                          border: TableBorder(
+                            verticalInside: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                            left: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                            right: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                          ),
+                          children: [
+                            TableRow(children: [
+                              for (var i = 0; i < 7; i++)
+                                const SizedBox(
+                                  height: 850,
+                                  child: Text(""),
+                                ),
+                            ]),
+                          ],
                         ),
-                        children: [
-                          TableRow(children: [
-                            SizedBox(
-                              height: 80,
-                              child: Center(
-                                child: TextStyles.standardText(
-                                  text: "Tarifa Mayo - Junio",
-                                  overClip: true,
-                                  aling: TextAlign.center,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox()
-                          ]),
-                          TableRow(children: [
-                            SizedBox(
-                              height: 80,
-                              child: Center(
-                                child: TextStyles.standardText(
-                                  text: "Tarifa Agosto - Octubre",
-                                  overClip: true,
-                                  aling: TextAlign.center,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox()
-                          ])
-                        ],
                       ),
                     )),
                 Padding(
-                  padding: const EdgeInsets.only(left: 100),
+                  padding:
+                      EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
                   child: GridView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -121,153 +117,203 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                   ),
                 ),
                 Positioned(
+                  left: (screenWidth > 1280) ? (370) : -10,
+                  top: 110,
                   child: SizedBox(
-                    width: screenWidth > 875
-                        ? screenWidth > 950
-                            ? 350
-                            : screenWidth * 0.34
-                        : 300,
-                    child: Card(
-                      elevation: 10,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: (screenWidth > 1280) ? 10 : 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: TextStyles.standardText(
-                                        text: "Diseño de calendario",
-                                        isBold: true,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                                  if (screenWidth < 1280)
-                                    IconButton(
-                                      onPressed: () {
-                                        widget.onTarget!.call();
-                                      },
-                                      icon: const Icon(
-                                          Icons.arrow_back_ios_new_rounded),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 380,
-                              child: Column(
-                                children: [
-                                  _buildHeader(),
-                                  const Divider(height: 5),
-                                  _buildWeeks(),
-                                  Expanded(
-                                    child: PageView.builder(
-                                      controller: _pageController,
-                                      onPageChanged: (index) {
-                                        setState(() {
-                                          _currentMonth = DateTime(
-                                              _currentMonth.year, index + 1, 1);
-                                        });
-                                      },
-                                      itemCount: 12 *
-                                          10, // Show 10 years, adjust this count as needed
-                                      itemBuilder: (context, pageIndex) {
-                                        DateTime month = DateTime(
-                                            _currentMonth.year,
-                                            (pageIndex % 12) + 1,
-                                            1);
-                                        return buildCalendar(month);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ExpansionTile(
-                              initiallyExpanded: true,
-                              collapsedShape: Border(
-                                  top: BorderSide(
-                                      color: Theme.of(context).dividerColor)),
-                              title: TextStyles.standardText(
-                                text: "Tarifas disponibles",
-                                isBold: true,
-                                color: Theme.of(context).primaryColor,
-                                size: 14,
-                              ),
-                              children: [
-                                ItemRow.tarifaItemRow(
-                                  context,
-                                  nameRack: "Mayo - Julio",
-                                  colorIndicator: Colors.blue[200],
-                                ),
-                                ItemRow.tarifaItemRow(
-                                  context,
-                                  nameRack: "Agosto - Octubre",
-                                  colorIndicator: Colors.amber,
-                                ),
-                              ],
-                            ),
-                            ExpansionTile(
-                              initiallyExpanded: true,
-                              collapsedShape: Border(
-                                  top: BorderSide(
-                                      color: Theme.of(context).dividerColor)),
-                              title: TextStyles.standardText(
-                                text: "Usuarios autorizados",
-                                isBold: true,
-                                color: Theme.of(context).primaryColor,
-                                size: 14,
-                              ),
-                              children: [
-                                ItemRow.userTarifaItemRow(context,
-                                    nameUser: "Neli", rolUser: "Administrador")
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 50.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextStyles.standardText(
-                                      text: "Ultima modificación:",
-                                      color: Theme.of(context).primaryColor),
-                                  TextStyles.standardText(
-                                      text: Utility.getCompleteDate(
-                                          data: DateTime.now()),
-                                      color: Theme.of(context).dividerColor),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                    height: screenHeight - 260,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = 0; i < 4; i++)
+                            PeriodItemRow(
+                              color: Colors.amber,
+                              days: i + 1,
+                              lenghtDays: 7,
+                              lenghtSideBar:
+                                  (widget.sideController.extended ? 230 : 118),
+                            )
+                        ],
                       ),
                     ),
-                  )
-                      .animate(
-                          delay: !startFlow ? 1600.ms : 0.ms,
-                          onComplete: (controller) => setState(() {
-                                startFlow = true;
-                              }),
-                          target: (screenWidth > 1280)
-                              ? 1
-                              : !widget.target
-                                  ? 1
-                                  : 0)
-                      .slideX(begin: -0.2, duration: 550.ms)
-                      .fadeIn(delay: widget.target ? 0.ms : 400.ms),
+                  ),
                 ),
+                if (!widget.inMenu || screenWidth > 1280)
+                  Positioned(
+                    child: SizedBox(
+                      width: screenWidth > 875
+                          ? screenWidth > 950
+                              ? 350
+                              : screenWidth * 0.34
+                          : 300,
+                      child: Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                height: screenHeight - 210,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical:
+                                                (screenWidth > 1280) ? 10 : 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: TextStyles.standardText(
+                                                  text: "Diseño de calendario",
+                                                  isBold: true,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  size: 14,
+                                                ),
+                                              ),
+                                            ),
+                                            if (screenWidth < 1280)
+                                              IconButton(
+                                                onPressed: () {
+                                                  widget.onTarget!.call();
+                                                },
+                                                icon: const Icon(Icons
+                                                    .arrow_back_ios_new_rounded),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 380,
+                                        child: Column(
+                                          children: [
+                                            _buildHeader(),
+                                            const Divider(height: 5),
+                                            _buildWeeks(),
+                                            Expanded(
+                                              child: PageView.builder(
+                                                controller: _pageController,
+                                                onPageChanged: (index) {
+                                                  setState(() {
+                                                    _currentMonth = DateTime(
+                                                        _currentMonth.year,
+                                                        index + 1,
+                                                        1);
+                                                  });
+                                                },
+                                                itemCount: 12 *
+                                                    10, // Show 10 years, adjust this count as needed
+                                                itemBuilder:
+                                                    (context, pageIndex) {
+                                                  DateTime month = DateTime(
+                                                      _currentMonth.year,
+                                                      (pageIndex % 12) + 1,
+                                                      1);
+                                                  return buildCalendar(month);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ExpansionTile(
+                                        initiallyExpanded: true,
+                                        collapsedShape: Border(
+                                            top: BorderSide(
+                                                color: Theme.of(context)
+                                                    .dividerColor)),
+                                        title: IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                                Icons.add_circle_rounded)),
+                                        leading: SizedBox(
+                                          width: 210,
+                                          child: TextStyles.standardText(
+                                            text: "Tarifas disponibles",
+                                            isBold: true,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 14,
+                                          ),
+                                        ),
+                                        children: [
+                                          ItemRow.tarifaItemRow(
+                                            context,
+                                            nameRack: "Mayo - Julio",
+                                            colorIndicator: Colors.blue[200],
+                                          ),
+                                          ItemRow.tarifaItemRow(
+                                            context,
+                                            nameRack: "Agosto - Octubre",
+                                            colorIndicator: Colors.amber,
+                                          ),
+                                        ],
+                                      ),
+                                      ExpansionTile(
+                                        initiallyExpanded: true,
+                                        collapsedShape: Border(
+                                            top: BorderSide(
+                                                color: Theme.of(context)
+                                                    .dividerColor)),
+                                        title: TextStyles.standardText(
+                                          text: "Usuarios autorizados",
+                                          isBold: true,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 14,
+                                        ),
+                                        children: [
+                                          ItemRow.userTarifaItemRow(context,
+                                              nameUser: "Neli",
+                                              rolUser: "Administrador")
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextStyles.standardText(
+                                        text: "Ultima modificación:",
+                                        color: Theme.of(context).primaryColor),
+                                    TextStyles.standardText(
+                                        text: Utility.getCompleteDate(
+                                            data: DateTime.now()),
+                                        color: Theme.of(context).dividerColor),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                        .animate(
+                            delay: !startFlow ? 1600.ms : 0.ms,
+                            onComplete: (controller) => setState(() {
+                                  startFlow = true;
+                                }),
+                            target: (screenWidth > 1280)
+                                ? 1
+                                : !widget.target
+                                    ? 1
+                                    : 0)
+                        .slideX(begin: -0.2, duration: 550.ms)
+                        .fadeIn(delay: widget.target ? 0.ms : 400.ms),
+                  ),
               ],
             ),
           ],
@@ -343,7 +389,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
               if (!isLastMonthOfYear) {
                 setState(() {
                   _pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
                 });

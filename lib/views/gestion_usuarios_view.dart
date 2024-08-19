@@ -107,9 +107,9 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                 color: Theme.of(context).primaryColor,
               ),
               CustomWidgets.sectionButton(
-                _selectedMode,
-                modesVisual,
-                (p0, p1) {},
+                listModes: _selectedMode,
+                modesVisual: modesVisual,
+                onChanged: (p0, p1) {},
               ),
               if (!Utility.isResizable(
                   extended: widget.sideController.extended, context: context))

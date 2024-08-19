@@ -8,7 +8,6 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/custom_widgets.dart';
 import '../../ui/title_page.dart';
-import '../../widgets/custom_dropdown.dart';
 
 class TarifarioView extends ConsumerStatefulWidget {
   const TarifarioView({super.key, required this.sideController});
@@ -21,7 +20,15 @@ class TarifarioView extends ConsumerStatefulWidget {
 class _TarifarioViewState extends ConsumerState<TarifarioView> {
   String typePeriod = filtrosRegistro.first;
   bool target = false;
-  final List<bool> selectedMode = <bool>[
+  bool inMenu = false;
+
+  final List<bool> selectedModeView = <bool>[
+    true,
+    false,
+    false,
+  ];
+
+  final List<bool> selectedModeCalendar = <bool>[
     true,
     false,
     false,
@@ -56,12 +63,31 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 children: [
                   Row(
                     children: [
-                      if (screenWidth < 1280)
+                      SizedBox(
+                        height: 50,
+                        child: CustomWidgets.sectionButton(
+                          listModes: selectedModeCalendar,
+                          modesVisual: [],
+                          onChanged: (p0, p1) {
+                            selectedModeCalendar[p0] = p0 == p1;
+                            setState(() {});
+                          },
+                          arrayStrings: filtrosRegistro,
+                          borderRadius: 12,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      if (screenWidth < 1280 && inMenu)
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
                               target = false;
                             });
+
+                            Future.delayed(
+                              700.ms,
+                              () => setState(() => inMenu = false),
+                            );
                           },
                           style: ButtonStyle(
                             padding:
@@ -82,25 +108,13 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                             .animate(target: target ? 1 : 0)
                             .slideX(begin: -0.2, duration: 550.ms)
                             .fadeIn(delay: !target ? 0.ms : 400.ms),
-                      const SizedBox(width: 10),
-                        CustomDropdown.dropdownMenuCustom(
-                          fontSize: 12,
-                          initialSelection: typePeriod,
-                          onSelected: (String? value) {
-                            setState(() {
-                              typePeriod = value!;
-                            });
-                          },
-                          elements: filtrosRegistro,
-                          screenWidth: null),
-                    
                     ],
                   ),
                   CustomWidgets.sectionButton(
-                    selectedMode,
-                    modesVisual,
-                    (p0, p1) {
-                      selectedMode[p0] = p0 == p1;
+                    listModes: selectedModeView,
+                    modesVisual: modesVisual,
+                    onChanged: (p0, p1) {
+                      selectedModeView[p0] = p0 == p1;
                       setState(() {});
                     },
                   ),
@@ -108,10 +122,13 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
               ),
               TarifarioCalendaryView(
                 target: target,
+                inMenu: inMenu,
+                sideController: widget.sideController,
                 onTarget: () {
-                  setState(() {
-                    target = true;
-                  });
+                  setState(() => target = true);
+
+                  Future.delayed(Durations.extralong1,
+                      () => setState(() => inMenu = true));
                 },
               ),
             ],

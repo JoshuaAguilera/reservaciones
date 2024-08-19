@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../utils/helpers/web_colors.dart';
 import '../widgets/text_styles.dart';
@@ -42,8 +43,15 @@ class CustomWidgets {
     );
   }
 
-  static Widget sectionButton(List<bool> listModes, List<Widget> modesVisual,
-      void Function(int, int)? onChanged) {
+  static Widget sectionButton({
+    required List<bool> listModes,
+    required List<Widget> modesVisual,
+    void Function(int, int)? onChanged,
+    List<String>? arrayStrings,
+    Color? selectedColor,
+    Color? selectedBorderColor,
+    double borderRadius = 4,
+  }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
         return Align(
@@ -60,16 +68,20 @@ class CustomWidgets {
                 },
               );
             },
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
-            selectedBorderColor: DesktopColors.cerulean,
+            borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+            selectedBorderColor: selectedBorderColor ?? DesktopColors.cerulean,
             selectedColor: DesktopColors.ceruleanOscure,
+            fillColor: selectedColor,
             color: Theme.of(context).primaryColor,
             constraints: const BoxConstraints(
               minHeight: 35.0,
               minWidth: 70.0,
             ),
             isSelected: listModes,
-            children: modesVisual,
+            children: modesVisual.isEmpty
+                ? Utility.generateTextWidget(
+                    arrayStrings!, Theme.of(context).primaryColor)
+                : modesVisual,
           ),
         );
       },
