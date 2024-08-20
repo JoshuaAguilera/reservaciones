@@ -20,7 +20,7 @@ Future<void> main() async {
   await Preferences.init();
   await windowManager.ensureInitialized();
   if (Platform.isWindows) {
-    WindowManager.instance.setMinimumSize(const Size(320, 420));
+    WindowManager.instance.setMinimumSize(const Size(960, 420));
     //WindowManager.instance.setMaximumSize(const Size(1200, 600));
   }
   //databse

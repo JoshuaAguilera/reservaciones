@@ -194,6 +194,16 @@ const List<String> dayNames = [
   "Domingo",
 ];
 
+const List<String> daysNameShort = [
+  "Lun",
+  "Mar",
+  "Mie",
+  "Jue",
+  "Vie",
+  "Sab",
+  "Dom",
+];
+
 const List<String> typeSettings = [
   "Generales",
   "Formato Individual",

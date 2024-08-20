@@ -375,18 +375,21 @@ class ItemRow {
     );
   }
 
-  static Widget getTitleDay(
-      {required int title,
-      required String subTitle,
-      required bool select,
-      required int index,
-      required Brightness brightness}) {
+  static Widget getTitleDay({
+    required int title,
+    required String subTitle,
+    required bool select,
+    required int index,
+    required Brightness brightness,
+    bool withOutDay = false,
+  }) {
     return Opacity(
       opacity: select ? 1 : 0.35,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextStyles.TextSpecial(
+            withOutDay: withOutDay,
             compact: true,
             day: title,
             subtitle: subTitle,

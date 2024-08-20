@@ -3,11 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/views/tarifario/tarifario_calendary_view.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/custom_widgets.dart';
 import '../../ui/title_page.dart';
+import 'tarifario_calendary_week_view.dart';
 
 class TarifarioView extends ConsumerStatefulWidget {
   const TarifarioView({super.key, required this.sideController});
@@ -124,6 +124,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 target: target,
                 inMenu: inMenu,
                 sideController: widget.sideController,
+                viewWeek: selectedModeCalendar[0],
+                viewMonth: selectedModeCalendar[1],
+                viewYear: selectedModeCalendar[2],
                 onTarget: () {
                   setState(() => target = true);
 

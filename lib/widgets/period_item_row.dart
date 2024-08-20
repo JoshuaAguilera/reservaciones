@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -25,7 +26,7 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 7),
       child: SizedBox(
@@ -59,7 +60,31 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
                     TextStyles.standardText(text: "Temporada de Verano")
                   ],
                 ),
-                LinearProgressIndicator(value: widget.days/10,)
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            TextStyles.standardText(
+                                text: "En progreso", isBold: true),
+                            const SizedBox(width: 5),
+                            RotatedBox(
+                              quarterTurns: 3,
+                              child: Icon(
+                                CupertinoIcons.chevron_right_2,
+                                size: 15,
+                                color: DesktopColors.prussianBlue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 20),
+                        TextStyles.standardText(
+                            text: "${(widget.days / 10) * 100}%")
+                      ],
+                    )),
               ],
             ),
           ),
