@@ -21,8 +21,15 @@ class ControllerCalendarWidget extends StatefulWidget {
   final bool viewWeek;
   final bool viewMonth;
   final bool viewYear;
+  final PageController pageMonthController;
+  final PageController pageWeekController;
+  final void Function(int)? onChangePageWeekController;
+  final int yearNow;
+  final void Function()? reduceYear;
+  final void Function()? increaseYear;
+  final void Function(int)? setYear;
 
-  ControllerCalendarWidget({
+  const ControllerCalendarWidget({
     super.key,
     required this.target,
     required this.onTarget,
@@ -36,6 +43,13 @@ class ControllerCalendarWidget extends StatefulWidget {
     required this.viewWeek,
     required this.viewMonth,
     required this.viewYear,
+    required this.pageMonthController,
+    required this.pageWeekController,
+    required this.onChangePageWeekController,
+    required this.yearNow,
+    required this.reduceYear,
+    required this.increaseYear,
+    required this.setYear,
   });
 
   @override
@@ -44,8 +58,6 @@ class ControllerCalendarWidget extends StatefulWidget {
 }
 
 class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
-  final PageController _pageController =
-      PageController(initialPage: DateTime.now().month - 1);
   DateTime _currentMonth = DateTime.now();
 
   @override
@@ -101,30 +113,58 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                           ],
                         ),
                       ),
+                      if (widget.viewYear)
+                        SizedBox(
+                          height: 320,
+                          width: 300,
+                          child: Column(
+                            children: [
+                              const Divider(height: 5),
+                              Expanded(
+                                child: PageView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+
+                                  ///   controller: widget.pageMonthController,
+                                  itemCount: 10,
+                                  itemBuilder: (context, pageIndex) {
+                                    return _buildYear();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       if (widget.viewMonth)
                         SizedBox(
                           height: 380,
                           width: 300,
                           child: Column(
                             children: [
-                              _buildHeaderWeek(),
+                              _buildHeaderMonth(),
                               const Divider(height: 5),
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-                                  controller: _pageController,
-                                  onPageChanged: (index) {
-                                    // setState(() {
-                                    //   _currentMonth = DateTime(
-                                    //       _currentMonth.year, index + 1, 1);
-                                    // });
-                                  },
-                                  itemCount: 12 * 3,
+
+                                  ///   controller: widget.pageMonthController,
+                                  itemCount: 10,
                                   itemBuilder: (context, pageIndex) {
                                     return _buildMonth();
                                   },
                                 ),
-                              )
+                              ),
+                              SizedBox(
+                                height: 5,
+                                width: double.infinity,
+                                child: PageView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  controller: widget.pageWeekController,
+                                  itemCount: 12 * 12,
+                                  itemBuilder: (context, pageIndex) {
+                                    return SizedBox();
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -139,14 +179,14 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-                                  controller: _pageController,
+                                  controller: widget.pageWeekController,
                                   onPageChanged: (index) {
                                     setState(() {
                                       _currentMonth = DateTime(
                                           _currentMonth.year, index + 1, 1);
                                     });
                                   },
-                                  itemCount: 12 * 10,
+                                  itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
                                     DateTime month = DateTime(
                                         _currentMonth.year,
@@ -249,8 +289,8 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
                 setState(() {
-                  if (_pageController.page! > 0) {
-                    _pageController.previousPage(
+                  if (widget.pageWeekController.page! > 0) {
+                    widget.pageWeekController.previousPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
@@ -303,7 +343,7 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
               onPressed: () {
                 if (!isLastMonthOfYear) {
                   setState(() {
-                    _pageController.nextPage(
+                    widget.pageWeekController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
@@ -318,82 +358,47 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
     );
   }
 
-
-Widget _buildHeaderMonth() {
-    bool isLastMonthOfYear = _currentMonth.month == 12;
-    bool isFirstMonthOfYear = _currentMonth.month == 1;
+  Widget _buildHeaderMonth() {
     Intl.defaultLocale = "es_ES";
+    int yearNowStatic = DateTime.now().year;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!isFirstMonthOfYear)
+          if (widget.yearNow > yearNowStatic)
             IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
-                setState(() {
-                  if (_pageController.page! > 0) {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
-                });
+                widget.reduceYear!.call();
+                // setState(() {
+                //   if (widget.pageMonthController.page! > 0) {
+                //     widget.pageMonthController.previousPage(
+                //       duration: const Duration(milliseconds: 300),
+                //       curve: Curves.easeInOut,
+                //     );
+                //   }
+                // });
               },
             )
           else
             const SizedBox(width: 36),
           TextStyles.titleText(
-              text: DateFormat('yyyy')
-                      .format(_currentMonth)
-                      .substring(0, 1)
-                      .toUpperCase() +
-                  DateFormat('yyyy').format(_currentMonth).substring(1),
+              text: widget.yearNow.toString(),
               color: Theme.of(context).primaryColor,
               size: 16),
-          /*
-          DropdownButton<int>(
-            // Dropdown for selecting a year
-            value: _currentMonth.year,
-            onChanged: (int? year) {
-              if (year != null) {
-                setState(() {
-                  // Sets the current month to January of the selected year
-                  _currentMonth = DateTime(year, 1, 1);
-
-                  // Calculates the month index based on the selected year and sets the page
-                  int yearDiff = DateTime.now().year - year;
-                  int monthIndex = 12 * yearDiff + _currentMonth.month - 1;
-                  _pageController.jumpToPage(monthIndex);
-                });
-              }
-            },
-            items: [
-              // Generates DropdownMenuItems for a range of years from current year to 10 years ahead
-              for (int year = DateTime.now().year;
-                  year <= DateTime.now().year + 10;
-                  year++)
-                DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString()),
-                ),
-            ],
-          ),
-          */
-          if (!isLastMonthOfYear)
+          if (widget.yearNow < (yearNowStatic + 11))
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
-                if (!isLastMonthOfYear) {
-                  setState(() {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  });
-                }
+                widget.increaseYear!.call();
+                // setState(() {
+                //   widget.pageMonthController.nextPage(
+                //     duration: const Duration(milliseconds: 300),
+                //     curve: Curves.easeInOut,
+                //   );
+                // });
               },
             )
           else
@@ -551,7 +556,7 @@ Widget _buildHeaderMonth() {
                                   month.month + 1,
                                   (index -
                                       (daysInMonth + weekdayOfFirstDay - 2)))
-                              .add(const Duration(days: 1)))
+                              .add(const Duration(days: 0)))
                           .inDays
                           .isNegative &&
                       !initDayWeek
@@ -593,18 +598,52 @@ Widget _buildHeaderMonth() {
   Widget _buildMonth() {
     return GridView.builder(
         padding: EdgeInsets.zero,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,  childAspectRatio: 1.3),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, childAspectRatio: 1.3),
         itemCount: 12,
         itemBuilder: (context, index) {
           return Card(
-            color: (index == 7) ? DesktopColors.ceruleanOscure : DesktopColors.cerulean,
+            color: (index == (_currentMonth.month - 1))
+                ? DesktopColors.ceruleanOscure
+                : DesktopColors.cerulean,
             elevation: 10,
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                widget.onChangePageWeekController!.call(index);
+
+                setState(() {
+                  _currentMonth = DateTime(_currentMonth.year, index + 1, 1);
+                });
+              },
               child: Center(
                 child: Text(
                   monthNames[index],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _buildYear() {
+    return GridView.builder(
+        padding: EdgeInsets.zero,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, childAspectRatio: 1.3),
+        itemCount: 12,
+        itemBuilder: (context, index) {
+          return Card(
+            color: ((DateTime.now().year + index) == (widget.yearNow))
+                ? DesktopColors.ceruleanOscure
+                : DesktopColors.cerulean,
+            elevation: 10,
+            child: InkWell(
+              onTap: () {
+                widget.setYear!.call(DateTime.now().year + (index));
+              },
+              child: Center(
+                child: Text(
+                  "${DateTime.now().year + index}",
                 ),
               ),
             ),

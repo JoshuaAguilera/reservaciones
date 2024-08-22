@@ -384,7 +384,11 @@ class ItemRow {
     bool withOutDay = false,
   }) {
     return Opacity(
-      opacity: select ? 1 : 0.35,
+      opacity: withOutDay
+          ? 1
+          : select
+              ? 1
+              : 0.35,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -406,20 +410,21 @@ class ItemRow {
               .fadeIn(duration: 400.ms)
               .scale(duration: 500.ms),
           const SizedBox(height: 5),
-          const RotatedBox(
-            quarterTurns: 1,
+          RotatedBox(
+            quarterTurns: withOutDay ? 0 : 1,
             child: SizedBox(
-              width: 12,
-              child: Divider(),
+              height: withOutDay ? 7 : null,
+              width: withOutDay ? 100 : 12,
+              child: const Divider(),
             ),
           ).animate(delay: 220.ms * index).fadeIn(),
           if (select)
-            const Padding(
-              padding: EdgeInsets.only(top: 3),
+            Padding(
+              padding: EdgeInsets.only(top: withOutDay ? 0 : 3),
               child: Icon(
-                Icons.circle,
+                withOutDay ? Icons.keyboard_arrow_down : Icons.circle,
                 color: Colors.amber,
-                size: 7.5,
+                size: withOutDay ? 35 : 7.5,
               ),
             ).animate(delay: 220.ms * index).fadeIn().scale(duration: 500.ms),
         ],

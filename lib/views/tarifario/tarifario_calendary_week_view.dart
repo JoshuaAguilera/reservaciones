@@ -2,8 +2,11 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 class TarifarioCalendaryView extends StatefulWidget {
@@ -16,6 +19,10 @@ class TarifarioCalendaryView extends StatefulWidget {
     required this.viewWeek,
     required this.viewMonth,
     required this.viewYear,
+    required this.yearNow,
+    required this.reduceYear,
+    required this.increaseYear,
+    required this.setYear,
   });
 
   final bool target;
@@ -25,6 +32,10 @@ class TarifarioCalendaryView extends StatefulWidget {
   final bool viewWeek;
   final bool viewMonth;
   final bool viewYear;
+  final int yearNow;
+  final void Function()? reduceYear;
+  final void Function()? increaseYear;
+  final void Function(int)? setYear;
 
   @override
   State<TarifarioCalendaryView> createState() => _TarifarioCalendaryViewState();
@@ -37,9 +48,12 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
   bool selectedcurrentyear = false;
   bool startFlow = false;
-  final PageController _pageController =
+  PageController pageWeekController =
       PageController(initialPage: DateTime.now().month - 1);
-  DateTime _currentMonth = DateTime.now();
+  final PageController pageMonthController = PageController(initialPage: 0);
+  final DateTime _currentMonth = DateTime.now();
+  double targetMonth = 1;
+  bool showMonth = true;
 
   @override
   void initState() {
@@ -59,6 +73,55 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
           children: [
             Stack(
               children: [
+                if (widget.viewYear)
+                  SizedBox(
+                    height: screenHeight - 160,
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: (screenWidth > 1280) ? (380) : 0),
+                          child: GridView.builder(
+                              padding: EdgeInsets.zero,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: (screenWidth > 1080) ? 3 : 2,
+                                childAspectRatio: 0.95,
+                                crossAxisSpacing: 25,
+                              ),
+                              itemCount: 12,
+                              itemBuilder: (context, index) {
+                                DateTime month = DateTime(
+                                    _currentMonth.year, (index % 12) + 1, 1);
+                                return SizedBox(
+                                  height: 380,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildHeaderYear(month),
+                                      _buildWeeks(),
+                                      const Divider(height: 5),
+                                      Expanded(
+                                        child: buildCalendarYear(
+                                          month,
+                                          initDayWeek.subtract(
+                                            const Duration(
+                                              days: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        )
+                            .animate(target: 1)
+                            .fadeIn(duration: 1800.ms, begin: -.6),
+                      ],
+                    ),
+                  ),
                 if (widget.viewMonth)
                   SizedBox(
                     height: screenHeight - 160,
@@ -93,47 +156,45 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                             },
                           ),
                         ),
-                        Positioned(
-                          top: 65,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: (screenWidth > 1280) ? 385 : 0,
-                            ),
-                            child: SizedBox(
-                              width: (screenWidth > 1280)
-                                  ? (screenWidth -
-                                      385 -
-                                      (widget.sideController.extended
-                                          ? 230
-                                          : 118))
-                                  : screenWidth - 230,
-                              height: screenHeight - 100,
-                              child: PageView.builder(
-                                // physics: const NeverScrollableScrollPhysics(),
-                                controller: _pageController,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentMonth = DateTime(
-                                        _currentMonth.year, index + 1, 1);
-                                  });
-                                },
-                                itemCount: 12 * 10,
-                                itemBuilder: (context, pageIndex) {
-                                  DateTime month = DateTime(_currentMonth.year,
-                                      (pageIndex % 12) + 1, 1);
-                                  return buildCalendar(
-                                    month,
-                                    initDayWeek.subtract(
-                                      const Duration(
-                                        days: 1,
+                        if (showMonth)
+                          Positioned(
+                            top: 65,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: (screenWidth > 1280) ? 385 : 0,
+                              ),
+                              child: SizedBox(
+                                width: (screenWidth > 1280)
+                                    ? (screenWidth -
+                                        385 -
+                                        (widget.sideController.extended
+                                            ? 230
+                                            : 118))
+                                    : screenWidth - 230,
+                                height: screenHeight - 225,
+                                child: PageView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  controller: pageWeekController,
+                                  itemCount: 12 * 10,
+                                  itemBuilder: (context, pageIndex) {
+                                    DateTime month = DateTime(widget.yearNow,
+                                        (pageIndex % 12) + 1, 1);
+                                    return buildCalendar(
+                                      month,
+                                      initDayWeek.subtract(
+                                        const Duration(
+                                          days: 1,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ).animate().fadeIn(duration: 1800.ms, begin: -.6),
+                                    );
+                                  },
+                                ).animate(target: targetMonth).fadeIn(
+                                    duration:
+                                        targetMonth == 0 ? 500.ms : 1200.ms,
+                                    begin: -.6),
+                              ),
                             ),
                           ),
-                        ),
                         Positioned(
                           left: (screenWidth > 1280) ? (370) : -10,
                           top: 110,
@@ -253,12 +314,79 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                       viewWeek: widget.viewWeek,
                       viewMonth: widget.viewMonth,
                       viewYear: widget.viewYear,
+                      pageMonthController: pageMonthController,
+                      pageWeekController: pageWeekController,
+                      yearNow: widget.yearNow,
+                      setYear: widget.setYear,
                       onChangeDate: (p0) => setState(
                         () {
                           initDayWeek = p0;
                           initDayWeekGraphics = p0;
                         },
                       ),
+                      increaseYear: () {
+                        setState(() => targetMonth = 0);
+
+                        Future.delayed(
+                          550.ms,
+                          () => setState(() => showMonth = false),
+                        );
+
+                        widget.increaseYear!.call();
+
+                        Future.delayed(
+                          650.ms,
+                          () => setState(
+                            () {
+                              showMonth = true;
+                              targetMonth = 1;
+                            },
+                          ),
+                        );
+                      },
+                      reduceYear: () {
+                        setState(() => targetMonth = 0);
+
+                        Future.delayed(
+                          550.ms,
+                          () => setState(() => showMonth = false),
+                        );
+
+                        widget.reduceYear!.call();
+
+                        Future.delayed(
+                          650.ms,
+                          () => setState(
+                            () {
+                              showMonth = true;
+                              targetMonth = 1;
+                            },
+                          ),
+                        );
+                      },
+                      onChangePageWeekController: (p0) {
+                        setState(() => targetMonth = 0);
+
+                        Future.delayed(
+                          550.ms,
+                          () => setState(() => showMonth = false),
+                        );
+
+                        Future.delayed(
+                            600.ms,
+                            () => setState(() => pageWeekController =
+                                PageController(initialPage: p0)));
+
+                        Future.delayed(
+                          650.ms,
+                          () => setState(
+                            () {
+                              showMonth = true;
+                              targetMonth = 1;
+                            },
+                          ),
+                        );
+                      },
                       onStartflow: (p0) => setState(() => startFlow = p0),
                     ),
                   ),
@@ -267,6 +395,89 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildCalendarYear(DateTime month, DateTime initDayWeek) {
+    int daysInMonth = DateTime(widget.yearNow, month.month + 1, 0).day;
+    DateTime firstDayOfMonth = DateTime(widget.yearNow, month.month, 1);
+    int weekdayOfFirstDay = firstDayOfMonth.weekday;
+
+    int lastDayOfMonth =
+        7 - DateTime(widget.yearNow, month.month + 1, 0).weekday;
+
+    return GridView.builder(
+      padding: EdgeInsets.zero,
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+      itemCount: (daysInMonth + weekdayOfFirstDay - 1) + lastDayOfMonth,
+      itemBuilder: (context, index) {
+        if (index < weekdayOfFirstDay - 1) {
+          return const SizedBox();
+        } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
+          // Displaying the current month's days
+          DateTime date = DateTime(
+              widget.yearNow, month.month, index - weekdayOfFirstDay + 2);
+          int text = date.day;
+
+          return InkWell(
+            onTap: () {
+              // DateTime selectDate = DateTime(month.year, month.month, text);
+              // int weekdaySelect = selectDate.weekday;
+              // DateTime initWeekSelect =
+              //     selectDate.subtract(Duration(days: weekdaySelect - 1));
+
+              // // widget.initDayWeek = initWeekSelect;
+              // // widget.onChangeDate!.call(initWeekSelect);
+              // setState(() {});
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if ((initDayWeek
+                        .difference(DateTime(widget.yearNow, month.month, text)
+                            .add(const Duration(days: 0)))
+                        .inDays
+                        .isNegative &&
+                    !initDayWeek
+                        .add(const Duration(days: 7))
+                        .difference(DateTime(widget.yearNow, month.month, text))
+                        .inDays
+                        .isNegative))
+                  Expanded(
+                    child: Card(
+                      elevation: 3.5,
+                      color: Colors.green[300],
+                      child: Center(
+                        child: Text(
+                          text.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Text(
+                        text.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 
@@ -285,7 +496,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
       padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        childAspectRatio: 1.41,
+        childAspectRatio: 1.43,
         crossAxisSpacing: 0,
         mainAxisSpacing: 0,
       ),
@@ -295,52 +506,59 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
         if (index < weekdayOfFirstDay - 1) {
           int previousMonthDay =
               daysInPreviousMonth - (weekdayOfFirstDay - index) + 2;
-          return Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor)),
-            alignment: Alignment.center,
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Text(
-                    previousMonthDay.toString(),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(delay: 50.ms * index);
-        } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
-          // Displaying the current month's days
-          DateTime date =
-              DateTime(month.year, month.month, index - weekdayOfFirstDay + 2);
-          int text = date.day;
-
-          return Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor)),
-            child: InkWell(
-              onTap: () {
-                DateTime selectDate = DateTime(month.year, month.month, text);
-                int weekdaySelect = selectDate.weekday;
-                DateTime initWeekSelect =
-                    selectDate.subtract(Duration(days: weekdaySelect - 1));
-
-                // widget.initDayWeek = initWeekSelect;
-                // widget.onChangeDate!.call(initWeekSelect);
-                setState(() {});
-              },
+          return Opacity(
+            opacity: 0.25,
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor)),
+              alignment: Alignment.center,
               child: Stack(
                 children: [
                   Positioned(
                     top: 10,
                     left: 10,
-                    child: Text(
-                      text.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                    child: TextStyles.standardText(
+                      text: previousMonthDay.toString(),
+                      color: Theme.of(context).primaryColor,
+                      isBold: true,
+                    ),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 50.ms * index),
+          );
+        } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
+          // Displaying the current month's days
+          DateTime date =
+              DateTime(month.year, month.month, index - weekdayOfFirstDay + 2);
+          int text = date.day;
+          DateTime dateNow = DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+          return Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).primaryColor)),
+            child: InkWell(
+              onTap: () {},
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      width: 20,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: dateNow.isSameDate(date) ? Colors.amber : null,
+                      ),
+                      child: Center(
+                        child: Text(
+                          text.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -349,25 +567,127 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
             ),
           ).animate().fadeIn(delay: 50.ms * index);
         } else {
-          return Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor)),
-            alignment: Alignment.center,
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Text(
-                    (index - (daysInMonth + weekdayOfFirstDay - 2)).toString(),
-                    style: const TextStyle(color: Colors.grey),
+          return Opacity(
+            opacity: 0.25,
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor)),
+              alignment: Alignment.center,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: TextStyles.standardText(
+                      text: (index - (daysInMonth + weekdayOfFirstDay - 2))
+                          .toString(),
+                      isBold: true,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(delay: 50.ms * index);
+                ],
+              ),
+            ).animate().fadeIn(delay: 50.ms * index),
+          );
         }
       },
+    );
+  }
+
+  Widget _buildHeaderMonth() {
+    Intl.defaultLocale = "es_ES";
+    int yearNowStatic = DateTime.now().year;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (widget.yearNow > yearNowStatic)
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              onPressed: () {
+                widget.reduceYear!.call();
+                // setState(() {
+                //   if (widget.pageMonthController.page! > 0) {
+                //     widget.pageMonthController.previousPage(
+                //       duration: const Duration(milliseconds: 300),
+                //       curve: Curves.easeInOut,
+                //     );
+                //   }
+                // });
+              },
+            )
+          else
+            const SizedBox(width: 36),
+          TextStyles.titleText(
+              text: widget.yearNow.toString(),
+              color: Theme.of(context).primaryColor,
+              size: 16),
+          if (widget.yearNow < (yearNowStatic + 11))
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios_rounded),
+              onPressed: () {
+                widget.increaseYear!.call();
+                // setState(() {
+                //   widget.pageMonthController.nextPage(
+                //     duration: const Duration(milliseconds: 300),
+                //     curve: Curves.easeInOut,
+                //   );
+                // });
+              },
+            )
+          else
+            const SizedBox(width: 36),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderYear(DateTime month) {
+    Intl.defaultLocale = "es_ES";
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: DesktopColors.cerulean,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+        width: 700,
+        height: 40,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: TextStyles.titleText(
+            text:
+                "              ${DateFormat('MMMM').format(month).substring(0, 1).toUpperCase()}${DateFormat('MMMM').format(month).substring(1)}",
+            color: Theme.of(context).primaryColor,
+            size: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeks() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildWeekDay('L'),
+        _buildWeekDay('M'),
+        _buildWeekDay('Mi'),
+        _buildWeekDay('J'),
+        _buildWeekDay('V'),
+        _buildWeekDay('S'),
+        _buildWeekDay('D'),
+      ],
+    );
+  }
+
+  Widget _buildWeekDay(String day) {
+    return Center(
+      child: TextStyles.standardText(
+          text: day, isBold: true, color: Theme.of(context).primaryColor),
     );
   }
 }

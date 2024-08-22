@@ -21,6 +21,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   String typePeriod = filtrosRegistro.first;
   bool target = false;
   bool inMenu = false;
+  int yearNow = DateTime.now().year;
 
   final List<bool> selectedModeView = <bool>[
     true,
@@ -70,6 +71,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                           modesVisual: [],
                           onChanged: (p0, p1) {
                             selectedModeCalendar[p0] = p0 == p1;
+                            if (selectedModeCalendar[0]) {
+                              yearNow = DateTime.now().year;
+                            }
                             setState(() {});
                           },
                           arrayStrings: filtrosRegistro,
@@ -127,12 +131,23 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 viewWeek: selectedModeCalendar[0],
                 viewMonth: selectedModeCalendar[1],
                 viewYear: selectedModeCalendar[2],
+                yearNow: yearNow,
                 onTarget: () {
                   setState(() => target = true);
 
                   Future.delayed(Durations.extralong1,
                       () => setState(() => inMenu = true));
                 },
+                increaseYear: () {
+                  setState(() => yearNow++);
+                },
+                reduceYear: () {
+                  setState(() => yearNow--);
+                },
+                setYear: (p0) => setState(() {
+                  yearNow = p0;
+                  print(yearNow);
+                }),
               ),
             ],
           ),
