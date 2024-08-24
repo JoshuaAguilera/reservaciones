@@ -3,10 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
+import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/web_colors.dart';
@@ -428,6 +431,65 @@ class ItemRow {
               ),
             ).animate(delay: 220.ms * index).fadeIn().scale(duration: 500.ms),
         ],
+      ),
+    );
+  }
+
+  static Widget filterItemRow({
+    required Color colorCard,
+    required DateTime initDate,
+    required DateTime lastDate,
+    void Function()? onRemove,
+  }) {
+    String periodo = '';
+    Intl.defaultLocale = "es_ES";
+
+    if (initDate.isSameDate(lastDate)) {
+      periodo =
+          "${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
+    } else if (initDate.month == lastDate.month &&
+        initDate.year == lastDate.year) {
+      periodo =
+          "${initDate.day} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
+    } else if (initDate.year == lastDate.year) {
+      periodo =
+          "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, 3)} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
+    } else {
+      periodo =
+          "${initDate.day}/${initDate.month}/${initDate.year.toString().substring(2)} - ${lastDate.day}/${lastDate.month}/${lastDate.year.toString().substring(2)}";
+    }
+
+    return SizedBox(
+      width: 170,
+      child: Card(
+        color: colorCard,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(width: 7),
+            TextStyles.standardText(
+                text: periodo,
+                color: useWhiteForeground(colorCard)
+                    ? Colors.white
+                    : Colors.black),
+            SizedBox(
+              width: 35,
+              height: 40,
+              child: IconButton(
+                onPressed: () {
+                  onRemove!.call();
+                },
+                icon: Icon(
+                  Icons.close,
+                  size: 25,
+                  color: useWhiteForeground(colorCard)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -225,12 +225,11 @@ class Dialogs {
     });
   }
 
-  Widget tarifaFormDialog({
-    required BuildContext buildContext,
+  static Widget tarifaFormDialog({
+    required BuildContext context,
     Habitacion? habitacion,
     void Function(Habitacion?)? onInsert,
     void Function(Habitacion?)? onUpdate,
-    required BuildContext context,
   }) {
     //data Quote
     String type = tipoHabitacion.first;
@@ -249,19 +248,14 @@ class Dialogs {
                 .toString()
                 .substring(0, 10));
     TextEditingController _adults1_2Controller = TextEditingController();
-    // text: habitacion != null ? habitacion.tarifaAdulto1_2.toString() : '');
     TextEditingController _adults3Controller = TextEditingController();
-    // text: habitacion != null ? habitacion.tarifaAdulto3.toString() : '');
     TextEditingController _adults4Controller = TextEditingController();
-    // text: habitacion != null ? habitacion.tarifaAdulto4.toString() : '');
     TextEditingController _minors7_12Controller = TextEditingController();
-    // TextEditingController(
-    //     text: habitacion != null ? habitacion.tarifaMenor.toString() : '');
 
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: TextStyles.titleText(
-          text: habitacion != null ? "Editar habitación" : "Agregar habitación",
+          text: habitacion != null ? "Editar tarifa" : "Agregar tarifa",
           color: Theme.of(context).primaryColor),
       content: StatefulBuilder(
         builder: (context, setState) {
@@ -270,49 +264,6 @@ class Dialogs {
               key: _formKeyHabitacion,
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: TextStyles.standardText(
-                              text: "Tipo de habitacion: ",
-                              overClip: true,
-                              color: Theme.of(context).primaryColor)),
-                      const SizedBox(width: 15),
-                      CustomDropdown.dropdownMenuCustom(
-                          initialSelection:
-                              habitacion != null ? habitacion.categoria! : type,
-                          onSelected: (String? value) {
-                            type = value!;
-                          },
-                          elements: tipoHabitacion,
-                          screenWidth: MediaQuery.of(context).size.width),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextStyles.standardText(
-                            text: "Plan: ",
-                            overClip: true,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      const SizedBox(width: 15),
-                      CustomDropdown.dropdownMenuCustom(
-                        initialSelection:
-                            habitacion != null ? habitacion.plan! : plan,
-                        onSelected: (String? value) {
-                          plan = value!;
-                        },
-                        elements: planes,
-                        screenWidth: MediaQuery.of(context).size.width,
-                        removeItem: "SOLO HOSPEDAJE",
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
@@ -345,13 +296,34 @@ class Dialogs {
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: TextStyles.standardText(
+                              text: "Categoría: ",
+                              overClip: true,
+                              color: Theme.of(context).primaryColor)),
+                      const SizedBox(width: 15),
+                      CustomDropdown.dropdownMenuCustom(
+                          initialSelection:
+                              habitacion != null ? habitacion.categoria! : type,
+                          onSelected: (String? value) {
+                            type = value!;
+                          },
+                          elements: tipoHabitacion,
+                          screenWidth: MediaQuery.of(context).size.width),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
                       child: TextStyles.titleText(
                         text: "Tarífas:",
                         size: 15,
+                        color: Theme.of(context).dividerColor,
                       ),
                     ),
                   ),
@@ -359,7 +331,7 @@ class Dialogs {
                     children: [
                       Expanded(
                         child: FormWidgets.textFormFieldResizable(
-                          name: "1 O 2 ADULTOS",
+                          name: "SGL/DBL",
                           isDecimal: true,
                           isNumeric: true,
                           isMoneda: true,
@@ -369,7 +341,7 @@ class Dialogs {
                       const SizedBox(width: 10),
                       Expanded(
                         child: FormWidgets.textFormFieldResizable(
-                          name: "3 ADULTOS",
+                          name: "PAX ADIC",
                           isDecimal: true,
                           isNumeric: true,
                           isMoneda: true,
@@ -383,25 +355,53 @@ class Dialogs {
                     children: [
                       Expanded(
                         child: FormWidgets.textFormFieldResizable(
-                          name: "4 ADULTO",
+                          name: "TPL",
                           isDecimal: true,
                           isNumeric: true,
                           isMoneda: true,
+                          blocked: true,
                           controller: _adults4Controller,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: FormWidgets.textFormFieldResizable(
-                          name: "MENORES 7 A 12 AÑOS",
+                          name: "CPLE",
                           isDecimal: true,
                           isNumeric: true,
                           isMoneda: true,
+                          blocked: true,
                           controller: _minors7_12Controller,
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "MENORES 7 A 12 AÑOS",
+                          isDecimal: true,
+                          isNumeric: true,
+                          isMoneda: true,
+                          controller: _adults1_2Controller,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "MENORES 0 A 6 AÑOS",
+                          isDecimal: true,
+                          initialValue: "GRATIS",
+                          isNumeric: true,
+                          // isMoneda: true,
+                          blocked: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -433,13 +433,13 @@ class Dialogs {
               //   onUpdate.call(cotGrup);
               // }
 
-              Navigator.of(buildContext).pop();
+              Navigator.of(context).pop();
             },
             child: TextStyles.buttonText(
                 text: habitacion != null ? "Editar" : "Agregar")),
         TextButton(
             onPressed: () {
-              Navigator.pop(buildContext);
+              Navigator.pop(context);
             },
             child: TextStyles.buttonText(text: "Cancelar"))
       ],
@@ -829,7 +829,7 @@ class Dialogs {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 TextFormFieldCustom.textFormFieldwithBorder(
                   name: "Tarifa adulto SGL/DBL",
                   isMoneda: true,

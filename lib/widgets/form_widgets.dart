@@ -14,75 +14,78 @@ class FormWidgets {
   static Widget inputColor({
     required String nameInput,
     required Color primaryColor,
-    double verticalPadding = 6,
     bool blocked = false,
     required Color colorText,
+    void Function(Color)? onChangedColor,
   }) {
     Color pickerColor = primaryColor;
     Color currentColor = primaryColor;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: verticalPadding),
-      child: StatefulBuilder(
-        builder: (context, setState) {
-          void changeColor(Color color) {
-            setState(() => pickerColor = color);
-          }
+    return StatefulBuilder(
+      builder: (context, setState) {
+        void changeColor(Color color) {
+          setState(() => pickerColor = color);
+        }
 
-          return Opacity(
-            opacity: blocked ? 0.6 : 1,
-            child: AbsorbPointer(
-              absorbing: blocked,
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  TextStyles.standardText(text: nameInput, color: colorText),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: TextStyles.titleText(
-                                text: "Selecciona un color",
-                                color: Colors.black87),
-                            content: SingleChildScrollView(
-                              child: MaterialPicker(
-                                pickerColor: pickerColor,
-                                onColorChanged: changeColor,
-                                enableLabel: true,
-                              ),
-                            ),
-                            actions: <Widget>[
-                              Buttons.commonButton(
-                                  onPressed: () {
-                                    setState(() => currentColor = pickerColor);
-                                    Navigator.of(context).pop();
-                                  },
-                                  text: "Aceptar"),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Card(
-                      elevation: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.5),
-                        child: Container(
-                          color: currentColor,
-                          width: 35,
-                          height: 12,
+        return Opacity(
+          opacity: blocked ? 0.6 : 1,
+          child: AbsorbPointer(
+            absorbing: blocked,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: TextStyles.titleText(
+                          text: "Selecciona un color",
+                          color: Theme.of(context).primaryColor),
+                      content: SingleChildScrollView(
+                        child: MaterialPicker(
+                          pickerColor: pickerColor,
+                          onColorChanged: changeColor,
+                          enableLabel: false,
+                          portraitOnly: true,
                         ),
+                      ),
+                      actions: <Widget>[
+                        Buttons.commonButton(
+                          onPressed: () {
+                            setState(() => currentColor = pickerColor);
+                            onChangedColor!.call(currentColor);
+                            Navigator.of(context).pop();
+                          },
+                          text: "Aceptar",
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Stack(
+                children: [
+                  TextFormFieldCustom.textFormFieldwithBorder(
+                      name: "Color", initialValue: "s", blocked: true),
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Center(
+                      child: Container(
+                        width: 105,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            color: currentColor,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5))),
                       ),
                     ),
                   )
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -145,7 +148,8 @@ class FormWidgets {
                 decoration: CustomDropdownDecoration(
                     closedFillColor: contentColor,
                     expandedFillColor: contentColor,
-                    searchFieldDecoration: SearchFieldDecoration( fillColor: contentColor),
+                    searchFieldDecoration:
+                        SearchFieldDecoration(fillColor: contentColor),
                     closedBorderRadius:
                         const BorderRadius.all(Radius.circular(5)),
                     expandedBorderRadius:

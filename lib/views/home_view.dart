@@ -2,7 +2,6 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/views/login_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -24,7 +23,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 600;
+    final isSmallScreen = MediaQuery.of(context).size.width < 800;
     if (!isSmallScreen) {
       startflow = true;
       _key.currentState?.closeDrawer();

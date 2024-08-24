@@ -51,6 +51,8 @@ class CustomWidgets {
     Color? selectedColor,
     Color? selectedBorderColor,
     double borderRadius = 4,
+    bool isCompact = false,
+    bool isReactive = true,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -61,9 +63,14 @@ class CustomWidgets {
             onPressed: (int index) {
               snapshot(
                 () {
-                  for (int i = 0; i < listModes.length; i++) {
-                    listModes[i] = i == index;
-                    onChanged!.call(i, index);
+                  if (isReactive) {
+                    for (int i = 0; i < listModes.length; i++) {
+                      listModes[i] = i == index;
+                      onChanged!.call(i, index);
+                    }
+                  } else {
+                    listModes[index] = !listModes[index];
+                    onChanged!.call(0, index);
                   }
                 },
               );
@@ -73,10 +80,9 @@ class CustomWidgets {
             selectedColor: DesktopColors.ceruleanOscure,
             fillColor: selectedColor,
             color: Theme.of(context).primaryColor,
-            constraints: const BoxConstraints(
-              minHeight: 35.0,
-              minWidth: 70.0,
-            ),
+            constraints: isCompact
+                ? null
+                : const BoxConstraints(minHeight: 35.0, minWidth: 70.0),
             isSelected: listModes,
             children: modesVisual.isEmpty
                 ? Utility.generateTextWidget(

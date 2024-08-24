@@ -20,6 +20,9 @@ class TarifarioView extends ConsumerStatefulWidget {
 class _TarifarioViewState extends ConsumerState<TarifarioView> {
   String typePeriod = filtrosRegistro.first;
   bool target = false;
+  bool targetForm = false;
+  bool showForm = true;
+
   bool inMenu = false;
   int yearNow = DateTime.now().year;
 
@@ -51,13 +54,29 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 title: "Tarifario",
                 subtitle:
                     "Contempla, analiza y define las principales tarifas de planes, habitaciones, PAX y promociones para complementar la generación de cotizaciones.",
-                childOptional: SizedBox(
-                  height: 38,
-                  child: Buttons.commonButton(
-                    onPressed: () {},
-                    text: "Crear tarifa",
-                  ),
-                ),
+                childOptional: !showForm
+                    ? const SizedBox()
+                    : SizedBox(
+                        height: 38,
+                        child: Buttons.commonButton(
+                          onPressed: () {
+                            setState(() {
+                              target = true;
+                            });
+
+                            Future.delayed(
+                              500.ms,
+                              () => setState(() => inMenu = true),
+                            );
+
+                            setState(() => targetForm = !targetForm);
+
+                            Future.delayed(Durations.extralong1,
+                                () => setState(() => showForm = !showForm));
+                          },
+                          text: "Crear tarifa",
+                        ).animate(target: !targetForm ? 1 : 0).fadeIn(),
+                      ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,6 +103,13 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                       if (screenWidth < 1280 && inMenu)
                         ElevatedButton(
                           onPressed: () {
+                            if (targetForm) {
+                              setState(() => targetForm = !targetForm);
+
+                              Future.delayed(Durations.extralong1,
+                                  () => setState(() => showForm = !showForm));
+                            }
+
                             setState(() {
                               target = false;
                             });
@@ -132,11 +158,19 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 viewMonth: selectedModeCalendar[1],
                 viewYear: selectedModeCalendar[2],
                 yearNow: yearNow,
+                targetForm: targetForm,
+                showForm: showForm,
                 onTarget: () {
                   setState(() => target = true);
 
                   Future.delayed(Durations.extralong1,
                       () => setState(() => inMenu = true));
+                },
+                onTargetForm: () {
+                  setState(() => targetForm = !targetForm);
+
+                  Future.delayed(Durations.extralong1,
+                      () => setState(() => showForm = !showForm));
                 },
                 increaseYear: () {
                   setState(() => yearNow++);

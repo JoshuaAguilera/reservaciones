@@ -1,8 +1,6 @@
-import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
@@ -22,7 +20,13 @@ class Utility {
       case 2:
         return 'Historial';
       case 3:
-        return 'Configuracion';
+        return 'Configuración';
+      case 4:
+        return 'Gestión de usuarios';
+      case 5:
+        return 'Tarifario';
+      case 12:
+        return 'Detalle comprobante';
       case 99:
         return 'Perfil';
       // case 4:
@@ -617,7 +621,7 @@ class Utility {
 
     subtotal = tarifaAdultoNum + (tarifaPaxAdicNum * numPaxAdic);
 
-    subtotalString = subtotal.toStringAsFixed(2);
+    subtotalString = subtotal.round().toString();
 
     return subtotalString;
   }
@@ -631,5 +635,22 @@ class Utility {
     }
 
     return children;
+  }
+
+  static String calculatePromotion(
+      TextEditingController tarifa, TextEditingController promocion, int desc) {
+    String subtotalString = '0';
+    double subtotal = 0;
+    double tarifaNum = double.parse(tarifa.text.isEmpty ? '0' : tarifa.text);
+    double promocionNUM =
+        double.parse(promocion.text.isEmpty ? '0' : promocion.text);
+
+    double descuento = (tarifaNum / 100) * (promocionNUM + desc);
+
+    subtotal = tarifaNum - descuento;
+
+    subtotalString = subtotal.round().toString();
+
+    return subtotalString;
   }
 }

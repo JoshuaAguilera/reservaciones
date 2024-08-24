@@ -8,5 +8,4 @@ class Tarifa extends Table {
   RealColumn get tarifaAdulto => real().nullable()();
   RealColumn get tarifaMenores7a12 => real().nullable()();
   RealColumn get tarifaPaxAdicional => real().nullable()();
-  BoolColumn get esEstatica => boolean().nullable()();
 }

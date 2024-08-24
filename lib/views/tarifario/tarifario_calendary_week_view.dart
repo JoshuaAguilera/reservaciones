@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/views/tarifario/form_tarifario_view.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -23,6 +24,9 @@ class TarifarioCalendaryView extends StatefulWidget {
     required this.reduceYear,
     required this.increaseYear,
     required this.setYear,
+    required this.targetForm,
+    required this.showForm,
+    required this.onTargetForm,
   });
 
   final bool target;
@@ -33,9 +37,12 @@ class TarifarioCalendaryView extends StatefulWidget {
   final bool viewMonth;
   final bool viewYear;
   final int yearNow;
+  final bool targetForm;
+  final bool showForm;
   final void Function()? reduceYear;
   final void Function()? increaseYear;
   final void Function(int)? setYear;
+  final void Function()? onTargetForm;
 
   @override
   State<TarifarioCalendaryView> createState() => _TarifarioCalendaryViewState();
@@ -86,7 +93,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: (screenWidth > 1080) ? 3 : 2,
-                                childAspectRatio: 0.95,
+                                childAspectRatio: 0.85,
                                 crossAxisSpacing: 25,
                               ),
                               itemCount: 12,
@@ -103,14 +110,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                       _buildWeeks(),
                                       const Divider(height: 5),
                                       Expanded(
-                                        child: buildCalendarYear(
-                                          month,
-                                          initDayWeek.subtract(
-                                            const Duration(
-                                              days: 1,
-                                            ),
-                                          ),
-                                        ),
+                                        child: buildCalendarYear(month),
                                       ),
                                     ],
                                   ),
@@ -170,12 +170,15 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                         (widget.sideController.extended
                                             ? 230
                                             : 118))
-                                    : screenWidth - 230,
+                                    : screenWidth -
+                                        (widget.sideController.extended
+                                            ? 230
+                                            : 118),
                                 height: screenHeight - 225,
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   controller: pageWeekController,
-                                  itemCount: 12 * 10,
+                                  itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
                                     DateTime month = DateTime(widget.yearNow,
                                         (pageIndex % 12) + 1, 1);
@@ -229,7 +232,10 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                         (widget.sideController.extended
                                             ? 230
                                             : 118))
-                                    : screenWidth - 230,
+                                    : screenWidth -
+                                        (widget.sideController.extended
+                                            ? 230
+                                            : 118),
                                 child: Table(
                                   border: TableBorder(
                                     verticalInside: BorderSide(
@@ -240,15 +246,17 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                         color: Theme.of(context).dividerColor),
                                   ),
                                   children: [
-                                    TableRow(children: [
-                                      for (var i = initDayWeek.day;
-                                          i < (initDayWeek.day + 7);
-                                          i++)
-                                        SizedBox(
-                                          height: screenHeight - 270,
-                                          child: const Text(""),
-                                        ),
-                                    ]),
+                                    TableRow(
+                                      children: [
+                                        for (var i = initDayWeek.day;
+                                            i < (initDayWeek.day + 7);
+                                            i++)
+                                          SizedBox(
+                                            height: screenHeight - 270,
+                                            child: const Text(""),
+                                          ),
+                                      ],
+                                    ),
                                   ],
                                 )
                                     .animate()
@@ -387,7 +395,35 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                           ),
                         );
                       },
+                      onPreviewPage: (p0) {
+                        setState(() {
+                          pageWeekController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+
+                          pageWeekController = PageController(initialPage: p0);
+                        });
+                      },
+                      onNextPage: (p0) {
+                        setState(() {
+                          pageWeekController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        });
+                        pageWeekController = PageController(initialPage: p0);
+                      },
                       onStartflow: (p0) => setState(() => startFlow = p0),
+                    ),
+                  ),
+                if (!widget.showForm)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: FormTarifarioView(
+                      target: !widget.targetForm,
+                      onTarget: widget.onTargetForm,
                     ),
                   ),
               ],
@@ -398,7 +434,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
     );
   }
 
-  Widget buildCalendarYear(DateTime month, DateTime initDayWeek) {
+  Widget buildCalendarYear(DateTime month) {
     int daysInMonth = DateTime(widget.yearNow, month.month + 1, 0).day;
     DateTime firstDayOfMonth = DateTime(widget.yearNow, month.month, 1);
     int weekdayOfFirstDay = firstDayOfMonth.weekday;
@@ -436,11 +472,11 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
               children: [
                 if ((initDayWeek
                         .difference(DateTime(widget.yearNow, month.month, text)
-                            .add(const Duration(days: 0)))
+                            .add(const Duration(days: 1)))
                         .inDays
                         .isNegative &&
                     !initDayWeek
-                        .add(const Duration(days: 7))
+                        .add(const Duration(days: 6))
                         .difference(DateTime(widget.yearNow, month.month, text))
                         .inDays
                         .isNegative))
@@ -496,9 +532,9 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
       padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        childAspectRatio: 1.43,
         crossAxisSpacing: 0,
         mainAxisSpacing: 0,
+        mainAxisExtent: 129,
       ),
       shrinkWrap: true,
       itemCount: (daysInMonth + weekdayOfFirstDay - 1) + lastDayOfMonth,
@@ -515,8 +551,8 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 10,
-                    left: 10,
+                    top: 5,
+                    left: 5,
                     child: TextStyles.standardText(
                       text: previousMonthDay.toString(),
                       color: Theme.of(context).primaryColor,
@@ -528,7 +564,6 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
             ).animate().fadeIn(delay: 50.ms * index),
           );
         } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
-          // Displaying the current month's days
           DateTime date =
               DateTime(month.year, month.month, index - weekdayOfFirstDay + 2);
           int text = date.day;
@@ -543,8 +578,8 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 10,
-                    left: 10,
+                    top: 5,
+                    left: 5,
                     child: Container(
                       width: 20,
                       height: 25,
@@ -576,8 +611,8 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 10,
-                    left: 10,
+                    top: 5,
+                    left: 5,
                     child: TextStyles.standardText(
                       text: (index - (daysInMonth + weekdayOfFirstDay - 2))
                           .toString(),

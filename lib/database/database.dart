@@ -1,9 +1,5 @@
 import 'dart:io';
 import 'package:drift/native.dart';
-import 'package:generador_formato/database/tables/tarifa_table.dart';
-import 'package:generador_formato/database/tables/temporada_table.dart';
-import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
-import 'package:generador_formato/database/tables/user_activity_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +9,11 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'tables/habitacion_table.dart';
 import 'tables/cotizaciones_table.dart';
 import 'tables/periodo_table.dart';
+import 'tables/tarifa_rack_table.dart';
+import 'tables/tarifa_table.dart';
+import 'tables/tarifa_x_dia_table.dart';
+import 'tables/temporada_table.dart';
+import 'tables/user_activity_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
@@ -25,6 +26,7 @@ part 'database.g.dart';
 //   Temporada,
 //   Tarifa,
 //   UserActivity,
+//   TarifaRack,
 // ])
 // class AppDatabase extends _$AppDatabase {}
 
@@ -37,6 +39,7 @@ part 'database.g.dart';
   Temporada,
   Tarifa,
   UserActivity,
+  TarifaRack,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -172,8 +175,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<HabitacionData>> getHabitacionesByFolio(String folio) {
-    return (select(habitacion)..where((t) => t.subfolio.equals(folio)))
-        .get();
+    return (select(habitacion)..where((t) => t.subfolio.equals(folio))).get();
   }
 
   Future<List<HabitacionData>> getHabitacionesByPeriod(
@@ -198,8 +200,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future deleteHabitacionByFolio(String folio) {
-    return (delete(habitacion)..where((t) => t.subfolio.equals(folio)))
-        .go();
+    return (delete(habitacion)..where((t) => t.subfolio.equals(folio))).go();
   }
 
   //tarifaXdia DAO

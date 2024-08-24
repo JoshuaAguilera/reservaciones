@@ -28,6 +28,8 @@ class ControllerCalendarWidget extends StatefulWidget {
   final void Function()? reduceYear;
   final void Function()? increaseYear;
   final void Function(int)? setYear;
+  final void Function(int)? onPreviewPage;
+  final void Function(int)? onNextPage;
 
   const ControllerCalendarWidget({
     super.key,
@@ -50,6 +52,8 @@ class ControllerCalendarWidget extends StatefulWidget {
     required this.reduceYear,
     required this.increaseYear,
     required this.setYear,
+    required this.onPreviewPage,
+    required this.onNextPage,
   });
 
   @override
@@ -123,8 +127,6 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-
-                                  ///   controller: widget.pageMonthController,
                                   itemCount: 10,
                                   itemBuilder: (context, pageIndex) {
                                     return _buildYear();
@@ -145,8 +147,6 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-
-                                  ///   controller: widget.pageMonthController,
                                   itemCount: 10,
                                   itemBuilder: (context, pageIndex) {
                                     return _buildMonth();
@@ -161,7 +161,7 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                                   controller: widget.pageWeekController,
                                   itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
-                                    return SizedBox();
+                                    return const SizedBox();
                                   },
                                 ),
                               ),
@@ -288,26 +288,22 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
             IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
-                setState(() {
-                  if (widget.pageWeekController.page! > 0) {
-                    widget.pageWeekController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
-                });
+                if (widget.pageWeekController.page! > 0) {
+                  widget.onPreviewPage!.call(_currentMonth.month - 2);
+                }
               },
             )
           else
             const SizedBox(width: 36),
           TextStyles.titleText(
-              text: DateFormat('MMMM')
-                      .format(_currentMonth)
-                      .substring(0, 1)
-                      .toUpperCase() +
-                  DateFormat('MMMM').format(_currentMonth).substring(1),
-              color: Theme.of(context).primaryColor,
-              size: 16),
+            text: DateFormat('MMMM')
+                    .format(_currentMonth)
+                    .substring(0, 1)
+                    .toUpperCase() +
+                DateFormat('MMMM').format(_currentMonth).substring(1),
+            color: Theme.of(context).primaryColor,
+            size: 16,
+          ),
           /*
           DropdownButton<int>(
             // Dropdown for selecting a year
@@ -342,12 +338,7 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
                 if (!isLastMonthOfYear) {
-                  setState(() {
-                    widget.pageWeekController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  });
+                  widget.onNextPage!.call(_currentMonth.month);
                 }
               },
             )
@@ -372,14 +363,6 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
                 widget.reduceYear!.call();
-                // setState(() {
-                //   if (widget.pageMonthController.page! > 0) {
-                //     widget.pageMonthController.previousPage(
-                //       duration: const Duration(milliseconds: 300),
-                //       curve: Curves.easeInOut,
-                //     );
-                //   }
-                // });
               },
             )
           else
@@ -393,12 +376,6 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
                 widget.increaseYear!.call();
-                // setState(() {
-                //   widget.pageMonthController.nextPage(
-                //     duration: const Duration(milliseconds: 300),
-                //     curve: Curves.easeInOut,
-                //   );
-                // });
               },
             )
           else

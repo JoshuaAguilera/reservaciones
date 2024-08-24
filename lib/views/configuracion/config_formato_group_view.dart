@@ -78,7 +78,6 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                                 FormWidgets.inputColor(
                                   primaryColor: colorTableInd,
                                   nameInput: "Color de tablas: ",
-                                  verticalPadding: 12,
                                   colorText: Theme.of(context).primaryColor,
                                 ),
                               ],
