@@ -63,16 +63,8 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                             setState(() {
                               target = true;
                             });
-
-                            Future.delayed(
-                              500.ms,
-                              () => setState(() => inMenu = true),
-                            );
-
-                            setState(() => targetForm = !targetForm);
-
-                            Future.delayed(Durations.extralong1,
-                                () => setState(() => showForm = !showForm));
+                            Future.delayed(500.ms,
+                                () => widget.sideController.selectIndex(15));
                           },
                           text: "Crear tarifa",
                         ).animate(target: !targetForm ? 1 : 0).fadeIn(),
@@ -187,6 +179,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           ),
         ),
       ),
-    );
+    ).animate(target: target ? 0 : 1).fadeIn();
   }
 }

@@ -1,39 +1,27 @@
-class Tarifa {
+class TarifaTemporada {
   int? id;
   String? fecha;
-  String? fechaInicio;
-  String? fechaFin;
-  String? tarifaRack;
-  double? porcentajeDescuento;
+  String? code;
   String? categoria;
-  int? nivel;
-  int? tarifaRealId;
-  int? responsableId;
+  double? porcentajeDescuento;
+  int? estanciaMinima;
+  double? tarifaAdulto1a2;
+  double? tarifaAdulto3;
+  double? tarifaAdulto4;
+  double? tarifaMenores7a12;
+  double? tarifaPaxAdicional;
 
-  Tarifa({
+  TarifaTemporada({
     this.id,
     this.fecha,
-    this.fechaInicio,
-    this.fechaFin,
-    this.tarifaRack,
-    this.porcentajeDescuento,
+    this.code,
     this.categoria,
-    this.nivel,
-    this.tarifaRealId,
-    this.responsableId,
-  });
-}
-
-class TarifaReal {
-  int? id;
-  String? fecha;
-  String? tipoHuesped;
-  double? tarifaBase;
-
-  TarifaReal({
-    this.id,
-    this.fecha,
-    this.tipoHuesped,
-    this.tarifaBase,
+    this.porcentajeDescuento,
+    this.estanciaMinima,
+    this.tarifaAdulto1a2,
+    this.tarifaAdulto3,
+    this.tarifaAdulto4,
+    this.tarifaMenores7a12,
+    this.tarifaPaxAdicional,
   });
 }

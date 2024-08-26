@@ -653,4 +653,10 @@ class Utility {
 
     return subtotalString;
   }
+
+  static double parseDoubleText(String value) {
+    double valor = 0;
+    valor = value.isEmpty ? 0 : double.parse(value);
+    return valor;
+  }
 }

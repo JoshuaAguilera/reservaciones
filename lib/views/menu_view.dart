@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/views/tarifario/form_tarifario_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_view.dart';
 import 'package:generador_formato/views/gestion_usuarios_view.dart';
 import 'package:generador_formato/views/historial/comprobante_detalle_view.dart';
@@ -48,6 +49,8 @@ class _MenuViewState extends State<MenuView> {
             return PerfilView(sideController: widget.controller);
           case 12:
             return ComprobanteDetalleView(sideController: widget.controller);
+          case 15:
+            return FormTarifarioView(sideController: widget.controller);
           default:
             return Text(
               pageTitle,

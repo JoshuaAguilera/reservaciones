@@ -170,10 +170,12 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                         (widget.sideController.extended
                                             ? 230
                                             : 118))
-                                    : screenWidth -
-                                        (widget.sideController.extended
-                                            ? 230
-                                            : 118),
+                                    : (screenWidth > 800)
+                                        ? screenWidth -
+                                            (widget.sideController.extended
+                                                ? 230
+                                                : 118)
+                                        : screenWidth - 28,
                                 height: screenHeight - 225,
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
@@ -232,10 +234,12 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                                         (widget.sideController.extended
                                             ? 230
                                             : 118))
-                                    : screenWidth -
-                                        (widget.sideController.extended
-                                            ? 230
-                                            : 118),
+                                    : (screenWidth > 800)
+                                        ? screenWidth -
+                                            (widget.sideController.extended
+                                                ? 230
+                                                : 118)
+                                        : screenWidth - 28,
                                 child: Table(
                                   border: TableBorder(
                                     verticalInside: BorderSide(
@@ -415,15 +419,6 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                         pageWeekController = PageController(initialPage: p0);
                       },
                       onStartflow: (p0) => setState(() => startFlow = p0),
-                    ),
-                  ),
-                if (!widget.showForm)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: FormTarifarioView(
-                      target: !widget.targetForm,
-                      onTarget: widget.onTargetForm,
                     ),
                   ),
               ],

@@ -66,13 +66,12 @@ class FormWidgets {
                 children: [
                   TextFormFieldCustom.textFormFieldwithBorder(
                       name: "Color", initialValue: "s", blocked: true),
-                  Positioned(
-                    top: 10,
-                    left: 10,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Center(
                       child: Container(
-                        width: 105,
                         height: 30,
+                        width: 500,
                         decoration: BoxDecoration(
                             color: currentColor,
                             borderRadius:

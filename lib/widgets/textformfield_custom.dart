@@ -94,6 +94,7 @@ class TextFormFieldCustom {
                             ? FilteringTextInputFormatter.digitsOnly
                             : FilteringTextInputFormatter.singleLineFormatter
                   ],
+                  textAlignVertical: TextAlignVertical.top,
                   textAlign: isMoneda ? TextAlign.right : TextAlign.left,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
