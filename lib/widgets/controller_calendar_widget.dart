@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:intl/intl.dart';
 
+import '../ui/custom_widgets.dart';
+import '../ui/progress_indicator.dart';
 import '../utils/helpers/utility.dart';
 import 'item_row.dart';
 import 'text_styles.dart';
 
-class ControllerCalendarWidget extends StatefulWidget {
+class ControllerCalendarWidget extends ConsumerStatefulWidget {
   final bool target;
   final bool inMenu;
   final void Function()? onTarget;
@@ -30,6 +34,7 @@ class ControllerCalendarWidget extends StatefulWidget {
   final void Function(int)? setYear;
   final void Function(int)? onPreviewPage;
   final void Function(int)? onNextPage;
+  final void Function()? onCreated;
 
   const ControllerCalendarWidget({
     super.key,
@@ -54,20 +59,23 @@ class ControllerCalendarWidget extends StatefulWidget {
     required this.setYear,
     required this.onPreviewPage,
     required this.onNextPage,
+    required this.onCreated,
   });
 
   @override
-  State<ControllerCalendarWidget> createState() =>
+  _ControllerCalendarWidgetState createState() =>
       _ControllerCalendarWidgetState();
 }
 
-class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
+class _ControllerCalendarWidgetState
+    extends ConsumerState<ControllerCalendarWidget> {
   DateTime _currentMonth = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final tarifasProvider = ref.watch(allTarifaProvider(""));
 
     return SizedBox(
       width: screenWidth > 875
@@ -208,10 +216,12 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                             top: BorderSide(
                                 color: Theme.of(context).dividerColor)),
                         title: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              widget.onCreated!.call();
+                            },
                             icon: const Icon(Icons.add_circle_rounded)),
                         leading: SizedBox(
-                          width: 190,
+                          width: 175,
                           child: TextStyles.standardText(
                             text: "Tarifas disponibles",
                             isBold: true,
@@ -219,7 +229,52 @@ class _ControllerCalendarWidgetState extends State<ControllerCalendarWidget> {
                             size: 14,
                           ),
                         ),
-                        children: [],
+                        children: [
+                          tarifasProvider.when(
+                            data: (list) {
+                              if (list.isEmpty) {
+                                return SizedBox(
+                                  height: 150,
+                                  child: CustomWidgets.messageNotResult(
+                                      context: context, sizeImage: 100),
+                                );
+                              } else {
+                                return SizedBox(
+                                  width: screenWidth,
+                                  height: Utility.limitHeightList(
+                                      list.length, 5, 50),
+                                  child: ListView.builder(
+                                    itemCount: list.length,
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      return ItemRow.tarifaItemRow(
+                                        context,
+                                        registroTarifa: list[index],
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                            },
+                            error: (error, stackTrace) {
+                              return SizedBox(
+                                height: 150,
+                                child: CustomWidgets.messageNotResult(
+                                    context: context, sizeImage: 100),
+                              );
+                            },
+                            loading: () {
+                              return SizedBox(
+                                height: 150,
+                                child: ProgressIndicatorCustom(
+                                  screenHight: 25,
+                                  sizeProgressIndicator: 25,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       ExpansionTile(
                         initiallyExpanded: true,

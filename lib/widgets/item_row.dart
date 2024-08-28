@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
@@ -289,8 +290,7 @@ class ItemRow {
 
   static Widget tarifaItemRow(
     BuildContext context, {
-    Color? colorIndicator,
-    required String nameRack,
+    RegistroTarifa? registroTarifa,
     void Function()? onEdit,
     void Function()? onDelete,
   }) {
@@ -298,7 +298,7 @@ class ItemRow {
       leading: Checkbox(
         value: true,
         onChanged: (value) {},
-        activeColor: colorIndicator ?? Colors.amber,
+        activeColor: registroTarifa?.color ?? Colors.amber,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(3),
@@ -306,7 +306,7 @@ class ItemRow {
         ),
       ),
       title: TextStyles.standardText(
-          text: nameRack, color: Theme.of(context).primaryColor),
+          text: registroTarifa?.nombre ?? 'Unknow', color: Theme.of(context).primaryColor),
       trailing: PopupMenuButton<ListTileTitleAlignment>(
         position: PopupMenuPosition.under,
         tooltip: "Opciones",

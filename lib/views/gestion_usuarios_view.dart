@@ -199,20 +199,21 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       children: [
                         Table(
                           columnWidths: {
-                            0: FractionColumnWidth(.05),
-                            1: FractionColumnWidth(0.16),
+                            0: const FractionColumnWidth(.05),
+                            1: const FractionColumnWidth(0.16),
                             2: (screenWidth > 1000)
-                                ? FractionColumnWidth(0.15)
-                                : FractionColumnWidth(0.3),
+                                ? const FractionColumnWidth(0.15)
+                                : const FractionColumnWidth(0.3),
                             3: (screenWidth > 1000)
-                                ? FractionColumnWidth(0.25)
-                                : FractionColumnWidth(0.25),
+                                ? const FractionColumnWidth(0.25)
+                                : const FractionColumnWidth(0.25),
                             4: (screenWidth > 1200)
-                                ? FractionColumnWidth(.15)
-                                : FractionColumnWidth(0.25),
+                                ? const FractionColumnWidth(.15)
+                                : const FractionColumnWidth(0.25),
                             if (screenWidth > 1000)
-                              5: FractionColumnWidth(0.12),
-                            if (screenWidth > 1200) 6: FractionColumnWidth(.14),
+                              5: const FractionColumnWidth(0.12),
+                            if (screenWidth > 1200)
+                              6: const FractionColumnWidth(.14),
                           },
                           children: [
                             for (var data in list)
@@ -368,7 +369,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                     );
                   },
                   loading: () {
-                    return ProgressIndicatorCustom(320);
+                    return ProgressIndicatorCustom(screenHight: 320);
                   },
                 ),
               ),

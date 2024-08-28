@@ -27,6 +27,7 @@ class TarifarioCalendaryView extends StatefulWidget {
     required this.targetForm,
     required this.showForm,
     required this.onTargetForm,
+    required this.onCreate,
   });
 
   final bool target;
@@ -43,6 +44,7 @@ class TarifarioCalendaryView extends StatefulWidget {
   final void Function()? increaseYear;
   final void Function(int)? setYear;
   final void Function()? onTargetForm;
+  final void Function()? onCreate;
 
   @override
   State<TarifarioCalendaryView> createState() => _TarifarioCalendaryViewState();
@@ -419,6 +421,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                         pageWeekController = PageController(initialPage: p0);
                       },
                       onStartflow: (p0) => setState(() => startFlow = p0),
+                      onCreated: () => widget.onCreate!.call(),
                     ),
                   ),
               ],

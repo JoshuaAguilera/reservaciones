@@ -331,7 +331,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                     );
                   },
                   loading: () {
-                    return ProgressIndicatorCustom(screenHight);
+                    return ProgressIndicatorCustom(screenHight: screenHight);
                   },
                 )
               ],

@@ -353,7 +353,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         ],
                       ),
                     if (isLoading && !isFinish)
-                      ProgressIndicatorCustom(screenHight),
+                      ProgressIndicatorCustom(screenHight: screenHight),
                     if (isFinish)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),

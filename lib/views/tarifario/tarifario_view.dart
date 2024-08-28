@@ -22,7 +22,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   bool target = false;
   bool targetForm = false;
   bool showForm = true;
-
   bool inMenu = false;
   int yearNow = DateTime.now().year;
 
@@ -60,11 +59,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                         height: 38,
                         child: Buttons.commonButton(
                           onPressed: () {
-                            setState(() {
-                              target = true;
-                            });
-                            Future.delayed(500.ms,
-                                () => widget.sideController.selectIndex(15));
+                            onCreate.call();
                           },
                           text: "Crear tarifa",
                         ).animate(target: !targetForm ? 1 : 0).fadeIn(),
@@ -152,6 +147,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 yearNow: yearNow,
                 targetForm: targetForm,
                 showForm: showForm,
+                onCreate: () => onCreate.call(),
                 onTarget: () {
                   setState(() => target = true);
 
@@ -164,21 +160,21 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   Future.delayed(Durations.extralong1,
                       () => setState(() => showForm = !showForm));
                 },
-                increaseYear: () {
-                  setState(() => yearNow++);
-                },
-                reduceYear: () {
-                  setState(() => yearNow--);
-                },
-                setYear: (p0) => setState(() {
-                  yearNow = p0;
-                  print(yearNow);
-                }),
+                increaseYear: () => setState(() => yearNow++),
+                reduceYear: () => setState(() => yearNow--),
+                setYear: (p0) => setState(() => yearNow = p0),
               ),
             ],
           ),
         ),
       ),
     ).animate(target: target ? 0 : 1).fadeIn();
+  }
+
+  void Function()? onCreate() {
+    setState(() {
+      target = true;
+    });
+    Future.delayed(500.ms, () => widget.sideController.selectIndex(15));
   }
 }

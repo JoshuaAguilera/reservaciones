@@ -41,7 +41,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
           width: screenWidth,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Colors.white, DesktopColors.cerulean],
+                colors: [Theme.of(context).primaryColorDark, DesktopColors.cerulean],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter),
           ),

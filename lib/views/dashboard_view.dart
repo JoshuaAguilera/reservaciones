@@ -272,7 +272,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   loading: () {
                                     return SizedBox(
                                       height: 450,
-                                      child: ProgressIndicatorCustom(0),
+                                      child: ProgressIndicatorCustom(
+                                          screenHight: 0),
                                     );
                                   },
                                 )
@@ -301,7 +302,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 return const SizedBox();
                               },
                               loading: () {
-                                return ProgressIndicatorCustom(80);
+                                return ProgressIndicatorCustom(screenHight: 80);
                               },
                             ),
                           ),
@@ -313,7 +314,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   ),
                 ),
               if (isLoading)
-                ProgressIndicatorCustom(screenHight)
+                ProgressIndicatorCustom(screenHight: screenHight)
               else
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -424,7 +425,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           return const SizedBox();
                                         },
                                         loading: () {
-                                          return ProgressIndicatorCustom(350);
+                                          return ProgressIndicatorCustom(
+                                              screenHight: 350);
                                         },
                                       )
                                     ],
@@ -534,7 +536,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           );
                                         },
                                         loading: () {
-                                          return ProgressIndicatorCustom(320);
+                                          return ProgressIndicatorCustom(
+                                              screenHight: 320);
                                         },
                                       )
                                     ],

@@ -257,14 +257,17 @@ class TextStyles {
     ]));
   }
 
-  static Text mediumText(
-      {String text = "",
-      TextAlign aling = TextAlign.left,
-      double size = 14,
-      Color? color}) {
+  static Text mediumText({
+    String text = "",
+    TextAlign aling = TextAlign.left,
+    double size = 14,
+    Color? color,
+    TextOverflow? overflow,
+  }) {
     return Text(
       text,
       textAlign: aling,
+      overflow: overflow,
       style: TextStyle(
         color: color ?? DesktopColors.turqueza,
         fontSize: size,

@@ -24,10 +24,71 @@ class CustomWidgets {
     );
   }
 
+  static Widget sectionConfigSeason({
+    required String title,
+    required BuildContext context,
+    required TextEditingController estanciaController,
+    required TextEditingController promocionController,
+    void Function(String)? onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: Border.all(color: Theme.of(context).primaryColor)),
+      child: Column(
+        children: [
+          Center(
+            child: TextStyles.mediumText(
+              text: title,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  child: TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Estancia min.",
+                    isNumeric: true,
+                    controller: estanciaController,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: SizedBox(
+                  child: TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Descuento",
+                    isNumeric: true,
+                    icon: const Icon(
+                      CupertinoIcons.percent,
+                      size: 20,
+                    ),
+                    controller: promocionController,
+                    onChanged: (p0) {
+                      if (onChanged != null) {
+                        onChanged.call(p0);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   static Widget expansionTileCustomTarifa({
     required Color colorTarifa,
     required String nameTile,
     required BuildContext context,
+    bool initiallyExpanded = false,
     required TextEditingController estanciaController,
     required TextEditingController promocionController,
     required TextEditingController adults1_2Controller,
@@ -41,7 +102,7 @@ class CustomWidgets {
       padding: const EdgeInsets.only(top: 20),
       child: StatefulBuilder(builder: (context, snapshot) {
         return ExpansionTile(
-          initiallyExpanded: true,
+          initiallyExpanded: initiallyExpanded,
           shape: Border(top: BorderSide(color: colorTarifa)),
           collapsedShape: Border(top: BorderSide(color: colorTarifa)),
           title: TextStyles.standardText(
@@ -51,47 +112,6 @@ class CustomWidgets {
             size: 14,
           ),
           children: [
-            const SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 55,
-                    child: TextFormFieldCustom.textFormFieldwithBorder(
-                      name: "Estancia min.",
-                      isNumeric: true,
-                      controller: promocionController,
-                      onChanged: (p0) {
-                        if (onChanged != null) {
-                          onChanged.call(p0);
-                        }
-                        snapshot(() {});
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: SizedBox(
-                    height: 55,
-                    child: TextFormFieldCustom.textFormFieldwithBorder(
-                      name: "Descuento",
-                      isNumeric: true,
-                      icon: const Icon(CupertinoIcons.percent),
-                      controller: promocionController,
-                      onChanged: (p0) {
-                        if (onChanged != null) {
-                          onChanged.call(p0);
-                        }
-                        snapshot(() {});
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 5),
             Opacity(
               opacity: 0.5,
@@ -207,16 +227,18 @@ class CustomWidgets {
   }
 
   static Widget messageNotResult(
-      {double sizeMessage = 11, required BuildContext context}) {
+      {double sizeMessage = 11,
+      required BuildContext context,
+      double sizeImage = 120}) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Image(
-            image: AssetImage("assets/image/not_results.png"),
-            width: 120,
-            height: 120,
+          Image(
+            image: const AssetImage("assets/image/not_results.png"),
+            width: sizeImage,
+            height: sizeImage,
           ),
           TextStyles.standardText(
             text: "No se encontraron resultados",
@@ -254,7 +276,10 @@ class CustomWidgets {
                       onChanged!.call(i, index);
                     }
                   } else {
-                    listModes[index] = !listModes[index];
+                    listModes[index] =
+                        (listModes.where((element) => element).length > 1)
+                            ? !listModes[index]
+                            : true;
                     onChanged!.call(0, index);
                   }
                 },

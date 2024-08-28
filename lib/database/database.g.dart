@@ -2955,6 +2955,11 @@ class $TemporadaTable extends Temporada
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
       'code', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+      'nombre', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
@@ -2979,8 +2984,15 @@ class $TemporadaTable extends Temporada
       'code_tarifa', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, code, fecha, estanciaMinima, porcentajePromocion, codeTarifa];
+  List<GeneratedColumn> get $columns => [
+        id,
+        code,
+        nombre,
+        fecha,
+        estanciaMinima,
+        porcentajePromocion,
+        codeTarifa
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2999,6 +3011,12 @@ class $TemporadaTable extends Temporada
           _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
     } else if (isInserting) {
       context.missing(_codeMeta);
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    } else if (isInserting) {
+      context.missing(_nombreMeta);
     }
     if (data.containsKey('fecha')) {
       context.handle(
@@ -3035,6 +3053,8 @@ class $TemporadaTable extends Temporada
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}code'])!,
+      nombre: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nombre'])!,
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       estanciaMinima: attachedDatabase.typeMapping
@@ -3055,6 +3075,7 @@ class $TemporadaTable extends Temporada
 class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final int id;
   final String code;
+  final String nombre;
   final DateTime? fecha;
   final int? estanciaMinima;
   final double? porcentajePromocion;
@@ -3062,6 +3083,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   const TemporadaData(
       {required this.id,
       required this.code,
+      required this.nombre,
       this.fecha,
       this.estanciaMinima,
       this.porcentajePromocion,
@@ -3071,6 +3093,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['code'] = Variable<String>(code);
+    map['nombre'] = Variable<String>(nombre);
     if (!nullToAbsent || fecha != null) {
       map['fecha'] = Variable<DateTime>(fecha);
     }
@@ -3090,6 +3113,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     return TemporadaCompanion(
       id: Value(id),
       code: Value(code),
+      nombre: Value(nombre),
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       estanciaMinima: estanciaMinima == null && nullToAbsent
@@ -3110,6 +3134,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     return TemporadaData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String>(json['code']),
+      nombre: serializer.fromJson<String>(json['nombre']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       estanciaMinima: serializer.fromJson<int?>(json['estanciaMinima']),
       porcentajePromocion:
@@ -3123,6 +3148,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'code': serializer.toJson<String>(code),
+      'nombre': serializer.toJson<String>(nombre),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'estanciaMinima': serializer.toJson<int?>(estanciaMinima),
       'porcentajePromocion': serializer.toJson<double?>(porcentajePromocion),
@@ -3133,6 +3159,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   TemporadaData copyWith(
           {int? id,
           String? code,
+          String? nombre,
           Value<DateTime?> fecha = const Value.absent(),
           Value<int?> estanciaMinima = const Value.absent(),
           Value<double?> porcentajePromocion = const Value.absent(),
@@ -3140,6 +3167,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       TemporadaData(
         id: id ?? this.id,
         code: code ?? this.code,
+        nombre: nombre ?? this.nombre,
         fecha: fecha.present ? fecha.value : this.fecha,
         estanciaMinima:
             estanciaMinima.present ? estanciaMinima.value : this.estanciaMinima,
@@ -3153,6 +3181,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     return (StringBuffer('TemporadaData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
+          ..write('nombre: $nombre, ')
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
@@ -3163,13 +3192,14 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
 
   @override
   int get hashCode => Object.hash(
-      id, code, fecha, estanciaMinima, porcentajePromocion, codeTarifa);
+      id, code, nombre, fecha, estanciaMinima, porcentajePromocion, codeTarifa);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TemporadaData &&
           other.id == this.id &&
           other.code == this.code &&
+          other.nombre == this.nombre &&
           other.fecha == this.fecha &&
           other.estanciaMinima == this.estanciaMinima &&
           other.porcentajePromocion == this.porcentajePromocion &&
@@ -3179,6 +3209,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
 class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<int> id;
   final Value<String> code;
+  final Value<String> nombre;
   final Value<DateTime?> fecha;
   final Value<int?> estanciaMinima;
   final Value<double?> porcentajePromocion;
@@ -3186,6 +3217,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   const TemporadaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
+    this.nombre = const Value.absent(),
     this.fecha = const Value.absent(),
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
@@ -3194,14 +3226,17 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   TemporadaCompanion.insert({
     this.id = const Value.absent(),
     required String code,
+    required String nombre,
     this.fecha = const Value.absent(),
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
-  }) : code = Value(code);
+  })  : code = Value(code),
+        nombre = Value(nombre);
   static Insertable<TemporadaData> custom({
     Expression<int>? id,
     Expression<String>? code,
+    Expression<String>? nombre,
     Expression<DateTime>? fecha,
     Expression<int>? estanciaMinima,
     Expression<double>? porcentajePromocion,
@@ -3210,6 +3245,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (code != null) 'code': code,
+      if (nombre != null) 'nombre': nombre,
       if (fecha != null) 'fecha': fecha,
       if (estanciaMinima != null) 'estancia_minima': estanciaMinima,
       if (porcentajePromocion != null)
@@ -3221,6 +3257,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   TemporadaCompanion copyWith(
       {Value<int>? id,
       Value<String>? code,
+      Value<String>? nombre,
       Value<DateTime?>? fecha,
       Value<int?>? estanciaMinima,
       Value<double?>? porcentajePromocion,
@@ -3228,6 +3265,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     return TemporadaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
+      nombre: nombre ?? this.nombre,
       fecha: fecha ?? this.fecha,
       estanciaMinima: estanciaMinima ?? this.estanciaMinima,
       porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
@@ -3243,6 +3281,9 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
     }
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
@@ -3264,6 +3305,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     return (StringBuffer('TemporadaCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
+          ..write('nombre: $nombre, ')
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
@@ -3303,11 +3345,23 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
       'categoria', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _tarifaAdultoMeta =
-      const VerificationMeta('tarifaAdulto');
+  static const VerificationMeta _tarifaAdultoSGLoDBLMeta =
+      const VerificationMeta('tarifaAdultoSGLoDBL');
   @override
-  late final GeneratedColumn<double> tarifaAdulto = GeneratedColumn<double>(
-      'tarifa_adulto', aliasedName, true,
+  late final GeneratedColumn<double> tarifaAdultoSGLoDBL =
+      GeneratedColumn<double>('tarifa_adulto_s_g_lo_d_b_l', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaAdultoTPLMeta =
+      const VerificationMeta('tarifaAdultoTPL');
+  @override
+  late final GeneratedColumn<double> tarifaAdultoTPL = GeneratedColumn<double>(
+      'tarifa_adulto_t_p_l', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaAdultoCPLEMeta =
+      const VerificationMeta('tarifaAdultoCPLE');
+  @override
+  late final GeneratedColumn<double> tarifaAdultoCPLE = GeneratedColumn<double>(
+      'tarifa_adulto_c_p_l_e', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _tarifaMenores7a12Meta =
       const VerificationMeta('tarifaMenores7a12');
@@ -3327,7 +3381,9 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
         code,
         fecha,
         categoria,
-        tarifaAdulto,
+        tarifaAdultoSGLoDBL,
+        tarifaAdultoTPL,
+        tarifaAdultoCPLE,
         tarifaMenores7a12,
         tarifaPaxAdicional
       ];
@@ -3358,11 +3414,23 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
       context.handle(_categoriaMeta,
           categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
     }
-    if (data.containsKey('tarifa_adulto')) {
+    if (data.containsKey('tarifa_adulto_s_g_lo_d_b_l')) {
       context.handle(
-          _tarifaAdultoMeta,
-          tarifaAdulto.isAcceptableOrUnknown(
-              data['tarifa_adulto']!, _tarifaAdultoMeta));
+          _tarifaAdultoSGLoDBLMeta,
+          tarifaAdultoSGLoDBL.isAcceptableOrUnknown(
+              data['tarifa_adulto_s_g_lo_d_b_l']!, _tarifaAdultoSGLoDBLMeta));
+    }
+    if (data.containsKey('tarifa_adulto_t_p_l')) {
+      context.handle(
+          _tarifaAdultoTPLMeta,
+          tarifaAdultoTPL.isAcceptableOrUnknown(
+              data['tarifa_adulto_t_p_l']!, _tarifaAdultoTPLMeta));
+    }
+    if (data.containsKey('tarifa_adulto_c_p_l_e')) {
+      context.handle(
+          _tarifaAdultoCPLEMeta,
+          tarifaAdultoCPLE.isAcceptableOrUnknown(
+              data['tarifa_adulto_c_p_l_e']!, _tarifaAdultoCPLEMeta));
     }
     if (data.containsKey('tarifa_menores7a12')) {
       context.handle(
@@ -3393,8 +3461,13 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       categoria: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}categoria']),
-      tarifaAdulto: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}tarifa_adulto']),
+      tarifaAdultoSGLoDBL: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}tarifa_adulto_s_g_lo_d_b_l']),
+      tarifaAdultoTPL: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}tarifa_adulto_t_p_l']),
+      tarifaAdultoCPLE: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}tarifa_adulto_c_p_l_e']),
       tarifaMenores7a12: attachedDatabase.typeMapping.read(
           DriftSqlType.double, data['${effectivePrefix}tarifa_menores7a12']),
       tarifaPaxAdicional: attachedDatabase.typeMapping.read(
@@ -3413,7 +3486,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   final String code;
   final DateTime? fecha;
   final String? categoria;
-  final double? tarifaAdulto;
+  final double? tarifaAdultoSGLoDBL;
+  final double? tarifaAdultoTPL;
+  final double? tarifaAdultoCPLE;
   final double? tarifaMenores7a12;
   final double? tarifaPaxAdicional;
   const TarifaData(
@@ -3421,7 +3496,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       required this.code,
       this.fecha,
       this.categoria,
-      this.tarifaAdulto,
+      this.tarifaAdultoSGLoDBL,
+      this.tarifaAdultoTPL,
+      this.tarifaAdultoCPLE,
       this.tarifaMenores7a12,
       this.tarifaPaxAdicional});
   @override
@@ -3435,8 +3512,14 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     if (!nullToAbsent || categoria != null) {
       map['categoria'] = Variable<String>(categoria);
     }
-    if (!nullToAbsent || tarifaAdulto != null) {
-      map['tarifa_adulto'] = Variable<double>(tarifaAdulto);
+    if (!nullToAbsent || tarifaAdultoSGLoDBL != null) {
+      map['tarifa_adulto_s_g_lo_d_b_l'] = Variable<double>(tarifaAdultoSGLoDBL);
+    }
+    if (!nullToAbsent || tarifaAdultoTPL != null) {
+      map['tarifa_adulto_t_p_l'] = Variable<double>(tarifaAdultoTPL);
+    }
+    if (!nullToAbsent || tarifaAdultoCPLE != null) {
+      map['tarifa_adulto_c_p_l_e'] = Variable<double>(tarifaAdultoCPLE);
     }
     if (!nullToAbsent || tarifaMenores7a12 != null) {
       map['tarifa_menores7a12'] = Variable<double>(tarifaMenores7a12);
@@ -3456,9 +3539,15 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       categoria: categoria == null && nullToAbsent
           ? const Value.absent()
           : Value(categoria),
-      tarifaAdulto: tarifaAdulto == null && nullToAbsent
+      tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL == null && nullToAbsent
           ? const Value.absent()
-          : Value(tarifaAdulto),
+          : Value(tarifaAdultoSGLoDBL),
+      tarifaAdultoTPL: tarifaAdultoTPL == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaAdultoTPL),
+      tarifaAdultoCPLE: tarifaAdultoCPLE == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaAdultoCPLE),
       tarifaMenores7a12: tarifaMenores7a12 == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaMenores7a12),
@@ -3476,7 +3565,10 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       code: serializer.fromJson<String>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       categoria: serializer.fromJson<String?>(json['categoria']),
-      tarifaAdulto: serializer.fromJson<double?>(json['tarifaAdulto']),
+      tarifaAdultoSGLoDBL:
+          serializer.fromJson<double?>(json['tarifaAdultoSGLoDBL']),
+      tarifaAdultoTPL: serializer.fromJson<double?>(json['tarifaAdultoTPL']),
+      tarifaAdultoCPLE: serializer.fromJson<double?>(json['tarifaAdultoCPLE']),
       tarifaMenores7a12:
           serializer.fromJson<double?>(json['tarifaMenores7a12']),
       tarifaPaxAdicional:
@@ -3491,7 +3583,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       'code': serializer.toJson<String>(code),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'categoria': serializer.toJson<String?>(categoria),
-      'tarifaAdulto': serializer.toJson<double?>(tarifaAdulto),
+      'tarifaAdultoSGLoDBL': serializer.toJson<double?>(tarifaAdultoSGLoDBL),
+      'tarifaAdultoTPL': serializer.toJson<double?>(tarifaAdultoTPL),
+      'tarifaAdultoCPLE': serializer.toJson<double?>(tarifaAdultoCPLE),
       'tarifaMenores7a12': serializer.toJson<double?>(tarifaMenores7a12),
       'tarifaPaxAdicional': serializer.toJson<double?>(tarifaPaxAdicional),
     };
@@ -3502,7 +3596,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           String? code,
           Value<DateTime?> fecha = const Value.absent(),
           Value<String?> categoria = const Value.absent(),
-          Value<double?> tarifaAdulto = const Value.absent(),
+          Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
+          Value<double?> tarifaAdultoTPL = const Value.absent(),
+          Value<double?> tarifaAdultoCPLE = const Value.absent(),
           Value<double?> tarifaMenores7a12 = const Value.absent(),
           Value<double?> tarifaPaxAdicional = const Value.absent()}) =>
       TarifaData(
@@ -3510,8 +3606,15 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
         code: code ?? this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
         categoria: categoria.present ? categoria.value : this.categoria,
-        tarifaAdulto:
-            tarifaAdulto.present ? tarifaAdulto.value : this.tarifaAdulto,
+        tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL.present
+            ? tarifaAdultoSGLoDBL.value
+            : this.tarifaAdultoSGLoDBL,
+        tarifaAdultoTPL: tarifaAdultoTPL.present
+            ? tarifaAdultoTPL.value
+            : this.tarifaAdultoTPL,
+        tarifaAdultoCPLE: tarifaAdultoCPLE.present
+            ? tarifaAdultoCPLE.value
+            : this.tarifaAdultoCPLE,
         tarifaMenores7a12: tarifaMenores7a12.present
             ? tarifaMenores7a12.value
             : this.tarifaMenores7a12,
@@ -3526,7 +3629,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
           ..write('categoria: $categoria, ')
-          ..write('tarifaAdulto: $tarifaAdulto, ')
+          ..write('tarifaAdultoSGLoDBL: $tarifaAdultoSGLoDBL, ')
+          ..write('tarifaAdultoTPL: $tarifaAdultoTPL, ')
+          ..write('tarifaAdultoCPLE: $tarifaAdultoCPLE, ')
           ..write('tarifaMenores7a12: $tarifaMenores7a12, ')
           ..write('tarifaPaxAdicional: $tarifaPaxAdicional')
           ..write(')'))
@@ -3534,8 +3639,16 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, code, fecha, categoria, tarifaAdulto,
-      tarifaMenores7a12, tarifaPaxAdicional);
+  int get hashCode => Object.hash(
+      id,
+      code,
+      fecha,
+      categoria,
+      tarifaAdultoSGLoDBL,
+      tarifaAdultoTPL,
+      tarifaAdultoCPLE,
+      tarifaMenores7a12,
+      tarifaPaxAdicional);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3544,7 +3657,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           other.code == this.code &&
           other.fecha == this.fecha &&
           other.categoria == this.categoria &&
-          other.tarifaAdulto == this.tarifaAdulto &&
+          other.tarifaAdultoSGLoDBL == this.tarifaAdultoSGLoDBL &&
+          other.tarifaAdultoTPL == this.tarifaAdultoTPL &&
+          other.tarifaAdultoCPLE == this.tarifaAdultoCPLE &&
           other.tarifaMenores7a12 == this.tarifaMenores7a12 &&
           other.tarifaPaxAdicional == this.tarifaPaxAdicional);
 }
@@ -3554,7 +3669,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<String> code;
   final Value<DateTime?> fecha;
   final Value<String?> categoria;
-  final Value<double?> tarifaAdulto;
+  final Value<double?> tarifaAdultoSGLoDBL;
+  final Value<double?> tarifaAdultoTPL;
+  final Value<double?> tarifaAdultoCPLE;
   final Value<double?> tarifaMenores7a12;
   final Value<double?> tarifaPaxAdicional;
   const TarifaCompanion({
@@ -3562,7 +3679,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
     this.categoria = const Value.absent(),
-    this.tarifaAdulto = const Value.absent(),
+    this.tarifaAdultoSGLoDBL = const Value.absent(),
+    this.tarifaAdultoTPL = const Value.absent(),
+    this.tarifaAdultoCPLE = const Value.absent(),
     this.tarifaMenores7a12 = const Value.absent(),
     this.tarifaPaxAdicional = const Value.absent(),
   });
@@ -3571,7 +3690,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     required String code,
     this.fecha = const Value.absent(),
     this.categoria = const Value.absent(),
-    this.tarifaAdulto = const Value.absent(),
+    this.tarifaAdultoSGLoDBL = const Value.absent(),
+    this.tarifaAdultoTPL = const Value.absent(),
+    this.tarifaAdultoCPLE = const Value.absent(),
     this.tarifaMenores7a12 = const Value.absent(),
     this.tarifaPaxAdicional = const Value.absent(),
   }) : code = Value(code);
@@ -3580,7 +3701,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     Expression<String>? code,
     Expression<DateTime>? fecha,
     Expression<String>? categoria,
-    Expression<double>? tarifaAdulto,
+    Expression<double>? tarifaAdultoSGLoDBL,
+    Expression<double>? tarifaAdultoTPL,
+    Expression<double>? tarifaAdultoCPLE,
     Expression<double>? tarifaMenores7a12,
     Expression<double>? tarifaPaxAdicional,
   }) {
@@ -3589,7 +3712,10 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       if (code != null) 'code': code,
       if (fecha != null) 'fecha': fecha,
       if (categoria != null) 'categoria': categoria,
-      if (tarifaAdulto != null) 'tarifa_adulto': tarifaAdulto,
+      if (tarifaAdultoSGLoDBL != null)
+        'tarifa_adulto_s_g_lo_d_b_l': tarifaAdultoSGLoDBL,
+      if (tarifaAdultoTPL != null) 'tarifa_adulto_t_p_l': tarifaAdultoTPL,
+      if (tarifaAdultoCPLE != null) 'tarifa_adulto_c_p_l_e': tarifaAdultoCPLE,
       if (tarifaMenores7a12 != null) 'tarifa_menores7a12': tarifaMenores7a12,
       if (tarifaPaxAdicional != null)
         'tarifa_pax_adicional': tarifaPaxAdicional,
@@ -3601,7 +3727,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       Value<String>? code,
       Value<DateTime?>? fecha,
       Value<String?>? categoria,
-      Value<double?>? tarifaAdulto,
+      Value<double?>? tarifaAdultoSGLoDBL,
+      Value<double?>? tarifaAdultoTPL,
+      Value<double?>? tarifaAdultoCPLE,
       Value<double?>? tarifaMenores7a12,
       Value<double?>? tarifaPaxAdicional}) {
     return TarifaCompanion(
@@ -3609,7 +3737,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       code: code ?? this.code,
       fecha: fecha ?? this.fecha,
       categoria: categoria ?? this.categoria,
-      tarifaAdulto: tarifaAdulto ?? this.tarifaAdulto,
+      tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL ?? this.tarifaAdultoSGLoDBL,
+      tarifaAdultoTPL: tarifaAdultoTPL ?? this.tarifaAdultoTPL,
+      tarifaAdultoCPLE: tarifaAdultoCPLE ?? this.tarifaAdultoCPLE,
       tarifaMenores7a12: tarifaMenores7a12 ?? this.tarifaMenores7a12,
       tarifaPaxAdicional: tarifaPaxAdicional ?? this.tarifaPaxAdicional,
     );
@@ -3630,8 +3760,15 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     if (categoria.present) {
       map['categoria'] = Variable<String>(categoria.value);
     }
-    if (tarifaAdulto.present) {
-      map['tarifa_adulto'] = Variable<double>(tarifaAdulto.value);
+    if (tarifaAdultoSGLoDBL.present) {
+      map['tarifa_adulto_s_g_lo_d_b_l'] =
+          Variable<double>(tarifaAdultoSGLoDBL.value);
+    }
+    if (tarifaAdultoTPL.present) {
+      map['tarifa_adulto_t_p_l'] = Variable<double>(tarifaAdultoTPL.value);
+    }
+    if (tarifaAdultoCPLE.present) {
+      map['tarifa_adulto_c_p_l_e'] = Variable<double>(tarifaAdultoCPLE.value);
     }
     if (tarifaMenores7a12.present) {
       map['tarifa_menores7a12'] = Variable<double>(tarifaMenores7a12.value);
@@ -3649,7 +3786,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
           ..write('categoria: $categoria, ')
-          ..write('tarifaAdulto: $tarifaAdulto, ')
+          ..write('tarifaAdultoSGLoDBL: $tarifaAdultoSGLoDBL, ')
+          ..write('tarifaAdultoTPL: $tarifaAdultoTPL, ')
+          ..write('tarifaAdultoCPLE: $tarifaAdultoCPLE, ')
           ..write('tarifaMenores7a12: $tarifaMenores7a12, ')
           ..write('tarifaPaxAdicional: $tarifaPaxAdicional')
           ..write(')'))
@@ -5611,6 +5750,7 @@ class $$PeriodoTableOrderingComposer
 typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
   required String code,
+  required String nombre,
   Value<DateTime?> fecha,
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
@@ -5619,6 +5759,7 @@ typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
 typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
   Value<String> code,
+  Value<String> nombre,
   Value<DateTime?> fecha,
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
@@ -5647,6 +5788,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
+            Value<String> nombre = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
@@ -5655,6 +5797,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
               TemporadaCompanion(
             id: id,
             code: code,
+            nombre: nombre,
             fecha: fecha,
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
@@ -5663,6 +5806,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             required String code,
+            required String nombre,
             Value<DateTime?> fecha = const Value.absent(),
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
@@ -5671,6 +5815,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
               TemporadaCompanion.insert(
             id: id,
             code: code,
+            nombre: nombre,
             fecha: fecha,
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
@@ -5701,6 +5846,11 @@ class $$TemporadaTableFilterComposer
 
   ColumnFilters<String> get code => $state.composableBuilder(
       column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5738,6 +5888,11 @@ class $$TemporadaTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
       column: $state.table.fecha,
       builder: (column, joinBuilders) =>
@@ -5764,7 +5919,9 @@ typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
   required String code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
-  Value<double?> tarifaAdulto,
+  Value<double?> tarifaAdultoSGLoDBL,
+  Value<double?> tarifaAdultoTPL,
+  Value<double?> tarifaAdultoCPLE,
   Value<double?> tarifaMenores7a12,
   Value<double?> tarifaPaxAdicional,
 });
@@ -5773,7 +5930,9 @@ typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
   Value<String> code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
-  Value<double?> tarifaAdulto,
+  Value<double?> tarifaAdultoSGLoDBL,
+  Value<double?> tarifaAdultoTPL,
+  Value<double?> tarifaAdultoCPLE,
   Value<double?> tarifaMenores7a12,
   Value<double?> tarifaPaxAdicional,
 });
@@ -5801,7 +5960,9 @@ class $$TarifaTableTableManager extends RootTableManager<
             Value<String> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
-            Value<double?> tarifaAdulto = const Value.absent(),
+            Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
+            Value<double?> tarifaAdultoTPL = const Value.absent(),
+            Value<double?> tarifaAdultoCPLE = const Value.absent(),
             Value<double?> tarifaMenores7a12 = const Value.absent(),
             Value<double?> tarifaPaxAdicional = const Value.absent(),
           }) =>
@@ -5810,7 +5971,9 @@ class $$TarifaTableTableManager extends RootTableManager<
             code: code,
             fecha: fecha,
             categoria: categoria,
-            tarifaAdulto: tarifaAdulto,
+            tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL,
+            tarifaAdultoTPL: tarifaAdultoTPL,
+            tarifaAdultoCPLE: tarifaAdultoCPLE,
             tarifaMenores7a12: tarifaMenores7a12,
             tarifaPaxAdicional: tarifaPaxAdicional,
           ),
@@ -5819,7 +5982,9 @@ class $$TarifaTableTableManager extends RootTableManager<
             required String code,
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
-            Value<double?> tarifaAdulto = const Value.absent(),
+            Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
+            Value<double?> tarifaAdultoTPL = const Value.absent(),
+            Value<double?> tarifaAdultoCPLE = const Value.absent(),
             Value<double?> tarifaMenores7a12 = const Value.absent(),
             Value<double?> tarifaPaxAdicional = const Value.absent(),
           }) =>
@@ -5828,7 +5993,9 @@ class $$TarifaTableTableManager extends RootTableManager<
             code: code,
             fecha: fecha,
             categoria: categoria,
-            tarifaAdulto: tarifaAdulto,
+            tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL,
+            tarifaAdultoTPL: tarifaAdultoTPL,
+            tarifaAdultoCPLE: tarifaAdultoCPLE,
             tarifaMenores7a12: tarifaMenores7a12,
             tarifaPaxAdicional: tarifaPaxAdicional,
           ),
@@ -5870,8 +6037,18 @@ class $$TarifaTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get tarifaAdulto => $state.composableBuilder(
-      column: $state.table.tarifaAdulto,
+  ColumnFilters<double> get tarifaAdultoSGLoDBL => $state.composableBuilder(
+      column: $state.table.tarifaAdultoSGLoDBL,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaAdultoTPL => $state.composableBuilder(
+      column: $state.table.tarifaAdultoTPL,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get tarifaAdultoCPLE => $state.composableBuilder(
+      column: $state.table.tarifaAdultoCPLE,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5909,8 +6086,18 @@ class $$TarifaTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get tarifaAdulto => $state.composableBuilder(
-      column: $state.table.tarifaAdulto,
+  ColumnOrderings<double> get tarifaAdultoSGLoDBL => $state.composableBuilder(
+      column: $state.table.tarifaAdultoSGLoDBL,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaAdultoTPL => $state.composableBuilder(
+      column: $state.table.tarifaAdultoTPL,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get tarifaAdultoCPLE => $state.composableBuilder(
+      column: $state.table.tarifaAdultoCPLE,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

@@ -285,7 +285,8 @@ class _ComprobanteDetalleViewState
                     ),
                   ],
                 ),
-              if (isLoading && !isFinish) ProgressIndicatorCustom(screenHight),
+              if (isLoading && !isFinish)
+                ProgressIndicatorCustom(screenHight: screenHight),
               if (isFinish)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),

@@ -1,5 +1,4 @@
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/database/tables/usuario_table.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:riverpod/riverpod.dart';
 

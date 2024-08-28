@@ -158,7 +158,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                       canChangeOrientation: false,
                       canChangePageFormat: false,
                       canDebug: false,
-                      loadingWidget: ProgressIndicatorCustom(0),
+                      loadingWidget: ProgressIndicatorCustom(screenHight: 0),
                       allowSharing: false,
                       allowPrinting: false,
                       pdfFileName:
@@ -194,7 +194,8 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                   return const Text('No se encontraron resultados');
                 },
                 loading: () {
-                  return ProgressIndicatorCustom(screenHight * 0.2);
+                  return ProgressIndicatorCustom(
+                      screenHight: screenHight * 0.2);
                 },
               ),
             ],

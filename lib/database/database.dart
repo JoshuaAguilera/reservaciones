@@ -260,6 +260,25 @@ class AppDatabase extends _$AppDatabase {
   Future<List<UsuarioData>> getListUser() {
     return (select(usuario)).get();
   }
+
+  //tarifa dao
+
+  Future<List<TarifaRackData>> getAllTarifasRack() {
+    return (select(tarifaRack)).get();
+  }
+
+  Future<List<TemporadaData>> getSeasonByCode(String code) async {
+    return await (select(temporada)..where((tbl) => tbl.code.equals(code)))
+        .get();
+  }
+
+  Future<List<TarifaData>> getTariffByCode(String code) async {
+    return await (select(tarifa)..where((tbl) => tbl.code.equals(code))).get();
+  }
+
+  Future<List<PeriodoData>> getPeriodByCode(String code) async {
+    return await (select(periodo)..where((tbl) => tbl.code.equals(code))).get();
+  }
 }
 
 LazyDatabase _openConnection() {

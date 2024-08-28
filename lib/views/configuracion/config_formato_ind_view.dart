@@ -148,7 +148,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                       canDebug: false,
                       allowSharing: false,
                       allowPrinting: false,
-                      loadingWidget: ProgressIndicatorCustom(0),
+                      loadingWidget: ProgressIndicatorCustom(screenHight: 0),
                       pdfFileName:
                           "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
                       actions: [
@@ -174,7 +174,8 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                   return const Text('No se encontraron resultados');
                 },
                 loading: () {
-                  return ProgressIndicatorCustom(screenHight * 0.3);
+                  return ProgressIndicatorCustom(
+                      screenHight: screenHight * 0.3);
                 },
               )
             ],

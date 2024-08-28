@@ -3,8 +3,6 @@ class TarifaTemporada {
   String? fecha;
   String? code;
   String? categoria;
-  double? porcentajeDescuento;
-  int? estanciaMinima;
   double? tarifaAdulto1a2;
   double? tarifaAdulto3;
   double? tarifaAdulto4;
@@ -16,8 +14,6 @@ class TarifaTemporada {
     this.fecha,
     this.code,
     this.categoria,
-    this.porcentajeDescuento,
-    this.estanciaMinima,
     this.tarifaAdulto1a2,
     this.tarifaAdulto3,
     this.tarifaAdulto4,
