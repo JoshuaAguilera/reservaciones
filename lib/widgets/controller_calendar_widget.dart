@@ -242,7 +242,7 @@ class _ControllerCalendarWidgetState
                                 return SizedBox(
                                   width: screenWidth,
                                   height: Utility.limitHeightList(
-                                      list.length, 5, 50),
+                                      list.length, 5, 200),
                                   child: ListView.builder(
                                     itemCount: list.length,
                                     padding: const EdgeInsets.only(bottom: 10),
@@ -268,7 +268,7 @@ class _ControllerCalendarWidgetState
                               return SizedBox(
                                 height: 150,
                                 child: ProgressIndicatorCustom(
-                                  screenHight: 25,
+                                  screenHight: 5,
                                   sizeProgressIndicator: 25,
                                 ),
                               );

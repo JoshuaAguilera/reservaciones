@@ -35,8 +35,6 @@ class FormTarifarioView extends ConsumerStatefulWidget {
 
 class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
   final _formKeyTarifa = GlobalKey<FormState>();
-  final GlobalKey _keyContainerVR = GlobalKey();
-  final GlobalKey _keyContainerVPM = GlobalKey();
   String type = tipoHabitacion.first;
   String plan = planes.first;
   bool inAllPeriod = false;
@@ -505,7 +503,6 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      key: _keyContainerVR,
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                           color: DesktopColors.vistaReserva,
@@ -1016,6 +1013,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
             "Se requiere al menos un periodo para aplicar esta tarifa en el calendario",
         type: "danger",
       );
+      return;
     }
 
     TarifaTemporada tarifaVR = TarifaTemporada(
@@ -1079,6 +1077,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
           title: "Error de guardado",
           message: "Se detecto un error al intentar guardar la tarifa.",
           type: "danger");
+      return;
     }
   }
 }

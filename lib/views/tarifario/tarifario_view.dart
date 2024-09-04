@@ -168,12 +168,12 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           ),
         ),
       ),
-    ).animate(target: target ? 0 : 1).fadeIn();
+    ).animate(target: targetForm ? 0 : 1).fadeIn();
   }
 
   void Function()? onCreate() {
     setState(() {
-      target = true;
+      targetForm = true;
     });
     Future.delayed(500.ms, () => widget.sideController.selectIndex(15));
   }

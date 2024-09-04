@@ -5,6 +5,7 @@ import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 
@@ -324,6 +325,7 @@ class Utility {
         return Colors.blue[400];
       default:
     }
+    return null;
   }
 
   static IconData? getIconNavbar(String type) {
@@ -338,6 +340,7 @@ class Utility {
         return CupertinoIcons.exclamationmark_bubble;
       default:
     }
+    return null;
   }
 
   static String getOcupattionMessage(List<Habitacion> cotizaciones) {
@@ -389,7 +392,7 @@ class Utility {
 
   static int getDifferenceInDays({List<Habitacion>? cotizaciones}) {
     int days = DateTime.parse(cotizaciones!.first.fechaCheckOut!)
-        .difference(DateTime.parse(cotizaciones!.last.fechaCheckIn!))
+        .difference(DateTime.parse(cotizaciones.last.fechaCheckIn!))
         .inDays;
 
     return days;
@@ -415,7 +418,7 @@ class Utility {
       case "Cotizaciones grupales":
         return [
           DesktopColors.cotGroupColor,
-          Color.fromARGB(255, 140, 207, 240)
+          const Color.fromARGB(255, 140, 207, 240)
         ];
       case "Cotizaciones grupales en Preventa":
         return [
@@ -511,6 +514,7 @@ class Utility {
         return const Color.fromARGB(255, 10, 166, 180);
       default:
     }
+    return null;
   }
 
   static bool valueShowLimitDays(
@@ -658,5 +662,274 @@ class Utility {
     double valor = 0;
     valor = value.isEmpty ? 0 : double.parse(value);
     return valor;
+  }
+
+  static bool showTariffByWeek(String nombre, List<PeriodoData>? periodos,
+      DateTime initDayWeekGraphics) {
+    bool show = false;
+
+    for (var element in periodos!) {
+      if ((initDayWeekGraphics.compareTo(element.fechaFinal!) <= -1 &&
+              (initDayWeekGraphics
+                      .add(const Duration(days: 6))
+                      .compareTo(element.fechaFinal!) >=
+                  1)) ||
+          (initDayWeekGraphics.compareTo(element.fechaInicial!) == -1 &&
+              (initDayWeekGraphics
+                      .add(const Duration(days: 6))
+                      .compareTo(element.fechaInicial!) ==
+                  1)) ||
+          (initDayWeekGraphics.compareTo(element.fechaInicial!) >= 0 &&
+              (initDayWeekGraphics
+                      .add(const Duration(days: 6))
+                      .compareTo(element.fechaFinal!) <=
+                  0)) ||
+          initDayWeekGraphics
+                  .add(const Duration(days: 6))
+                  .compareTo(element.fechaInicial!) ==
+              0 ||
+          initDayWeekGraphics.compareTo(element.fechaFinal!) == 0) {
+        show = true;
+      }
+    }
+
+    return show;
+  }
+
+  static String getStringPeriod({
+    required DateTime initDate,
+    required DateTime lastDate,
+    bool compact = true,
+  }) {
+    String periodo = '';
+    Intl.defaultLocale = "es_ES";
+
+    if (initDate.isSameDate(lastDate)) {
+      periodo =
+          "${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+    } else if (initDate.month == lastDate.month &&
+        initDate.year == lastDate.year) {
+      periodo =
+          "${initDate.day} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+    } else if (initDate.year == lastDate.year) {
+      periodo =
+          "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, compact ? 3 : null)} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+    } else {
+      periodo = compact
+          ? "${initDate.day}/${initDate.month}/${initDate.year.toString().substring(2)} - ${lastDate.day}/${lastDate.month}/${lastDate.year.toString().substring(2)}"
+          : "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, compact ? 3 : null)} ${initDate.year} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)} ${lastDate.year.toString().substring(2)}";
+    }
+
+    return periodo;
+  }
+
+  static PeriodoData getPeriodNow(
+      DateTime weekNow, List<PeriodoData>? periodos) {
+    PeriodoData dataNow = const PeriodoData(id: 0, code: "###");
+
+    for (var element in periodos!) {
+      if ((element.fechaInicial!.compareTo(weekNow) >= 0 &&
+              (element.fechaInicial!
+                      .compareTo(weekNow.add(const Duration(days: 6))) <=
+                  0)) ||
+          (element.fechaInicial!.compareTo(weekNow) <= 0 &&
+              (element.fechaFinal!.compareTo(weekNow) >= 0 ||
+                  element.fechaFinal!
+                          .compareTo(weekNow.add(const Duration(days: 6))) >=
+                      0))) {
+        dataNow = element;
+        break;
+      }
+    }
+    return dataNow;
+  }
+
+  static String definePeriodNow(DateTime weekNow, List<PeriodoData>? periodos) {
+    String periodo = "01 Enero a 14 Marzo";
+
+    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
+    periodo = getStringPeriod(
+      initDate: periodNow.fechaInicial!,
+      lastDate: periodNow.fechaFinal!,
+      compact: false,
+    );
+
+    return periodo;
+  }
+
+  static double defineRightPeriodWeek(
+      DateTime weekNow, List<PeriodoData>? periodos, double sectionDay) {
+    double rightPadding = 0;
+
+    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
+
+    if (!periodNow.enDomingo!) {
+      rightPadding = sectionDay;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enSabado!) {
+      rightPadding = sectionDay * 2;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enViernes!) {
+      rightPadding = sectionDay * 3;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enJueves!) {
+      rightPadding = sectionDay * 4;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enMiercoles!) {
+      rightPadding = sectionDay * 5;
+    } else {
+      return rightPadding;
+    }
+    if (!periodNow.enMartes!) {
+      rightPadding = sectionDay * 6;
+    } else {
+      return rightPadding;
+    }
+
+    return rightPadding;
+  }
+
+  static double defineLeftPeriodWeek(
+      DateTime weekNow, List<PeriodoData>? periodos, double sectionDay) {
+    double rightPadding = 0;
+
+    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
+
+    if (!periodNow.enLunes!) {
+      rightPadding = sectionDay;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enMartes!) {
+      rightPadding = sectionDay * 2;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enMiercoles!) {
+      rightPadding = sectionDay * 3;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enJueves!) {
+      rightPadding = sectionDay * 4;
+    } else {
+      return rightPadding;
+    }
+
+    if (!periodNow.enViernes!) {
+      rightPadding = sectionDay * 5;
+    } else {
+      return rightPadding;
+    }
+    if (!periodNow.enSabado!) {
+      rightPadding = sectionDay * 6;
+    } else {
+      return rightPadding;
+    }
+
+    return rightPadding;
+  }
+
+  static bool revisedInsideDays(DateTime weekNow, PeriodoData periodNow) {
+    bool isValid = false;
+
+    return isValid;
+  }
+
+  static List<DateTime> generateSegmentWeek(DateTime weekNow) {
+    List<DateTime> weekSegment = [];
+
+    for (var day = 0; day < 7; day++) {
+      weekSegment.add(weekNow.add(Duration(days: day)));
+    }
+
+    return weekSegment;
+  }
+
+  static bool foundExpansionCard(List<DateTime> weekNowSegment, int indexOf,
+      DateTime weekNow, List<PeriodoData>? periodos) {
+    bool notFound = true;
+
+    int index =
+        ((weekNowSegment.length - 1) == indexOf) ? indexOf : indexOf + 1;
+
+    if (weekNowSegment[index].compareTo(
+                Utility.getPeriodNow(weekNow, periodos).fechaInicial!) >=
+            0 &&
+        weekNowSegment[index].compareTo(
+                Utility.getPeriodNow(weekNow, periodos).fechaFinal!) <=
+            0) {
+      notFound = false;
+    }
+
+    return notFound;
+  }
+
+  static bool revisedValidDays(int indexOf, List<DateTime> weekNowSegment,
+      DateTime element, DateTime fechaInicial, DateTime fechaFinal) {
+    bool isValid = false;
+
+    if (element.subtract(const Duration(days: 1)).compareTo(fechaInicial) >=
+            0 &&
+        element.subtract(const Duration(days: 1)).compareTo(fechaFinal) <= 0) {
+      isValid = true;
+    }
+
+    if (element.add(const Duration(days: 1)).compareTo(fechaInicial) >= 0 &&
+        element.add(const Duration(days: 1)).compareTo(fechaFinal) <= 0) {
+      isValid = true;
+    }
+
+    if (element.compareTo(fechaFinal) > 0) {
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  static bool defineApplyDays(PeriodoData nowPeriod, DateTime element) {
+    bool isntApply = false;
+
+    switch (element.weekday) {
+      case 1:
+        isntApply = !nowPeriod.enLunes!;
+        break;
+      case 2:
+        isntApply = !nowPeriod.enMartes!;
+        break;
+      case 3:
+        isntApply = !nowPeriod.enMiercoles!;
+        break;
+      case 4:
+        isntApply = !nowPeriod.enJueves!;
+        break;
+      case 5:
+        isntApply = !nowPeriod.enViernes!;
+        break;
+      case 6:
+        isntApply = !nowPeriod.enSabado!;
+        break;
+      case 7:
+        isntApply = !nowPeriod.enDomingo!;
+        break;
+      default:
+    }
+
+    return isntApply;
   }
 }

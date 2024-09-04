@@ -1,16 +1,22 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/views/tarifario/form_tarifario_view.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-class TarifarioCalendaryView extends StatefulWidget {
+import '../../providers/tarifario_provider.dart';
+import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
+import '../../widgets/period_item_row.dart';
+
+class TarifarioCalendaryView extends ConsumerStatefulWidget {
   const TarifarioCalendaryView({
     super.key,
     required this.target,
@@ -47,10 +53,11 @@ class TarifarioCalendaryView extends StatefulWidget {
   final void Function()? onCreate;
 
   @override
-  State<TarifarioCalendaryView> createState() => _TarifarioCalendaryViewState();
+  _TarifarioCalendaryViewState createState() => _TarifarioCalendaryViewState();
 }
 
-class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
+class _TarifarioCalendaryViewState
+    extends ConsumerState<TarifarioCalendaryView> {
   DateTime initDayWeek =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday));
   DateTime initDayWeekGraphics =
@@ -73,6 +80,7 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final tarifasProvider = ref.watch(allTarifaProvider(""));
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Padding(
@@ -304,10 +312,75 @@ class _TarifarioCalendaryViewState extends State<TarifarioCalendaryView> {
                           top: 110,
                           child: SizedBox(
                             height: screenHeight - 260,
-                            child: const SingleChildScrollView(
+                            child: SingleChildScrollView(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [],
+                                children: [
+                                  tarifasProvider.when(
+                                    data: (list) {
+                                      if (list.isNotEmpty) {
+                                        return SizedBox(
+                                          height: screenHeight - 260,
+                                          width: (screenWidth > 1280)
+                                              ? (screenWidth -
+                                                  378 -
+                                                  (widget.sideController
+                                                          .extended
+                                                      ? 230
+                                                      : 118))
+                                              : (screenWidth > 800)
+                                                  ? screenWidth -
+                                                      (widget.sideController
+                                                              .extended
+                                                          ? 230
+                                                          : 118)
+                                                  : screenWidth - 28,
+                                          child: ListView.builder(
+                                            itemCount: list.length,
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              if (Utility.showTariffByWeek(
+                                                  list[index].nombre!,
+                                                  list[index].periodos,
+                                                  initDayWeekGraphics)) {
+                                                return PeriodItemRow(
+                                                  weekNow: initDayWeekGraphics,
+                                                  tarifa: list[index],
+                                                  lenghtDays: 1,
+                                                  lenghtSideBar: (widget
+                                                          .sideController
+                                                          .extended
+                                                      ? 230
+                                                      : 118),
+                                                );
+                                              } else {
+                                                return SizedBox();
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox();
+                                    },
+                                    error: (error, stackTrace) {
+                                      return SizedBox(
+                                        height: 150,
+                                        child: CustomWidgets.messageNotResult(
+                                            context: context, sizeImage: 100),
+                                      );
+                                    },
+                                    loading: () {
+                                      return Center(
+                                        child: ProgressIndicatorCustom(
+                                          screenHight: screenHeight - 250,
+                                          sizeProgressIndicator: 50,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ),

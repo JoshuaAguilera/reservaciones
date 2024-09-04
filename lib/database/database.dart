@@ -267,17 +267,16 @@ class AppDatabase extends _$AppDatabase {
     return (select(tarifaRack)).get();
   }
 
-  Future<List<TemporadaData>> getSeasonByCode(String code) async {
-    return await (select(temporada)..where((tbl) => tbl.code.equals(code)))
-        .get();
+  Future<List<TemporadaData>> getSeasonByCode(String code) {
+    return (select(temporada)..where((tbl) => tbl.code.equals(code))).get();
   }
 
-  Future<List<TarifaData>> getTariffByCode(String code) async {
-    return await (select(tarifa)..where((tbl) => tbl.code.equals(code))).get();
+  Future<List<TarifaData>> getTariffByCode(String code) {
+    return (select(tarifa)..where((tbl) => tbl.code.equals(code))).get();
   }
 
-  Future<List<PeriodoData>> getPeriodByCode(String code) async {
-    return await (select(periodo)..where((tbl) => tbl.code.equals(code))).get();
+  Future<List<PeriodoData>> getPeriodByCode(String code) {
+    return (select(periodo)..where((tbl) => tbl.code.equals(code))).get();
   }
 }
 

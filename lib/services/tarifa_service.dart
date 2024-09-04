@@ -130,11 +130,13 @@ class TarifaService extends BaseService {
     List<RegistroTarifa> tarifasRegistradas = [];
     List<TarifaRackData> tarifas = [];
 
+    print("Recargando tarifas");
+
     final db = AppDatabase();
 
     try {
       tarifas = await db.getAllTarifasRack();
-      db.close();
+      await db.close();
 
       for (var tarifa in tarifas) {
         RegistroTarifa newRegistroTarifa = RegistroTarifa(
@@ -147,19 +149,20 @@ class TarifaService extends BaseService {
         );
 
         final databaseQuery = AppDatabase();
-        databaseQuery.transaction(
+        await databaseQuery.transaction(
           () async {
             newRegistroTarifa.periodos =
                 await databaseQuery.getPeriodByCode(tarifa.code);
-            databaseQuery.close();
+
             newRegistroTarifa.temporadas =
                 await databaseQuery.getSeasonByCode(tarifa.code);
-            databaseQuery.close();
+
             newRegistroTarifa.tarifas =
                 await databaseQuery.getTariffByCode(tarifa.code);
-            databaseQuery.close();
           },
         );
+
+        await databaseQuery.close();
 
         tarifasRegistradas.add(newRegistroTarifa);
       }

@@ -306,7 +306,8 @@ class ItemRow {
         ),
       ),
       title: TextStyles.standardText(
-          text: registroTarifa?.nombre ?? 'Unknow', color: Theme.of(context).primaryColor),
+          text: registroTarifa?.nombre ?? 'Unknow',
+          color: Theme.of(context).primaryColor),
       trailing: PopupMenuButton<ListTileTitleAlignment>(
         position: PopupMenuPosition.under,
         tooltip: "Opciones",
@@ -441,24 +442,6 @@ class ItemRow {
     required DateTime lastDate,
     void Function()? onRemove,
   }) {
-    String periodo = '';
-    Intl.defaultLocale = "es_ES";
-
-    if (initDate.isSameDate(lastDate)) {
-      periodo =
-          "${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
-    } else if (initDate.month == lastDate.month &&
-        initDate.year == lastDate.year) {
-      periodo =
-          "${initDate.day} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
-    } else if (initDate.year == lastDate.year) {
-      periodo =
-          "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, 3)} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, 3)}";
-    } else {
-      periodo =
-          "${initDate.day}/${initDate.month}/${initDate.year.toString().substring(2)} - ${lastDate.day}/${lastDate.month}/${lastDate.year.toString().substring(2)}";
-    }
-
     return SizedBox(
       width: 170,
       child: Card(
@@ -468,7 +451,8 @@ class ItemRow {
           children: [
             const SizedBox(width: 7),
             TextStyles.standardText(
-                text: periodo,
+                text: Utility.getStringPeriod(
+                    initDate: initDate, lastDate: lastDate),
                 color: useWhiteForeground(colorCard)
                     ? Colors.white
                     : Colors.black),
