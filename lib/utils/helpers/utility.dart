@@ -903,33 +903,55 @@ class Utility {
   }
 
   static bool defineApplyDays(PeriodoData nowPeriod, DateTime element) {
-    bool isntApply = false;
-
     switch (element.weekday) {
       case 1:
-        isntApply = !nowPeriod.enLunes!;
-        break;
+        return !nowPeriod.enLunes!;
       case 2:
-        isntApply = !nowPeriod.enMartes!;
-        break;
+        return !nowPeriod.enMartes!;
       case 3:
-        isntApply = !nowPeriod.enMiercoles!;
-        break;
+        return !nowPeriod.enMiercoles!;
       case 4:
-        isntApply = !nowPeriod.enJueves!;
-        break;
+        return !nowPeriod.enJueves!;
       case 5:
-        isntApply = !nowPeriod.enViernes!;
-        break;
+        return !nowPeriod.enViernes!;
       case 6:
-        isntApply = !nowPeriod.enSabado!;
-        break;
+        return !nowPeriod.enSabado!;
       case 7:
-        isntApply = !nowPeriod.enDomingo!;
-        break;
+        return !nowPeriod.enDomingo!;
       default:
+        return false;
+    }
+  }
+
+  static double getExpandedDayWeek(
+      double sectionDay, PeriodoData nowPeriod, DateTime element) {
+    final int weekday = element.weekday;
+
+    if (weekday < 1 || weekday > 7) {
+      return 0; // Handle invalid weekdays
     }
 
-    return isntApply;
+    // Create a list of days for easier access
+    final List<bool> days = [
+      nowPeriod.enLunes!,
+      nowPeriod.enMartes!,
+      nowPeriod.enMiercoles!,
+      nowPeriod.enJueves!,
+      nowPeriod.enViernes!,
+      nowPeriod.enSabado!,
+      nowPeriod.enDomingo!,
+    ];
+
+    // Calculate the flex based on the weekday and active days
+    double flex = 0;
+    for (int i = weekday - 1; i < days.length; i++) {
+      if (days[i]) {
+        flex += sectionDay;
+      } else {
+        break;
+      }
+    }
+
+    return flex;
   }
 }

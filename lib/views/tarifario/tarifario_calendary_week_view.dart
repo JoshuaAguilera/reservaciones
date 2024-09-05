@@ -308,7 +308,7 @@ class _TarifarioCalendaryViewState
                           ),
                         ),
                         Positioned(
-                          left: (screenWidth > 1280) ? (370) : -10,
+                          left: (screenWidth > 1280) ? (385) : -10,
                           top: 110,
                           child: SizedBox(
                             height: screenHeight - 260,
