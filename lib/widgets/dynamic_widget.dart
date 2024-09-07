@@ -56,6 +56,7 @@ class dynamicWidget {
     required DateTime weekNow,
     required RegistroTarifa tarifa,
     required double sectionDay,
+    bool compact = false,
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
@@ -78,76 +79,106 @@ class dynamicWidget {
         isRepeat = true;
         cards.add(SizedBox(
           width: Utility.getExpandedDayWeek(sectionDay, nowPeriod, element),
-          height: 100,
-          child: Card(
-            color: tarifa.color ?? Colors.cyan,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextStyles.standardText(
-                              text: Utility.definePeriodNow(
-                                  weekNow, tarifa.periodos),
-                              size: 11,
+          height: !compact ? 100 : 30,
+          child: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              Utility.getRevisedActually(nowPeriod)
+                  ? Colors.grey
+                  : Colors.white,
+              BlendMode.modulate,
+            ),
+            child: Card(
+              elevation: 8,
+              color: tarifa.color ?? Colors.cyan,
+              child: Padding(
+                padding: compact
+                    ? const EdgeInsets.fromLTRB(8, 2, 8, 0)
+                    : const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextStyles.standardText(
+                                text: Utility.definePeriodNow(
+                                    weekNow, tarifa.periodos),
+                                size: 11,
+                                color: useWhiteForeground(tarifa.color!)
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            /*
+                            Icon(
+                              Icons.assignment_late_outlined,
                               color: useWhiteForeground(tarifa.color!)
                                   ? Colors.white
-                                  : Colors.black),
-                          Icon(Icons.warning_amber_rounded,
-                              color: useWhiteForeground(tarifa.color!)
-                                  ? Colors.white
-                                  : Colors.black)
-                        ],
-                      ),
-                      TextStyles.standardText(
-                          text: tarifa.nombre ?? '',
-                          color: useWhiteForeground(tarifa.color!)
-                              ? Colors.white
-                              : Colors.black),
-                    ],
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              TextStyles.standardText(
-                                  text: "En progreso",
+                                  : Colors.black,
+                            )
+                            */
+                            if (compact)
+                              Expanded(
+                                child: TextStyles.standardText(
+                                  text: tarifa.nombre ?? '',
                                   isBold: true,
                                   color: useWhiteForeground(tarifa.color!)
                                       ? Colors.white
-                                      : Colors.black),
-                              const SizedBox(width: 5),
-                              RotatedBox(
-                                quarterTurns: 3,
-                                child: Icon(
-                                  CupertinoIcons.chevron_right_2,
-                                  size: 15,
-                                  color: useWhiteForeground(tarifa.color!)
-                                      ? Colors.white
                                       : Colors.black,
+                                  aling: TextAlign.right,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(width: 20),
+                          ],
+                        ),
+                        if (!compact)
                           TextStyles.standardText(
-                            text: "${(2 / 10) * 100}%",
-                            color: useWhiteForeground(tarifa.color!)
-                                ? Colors.white
-                                : Colors.black,
-                          )
-                        ],
-                      )),
-                ],
+                              text: tarifa.nombre ?? '',
+                              color: useWhiteForeground(tarifa.color!)
+                                  ? Colors.white
+                                  : Colors.black),
+                      ],
+                    ),
+                    if (!compact)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: TextStyles.standardText(
+                                        text: Utility.defineStatusPeriod(
+                                            nowPeriod),
+                                        isBold: true,
+                                        color: useWhiteForeground(tarifa.color!)
+                                            ? Colors.white
+                                            : Colors.black),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Utility.getIconStatusPeriod(
+                                      nowPeriod, tarifa.color!),
+                                ],
+                              ),
+                            ),
+                            TextStyles.standardText(
+                              text:
+                                  "${Utility.calculatePercentagePeriod(nowPeriod).toStringAsFixed(2)}%",
+                              color: useWhiteForeground(tarifa.color!)
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

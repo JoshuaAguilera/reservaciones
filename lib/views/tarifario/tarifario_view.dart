@@ -7,7 +7,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/custom_widgets.dart';
 import '../../ui/title_page.dart';
-import 'tarifario_calendary_week_view.dart';
+import 'tarifario_calendary_view.dart';
 
 class TarifarioView extends ConsumerStatefulWidget {
   const TarifarioView({super.key, required this.sideController});

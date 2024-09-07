@@ -301,12 +301,16 @@ class _ControllerCalendarWidgetState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextStyles.standardText(
-                        text: "Ultima modificación:",
-                        color: Theme.of(context).primaryColor),
-                    TextStyles.standardText(
-                        text: Utility.getCompleteDate(data: DateTime.now()),
-                        color: Theme.of(context).dividerColor),
+                    Expanded(
+                      child: TextStyles.standardText(
+                          text: "Ultima modificación:",
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    Expanded(
+                      child: TextStyles.standardText(
+                          text: Utility.getCompleteDate(data: DateTime.now()),
+                          color: Theme.of(context).dividerColor),
+                    ),
                   ],
                 ),
               ),

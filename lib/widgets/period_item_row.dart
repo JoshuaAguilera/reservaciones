@@ -11,12 +11,14 @@ class PeriodItemRow extends StatefulWidget {
     required this.lenghtDays,
     required this.lenghtSideBar,
     required this.weekNow,
+    this.compact = false,
   }) : super(key: key);
 
   final RegistroTarifa tarifa;
   final int lenghtDays;
   final double lenghtSideBar;
   final DateTime weekNow;
+  final bool compact;
 
   @override
   State<PeriodItemRow> createState() => _PeriodItemRowState();
@@ -30,12 +32,9 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
     double screenWidth = MediaQuery.of(context).size.width;
     double sectionDay = ((((screenWidth > 1280)
         ? ((screenWidth - 385 - widget.lenghtSideBar) / 7)
-        : (screenWidth - widget.lenghtSideBar) / 7)));
+        : (screenWidth - widget.lenghtSideBar + (screenWidth > 800 ? 0 : 202)) /
+            7)));
     weekNowSegment = Utility.generateSegmentWeek(widget.weekNow);
-
-    debugPrint(Utility.getPeriodNow(widget.weekNow, widget.tarifa.periodos)
-        .fechaInicial!
-        .toIso8601String());
 
     return Row(
       children: dynamicWidget.buildExpansionItemWeek(
@@ -43,6 +42,7 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         weekNow: widget.weekNow,
         tarifa: widget.tarifa,
         sectionDay: sectionDay,
+        compact: widget.compact,
       ),
     );
   }

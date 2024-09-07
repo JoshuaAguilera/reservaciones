@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
@@ -928,10 +929,8 @@ class Utility {
     final int weekday = element.weekday;
 
     if (weekday < 1 || weekday > 7) {
-      return 0; // Handle invalid weekdays
+      return 0;
     }
-
-    // Create a list of days for easier access
     final List<bool> days = [
       nowPeriod.enLunes!,
       nowPeriod.enMartes!,
@@ -942,16 +941,122 @@ class Utility {
       nowPeriod.enDomingo!,
     ];
 
-    // Calculate the flex based on the weekday and active days
     double flex = 0;
     for (int i = weekday - 1; i < days.length; i++) {
-      if (days[i]) {
-        flex += sectionDay;
-      } else {
-        break;
+      if (getLimitDaysInWeek(
+          element.add(Duration(days: i - weekday)), nowPeriod.fechaFinal!)) {
+        if (days[i]) {
+          flex += sectionDay;
+        } else {
+          break;
+        }
       }
     }
 
     return flex;
+  }
+
+  static bool getLimitDaysInWeek(DateTime initDate, DateTime lastDate) {
+    bool isValid = true;
+
+    isValid = initDate.compareTo(lastDate) < 0;
+    return isValid;
+  }
+
+  static String defineStatusPeriod(PeriodoData nowPeriod) {
+    String status = "TERMINADA";
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) >= 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) <= 0) {
+      status = "EN PROCESO";
+    }
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+      status = "PROXIMAMENTE";
+    }
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+      status = "TERMINADA";
+    }
+
+    return status;
+  }
+
+  static double calculatePercentagePeriod(PeriodoData nowPeriod) {
+    double porcentaje = 0;
+    int totalDays = 0;
+    int nowTotalDays = 0;
+
+    if (!nowPeriod.fechaInicial!.isSameDate(nowPeriod.fechaFinal!)) {
+      totalDays =
+          nowPeriod.fechaFinal!.difference(nowPeriod.fechaInicial!).inDays;
+      nowTotalDays = DateTime.now().difference(nowPeriod.fechaInicial!).inDays;
+    } else {
+      totalDays = nowPeriod.fechaFinal!
+          .add(const Duration(days: 1))
+          .difference(nowPeriod.fechaInicial!)
+          .inHours;
+      nowTotalDays = DateTime.now().difference(nowPeriod.fechaInicial!).inHours;
+    }
+    porcentaje = (nowTotalDays / totalDays) * 100;
+    //print("$nowTotalDays  / $totalDays =  $porcentaje");
+
+    if (porcentaje.isNegative) {
+      porcentaje = 0;
+    }
+
+    return porcentaje;
+  }
+
+  static bool getRevisedActually(PeriodoData nowPeriod) {
+    bool opacity = false;
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+      opacity = true;
+    }
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+      opacity = true;
+    }
+
+    return opacity;
+  }
+
+  static Widget getIconStatusPeriod(PeriodoData nowPeriod, Color color) {
+    Widget icon = RotatedBox(
+      quarterTurns: 3,
+      child: Icon(
+        CupertinoIcons.chevron_right_2,
+        size: 15,
+        color: useWhiteForeground(color) ? Colors.white : Colors.black,
+      ),
+    );
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+      icon = Icon(CupertinoIcons.time,
+          color: useWhiteForeground(color) ? Colors.white : Colors.black,
+          size: 15);
+    }
+
+    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
+        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+      icon = Icon(Icons.done_all_outlined,
+          color: useWhiteForeground(color) ? Colors.white : Colors.black,
+          size: 15);
+    }
+
+    return icon;
+  }
+
+  static DateTime getInitsWeekMonth(PageController pageMonthController) {
+    DateTime initWeek =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+
+    return initWeek;
   }
 }
