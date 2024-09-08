@@ -1053,10 +1053,33 @@ class Utility {
     return icon;
   }
 
-  static DateTime getInitsWeekMonth(PageController pageMonthController) {
-    DateTime initWeek =
-        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+  static DateTime getInitsWeekMonth(DateTime initWeekMonth, int i) {
+    DateTime initWeek = initWeekMonth;
 
+    if (i == 0) {
+      initWeek =
+          initWeekMonth.subtract(Duration(days: initWeekMonth.weekday - 1));
+    } else {
+      initWeek = initWeekMonth
+          .add(Duration(days: (7 - initWeekMonth.weekday + 1) + ((i - 1) * 7)));
+    }
     return initWeek;
+  }
+
+  static int getWeeksMonth(DateTime initWeekMonth) {
+    int weeks = 6;
+    int daysInMonth =
+        DateTime(initWeekMonth.year, initWeekMonth.month + 1, 0).day;
+    DateTime firstDayOfMonth =
+        DateTime(initWeekMonth.year, initWeekMonth.month, 1);
+    int weekdayOfFirstDay = firstDayOfMonth.weekday;
+    int lastDayOfMonth =
+        7 - DateTime(initWeekMonth.year, initWeekMonth.month + 1, 0).weekday;
+
+    if (((daysInMonth + (weekdayOfFirstDay - 1)) + lastDayOfMonth) <= 35) {
+      weeks = 5;
+    }
+
+    return weeks;
   }
 }

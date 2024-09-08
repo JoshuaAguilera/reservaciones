@@ -57,6 +57,7 @@ class dynamicWidget {
     required RegistroTarifa tarifa,
     required double sectionDay,
     bool compact = false,
+    double target = 1,
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
@@ -182,7 +183,9 @@ class dynamicWidget {
               ),
             ),
           ),
-        ).animate(delay: 450.ms).scaleX(alignment: Alignment.centerLeft));
+        )
+            .animate(target: target, delay: !compact ? 450.ms : 2000.ms)
+            .scaleX(alignment: Alignment.centerLeft));
       } else {
         isRepeat = false;
         cards.add(SizedBox(width: sectionDay));

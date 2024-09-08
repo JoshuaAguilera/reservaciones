@@ -61,6 +61,8 @@ class _TarifarioCalendaryViewState
       DateTime.now().subtract(Duration(days: DateTime.now().weekday));
   DateTime initDayWeekGraphics =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+
+  DateTime initWeekMonth = DateTime.now();
   bool selectedcurrentyear = false;
   bool startFlow = false;
   PageController pageWeekController =
@@ -70,6 +72,7 @@ class _TarifarioCalendaryViewState
   double targetMonth = 1;
   bool showMonth = true;
   bool changeDate = false;
+  bool changeMonth = false;
 
   @override
   void initState() {
@@ -194,6 +197,16 @@ class _TarifarioCalendaryViewState
                                   itemBuilder: (context, pageIndex) {
                                     DateTime month = DateTime(widget.yearNow,
                                         (pageIndex % 12) + 1, 1);
+
+                                    if (!changeMonth) {
+                                      Future.delayed(
+                                          Durations.medium1,
+                                          () => setState(() => initWeekMonth =
+                                              DateTime(widget.yearNow,
+                                                  (pageIndex % 12) + 1, 1)));
+                                      changeMonth = true;
+                                    }
+
                                     return buildCalendar(
                                       month,
                                       initDayWeek.subtract(
@@ -217,7 +230,9 @@ class _TarifarioCalendaryViewState
                             height: screenHeight - 238,
                             child: Column(
                               children: [
-                                for (var i = 0; i < 6; i++)
+                                for (var i = 0;
+                                    i < Utility.getWeeksMonth(initWeekMonth);
+                                    i++)
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -257,11 +272,13 @@ class _TarifarioCalendaryViewState
                                                       list[index].nombre!,
                                                       list[index].periodos,
                                                       Utility.getInitsWeekMonth(
-                                                          pageMonthController))) {
+                                                          initWeekMonth, i))) {
                                                     return PeriodItemRow(
+                                                      target: targetMonth,
                                                       compact: true,
-                                                      weekNow:
-                                                          initDayWeekGraphics,
+                                                      weekNow: Utility
+                                                          .getInitsWeekMonth(
+                                                              initWeekMonth, i),
                                                       tarifa: list[index],
                                                       lenghtDays: 1,
                                                       lenghtSideBar: (widget
@@ -339,6 +356,13 @@ class _TarifarioCalendaryViewState
                         widget.increaseYear!.call();
 
                         Future.delayed(
+                            Durations.long4,
+                            () => setState(() => initWeekMonth = DateTime(
+                                widget.yearNow,
+                                (pageWeekController.page!.toInt() % 12) + 1,
+                                1)));
+
+                        Future.delayed(
                           650.ms,
                           () => setState(
                             () {
@@ -357,6 +381,13 @@ class _TarifarioCalendaryViewState
                         );
 
                         widget.reduceYear!.call();
+
+                        Future.delayed(
+                            Durations.long4,
+                            () => setState(() => initWeekMonth = DateTime(
+                                widget.yearNow,
+                                (pageWeekController.page!.toInt() % 12) + 1,
+                                1)));
 
                         Future.delayed(
                           650.ms,
@@ -390,6 +421,11 @@ class _TarifarioCalendaryViewState
                             },
                           ),
                         );
+
+                        Future.delayed(
+                            Durations.long4,
+                            () => setState(() => initWeekMonth =
+                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
                       },
                       onPreviewPage: (p0) {
                         setState(() {

@@ -12,6 +12,7 @@ class PeriodItemRow extends StatefulWidget {
     required this.lenghtSideBar,
     required this.weekNow,
     this.compact = false,
+    this.target = 1,
   }) : super(key: key);
 
   final RegistroTarifa tarifa;
@@ -19,6 +20,7 @@ class PeriodItemRow extends StatefulWidget {
   final double lenghtSideBar;
   final DateTime weekNow;
   final bool compact;
+  final double target;
 
   @override
   State<PeriodItemRow> createState() => _PeriodItemRowState();
@@ -43,6 +45,7 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         tarifa: widget.tarifa,
         sectionDay: sectionDay,
         compact: widget.compact,
+        target: widget.target,
       ),
     );
   }
