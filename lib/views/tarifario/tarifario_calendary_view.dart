@@ -13,6 +13,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
 import '../../utils/helpers/utility.dart';
+import '../../widgets/dynamic_widget.dart';
 import '../../widgets/period_item_row.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
@@ -106,7 +107,7 @@ class _TarifarioCalendaryViewState
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: (screenWidth > 1080) ? 3 : 2,
-                                childAspectRatio: 0.85,
+                                childAspectRatio: 0.9,
                                 crossAxisSpacing: 25,
                               ),
                               itemCount: 12,
@@ -300,7 +301,10 @@ class _TarifarioCalendaryViewState
                                           return SizedBox();
                                         },
                                         loading: () {
-                                          return Center();
+                                          return dynamicWidget.loadingWidget(
+                                              screenWidth,
+                                              screenHeight,
+                                              widget.sideController.extended);
                                         },
                                       ),
                                     ],
@@ -359,7 +363,7 @@ class _TarifarioCalendaryViewState
                             Durations.long4,
                             () => setState(() => initWeekMonth = DateTime(
                                 widget.yearNow,
-                                (pageWeekController.page!.toInt() % 12) + 1,
+                                (pageWeekController.initialPage!.toInt() % 12) + 1,
                                 1)));
 
                         Future.delayed(
@@ -386,7 +390,7 @@ class _TarifarioCalendaryViewState
                             Durations.long4,
                             () => setState(() => initWeekMonth = DateTime(
                                 widget.yearNow,
-                                (pageWeekController.page!.toInt() % 12) + 1,
+                                (pageWeekController.initialPage!.toInt() % 12) + 1,
                                 1)));
 
                         Future.delayed(

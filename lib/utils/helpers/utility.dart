@@ -856,7 +856,8 @@ class Utility {
     List<DateTime> weekSegment = [];
 
     for (var day = 0; day < 7; day++) {
-      weekSegment.add(weekNow.add(Duration(days: day)));
+      DateTime dayNow = weekNow.add(Duration(days: day));
+      weekSegment.add(DateTime(dayNow.year, dayNow.month, dayNow.day));
     }
 
     return weekSegment;

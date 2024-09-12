@@ -178,7 +178,7 @@ class _ControllerCalendarWidgetState
                         ),
                       if (widget.viewWeek)
                         SizedBox(
-                          height: 380,
+                          height: 390,
                           child: Column(
                             children: [
                               _buildHeaderWeek(),
@@ -376,7 +376,7 @@ class _ControllerCalendarWidgetState
                   // Calculates the month index based on the selected year and sets the page
                   int yearDiff = DateTime.now().year - year;
                   int monthIndex = 12 * yearDiff + _currentMonth.month - 1;
-                  _pageController.jumpToPage(monthIndex);
+                  widget.pageWeekController.jumpToPage(monthIndex);
                 });
               }
             },

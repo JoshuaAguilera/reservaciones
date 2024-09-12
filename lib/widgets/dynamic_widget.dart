@@ -6,6 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 
 import '../database/database.dart';
+import '../ui/progress_indicator.dart';
 import '../utils/helpers/utility.dart';
 import 'text_styles.dart';
 
@@ -75,8 +76,10 @@ class dynamicWidget {
               nowPeriod.fechaInicial!,
               nowPeriod.fechaFinal!)) {
       } else if (!isRepeat &&
-          (element.compareTo(nowPeriod.fechaInicial!) >= 0 &&
-              element.compareTo(nowPeriod.fechaFinal!) <= 0)) {
+          ((element.compareTo(nowPeriod.fechaInicial!) >= 0 &&
+                  element.compareTo(nowPeriod.fechaFinal!) <= 0) ||
+              element.compareTo(nowPeriod.fechaFinal!) == 0 ||
+              element.compareTo(nowPeriod.fechaInicial!) == 0)) {
         isRepeat = true;
         cards.add(SizedBox(
           width: Utility.getExpandedDayWeek(sectionDay, nowPeriod, element),
@@ -193,5 +196,22 @@ class dynamicWidget {
     }
 
     return cards;
+  }
+
+  static Widget loadingWidget(
+      double screenWidth, double screenHeight, bool extended) {
+    return SizedBox(
+      width: (screenWidth > 1280)
+          ? (screenWidth - 385 - (extended ? 230 : 118))
+          : (screenWidth > 800)
+              ? screenWidth - (extended ? 230 : 118)
+              : screenWidth - 28,
+      child: Center(
+        child: ProgressIndicatorCustom(
+          screenHight: screenHeight - 250,
+          sizeProgressIndicator: 50,
+        ),
+      ),
+    );
   }
 }
