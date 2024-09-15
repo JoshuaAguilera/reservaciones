@@ -141,6 +141,18 @@ class _ControllerCalendarWidgetState
                                   },
                                 ),
                               ),
+                              SizedBox(
+                                height: 5,
+                                width: double.infinity,
+                                child: PageView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  controller: widget.pageWeekController,
+                                  itemCount: 12 * 12,
+                                  itemBuilder: (context, pageIndex) {
+                                    return const SizedBox();
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -396,6 +408,7 @@ class _ControllerCalendarWidgetState
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
+                print("Month: ${_currentMonth.month}");
                 if (!isLastMonthOfYear) {
                   widget.onNextPage!.call(_currentMonth.month);
                 }
@@ -663,6 +676,7 @@ class _ControllerCalendarWidgetState
 
   Widget _buildYear() {
     return GridView.builder(
+        key: UniqueKey(),
         padding: EdgeInsets.zero,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, childAspectRatio: 1.3),

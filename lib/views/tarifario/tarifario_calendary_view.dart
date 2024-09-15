@@ -1,20 +1,19 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/views/tarifario/tarifario_calendary_month_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_week_view.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
-import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../utils/helpers/utility.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/period_item_row.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
   const TarifarioCalendaryView({
@@ -84,7 +83,6 @@ class _TarifarioCalendaryViewState
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final tarifasProvider = ref.watch(allTarifaProvider(""));
 
     return Padding(
@@ -99,222 +97,75 @@ class _TarifarioCalendaryViewState
                     height: screenHeight - 160,
                     child: Stack(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: (screenWidth > 1280) ? (380) : 0),
-                          child: GridView.builder(
-                              padding: EdgeInsets.zero,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: (screenWidth > 1080) ? 3 : 2,
-                                childAspectRatio: 0.9,
-                                crossAxisSpacing: 25,
-                              ),
-                              itemCount: 12,
-                              itemBuilder: (context, index) {
-                                DateTime month = DateTime(
-                                    _currentMonth.year, (index % 12) + 1, 1);
-                                return SizedBox(
-                                  height: 380,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _buildHeaderYear(month),
-                                      _buildWeeks(),
-                                      const Divider(height: 5),
-                                      Expanded(
-                                        child: buildCalendarYear(month),
-                                      ),
-                                    ],
+                        tarifasProvider.when(
+                          data: (list) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: (screenWidth > 1280) ? (380) : 0),
+                              child: GridView.builder(
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        (screenWidth > 1080) ? 3 : 2,
+                                    childAspectRatio: 0.9,
+                                    crossAxisSpacing: 25,
                                   ),
-                                );
-                              }),
-                        )
-                            .animate(target: 1)
-                            .fadeIn(duration: 1800.ms, begin: -.6),
+                                  itemCount: 12,
+                                  itemBuilder: (context, index) {
+                                    DateTime month = DateTime(
+                                        _currentMonth.year,
+                                        (index % 12) + 1,
+                                        1);
+                                    return SizedBox(
+                                      height: 380,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          _buildHeaderYear(month),
+                                          _buildWeeks(),
+                                          const Divider(height: 5),
+                                          Expanded(
+                                            child:
+                                                buildCalendarYear(month, list),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            )
+                                .animate(target: 1)
+                                .fadeIn(duration: 1800.ms, begin: -.6);
+                          },
+                          error: (error, stackTrace) => const SizedBox(),
+                          loading: () => dynamicWidget.loadingWidget(
+                              screenWidth,
+                              screenHeight,
+                              widget.sideController.extended),
+                        ),
                       ],
                     ),
                   ),
                 if (widget.viewMonth)
-                  SizedBox(
-                    height: screenHeight - 160,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: (screenWidth > 1280) ? (380) : 0),
-                          child: GridView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: 7,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 7, childAspectRatio: 0.5),
-                            itemBuilder: (context, index) {
-                              return ItemRow.getTitleDay(
-                                title: 0,
-                                withOutDay: true,
-                                subTitle: daysNameShort[initDayWeekGraphics
-                                        .add(Duration(days: index))
-                                        .weekday -
-                                    1],
-                                select: initDayWeekGraphics
-                                            .add(Duration(days: index))
-                                            .weekday -
-                                        1 ==
-                                    (DateTime.now().weekday - 1),
-                                index: index,
-                                brightness: brightness,
-                              );
-                            },
-                          ),
-                        ),
-                        if (showMonth)
-                          Positioned(
-                            top: 65,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: (screenWidth > 1280) ? 385 : 0,
-                              ),
-                              child: SizedBox(
-                                width: (screenWidth > 1280)
-                                    ? (screenWidth -
-                                        385 -
-                                        (widget.sideController.extended
-                                            ? 230
-                                            : 118))
-                                    : (screenWidth > 800)
-                                        ? screenWidth -
-                                            (widget.sideController.extended
-                                                ? 230
-                                                : 118)
-                                        : screenWidth - 28,
-                                height: screenHeight - 225,
-                                child: PageView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  controller: pageWeekController,
-                                  itemCount: 12 * 12,
-                                  itemBuilder: (context, pageIndex) {
-                                    DateTime month = DateTime(widget.yearNow,
-                                        (pageIndex % 12) + 1, 1);
-
-                                    if (!changeMonth) {
-                                      Future.delayed(
-                                          Durations.medium1,
-                                          () => setState(() => initWeekMonth =
-                                              DateTime(widget.yearNow,
-                                                  (pageIndex % 12) + 1, 1)));
-                                      changeMonth = true;
-                                    }
-
-                                    return buildCalendar(
-                                      month,
-                                      initDayWeek.subtract(
-                                        const Duration(
-                                          days: 1,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ).animate(target: targetMonth).fadeIn(
-                                    duration:
-                                        targetMonth == 0 ? 500.ms : 1200.ms,
-                                    begin: -.6),
-                              ),
-                            ),
-                          ),
-                        Positioned(
-                          left: (screenWidth > 1280) ? (385) : 0,
-                          top: 65,
-                          child: SizedBox(
-                            height: screenHeight - 238,
-                            child: Column(
-                              children: [
-                                for (var i = 0;
-                                    i < Utility.getWeeksMonth(initWeekMonth);
-                                    i++)
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                          height: ((screenHeight - 238) / 6) *
-                                              0.25),
-                                      tarifasProvider.when(
-                                        data: (list) {
-                                          if (list.isNotEmpty) {
-                                            return SizedBox(
-                                              height:
-                                                  ((screenHeight - 238) / 6) *
-                                                      0.75,
-                                              width: (screenWidth > 1280)
-                                                  ? (screenWidth -
-                                                      378 -
-                                                      (widget.sideController
-                                                              .extended
-                                                          ? 230
-                                                          : 118))
-                                                  : (screenWidth > 800)
-                                                      ? screenWidth -
-                                                          (widget.sideController
-                                                                  .extended
-                                                              ? 230
-                                                              : 118)
-                                                      : screenWidth - 28,
-                                              child: ListView.builder(
-                                                itemCount: list.length,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 0),
-                                                shrinkWrap: true,
-                                                itemBuilder: (context, index) {
-                                                  if (Utility.showTariffByWeek(
-                                                      list[index].nombre!,
-                                                      list[index].periodos,
-                                                      Utility.getInitsWeekMonth(
-                                                          initWeekMonth, i))) {
-                                                    return PeriodItemRow(
-                                                      target: targetMonth,
-                                                      compact: true,
-                                                      weekNow: Utility
-                                                          .getInitsWeekMonth(
-                                                              initWeekMonth, i),
-                                                      tarifa: list[index],
-                                                      lenghtDays: 1,
-                                                      lenghtSideBar: (widget
-                                                              .sideController
-                                                              .extended
-                                                          ? 230
-                                                          : 118),
-                                                    );
-                                                  } else {
-                                                    return const SizedBox();
-                                                  }
-                                                },
-                                              ),
-                                            );
-                                          }
-                                          return const SizedBox();
-                                        },
-                                        error: (error, stackTrace) {
-                                          return SizedBox();
-                                        },
-                                        loading: () {
-                                          return dynamicWidget.loadingWidget(
-                                              screenWidth,
-                                              screenHeight,
-                                              widget.sideController.extended);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  TarifarioCalendaryMonthView(
+                    sideController: widget.sideController,
+                    initWeekMonth: initWeekMonth,
+                    showMonth: showMonth,
+                    targetMonth: targetMonth,
+                    initDayWeek: initDayWeek,
+                    initDayWeekGraphics: initDayWeekGraphics,
+                    yearNow: widget.yearNow,
+                    pageWeekController: pageWeekController,
+                    refreshDate: (pageIndex) {
+                      if (!changeMonth) {
+                        Future.delayed(
+                            Durations.medium1,
+                            () => setState(() => initWeekMonth = DateTime(
+                                widget.yearNow, (pageIndex % 12) + 1, 1)));
+                        changeMonth = true;
+                      }
+                    },
                   ),
                 if (widget.viewWeek)
                   TarifarioCalendaryWeekView(
@@ -363,7 +214,8 @@ class _TarifarioCalendaryViewState
                             Durations.long4,
                             () => setState(() => initWeekMonth = DateTime(
                                 widget.yearNow,
-                                (pageWeekController.initialPage!.toInt() % 12) + 1,
+                                (pageWeekController.initialPage.toInt() % 12) +
+                                    1,
                                 1)));
 
                         Future.delayed(
@@ -390,7 +242,8 @@ class _TarifarioCalendaryViewState
                             Durations.long4,
                             () => setState(() => initWeekMonth = DateTime(
                                 widget.yearNow,
-                                (pageWeekController.initialPage!.toInt() % 12) + 1,
+                                (pageWeekController.initialPage.toInt() % 12) +
+                                    1,
                                 1)));
 
                         Future.delayed(
@@ -440,15 +293,27 @@ class _TarifarioCalendaryViewState
 
                           pageWeekController = PageController(initialPage: p0);
                         });
+
+                        Future.delayed(
+                            Durations.long4,
+                            () => setState(() => initWeekMonth =
+                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
                       },
                       onNextPage: (p0) {
+                        print(p0);
                         setState(() {
                           pageWeekController.nextPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
                           );
+
+                          pageWeekController = PageController(initialPage: p0);
                         });
-                        pageWeekController = PageController(initialPage: p0);
+
+                        Future.delayed(
+                            Durations.long4,
+                            () => setState(() => initWeekMonth =
+                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
                       },
                       onStartflow: (p0) => setState(() => startFlow = p0),
                       onCreated: () => widget.onCreate!.call(),
@@ -462,7 +327,7 @@ class _TarifarioCalendaryViewState
     );
   }
 
-  Widget buildCalendarYear(DateTime month) {
+  Widget buildCalendarYear(DateTime month, List<RegistroTarifa> list) {
     int daysInMonth = DateTime(widget.yearNow, month.month + 1, 0).day;
     DateTime firstDayOfMonth = DateTime(widget.yearNow, month.month, 1);
     int weekdayOfFirstDay = firstDayOfMonth.weekday;
@@ -484,6 +349,9 @@ class _TarifarioCalendaryViewState
               widget.yearNow, month.month, index - weekdayOfFirstDay + 2);
           int text = date.day;
 
+          RegistroTarifa? tariffNow = Utility.revisedTariffDay(
+              DateTime(widget.yearNow, month.month, text), list);
+
           return InkWell(
             onTap: () {
               // DateTime selectDate = DateTime(month.year, month.month, text);
@@ -498,26 +366,21 @@ class _TarifarioCalendaryViewState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if ((initDayWeek
-                        .difference(DateTime(widget.yearNow, month.month, text)
-                            .add(const Duration(days: 1)))
-                        .inDays
-                        .isNegative &&
-                    !initDayWeek
-                        .add(const Duration(days: 6))
-                        .difference(DateTime(widget.yearNow, month.month, text))
-                        .inDays
-                        .isNegative))
+                if (tariffNow != null)
                   Expanded(
                     child: Card(
                       elevation: 3.5,
-                      color: Colors.green[300],
+                      color: tariffNow.color,
                       child: Center(
                         child: Text(
                           text.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          style: TextStyle(
+                            fontWeight: useWhiteForeground(tariffNow.color!)
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: useWhiteForeground(tariffNow.color!)
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ),
@@ -542,168 +405,6 @@ class _TarifarioCalendaryViewState
           return const SizedBox();
         }
       },
-    );
-  }
-
-  Widget buildCalendar(DateTime month, DateTime initDayWeek) {
-    int daysInMonth = DateTime(month.year, month.month + 1, 0).day;
-    DateTime firstDayOfMonth = DateTime(month.year, month.month, 1);
-    int weekdayOfFirstDay = firstDayOfMonth.weekday;
-
-    DateTime lastDayOfPreviousMonth =
-        firstDayOfMonth.subtract(const Duration(days: 1));
-    int daysInPreviousMonth = lastDayOfPreviousMonth.day;
-
-    int lastDayOfMonth = 7 - DateTime(month.year, month.month + 1, 0).weekday;
-
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        crossAxisSpacing: 0,
-        mainAxisSpacing: 0,
-        mainAxisExtent: 129,
-      ),
-      shrinkWrap: true,
-      itemCount: (daysInMonth + weekdayOfFirstDay - 1) + lastDayOfMonth,
-      itemBuilder: (context, index) {
-        if (index < weekdayOfFirstDay - 1) {
-          int previousMonthDay =
-              daysInPreviousMonth - (weekdayOfFirstDay - index) + 2;
-          return Opacity(
-            opacity: 0.25,
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor)),
-              alignment: Alignment.center,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 5,
-                    left: 5,
-                    child: TextStyles.standardText(
-                      text: previousMonthDay.toString(),
-                      color: Theme.of(context).primaryColor,
-                      isBold: true,
-                    ),
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(delay: 50.ms * index),
-          );
-        } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
-          DateTime date =
-              DateTime(month.year, month.month, index - weekdayOfFirstDay + 2);
-          int text = date.day;
-          DateTime dateNow = DateTime(
-              DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
-          return Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).primaryColor)),
-            child: InkWell(
-              onTap: () {},
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 5,
-                    left: 5,
-                    child: Container(
-                      width: 20,
-                      height: 25,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: dateNow.isSameDate(date) ? Colors.amber : null,
-                      ),
-                      child: Center(
-                        child: Text(
-                          text.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(delay: 50.ms * index);
-        } else {
-          return Opacity(
-            opacity: 0.25,
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor)),
-              alignment: Alignment.center,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 5,
-                    left: 5,
-                    child: TextStyles.standardText(
-                      text: (index - (daysInMonth + weekdayOfFirstDay - 2))
-                          .toString(),
-                      isBold: true,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(delay: 50.ms * index),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildHeaderMonth() {
-    Intl.defaultLocale = "es_ES";
-    int yearNowStatic = DateTime.now().year;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (widget.yearNow > yearNowStatic)
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () {
-                widget.reduceYear!.call();
-                // setState(() {
-                //   if (widget.pageMonthController.page! > 0) {
-                //     widget.pageMonthController.previousPage(
-                //       duration: const Duration(milliseconds: 300),
-                //       curve: Curves.easeInOut,
-                //     );
-                //   }
-                // });
-              },
-            )
-          else
-            const SizedBox(width: 36),
-          TextStyles.titleText(
-              text: widget.yearNow.toString(),
-              color: Theme.of(context).primaryColor,
-              size: 16),
-          if (widget.yearNow < (yearNowStatic + 11))
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios_rounded),
-              onPressed: () {
-                widget.increaseYear!.call();
-                // setState(() {
-                //   widget.pageMonthController.nextPage(
-                //     duration: const Duration(milliseconds: 300),
-                //     curve: Curves.easeInOut,
-                //   );
-                // });
-              },
-            )
-          else
-            const SizedBox(width: 36),
-        ],
-      ),
     );
   }
 

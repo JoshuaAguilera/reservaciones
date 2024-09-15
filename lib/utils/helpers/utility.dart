@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
@@ -665,8 +666,8 @@ class Utility {
     return valor;
   }
 
-  static bool showTariffByWeek(String nombre, List<PeriodoData>? periodos,
-      DateTime initDayWeekGraphics) {
+  static bool showTariffByWeek(
+      List<PeriodoData>? periodos, DateTime initDayWeekGraphics) {
     bool show = false;
 
     for (var element in periodos!) {
@@ -966,20 +967,26 @@ class Utility {
 
   static String defineStatusPeriod(PeriodoData nowPeriod) {
     String status = "TERMINADA";
+    DateTime nowDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) >= 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) <= 0) {
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) >= 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) <= 0) {
       status = "EN PROCESO";
     }
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
       status = "PROXIMAMENTE";
     }
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) > 0) {
       status = "TERMINADA";
+    }
+
+    if (nowDate.compareTo(nowPeriod.fechaFinal!) == 0) {
+      status = "TERMINA HOY";
     }
 
     return status;
@@ -992,8 +999,11 @@ class Utility {
 
     if (!nowPeriod.fechaInicial!.isSameDate(nowPeriod.fechaFinal!)) {
       totalDays =
-          nowPeriod.fechaFinal!.difference(nowPeriod.fechaInicial!).inDays;
-      nowTotalDays = DateTime.now().difference(nowPeriod.fechaInicial!).inDays;
+          nowPeriod.fechaFinal!.difference(nowPeriod.fechaInicial!).inDays + 1;
+      nowTotalDays = DateTime.now()
+          // .subtract(const Duration(days: 1))
+          .difference(nowPeriod.fechaInicial!)
+          .inDays;
     } else {
       totalDays = nowPeriod.fechaFinal!
           .add(const Duration(days: 1))
@@ -1002,10 +1012,14 @@ class Utility {
       nowTotalDays = DateTime.now().difference(nowPeriod.fechaInicial!).inHours;
     }
     porcentaje = (nowTotalDays / totalDays) * 100;
-    //print("$nowTotalDays  / $totalDays =  $porcentaje");
+//    print("$nowTotalDays  / $totalDays =  $porcentaje");
 
     if (porcentaje.isNegative) {
       porcentaje = 0;
+    }
+
+    if (porcentaje > 100) {
+      porcentaje = 100;
     }
 
     return porcentaje;
@@ -1014,13 +1028,16 @@ class Utility {
   static bool getRevisedActually(PeriodoData nowPeriod) {
     bool opacity = false;
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+    DateTime nowDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
       opacity = true;
     }
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) > 0) {
       opacity = true;
     }
 
@@ -1037,15 +1054,18 @@ class Utility {
       ),
     );
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) < 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) < 0) {
+    DateTime nowDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
       icon = Icon(CupertinoIcons.time,
           color: useWhiteForeground(color) ? Colors.white : Colors.black,
           size: 15);
     }
 
-    if (DateTime.now().compareTo(nowPeriod.fechaInicial!) > 0 &&
-        DateTime.now().compareTo(nowPeriod.fechaFinal!) > 0) {
+    if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
+        nowDate.compareTo(nowPeriod.fechaFinal!) > 0) {
       icon = Icon(Icons.done_all_outlined,
           color: useWhiteForeground(color) ? Colors.white : Colors.black,
           size: 15);
@@ -1082,5 +1102,28 @@ class Utility {
     }
 
     return weeks;
+  }
+
+  static bool showTariffNow(DateTime nowDay, List<PeriodoData>? periodos) {
+    bool show = false;
+
+    show = periodos!.any((element) =>
+        (nowDay.compareTo(element.fechaInicial!) >= 0 &&
+            (nowDay.compareTo(element.fechaFinal!) <= 0)) ||
+        (nowDay.compareTo(element.fechaInicial!) == 0 ||
+            nowDay.compareTo(element.fechaFinal!) == 0));
+
+    return show;
+  }
+
+  static RegistroTarifa? revisedTariffDay(
+      DateTime daySelect, List<RegistroTarifa> list) {
+    RegistroTarifa? first;
+
+    first = list
+        .where((element) => showTariffNow(daySelect, element.periodos))
+        .firstOrNull;
+
+    return first;
   }
 }

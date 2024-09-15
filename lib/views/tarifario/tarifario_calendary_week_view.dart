@@ -147,7 +147,6 @@ class _TarifarioCalendaryWeekViewState
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 if (Utility.showTariffByWeek(
-                                    list[index].nombre!,
                                     list[index].periodos,
                                     widget.initDayWeekGraphics)) {
                                   return PeriodItemRow(
@@ -168,17 +167,13 @@ class _TarifarioCalendaryWeekViewState
                         }
                         return const SizedBox();
                       },
-                      error: (error, stackTrace) {
-                        return SizedBox(
-                          height: 150,
-                          child: CustomWidgets.messageNotResult(
-                              context: context, sizeImage: 100),
-                        );
-                      },
-                      loading: () {
-                        return dynamicWidget.loadingWidget(screenWidth,
-                            screenHeight, widget.sideController.extended);
-                      },
+                      error: (error, stackTrace) => SizedBox(
+                        height: 150,
+                        child: CustomWidgets.messageNotResult(
+                            context: context, sizeImage: 100),
+                      ),
+                      loading: () => dynamicWidget.loadingWidget(screenWidth,
+                          screenHeight, widget.sideController.extended),
                     ),
                   ],
                 ),
