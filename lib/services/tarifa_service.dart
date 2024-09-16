@@ -59,6 +59,8 @@ class TarifaService extends BaseService {
                   tarifaAdultoSGLoDBL: Value(tarifaVR.tarifaAdulto1a2),
                   tarifaMenores7a12: Value(tarifaVR.tarifaMenores7a12),
                   tarifaPaxAdicional: Value(tarifaVR.tarifaPaxAdicional),
+                  tarifaAdultoCPLE: Value(tarifaVR.tarifaAdulto4),
+                  tarifaAdultoTPL: Value(tarifaVR.tarifaAdulto3),
                 ),
               );
           await database.into(database.tarifa).insert(
@@ -69,6 +71,8 @@ class TarifaService extends BaseService {
                   tarifaAdultoSGLoDBL: Value(tarifaVPM.tarifaAdulto1a2),
                   tarifaMenores7a12: Value(tarifaVPM.tarifaMenores7a12),
                   tarifaPaxAdicional: Value(tarifaVPM.tarifaPaxAdicional),
+                  tarifaAdultoCPLE: Value(tarifaVPM.tarifaAdulto4),
+                  tarifaAdultoTPL: Value(tarifaVPM.tarifaAdulto3),
                 ),
               );
 

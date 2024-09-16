@@ -64,6 +64,7 @@ dependencies:
   image: ^4.2.0
   loading_animation_widget: ^1.2.1
   animated_theme_switcher: ^2.0.10
+  super_tooltip: ^2.0.8
 
 dev_dependencies:
   flutter_test:
@@ -167,7 +168,7 @@ flutter:
     - family: librebaskerville_regular
       fonts:
         - asset: assets/fonts/libreBaskerville-regular.ttf
-    
+
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

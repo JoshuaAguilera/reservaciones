@@ -1031,10 +1031,10 @@ class Utility {
     DateTime nowDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
-        nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
-      opacity = true;
-    }
+    // if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
+    //     nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
+    //   opacity = true;
+    // }
 
     if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
         nowDate.compareTo(nowPeriod.fechaFinal!) > 0) {
@@ -1107,11 +1107,35 @@ class Utility {
   static bool showTariffNow(DateTime nowDay, List<PeriodoData>? periodos) {
     bool show = false;
 
-    show = periodos!.any((element) =>
+    if (periodos!.any((element) =>
         (nowDay.compareTo(element.fechaInicial!) >= 0 &&
             (nowDay.compareTo(element.fechaFinal!) <= 0)) ||
         (nowDay.compareTo(element.fechaInicial!) == 0 ||
-            nowDay.compareTo(element.fechaFinal!) == 0));
+            nowDay.compareTo(element.fechaFinal!) == 0))) {
+      PeriodoData nowPeriod = periodos.firstWhere((element) =>
+          (nowDay.compareTo(element.fechaInicial!) >= 0 &&
+              (nowDay.compareTo(element.fechaFinal!) <= 0)) ||
+          (nowDay.compareTo(element.fechaInicial!) == 0 ||
+              nowDay.compareTo(element.fechaFinal!) == 0));
+
+      final List<bool> days = [
+        nowPeriod.enLunes!,
+        nowPeriod.enMartes!,
+        nowPeriod.enMiercoles!,
+        nowPeriod.enJueves!,
+        nowPeriod.enViernes!,
+        nowPeriod.enSabado!,
+        nowPeriod.enDomingo!,
+      ];
+
+      for (int i = nowDay.weekday - 1; i < days.length; i++) {
+        if (days[i]) {
+          show = true;
+        } else {
+          break;
+        }
+      }
+    }
 
     return show;
   }
@@ -1119,6 +1143,18 @@ class Utility {
   static RegistroTarifa? revisedTariffDay(
       DateTime daySelect, List<RegistroTarifa> list) {
     RegistroTarifa? first;
+
+    if (list.any((element) => element.periodos!.any((element) =>
+        ((daySelect.compareTo(element.fechaInicial!) == 0 &&
+                daySelect.compareTo(element.fechaFinal!) == 0) &&
+            element.fechaInicial!.isSameDate(element.fechaFinal!))))) {
+      return list
+          .where((element) => element.periodos!.any((element) =>
+              ((daySelect.compareTo(element.fechaInicial!) == 0 &&
+                      daySelect.compareTo(element.fechaFinal!) == 0) &&
+                  element.fechaInicial!.isSameDate(element.fechaFinal!))))
+          .firstOrNull;
+    }
 
     first = list
         .where((element) => showTariffNow(daySelect, element.periodos))

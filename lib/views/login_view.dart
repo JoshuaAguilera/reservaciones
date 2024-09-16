@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,18 +33,22 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Stack(
       children: [
         Container(
           height: screenHeight,
           width: screenWidth,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Theme.of(context).primaryColorDark, DesktopColors.cerulean],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter),
+            gradient: LinearGradient(colors: [
+              Theme.of(context).primaryColorDark,
+              brightness == Brightness.light
+                  ? DesktopColors.cerulean
+                  : DesktopColors.grisPalido
+            ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
           ),
         ),
         Scaffold(

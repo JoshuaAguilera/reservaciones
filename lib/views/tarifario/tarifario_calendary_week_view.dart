@@ -45,43 +45,44 @@ class _TarifarioCalendaryWeekViewState
       child: Stack(
         children: [
           Positioned(
-              top: 100,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: (screenWidth > 1280) ? 385 : 0,
-                ),
-                child: SizedBox(
-                  width: (screenWidth > 1280)
-                      ? (screenWidth -
-                          385 -
-                          (widget.sideController.extended ? 230 : 118))
-                      : (screenWidth > 800)
-                          ? screenWidth -
-                              (widget.sideController.extended ? 230 : 118)
-                          : screenWidth - 28,
-                  child: Table(
-                    border: TableBorder(
-                      verticalInside:
-                          BorderSide(color: Theme.of(context).dividerColor),
-                      left: BorderSide(color: Theme.of(context).dividerColor),
-                      right: BorderSide(color: Theme.of(context).dividerColor),
+            top: 100,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: (screenWidth > 1280) ? 385 : 0,
+              ),
+              child: SizedBox(
+                width: (screenWidth > 1280)
+                    ? (screenWidth -
+                        385 -
+                        (widget.sideController.extended ? 230 : 118))
+                    : (screenWidth > 800)
+                        ? screenWidth -
+                            (widget.sideController.extended ? 230 : 118)
+                        : screenWidth - 28,
+                child: Table(
+                  border: TableBorder(
+                    verticalInside:
+                        BorderSide(color: Theme.of(context).dividerColor),
+                    left: BorderSide(color: Theme.of(context).dividerColor),
+                    right: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                  children: [
+                    TableRow(
+                      children: [
+                        for (var i = widget.initDayWeek.day;
+                            i < (widget.initDayWeek.day + 7);
+                            i++)
+                          SizedBox(
+                            height: screenHeight - 270,
+                            child: const Text(""),
+                          ),
+                      ],
                     ),
-                    children: [
-                      TableRow(
-                        children: [
-                          for (var i = widget.initDayWeek.day;
-                              i < (widget.initDayWeek.day + 7);
-                              i++)
-                            SizedBox(
-                              height: screenHeight - 270,
-                              child: const Text(""),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ).animate().fadeIn(duration: 1800.ms, begin: -.6),
-                ),
-              )),
+                  ],
+                ).animate().fadeIn(duration: 1800.ms, begin: -.6),
+              ),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
             child: GridView.builder(

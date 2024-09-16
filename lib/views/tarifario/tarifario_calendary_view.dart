@@ -11,9 +11,11 @@ import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
 import '../../providers/tarifario_provider.dart';
 import '../../widgets/dynamic_widget.dart';
+import '../../widgets/form_widgets.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
   const TarifarioCalendaryView({
@@ -57,10 +59,25 @@ class TarifarioCalendaryView extends ConsumerStatefulWidget {
 
 class _TarifarioCalendaryViewState
     extends ConsumerState<TarifarioCalendaryView> {
+  // DateTime initDayWeek =
+  //     DateTime.now().subtract(Duration(days: DateTime.now().weekday));
+  // DateTime initDayWeekGraphics =
+  //     DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+
   DateTime initDayWeek =
-      DateTime.now().subtract(Duration(days: DateTime.now().weekday));
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .subtract(Duration(
+              days: DateTime(DateTime.now().year, DateTime.now().month,
+                          DateTime.now().day)
+                      .weekday -
+                  1));
   DateTime initDayWeekGraphics =
-      DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .subtract(Duration(
+              days: DateTime(DateTime.now().year, DateTime.now().month,
+                          DateTime.now().day)
+                      .weekday -
+                  1));
 
   DateTime initWeekMonth = DateTime.now();
   bool selectedcurrentyear = false;
@@ -103,6 +120,8 @@ class _TarifarioCalendaryViewState
                               padding: EdgeInsets.only(
                                   left: (screenWidth > 1280) ? (380) : 0),
                               child: GridView.builder(
+                                  key: const PageStorageKey('myGridViewKey'),
+                                  cacheExtent: 1000,
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
@@ -300,7 +319,6 @@ class _TarifarioCalendaryViewState
                                 DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
                       },
                       onNextPage: (p0) {
-                        print(p0);
                         setState(() {
                           pageWeekController.nextPage(
                             duration: const Duration(milliseconds: 300),
@@ -351,36 +369,292 @@ class _TarifarioCalendaryViewState
 
           RegistroTarifa? tariffNow = Utility.revisedTariffDay(
               DateTime(widget.yearNow, month.month, text), list);
+          final _controller = SuperTooltipController();
 
           return InkWell(
-            onTap: () {
-              // DateTime selectDate = DateTime(month.year, month.month, text);
-              // int weekdaySelect = selectDate.weekday;
-              // DateTime initWeekSelect =
-              //     selectDate.subtract(Duration(days: weekdaySelect - 1));
-
-              // // widget.initDayWeek = initWeekSelect;
-              // // widget.onChangeDate!.call(initWeekSelect);
-              // setState(() {});
-            },
+            onTap: () {},
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (tariffNow != null)
                   Expanded(
-                    child: Card(
-                      elevation: 3.5,
-                      color: tariffNow.color,
-                      child: Center(
-                        child: Text(
-                          text.toString(),
-                          style: TextStyle(
-                            fontWeight: useWhiteForeground(tariffNow.color!)
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: useWhiteForeground(tariffNow.color!)
-                                ? Colors.white
-                                : Colors.black,
+                    child: GestureDetector(
+                      onTap: () async => await _controller.showTooltip(),
+                      //Pendiente resolver porque el Tooltip sigue aun cuando se cambia de pantalla
+                      child: SuperTooltip(
+                        showBarrier: true,
+                        controller: _controller,
+                        popupDirection: TooltipDirection.up,
+                        barrierColor: Colors.transparent,
+                        borderColor: Colors.transparent,
+                        // onShow: () => Future.delayed(
+                        //   7.seconds,
+                        //   () => _controller.hideTooltip(),
+                        // ),
+                        content: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  TextStyles.standardText(
+                                    text: tariffNow.nombre ?? '',
+                                    isBold: true,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  TextStyles.standardText(
+                                    text: Utility.definePeriodNow(
+                                        DateTime(
+                                            widget.yearNow, month.month, text),
+                                        tariffNow.periodos),
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  Container(
+                                    width: 275,
+                                    height: 30,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: DesktopColors.vistaReserva,
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(7),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: TextStyles.mediumText(
+                                        text: "VISTA RESERVA",
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "SGL/DBL",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow.tarifas!
+                                                .first.tarifaAdultoSGLoDBL!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "PAX ADIC",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow.tarifas!
+                                                .first.tarifaPaxAdicional!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "TPL",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas!.first.tarifaAdultoTPL
+                                                .toString(),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "CPLE",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas!.first.tarifaAdultoCPLE
+                                                .toString(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "MENORES 7-12 AÑOS",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow.tarifas!
+                                                .first.tarifaMenores7a12!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "MENORES 0-6 AÑOS",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: "GRATIS",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  Container(
+                                    width: 275,
+                                    height: 30,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: DesktopColors.vistaParcialMar,
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(7),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: TextStyles.mediumText(
+                                        text: "VISTA PARCIAL AL MAR",
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "SGL/DBL",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow.tarifas![1]
+                                                .tarifaAdultoSGLoDBL!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "PAX ADIC",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas![1].tarifaPaxAdicional!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "TPL",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas![1].tarifaAdultoTPL
+                                                .toString(),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "CPLE",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas![1].tarifaAdultoCPLE
+                                                .toString(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: 275,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "MENORES 7-12 AÑOS",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: tariffNow
+                                                .tarifas![1].tarifaMenores7a12!
+                                                .toStringAsFixed(2),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: FormWidgets
+                                              .textFormFieldResizable(
+                                            name: "MENORES 0-6 AÑOS",
+                                            isDecimal: true,
+                                            isNumeric: true,
+                                            isMoneda: true,
+                                            initialValue: "GRATIS",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                        child: Card(
+                          elevation: 3.5,
+                          color: tariffNow.color,
+                          child: Center(
+                            child: Text(
+                              text.toString(),
+                              style: TextStyle(
+                                fontWeight: useWhiteForeground(tariffNow.color!)
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: useWhiteForeground(tariffNow.color!)
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -425,7 +699,7 @@ class _TarifarioCalendaryViewState
           child: TextStyles.titleText(
             text:
                 "              ${DateFormat('MMMM').format(month).substring(0, 1).toUpperCase()}${DateFormat('MMMM').format(month).substring(1)}",
-            color: Theme.of(context).primaryColor,
+            color: Colors.white,
             size: 16,
           ),
         ),
