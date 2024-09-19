@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
+import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:intl/intl.dart';
 
 import '../ui/custom_widgets.dart';
 import '../ui/progress_indicator.dart';
+import '../ui/show_snackbar.dart';
 import '../utils/helpers/utility.dart';
 import 'item_row.dart';
 import 'text_styles.dart';
@@ -75,6 +78,7 @@ class _ControllerCalendarWidgetState
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifasProvider = ref.watch(allTarifaProvider(""));
 
     return SizedBox(
@@ -229,6 +233,9 @@ class _ControllerCalendarWidgetState
                                 color: Theme.of(context).dividerColor)),
                         title: IconButton(
                             onPressed: () {
+                              ref
+                                  .read(editTarifaProvider.notifier)
+                                  .update((state) => RegistroTarifa());
                               widget.onCreated!.call();
                             },
                             icon: const Icon(Icons.add_circle_rounded)),
@@ -251,21 +258,90 @@ class _ControllerCalendarWidgetState
                                       context: context, sizeImage: 100),
                                 );
                               } else {
-                                return SizedBox(
-                                  width: screenWidth,
-                                  height: Utility.limitHeightList(
-                                      list.length, 5, 200),
-                                  child: ListView.builder(
-                                    itemCount: list.length,
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      return ItemRow.tarifaItemRow(
-                                        context,
-                                        registroTarifa: list[index],
-                                      );
-                                    },
-                                  ),
+                                return listTarifasProvider.when(
+                                  data: (list) {
+                                    return SizedBox(
+                                      width: screenWidth,
+                                      height: Utility.limitHeightList(
+                                          list.length, 5, 200),
+                                      child: ListView.builder(
+                                        itemCount: list.length,
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          return ItemRow.tarifaItemRow(
+                                            context,
+                                            registroTarifa: list[index],
+                                            onEdit: () {
+                                              ref
+                                                  .read(editTarifaProvider
+                                                      .notifier)
+                                                  .update(
+                                                      (state) => list[index]);
+                                              widget.onCreated!.call();
+                                            },
+                                            onDelete: () async {
+                                              bool isSaves =
+                                                  await TarifaService()
+                                                      .deleteTarifaRack(
+                                                          list[index]);
+
+                                              if (isSaves) {
+                                                showSnackBar(
+                                                  context: context,
+                                                  title: "Tarifa Eliminada",
+                                                  message:
+                                                      "La tarifa fue eliminada exitosamente.",
+                                                  type: "success",
+                                                  iconCustom: Icons.delete,
+                                                );
+
+                                                Future.delayed(
+                                                  500.ms,
+                                                  () {
+                                                    ref
+                                                        .read(
+                                                            changeTarifasProvider
+                                                                .notifier)
+                                                        .update((state) =>
+                                                            UniqueKey()
+                                                                .hashCode);
+                                                  },
+                                                );
+                                              } else {
+                                                if (mounted) return;
+                                                showSnackBar(
+                                                    context: context,
+                                                    title:
+                                                        "Error de eliminación",
+                                                    message:
+                                                        "Se detecto un error al intentar eliminar la tarifa. Intentelo más tarde.",
+                                                    type: "danger");
+                                                return;
+                                              }
+                                            },
+                                            onChangedSelect: (p0) {
+                                              setState(() =>
+                                                  list[index].isSelected = p0);
+                                              ref
+                                                  .read(
+                                                      changeTarifasListProvider
+                                                          .notifier)
+                                                  .update((state) =>
+                                                      UniqueKey().hashCode);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  error: (error, stackTrace) {
+                                    return const SizedBox();
+                                  },
+                                  loading: () {
+                                    return const SizedBox();
+                                  },
                                 );
                               }
                             },
@@ -314,14 +390,18 @@ class _ControllerCalendarWidgetState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
+                      flex: 2,
                       child: TextStyles.standardText(
                           text: "Ultima modificación:",
                           color: Theme.of(context).primaryColor),
                     ),
                     Expanded(
+                      flex: 3,
                       child: TextStyles.standardText(
-                          text: Utility.getCompleteDate(data: DateTime.now()),
-                          color: Theme.of(context).dividerColor),
+                        text: Utility.getCompleteDate(data: DateTime.now()),
+                        color: Theme.of(context).dividerColor,
+                        aling: TextAlign.end,
+                      ),
                     ),
                   ],
                 ),
@@ -408,7 +488,6 @@ class _ControllerCalendarWidgetState
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
-                print("Month: ${_currentMonth.month}");
                 if (!isLastMonthOfYear) {
                   widget.onNextPage!.call(_currentMonth.month);
                 }

@@ -229,23 +229,34 @@ class CustomWidgets {
   static Widget messageNotResult(
       {double sizeMessage = 11,
       required BuildContext context,
-      double sizeImage = 120}) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image(
-            image: const AssetImage("assets/image/not_results.png"),
-            width: sizeImage,
-            height: sizeImage,
-          ),
-          TextStyles.standardText(
-            text: "No se encontraron resultados",
-            size: sizeMessage,
-            color: Theme.of(context).primaryColor,
-          ),
-        ],
+      double sizeImage = 120,
+      double? screenWidth,
+      bool extended = false}) {
+    return SizedBox(
+      width: screenWidth != null
+          ? (screenWidth > 1280)
+              ? (screenWidth - 385 - (extended ? 230 : 118))
+              : (screenWidth > 800)
+                  ? screenWidth - (extended ? 230 : 118)
+                  : screenWidth - 28
+          : null,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image(
+              image: const AssetImage("assets/image/not_results.png"),
+              width: sizeImage,
+              height: sizeImage,
+            ),
+            TextStyles.standardText(
+              text: "No se encontraron resultados",
+              size: sizeMessage,
+              color: Theme.of(context).primaryColor,
+            ),
+          ],
+        ),
       ),
     );
   }

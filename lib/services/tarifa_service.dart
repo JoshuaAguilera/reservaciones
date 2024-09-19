@@ -130,6 +130,142 @@ class TarifaService extends BaseService {
     }
   }
 
+  Future<bool> UpdateTarifaBD({
+    required String name,
+    required RegistroTarifa oldRegister,
+    required String codeUniversal,
+    required List<Periodo> periodos,
+    required Color colorIdentificativo,
+    required List<bool> diasAplicacion,
+    required Temporada tempProm,
+    required Temporada tempBar1,
+    required Temporada tempBar2,
+    required TarifaTemporada tarifaVR,
+    required TarifaTemporada tarifaVPM,
+  }) async {
+    final database = AppDatabase();
+
+    try {
+      database.transaction(
+        () async {
+          //Update periods
+          for (var element in oldRegister.periodos!) {
+            await database.deletePeriodByIDandCode(codeUniversal, element.id);
+          }
+
+          for (var element in periodos) {
+            await database.into(database.periodo).insert(
+                  PeriodoCompanion.insert(
+                    code: codeUniversal,
+                    fecha: Value(oldRegister.fechaRegistro),
+                    fechaFinal: Value(element.fechaFinal),
+                    fechaInicial: Value(element.fechaInicial),
+                    enLunes: Value(diasAplicacion[0]),
+                    enMartes: Value(diasAplicacion[1]),
+                    enMiercoles: Value(diasAplicacion[2]),
+                    enJueves: Value(diasAplicacion[3]),
+                    enViernes: Value(diasAplicacion[4]),
+                    enSabado: Value(diasAplicacion[5]),
+                    enDomingo: Value(diasAplicacion[6]),
+                  ),
+                );
+          }
+
+          await database.updateTariff(
+            codeUniv: codeUniversal,
+            id: oldRegister.tarifas!.first.id,
+            tarifaUpdate: TarifaCompanion(
+              tarifaAdultoSGLoDBL: Value(tarifaVR.tarifaAdulto1a2),
+              tarifaMenores7a12: Value(tarifaVR.tarifaMenores7a12),
+              tarifaPaxAdicional: Value(tarifaVR.tarifaPaxAdicional),
+              tarifaAdultoCPLE: Value(tarifaVR.tarifaAdulto4),
+              tarifaAdultoTPL: Value(tarifaVR.tarifaAdulto3),
+            ),
+          );
+          await database.updateTariff(
+            codeUniv: codeUniversal,
+            id: oldRegister.tarifas![1].id,
+            tarifaUpdate: TarifaCompanion(
+              tarifaAdultoSGLoDBL: Value(tarifaVPM.tarifaAdulto1a2),
+              tarifaMenores7a12: Value(tarifaVPM.tarifaMenores7a12),
+              tarifaPaxAdicional: Value(tarifaVPM.tarifaPaxAdicional),
+              tarifaAdultoCPLE: Value(tarifaVPM.tarifaAdulto4),
+              tarifaAdultoTPL: Value(tarifaVPM.tarifaAdulto3),
+            ),
+          );
+
+          await database.updateSeason(
+              tempUpdate: TemporadaCompanion(
+                estanciaMinima: Value(tempProm.estanciaMinima),
+                porcentajePromocion: Value(tempProm.porcentajePromocion),
+              ),
+              codeUniv: codeUniversal,
+              id: oldRegister.temporadas![0].id);
+          await database.updateSeason(
+              tempUpdate: TemporadaCompanion(
+                estanciaMinima: Value(tempBar1.estanciaMinima),
+                porcentajePromocion: Value(tempBar1.porcentajePromocion),
+              ),
+              codeUniv: codeUniversal,
+              id: oldRegister.temporadas![1].id);
+          await database.updateSeason(
+              tempUpdate: TemporadaCompanion(
+                estanciaMinima: Value(tempBar2.estanciaMinima),
+                porcentajePromocion: Value(tempBar2.porcentajePromocion),
+              ),
+              codeUniv: codeUniversal,
+              id: oldRegister.temporadas![2].id);
+
+          await database.updateTariffRack(
+              tarifaUpdate: TarifaRackCompanion(
+                colorIdentificacion:
+                    Value("#${colorIdentificativo.toHexString()}"),
+                nombreRack: Value(name),
+              ),
+              codeUniv: codeUniversal,
+              id: oldRegister.id!);
+        },
+      );
+      await database.close();
+      return true;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return false;
+    }
+  }
+
+  Future<bool> deleteTarifaRack(RegistroTarifa tarifa) async {
+    final database = AppDatabase();
+
+    try {
+      database.transaction(
+        () async {
+          //Update periods
+          for (var element in tarifa.periodos!) {
+            await database.deletePeriodByIDandCode(tarifa.code!, element.id);
+          }
+
+          for (var element in tarifa.tarifas!) {
+            await database.deleteTariffByIDandCode(tarifa.code!, element.id);
+          }
+
+          for (var element in tarifa.temporadas!) {
+            await database.deleteSeasonByIDandCode(tarifa.code!, element.id);
+          }
+
+          await database.deleteTariffRackByIDandCode(tarifa.code!, tarifa.id!);
+        },
+      );
+      await database.close();
+      return true;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return false;
+    }
+  }
+
   Future<List<RegistroTarifa>> getTarifasBD() async {
     List<RegistroTarifa> tarifasRegistradas = [];
     List<TarifaRackData> tarifas = [];
@@ -144,6 +280,7 @@ class TarifaService extends BaseService {
 
       for (var tarifa in tarifas) {
         RegistroTarifa newRegistroTarifa = RegistroTarifa(
+          isSelected: true,
           code: tarifa.code,
           color: colorFromHex(tarifa.colorIdentificacion ?? '#ffffff'),
           fechaRegistro: tarifa.fecha,

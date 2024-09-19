@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
+import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
@@ -977,7 +978,7 @@ class Utility {
 
     if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
         nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
-      status = "PROXIMAMENTE";
+      status = "VIGENTE";
     }
 
     if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
@@ -1161,5 +1162,17 @@ class Utility {
         .firstOrNull;
 
     return first;
+  }
+
+  static List<Periodo> getPeriodsRegister(List<PeriodoData>? periods) {
+    List<Periodo> periodos = [];
+
+    for (var element in periods!) {
+      Periodo periodNow = Periodo(
+          fechaFinal: element.fechaFinal, fechaInicial: element.fechaInicial);
+      periodos.add(periodNow);
+    }
+
+    return periodos;
   }
 }

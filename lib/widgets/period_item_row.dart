@@ -13,6 +13,8 @@ class PeriodItemRow extends StatefulWidget {
     required this.weekNow,
     this.compact = false,
     this.target = 1,
+    this.isUpDireccion = false,
+    this.showMonth = false,
   }) : super(key: key);
 
   final RegistroTarifa tarifa;
@@ -21,6 +23,8 @@ class PeriodItemRow extends StatefulWidget {
   final DateTime weekNow;
   final bool compact;
   final double target;
+  final bool isUpDireccion;
+  final bool showMonth;
 
   @override
   State<PeriodItemRow> createState() => _PeriodItemRowState();
@@ -46,6 +50,8 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         sectionDay: sectionDay,
         compact: widget.compact,
         target: widget.target,
+        isUpDireccion: widget.isUpDireccion,
+        showMonth: widget.showMonth,
       ),
     );
   }

@@ -8,6 +8,7 @@ void showSnackBar({
   required String title,
   required String message,
   required String type,
+  IconData? iconCustom,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     elevation: 0,
@@ -41,7 +42,7 @@ void showSnackBar({
             Expanded(
               flex: 1,
               child: Icon(
-                Utility.getIconNavbar(type),
+                iconCustom ?? Utility.getIconNavbar(type),
                 size: 50,
                 color: Colors.white,
               ),

@@ -308,14 +308,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                         withButtonCancel: true,
                                         iconData: Icons.delete,
                                       ),
-                                    ).then(
-                                      (value) {
-                                        if (value != null) {
-                                          // setState(() {});
-                                          // Future.delayed(
-                                          //     Durations.extralong1, () => fetchData());
-                                        }
-                                      },
                                     );
                                   },
                                 );

@@ -37,7 +37,8 @@ class _TarifarioCalendaryWeekViewState
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    final tarifasProvider = ref.watch(allTarifaProvider(""));
+    final listTarifasProvider = ref.watch(listTarifaProvider(""));
+    final tarifaProvider = ref.watch(allTarifaProvider(""));
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return SizedBox(
@@ -125,54 +126,73 @@ class _TarifarioCalendaryWeekViewState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    tarifasProvider.when(
+                    tarifaProvider.when(
                       data: (list) {
                         if (list.isNotEmpty) {
-                          return SizedBox(
-                            height: screenHeight - 260,
-                            width: (screenWidth > 1280)
-                                ? (screenWidth -
-                                    378 -
-                                    (widget.sideController.extended
-                                        ? 230
-                                        : 118))
-                                : (screenWidth > 800)
-                                    ? screenWidth -
-                                        (widget.sideController.extended
-                                            ? 230
-                                            : 118)
-                                    : screenWidth - 28,
-                            child: ListView.builder(
-                              itemCount: list.length,
-                              padding: const EdgeInsets.only(bottom: 10),
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                if (Utility.showTariffByWeek(
-                                    list[index].periodos,
-                                    widget.initDayWeekGraphics)) {
-                                  return PeriodItemRow(
-                                    weekNow: widget.initDayWeekGraphics,
-                                    tarifa: list[index],
-                                    lenghtDays: 1,
-                                    lenghtSideBar:
-                                        (widget.sideController.extended
-                                            ? 230
-                                            : 118),
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
-                              },
-                            ),
+                          return listTarifasProvider.when(
+                            data: (list) {
+                              if (list.isNotEmpty) {
+                                return SizedBox(
+                                  height: screenHeight - 260,
+                                  width: (screenWidth > 1280)
+                                      ? (screenWidth -
+                                          378 -
+                                          (widget.sideController.extended
+                                              ? 230
+                                              : 118))
+                                      : (screenWidth > 800)
+                                          ? screenWidth -
+                                              (widget.sideController.extended
+                                                  ? 230
+                                                  : 118)
+                                          : screenWidth - 28,
+                                  child: ListView.builder(
+                                    itemCount: list.length,
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      if (Utility.showTariffByWeek(
+                                              list[index].periodos,
+                                              widget.initDayWeekGraphics) &&
+                                          list[index].isSelected!) {
+                                        return PeriodItemRow(
+                                          weekNow: widget.initDayWeekGraphics,
+                                          tarifa: list[index],
+                                          lenghtDays: 1,
+                                          lenghtSideBar:
+                                              (widget.sideController.extended
+                                                  ? 230
+                                                  : 118),
+                                          isUpDireccion: true,
+                                        );
+                                      } else {
+                                        return const SizedBox();
+                                      }
+                                    },
+                                  ),
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                            error: (error, stackTrace) => const SizedBox(),
+                            loading: () => const SizedBox(),
                           );
                         }
-                        return const SizedBox();
+                        return SizedBox(
+                            height: 150,
+                            child: CustomWidgets.messageNotResult(
+                                context: context,
+                                sizeImage: 100,
+                                screenWidth: screenWidth,
+                                extended: widget.sideController.extended));
                       },
                       error: (error, stackTrace) => SizedBox(
-                        height: 150,
-                        child: CustomWidgets.messageNotResult(
-                            context: context, sizeImage: 100),
-                      ),
+                          height: 150,
+                          child: CustomWidgets.messageNotResult(
+                              context: context,
+                              sizeImage: 100,
+                              screenWidth: screenWidth,
+                              extended: widget.sideController.extended)),
                       loading: () => dynamicWidget.loadingWidget(screenWidth,
                           screenHeight, widget.sideController.extended),
                     ),

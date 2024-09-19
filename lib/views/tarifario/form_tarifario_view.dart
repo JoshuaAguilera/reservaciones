@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/periodo_model.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
@@ -40,8 +41,10 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
   bool inAllPeriod = false;
   bool autoCalculationVR = true;
   bool autoCalculationVPM = true;
+  bool starflow = false;
   double target = 1;
   Color colorTarifa = Colors.amber;
+  RegistroTarifa? oldRegister;
   TextEditingController nombreTarifaController = TextEditingController();
   TextEditingController _fechaEntrada = TextEditingController(text: "");
   TextEditingController _fechaSalida = TextEditingController(text: "");
@@ -63,6 +66,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
   TextEditingController adults4VPMController = TextEditingController(text: "0");
   TextEditingController paxAdicVPMController = TextEditingController();
   TextEditingController minors7_12VPMController = TextEditingController();
+  bool initiallyExpanded = false;
 
   List<Periodo> periodos = [];
 
@@ -121,6 +125,78 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final actualTarifa = ref.watch(editTarifaProvider);
+
+    if (!starflow && actualTarifa.code != null) {
+      nombreTarifaController.text = actualTarifa.nombre!;
+      colorTarifa = actualTarifa.color!;
+      initiallyExpanded = true;
+      oldRegister = actualTarifa;
+
+      if (actualTarifa.periodos!.isNotEmpty) {
+        selectedDayWeek[0] = actualTarifa.periodos!.first.enLunes ?? false;
+        selectedDayWeek[1] = actualTarifa.periodos!.first.enMartes ?? false;
+        selectedDayWeek[2] = actualTarifa.periodos!.first.enMiercoles ?? false;
+        selectedDayWeek[3] = actualTarifa.periodos!.first.enJueves ?? false;
+        selectedDayWeek[4] = actualTarifa.periodos!.first.enViernes ?? false;
+        selectedDayWeek[5] = actualTarifa.periodos!.first.enSabado ?? false;
+        selectedDayWeek[6] = actualTarifa.periodos!.first.enDomingo ?? false;
+      }
+      periodos = Utility.getPeriodsRegister(actualTarifa.periodos);
+
+      promocionController.text = actualTarifa
+          .temporadas!.first.porcentajePromocion!
+          .round()
+          .toString();
+
+      bar1Controller.text =
+          actualTarifa.temporadas![1].porcentajePromocion!.round().toString();
+
+      bar2Controller.text =
+          actualTarifa.temporadas![2].porcentajePromocion!.round().toString();
+
+      estanciaPromController.text =
+          actualTarifa.temporadas!.first.estanciaMinima!.toString();
+
+      estanciaBar1Controller.text =
+          actualTarifa.temporadas![1].estanciaMinima!.toString();
+
+      estanciaBar2Controller.text =
+          actualTarifa.temporadas![2].estanciaMinima!.toString();
+
+      adults1_2VRController.text =
+          actualTarifa.tarifas!.first.tarifaAdultoSGLoDBL!.round().toString();
+      paxAdicVRController.text =
+          actualTarifa.tarifas!.first.tarifaPaxAdicional!.round().toString();
+      adults3VRController.text = (actualTarifa.tarifas!.first.tarifaAdultoTPL ??
+              Utility.calculateRate(
+                  adults1_2VRController, paxAdicVRController, 1))
+          .toString();
+      adults4VRController.text =
+          (actualTarifa.tarifas!.first.tarifaAdultoCPLE ??
+                  Utility.calculateRate(
+                      adults1_2VRController, paxAdicVRController, 2))
+              .toString();
+      minors7_12VRController.text =
+          actualTarifa.tarifas!.first.tarifaMenores7a12!.round().toString();
+
+      adults1_2VPMController.text =
+          actualTarifa.tarifas![1].tarifaAdultoSGLoDBL!.round().toString();
+      paxAdicVPMController.text =
+          actualTarifa.tarifas![1].tarifaPaxAdicional!.round().toString();
+      adults3VPMController.text = (actualTarifa.tarifas![1].tarifaAdultoTPL ??
+              Utility.calculateRate(
+                  adults1_2VPMController, paxAdicVPMController, 1))
+          .toString();
+      adults4VPMController.text = (actualTarifa.tarifas![1].tarifaAdultoCPLE ??
+              Utility.calculateRate(
+                  adults1_2VPMController, paxAdicVPMController, 2))
+          .toString();
+      minors7_12VPMController.text =
+          actualTarifa.tarifas![1].tarifaMenores7a12!.round().toString();
+
+      starflow = true;
+    }
 
     return Scaffold(
       body: Padding(
@@ -154,7 +230,9 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                           ),
                         ),
                         TextStyles.titlePagText(
-                          text: "Crear tarifa",
+                          text: actualTarifa.code != null
+                              ? "Editar tarifa"
+                              : "Crear tarifa",
                           overflow: TextOverflow.ellipsis,
                           color: Theme.of(context).primaryColor,
                         ),
@@ -661,6 +739,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "Promoción",
                                       context: context,
                                       promocionController: promocionController,
@@ -685,6 +764,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "BAR I",
                                       context: context,
                                       promocionController: bar1Controller,
@@ -700,6 +780,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "BAR II",
                                       context: context,
                                       promocionController: bar2Controller,
@@ -880,6 +961,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "Promoción",
                                       context: context,
                                       promocionController: promocionController,
@@ -904,6 +986,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "BAR I",
                                       context: context,
                                       promocionController: bar1Controller,
@@ -919,6 +1002,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                     ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
+                                      initiallyExpanded: initiallyExpanded,
                                       nameTile: "BAR II",
                                       context: context,
                                       promocionController: bar2Controller,
@@ -971,9 +1055,8 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
     bool isRepeat = false;
 
     isRepeat = periodos.any((element) =>
-        (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) >= 0 &&
-            element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) <= 0) ||
-        element.fechaFinal!.compareTo(DateTime.parse(fechaIni)) >= 0);
+        (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
+            element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) >= 0));
 
     return isRepeat;
   }
@@ -1040,24 +1123,41 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
         estanciaMinima: int.parse(estanciaBar2Controller.text),
         porcentajePromocion: double.parse(bar2Controller.text));
 
-    bool isSaves = await TarifaService().saveTarifaBD(
-      name: nombreTarifaController.text,
-      colorIdentificativo: colorTarifa,
-      diasAplicacion: selectedDayWeek,
-      periodos: periodos,
-      tempProm: temporadaPromocion,
-      tempBar1: temporadaBar1,
-      tempBar2: temporadaBar2,
-      tarifaVPM: tarifaVPM,
-      tarifaVR: tarifaVR,
-    );
+    bool isSaves = oldRegister != null
+        ? await TarifaService().UpdateTarifaBD(
+            codeUniversal: oldRegister!.code!,
+            oldRegister: oldRegister!,
+            name: nombreTarifaController.text,
+            colorIdentificativo: colorTarifa,
+            diasAplicacion: selectedDayWeek,
+            periodos: periodos,
+            tempProm: temporadaPromocion,
+            tempBar1: temporadaBar1,
+            tempBar2: temporadaBar2,
+            tarifaVPM: tarifaVPM,
+            tarifaVR: tarifaVR,
+          )
+        : await TarifaService().saveTarifaBD(
+            name: nombreTarifaController.text,
+            colorIdentificativo: colorTarifa,
+            diasAplicacion: selectedDayWeek,
+            periodos: periodos,
+            tempProm: temporadaPromocion,
+            tempBar1: temporadaBar1,
+            tempBar2: temporadaBar2,
+            tarifaVPM: tarifaVPM,
+            tarifaVR: tarifaVR,
+          );
 
     if (isSaves) {
       showSnackBar(
-          context: context,
-          title: "Tarifa implementada",
-          message: "La tarifa fue guardada e implementada con exito",
-          type: "success");
+        context: context,
+        title: "Tarifa ${oldRegister != null ? "Actualizada" : "Implementada"}",
+        message:
+            "La tarifa fue ${oldRegister != null ? "actualizada" : "guardada e implementada"} con exito",
+        type: "success",
+        iconCustom: oldRegister != null ? Icons.edit : Icons.save,
+      );
       setState(() => target = 0);
 
       Future.delayed(
@@ -1075,7 +1175,8 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
       showSnackBar(
           context: context,
           title: "Error de guardado",
-          message: "Se detecto un error al intentar guardar la tarifa.",
+          message:
+              "Se detecto un error al intentar guardar la tarifa. Intentelo más tarde.",
           type: "danger");
       return;
     }

@@ -6,6 +6,7 @@ import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
+import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/dynamic_widget.dart';
@@ -25,6 +26,7 @@ class TarifarioCalendaryMonthView extends ConsumerStatefulWidget {
     required this.showMonth,
     required this.pageWeekController,
     required this.targetMonth,
+    required this.showMonthDelay,
   });
 
   final SidebarXController sideController;
@@ -36,6 +38,7 @@ class TarifarioCalendaryMonthView extends ConsumerStatefulWidget {
   final bool showMonth;
   final PageController pageWeekController;
   final double targetMonth;
+  final bool showMonthDelay;
 
   @override
   _TarifarioCalendaryMonthViewState createState() =>
@@ -47,7 +50,8 @@ class _TarifarioCalendaryMonthViewState
   @override
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
-    final tarifasProvider = ref.watch(allTarifaProvider(""));
+    final listTarifasProvider = ref.watch(listTarifaProvider(""));
+    final tarifaProvider = ref.watch(allTarifaProvider(""));
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -131,6 +135,35 @@ class _TarifarioCalendaryMonthViewState
             top: 65,
             child: SizedBox(
               height: screenHeight - 238,
+              child: tarifaProvider.when(
+                data: (list) {
+                  return const SizedBox();
+                },
+                error: (error, stackTrace) => Padding(
+                  padding:
+                      EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
+                  child: SizedBox(
+                      height: 150,
+                      child: CustomWidgets.messageNotResult(
+                        context: context,
+                        sizeImage: 100,
+                      )),
+                ),
+                loading: () => Padding(
+                  padding:
+                      EdgeInsets.only(left: (screenWidth > 1280) ? (630) : 0),
+                  child: dynamicWidget.loadingWidget(
+                      screenWidth, 500, widget.sideController.extended,
+                      isEstandar: true, sizeIndicator: 50),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: (screenWidth > 1280) ? (385) : 0,
+            top: 65,
+            child: SizedBox(
+              height: screenHeight - 238,
               child: Column(
                 children: [
                   for (var i = 0;
@@ -140,7 +173,7 @@ class _TarifarioCalendaryMonthViewState
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(height: ((screenHeight - 238) / 6) * 0.25),
-                        tarifasProvider.when(
+                        listTarifasProvider.when(
                           data: (list) {
                             if (list.isNotEmpty) {
                               return SizedBox(
@@ -164,11 +197,13 @@ class _TarifarioCalendaryMonthViewState
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     if (Utility.showTariffByWeek(
-                                        list[index].periodos,
-                                        Utility.getInitsWeekMonth(
-                                            widget.initWeekMonth, i))) {
+                                            list[index].periodos,
+                                            Utility.getInitsWeekMonth(
+                                                widget.initWeekMonth, i)) &&
+                                        list[index].isSelected!) {
                                       return PeriodItemRow(
                                         target: widget.targetMonth,
+                                        showMonth: widget.showMonthDelay,
                                         compact: true,
                                         weekNow: Utility.getInitsWeekMonth(
                                             widget.initWeekMonth, i),
@@ -189,10 +224,7 @@ class _TarifarioCalendaryMonthViewState
                             return const SizedBox();
                           },
                           error: (error, stackTrace) => const SizedBox(),
-                          loading: () => dynamicWidget.loadingWidget(
-                              screenWidth,
-                              screenHeight,
-                              widget.sideController.extended),
+                          loading: () => const SizedBox(),
                         ),
                       ],
                     ),

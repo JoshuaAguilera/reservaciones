@@ -263,6 +263,8 @@ class AppDatabase extends _$AppDatabase {
 
   //tarifa dao
 
+  // -- //Methods Get
+
   Future<List<TarifaRackData>> getAllTarifasRack() {
     return (select(tarifaRack)).get();
   }
@@ -277,6 +279,84 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<PeriodoData>> getPeriodByCode(String code) {
     return (select(periodo)..where((tbl) => tbl.code.equals(code))).get();
+  }
+
+  // -- //Methods Update
+
+  Future<int> updateTariff(
+      {required TarifaCompanion tarifaUpdate,
+      required String codeUniv,
+      required int id}) {
+    return (update(tarifa)
+          ..where((t) => t.code.equals(codeUniv))
+          ..where(
+            (tbl) => tbl.id.equals(id),
+          ))
+        .write(tarifaUpdate);
+  }
+
+  Future<int> updateSeason({
+    required TemporadaCompanion tempUpdate,
+    required String codeUniv,
+    required int id,
+  }) {
+    return (update(temporada)
+          ..where((t) => t.code.equals(codeUniv))
+          ..where(
+            (tbl) => tbl.id.equals(id),
+          ))
+        .write(tempUpdate);
+  }
+
+  Future<int> updateTariffRack({
+    required TarifaRackCompanion tarifaUpdate,
+    required String codeUniv,
+    required int id,
+  }) {
+    return (update(tarifaRack)
+          ..where((t) => t.code.equals(codeUniv))
+          ..where(
+            (tbl) => tbl.id.equals(id),
+          ))
+        .write(tarifaUpdate);
+  }
+
+  // -- //Methods Delete
+
+  Future<int> deletePeriodByIDandCode(String codeUniv, int id) {
+    return (delete(periodo)
+          ..where(
+            (tbl) => tbl.code.equals(codeUniv),
+          )
+          ..where((t) => t.id.equals(id)))
+        .go();
+  }
+
+  Future<int> deleteTariffByIDandCode(String codeUniv, int id) {
+    return (delete(tarifa)
+          ..where(
+            (tbl) => tbl.code.equals(codeUniv),
+          )
+          ..where((t) => t.id.equals(id)))
+        .go();
+  }
+
+  Future<int> deleteSeasonByIDandCode(String codeUniv, int id) {
+    return (delete(temporada)
+          ..where(
+            (tbl) => tbl.code.equals(codeUniv),
+          )
+          ..where((t) => t.id.equals(id)))
+        .go();
+  }
+
+  Future<int> deleteTariffRackByIDandCode(String codeUniv, int id) {
+    return (delete(tarifaRack)
+          ..where(
+            (tbl) => tbl.code.equals(codeUniv),
+          )
+          ..where((t) => t.id.equals(id)))
+        .go();
   }
 }
 

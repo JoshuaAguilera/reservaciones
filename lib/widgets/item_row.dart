@@ -291,13 +291,14 @@ class ItemRow {
   static Widget tarifaItemRow(
     BuildContext context, {
     RegistroTarifa? registroTarifa,
+    void Function(bool?)? onChangedSelect,
     void Function()? onEdit,
     void Function()? onDelete,
   }) {
     return ListTile(
       leading: Checkbox(
-        value: true,
-        onChanged: (value) {},
+        value: registroTarifa!.isSelected,
+        onChanged: onChangedSelect,
         activeColor: registroTarifa?.color ?? Colors.amber,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -332,9 +333,22 @@ class ItemRow {
           PopupMenuItem<ListTileTitleAlignment>(
             value: ListTileTitleAlignment.titleHeight,
             onTap: () {
-              if (onDelete != null) {
-                onDelete.call();
-              }
+              showDialog(
+                context: context,
+                builder: (context) => Dialogs.customAlertDialog(
+                  context: context,
+                  title: "Eliminar tarifa",
+                  content:
+                      "¿Desea eliminar la siguiente tarifa: ${registroTarifa.nombre}?",
+                  nameButtonMain: "Aceptar",
+                  funtionMain: () async {
+                    onDelete!.call();
+                  },
+                  nameButtonCancel: "Cancelar",
+                  withButtonCancel: true,
+                  iconData: Icons.delete,
+                ),
+              );
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -441,13 +455,17 @@ class ItemRow {
     required DateTime initDate,
     required DateTime lastDate,
     void Function()? onRemove,
+    bool withDeleteButton = true,
   }) {
     return SizedBox(
       width: 170,
+      height: withDeleteButton ? null : 38,
       child: Card(
         color: colorCard,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: withDeleteButton
+              ? MainAxisAlignment.spaceBetween
+              : MainAxisAlignment.center,
           children: [
             const SizedBox(width: 7),
             TextStyles.standardText(
@@ -456,22 +474,23 @@ class ItemRow {
                 color: useWhiteForeground(colorCard)
                     ? Colors.white
                     : Colors.black),
-            SizedBox(
-              width: 35,
-              height: 40,
-              child: IconButton(
-                onPressed: () {
-                  onRemove!.call();
-                },
-                icon: Icon(
-                  Icons.close,
-                  size: 25,
-                  color: useWhiteForeground(colorCard)
-                      ? Colors.white
-                      : Colors.black,
+            if (withDeleteButton)
+              SizedBox(
+                width: 35,
+                height: 40,
+                child: IconButton(
+                  onPressed: () {
+                    onRemove!.call();
+                  },
+                  icon: Icon(
+                    Icons.close,
+                    size: 25,
+                    color: useWhiteForeground(colorCard)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

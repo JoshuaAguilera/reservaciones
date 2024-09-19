@@ -3,8 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/registro_tarifa_model.dart';
+import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/title_page.dart';
 import 'tarifario_calendary_view.dart';
@@ -59,6 +62,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                         height: 38,
                         child: Buttons.commonButton(
                           onPressed: () {
+                            ref
+                                .read(editTarifaProvider.notifier)
+                                .update((state) => RegistroTarifa());
                             onCreate.call();
                           },
                           text: "Crear tarifa",
@@ -66,104 +72,113 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                       ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: (selectedModeView.first)
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
                 children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: CustomWidgets.sectionButton(
-                          listModes: selectedModeCalendar,
-                          modesVisual: [],
-                          onChanged: (p0, p1) {
-                            selectedModeCalendar[p0] = p0 == p1;
-                            if (selectedModeCalendar[0]) {
-                              yearNow = DateTime.now().year;
-                            }
-                            setState(() {});
-                          },
-                          arrayStrings: filtrosRegistro,
-                          borderRadius: 12,
+                  if (selectedModeView.first)
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          child: CustomWidgets.sectionButton(
+                            listModes: selectedModeCalendar,
+                            modesVisual: [],
+                            onChanged: (p0, p1) {
+                              selectedModeCalendar[p0] = p0 == p1;
+                              if (selectedModeCalendar[0]) {
+                                yearNow = DateTime.now().year;
+                              }
+                              setState(() {});
+                            },
+                            arrayStrings: filtrosRegistro,
+                            borderRadius: 12,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      if (screenWidth < 1280 && inMenu)
-                        ElevatedButton(
-                          onPressed: () {
-                            if (targetForm) {
-                              setState(() => targetForm = !targetForm);
+                        const SizedBox(width: 10),
+                        if (screenWidth < 1280 && inMenu)
+                          ElevatedButton(
+                            onPressed: () {
+                              if (targetForm) {
+                                setState(() => targetForm = !targetForm);
 
-                              Future.delayed(Durations.extralong1,
-                                  () => setState(() => showForm = !showForm));
-                            }
+                                Future.delayed(Durations.extralong1,
+                                    () => setState(() => showForm = !showForm));
+                              }
 
-                            setState(() {
-                              target = false;
-                            });
+                              setState(() {
+                                target = false;
+                              });
 
-                            Future.delayed(
-                              700.ms,
-                              () => setState(() => inMenu = false),
-                            );
-                          },
-                          style: ButtonStyle(
-                            padding:
-                                const WidgetStatePropertyAll(EdgeInsets.zero),
-                            backgroundColor: WidgetStatePropertyAll(
-                              Theme.of(context).cardColor,
+                              Future.delayed(
+                                700.ms,
+                                () => setState(() => inMenu = false),
+                              );
+                            },
+                            style: ButtonStyle(
+                              padding:
+                                  const WidgetStatePropertyAll(EdgeInsets.zero),
+                              backgroundColor: WidgetStatePropertyAll(
+                                Theme.of(context).cardColor,
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Icon(
-                              Icons.menu_rounded,
-                              color: Theme.of(context).primaryColor,
-                              size: 30,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Icon(
+                                Icons.menu_rounded,
+                                color: Theme.of(context).primaryColor,
+                                size: 30,
+                              ),
                             ),
-                          ),
-                        )
-                            .animate(target: target ? 1 : 0)
-                            .slideX(begin: -0.2, duration: 550.ms)
-                            .fadeIn(delay: !target ? 0.ms : 400.ms),
-                    ],
-                  ),
-                  CustomWidgets.sectionButton(
-                    listModes: selectedModeView,
-                    modesVisual: modesVisual,
-                    onChanged: (p0, p1) {
-                      selectedModeView[p0] = p0 == p1;
-                      setState(() {});
-                    },
+                          )
+                              .animate(target: target ? 1 : 0)
+                              .slideX(begin: -0.2, duration: 550.ms)
+                              .fadeIn(delay: !target ? 0.ms : 400.ms),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 50,
+                    child: CustomWidgets.sectionButton(
+                      listModes: selectedModeView,
+                      modesVisual: modesVisual,
+                      onChanged: (p0, p1) {
+                        selectedModeView[p0] = p0 == p1;
+                        setState(() {});
+                      },
+                    ),
                   ),
                 ],
               ),
-              TarifarioCalendaryView(
-                target: target,
-                inMenu: inMenu,
-                sideController: widget.sideController,
-                viewWeek: selectedModeCalendar[0],
-                viewMonth: selectedModeCalendar[1],
-                viewYear: selectedModeCalendar[2],
-                yearNow: yearNow,
-                targetForm: targetForm,
-                showForm: showForm,
-                onCreate: () => onCreate.call(),
-                onTarget: () {
-                  setState(() => target = true);
+              if (selectedModeView.first)
+                TarifarioCalendaryView(
+                  target: target,
+                  inMenu: inMenu,
+                  sideController: widget.sideController,
+                  viewWeek: selectedModeCalendar[0],
+                  viewMonth: selectedModeCalendar[1],
+                  viewYear: selectedModeCalendar[2],
+                  yearNow: yearNow,
+                  targetForm: targetForm,
+                  showForm: showForm,
+                  onCreate: () => onCreate.call(),
+                  onTarget: () {
+                    setState(() => target = true);
 
-                  Future.delayed(Durations.extralong1,
-                      () => setState(() => inMenu = true));
-                },
-                onTargetForm: () {
-                  setState(() => targetForm = !targetForm);
+                    Future.delayed(Durations.extralong1,
+                        () => setState(() => inMenu = true));
+                  },
+                  onTargetForm: () {
+                    setState(() => targetForm = !targetForm);
 
-                  Future.delayed(Durations.extralong1,
-                      () => setState(() => showForm = !showForm));
-                },
-                increaseYear: () => setState(() => yearNow++),
-                reduceYear: () => setState(() => yearNow--),
-                setYear: (p0) => setState(() => yearNow = p0),
-              ),
+                    Future.delayed(Durations.extralong1,
+                        () => setState(() => showForm = !showForm));
+                  },
+                  increaseYear: () => setState(() => yearNow++),
+                  reduceYear: () => setState(() => yearNow--),
+                  setYear: (p0) => setState(() => yearNow = p0),
+                ),
+              if (selectedModeView[1])
+                TarifarioTableView(sideController: widget.sideController)
             ],
           ),
         ),
@@ -171,7 +186,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     ).animate(target: targetForm ? 0 : 1).fadeIn();
   }
 
-  void Function()? onCreate() {
+  void Function()? onCreate({bool isUpdating = false}) {
     setState(() {
       targetForm = true;
     });

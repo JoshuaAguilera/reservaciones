@@ -15,3 +15,12 @@ Widget ProgressIndicatorCustom(
     ),
   );
 }
+
+Widget ProgressIndicatorEstandar({double sizeProgressIndicator = 45}) {
+  return Center(
+    child: LoadingAnimationWidget.fourRotatingDots(
+      color: Colors.grey,
+      size: sizeProgressIndicator,
+    ),
+  );
+}

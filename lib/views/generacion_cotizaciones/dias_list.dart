@@ -159,16 +159,17 @@ class _DiasListState extends State<DiasList> {
                             : 80,
                         width: 7800,
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                              Theme.of(context).cardColor,
-                              if (brightness == Brightness.dark)
-                                const Color.fromARGB(0, 68, 68, 68),
-                              if (brightness == Brightness.light)
-                                const Color.fromARGB(0, 255, 255, 255)
-                            ],
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter)),
+                          gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).cardColor,
+                                if (brightness == Brightness.dark)
+                                  const Color.fromARGB(0, 68, 68, 68),
+                                if (brightness == Brightness.light)
+                                  const Color.fromARGB(0, 255, 255, 255)
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter),
+                        ),
                       ),
                     ),
                   ],
@@ -186,8 +187,10 @@ class _DiasListState extends State<DiasList> {
                   Table(
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     border: TableBorder(
-                      horizontalInside:
-                          BorderSide(color: Theme.of(context).dividerColor),
+                      verticalInside: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                        width: 2,
+                      ),
                     ),
                     children: [
                       TableRow(
@@ -241,6 +244,7 @@ class _DiasListState extends State<DiasList> {
                       ),
                     ],
                   ),
+                  Divider(color: Theme.of(context).primaryColorLight),
                   SizedBox(
                     height: Utility.limitHeightList(numDays, 20, 450),
                     child: SingleChildScrollView(
