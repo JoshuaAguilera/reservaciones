@@ -342,23 +342,24 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                 ),
                               ),
                               FormWidgets.inputSwitch(
-                                  value: inAllPeriod,
-                                  context: context,
-                                  activeColor: colorTarifa,
-                                  onChanged: (p0) => setState(() {
-                                        inAllPeriod = !inAllPeriod;
-                                        selectedDayWeek.clear();
-                                        selectedDayWeek.addAll([
-                                          true,
-                                          inAllPeriod,
-                                          inAllPeriod,
-                                          inAllPeriod,
-                                          inAllPeriod,
-                                          inAllPeriod,
-                                          inAllPeriod
-                                        ]);
-                                      }),
-                                  name: "Aplicar en todo el periodo"),
+                                value: inAllPeriod,
+                                context: context,
+                                activeColor: colorTarifa,
+                                onChanged: (p0) => setState(() {
+                                  inAllPeriod = !inAllPeriod;
+                                  selectedDayWeek.clear();
+                                  selectedDayWeek.addAll([
+                                    true,
+                                    inAllPeriod,
+                                    inAllPeriod,
+                                    inAllPeriod,
+                                    inAllPeriod,
+                                    inAllPeriod,
+                                    inAllPeriod
+                                  ]);
+                                }),
+                                name: "Aplicar en toda la semana",
+                              ),
                             ],
                           ),
                           Padding(
@@ -518,9 +519,11 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                   onChanged: (p0) {
                                     bar1Controller.text =
                                         (Utility.parseDoubleText(p0) + 1)
+                                            .round()
                                             .toString();
                                     bar2Controller.text =
                                         (Utility.parseDoubleText(p0) + 2)
+                                            .round()
                                             .toString();
                                     setState(() {});
                                   },
@@ -533,15 +536,6 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                   context: context,
                                   estanciaController: estanciaBar1Controller,
                                   promocionController: bar1Controller,
-                                  onChanged: (p0) {
-                                    bar1Controller.text =
-                                        (Utility.parseDoubleText(p0) + 1)
-                                            .toString();
-                                    bar2Controller.text =
-                                        (Utility.parseDoubleText(p0) + 2)
-                                            .toString();
-                                    setState(() {});
-                                  },
                                 ),
                               ),
                               SizedBox(
@@ -551,15 +545,6 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                   context: context,
                                   estanciaController: estanciaBar2Controller,
                                   promocionController: bar2Controller,
-                                  onChanged: (p0) {
-                                    bar1Controller.text =
-                                        (Utility.parseDoubleText(p0) + 1)
-                                            .toString();
-                                    bar2Controller.text =
-                                        (Utility.parseDoubleText(p0) + 2)
-                                            .toString();
-                                    setState(() {});
-                                  },
                                 ),
                               ),
                             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../utils/helpers/web_colors.dart';
@@ -312,6 +313,123 @@ class CustomWidgets {
           ),
         );
       },
+    );
+  }
+
+  static Widget tableTarifasTemporadas({
+    required Color colorBorder,
+    required Color backgroundColor,
+    required TextEditingController adults1a2,
+    required TextEditingController adults3,
+    required TextEditingController adults4,
+    required TextEditingController paxAdic,
+    required TextEditingController minor7a12,
+    required TextEditingController promocionController,
+    required TextEditingController bar1Controller,
+    required TextEditingController bar2Controller,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                border: TableBorder(
+                  // horizontalInside: BorderSide(color: colorBorder),
+                  verticalInside:
+                      BorderSide(color: colorBorder, strokeAlign: 0.5),
+                ),
+                columnWidths: const {
+                  0: FractionColumnWidth(0.22),
+                  1: FractionColumnWidth(0.13),
+                  2: FractionColumnWidth(0.13),
+                  3: FractionColumnWidth(0.13),
+                  4: FractionColumnWidth(0.13),
+                  5: FractionColumnWidth(0.13),
+                  6: FractionColumnWidth(0.13),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      SizedBox(
+                        height: 25,
+                        child: Center(
+                          child: SizedBox(
+                            child: TextStyles.standardText(
+                              text: "PAX",
+                              color: useWhiteForeground(backgroundColor)
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "SGL/DBL",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "TPL",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "CPLE",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "MEN 7-12",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "PAX ADIC",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      Center(
+                        child: TextStyles.standardText(
+                          text: "MEN 0-6",
+                          color: useWhiteForeground(backgroundColor)
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
