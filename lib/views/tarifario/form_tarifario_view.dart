@@ -14,6 +14,7 @@ import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -132,6 +133,8 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
       colorTarifa = actualTarifa.color!;
       initiallyExpanded = true;
       oldRegister = actualTarifa;
+      autoCalculationVPM = false;
+      autoCalculationVR = false;
 
       if (actualTarifa.periodos!.isNotEmpty) {
         selectedDayWeek[0] = actualTarifa.periodos!.first.enLunes ?? false;
@@ -168,15 +171,16 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
           actualTarifa.tarifas!.first.tarifaAdultoSGLoDBL!.round().toString();
       paxAdicVRController.text =
           actualTarifa.tarifas!.first.tarifaPaxAdicional!.round().toString();
-      adults3VRController.text = (actualTarifa.tarifas!.first.tarifaAdultoTPL ??
-              Utility.calculateRate(
-                  adults1_2VRController, paxAdicVRController, 1))
-          .toString();
+      adults3VRController.text =
+          actualTarifa.tarifas!.first.tarifaAdultoTPL != null
+              ? actualTarifa.tarifas!.first.tarifaAdultoTPL!.round().toString()
+              : Utility.calculateRate(
+                  adults1_2VRController, paxAdicVRController, 1);
       adults4VRController.text =
-          (actualTarifa.tarifas!.first.tarifaAdultoCPLE ??
-                  Utility.calculateRate(
-                      adults1_2VRController, paxAdicVRController, 2))
-              .toString();
+          actualTarifa.tarifas!.first.tarifaAdultoCPLE != null
+              ? actualTarifa.tarifas!.first.tarifaAdultoCPLE!.round().toString()
+              : Utility.calculateRate(
+                  adults1_2VRController, paxAdicVRController, 2);
       minors7_12VRController.text =
           actualTarifa.tarifas!.first.tarifaMenores7a12!.round().toString();
 
@@ -184,14 +188,16 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
           actualTarifa.tarifas![1].tarifaAdultoSGLoDBL!.round().toString();
       paxAdicVPMController.text =
           actualTarifa.tarifas![1].tarifaPaxAdicional!.round().toString();
-      adults3VPMController.text = (actualTarifa.tarifas![1].tarifaAdultoTPL ??
-              Utility.calculateRate(
-                  adults1_2VPMController, paxAdicVPMController, 1))
-          .toString();
-      adults4VPMController.text = (actualTarifa.tarifas![1].tarifaAdultoCPLE ??
-              Utility.calculateRate(
-                  adults1_2VPMController, paxAdicVPMController, 2))
-          .toString();
+      adults3VPMController.text =
+          actualTarifa.tarifas![1].tarifaAdultoTPL != null
+              ? actualTarifa.tarifas![1].tarifaAdultoTPL!.round().toString()
+              : Utility.calculateRate(
+                  adults1_2VPMController, paxAdicVPMController, 1);
+      adults4VPMController.text =
+          actualTarifa.tarifas![1].tarifaAdultoCPLE != null
+              ? actualTarifa.tarifas![1].tarifaAdultoCPLE!.round().toString()
+              : Utility.calculateRate(
+                  adults1_2VPMController, paxAdicVPMController, 2);
       minors7_12VPMController.text =
           actualTarifa.tarifas![1].tarifaMenores7a12!.round().toString();
 
@@ -429,7 +435,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                         context: context,
                                         title: "Concurrencia de periodo",
                                         message:
-                                            "Ya existe un periodo que contempla estas fechas de implementación",
+                                            "Ya existe un periodo que contempla o abarca estas fechas de implementación",
                                         type: "alert",
                                       );
                                     }
@@ -1054,9 +1060,19 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
       List<Periodo> periodos, String fechaIni, String fechaSal) {
     bool isRepeat = false;
 
-    isRepeat = periodos.any((element) =>
-        (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
-            element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) >= 0));
+    isRepeat = periodos.any(
+      (element) =>
+          (element.fechaFinal!.isSameDate(DateTime.parse(fechaIni))) ||
+          (element.fechaFinal!.isSameDate(DateTime.parse(fechaSal))) ||
+          (element.fechaInicial!.isSameDate(DateTime.parse(fechaIni))) ||
+          (element.fechaInicial!.isSameDate(DateTime.parse(fechaSal))) ||
+          (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) > 0 &&
+              element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
+          // (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
+          //     element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
+          (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
+              element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) >= 0),
+    );
 
     return isRepeat;
   }

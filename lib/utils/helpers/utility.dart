@@ -1032,11 +1032,6 @@ class Utility {
     DateTime nowDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-    // if (nowDate.compareTo(nowPeriod.fechaInicial!) < 0 &&
-    //     nowDate.compareTo(nowPeriod.fechaFinal!) < 0) {
-    //   opacity = true;
-    // }
-
     if (nowDate.compareTo(nowPeriod.fechaInicial!) > 0 &&
         nowDate.compareTo(nowPeriod.fechaFinal!) > 0) {
       opacity = true;
@@ -1174,5 +1169,23 @@ class Utility {
     }
 
     return periodos;
+  }
+
+  static String defineStatusTariff(List<PeriodoData>? periodos) {
+    String status = "En proceso";
+    int lenght = periodos!.length;
+    int count = 0;
+
+    for (var element in periodos) {
+      if (getRevisedActually(element)) {
+        count++;
+      }
+    }
+
+    if (count >= lenght) {
+      status = "Terminada";
+    }
+
+    return status;
   }
 }

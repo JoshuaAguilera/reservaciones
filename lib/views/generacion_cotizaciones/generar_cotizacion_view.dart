@@ -220,11 +220,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     habitaciones: habitaciones,
                                   )
                                     .animate(target: targetHabitaciones)
-                                    .slideX(
-                                        duration: 900.ms,
-                                        begin: 0.5,
-                                        curve: Curves.easeInOutBack)
-                                    .fadeIn()
+                                    // .slideX(
+                                    //     duration: 900.ms,
+                                    //     begin: 0.5,
+                                    //     curve: Curves.easeInOutBack)
+                                    .fadeIn(duration: 500.ms)
                                 : HabitacionForm(
                                     cancelarFunction: () {
                                       setState(
@@ -242,114 +242,114 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     },
                                   )
                                     .animate(target: targetDetalleHabitacion)
-                                    .slideX(
-                                        duration: 900.ms,
-                                        begin: 0.5,
-                                        curve: Curves.easeInOutBack)
-                                    .fadeIn(),
+                                    // .slideX(
+                                    //     duration: 900.ms,
+                                    //     begin: 0.5,
+                                    //     curve: Curves.easeInOutBack)
+                                    .fadeIn(duration: 850.ms),
                           ),
                           const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 4.0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: SizedBox(
-                                width: 200,
-                                height: 40,
-                                child: Buttons.commonButton(
-                                        onPressed: () async {
-                                          if (_formKeyCotizacion.currentState!
-                                              .validate()) {
-                                            if (habitaciones.isEmpty &&
-                                                dropdownValue ==
-                                                    'Cotización Individual') {
-                                              showSnackBar(
-                                                type: "alert",
-                                                context: context,
-                                                title:
-                                                    "Cotizaciones no registradas",
-                                                message:
-                                                    "Se requiere al menos una cotización",
-                                              );
-                                              return;
-                                            }
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 4.0),
+                          //   child: Align(
+                          //     alignment: Alignment.centerLeft,
+                          //     child: SizedBox(
+                          //       width: 200,
+                          //       height: 40,
+                          //       child: Buttons.commonButton(
+                          //               onPressed: () async {
+                          //                 if (_formKeyCotizacion.currentState!
+                          //                     .validate()) {
+                          //                   if (habitaciones.isEmpty &&
+                          //                       dropdownValue ==
+                          //                           'Cotización Individual') {
+                          //                     showSnackBar(
+                          //                       type: "alert",
+                          //                       context: context,
+                          //                       title:
+                          //                           "Cotizaciones no registradas",
+                          //                       message:
+                          //                           "Se requiere al menos una cotización",
+                          //                     );
+                          //                     return;
+                          //                   }
 
-                                            setState(() => isLoading = true);
+                          //                   setState(() => isLoading = true);
 
-                                            if (!(await CotizacionService()
-                                                .createCotizacion(
-                                                    cotizacion: comprobante,
-                                                    habitaciones:
-                                                        habitaciones.isNotEmpty
-                                                            ? habitaciones
-                                                            : null,
-                                                    folio: folio,
-                                                    prefijoInit: prefijoInit,
-                                                    isQuoteGroup: dropdownValue ==
-                                                        'Cotización Grupos'))) {
-                                              if (!context.mounted) return;
-                                              showSnackBar(
-                                                type: "danger",
-                                                context: context,
-                                                title:
-                                                    "Error al registrar la cotizacion",
-                                                message:
-                                                    "Se produjo un error al insertar la nueva cotización.",
-                                              );
-                                              return;
-                                            }
+                          //                   if (!(await CotizacionService()
+                          //                       .createCotizacion(
+                          //                           cotizacion: comprobante,
+                          //                           habitaciones:
+                          //                               habitaciones.isNotEmpty
+                          //                                   ? habitaciones
+                          //                                   : null,
+                          //                           folio: folio,
+                          //                           prefijoInit: prefijoInit,
+                          //                           isQuoteGroup: dropdownValue ==
+                          //                               'Cotización Grupos'))) {
+                          //                     if (!context.mounted) return;
+                          //                     showSnackBar(
+                          //                       type: "danger",
+                          //                       context: context,
+                          //                       title:
+                          //                           "Error al registrar la cotizacion",
+                          //                       message:
+                          //                           "Se produjo un error al insertar la nueva cotización.",
+                          //                     );
+                          //                     return;
+                          //                   }
 
-                                            receiptQuotePresent = comprobante;
-                                            receiptQuotePresent.folioPrincipal =
-                                                folio;
-                                            quotesIndPresent = habitaciones;
+                          //                   receiptQuotePresent = comprobante;
+                          //                   receiptQuotePresent.folioPrincipal =
+                          //                       folio;
+                          //                   quotesIndPresent = habitaciones;
 
-                                            comprobantePDF = await ref
-                                                .watch(HabitacionProvider
-                                                    .provider.notifier)
-                                                .generarComprobante(
-                                                    comprobante);
+                          //                   comprobantePDF = await ref
+                          //                       .watch(HabitacionProvider
+                          //                           .provider.notifier)
+                          //                       .generarComprobante(
+                          //                           comprobante);
 
-                                            ref
-                                                .read(
-                                                    cotizacionProvider.notifier)
-                                                .update(
-                                                    (state) => Cotizacion());
-                                            ref
-                                                .watch(HabitacionProvider
-                                                    .provider.notifier)
-                                                .clear();
+                          //                   ref
+                          //                       .read(
+                          //                           cotizacionProvider.notifier)
+                          //                       .update(
+                          //                           (state) => Cotizacion());
+                          //                   ref
+                          //                       .watch(HabitacionProvider
+                          //                           .provider.notifier)
+                          //                       .clear();
 
-                                            ref
-                                                .read(uniqueFolioProvider
-                                                    .notifier)
-                                                .update((state) => UniqueKey()
-                                                    .hashCode
-                                                    .toString());
+                          //                   ref
+                          //                       .read(uniqueFolioProvider
+                          //                           .notifier)
+                          //                       .update((state) => UniqueKey()
+                          //                           .hashCode
+                          //                           .toString());
 
-                                            ref
-                                                .read(changeProvider.notifier)
-                                                .update((state) =>
-                                                    UniqueKey().hashCode);
+                          //                   ref
+                          //                       .read(changeProvider.notifier)
+                          //                       .update((state) =>
+                          //                           UniqueKey().hashCode);
 
-                                            if (!context.mounted) return;
-                                            Future.delayed(
-                                                Durations.long2,
-                                                () => setState(
-                                                    () => isFinish = true));
-                                          }
-                                        },
-                                        text: "Generar cotización",
-                                        color: DesktopColors.prussianBlue)
-                                    .animate()
-                                    .fadeIn(
-                                      delay: const Duration(
-                                        milliseconds: 1000,
-                                      ),
-                                    ),
-                              ),
-                            ),
-                          ),
+                          //                   if (!context.mounted) return;
+                          //                   Future.delayed(
+                          //                       Durations.long2,
+                          //                       () => setState(
+                          //                           () => isFinish = true));
+                          //                 }
+                          //               },
+                          //               text: "Generar cotización",
+                          //               color: DesktopColors.prussianBlue)
+                          //           .animate()
+                          //           .fadeIn(
+                          //             delay: const Duration(
+                          //               milliseconds: 1000,
+                          //             ),
+                          //           ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     if (isLoading && !isFinish)

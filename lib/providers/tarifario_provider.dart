@@ -27,3 +27,11 @@ final changeTarifasProvider = StateProvider<int>((ref) {
 final changeTarifasListProvider = StateProvider<int>((ref) {
   return 0;
 });
+
+final selectedModeViewProvider = StateProvider<List<bool>>((ref) {
+  return <bool>[
+    true,
+    false,
+    false,
+  ];
+});

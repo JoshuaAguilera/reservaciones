@@ -1,20 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
 import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
+import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/form_widgets.dart';
 import '../../widgets/item_row.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
-  const TarifarioTableView({super.key, required this.sideController});
+  const TarifarioTableView({
+    super.key,
+    required this.sideController,
+    required this.onEdit,
+    required this.onDelete,
+  });
   final SidebarXController sideController;
+  final void Function(RegistroTarifa)? onEdit;
+  final void Function(RegistroTarifa)? onDelete;
 
   @override
   _TarifarioTableState createState() => _TarifarioTableState();
@@ -41,16 +50,16 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
               ),
             ),
             columnWidths: {
-              0: FractionColumnWidth(0.05),
-              1: FractionColumnWidth(0.15),
-              2: FractionColumnWidth(.18),
-              3: (screenWidth > 1505)
-                  ? FractionColumnWidth(0.12)
-                  : FractionColumnWidth(.35),
-              4: (screenWidth > 1505)
-                  ? FractionColumnWidth(.35)
-                  : FractionColumnWidth(.15),
-              if (screenWidth > 1505) 5: FractionColumnWidth(0.15),
+              0: const FractionColumnWidth(0.05),
+              1: const FractionColumnWidth(0.1),
+              2: const FractionColumnWidth(.18),
+              3: (screenWidth > 1525)
+                  ? const FractionColumnWidth(0.1)
+                  : const FractionColumnWidth(.47),
+              4: (screenWidth > 1525)
+                  ? const FractionColumnWidth(.41)
+                  : const FractionColumnWidth(.2),
+              if (screenWidth > 1525) 5: const FractionColumnWidth(0.15),
             },
             children: [
               TableRow(
@@ -66,11 +75,14 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                     ),
                   ),
                   Center(
-                    child: TextStyles.standardText(
-                        text: "Fecha de registro",
-                        isBold: true,
-                        color: Theme.of(context).primaryColor,
-                        size: 14),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextStyles.standardText(
+                          text: "Fecha de registro",
+                          isBold: true,
+                          color: Theme.of(context).primaryColor,
+                          size: 14),
+                    ),
                   ),
                   Center(
                     child: TextStyles.standardText(
@@ -79,10 +91,10 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         color: Theme.of(context).primaryColor,
                         size: 14),
                   ),
-                  if (screenWidth > 1505)
+                  if (screenWidth > 1525)
                     Center(
                       child: TextStyles.standardText(
-                          text: "Color ident.",
+                          text: "Estatus",
                           isBold: true,
                           color: Theme.of(context).primaryColor,
                           size: 14),
@@ -122,16 +134,17 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                           ),
                         ),
                         columnWidths: {
-                          0: FractionColumnWidth(0.05),
-                          1: FractionColumnWidth(0.15),
-                          2: FractionColumnWidth(.18),
-                          3: (screenWidth > 1505)
-                              ? FractionColumnWidth(0.12)
-                              : FractionColumnWidth(.35),
-                          4: (screenWidth > 1505)
-                              ? FractionColumnWidth(.35)
-                              : FractionColumnWidth(.15),
-                          if (screenWidth > 1505) 5: FractionColumnWidth(0.15),
+                          0: const FractionColumnWidth(0.05),
+                          1: const FractionColumnWidth(0.1),
+                          2: const FractionColumnWidth(.18),
+                          3: (screenWidth > 1525)
+                              ? const FractionColumnWidth(0.1)
+                              : const FractionColumnWidth(.47),
+                          4: (screenWidth > 1525)
+                              ? const FractionColumnWidth(.41)
+                              : const FractionColumnWidth(.2),
+                          if (screenWidth > 1525)
+                            5: const FractionColumnWidth(0.15),
                         },
                         children: [
                           for (var element in list)
@@ -162,20 +175,15 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                                       color: Theme.of(context).primaryColor,
                                       size: 14),
                                 ),
-                                if (screenWidth > 1505)
+                                if (screenWidth > 1525)
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: AbsorbPointer(
-                                        absorbing: true,
-                                        child: FormWidgets.inputColor(
-                                          nameInput: "",
-                                          primaryColor: element.color!,
-                                          colorText:
-                                              Theme.of(context).primaryColor,
-                                          onChangedColor: (p0) {},
-                                        ),
-                                      ),
+                                      child: TextStyles.standardText(
+                                          text: Utility.defineStatusTariff(
+                                              element.periodos),
+                                          color: Theme.of(context).primaryColor,
+                                          size: 14),
                                     ),
                                   ),
                                 Center(
@@ -184,6 +192,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                                         const EdgeInsets.symmetric(vertical: 5),
                                     child: SizedBox(
                                       child: Wrap(
+                                        alignment: WrapAlignment.center,
                                         children: [
                                           for (var elementInt
                                               in element.periodos ?? [])
@@ -208,17 +217,19 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      if (screenWidth > 1400)
+                                      if (screenWidth > 1300)
                                         Expanded(
                                           child: Buttons.commonButton(
-                                            onPressed: () {},
+                                            onPressed: () =>
+                                                widget.onEdit!.call(element),
                                             text: "Editar",
                                             color: DesktopColors.turquezaOscure,
                                           ),
                                         )
                                       else
                                         IconButton(
-                                          onPressed: () {},
+                                          onPressed: () =>
+                                              widget.onEdit!.call(element),
                                           tooltip: "Editar",
                                           icon: Icon(
                                             CupertinoIcons.pencil,
@@ -227,22 +238,24 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                                           ),
                                         ),
                                       const SizedBox(width: 10),
-                                      if (screenWidth > 1400)
+                                      if (screenWidth > 1300)
                                         Expanded(
                                           child: Buttons.commonButton(
-                                            onPressed: () {},
+                                            onPressed: () =>
+                                                widget.onDelete!.call(element),
                                             text: "Eliminar",
-                                            color: Colors.red[900],
+                                            color: DesktopColors.ceruleanOscure,
                                           ),
                                         )
                                       else
                                         IconButton(
-                                          onPressed: () {},
+                                          onPressed: () =>
+                                              widget.onDelete!.call(element),
                                           tooltip: "Eliminar",
                                           icon: Icon(
                                             CupertinoIcons.delete,
                                             size: 30,
-                                            color: Colors.red[900],
+                                            color: DesktopColors.ceruleanOscure,
                                           ),
                                         ),
                                     ],
@@ -279,6 +292,6 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: 750.ms);
   }
 }

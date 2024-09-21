@@ -299,7 +299,7 @@ class ItemRow {
       leading: Checkbox(
         value: registroTarifa!.isSelected,
         onChanged: onChangedSelect,
-        activeColor: registroTarifa?.color ?? Colors.amber,
+        activeColor: registroTarifa.color ?? Colors.amber,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(3),
@@ -360,6 +360,182 @@ class ItemRow {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  static Widget tarifaCheckListItemRow(
+      {required RegistroTarifa registro,
+      required double screenWidth,
+      required void Function(RegistroTarifa)? onEdit,
+      required void Function(RegistroTarifa)? onDelete}) {
+    return SizedBox(
+      width: 170,
+      child: Card(
+        elevation: 5,
+        color: registro.color,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextStyles.standardText(
+                  text: registro.nombre ?? '',
+                  isBold: true,
+                  color: useWhiteForeground(registro.color!)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                TextStyles.standardText(
+                  text: Utility.defineStatusTariff(registro.periodos),
+                  color: useWhiteForeground(registro.color!)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ],
+            ),
+            trailing: Wrap(
+              children: [
+                IconButton(
+                  onPressed: () => onEdit!.call(registro),
+                  tooltip: "Editar",
+                  icon: Icon(
+                    Icons.edit,
+                    size: 30,
+                    color: useWhiteForeground(registro.color!)
+                        ? const Color.fromARGB(255, 211, 211, 211)
+                        : const Color.fromARGB(255, 52, 52, 52),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  onPressed: () => onDelete!.call(registro),
+                  tooltip: "Eliminar",
+                  icon: Icon(
+                    CupertinoIcons.delete,
+                    size: 30,
+                    color: useWhiteForeground(registro.color!)
+                        ? const Color.fromARGB(255, 211, 211, 211)
+                        : const Color.fromARGB(255, 52, 52, 52),
+                  ),
+                ),
+              ],
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextStyles.TextAsociative(
+                  "Fecha de registro: ",
+                  Utility.getCompleteDate(data: registro.fechaRegistro),
+                  color: useWhiteForeground(registro.color!)
+                      ? Colors.white
+                      : Colors.black,
+                  size: 13,
+                  boldInversed: true,
+                ),
+                Wrap(
+                  spacing: 15,
+                  runSpacing: 10,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextStyles.standardText(
+                            text: "Tarifas Vista Reserva:",
+                            color: useWhiteForeground(registro.color!)
+                                ? Colors.white
+                                : Colors.black),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 7,
+                          runSpacing: 5,
+                          children: [
+                            tariffIndItemRow(
+                                "SGL/DBL",
+                                registro.tarifas!.first.tarifaAdultoSGLoDBL!,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "TPL",
+                                registro.tarifas!.first.tarifaAdultoTPL,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "CPLE",
+                                registro.tarifas!.first.tarifaAdultoCPLE,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "MEN 7-12",
+                                registro.tarifas!.first.tarifaMenores7a12!,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "PAX ADIC",
+                                registro.tarifas!.first.tarifaPaxAdicional!,
+                                registro.color!),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextStyles.standardText(
+                            text: "Tarifas Vista Parcial al Mar:",
+                            color: useWhiteForeground(registro.color!)
+                                ? Colors.white
+                                : Colors.black),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 7,
+                          runSpacing: 5,
+                          children: [
+                            tariffIndItemRow(
+                                "SGL/DBL",
+                                registro.tarifas![1].tarifaAdultoSGLoDBL!,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "TPL",
+                                registro.tarifas![1].tarifaAdultoTPL,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "CPLE",
+                                registro.tarifas![1].tarifaAdultoCPLE,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "MEN 7-12",
+                                registro.tarifas![1].tarifaMenores7a12!,
+                                registro.color!),
+                            tariffIndItemRow(
+                                "PAX ADIC",
+                                registro.tarifas![1].tarifaPaxAdicional!,
+                                registro.color!),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget tariffIndItemRow(String tipo, double? tarifa, Color color) {
+    return Container(
+      width: 135,
+      padding: const EdgeInsets.all(2.5),
+      decoration: BoxDecoration(
+        border: Border.all(
+            width: 1,
+            color: useWhiteForeground(color) ? Colors.white : Colors.black),
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
+      ),
+      child: Center(
+        child: TextStyles.standardText(
+            text: "$tipo: ${Utility.formatterNumber(tarifa ?? 0)}",
+            color: useWhiteForeground(color) ? Colors.white : Colors.black),
       ),
     );
   }

@@ -3,13 +3,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
+import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
+import '../../ui/show_snackbar.dart';
 import '../../ui/title_page.dart';
+import '../../widgets/dialogs.dart';
 import 'tarifario_calendary_view.dart';
 
 class TarifarioView extends ConsumerStatefulWidget {
@@ -28,12 +32,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   bool inMenu = false;
   int yearNow = DateTime.now().year;
 
-  final List<bool> selectedModeView = <bool>[
-    true,
-    false,
-    false,
-  ];
-
   final List<bool> selectedModeCalendar = <bool>[
     true,
     false,
@@ -43,6 +41,56 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final modeViewProvider = ref.watch(selectedModeViewProvider);
+
+    void onEdit(RegistroTarifa register) {
+      ref.read(editTarifaProvider.notifier).update((state) => register);
+      onCreate.call();
+    }
+
+    void onDelete(RegistroTarifa register) {
+      showDialog(
+        context: context,
+        builder: (context) => Dialogs.customAlertDialog(
+          context: context,
+          title: "Eliminar tarifa",
+          content: "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
+          nameButtonMain: "Aceptar",
+          funtionMain: () async {
+            bool isSaves = await TarifaService().deleteTarifaRack(register);
+
+            if (isSaves) {
+              showSnackBar(
+                context: context,
+                title: "Tarifa Eliminada",
+                message: "La tarifa fue eliminada exitosamente.",
+                type: "success",
+                iconCustom: Icons.delete,
+              );
+
+              Future.delayed(
+                500.ms,
+                () => ref
+                    .read(changeTarifasProvider.notifier)
+                    .update((state) => UniqueKey().hashCode),
+              );
+            } else {
+              showSnackBar(
+                context: context,
+                title: "Error al eliminar tarifa",
+                message:
+                    "La tarifa no fue eliminada debido a un error inesperado.",
+                type: "success",
+                iconCustom: Icons.delete,
+              );
+            }
+          },
+          nameButtonCancel: "Cancelar",
+          withButtonCancel: true,
+          iconData: Icons.delete,
+        ),
+      );
+    }
 
     return Scaffold(
       body: Padding(
@@ -72,11 +120,11 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                       ),
               ),
               Row(
-                mainAxisAlignment: (selectedModeView.first)
+                mainAxisAlignment: (modeViewProvider.first)
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.end,
                 children: [
-                  if (selectedModeView.first)
+                  if (modeViewProvider.first)
                     Row(
                       children: [
                         SizedBox(
@@ -139,17 +187,17 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   SizedBox(
                     height: 50,
                     child: CustomWidgets.sectionButton(
-                      listModes: selectedModeView,
+                      listModes: modeViewProvider,
                       modesVisual: modesVisual,
                       onChanged: (p0, p1) {
-                        selectedModeView[p0] = p0 == p1;
+                        modeViewProvider[p0] = p0 == p1;
                         setState(() {});
                       },
                     ),
                   ),
                 ],
               ),
-              if (selectedModeView.first)
+              if (modeViewProvider.first)
                 TarifarioCalendaryView(
                   target: target,
                   inMenu: inMenu,
@@ -177,8 +225,18 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   reduceYear: () => setState(() => yearNow--),
                   setYear: (p0) => setState(() => yearNow = p0),
                 ),
-              if (selectedModeView[1])
-                TarifarioTableView(sideController: widget.sideController)
+              if (modeViewProvider[1])
+                TarifarioTableView(
+                  sideController: widget.sideController,
+                  onEdit: (register) => onEdit(register),
+                  onDelete: (register) => onDelete(register),
+                ),
+              if (modeViewProvider[2])
+                TarifarioChecklistView(
+                  sideController: widget.sideController,
+                  onEdit: (register) => onEdit(register),
+                  onDelete: (register) => onDelete(register),
+                ),
             ],
           ),
         ),
