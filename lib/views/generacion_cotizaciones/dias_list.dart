@@ -69,116 +69,123 @@ class _DiasListState extends State<DiasList> {
           ),
           if (widget.isCalendary &&
               Utility.revisedLimitDateTime(checkIn, checkOut))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
+            Card(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 45),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: screenWidth < 1100 ? double.infinity : 1100,
-                      child: GridView.count(
-                        crossAxisCount: 7,
-                        shrinkWrap: true,
-                        childAspectRatio: 0.9,
-                        children: [
-                          for (var ink = 0;
-                              ink < (numDays + extraDays + daysMonth);
-                              ink++)
-                            if ((checkIn.day < checkOut.day) &&
-                                ink >
-                                    (checkIn.day -
-                                        checkIn.weekday -
-                                        (7 - dayWeekInit + 2)) &&
-                                ink <
-                                    (checkOut.day +
-                                        (7 - checkOut.weekday) +
-                                        ((checkIn.day >= 1 &&
-                                                checkIn.day <=
-                                                    (7 - dayWeekInit + 1))
-                                            ? (9 + (dayWeekInit - 3)) + 7
-                                            : (9 + (dayWeekInit - 3)))))
-                              ItemRow.dayRateRow(
-                                context: context,
-                                day: (checkIn.day >= 1 &&
-                                        checkIn.day <= (7 - dayWeekInit + 1))
-                                    ? ink - 7
-                                    : ink,
-                                initDay: dayWeekInit,
-                                lastDay: daysMonth,
-                                dayCheckIn: dayCheckIn,
-                                dayCheckOut: dayCheckOut,
-                                daysMonthAfter: daysMonthAfter,
-                                numMonthInit: checkIn.month,
-                              )
-                            else if ((checkIn.day > checkOut.day) &&
-                                ink > (checkIn.day - checkIn.weekday - 5) &&
-                                ink <
-                                    ((checkOut.day + daysMonth) +
-                                        (7 - checkOut.weekday) +
-                                        10))
-                              ItemRow.dayRateRow(
-                                context: context,
-                                day: ink,
-                                initDay: dayWeekInit,
-                                lastDay: daysMonth,
-                                dayCheckIn: dayCheckIn,
-                                dayCheckOut: dayCheckOut,
-                                daysMonthAfter: daysMonthAfter,
-                                dayWeekLater: 7 - checkOut.weekday,
-                                dayMonthLater: daysMonthLater,
-                                numMonthInit: checkIn.month,
-                              )
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 0,
-                      child: Container(
-                        height: (MediaQuery.of(context).size.width > 1080)
-                            ? 135
-                            : 80,
-                        width: 7800,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                              Theme.of(context).cardColor,
-                              if (brightness == Brightness.dark)
-                                const Color.fromARGB(0, 68, 68, 68),
-                              if (brightness == Brightness.light)
-                                const Color.fromARGB(0, 255, 255, 255)
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: screenWidth < 1100 ? double.infinity : 1100,
+                          child: GridView.count(
+                            crossAxisCount: 7,
+                            shrinkWrap: true,
+                            childAspectRatio: 0.9,
+                            children: [
+                              for (var ink = 0;
+                                  ink < (numDays + extraDays + daysMonth);
+                                  ink++)
+                                if ((checkIn.day < checkOut.day) &&
+                                    ink >
+                                        (checkIn.day -
+                                            checkIn.weekday -
+                                            (7 - dayWeekInit + 2)) &&
+                                    ink <
+                                        (checkOut.day +
+                                            (7 - checkOut.weekday) +
+                                            ((checkIn.day >= 1 &&
+                                                    checkIn.day <=
+                                                        (7 - dayWeekInit + 1))
+                                                ? (9 + (dayWeekInit - 3)) + 7
+                                                : (9 + (dayWeekInit - 3)))))
+                                  ItemRow.dayRateRow(
+                                    context: context,
+                                    day: (checkIn.day >= 1 &&
+                                            checkIn.day <=
+                                                (7 - dayWeekInit + 1))
+                                        ? ink - 7
+                                        : ink,
+                                    initDay: dayWeekInit,
+                                    lastDay: daysMonth,
+                                    dayCheckIn: dayCheckIn,
+                                    dayCheckOut: dayCheckOut,
+                                    daysMonthAfter: daysMonthAfter,
+                                    numMonthInit: checkIn.month,
+                                  )
+                                else if ((checkIn.day > checkOut.day) &&
+                                    ink > (checkIn.day - checkIn.weekday - 5) &&
+                                    ink <
+                                        ((checkOut.day + daysMonth) +
+                                            (7 - checkOut.weekday) +
+                                            10))
+                                  ItemRow.dayRateRow(
+                                    context: context,
+                                    day: ink,
+                                    initDay: dayWeekInit,
+                                    lastDay: daysMonth,
+                                    dayCheckIn: dayCheckIn,
+                                    dayCheckOut: dayCheckOut,
+                                    daysMonthAfter: daysMonthAfter,
+                                    dayWeekLater: 7 - checkOut.weekday,
+                                    dayMonthLater: daysMonthLater,
+                                    numMonthInit: checkIn.month,
+                                  )
                             ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter)),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        height: (MediaQuery.of(context).size.width > 1080)
-                            ? 135
-                            : 80,
-                        width: 7800,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).cardColor,
-                                if (brightness == Brightness.dark)
-                                  const Color.fromARGB(0, 68, 68, 68),
-                                if (brightness == Brightness.light)
-                                  const Color.fromARGB(0, 255, 255, 255)
-                              ],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          top: 0,
+                          child: Container(
+                            height: (MediaQuery.of(context).size.width > 1080)
+                                ? 135
+                                : 80,
+                            width: 7800,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                  Theme.of(context).cardColor,
+                                  if (brightness == Brightness.dark)
+                                    const Color.fromARGB(0, 68, 68, 68),
+                                  if (brightness == Brightness.light)
+                                    const Color.fromARGB(0, 255, 255, 255)
+                                ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter)),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            height: (MediaQuery.of(context).size.width > 1080)
+                                ? 135
+                                : 80,
+                            width: 7800,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).cardColor,
+                                    if (brightness == Brightness.dark)
+                                      const Color.fromARGB(0, 68, 68, 68),
+                                    if (brightness == Brightness.light)
+                                      const Color.fromARGB(0, 255, 255, 255)
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ],
-            )
-                .animate()
-                .slideY(begin: 2, duration: 500.ms)
-                .fadeIn(delay: 400.ms),
+                )
+                    .animate()
+                    .slideY(begin: 2, duration: 500.ms)
+                    .fadeIn(delay: 400.ms),
+              ),
+            ),
           if (widget.isTable)
             Padding(
               padding: const EdgeInsets.only(top: 15),

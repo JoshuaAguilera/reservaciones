@@ -8,6 +8,7 @@ import '../utils/helpers/web_colors.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/text_styles.dart';
 import '../widgets/textformfield_custom.dart';
+import 'buttons.dart';
 
 class CustomWidgets {
   static Widget containerCard(
@@ -430,6 +431,61 @@ class CustomWidgets {
           ),
         ],
       ),
+    );
+  }
+
+  static Widget titleFormPage({
+    required void Function()? onPressedBack,
+    required BuildContext context,
+    required String title,
+    required void Function()? onPressedSaveButton,
+  }) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    if (onPressedBack != null) {
+                      onPressedBack.call();
+                    }
+                  },
+                  iconSize: 30,
+                  icon: Icon(
+                    CupertinoIcons.chevron_left_circle,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  ),
+                ),
+                TextStyles.titlePagText(
+                  text: title,
+                  overflow: TextOverflow.ellipsis,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 35,
+              width: 130,
+              child: Buttons.commonButton(
+                onPressed: () {
+                  if (onPressedSaveButton != null) {
+                    onPressedSaveButton.call();
+                  }
+                },
+                sizeText: 15,
+                text: "Guardar",
+              ),
+            ),
+          ],
+        ),
+        Divider(color: Theme.of(context).primaryColor),
+      ],
     );
   }
 }

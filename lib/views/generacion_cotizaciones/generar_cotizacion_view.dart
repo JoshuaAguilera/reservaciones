@@ -4,17 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/services/send_quote_service.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/services/cotizacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -27,7 +23,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
-import '../../ui/buttons.dart';
 import '../../utils/helpers/constants.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
@@ -71,6 +66,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final comprobante = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -110,7 +106,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     ),
                             )
                           : const SizedBox(),
-                    ),
+                    )
+                        .animate(target: targetHabitaciones)
+                        .fadeIn(duration: 250.ms),
                     if (!isLoading)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,57 +195,38 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 ],
                               ),
                             ),
-                          ).animate().fadeIn(),
+                          )
+                              .animate(target: targetHabitaciones)
+                              .fadeIn(duration: 250.ms),
                           const SizedBox(height: 10),
                           SizedBox(
-                            child: (inList)
-                                ? HabitacionesList(
-                                    nuevaHabitacion: () {
-                                      setState(() => targetHabitaciones = 0);
-                                      Future.delayed(
-                                        800.ms,
-                                        () => setState(
-                                          () {
-                                            inList = false;
-                                            inDetail = true;
-                                            targetDetalleHabitacion = 1;
-                                          },
-                                        ),
-                                      );
+                            child: HabitacionesList(
+                              nuevaHabitacion: () {
+                                setState(() => targetHabitaciones = 0);
+                                Future.delayed(
+                                  800.ms,
+                                  () => setState(
+                                    () {
+                                      inList = false;
+                                      inDetail = true;
+                                      targetDetalleHabitacion = 1;
                                     },
-                                    sideController: widget.sideController,
-                                    esGrupo: habitaciones.length > 9,
-                                    habitaciones: habitaciones,
-                                  )
-                                    .animate(target: targetHabitaciones)
-                                    // .slideX(
-                                    //     duration: 900.ms,
-                                    //     begin: 0.5,
-                                    //     curve: Curves.easeInOutBack)
-                                    .fadeIn(duration: 500.ms)
-                                : HabitacionForm(
-                                    cancelarFunction: () {
-                                      setState(
-                                          () => targetDetalleHabitacion = 0);
-                                      Future.delayed(
-                                        800.ms,
-                                        () => setState(
-                                          () {
-                                            inList = true;
-                                            inDetail = false;
-                                            targetHabitaciones = 1;
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  )
-                                    .animate(target: targetDetalleHabitacion)
-                                    // .slideX(
-                                    //     duration: 900.ms,
-                                    //     begin: 0.5,
-                                    //     curve: Curves.easeInOutBack)
-                                    .fadeIn(duration: 850.ms),
-                          ),
+                                  ),
+                                );
+
+                                Future.delayed(
+                                    1000.ms,
+                                    () =>
+                                        widget.sideController.selectIndex(16));
+                              },
+                              sideController: widget.sideController,
+                              esGrupo: habitaciones.length > 9,
+                              habitaciones: habitaciones,
+                            ),
+                          )
+                              .animate(
+                                  target: targetHabitaciones)
+                              .fadeIn(duration: 450.ms),
                           const SizedBox(height: 12),
                           // Padding(
                           //   padding: const EdgeInsets.only(left: 4.0),

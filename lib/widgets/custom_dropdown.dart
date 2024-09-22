@@ -13,6 +13,7 @@ class CustomDropdown {
     double fontSize = 13,
     double? screenWidth,
     String removeItem = '',
+    String label = '',
   }) {
     List<String> items = elements.toList();
 
@@ -29,6 +30,7 @@ class CustomDropdown {
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,
+          label: Text(label),
           textStyle:
               TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
           dropdownMenuEntries:

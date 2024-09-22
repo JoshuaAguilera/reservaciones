@@ -148,7 +148,7 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
                         ? (widget.day - 2)
                         : widget.day - 2 - widget.daysMonth!
                     : (widget.day) - (widget.initDay - 2),
-                subtitle: (MediaQuery.of(context).size.width > 960)
+                subtitle: (MediaQuery.of(context).size.width > 1035)
                     ? dayNames[widget.isMostMonth
                         ? (widget.initDay == 4)
                             ? widget.day
@@ -161,25 +161,25 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
                 colorsubTitle: Theme.of(context).primaryColor,
                 colorTitle: Theme.of(context).dividerColor,
                 sizeSubtitle: 15),
-            if (MediaQuery.of(context).size.width > 960)
+            if (MediaQuery.of(context).size.width > 1035)
               const SizedBox(height: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (MediaQuery.of(context).size.width > 1080)
+                if (MediaQuery.of(context).size.width > 1200)
                   TextStyles.TextAsociative(
                       "Adulto: ", Utility.formatterNumber(0),
                       boldInversed: true,
                       size: 11,
                       color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1180)
+                if (MediaQuery.of(context).size.width > 1300)
                   TextStyles.TextAsociative(
                       "KID: ",
                       boldInversed: true,
                       size: 11,
                       Utility.formatterNumber(0),
                       color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1280)
+                if (MediaQuery.of(context).size.width > 1400)
                   TextStyles.TextAsociative(
                       "Pax adic: ",
                       boldInversed: true,

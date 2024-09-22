@@ -4,8 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list.dart';
+import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
@@ -16,10 +16,14 @@ import '../../widgets/textformfield_custom.dart';
 
 class HabitacionForm extends StatefulWidget {
   const HabitacionForm(
-      {super.key, required this.cancelarFunction, this.habitacionSelect});
+      {super.key,
+      required this.cancelarFunction,
+      this.habitacionSelect,
+      required this.sideController});
 
   final void Function()? cancelarFunction;
   final Habitacion? habitacionSelect;
+  final SidebarXController sideController;
 
   @override
   State<HabitacionForm> createState() => _HabitacionFormState();
@@ -36,6 +40,7 @@ class _HabitacionFormState extends State<HabitacionForm> {
     const Icon(Icons.table_chart),
     const Icon(Icons.dehaze_sharp),
   ];
+  double target = 1;
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -101,214 +106,210 @@ class _HabitacionFormState extends State<HabitacionForm> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Card(
-      elevation: 6,
-      child: Padding(
+    return Scaffold(
+      body: Padding(
         padding: const EdgeInsets.all(14.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextStyles.titleText(
-                    text: "Nueva Habitación",
-                    color: Theme.of(context).dividerColor,
-                  ),
-                  SizedBox(
-                    width: 200,
-                    height: 40,
-                    child: Buttons.commonButton(
-                        onPressed: () {
-                          widget.cancelarFunction!.call();
-                        },
-                        text: "Cancelar"),
-                  ),
-                ],
+              CustomWidgets.titleFormPage(
+                onPressedBack: () {
+                  if (target == 1) {
+                    setState(() => target = 0);
+
+                    Future.delayed(
+                        500.ms, () => widget.sideController.selectIndex(1));
+                  }
+                },
+                context: context,
+                title: "Nueva Habitación",
+                onPressedSaveButton: () {},
               ),
+
               const SizedBox(height: 15),
-              Form(
-                key: _formKeyHabitacion,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      runSpacing: 20,
-                      spacing: 10,
-                      children: [
-                        Wrap(
-                          runSpacing: 10,
-                          spacing: 20,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 350,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+              Center(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(25, 45, 25, 35),
+                    child: Form(
+                      key: _formKeyHabitacion,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            runSpacing: 20,
+                            spacing: 10,
+                            children: [
+                              Wrap(
+                                runSpacing: 10,
+                                spacing: 20,
+                                crossAxisAlignment: WrapCrossAlignment.start,
                                 children: [
-                                  TextStyles.standardText(
-                                    text: "Categoría: ",
-                                    overClip: true,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  CustomDropdown.dropdownMenuCustom(
-                                    initialSelection: widget.habitacionSelect !=
-                                            null
-                                        ? widget.habitacionSelect!.categoria!
-                                        : categorias.first,
-                                    onSelected: (String? value) {
-                                      nuevaHabitacion.categoria = value!;
-                                    },
-                                    elements: categorias,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 320,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  TextStyles.standardText(
-                                    text: "Plan: ",
-                                    overClip: true,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  CustomDropdown.dropdownMenuCustom(
+                                  SizedBox(
+                                    child: CustomDropdown.dropdownMenuCustom(
+                                      label: "Categoría",
                                       initialSelection:
                                           widget.habitacionSelect != null
-                                              ? widget.habitacionSelect!.plan!
-                                              : planes.first,
+                                              ? widget
+                                                  .habitacionSelect!.categoria!
+                                              : tipoHabitacion.first,
                                       onSelected: (String? value) {
-                                        nuevaHabitacion.plan = value!;
+                                        nuevaHabitacion.categoria = value!;
                                       },
-                                      elements: planes,
-                                      removeItem: "PLAN SIN ALIMENTOS",
-                                      screenWidth: 550),
+                                      elements: tipoHabitacion,
+                                    ),
+                                  ),
+                                  /*
+                                  CustomDropdown.dropdownMenuCustom(
+                                    label: "Plan",
+                                    initialSelection:
+                                        widget.habitacionSelect != null
+                                            ? widget.habitacionSelect!.plan!
+                                            : planes.first,
+                                    onSelected: (String? value) {
+                                      nuevaHabitacion.plan = value!;
+                                    },
+                                    elements: planes,
+                                    removeItem: "PLAN SIN ALIMENTOS",
+                                    screenWidth: 550,
+                                  ),
+                                  */
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: screenWidth > 1520 ? 560 : null,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormFieldCustom
-                                    .textFormFieldwithBorderCalendar(
-                                  name: "Fecha de entrada",
-                                  msgError: "Campo requerido*",
-                                  fechaLimite: DateTime.now()
-                                      .subtract(const Duration(days: 1))
-                                      .toIso8601String()
-                                      .substring(0, 10),
-                                  dateController: _fechaEntrada,
-                                  onChanged: () {
-                                    setState(() {
-                                      _fechaSalida.text = Utility.getNextDay(
-                                          _fechaEntrada.text);
-                                      changedDate = true;
-                                    });
-                                    Future.delayed(
-                                      Durations.medium1,
-                                      () => setState(
-                                        () {
-                                          changedDate = false;
+                              SizedBox(
+                                width: screenWidth > 1520 ? 480 : null,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormFieldCustom
+                                          .textFormFieldwithBorderCalendar(
+                                        name: "Fecha de entrada",
+                                        msgError: "Campo requerido*",
+                                        fechaLimite: DateTime.now()
+                                            .subtract(const Duration(days: 1))
+                                            .toIso8601String()
+                                            .substring(0, 10),
+                                        dateController: _fechaEntrada,
+                                        onChanged: () {
+                                          setState(() {
+                                            _fechaSalida.text =
+                                                Utility.getNextDay(
+                                                    _fechaEntrada.text);
+                                            changedDate = true;
+                                          });
+                                          Future.delayed(
+                                            Durations.medium1,
+                                            () => setState(
+                                              () {
+                                                changedDate = false;
+                                              },
+                                            ),
+                                          );
                                         },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormFieldCustom
-                                    .textFormFieldwithBorderCalendar(
-                                  name: "Fecha de salida",
-                                  msgError: "Campo requerido*",
-                                  dateController: _fechaSalida,
-                                  fechaLimite: _fechaEntrada.text,
-                                  onChanged: () {
-                                    setState(() => changedDate = true);
-                                    Future.delayed(
-                                        Durations.medium1,
-                                        () => setState(
-                                            () => changedDate = false));
-                                  },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: TextFormFieldCustom
+                                          .textFormFieldwithBorderCalendar(
+                                        name: "Fecha de salida",
+                                        msgError: "Campo requerido*",
+                                        dateController: _fechaSalida,
+                                        fechaLimite: _fechaEntrada.text,
+                                        onChanged: () {
+                                          setState(() => changedDate = true);
+                                          Future.delayed(
+                                              Durations.medium1,
+                                              () => setState(
+                                                  () => changedDate = false));
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: screenWidth > 500 ? 500 : null,
-                      child: Table(
-                        children: [
-                          TableRow(children: [
-                            TextStyles.standardText(
-                                text: "Adultos",
-                                aling: TextAlign.center,
-                                color: Theme.of(context).primaryColor),
-                            TextStyles.standardText(
-                                text: "Menores 0-6",
-                                aling: TextAlign.center,
-                                color: Theme.of(context).primaryColor),
-                            TextStyles.standardText(
-                                text: "Menores 7-12",
-                                aling: TextAlign.center,
-                                color: Theme.of(context).primaryColor),
-                          ]),
-                          TableRow(children: [
-                            NumberInputWithIncrementDecrement(
-                              onChanged: (p0) {
-                                nuevaHabitacion.adultos = int.tryParse(p0);
-                              },
-                              initialValue:
-                                  widget.habitacionSelect?.adultos!.toString(),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: NumberInputWithIncrementDecrement(
-                                onChanged: (p0) {
-                                  nuevaHabitacion.menores0a6 = int.tryParse(p0);
-                                },
-                                initialValue: widget
-                                    .habitacionSelect?.menores0a6!
-                                    .toString(),
+                          const SizedBox(height: 15),
+                          Wrap(
+                            spacing: 15,
+                            runSpacing: 15,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              TextStyles.standardText(
+                                text: "Pax: ",
+                                overClip: true,
+                                color: Theme.of(context).primaryColor,
                               ),
-                            ),
-                            NumberInputWithIncrementDecrement(
-                              onChanged: (p0) {
-                                nuevaHabitacion.menores7a12 = int.tryParse(p0);
-                              },
-                              initialValue: widget
-                                  .habitacionSelect?.menores7a12!
-                                  .toString(),
-                            )
-                          ]),
+                              SizedBox(
+                                width: screenWidth > 500 ? 500 : null,
+                                child: Table(
+                                  children: [
+                                    TableRow(children: [
+                                      TextStyles.standardText(
+                                          text: "Adultos",
+                                          aling: TextAlign.center,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      TextStyles.standardText(
+                                          text: "Menores 0-6",
+                                          aling: TextAlign.center,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      TextStyles.standardText(
+                                          text: "Menores 7-12",
+                                          aling: TextAlign.center,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ]),
+                                    TableRow(children: [
+                                      NumberInputWithIncrementDecrement(
+                                        onChanged: (p0) {
+                                          nuevaHabitacion.adultos =
+                                              int.tryParse(p0);
+                                        },
+                                        initialValue: widget
+                                            .habitacionSelect?.adultos!
+                                            .toString(),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child:
+                                            NumberInputWithIncrementDecrement(
+                                          onChanged: (p0) {
+                                            nuevaHabitacion.menores0a6 =
+                                                int.tryParse(p0);
+                                          },
+                                          initialValue: widget
+                                              .habitacionSelect?.menores0a6!
+                                              .toString(),
+                                        ),
+                                      ),
+                                      NumberInputWithIncrementDecrement(
+                                        onChanged: (p0) {
+                                          nuevaHabitacion.menores7a12 =
+                                              int.tryParse(p0);
+                                        },
+                                        initialValue: widget
+                                            .habitacionSelect?.menores7a12!
+                                            .toString(),
+                                      )
+                                    ]),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 16,
-                      child: isError
-                          ? TextStyles.errorText(
-                              text:
-                                  "Se requiere de al menos un adulto para generar la reservación",
-                              size: 12)
-                          : null,
-                    ),
-                  ],
+                  ),
                 ),
               ),
+              const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -359,7 +360,7 @@ class _HabitacionFormState extends State<HabitacionForm> {
               //   ),
               // ),
             ],
-          ),
+          ).animate(target: target).fadeIn(duration: 500.ms),
         ),
       ),
     );

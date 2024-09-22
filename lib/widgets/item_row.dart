@@ -9,8 +9,6 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
-import 'package:intl/intl.dart';
 
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/web_colors.dart';
@@ -307,7 +305,7 @@ class ItemRow {
         ),
       ),
       title: TextStyles.standardText(
-          text: registroTarifa?.nombre ?? 'Unknow',
+          text: registroTarifa.nombre ?? 'Unknow',
           color: Theme.of(context).primaryColor),
       trailing: PopupMenuButton<ListTileTitleAlignment>(
         position: PopupMenuPosition.under,

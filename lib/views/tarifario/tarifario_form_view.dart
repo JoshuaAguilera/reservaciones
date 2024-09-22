@@ -12,6 +12,7 @@ import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
+import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
@@ -25,8 +26,8 @@ import '../../widgets/form_widgets.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 
-class FormTarifarioView extends ConsumerStatefulWidget {
-  const FormTarifarioView({Key? key, required this.sideController})
+class TarifarioFormView extends ConsumerStatefulWidget {
+  const TarifarioFormView({Key? key, required this.sideController})
       : super(key: key);
 
   final SidebarXController sideController;
@@ -35,7 +36,7 @@ class FormTarifarioView extends ConsumerStatefulWidget {
   _FormTarifarioViewState createState() => _FormTarifarioViewState();
 }
 
-class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
+class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   final _formKeyTarifa = GlobalKey<FormState>();
   String type = tipoHabitacion.first;
   String plan = planes.first;
@@ -214,50 +215,21 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() => target = 0);
+                CustomWidgets.titleFormPage(
+                  context: context,
+                  title: actualTarifa.code != null
+                      ? "Editar tarifa"
+                      : "Crear tarifa",
+                  onPressedBack: () {
+                    setState(() => target = 0);
 
-                            Future.delayed(500.ms,
-                                () => widget.sideController.selectIndex(5));
-                          },
-                          iconSize: 30,
-                          icon: Icon(
-                            CupertinoIcons.chevron_left_circle,
-                            color: Theme.of(context).primaryColor,
-                            size: 30,
-                          ),
-                        ),
-                        TextStyles.titlePagText(
-                          text: actualTarifa.code != null
-                              ? "Editar tarifa"
-                              : "Crear tarifa",
-                          overflow: TextOverflow.ellipsis,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 35,
-                      width: 130,
-                      child: Buttons.commonButton(
-                        onPressed: () async {
-                          await savedTariff();
-                        },
-                        sizeText: 15,
-                        text: "Guardar",
-                      ),
-                    ),
-                  ],
+                    Future.delayed(
+                        500.ms, () => widget.sideController.selectIndex(5));
+                  },
+                  onPressedSaveButton: () async {
+                    await savedTariff();
+                  },
                 ),
-                Divider(color: Theme.of(context).primaryColor),
                 const SizedBox(height: 10),
                 Card(
                   elevation: 8,
@@ -728,6 +700,16 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 15),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 1),
+                                      child: TextStyles.titleText(
+                                        text: "Tarífas de temporada",
+                                        size: 18,
+                                        color: Theme.of(context).dividerColor,
+                                      ),
+                                    ),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
                                       initiallyExpanded: initiallyExpanded,
@@ -950,6 +932,7 @@ class _FormTarifarioViewState extends ConsumerState<FormTarifarioView> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 52),
                                     CustomWidgets.expansionTileCustomTarifa(
                                       colorTarifa: colorTarifa,
                                       initiallyExpanded: initiallyExpanded,
