@@ -209,24 +209,25 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
             children: [
               if (MediaQuery.of(context).size.width > 850)
                 TextStyles.TextSpecial(
-                    day: getNumDay(),
-                    subtitle: (MediaQuery.of(context).size.width > 960)
-                        ? dayNames[widget.isMostMonth
-                            ? (widget.initDay == 4)
-                                ? widget.day
-                                : (widget.initDay < 4)
-                                    ? widget.day - (widget.initDay)
-                                    : widget.day + (widget.initDay - 4)
-                            : widget.day]
-                        : '',
-                    sizeTitle: (MediaQuery.of(context).size.width > 1080)
-                        ? 28
-                        : (MediaQuery.of(context).size.width > 850)
-                            ? 20
-                            : 28,
-                    colorsubTitle: Theme.of(context).primaryColor,
-                    colorTitle: Theme.of(context).dividerColor,
-                    sizeSubtitle: 15),
+                  day: getNumDay(),
+                  subtitle: (MediaQuery.of(context).size.width > 960)
+                      ? dayNames[widget.isMostMonth
+                          ? (widget.initDay == 4)
+                              ? widget.day
+                              : (widget.initDay < 4)
+                                  ? widget.day - (widget.initDay)
+                                  : widget.day + (widget.initDay - 4)
+                          : widget.day]
+                      : '',
+                  sizeTitle: (MediaQuery.of(context).size.width > 1080)
+                      ? 28
+                      : (MediaQuery.of(context).size.width > 850)
+                          ? 20
+                          : 28,
+                  colorsubTitle: Theme.of(context).primaryColor,
+                  colorTitle: Theme.of(context).primaryColor,
+                  sizeSubtitle: 15,
+                ),
               if (MediaQuery.of(context).size.width > 1180)
                 const SizedBox(height: 12),
               if (MediaQuery.of(context).size.width > 1180)

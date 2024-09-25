@@ -70,6 +70,7 @@ class _DiasListState extends State<DiasList> {
           if (widget.isCalendary &&
               Utility.revisedLimitDateTime(checkIn, checkOut))
             Card(
+              elevation: 7,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 25, horizontal: 45),
