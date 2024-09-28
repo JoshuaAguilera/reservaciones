@@ -27,7 +27,6 @@ class Dialogs {
     Habitacion nuevaHabitacion = cotizacion ??
         Habitacion(
           categoria: categorias.first,
-          plan: planes.first,
           fechaCheckIn: DateTime.now().toString().substring(0, 10),
           adultos: 0,
           menores0a6: 0,
@@ -83,28 +82,6 @@ class Dialogs {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        child: TextStyles.standardText(
-                      text: "Plan: ",
-                      overClip: true,
-                      color: Theme.of(context).primaryColor,
-                    )),
-                    const SizedBox(width: 15),
-                    CustomDropdown.dropdownMenuCustom(
-                      initialSelection:
-                          cotizacion != null ? cotizacion.plan! : planes.first,
-                      onSelected: (String? value) {
-                        nuevaHabitacion.plan = value!;
-                      },
-                      elements: planes,
-                      screenWidth: MediaQuery.of(context).size.width,
-                      removeItem: "PLAN SIN ALIMENTOS",
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 20),
                 Row(
                   children: [

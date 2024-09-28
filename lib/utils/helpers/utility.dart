@@ -747,14 +747,15 @@ class Utility {
     return dataNow;
   }
 
-  static String definePeriodNow(DateTime weekNow, List<PeriodoData>? periodos) {
+  static String definePeriodNow(DateTime weekNow, List<PeriodoData>? periodos,
+      {bool compact = false}) {
     String periodo = "01 Enero a 14 Marzo";
 
     PeriodoData periodNow = getPeriodNow(weekNow, periodos);
     periodo = getStringPeriod(
       initDate: periodNow.fechaInicial!,
       lastDate: periodNow.fechaFinal!,
-      compact: false,
+      compact: compact,
     );
 
     return periodo;

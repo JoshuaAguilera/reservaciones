@@ -65,13 +65,15 @@ class _TarifarioCalendaryMonthViewState
               child: Stack(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
+                    padding:
+                        EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
                     child: GridView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       itemCount: 7,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 7, childAspectRatio: 0.5),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 7, childAspectRatio: 0.5),
                       itemBuilder: (context, index) {
                         return ItemRow.getTitleDay(
                           title: 0,
@@ -105,7 +107,9 @@ class _TarifarioCalendaryMonthViewState
                                   (widget.sideController.extended ? 230 : 118))
                               : (screenWidth > 800)
                                   ? screenWidth -
-                                      (widget.sideController.extended ? 230 : 118)
+                                      (widget.sideController.extended
+                                          ? 230
+                                          : 118)
                                   : screenWidth - 28,
                           height: 129 * 6.55,
                           child: PageView.builder(
@@ -113,13 +117,13 @@ class _TarifarioCalendaryMonthViewState
                             controller: widget.pageWeekController,
                             itemCount: 12 * 12,
                             itemBuilder: (context, pageIndex) {
-                              DateTime month =
-                                  DateTime(widget.yearNow, (pageIndex % 12) + 1, 1);
-              
+                              DateTime month = DateTime(
+                                  widget.yearNow, (pageIndex % 12) + 1, 1);
+
                               if (widget.refreshDate != null) {
                                 widget.refreshDate!.call(pageIndex);
                               }
-              
+
                               return buildCalendar(
                                 month,
                                 widget.initDayWeek.subtract(
@@ -130,7 +134,8 @@ class _TarifarioCalendaryMonthViewState
                               );
                             },
                           ).animate(target: widget.targetMonth).fadeIn(
-                              duration: widget.targetMonth == 0 ? 500.ms : 1200.ms,
+                              duration:
+                                  widget.targetMonth == 0 ? 500.ms : 1200.ms,
                               begin: -.6),
                         ),
                       ),
@@ -145,8 +150,8 @@ class _TarifarioCalendaryMonthViewState
                           return const SizedBox();
                         },
                         error: (error, stackTrace) => Padding(
-                          padding:
-                              EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
+                          padding: EdgeInsets.only(
+                              left: (screenWidth > 1280) ? (380) : 0),
                           child: SizedBox(
                               height: 150,
                               child: CustomWidgets.messageNotResult(
@@ -155,8 +160,8 @@ class _TarifarioCalendaryMonthViewState
                               )),
                         ),
                         loading: () => Padding(
-                          padding:
-                              EdgeInsets.only(left: (screenWidth > 1280) ? (630) : 0),
+                          padding: EdgeInsets.only(
+                              left: (screenWidth > 1280) ? (630) : 0),
                           child: dynamicWidget.loadingWidget(
                               screenWidth, 500, widget.sideController.extended,
                               isEstandar: true, sizeIndicator: 50),
@@ -177,7 +182,7 @@ class _TarifarioCalendaryMonthViewState
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(height: 129 * 0.25),
+                                const SizedBox(height: 129 * 0.25),
                                 listTarifasProvider.when(
                                   data: (list) {
                                     if (list.isNotEmpty) {
@@ -191,33 +196,40 @@ class _TarifarioCalendaryMonthViewState
                                                     : 118))
                                             : (screenWidth > 800)
                                                 ? screenWidth -
-                                                    (widget.sideController.extended
+                                                    (widget.sideController
+                                                            .extended
                                                         ? 230
                                                         : 118)
                                                 : screenWidth - 28,
                                         child: ListView.builder(
                                           itemCount: list.length,
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          padding: const EdgeInsets.only(bottom: 0),
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 0),
                                           shrinkWrap: true,
                                           itemBuilder: (context, index) {
                                             if (Utility.showTariffByWeek(
                                                     list[index].periodos,
                                                     Utility.getInitsWeekMonth(
-                                                        widget.initWeekMonth, i)) &&
+                                                        widget.initWeekMonth,
+                                                        i)) &&
                                                 list[index].isSelected!) {
                                               return PeriodItemRow(
                                                 target: widget.targetMonth,
-                                                showMonth: widget.showMonthDelay,
+                                                showMonth:
+                                                    widget.showMonthDelay,
                                                 compact: true,
-                                                weekNow: Utility.getInitsWeekMonth(
-                                                    widget.initWeekMonth, i),
+                                                weekNow:
+                                                    Utility.getInitsWeekMonth(
+                                                        widget.initWeekMonth,
+                                                        i),
                                                 tarifa: list[index],
                                                 lenghtDays: 1,
-                                                lenghtSideBar:
-                                                    (widget.sideController.extended
-                                                        ? 230
-                                                        : 118),
+                                                lenghtSideBar: (widget
+                                                        .sideController.extended
+                                                    ? 230
+                                                    : 118),
                                               );
                                             } else {
                                               return const SizedBox();
@@ -228,7 +240,8 @@ class _TarifarioCalendaryMonthViewState
                                     }
                                     return const SizedBox();
                                   },
-                                  error: (error, stackTrace) => const SizedBox(),
+                                  error: (error, stackTrace) =>
+                                      const SizedBox(),
                                   loading: () => const SizedBox(),
                                 ),
                               ],

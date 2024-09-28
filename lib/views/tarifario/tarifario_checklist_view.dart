@@ -36,56 +36,64 @@ class _TarifarioChecklistViewState
 
     return Padding(
       padding: EdgeInsets.only(top: 5),
-      child: SizedBox(
-        height: screenHeight - 160,
-        child: tarifaProvider.when(
-          data: (list) {
-            if (list.isNotEmpty) {
-              return listTarifasProvider.when(
-                data: (list) {
-                  if (list.isNotEmpty) {
-                    return ListView.builder(
-                      itemCount: list.length,
-                      shrinkWrap: false,
-                      itemBuilder: (context, index) {
-                        return ItemRow.tarifaCheckListItemRow(
-                          registro: list[index],
-                          screenWidth: screenWidth,
-                          onEdit: (register) => widget.onEdit!.call(register),
-                          onDelete: (register) =>
-                              widget.onDelete!.call(register),
-                        );
-                      },
-                    );
-                  }
-                  return const SizedBox();
-                },
-                error: (error, stackTrace) => const SizedBox(),
-                loading: () => const SizedBox(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          tarifaProvider.when(
+            data: (list) {
+              if (list.isNotEmpty) {
+                return listTarifasProvider.when(
+                  data: (list) {
+                    if (list.isNotEmpty) {
+                      return SizedBox(
+                        height: screenHeight - 160,
+                        child: ListView.builder(
+                          itemCount: list.length,
+                          shrinkWrap: false,
+                          itemBuilder: (context, index) {
+                            return ItemRow.tarifaCheckListItemRow(
+                              registro: list[index],
+                              screenWidth: screenWidth,
+                              onEdit: (register) =>
+                                  widget.onEdit!.call(register),
+                              onDelete: (register) =>
+                                  widget.onDelete!.call(register),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                  error: (error, stackTrace) => const SizedBox(),
+                  loading: () => const SizedBox(),
+                );
+              }
+              return Center(
+                child: SizedBox(
+                  height: 150,
+                  child: CustomWidgets.messageNotResult(
+                    context: context,
+                    sizeImage: 100,
+                    screenWidth: screenWidth,
+                    extended: widget.sideController.extended,
+                  ),
+                ),
               );
-            }
-            return SizedBox(
+            },
+            error: (error, stackTrace) => SizedBox(
               height: 150,
               child: CustomWidgets.messageNotResult(
-                context: context,
-                sizeImage: 100,
-                screenWidth: screenWidth,
-                extended: widget.sideController.extended,
-              ),
-            );
-          },
-          error: (error, stackTrace) => SizedBox(
-            height: 150,
-            child: CustomWidgets.messageNotResult(
-                context: context,
-                sizeImage: 100,
-                screenWidth: screenWidth,
-                extended: widget.sideController.extended),
+                  context: context,
+                  sizeImage: 100,
+                  screenWidth: screenWidth,
+                  extended: widget.sideController.extended),
+            ),
+            loading: () => dynamicWidget.loadingWidget(screenWidth * 2,
+                screenHeight / 2, widget.sideController.extended,
+                isEstandar: true),
           ),
-          loading: () => dynamicWidget.loadingWidget(
-              screenWidth * 2, screenHeight / 2, widget.sideController.extended,
-              isEstandar: true),
-        ),
+        ],
       ),
     ).animate().fadeIn(duration: 750.ms);
   }

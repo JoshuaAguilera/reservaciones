@@ -16,29 +16,21 @@ final documentQuoteIndProvider =
     habitaciones: [
       Habitacion(
         categoria: categorias.first,
-        plan: planes.first,
-        esPreventa: false,
         fechaCheckIn: "2021-01-01",
         fechaCheckOut: "2021-01-05",
       ),
       Habitacion(
         categoria: categorias.first,
-        plan: planes[1],
-        esPreventa: false,
         fechaCheckIn: "2021-01-01",
         fechaCheckOut: "2021-01-05",
       ),
       Habitacion(
         categoria: categorias[1],
-        plan: planes.first,
-        esPreventa: false,
         fechaCheckIn: "2021-01-01",
         fechaCheckOut: "2021-01-05",
       ),
       Habitacion(
         categoria: categorias[1],
-        plan: planes[1],
-        esPreventa: false,
         fechaCheckIn: "2021-01-01",
         fechaCheckOut: "2021-01-05",
       )

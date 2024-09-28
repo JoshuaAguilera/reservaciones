@@ -66,115 +66,43 @@ class ItemRow {
   static Widget dayRateRow({
     required BuildContext context,
     required int day,
-    int? daysMonthAfter,
-    int? initDay,
-    int? lastDay,
-    required int dayCheckIn,
-    required int dayCheckOut,
-    int? dayWeekLater,
-    int? dayMonthLater,
     required int numMonthInit,
+    required bool inPeriod,
+    required DateTime dateNow,
+    List<RegistroTarifa>? tarifas,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: () {},
-        child: (dayCheckOut < dayCheckIn)
-            ? ((day - 2) >= dayCheckIn && (day - 2 - lastDay!) <= dayCheckOut)
-                ? SizedBox(
-                    width: double.infinity,
-                    height: 170,
-                    child: CardAnimationWidget(
-                      key: UniqueKey(),
-                      day: day,
-                      isMostMonth: (dayCheckOut < dayCheckIn),
-                      initDay: initDay!,
-                      daysMonth: lastDay,
-                      weekDayLast: dayWeekLater,
-                      initMonth: numMonthInit,
+        child: inPeriod
+            ? SizedBox(
+                width: double.infinity,
+                height: 170,
+                child: CardAnimationWidget(
+                  key: UniqueKey(),
+                  day: day,
+                  dateNow: dateNow,
+                  registros: tarifas!,
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                ),
+                height: 170,
+                width: double.infinity,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 10,
+                      left: 15,
+                      child: TextStyles.TextSpecial(day: day, subtitle: ""),
                     ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).dividerColor)),
-                    height: 170,
-                    width: double.infinity,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 10,
-                          left: 15,
-                          child: TextStyles.TextSpecial(
-                              day: (lastDay != null &&
-                                      (day + 1) > (lastDay + (initDay! - 1)))
-                                  ? (day - lastDay - 2 > dayMonthLater!)
-                                      ? day - dayMonthLater - lastDay - 2
-                                      : day - lastDay - 2
-                                  : (day < initDay!)
-                                      ? (daysMonthAfter! - initDay + 2) + day
-                                      : day - 2,
-                              subtitle: ""),
-                        ),
-                      ],
-                    ),
-                  )
-            : (initDay != null && (day + 1) < initDay) ||
-                    (lastDay != null && (day + 1) > lastDay + (initDay! - 1))
-                ? Container(
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).dividerColor)),
-                    width: double.infinity,
-                    height: 170,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 10,
-                          left: 15,
-                          child: TextStyles.TextSpecial(
-                            day: (lastDay != null &&
-                                    (day + 1) > (lastDay + (initDay - 1)))
-                                ? day - lastDay - (initDay - 2)
-                                : daysMonthAfter != null
-                                    ? (daysMonthAfter) - (initDay - day - 2)
-                                    : day + 1,
-                            subtitle: "",
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : (((day - initDay! + 2) >= dayCheckIn) &&
-                        ((day - initDay + 2) <= dayCheckOut))
-                    ? SizedBox(
-                        width: double.infinity,
-                        height: 170,
-                        child: CardAnimationWidget(
-                          day: day,
-                          isMostMonth: (dayCheckOut < dayCheckIn),
-                          initDay: initDay,
-                          initMonth: numMonthInit,
-                          key: UniqueKey(),
-                        ),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).dividerColor)),
-                        height: 170,
-                        width: double.infinity,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: 10,
-                              left: 15,
-                              child: TextStyles.TextSpecial(
-                                  day: (day + 2) - initDay, subtitle: ""),
-                            ),
-                          ],
-                        ),
-                      ),
+                  ],
+                ),
+              ),
       ),
     );
   }

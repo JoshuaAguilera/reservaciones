@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -137,7 +138,24 @@ class _TarifarioCalendaryYearViewState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (tariffNow != null && tariffNow.isSelected!)
+                if (list.isEmpty &&
+                    DateTime(month.year, month.month, text)
+                        .isSameDate(DateTime.now()))
+                  Expanded(
+                    child: Card(
+                      elevation: 3.5,
+                      color: Colors.amber,
+                      child: Center(
+                        child: Text(
+                          text.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else if (tariffNow != null && tariffNow.isSelected!)
                   Expanded(
                     child: DayInfoItemRow(
                       tarifa: tariffNow,

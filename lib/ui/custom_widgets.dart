@@ -439,11 +439,14 @@ class CustomWidgets {
     required BuildContext context,
     required String title,
     required void Function()? onPressedSaveButton,
+    bool showSaveButton = true,
   }) {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: showSaveButton
+              ? MainAxisAlignment.spaceBetween
+              : MainAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -469,23 +472,103 @@ class CustomWidgets {
                 ),
               ],
             ),
-            SizedBox(
-              height: 35,
-              width: 130,
-              child: Buttons.commonButton(
-                onPressed: () {
-                  if (onPressedSaveButton != null) {
-                    onPressedSaveButton.call();
-                  }
-                },
-                sizeText: 15,
-                text: "Guardar",
+            if (showSaveButton)
+              SizedBox(
+                height: 35,
+                width: 130,
+                child: Buttons.commonButton(
+                  onPressed: () {
+                    if (onPressedSaveButton != null) {
+                      onPressedSaveButton.call();
+                    }
+                  },
+                  sizeText: 15,
+                  text: "Guardar",
+                ),
               ),
-            ),
           ],
         ),
         Divider(color: Theme.of(context).primaryColor),
       ],
+    );
+  }
+
+  static Widget expansionTileList({
+    required String title,
+    required bool showList,
+    required void Function(bool) onExpansionChanged,
+    required BuildContext context,
+  }) {
+    return ExpansionTile(
+      tilePadding: const EdgeInsets.all(4),
+      shape: Border.all(color: Colors.transparent),
+      initiallyExpanded: showList,
+      onExpansionChanged: onExpansionChanged,
+      title: Row(
+        children: [
+          TextStyles.standardText(
+            text: title,
+            color: Theme.of(context).primaryColor,
+            size: 13,
+          ),
+          Icon(
+            showList
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
+            size: 20,
+            color: Theme.of(context).primaryColor,
+          ),
+        ],
+      ),
+      trailing: TextStyles.standardText(
+        text: Utility.formatterNumber(0),
+        color: Theme.of(context).primaryColor,
+        size: 13,
+      ),
+      children: [
+        SizedBox(
+          height: 35,
+          child: Center(
+            child: TextStyles.standardText(
+              text: "Sin habitaciones",
+              color: Theme.of(context).primaryColor,
+              size: 11,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget itemListCount({
+    required String nameItem,
+    required double count,
+    required BuildContext context,
+    bool isBold = false,
+    double sizeText = 13,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextStyles.standardText(
+              text: nameItem,
+              color: Theme.of(context).primaryColor,
+              size: sizeText,
+              isBold: isBold,
+            ),
+            TextStyles.standardText(
+              text: Utility.formatterNumber(count),
+              color: Theme.of(context).primaryColor,
+              size: sizeText,
+              isBold: isBold,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

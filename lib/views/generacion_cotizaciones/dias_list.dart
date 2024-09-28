@@ -2,6 +2,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -19,6 +20,7 @@ class DiasList extends StatefulWidget {
     this.isCalendary = false,
     this.isTable = false,
     this.isCheckList = false,
+    required this.tarifas,
   });
 
   final String initDay;
@@ -26,29 +28,24 @@ class DiasList extends StatefulWidget {
   final bool isCalendary;
   final bool isTable;
   final bool isCheckList;
+  final List<RegistroTarifa> tarifas;
 
   @override
   State<DiasList> createState() => _DiasListState();
 }
 
 class _DiasListState extends State<DiasList> {
-  int daysMonth = 0;
-  int daysMonthAfter = 0;
-  int daysMonthLater = 0;
-  int dayWeekInit = 0;
-  int dayCheckIn = 1;
-  int dayCheckOut = 2;
   int numDays = 0;
 
-  //prepare V3
-  int extraDays = 0;
+  //prepare V4
   DateTime checkIn = DateTime.now();
   DateTime checkOut = DateTime.now();
+  DateTime checkInLimit = DateTime.now();
+  DateTime checkOutLimit = DateTime.now();
 
   @override
   void initState() {
-    getInfoDates();
-    respDataDate();
+    getDateData();
     super.initState();
   }
 
@@ -77,6 +74,28 @@ class _DiasListState extends State<DiasList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      width: screenWidth < 1100 ? double.infinity : 1100,
+                      height: 50,
+                      child: GridView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: 7,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 7, childAspectRatio: 0.5),
+                        itemBuilder: (context, index) {
+                          return ItemRow.getTitleDay(
+                            title: 0,
+                            withOutDay: true,
+                            subTitle: daysNameShort[index],
+                            select: false,
+                            index: index,
+                            brightness: brightness,
+                          );
+                        },
+                      ),
+                    ),
                     Stack(
                       children: [
                         SizedBox(
@@ -87,60 +106,48 @@ class _DiasListState extends State<DiasList> {
                             childAspectRatio: 0.9,
                             children: [
                               for (var ink = 0;
-                                  ink < (numDays + extraDays + daysMonth);
+                                  ink < checkIn.difference(checkInLimit).inDays;
                                   ink++)
-                                if ((checkIn.day < checkOut.day) &&
-                                    ink >
-                                        (checkIn.day -
-                                            checkIn.weekday -
-                                            (7 - dayWeekInit + 2)) &&
-                                    ink <
-                                        (checkOut.day +
-                                            (7 - checkOut.weekday) +
-                                            ((checkIn.day >= 1 &&
-                                                    checkIn.day <=
-                                                        (7 - dayWeekInit + 1))
-                                                ? (9 + (dayWeekInit - 3)) + 7
-                                                : (9 + (dayWeekInit - 3)))))
-                                  ItemRow.dayRateRow(
-                                    context: context,
-                                    day: (checkIn.day >= 1 &&
-                                            checkIn.day <=
-                                                (7 - dayWeekInit + 1))
-                                        ? ink - 7
-                                        : ink,
-                                    initDay: dayWeekInit,
-                                    lastDay: daysMonth,
-                                    dayCheckIn: dayCheckIn,
-                                    dayCheckOut: dayCheckOut,
-                                    daysMonthAfter: daysMonthAfter,
-                                    numMonthInit: checkIn.month,
-                                  )
-                                else if ((checkIn.day > checkOut.day) &&
-                                    ink > (checkIn.day - checkIn.weekday - 5) &&
-                                    ink <
-                                        ((checkOut.day + daysMonth) +
-                                            (7 - checkOut.weekday) +
-                                            10))
-                                  ItemRow.dayRateRow(
-                                    context: context,
-                                    day: ink,
-                                    initDay: dayWeekInit,
-                                    lastDay: daysMonth,
-                                    dayCheckIn: dayCheckIn,
-                                    dayCheckOut: dayCheckOut,
-                                    daysMonthAfter: daysMonthAfter,
-                                    dayWeekLater: 7 - checkOut.weekday,
-                                    dayMonthLater: daysMonthLater,
-                                    numMonthInit: checkIn.month,
-                                  )
+                                ItemRow.dayRateRow(
+                                  context: context,
+                                  day:
+                                      checkInLimit.add(Duration(days: ink)).day,
+                                  numMonthInit: checkIn.month,
+                                  inPeriod: false,
+                                  dateNow:
+                                      checkInLimit.add(Duration(days: ink)),
+                                ),
+                              for (var ink = 0;
+                                  ink < checkOut.difference(checkIn).inDays + 1;
+                                  ink++)
+                                ItemRow.dayRateRow(
+                                  context: context,
+                                  day: checkIn.add(Duration(days: ink)).day,
+                                  numMonthInit: checkIn.month,
+                                  inPeriod: true,
+                                  dateNow: checkIn.add(Duration(days: ink)),
+                                  tarifas: widget.tarifas,
+                                ),
+                              for (var ink = 0;
+                                  ink <
+                                      checkOutLimit.difference(checkOut).inDays;
+                                  ink++)
+                                ItemRow.dayRateRow(
+                                  context: context,
+                                  day:
+                                      checkOut.add(Duration(days: ink + 1)).day,
+                                  numMonthInit: checkIn.month,
+                                  inPeriod: false,
+                                  dateNow:
+                                      checkOut.add(Duration(days: ink + 1)),
+                                ),
                             ],
                           ),
                         ),
                         Positioned(
                           top: 0,
                           child: Container(
-                            height: (MediaQuery.of(context).size.width > 1080)
+                            height: (MediaQuery.of(context).size.width > 1280)
                                 ? 135
                                 : 80,
                             width: 7800,
@@ -160,7 +167,7 @@ class _DiasListState extends State<DiasList> {
                         Positioned(
                           bottom: 0,
                           child: Container(
-                            height: (MediaQuery.of(context).size.width > 1080)
+                            height: (MediaQuery.of(context).size.width > 1280)
                                 ? 135
                                 : 80,
                             width: 7800,
@@ -189,7 +196,7 @@ class _DiasListState extends State<DiasList> {
             ),
           if (widget.isTable)
             Padding(
-              padding: const EdgeInsets.only(top: 15),
+              padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
                   Table(
@@ -254,7 +261,7 @@ class _DiasListState extends State<DiasList> {
                   ),
                   Divider(color: Theme.of(context).primaryColorLight),
                   SizedBox(
-                    height: Utility.limitHeightList(numDays, 20, 450),
+                    height: Utility.limitHeightList(numDays, 20, 370),
                     child: SingleChildScrollView(
                       child: Table(
                         defaultVerticalAlignment:
@@ -369,14 +376,17 @@ class _DiasListState extends State<DiasList> {
             ).animate().fadeIn(duration: 700.ms),
           if (widget.isCheckList)
             SizedBox(
-              height: Utility.limitHeightList(numDays, 20, 400),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: numDays + 1,
-                itemBuilder: (context, index) {
-                  return ItemRow.itemTarifaDia(context,
-                      day: index, initDate: checkIn, isDetail: false);
-                },
+              height: Utility.limitHeightList(numDays, 20, 440),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: numDays + 1,
+                  itemBuilder: (context, index) {
+                    return ItemRow.itemTarifaDia(context,
+                        day: index, initDate: checkIn, isDetail: false);
+                  },
+                ),
               ),
             ).animate().shimmer(delay: 500.ms).fadeIn(),
         ],
@@ -384,22 +394,14 @@ class _DiasListState extends State<DiasList> {
     );
   }
 
-  Future respDataDate() async {
-    daysMonth = Utility.getDaysInMonth(checkIn.year, checkIn.month);
-    daysMonthAfter = Utility.getDaysInMonth(checkIn.year, checkIn.month - 1);
-    daysMonthLater = Utility.getDaysInMonth(checkIn.year, checkIn.month + 1);
-    dayWeekInit = DateTime(checkIn.year, checkIn.month, 1).weekday;
-
-    extraDays += 7 - (checkIn.weekday);
-    extraDays += 7 - (checkOut.weekday - 1);
-    extraDays += 14;
-  }
-
-  Future getInfoDates() async {
+  void getDateData() {
     checkIn = DateTime.parse(widget.initDay);
     checkOut = DateTime.parse(widget.lastDay);
-    dayCheckIn = checkIn.day;
-    dayCheckOut = checkOut.day;
-    numDays = checkOut.difference(checkIn).inDays;
+
+    int daysRestInit = checkIn.weekday;
+    checkInLimit = checkIn.subtract(Duration(days: 6 + daysRestInit));
+
+    int daysRestLast = 7 - checkOut.weekday;
+    checkOutLimit = checkOut.add(Duration(days: 7 + daysRestLast));
   }
 }

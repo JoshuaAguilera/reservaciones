@@ -273,12 +273,14 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                 );
               }
               return SizedBox(
-                  height: 150,
+                  height: 200,
                   child: CustomWidgets.messageNotResult(
-                      context: context,
-                      sizeImage: 100,
-                      screenWidth: screenWidth,
-                      extended: widget.sideController.extended));
+                    context: context,
+                    sizeImage: 120,
+                    screenWidth: screenWidth,
+                    extended: widget.sideController.extended,
+                    sizeMessage: 12,
+                  ));
             },
             error: (error, stackTrace) => SizedBox(
                 height: 150,

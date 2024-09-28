@@ -86,6 +86,7 @@ class Buttons {
     double sizeText = 14,
     bool isBold = false,
     bool withRoundedBorder = false,
+    Color colorText = Colors.white,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
@@ -118,7 +119,7 @@ class Buttons {
                   aling: TextAlign.center,
                   size: sizeText,
                   isBold: true,
-                  color: Colors.white,
+                  color: colorText,
                 )
               : TextStyles.buttonTextStyle(
                   text: !isLoading ? text : "Espere",

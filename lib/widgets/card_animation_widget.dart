@@ -4,6 +4,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -12,41 +15,37 @@ import '../utils/helpers/constants.dart';
 import '../utils/helpers/utility.dart';
 import 'text_styles.dart';
 
-class CardAnimationWidget extends StatefulWidget {
+class CardAnimationWidget extends ConsumerStatefulWidget {
   const CardAnimationWidget({
     super.key,
     required this.day,
-    required this.isMostMonth,
-    required this.initDay,
-    required this.initMonth,
-    this.daysMonth,
-    this.weekDayLast,
     this.resetTime = const Duration(milliseconds: 3500),
+    required this.dateNow,
+    required this.registros,
   });
 
   final int day;
-  final bool isMostMonth;
-  final int initDay;
-  final int initMonth;
-  final int? daysMonth;
-  final int? weekDayLast;
   final Duration resetTime;
+  final DateTime dateNow;
+  final List<RegistroTarifa> registros;
 
   @override
-  State<CardAnimationWidget> createState() => _CardAnimationWidgetState();
+  _CardAnimationWidgetState createState() => _CardAnimationWidgetState();
 }
 
-class _CardAnimationWidgetState extends State<CardAnimationWidget> {
+class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   bool _showFrontSide = false;
   bool _flipXAxis = false;
   bool _isLoading = false;
   bool _isEditing = false;
   late Timer flipCard;
+  RegistroTarifa? nowRegister;
 
   @override
   void initState() {
     _showFrontSide = true;
     _flipXAxis = true;
+    nowRegister = Utility.revisedTariffDay(widget.dateNow, widget.registros);
     super.initState();
   }
 
@@ -139,49 +138,47 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
       backgroundColor: Theme.of(context).primaryColorDark,
       faceName: "Front",
       child: Padding(
-        padding: EdgeInsets.fromLTRB(5, padding, 5, padding),
+        padding: EdgeInsets.fromLTRB(15, padding, 15, padding),
         child: Column(
           children: [
-            TextStyles.TextSpecial(
-                day: (widget.daysMonth != null)
-                    ? ((widget.day - 2) <= widget.daysMonth!)
-                        ? (widget.day - 2)
-                        : widget.day - 2 - widget.daysMonth!
-                    : (widget.day) - (widget.initDay - 2),
-                subtitle: (MediaQuery.of(context).size.width > 1035)
-                    ? dayNames[widget.isMostMonth
-                        ? (widget.initDay == 4)
-                            ? widget.day
-                            : (widget.initDay < 4)
-                                ? widget.day - (widget.initDay)
-                                : widget.day + (widget.initDay - 4)
-                        : widget.day]
-                    : '',
-                sizeTitle: 28,
-                colorsubTitle: Theme.of(context).primaryColor,
-                colorTitle: Theme.of(context).dividerColor,
-                sizeSubtitle: 15),
-            if (MediaQuery.of(context).size.width > 1035)
-              const SizedBox(height: 15),
+            TextStyles.TextTitleList(
+              index: widget.day,
+              color: nowRegister != null
+                  ? nowRegister!.color!
+                  : Theme.of(context).dividerColor,
+              size: 28,
+            ),
+            if (MediaQuery.of(context).size.width > 1345)
+              const SizedBox(height: 7),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (MediaQuery.of(context).size.width > 1200)
+                if (MediaQuery.of(context).size.width > 1310)
+                  TextStyles.standardText(
+                    text: nowRegister != null
+                        ? nowRegister!.nombre ?? ''
+                        : "No definido",
+                    size: 11,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                if (MediaQuery.of(context).size.width > 1510)
                   TextStyles.TextAsociative(
                       "Adulto: ", Utility.formatterNumber(0),
                       boldInversed: true,
                       size: 11,
                       color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1300)
+                if (MediaQuery.of(context).size.width > 1610)
                   TextStyles.TextAsociative(
-                      "KID: ",
+                      "Men 7-12: ",
                       boldInversed: true,
                       size: 11,
                       Utility.formatterNumber(0),
                       color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1400)
+                if (MediaQuery.of(context).size.width > 1710)
+                  const SizedBox(height: 10),
+                if (MediaQuery.of(context).size.width > 1710)
                   TextStyles.TextAsociative(
-                      "Pax adic: ",
+                      "Total: ",
                       boldInversed: true,
                       size: 11,
                       Utility.formatterNumber(0),
@@ -199,69 +196,86 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
 
     return __buildLayout(
       key: ValueKey(false),
-      backgroundColor: DesktopColors.cerulean,
+      backgroundColor:
+          nowRegister != null ? nowRegister!.color! : DesktopColors.cerulean,
       faceName: "Rear",
       child: Padding(
         padding: EdgeInsets.fromLTRB(padding, 10, padding, 0),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: (MediaQuery.of(context).size.width > 1200)
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             children: [
-              if (MediaQuery.of(context).size.width > 850)
-                TextStyles.TextSpecial(
-                  day: getNumDay(),
-                  subtitle: (MediaQuery.of(context).size.width > 960)
-                      ? dayNames[widget.isMostMonth
-                          ? (widget.initDay == 4)
-                              ? widget.day
-                              : (widget.initDay < 4)
-                                  ? widget.day - (widget.initDay)
-                                  : widget.day + (widget.initDay - 4)
-                          : widget.day]
-                      : '',
-                  sizeTitle: (MediaQuery.of(context).size.width > 1080)
+              if (MediaQuery.of(context).size.width > 1200)
+                TextStyles.TextTitleList(
+                  index: widget.day,
+                  color: nowRegister == null
+                      ? Colors.white
+                      : useWhiteForeground(nowRegister!.color!)
+                          ? Colors.white
+                          : const Color.fromARGB(255, 43, 43, 43),
+                  size: (MediaQuery.of(context).size.width > 1390)
                       ? 28
-                      : (MediaQuery.of(context).size.width > 850)
+                      : (MediaQuery.of(context).size.width > 1160)
                           ? 20
                           : 28,
-                  colorsubTitle: Theme.of(context).primaryColor,
-                  colorTitle: Theme.of(context).primaryColor,
-                  sizeSubtitle: 15,
                 ),
-              if (MediaQuery.of(context).size.width > 1180)
-                const SizedBox(height: 12),
-              if (MediaQuery.of(context).size.width > 1180)
+              if (MediaQuery.of(context).size.width > 1590)
+                const SizedBox(height: 8),
+              if (MediaQuery.of(context).size.width > 1500)
                 TextStyles.TextAsociative(
                   "Periodo: ",
-                  "Marzo-Abril",
+                  nowRegister == null
+                      ? "No definido"
+                      : Utility.definePeriodNow(
+                          widget.dateNow, nowRegister!.periodos,
+                          compact: true),
                   boldInversed: true,
                   size: 11,
-                  color: Theme.of(context).primaryColor,
-                  overflow: (MediaQuery.of(context).size.width > 1280)
+                  color: nowRegister == null
+                      ? Colors.white
+                      : useWhiteForeground(nowRegister!.color!)
+                          ? Colors.white
+                          : const Color.fromARGB(255, 43, 43, 43),
+                  overflow: (MediaQuery.of(context).size.width > 1590)
                       ? TextOverflow.clip
                       : TextOverflow.ellipsis,
                 ),
-              if (MediaQuery.of(context).size.width > 1280)
+              if (MediaQuery.of(context).size.width > 1590)
                 TextStyles.TextAsociative(
                   "Temporada: ",
-                  "Baja",
+                  "---",
                   boldInversed: true,
                   size: 11,
-                  color: Theme.of(context).primaryColor,
+                  color: nowRegister == null
+                      ? Colors.white
+                      : useWhiteForeground(nowRegister!.color!)
+                          ? Colors.white
+                          : const Color.fromARGB(255, 43, 43, 43),
                 ),
-              if (MediaQuery.of(context).size.width > 1180)
+              if (MediaQuery.of(context).size.width > 1460)
+                const SizedBox(height: 8),
+              if (MediaQuery.of(context).size.width > 1490)
                 SizedBox(
                   width:
-                      (MediaQuery.of(context).size.width > 1180) ? 105 : null,
+                      (MediaQuery.of(context).size.width > 1490) ? 105 : null,
                   child: Buttons.commonButton(
                     onPressed: () => showDialogEditQuote(),
                     text: "Cambiar",
                     sizeText: 11.5,
                     isBold: true,
                     withRoundedBorder: true,
+                    color: nowRegister?.color,
+                    colorText: nowRegister == null
+                        ? Colors.white
+                        : useWhiteForeground(nowRegister!.color!)
+                            ? Colors.white
+                            : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 ),
-              if (MediaQuery.of(context).size.width <= 1180)
+              if (MediaQuery.of(context).size.width <= 1490)
                 IconButton(
                   onPressed: () => showDialogEditQuote(),
                   icon: Icon(
@@ -285,7 +299,7 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
       context: context,
       builder: (context) => Dialogs.taridaAlertDialog(
         context: context,
-        title: "Modificar de tarifas ${getNumDay()} / ${getNameMonth()}",
+        title: "Modificar de tarifas ${widget.day} / ${getNameMonth()}",
         iconData: CupertinoIcons.pencil_circle,
         iconColor: DesktopColors.cerulean,
         nameButtonMain: "ACEPTAR",
@@ -343,6 +357,12 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
               blurRadius: 10, // Increased blur radius
               offset: const Offset(0, 7),
             ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 0,
+              blurRadius: 15, // Increased blur radius
+              offset: const Offset(0, -2),
+            ),
           ]),
       child: Center(
         child: child,
@@ -350,19 +370,7 @@ class _CardAnimationWidgetState extends State<CardAnimationWidget> {
     );
   }
 
-  int getNumDay() {
-    return (widget.daysMonth != null)
-        ? ((widget.day - 2) <= widget.daysMonth!)
-            ? (widget.day - 2)
-            : widget.day - 2 - widget.daysMonth!
-        : (widget.day) - (widget.initDay - 2);
-  }
-
   String getNameMonth() {
-    return (widget.daysMonth != null)
-        ? ((widget.day - 2) <= widget.daysMonth!)
-            ? monthNames[widget.initMonth - 1]
-            : monthNames[widget.initMonth]
-        : monthNames[widget.initMonth - 1];
+    return monthNames[widget.dateNow.month - 1];
   }
 }

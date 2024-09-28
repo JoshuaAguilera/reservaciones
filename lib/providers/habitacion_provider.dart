@@ -35,3 +35,6 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
     return pdfPrinc;
   }
 }
+
+final habitacionSelectProvider =
+    StateProvider<Habitacion>((ref) => Habitacion());

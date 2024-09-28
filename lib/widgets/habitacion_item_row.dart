@@ -24,8 +24,7 @@ class HabitacionItemRow extends StatefulWidget {
   });
 
   @override
-  State<HabitacionItemRow> createState() =>
-      _HabitacionItemRowState();
+  State<HabitacionItemRow> createState() => _HabitacionItemRowState();
 }
 
 class _HabitacionItemRowState extends State<HabitacionItemRow> {
@@ -225,8 +224,7 @@ class _TableRowCotizacion extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextStyles.standardText(
-                text: "Categoría: ${cotizacion.categoria!} /" +
-                    " Plan: ${cotizacion.plan!}",
+                text: "Categoría: ${cotizacion.categoria!} ",
                 isBold: true,
                 color:
                     cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
@@ -272,7 +270,7 @@ class _ListTileCotizacion extends StatelessWidget {
         ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
-          text: "${cotizacion.categoria} / ${cotizacion.plan}",
+          text: "${cotizacion.categoria}",
           isBold: true,
           color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
         ),
@@ -303,7 +301,8 @@ class _ListTileCotizacion extends StatelessWidget {
                 TextStyles.TextAsociative(
                     'Menores 7-12: ', "${cotizacion.folioHabitacion}    ",
                     color: DesktopColors.azulUltClaro),
-                TextStyles.TextAsociative('Adultos: ', "${cotizacion.folioHabitacion}",
+                TextStyles.TextAsociative(
+                    'Adultos: ', "${cotizacion.folioHabitacion}",
                     color: DesktopColors.azulUltClaro),
               ],
             ),

@@ -40,28 +40,29 @@ class MyApp extends StatelessWidget {
         Preferences.modeDark ? Themes().darkMode() : Themes().lightMode();
 
     return ThemeProvider(
-        initTheme: initTheme,
-        builder: (_, snapshot) {
-          return MaterialApp(
-            title: 'Generador de formatos de pago',
-            debugShowCheckedModeBanner: false,
-            scrollBehavior: CustomScrollBehavior(),
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('es'),
-            ],
-            theme: initTheme,
-            routes: {
-              'home': (_) => HomeView(),
-              'login': (_) => const LoginView(),
-            },
-            initialRoute: 'login',
-          );
-        });
+      initTheme: initTheme,
+      builder: (_, snapshot) {
+        return MaterialApp(
+          title: 'Generador de formatos de pago',
+          debugShowCheckedModeBanner: false,
+          scrollBehavior: CustomScrollBehavior(),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'),
+            Locale('es'),
+          ],
+          theme: initTheme,
+          routes: {
+            'home': (_) => HomeView(),
+            'login': (_) => const LoginView(),
+          },
+          initialRoute: 'login',
+        );
+      },
+    );
   }
 }

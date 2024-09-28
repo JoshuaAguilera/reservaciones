@@ -4,7 +4,6 @@ class Habitacion {
   int? id;
   String? folioHabitacion;
   String? categoria;
-  String? plan;
   bool? esPreventa;
   String? fechaCheckIn;
   String? fechaCheckOut;
@@ -19,7 +18,6 @@ class Habitacion {
     this.id,
     this.esPreventa,
     this.categoria,
-    this.plan,
     this.fechaCheckIn,
     this.fechaCheckOut,
     this.fecha,
@@ -36,7 +34,6 @@ class Habitacion {
         "folioHabitacion": folioHabitacion,
         "esPreventa": esPreventa,
         "categoria": categoria,
-        "plan": plan,
         "fechaCheckIn": fechaCheckIn,
         "fechaCheckOut": fechaCheckOut,
         "fecha": fecha,
@@ -50,7 +47,6 @@ class Habitacion {
         "folioHabitacion": folioHabitacion,
         "esPreventa": esPreventa,
         "categoria": categoria,
-        "plan": plan,
         "fechaCheckIn": fechaCheckIn,
         "fechaCheckOut": fechaCheckOut,
         "fecha": fecha,

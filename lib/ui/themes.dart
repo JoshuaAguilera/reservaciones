@@ -20,6 +20,7 @@ class Themes {
       primaryColorDark: Colors.white,
       primaryColorLight: Colors.black87,
       dividerColor: DesktopColors.cerulean,
+      scaffoldBackgroundColor: Color.fromARGB(255, 238, 238, 238)
     );
   }
 }

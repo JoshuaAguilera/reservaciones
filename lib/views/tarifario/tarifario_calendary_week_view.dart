@@ -178,13 +178,7 @@ class _TarifarioCalendaryWeekViewState
                             loading: () => const SizedBox(),
                           );
                         }
-                        return SizedBox(
-                            height: 150,
-                            child: CustomWidgets.messageNotResult(
-                                context: context,
-                                sizeImage: 100,
-                                screenWidth: screenWidth,
-                                extended: widget.sideController.extended));
+                        return const SizedBox(height: 150);
                       },
                       error: (error, stackTrace) => SizedBox(
                           height: 150,

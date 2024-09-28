@@ -217,9 +217,17 @@ class dynamicWidget {
 
   static Widget loadingWidget(
       double screenWidth, double screenHeight, bool extended,
-      {bool isEstandar = false, double sizeIndicator = 50}) {
+      {bool isEstandar = false, double sizeIndicator = 50, Widget? message}) {
     return isEstandar
-        ? ProgressIndicatorEstandar(sizeProgressIndicator: sizeIndicator)
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ProgressIndicatorEstandar(sizeProgressIndicator: sizeIndicator),
+              const SizedBox(height: 10),
+              if (message != null) message
+            ],
+          )
         : SizedBox(
             width: (screenWidth > 1280)
                 ? (screenWidth - 385 - (extended ? 230 : 118))
