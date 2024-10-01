@@ -224,7 +224,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               habitacionSelectProvider.notifier)
                                           .update(
                                             (state) => Habitacion(
-                                              categoria: categorias.first,
+                                              categoria: tipoHabitacion.first,
                                               adultos: 1,
                                               menores0a6: 0,
                                               menores7a12: 0,

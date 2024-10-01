@@ -560,8 +560,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           runAlignment: WrapAlignment.center,
                                           children: [
                                             TextStyles.mediumText(
-                                              text: "VISTA RESERVA",
+                                              text: tipoHabitacion[0],
                                               color: Colors.white,
+                                              aling: TextAlign.center,
                                             ),
                                             FormWidgets.inputSwitch(
                                               name: "Auto calculación:",
@@ -792,8 +793,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           runAlignment: WrapAlignment.center,
                                           children: [
                                             TextStyles.mediumText(
-                                              text: "VISTA PARCIAL AL MAR",
+                                              text: tipoHabitacion[1],
                                               color: Colors.white,
+                                              aling: TextAlign.center,
                                             ),
                                             FormWidgets.inputSwitch(
                                               name: "Auto calculación:",
@@ -1084,14 +1086,14 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     }
 
     TarifaTemporada tarifaVR = TarifaTemporada(
-        categoria: "VISTA RESERVA",
+        categoria: tipoHabitacion[0],
         tarifaAdulto1a2: double.parse(adults1_2VRController.text),
         tarifaAdulto3: double.parse(adults3VRController.text),
         tarifaAdulto4: double.parse(adults4VRController.text),
         tarifaMenores7a12: double.parse(minors7_12VRController.text),
         tarifaPaxAdicional: double.parse(paxAdicVRController.text));
     TarifaTemporada tarifaVPM = TarifaTemporada(
-        categoria: "VISTA PARCIAL AL MAR",
+        categoria: tipoHabitacion[1],
         tarifaAdulto1a2: double.parse(adults1_2VPMController.text),
         tarifaAdulto3: double.parse(adults3VPMController.text),
         tarifaAdulto4: double.parse(adults4VPMController.text),

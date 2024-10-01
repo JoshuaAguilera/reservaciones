@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
-  final void Function(String)? onChanged;
+  final void Function(String) onChanged;
+  final void Function(int)? onIncrement;
+  final void Function(int)? onDecrement;
   final String? initialValue;
   final int? minimalValue;
   final int? maxValue;
-  const NumberInputWithIncrementDecrement(
-      {super.key,
-      required this.onChanged,
-      required this.initialValue,
-      this.minimalValue,
-      this.maxValue});
+  const NumberInputWithIncrementDecrement({
+    super.key,
+    required this.onChanged,
+    required this.initialValue,
+    this.minimalValue,
+    this.maxValue,
+    this.onIncrement,
+    this.onDecrement,
+  });
 
   @override
   _NumberInputWithIncrementDecrementState createState() =>
@@ -51,7 +56,7 @@ class _NumberInputWithIncrementDecrementState
             child: AbsorbPointer(
               absorbing: true,
               child: TextFormField(
-                onChanged: (value) => widget.onChanged!.call(value),
+                onChanged: (value) => widget.onChanged.call(value),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontFamily: "poppins_regular", fontSize: 13),
@@ -101,7 +106,10 @@ class _NumberInputWithIncrementDecrementState
                                         : widget.maxValue)
                                     .toString()
                             : (currentValue).toString(); // incrementing value
-                        widget.onChanged!.call(_controller.text);
+                        widget.onChanged.call(_controller.text);
+                        if (widget.onIncrement != null) {
+                          widget.onIncrement!.call(currentValue);
+                        }
                       });
                     },
                   ),
@@ -120,7 +128,10 @@ class _NumberInputWithIncrementDecrementState
                                   ? currentValue
                                   : widget.minimalValue ?? 0)
                               .toString(); // decrementing value
-                      widget.onChanged!.call(_controller.text);
+                      widget.onChanged.call(_controller.text);
+                      if (widget.onDecrement != null) {
+                        widget.onDecrement!.call(currentValue);
+                      }
                     });
                   },
                 ),

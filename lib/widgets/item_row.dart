@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
@@ -66,10 +67,11 @@ class ItemRow {
   static Widget dayRateRow({
     required BuildContext context,
     required int day,
-    required int numMonthInit,
     required bool inPeriod,
     required DateTime dateNow,
     List<RegistroTarifa>? tarifas,
+    int totalDays = 0,
+    bool isLastDay = false,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
@@ -84,6 +86,8 @@ class ItemRow {
                   day: day,
                   dateNow: dateNow,
                   registros: tarifas!,
+                  totalDays: totalDays,
+                  isLastDay: isLastDay,
                 ),
               )
             : Container(
@@ -107,8 +111,151 @@ class ItemRow {
     );
   }
 
-  static Widget itemTarifaDia(BuildContext context,
-      {required int day, required DateTime initDate, required bool isDetail}) {
+  static TableRow tableRowTarifaDay(
+    BuildContext context, {
+    required DateTime checkIn,
+    required int ink,
+    required DateTime checkOut,
+    required List<RegistroTarifa> tarifas,
+    required Habitacion habitacion,
+    required double screenWidth,
+  }) {
+    RegistroTarifa? tarifa =
+        Utility.revisedTariffDay(checkIn.add(Duration(days: ink)), tarifas);
+
+    double tarifaAdulto = Utility.calculateTariffAdult(
+      tarifa,
+      habitacion,
+      checkOut.difference(checkIn).inDays,
+    );
+
+    double tarifaMenores = Utility.calculateTariffChildren(
+      tarifa,
+      habitacion,
+      checkOut.difference(checkIn).inDays,
+    );
+
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 11.0),
+          child: Center(
+            child: TextStyles.standardText(
+                text: checkIn
+                    .add(Duration(days: ink))
+                    .toIso8601String()
+                    .substring(0, 10),
+                color: Theme.of(context).primaryColor,
+                size: 14),
+          ),
+        ),
+        Center(
+          child: TextStyles.standardText(
+              text: Utility.formatterNumber(
+                (checkOut.difference(checkIn).inDays == ink) ? 0 : tarifaAdulto,
+              ),
+              color: Theme.of(context).primaryColor,
+              size: 14),
+        ),
+        Center(
+          child: TextStyles.standardText(
+              text: Utility.formatterNumber(
+                  (checkOut.difference(checkIn).inDays == ink)
+                      ? 0
+                      : tarifaMenores),
+              color: Theme.of(context).primaryColor,
+              size: 14),
+        ),
+        Center(
+          child: TextStyles.standardText(
+              text: Utility.formatterNumber(0),
+              color: Theme.of(context).primaryColor,
+              size: 14),
+        ),
+        Center(
+          child: TextStyles.standardText(
+              text: Utility.formatterNumber(
+                (checkOut.difference(checkIn).inDays == ink)
+                    ? 0
+                    : (tarifaAdulto + tarifaMenores),
+              ),
+              color: Theme.of(context).primaryColor,
+              size: 14),
+        ),
+        (checkOut.difference(checkIn).inDays == ink)
+            ? const SizedBox()
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (screenWidth > 1400)
+                    Buttons.commonButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialogs.taridaAlertDialog(
+                            context: context,
+                            title:
+                                "Modificar de tarifas ${checkIn.add(Duration(days: ink)).day} / ${monthNames[checkIn.add(Duration(days: ink)).month - 1]}",
+                            iconData: CupertinoIcons.pencil_circle,
+                            iconColor: DesktopColors.cerulean,
+                            nameButtonMain: "ACEPTAR",
+                            funtionMain: () {},
+                            nameButtonCancel: "CANCELAR",
+                            withButtonCancel: true,
+                          ),
+                        );
+                      },
+                      text: "Editar",
+                      color: tarifa?.color,
+                      colorText: tarifa == null
+                          ? Colors.white
+                          : useWhiteForeground(tarifa.color!)
+                              ? Colors.white
+                              : const Color.fromARGB(255, 43, 43, 43),
+                    )
+                  else
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialogs.taridaAlertDialog(
+                            context: context,
+                            title:
+                                "Modificar de tarifas ${checkIn.add(Duration(days: ink)).day} / ${monthNames[checkIn.add(Duration(days: ink)).month - 1]}",
+                            iconData: CupertinoIcons.pencil_circle,
+                            iconColor: DesktopColors.cerulean,
+                            nameButtonMain: "ACEPTAR",
+                            funtionMain: () {},
+                            nameButtonCancel: "CANCELAR",
+                            withButtonCancel: true,
+                          ),
+                        );
+                      },
+                      tooltip: "Editar",
+                      icon: Icon(
+                        CupertinoIcons.pencil,
+                        size: 30,
+                        color: tarifa?.color,
+                      ),
+                    ),
+                ],
+              )
+      ],
+    );
+  }
+
+  static Widget itemTarifaDia(
+    BuildContext context, {
+    required int day,
+    required DateTime initDate,
+    required bool isDetail,
+    required double tarifaAdulto,
+    required double tarifaMenores7a12,
+    required double tarifaMenores0a6,
+    required String temporada,
+    required String periodo,
+    Color? color,
+  }) {
     void showDialogEditQuote() {
       showDialog(
         context: context,
@@ -137,15 +284,15 @@ class ItemRow {
               day: day + 1,
               subtitle: "DIA",
               sizeTitle: 22,
-              colorsubTitle: Theme.of(context).dividerColor),
+              colorsubTitle: Theme.of(context).dividerColor,
+              colorTitle: color),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: TextStyles.TextAsociative(
               "Fecha:  ",
-              DateTime(initDate.year, initDate.month, initDate.day)
-                  .add(Duration(days: day))
-                  .toString()
-                  .substring(0, 10),
+              Utility.getCompleteDate(
+                  data: DateTime(initDate.year, initDate.month, initDate.day)
+                      .add(Duration(days: day))),
               color: Theme.of(context).primaryColor,
               size: 13.5,
             ),
@@ -156,36 +303,33 @@ class ItemRow {
             children: [
               TextStyles.TextAsociative(
                 "Tarifa de adultos:  ",
-                DateTime(initDate.year, initDate.month, initDate.day)
-                    .add(Duration(days: day))
-                    .toString()
-                    .substring(0, 10),
+                Utility.formatterNumber(tarifaAdulto),
                 color: Theme.of(context).primaryColor,
                 size: 13.5,
               ),
               TextStyles.TextAsociative(
                 "Tarifa de Menores de 7 a 12:  ",
-                Utility.formatterNumber(0),
+                Utility.formatterNumber(tarifaMenores7a12),
                 color: Theme.of(context).primaryColor,
                 size: 13.5,
               ),
               TextStyles.TextAsociative(
-                "Tarifa de Persona Adicional:  ",
-                Utility.formatterNumber(0),
+                "Tarifa de Menores de 0 a 6:  ",
+                Utility.formatterNumber(tarifaMenores0a6),
                 color: Theme.of(context).primaryColor,
                 size: 13.5,
               ),
               if (MediaQuery.of(context).size.width > 1300)
                 TextStyles.TextAsociative(
                   "Periodo:  ",
-                  "Marzo - Abril",
+                  periodo,
                   color: Theme.of(context).primaryColor,
                   size: 13.5,
                 ),
               if (MediaQuery.of(context).size.width > 1500)
                 TextStyles.TextAsociative(
                   "Temporada:  ",
-                  "Alta",
+                  temporada,
                   color: Theme.of(context).primaryColor,
                   size: 13.5,
                 ),
@@ -197,8 +341,13 @@ class ItemRow {
                   ? SizedBox(
                       width: 115,
                       child: Buttons.commonButton(
-                          onPressed: () => showDialogEditQuote(),
-                          text: "Editar"),
+                        onPressed: () => showDialogEditQuote(),
+                        text: "Editar",
+                        color: color,
+                        colorText: useWhiteForeground(color!)
+                            ? Colors.white
+                            : const Color.fromARGB(255, 43, 43, 43),
+                      ),
                     )
                   : IconButton(
                       onPressed: () => showDialogEditQuote(),
@@ -206,7 +355,7 @@ class ItemRow {
                       icon: Icon(
                         CupertinoIcons.pencil,
                         size: 30,
-                        color: DesktopColors.cerulean,
+                        color: color,
                       ),
                     ),
         ),

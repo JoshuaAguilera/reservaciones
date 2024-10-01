@@ -2,17 +2,15 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
-import '../../widgets/dialogs.dart';
-
-class DiasList extends StatefulWidget {
+class DiasList extends ConsumerStatefulWidget {
   const DiasList({
     super.key,
     required this.initDay,
@@ -31,10 +29,10 @@ class DiasList extends StatefulWidget {
   final List<RegistroTarifa> tarifas;
 
   @override
-  State<DiasList> createState() => _DiasListState();
+  _DiasListState createState() => _DiasListState();
 }
 
-class _DiasListState extends State<DiasList> {
+class _DiasListState extends ConsumerState<DiasList> {
   int numDays = 0;
 
   //prepare V4
@@ -53,6 +51,7 @@ class _DiasListState extends State<DiasList> {
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenWidth = MediaQuery.of(context).size.width;
+    final habitacionProvider = ref.watch(habitacionSelectProvider);
 
     return SingleChildScrollView(
       child: Column(
@@ -112,7 +111,6 @@ class _DiasListState extends State<DiasList> {
                                   context: context,
                                   day:
                                       checkInLimit.add(Duration(days: ink)).day,
-                                  numMonthInit: checkIn.month,
                                   inPeriod: false,
                                   dateNow:
                                       checkInLimit.add(Duration(days: ink)),
@@ -123,10 +121,13 @@ class _DiasListState extends State<DiasList> {
                                 ItemRow.dayRateRow(
                                   context: context,
                                   day: checkIn.add(Duration(days: ink)).day,
-                                  numMonthInit: checkIn.month,
                                   inPeriod: true,
                                   dateNow: checkIn.add(Duration(days: ink)),
                                   tarifas: widget.tarifas,
+                                  totalDays:
+                                      checkOut.difference(checkIn).inDays,
+                                  isLastDay: ink ==
+                                      checkOut.difference(checkIn).inDays,
                                 ),
                               for (var ink = 0;
                                   ink <
@@ -136,7 +137,6 @@ class _DiasListState extends State<DiasList> {
                                   context: context,
                                   day:
                                       checkOut.add(Duration(days: ink + 1)).day,
-                                  numMonthInit: checkIn.month,
                                   inPeriod: false,
                                   dateNow:
                                       checkOut.add(Duration(days: ink + 1)),
@@ -196,7 +196,7 @@ class _DiasListState extends State<DiasList> {
             ),
           if (widget.isTable)
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 5),
               child: Column(
                 children: [
                   Table(
@@ -211,7 +211,7 @@ class _DiasListState extends State<DiasList> {
                       TableRow(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
                             child: Center(
                               child: TextStyles.standardText(
                                   text: "Fecha",
@@ -236,7 +236,7 @@ class _DiasListState extends State<DiasList> {
                           ),
                           Center(
                             child: TextStyles.standardText(
-                                text: "Tarifa de Pax Adicional",
+                                text: "Tarifa Menores de 0 a 6 años",
                                 isBold: true,
                                 color: Theme.of(context).primaryColor,
                                 size: 14),
@@ -261,7 +261,7 @@ class _DiasListState extends State<DiasList> {
                   ),
                   Divider(color: Theme.of(context).primaryColorLight),
                   SizedBox(
-                    height: Utility.limitHeightList(numDays, 20, 370),
+                    height: Utility.limitHeightList(checkOut.difference(checkIn).inDays, 8, 345),
                     child: SingleChildScrollView(
                       child: Table(
                         defaultVerticalAlignment:
@@ -271,101 +271,17 @@ class _DiasListState extends State<DiasList> {
                               BorderSide(color: Theme.of(context).dividerColor),
                         ),
                         children: [
-                          for (var i = 0; i < numDays + 1; i++)
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 11.0),
-                                  child: Center(
-                                    child: TextStyles.standardText(
-                                        text: DateTime.parse(widget.initDay)
-                                            .add(Duration(days: i))
-                                            .toIso8601String()
-                                            .substring(0, 10),
-                                        color: Theme.of(context).primaryColor,
-                                        size: 14),
-                                  ),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: Utility.formatterNumber(0),
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: Utility.formatterNumber(0),
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: Utility.formatterNumber(0),
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: Utility.formatterNumber(0),
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (screenWidth > 1400)
-                                      Buttons.commonButton(
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  Dialogs.taridaAlertDialog(
-                                                context: context,
-                                                title:
-                                                    "Modificar de tarifas ${DateTime.parse(widget.initDay).add(Duration(days: i)).day} / ${monthNames[DateTime.parse(widget.initDay).add(Duration(days: i)).month - 1]}",
-                                                iconData: CupertinoIcons
-                                                    .pencil_circle,
-                                                iconColor:
-                                                    DesktopColors.cerulean,
-                                                nameButtonMain: "ACEPTAR",
-                                                funtionMain: () {},
-                                                nameButtonCancel: "CANCELAR",
-                                                withButtonCancel: true,
-                                              ),
-                                            );
-                                          },
-                                          text: "Editar")
-                                    else
-                                      IconButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                Dialogs.taridaAlertDialog(
-                                              context: context,
-                                              title:
-                                                  "Modificar de tarifas ${DateTime.parse(widget.initDay).add(Duration(days: i)).day} / ${monthNames[DateTime.parse(widget.initDay).add(Duration(days: i)).month - 1]}",
-                                              iconData:
-                                                  CupertinoIcons.pencil_circle,
-                                              iconColor: DesktopColors.cerulean,
-                                              nameButtonMain: "ACEPTAR",
-                                              funtionMain: () {},
-                                              nameButtonCancel: "CANCELAR",
-                                              withButtonCancel: true,
-                                            ),
-                                          );
-                                        },
-                                        tooltip: "Editar",
-                                        icon: Icon(
-                                          CupertinoIcons.pencil,
-                                          size: 30,
-                                          color: DesktopColors.cerulean,
-                                        ),
-                                      ),
-                                  ],
-                                )
-                              ],
+                          for (var ink = 0;
+                              ink < checkOut.difference(checkIn).inDays + 1;
+                              ink++)
+                            ItemRow.tableRowTarifaDay(
+                              context,
+                              checkIn: checkIn,
+                              ink: ink,
+                              checkOut: checkOut,
+                              tarifas: widget.tarifas,
+                              habitacion: habitacionProvider,
+                              screenWidth: screenWidth,
                             ),
                         ],
                       ),
@@ -376,15 +292,53 @@ class _DiasListState extends State<DiasList> {
             ).animate().fadeIn(duration: 700.ms),
           if (widget.isCheckList)
             SizedBox(
-              height: Utility.limitHeightList(numDays, 20, 440),
+              height: Utility.limitHeightList(
+                checkOut.difference(checkIn).inDays,
+                4,
+                380,
+              ),
               child: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: numDays + 1,
-                  itemBuilder: (context, index) {
-                    return ItemRow.itemTarifaDia(context,
-                        day: index, initDate: checkIn, isDetail: false);
+                  itemCount: checkOut.difference(checkIn).inDays + 1,
+                  itemBuilder: (context, ink) {
+                    RegistroTarifa? nowTariff = Utility.revisedTariffDay(
+                        checkIn.add(Duration(days: ink)), widget.tarifas);
+
+                    int totalDays = checkOut.difference(checkIn).inDays;
+
+                    return ItemRow.itemTarifaDia(
+                      context,
+                      day: ink,
+                      initDate: checkIn,
+                      isDetail: (totalDays == ink),
+                      color: nowTariff?.color,
+                      tarifaAdulto: (totalDays == ink)
+                          ? 0
+                          : Utility.calculateTariffAdult(
+                              nowTariff,
+                              habitacionProvider,
+                              totalDays,
+                            ),
+                      tarifaMenores7a12: (totalDays == ink)
+                          ? 0
+                          : Utility.calculateTariffChildren(
+                              nowTariff,
+                              habitacionProvider,
+                              totalDays,
+                            ),
+                      tarifaMenores0a6: 0,
+                      temporada:
+                          Utility.getSeasonNow(nowTariff!, totalDays)?.nombre ??
+                              'No definido',
+                      periodo: nowTariff == null
+                          ? "No definido"
+                          : Utility.definePeriodNow(
+                              checkIn.add(Duration(days: ink)),
+                              nowTariff.periodos,
+                              compact: true),
+                    );
                   },
                 ),
               ),

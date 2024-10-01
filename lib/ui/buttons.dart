@@ -124,7 +124,9 @@ class Buttons {
               : TextStyles.buttonTextStyle(
                   text: !isLoading ? text : "Espere",
                   aling: TextAlign.center,
-                  size: sizeText),
+                  size: sizeText,
+                  color: colorText,
+                ),
         ],
       ),
     );

@@ -23,11 +23,9 @@ class HabitacionForm extends ConsumerStatefulWidget {
   const HabitacionForm(
       {super.key,
       required this.cancelarFunction,
-      this.habitacionSelect,
       required this.sideController});
 
   final void Function()? cancelarFunction;
-  final Habitacion? habitacionSelect;
   final SidebarXController sideController;
 
   @override
@@ -35,7 +33,6 @@ class HabitacionForm extends ConsumerStatefulWidget {
 }
 
 class _HabitacionFormState extends ConsumerState<HabitacionForm> {
-  Habitacion nuevaHabitacion = Habitacion();
   final _formKeyHabitacion = GlobalKey<FormState>();
   TextEditingController _fechaEntrada = TextEditingController();
   TextEditingController _fechaSalida = TextEditingController();
@@ -48,6 +45,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     const Icon(Icons.dehaze_sharp),
   ];
   double target = 1;
+  int totalHuespedes = 1;
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -62,19 +60,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
   @override
   void initState() {
-    /*
-    nuevaHabitacion = widget.habitacionSelect ??
-        Habitacion(
-          categoria: categorias.first,
-          fechaCheckIn: DateTime.now().toString().substring(0, 10),
-          adultos: 0,
-          menores0a6: 0,
-          menores7a12: 0,
-          paxAdic: 0,
-        );
-
-        */
-
     super.initState();
   }
 
@@ -90,7 +75,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final tarifaProvider = ref.watch(allTarifaProvider(""));
-    final habitacionFormProvider = ref.watch(habitacionSelectProvider);
+    final habitacionProvider = ref.watch(habitacionSelectProvider);
 
     return Scaffold(
       body: Padding(
@@ -136,10 +121,10 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                               () => setState(() => showSaveButton = true));
 
                           _fechaEntrada = TextEditingController(
-                              text: habitacionFormProvider.fechaCheckIn ??
+                              text: habitacionProvider.fechaCheckIn ??
                                   DateTime.now().toString().substring(0, 10));
                           _fechaSalida = TextEditingController(
-                              text: habitacionFormProvider.fechaCheckOut ??
+                              text: habitacionProvider.fechaCheckOut ??
                                   DateTime.now()
                                       .add(const Duration(days: 1))
                                       .toString()
@@ -181,15 +166,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                               child: CustomDropdown
                                                   .dropdownMenuCustom(
                                                 initialSelection:
-                                                    widget.habitacionSelect !=
-                                                            null
-                                                        ? widget
-                                                            .habitacionSelect!
-                                                            .categoria!
-                                                        : tipoHabitacion.first,
+                                                    habitacionProvider
+                                                            .categoria ??
+                                                        tipoHabitacion.first,
                                                 onSelected: (String? value) {
-                                                  nuevaHabitacion.categoria =
+                                                  habitacionProvider.categoria =
                                                       value!;
+                                                  setState(() {});
                                                 },
                                                 elements: tipoHabitacion,
                                               ),
@@ -323,42 +306,92 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   TableRow(children: [
                                                     NumberInputWithIncrementDecrement(
                                                       onChanged: (p0) {
-                                                        nuevaHabitacion
+                                                        habitacionProvider
                                                                 .adultos =
                                                             int.tryParse(p0);
+                                                        setState(() {});
                                                       },
-                                                      initialValue: widget
-                                                          .habitacionSelect
-                                                          ?.adultos!
-                                                          .toString(),
+                                                      initialValue:
+                                                          habitacionProvider
+                                                              .adultos!
+                                                              .toString(),
+                                                      minimalValue: 1,
+                                                      maxValue: 4 -
+                                                          habitacionProvider
+                                                              .menores0a6! -
+                                                          habitacionProvider
+                                                              .menores7a12!,
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 8.0),
-                                                      child:
-                                                          NumberInputWithIncrementDecrement(
-                                                        onChanged: (p0) {
-                                                          nuevaHabitacion
-                                                                  .menores0a6 =
-                                                              int.tryParse(p0);
-                                                        },
-                                                        initialValue: widget
-                                                            .habitacionSelect
-                                                            ?.menores0a6!
-                                                            .toString(),
+                                                      child: AbsorbPointer(
+                                                        absorbing: revisedLimitPax(
+                                                            habitacionProvider,
+                                                            habitacionProvider
+                                                                .menores7a12!),
+                                                        child: Opacity(
+                                                          opacity: revisedLimitPax(
+                                                                  habitacionProvider,
+                                                                  habitacionProvider
+                                                                      .menores7a12!)
+                                                              ? 0.5
+                                                              : 1,
+                                                          child:
+                                                              NumberInputWithIncrementDecrement(
+                                                            onChanged: (p0) {
+                                                              habitacionProvider
+                                                                      .menores0a6 =
+                                                                  int.tryParse(
+                                                                      p0);
+                                                              setState(() {});
+                                                            },
+                                                            initialValue:
+                                                                habitacionProvider
+                                                                    .menores0a6!
+                                                                    .toString(),
+                                                            maxValue: 4 -
+                                                                habitacionProvider
+                                                                    .adultos! -
+                                                                habitacionProvider
+                                                                    .menores7a12!,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                    NumberInputWithIncrementDecrement(
-                                                      onChanged: (p0) {
-                                                        nuevaHabitacion
-                                                                .menores7a12 =
-                                                            int.tryParse(p0);
-                                                      },
-                                                      initialValue: widget
-                                                          .habitacionSelect
-                                                          ?.menores7a12!
-                                                          .toString(),
+                                                    AbsorbPointer(
+                                                      absorbing: revisedLimitPax(
+                                                          habitacionProvider,
+                                                          habitacionProvider
+                                                              .menores0a6!),
+                                                      child: Opacity(
+                                                        opacity: revisedLimitPax(
+                                                                habitacionProvider,
+                                                                habitacionProvider
+                                                                    .menores0a6!)
+                                                            ? 0.5
+                                                            : 1,
+                                                        child:
+                                                            NumberInputWithIncrementDecrement(
+                                                          onChanged: (p0) {
+                                                            habitacionProvider
+                                                                    .menores7a12 =
+                                                                int.tryParse(
+                                                                    p0);
+                                                            setState(() {});
+                                                          },
+                                                          initialValue:
+                                                              habitacionProvider
+                                                                  .menores7a12!
+                                                                  .toString(),
+                                                          maxValue: 4 -
+                                                              habitacionProvider
+                                                                  .menores0a6! -
+                                                              habitacionProvider
+                                                                  .adultos!,
+                                                        ),
+                                                      ),
                                                     )
                                                   ]),
                                                 ],
@@ -411,6 +444,79 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 ),
                               ),
                             const SizedBox(height: 15),
+                            TextStyles.titleText(
+                              text: "Totales",
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            const Divider(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Wrap(
+                                    children: [
+                                      SizedBox(
+                                        width: 220,
+                                        child: TextStyles.TextAsociative(
+                                          "Adultos: ",
+                                          Utility.calculateTariffRoom(
+                                            habitacion: habitacionProvider,
+                                            initDay: _fechaEntrada.text,
+                                            lastDay: _fechaSalida.text,
+                                            regitros: list,
+                                            onlyAdults: true,
+                                          ),
+                                          color: Theme.of(context).primaryColor,
+                                          size: 15,
+                                          boldInversed: true,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 270,
+                                        child: TextStyles.TextAsociative(
+                                          "Menores 7-12: ",
+                                          Utility.calculateTariffRoom(
+                                            habitacion: habitacionProvider,
+                                            initDay: _fechaEntrada.text,
+                                            lastDay: _fechaSalida.text,
+                                            regitros: list,
+                                            onlyChildren: true,
+                                          ),
+                                          color: Theme.of(context).primaryColor,
+                                          size: 15,
+                                          boldInversed: true,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 150,
+                                        child: TextStyles.TextAsociative(
+                                          "Menores 0-6: ",
+                                          Utility.formatterNumber(0),
+                                          color: Theme.of(context).primaryColor,
+                                          size: 15,
+                                          boldInversed: true,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 180,
+                                  child: TextStyles.mediumText(
+                                    aling: TextAlign.end,
+                                    text: Utility.calculateTariffRoom(
+                                      habitacion: habitacionProvider,
+                                      initDay: _fechaEntrada.text,
+                                      lastDay: _fechaSalida.text,
+                                      regitros: list,
+                                    ),
+                                    size: 22,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )
+                              ],
+                            )
                           ],
                         ).animate(target: target).fadeIn(duration: 500.ms);
                       },
@@ -443,5 +549,17 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         ),
       ),
     );
+  }
+
+  bool revisedLimitPax(Habitacion habitacionProvider, int cantidad) {
+    if (habitacionProvider.adultos == 4) {
+      return true;
+    }
+
+    if ((habitacionProvider.adultos! + cantidad) >= 4) {
+      return true;
+    }
+
+    return false;
   }
 }

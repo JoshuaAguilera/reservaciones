@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 
+import '../providers/habitacion_provider.dart';
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/utility.dart';
 import 'text_styles.dart';
@@ -22,12 +25,16 @@ class CardAnimationWidget extends ConsumerStatefulWidget {
     this.resetTime = const Duration(milliseconds: 3500),
     required this.dateNow,
     required this.registros,
+    required this.totalDays,
+    required this.isLastDay,
   });
 
   final int day;
   final Duration resetTime;
   final DateTime dateNow;
   final List<RegistroTarifa> registros;
+  final int totalDays;
+  final bool isLastDay;
 
   @override
   _CardAnimationWidgetState createState() => _CardAnimationWidgetState();
@@ -51,10 +58,12 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final habitacionProvider = ref.watch(habitacionSelectProvider);
+
     return Center(
       child: Container(
         constraints: BoxConstraints.tight(const Size.square(200.0)),
-        child: _buildFlipAnimation(),
+        child: _buildFlipAnimation(habitacionProvider),
       ),
     );
   }
@@ -95,7 +104,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     }
   }
 
-  Widget _buildFlipAnimation() {
+  Widget _buildFlipAnimation(Habitacion habitacion) {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
@@ -104,7 +113,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
         switchInCurve: Curves.easeInBack,
         switchOutCurve: Curves.easeInBack.flipped,
-        child: _showFrontSide ? _buildFront() : _buildRear(),
+        child:
+            _showFrontSide ? _buildFront(habitacion) : _buildRear(habitacion),
       ),
     );
   }
@@ -131,7 +141,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildFront() {
+  Widget _buildFront(Habitacion habitacion) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     return __buildLayout(
       key: ValueKey(true),
@@ -163,7 +173,12 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   ),
                 if (MediaQuery.of(context).size.width > 1510)
                   TextStyles.TextAsociative(
-                      "Adulto: ", Utility.formatterNumber(0),
+                      "Adulto: ",
+                      widget.isLastDay
+                          ? "\$0.00"
+                          : Utility.formatterNumber(
+                              Utility.calculateTariffAdult(
+                                  nowRegister, habitacion, widget.totalDays)),
                       boldInversed: true,
                       size: 11,
                       color: Theme.of(context).primaryColor),
@@ -172,7 +187,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       "Men 7-12: ",
                       boldInversed: true,
                       size: 11,
-                      Utility.formatterNumber(0),
+                      widget.isLastDay
+                          ? "\$0.00"
+                          : Utility.formatterNumber(
+                              Utility.calculateTariffChildren(
+                                  nowRegister, habitacion, widget.totalDays)),
                       color: Theme.of(context).primaryColor),
                 if (MediaQuery.of(context).size.width > 1710)
                   const SizedBox(height: 10),
@@ -181,7 +200,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       "Total: ",
                       boldInversed: true,
                       size: 11,
-                      Utility.formatterNumber(0),
+                      widget.isLastDay
+                          ? "\$0.00"
+                          : Utility.formatterNumber(
+                              Utility.calculateTariffAdult(nowRegister,
+                                      habitacion, widget.totalDays) +
+                                  Utility.calculateTariffChildren(nowRegister,
+                                      habitacion, widget.totalDays)),
                       color: Theme.of(context).primaryColor),
               ],
             ),
@@ -191,7 +216,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildRear() {
+  Widget _buildRear(Habitacion habitacion) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
 
     return __buildLayout(
@@ -246,7 +271,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
               if (MediaQuery.of(context).size.width > 1590)
                 TextStyles.TextAsociative(
                   "Temporada: ",
-                  "---",
+                  Utility.getSeasonNow(nowRegister!, widget.totalDays)
+                          ?.nombre ??
+                      '',
                   boldInversed: true,
                   size: 11,
                   color: nowRegister == null
@@ -257,7 +284,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 ),
               if (MediaQuery.of(context).size.width > 1460)
                 const SizedBox(height: 8),
-              if (MediaQuery.of(context).size.width > 1490)
+              if (MediaQuery.of(context).size.width > 1490 && !widget.isLastDay)
                 SizedBox(
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,

@@ -21,8 +21,8 @@ const List<String> cotizacionesList = <String>[
 ];
 
 const List<String> tipoHabitacion = <String>[
-  'DELUXE DOBLE VISTA A LA RESERVA 🎍',
-  'DELUXE DOBLE O KING SIZE VISTA PARCIAL AL MAR 🏝️',
+  'DELUXE DOBLE VISTA A LA RESERVA',
+  'DELUXE DOBLE VISTA PARCIAL AL MAR',
 ];
 
 const List<String> paxes = <String>[

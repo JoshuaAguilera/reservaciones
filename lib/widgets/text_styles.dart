@@ -51,13 +51,17 @@ class TextStyles {
     );
   }
 
-  static Text buttonTextStyle(
-      {String text = "", TextAlign aling = TextAlign.left, double size = 14}) {
+  static Text buttonTextStyle({
+    String text = "",
+    TextAlign aling = TextAlign.left,
+    double size = 14,
+    Color color = Colors.white,
+  }) {
     return Text(
       text,
       textAlign: aling,
       style: TextStyle(
-        color: Colors.white,
+        color: color,
         fontSize: size,
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_bold",

@@ -1189,4 +1189,114 @@ class Utility {
 
     return status;
   }
+
+  static String calculateTariffRoom({
+    required Habitacion habitacion,
+    required String initDay,
+    required String lastDay,
+    required List<RegistroTarifa> regitros,
+    bool onlyAdults = false,
+    bool onlyChildren = false,
+  }) {
+    double totalTarifa = 0;
+
+    for (var ink = 0;
+        ink <
+            DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays;
+        ink++) {
+      RegistroTarifa? nowRegister = revisedTariffDay(
+          DateTime.parse(initDay).add(Duration(days: ink)), regitros);
+
+      double tariffAdult = calculateTariffAdult(nowRegister, habitacion,
+          DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays);
+
+      double tariffChildren = calculateTariffChildren(nowRegister, habitacion,
+          DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays);
+
+      if (onlyAdults) {
+        totalTarifa = totalTarifa + tariffAdult;
+        continue;
+      }
+
+      if (onlyChildren) {
+        totalTarifa = totalTarifa + tariffChildren;
+        continue;
+      }
+
+      totalTarifa = totalTarifa + (tariffAdult + tariffChildren);
+    }
+    return formatterNumber(totalTarifa);
+  }
+
+  static double calculateTariffAdult(
+      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays) {
+    double tariffAdult = 0;
+
+    if (nowRegister == null) {
+      return 0;
+    }
+
+    TarifaData nowTarifa = nowRegister.tarifas!
+        .firstWhere((element) => element.categoria == habitacion.categoria);
+
+    double descuento =
+        getSeasonNow(nowRegister, totalDays)!.porcentajePromocion ?? 0;
+
+    switch (habitacion.adultos) {
+      case 1 || 2:
+        tariffAdult = nowTarifa.tarifaAdultoSGLoDBL!;
+        break;
+      case 3:
+        tariffAdult = nowTarifa.tarifaAdultoTPL!;
+        break;
+      case 4:
+        tariffAdult = nowTarifa.tarifaAdultoCPLE!;
+        break;
+      default:
+        tariffAdult = nowTarifa.tarifaPaxAdicional!;
+    }
+
+    tariffAdult =
+        (tariffAdult - ((descuento / 100) * tariffAdult)).round().toDouble();
+
+    return tariffAdult;
+  }
+
+  static double calculateTariffChildren(
+      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays) {
+    double tariffChildren = 0;
+
+    if (nowRegister == null) {
+      return 0;
+    }
+
+    TarifaData nowTarifa = nowRegister.tarifas!
+        .firstWhere((element) => element.categoria == habitacion.categoria);
+
+    tariffChildren = nowTarifa.tarifaMenores7a12! * habitacion.menores7a12!;
+
+    double descuento =
+        getSeasonNow(nowRegister, totalDays)!.porcentajePromocion ?? 0;
+
+    tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
+        .round()
+        .toDouble();
+
+    return tariffChildren;
+  }
+
+  static TemporadaData? getSeasonNow(
+      RegistroTarifa? nowRegister, int totalDays) {
+    if (nowRegister == null) {
+      return null;
+    }
+
+    TemporadaData? nowSeason = nowRegister.temporadas
+        ?.where((element) => element.estanciaMinima == totalDays)
+        .firstOrNull;
+
+    nowSeason ??= nowRegister.temporadas!.last;
+
+    return nowSeason;
+  }
 }
