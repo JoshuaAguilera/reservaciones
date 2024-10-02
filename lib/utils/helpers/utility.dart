@@ -1190,13 +1190,16 @@ class Utility {
     return status;
   }
 
-  static String calculateTariffRoom({
+  static dynamic calculateTariffRoom({
     required Habitacion habitacion,
     required String initDay,
     required String lastDay,
     required List<RegistroTarifa> regitros,
     bool onlyAdults = false,
     bool onlyChildren = false,
+    bool withFormat = true,
+    bool withDiscount = true,
+    bool onlyDiscount = false,
   }) {
     double totalTarifa = 0;
 
@@ -1207,11 +1210,21 @@ class Utility {
       RegistroTarifa? nowRegister = revisedTariffDay(
           DateTime.parse(initDay).add(Duration(days: ink)), regitros);
 
-      double tariffAdult = calculateTariffAdult(nowRegister, habitacion,
-          DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays);
+      double tariffAdult = calculateTariffAdult(
+        nowRegister,
+        habitacion,
+        DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays,
+        withDiscount: withDiscount,
+        onlyDiscount: onlyDiscount,
+      );
 
-      double tariffChildren = calculateTariffChildren(nowRegister, habitacion,
-          DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays);
+      double tariffChildren = calculateTariffChildren(
+        nowRegister,
+        habitacion,
+        DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays,
+        withDiscount: withDiscount,
+        onlyDiscount: onlyDiscount,
+      );
 
       if (onlyAdults) {
         totalTarifa = totalTarifa + tariffAdult;
@@ -1225,11 +1238,16 @@ class Utility {
 
       totalTarifa = totalTarifa + (tariffAdult + tariffChildren);
     }
-    return formatterNumber(totalTarifa);
+    if (withFormat) {
+      return formatterNumber(totalTarifa);
+    } else {
+      return totalTarifa;
+    }
   }
 
   static double calculateTariffAdult(
-      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays) {
+      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays,
+      {bool withDiscount = true, bool onlyDiscount = false}) {
     double tariffAdult = 0;
 
     if (nowRegister == null) {
@@ -1256,14 +1274,25 @@ class Utility {
         tariffAdult = nowTarifa.tarifaPaxAdicional!;
     }
 
-    tariffAdult =
-        (tariffAdult - ((descuento / 100) * tariffAdult)).round().toDouble();
+    if (withDiscount) {
+      tariffAdult =
+          (tariffAdult - ((descuento / 100) * tariffAdult)).round().toDouble();
+    }
+
+    if (onlyDiscount) {
+      tariffAdult = ((descuento / 100) * tariffAdult).round().toDouble();
+    }
 
     return tariffAdult;
   }
 
   static double calculateTariffChildren(
-      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays) {
+    RegistroTarifa? nowRegister,
+    Habitacion habitacion,
+    int totalDays, {
+    bool withDiscount = true,
+    bool onlyDiscount = false,
+  }) {
     double tariffChildren = 0;
 
     if (nowRegister == null) {
@@ -1278,9 +1307,15 @@ class Utility {
     double descuento =
         getSeasonNow(nowRegister, totalDays)!.porcentajePromocion ?? 0;
 
-    tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
-        .round()
-        .toDouble();
+    if (withDiscount) {
+      tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
+          .round()
+          .toDouble();
+    }
+
+    if (onlyDiscount) {
+      tariffChildren = ((descuento / 100) * tariffChildren).round().toDouble();
+    }
 
     return tariffChildren;
   }

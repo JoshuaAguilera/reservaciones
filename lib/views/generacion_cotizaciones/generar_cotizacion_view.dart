@@ -466,8 +466,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       ),
                     ),
                   ),
-                  const ControllerCotizacionWidget()
-                      .animate()
+                  const CalculateSummaryControllerWidget()
+                      .animate(target: targetHabitaciones)
                       .fadeIn(duration: 450.ms),
                 ],
               ),

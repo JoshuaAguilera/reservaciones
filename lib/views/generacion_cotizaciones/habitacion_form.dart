@@ -444,79 +444,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 ),
                               ),
                             const SizedBox(height: 15),
-                            TextStyles.titleText(
-                              text: "Totales",
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            const Divider(),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Wrap(
-                                    children: [
-                                      SizedBox(
-                                        width: 220,
-                                        child: TextStyles.TextAsociative(
-                                          "Adultos: ",
-                                          Utility.calculateTariffRoom(
-                                            habitacion: habitacionProvider,
-                                            initDay: _fechaEntrada.text,
-                                            lastDay: _fechaSalida.text,
-                                            regitros: list,
-                                            onlyAdults: true,
-                                          ),
-                                          color: Theme.of(context).primaryColor,
-                                          size: 15,
-                                          boldInversed: true,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 270,
-                                        child: TextStyles.TextAsociative(
-                                          "Menores 7-12: ",
-                                          Utility.calculateTariffRoom(
-                                            habitacion: habitacionProvider,
-                                            initDay: _fechaEntrada.text,
-                                            lastDay: _fechaSalida.text,
-                                            regitros: list,
-                                            onlyChildren: true,
-                                          ),
-                                          color: Theme.of(context).primaryColor,
-                                          size: 15,
-                                          boldInversed: true,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 150,
-                                        child: TextStyles.TextAsociative(
-                                          "Menores 0-6: ",
-                                          Utility.formatterNumber(0),
-                                          color: Theme.of(context).primaryColor,
-                                          size: 15,
-                                          boldInversed: true,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 180,
-                                  child: TextStyles.mediumText(
-                                    aling: TextAlign.end,
-                                    text: Utility.calculateTariffRoom(
-                                      habitacion: habitacionProvider,
-                                      initDay: _fechaEntrada.text,
-                                      lastDay: _fechaSalida.text,
-                                      regitros: list,
-                                    ),
-                                    size: 22,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                )
-                              ],
-                            )
                           ],
                         ).animate(target: target).fadeIn(duration: 500.ms);
                       },
@@ -544,7 +471,57 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                 ),
               ),
             ),
-            const ControllerCotizacionWidget(),
+            tarifaProvider.when(
+              data: (list) {
+                return CalculateSummaryControllerWidget(
+                  calculateRoom: true,
+                  totalAdulto: Utility.calculateTariffRoom(
+                    habitacion: habitacionProvider,
+                    initDay: _fechaEntrada.text,
+                    lastDay: _fechaSalida.text,
+                    regitros: list,
+                    onlyAdults: true,
+                    withFormat: false,
+                    withDiscount: false,
+                  ),
+                  totalMenores: Utility.calculateTariffRoom(
+                    habitacion: habitacionProvider,
+                    initDay: _fechaEntrada.text,
+                    lastDay: _fechaSalida.text,
+                    regitros: list,
+                    onlyChildren: true,
+                    withFormat: false,
+                    withDiscount: false,
+                  ),
+                  total: Utility.calculateTariffRoom(
+                    habitacion: habitacionProvider,
+                    initDay: _fechaEntrada.text,
+                    lastDay: _fechaSalida.text,
+                    regitros: list,
+                    withFormat: false,
+                  ),
+                  totalReal: Utility.calculateTariffRoom(
+                    habitacion: habitacionProvider,
+                    initDay: _fechaEntrada.text,
+                    lastDay: _fechaSalida.text,
+                    regitros: list,
+                    withFormat: false,
+                    withDiscount: false,
+                  ),
+                  descuento: Utility.calculateTariffRoom(
+                    habitacion: habitacionProvider,
+                    initDay: _fechaEntrada.text,
+                    lastDay: _fechaSalida.text,
+                    regitros: list,
+                    onlyDiscount: true,
+                    withFormat: false,
+                    withDiscount: false,
+                  ),
+                ).animate(target: target).fadeIn(duration: 500.ms);
+              },
+              error: (error, stackTrace) => const SizedBox(),
+              loading: () => const SizedBox(),
+            ),
           ],
         ),
       ),

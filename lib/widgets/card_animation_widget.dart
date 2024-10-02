@@ -271,9 +271,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
               if (MediaQuery.of(context).size.width > 1590)
                 TextStyles.TextAsociative(
                   "Temporada: ",
-                  Utility.getSeasonNow(nowRegister!, widget.totalDays)
-                          ?.nombre ??
-                      '',
+                  nowRegister != null
+                      ? Utility.getSeasonNow(nowRegister!, widget.totalDays)
+                              ?.nombre ??
+                          ''
+                      : "---",
                   boldInversed: true,
                   size: 11,
                   color: nowRegister == null
