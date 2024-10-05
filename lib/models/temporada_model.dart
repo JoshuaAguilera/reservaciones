@@ -6,6 +6,7 @@ class Temporada {
   int? estanciaMinima;
   double? porcentajePromocion;
   List<TarifaTemporada>? tarifa;
+  bool? editable;
 
   Temporada({
     this.code,
@@ -13,5 +14,6 @@ class Temporada {
     this.estanciaMinima,
     this.porcentajePromocion,
     this.tarifa,
+    this.editable = true,
   });
 }

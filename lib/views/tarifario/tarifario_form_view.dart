@@ -70,8 +70,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   TextEditingController minors7_12VPMController = TextEditingController();
   bool initiallyExpanded = false;
 
+  //New Version Form v2
   List<Periodo> periodos = [];
-
   final List<bool> selectedDayWeek = <bool>[
     true,
     false,
@@ -128,6 +128,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final actualTarifa = ref.watch(editTarifaProvider);
+    final temporadaListProvider = ref.read(temporadasProvider);
 
     if (!starflow && actualTarifa.code != null) {
       nombreTarifaController.text = actualTarifa.nombre!;
@@ -250,7 +251,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           ),
                           Wrap(
                             runSpacing: 15,
-                            spacing: 20,
+                            spacing: 25,
                             children: [
                               SizedBox(
                                 width: 500,
@@ -280,7 +281,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                 ),
                               ),
                               SizedBox(
-                                width: 500,
+                                width: 485,
                                 child: AbsorbPointer(
                                   absorbing: inAllPeriod,
                                   child: Opacity(
@@ -294,20 +295,19 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                             color:
                                                 Theme.of(context).primaryColor),
                                         CustomWidgets.sectionButton(
-                                          listModes: selectedDayWeek,
-                                          modesVisual: [],
-                                          onChanged: (p0, p1) {},
-                                          isReactive: false,
-                                          isCompact: true,
-                                          arrayStrings: daysNameShort,
-                                          borderRadius: 12,
-                                          selectedBorderColor: colorTarifa,
-                                          selectedColor: Color.fromARGB(
-                                              20,
-                                              colorTarifa.blue,
-                                              colorTarifa.green,
-                                              colorTarifa.red),
-                                        ),
+                                            listModes: selectedDayWeek,
+                                            modesVisual: [],
+                                            onChanged: (p0, p1) {},
+                                            isReactive: false,
+                                            isCompact: true,
+                                            arrayStrings: daysNameShort,
+                                            borderRadius: 12,
+                                            selectedBorderColor: colorTarifa,
+                                            selectedColor: Color.fromARGB(
+                                                20,
+                                                colorTarifa.blue,
+                                                colorTarifa.green,
+                                                colorTarifa.red)),
                                       ],
                                     ),
                                   ),
@@ -465,58 +465,76 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 1),
+                          padding: const EdgeInsets.only(left: 1, top: 5),
                           child: TextStyles.titleText(
-                            text: "Configuración de temporadas",
+                            text: "Temporadas",
                             size: 18,
                             color: Theme.of(context).dividerColor,
                           ),
                         ),
-                        const SizedBox(height: 10),
                         Center(
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             alignment: WrapAlignment.center,
-                            spacing: 10,
-                            runSpacing: 10,
+                            spacing: 2,
+                            runSpacing: 4,
                             children: [
-                              SizedBox(
-                                width: getWidthResizableTemporada(screenWidth),
-                                child: CustomWidgets.sectionConfigSeason(
-                                  title: "Promoción",
-                                  context: context,
-                                  estanciaController: estanciaPromController,
-                                  promocionController: promocionController,
-                                  onChanged: (p0) {
-                                    bar1Controller.text =
-                                        (Utility.parseDoubleText(p0) + 1)
-                                            .round()
-                                            .toString();
-                                    bar2Controller.text =
-                                        (Utility.parseDoubleText(p0) + 2)
-                                            .round()
-                                            .toString();
-                                    setState(() {});
-                                  },
+                              for (var element in temporadaListProvider)
+                                SizedBox(
+                                  width:
+                                      getWidthResizableTemporada(screenWidth) -
+                                          35,
+                                  child: CustomWidgets.sectionConfigSeason(
+                                    context: context,
+                                    temporada: element,
+                                    onRemove: () => setState(() =>
+                                        temporadaListProvider.remove(element)),
+                                    onChangedDescuento: (p0) => setState(() =>
+                                        element.porcentajePromocion = p0.isEmpty
+                                            ? null
+                                            : double.parse(p0)),
+                                    onChangedName: (p0) =>
+                                        setState(() => element.nombre = p0),
+                                    onChangedEstancia: (p0) =>
+                                        element.estanciaMinima =
+                                            p0.isEmpty ? null : int.parse(p0),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: getWidthResizableTemporada(screenWidth),
-                                child: CustomWidgets.sectionConfigSeason(
-                                  title: "BAR I",
-                                  context: context,
-                                  estanciaController: estanciaBar1Controller,
-                                  promocionController: bar1Controller,
-                                ),
-                              ),
-                              SizedBox(
-                                width: getWidthResizableTemporada(screenWidth),
-                                child: CustomWidgets.sectionConfigSeason(
-                                  title: "BAR II",
-                                  context: context,
-                                  estanciaController: estanciaBar2Controller,
-                                  promocionController: bar2Controller,
+                              Padding(
+                                padding: const EdgeInsets.only(top: 23),
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    temporadaListProvider
+                                        .add(Temporada(nombre: "Template"));
+                                  }),
+                                  child: Container(
+                                    width: 95,
+                                    height: 109,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.add,
+                                          size: 35,
+                                          color: Theme.of(context).dividerColor,
+                                        ),
+                                        TextStyles.titleText(
+                                          text: "Agregar",
+                                          color: Theme.of(context).primaryColor,
+                                          size: 15,
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -701,73 +719,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 15),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 1),
-                                      child: TextStyles.titleText(
-                                        text: "Tarífas de temporada",
-                                        size: 18,
-                                        color: Theme.of(context).dividerColor,
-                                      ),
-                                    ),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "Promoción",
-                                      context: context,
-                                      promocionController: promocionController,
-                                      estanciaController:
-                                          estanciaPromController,
-                                      adults1_2Controller:
-                                          adults1_2VRController,
-                                      paxAdicController: paxAdicVRController,
-                                      adults3Controller: adults3VRController,
-                                      adults4Controller: adults4VRController,
-                                      minors7_12Controller:
-                                          minors7_12VRController,
-                                      onChanged: (p0) {
-                                        bar1Controller.text =
-                                            (Utility.parseDoubleText(p0) + 1)
-                                                .toString();
-                                        bar2Controller.text =
-                                            (Utility.parseDoubleText(p0) + 2)
-                                                .toString();
-                                        setState(() {});
-                                      },
-                                    ),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "BAR I",
-                                      context: context,
-                                      promocionController: bar1Controller,
-                                      estanciaController:
-                                          estanciaBar1Controller,
-                                      adults1_2Controller:
-                                          adults1_2VRController,
-                                      paxAdicController: paxAdicVRController,
-                                      adults3Controller: adults3VRController,
-                                      adults4Controller: adults4VRController,
-                                      minors7_12Controller:
-                                          minors7_12VRController,
-                                    ),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "BAR II",
-                                      context: context,
-                                      promocionController: bar2Controller,
-                                      estanciaController:
-                                          estanciaBar2Controller,
-                                      adults1_2Controller:
-                                          adults1_2VRController,
-                                      paxAdicController: paxAdicVRController,
-                                      adults3Controller: adults3VRController,
-                                      adults4Controller: adults4VRController,
-                                      minors7_12Controller:
-                                          minors7_12VRController,
-                                    ),
+                                    const SizedBox(height: 10),
                                   ],
                                 ),
                               ),
@@ -934,69 +886,43 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 52),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "Promoción",
-                                      context: context,
-                                      promocionController: promocionController,
-                                      estanciaController:
-                                          estanciaPromController,
-                                      adults1_2Controller:
-                                          adults1_2VPMController,
-                                      paxAdicController: paxAdicVPMController,
-                                      adults3Controller: adults3VPMController,
-                                      adults4Controller: adults4VPMController,
-                                      minors7_12Controller:
-                                          minors7_12VPMController,
-                                      onChanged: (p0) {
-                                        bar1Controller.text =
-                                            (Utility.parseDoubleText(p0) + 1)
-                                                .toString();
-                                        bar2Controller.text =
-                                            (Utility.parseDoubleText(p0) + 2)
-                                                .toString();
-                                        setState(() {});
-                                      },
-                                    ),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "BAR I",
-                                      context: context,
-                                      promocionController: bar1Controller,
-                                      estanciaController:
-                                          estanciaBar1Controller,
-                                      adults1_2Controller:
-                                          adults1_2VPMController,
-                                      paxAdicController: paxAdicVPMController,
-                                      adults3Controller: adults3VPMController,
-                                      adults4Controller: adults4VPMController,
-                                      minors7_12Controller:
-                                          minors7_12VPMController,
-                                    ),
-                                    CustomWidgets.expansionTileCustomTarifa(
-                                      colorTarifa: colorTarifa,
-                                      initiallyExpanded: initiallyExpanded,
-                                      nameTile: "BAR II",
-                                      context: context,
-                                      promocionController: bar2Controller,
-                                      estanciaController:
-                                          estanciaBar2Controller,
-                                      adults1_2Controller:
-                                          adults1_2VPMController,
-                                      paxAdicController: paxAdicVPMController,
-                                      adults3Controller: adults3VPMController,
-                                      adults4Controller: adults4VPMController,
-                                      minors7_12Controller:
-                                          minors7_12VPMController,
-                                    ),
                                   ],
                                 ),
                               ),
                             ],
                           ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 1),
+                          child: TextStyles.titleText(
+                            text: "Tarífas de temporada",
+                            size: 18,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                        ),
+                        CustomWidgets.tableTarifasTemporadas(
+                          context: context,
+                          tipoHabitacion: tipoHabitacion[0],
+                          colorTipo: DesktopColors.vistaReserva,
+                          temporadas: temporadaListProvider,
+                          adults1a2: adults1_2VRController,
+                          adults3: adults3VRController,
+                          adults4: adults4VRController,
+                          paxAdic: paxAdicVRController,
+                          minor7a12: minors7_12VRController,
+                        ),
+                        const SizedBox(height: 20),
+                        CustomWidgets.tableTarifasTemporadas(
+                          context: context,
+                          tipoHabitacion: tipoHabitacion[1],
+                          colorTipo: DesktopColors.vistaParcialMar,
+                          temporadas: temporadaListProvider,
+                          adults1a2: adults1_2VPMController,
+                          adults3: adults3VPMController,
+                          adults4: adults4VPMController,
+                          paxAdic: paxAdicVPMController,
+                          minor7a12: minors7_12VPMController,
                         ),
                         const SizedBox(height: 10),
                         Align(
@@ -1048,12 +974,14 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   }
 
   double getWidthResizableTemporada(double screenWidth) {
-    return screenWidth > 800
+    return screenWidth > 1200
         ? ((screenWidth - 32) - (widget.sideController.extended ? 230 : 122)) *
             0.327
-        : screenWidth > 700
-            ? ((screenWidth - 32)) * 0.3125
-            : (screenWidth - 32) * 0.47;
+        : screenWidth > 800
+            ? ((screenWidth - 32) -
+                    (widget.sideController.extended ? 230 : 122)) *
+                0.5
+            : (screenWidth - 32) * 0.5;
   }
 
   double getWidthResizableTarifa(double screenWidth) {

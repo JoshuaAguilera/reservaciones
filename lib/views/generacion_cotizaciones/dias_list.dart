@@ -261,7 +261,8 @@ class _DiasListState extends ConsumerState<DiasList> {
                   ),
                   Divider(color: Theme.of(context).primaryColorLight),
                   SizedBox(
-                    height: Utility.limitHeightList(checkOut.difference(checkIn).inDays, 8, 345),
+                    height: Utility.limitHeightList(
+                        checkOut.difference(checkIn).inDays, 9, 392),
                     child: SingleChildScrollView(
                       child: Table(
                         defaultVerticalAlignment:
@@ -293,10 +294,7 @@ class _DiasListState extends ConsumerState<DiasList> {
           if (widget.isCheckList)
             SizedBox(
               height: Utility.limitHeightList(
-                checkOut.difference(checkIn).inDays,
-                4,
-                380,
-              ),
+                  checkOut.difference(checkIn).inDays, 4, 472),
               child: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: ListView.builder(

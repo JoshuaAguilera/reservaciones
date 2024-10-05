@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../utils/helpers/web_colors.dart';
@@ -27,63 +28,147 @@ class CustomWidgets {
   }
 
   static Widget sectionConfigSeason({
-    required String title,
     required BuildContext context,
-    required TextEditingController estanciaController,
-    required TextEditingController promocionController,
-    void Function(String)? onChanged,
+    required Temporada temporada,
+    void Function()? onRemove,
+    void Function(String)? onChangedEstancia,
+    void Function(String)? onChangedDescuento,
+    void Function(String)? onChangedName,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          border: Border.all(color: Theme.of(context).primaryColor)),
-      child: Column(
+    bool editName = false;
+    TextEditingController _controller =
+        TextEditingController(text: temporada.nombre);
+
+    return StatefulBuilder(builder: (context, snapshot) {
+      return Stack(
         children: [
-          Center(
-            child: TextStyles.mediumText(
-              text: title,
-              color: Theme.of(context).primaryColor,
+          Padding(
+            padding: const EdgeInsets.only(top: 23, right: 21),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: Theme.of(context).primaryColor)),
+              child: Column(
+                children: [
+                  if (!editName)
+                    SizedBox(
+                      height: 32,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          TextStyles.mediumText(
+                              text: temporada.nombre ?? '',
+                              color: Theme.of(context).primaryColor,
+                              overflow: TextOverflow.ellipsis),
+                          if (temporada.editable!)
+                            Expanded(
+                              child: SizedBox(
+                                height: 30,
+                                width: 35,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: IconButton(
+                                      onPressed: () =>
+                                          snapshot(() => editName = !editName),
+                                      icon: Icon(Icons.edit,
+                                          size: 22,
+                                          color:
+                                              Theme.of(context).dividerColor)),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (editName)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      child: SizedBox(
+                        height: 40,
+                        child: FormWidgets.textFormFieldResizable(
+                          name: "",
+                          controller: _controller,
+                          onEditingComplete: () {
+                            snapshot(
+                              () {
+                                onChangedName!.call(_controller.text);
+                                editName = false;
+                              },
+                            );
+                          },
+                          icon: IconButton(
+                            onPressed: () => snapshot(() {
+                              editName = !editName;
+                              _controller.text = temporada.nombre ?? '';
+                            }),
+                            icon: Icon(
+                              CupertinoIcons.clear_circled,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Estancia min.",
+                            isNumeric: true,
+                            icon: const Icon(CupertinoIcons.person_3_fill),
+                            onChanged: (p0) {
+                              onChangedEstancia!.call(p0);
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SizedBox(
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Descuento",
+                            isNumeric: true,
+                            icon: const Icon(
+                              CupertinoIcons.percent,
+                              size: 20,
+                            ),
+                            onChanged: (p0) {
+                              onChangedDescuento!.call(p0);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 7),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  child: TextFormFieldCustom.textFormFieldwithBorder(
-                    name: "Estancia min.",
-                    isNumeric: true,
-                    controller: estanciaController,
+          if (temporada.editable!)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: SizedBox(
+                child: IconButton(
+                  onPressed: onRemove,
+                  icon: Icon(
+                    CupertinoIcons.xmark_circle_fill,
+                    size: 25,
+                    color: DesktopColors.cerulean,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: SizedBox(
-                  child: TextFormFieldCustom.textFormFieldwithBorder(
-                    name: "Descuento",
-                    isNumeric: true,
-                    icon: const Icon(
-                      CupertinoIcons.percent,
-                      size: 20,
-                    ),
-                    controller: promocionController,
-                    onChanged: (p0) {
-                      if (onChanged != null) {
-                        onChanged.call(p0);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+            )
         ],
-      ),
-    );
+      );
+    });
   }
 
   static Widget expansionTileCustomTarifa({
@@ -318,118 +403,178 @@ class CustomWidgets {
   }
 
   static Widget tableTarifasTemporadas({
-    required Color colorBorder,
-    required Color backgroundColor,
+    required BuildContext context,
+    required String tipoHabitacion,
+    required Color? colorTipo,
+    required List<Temporada> temporadas,
     required TextEditingController adults1a2,
     required TextEditingController adults3,
     required TextEditingController adults4,
     required TextEditingController paxAdic,
     required TextEditingController minor7a12,
-    required TextEditingController promocionController,
-    required TextEditingController bar1Controller,
-    required TextEditingController bar2Controller,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
+    return Card(
+      elevation: 8,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              height: 35,
+              width: double.infinity,
+              padding: const EdgeInsets.only(left: 25),
+              decoration: BoxDecoration(
+                  color: colorTipo,
+                  borderRadius: const BorderRadius.all(Radius.circular(7))),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextStyles.mediumText(
+                  text: tipoHabitacion,
+                  color: Colors.white,
+                  aling: TextAlign.center,
+                ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                border: TableBorder(
-                  // horizontalInside: BorderSide(color: colorBorder),
-                  verticalInside:
-                      BorderSide(color: colorBorder, strokeAlign: 0.5),
+            const SizedBox(height: 10),
+            Table(
+              border: TableBorder(
+                top: BorderSide(color: Theme.of(context).primaryColor),
+                bottom: BorderSide(color: Theme.of(context).primaryColor),
+                horizontalInside:
+                    BorderSide(color: Theme.of(context).primaryColor),
+              ),
+              columnWidths: const {0: FractionColumnWidth(0.3)},
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: TextStyles.mediumText(
+                            text: "Temporada",
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "SGL/DBL",
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "TPL", color: Theme.of(context).primaryColor),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "CPLE", color: Theme.of(context).primaryColor),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "PAX ADIC",
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "MENORES 7 A 12",
+                          color: Theme.of(context).primaryColor,
+                          size: 10),
+                    ),
+                    Center(
+                      child: TextStyles.mediumText(
+                          text: "MENORES 0 A 6",
+                          color: Theme.of(context).primaryColor,
+                          size: 10),
+                    ),
+                  ],
                 ),
-                columnWidths: const {
-                  0: FractionColumnWidth(0.22),
-                  1: FractionColumnWidth(0.13),
-                  2: FractionColumnWidth(0.13),
-                  3: FractionColumnWidth(0.13),
-                  4: FractionColumnWidth(0.13),
-                  5: FractionColumnWidth(0.13),
-                  6: FractionColumnWidth(0.13),
-                },
-                children: [
+                for (var element in temporadas)
                   TableRow(
                     children: [
                       SizedBox(
-                        height: 25,
+                        height: 50,
                         child: Center(
-                          child: SizedBox(
-                            child: TextStyles.standardText(
-                              text: "PAX",
-                              color: useWhiteForeground(backgroundColor)
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
+                            child: TextStyles.mediumText(
+                                text: element.nombre ?? '',
+                                color: Theme.of(context).primaryColor)),
+                      ),
+                      Center(
+                          child: TextStyles.mediumText(
+                              text: (adults1a2.text.isEmpty &&
+                                      element.porcentajePromocion == null)
+                                  ? "—"
+                                  : Utility.calculatePromotion(
+                                      adults1a2,
+                                      TextEditingController(
+                                          text: element.porcentajePromocion
+                                              ?.toString()),
+                                      0),
+                              color: Theme.of(context).primaryColor)),
+                      Center(
+                          child: TextStyles.mediumText(
+                              text: ((adults3.text.isEmpty ||
+                                          adults3.text == '0') &&
+                                      element.porcentajePromocion == null)
+                                  ? "—"
+                                  : Utility.calculatePromotion(
+                                      adults3,
+                                      TextEditingController(
+                                          text: element.porcentajePromocion
+                                              ?.toString()),
+                                      0),
+                              color: Theme.of(context).primaryColor)),
+                      Center(
+                        child: TextStyles.mediumText(
+                            text: ((adults4.text.isEmpty ||
+                                        adults4.text == '0') &&
+                                    element.porcentajePromocion == null)
+                                ? "—"
+                                : Utility.calculatePromotion(
+                                    adults4,
+                                    TextEditingController(
+                                        text: element.porcentajePromocion
+                                            ?.toString()),
+                                    0),
+                            color: Theme.of(context).primaryColor),
+                      ),
+                      Center(
+                          child: TextStyles.mediumText(
+                              text: (paxAdic.text.isEmpty &&
+                                      element.porcentajePromocion == null)
+                                  ? "—"
+                                  : Utility.calculatePromotion(
+                                      paxAdic,
+                                      TextEditingController(
+                                          text: element.porcentajePromocion
+                                              ?.toString()),
+                                      0),
+                              color: Theme.of(context).primaryColor)),
+                      Center(
+                        child: TextStyles.mediumText(
+                          text: (minor7a12.text.isEmpty &&
+                                  element.porcentajePromocion == null)
+                              ? "—"
+                              : Utility.calculatePromotion(
+                                  minor7a12,
+                                  TextEditingController(
+                                      text: element.porcentajePromocion
+                                          ?.toString()),
+                                  0),
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       Center(
-                        child: TextStyles.standardText(
-                          text: "SGL/DBL",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                          text: "TPL",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                          text: "CPLE",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                          text: "MEN 7-12",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                          text: "PAX ADIC",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.standardText(
-                          text: "MEN 0-6",
-                          color: useWhiteForeground(backgroundColor)
-                              ? Colors.white
-                              : Colors.black,
-                        ),
+                        child: TextStyles.mediumText(
+                            text: "GRATIS",
+                            color: Theme.of(context).primaryColor),
                       ),
                     ],
                   ),
-                ],
-              ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

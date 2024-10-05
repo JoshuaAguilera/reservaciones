@@ -646,7 +646,6 @@ class Utility {
 
   static String calculatePromotion(
       TextEditingController tarifa, TextEditingController promocion, int desc) {
-    String subtotalString = '0';
     double subtotal = 0;
     double tarifaNum = double.parse(tarifa.text.isEmpty ? '0' : tarifa.text);
     double promocionNUM =
@@ -656,9 +655,9 @@ class Utility {
 
     subtotal = tarifaNum - descuento;
 
-    subtotalString = subtotal.round().toString();
+    // subtotalString = subtotal.round().toString();
 
-    return subtotalString;
+    return formatterNumber(subtotal.round().toDouble());
   }
 
   static double parseDoubleText(String value) {

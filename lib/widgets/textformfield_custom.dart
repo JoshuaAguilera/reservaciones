@@ -24,7 +24,7 @@ class TextFormFieldCustom {
     TextEditingController? controller,
     bool enabled = true,
     double? maxWidth,
-    Icon? icon,
+    Widget? icon,
     double maxHeight = 100,
     bool readOnly = false,
     String? Function(String?)? validator,

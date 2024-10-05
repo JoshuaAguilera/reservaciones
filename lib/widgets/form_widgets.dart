@@ -234,10 +234,11 @@ class FormWidgets {
     TextEditingController? controller,
     bool enabled = true,
     double? maxWidth,
-    Icon? icon,
+    Widget? icon,
     double maxHeight = 100,
     double verticalPadding = 10,
     String? Function(String?)? validator,
+    void Function()? onEditingComplete,
   }) {
     bool withContent = false;
 
@@ -252,6 +253,7 @@ class FormWidgets {
       child: TextFormField(
         enabled: enabled,
         controller: controller,
+        onEditingComplete: onEditingComplete,
         onChanged: (value) {
           if (value.isEmpty) {
             withContent = false;

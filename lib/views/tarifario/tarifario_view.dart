@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
@@ -113,6 +114,15 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                             ref
                                 .read(editTarifaProvider.notifier)
                                 .update((state) => RegistroTarifa());
+                            ref.read(temporadasProvider.notifier).update(
+                                  (state) => [
+                                    Temporada(
+                                        nombre: "Promoción", editable: false),
+                                    Temporada(nombre: "BAR I", editable: false),
+                                    Temporada(
+                                        nombre: "BAR II", editable: false),
+                                  ],
+                                );
                             onCreate.call();
                           },
                           text: "Crear tarifa",
