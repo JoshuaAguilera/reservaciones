@@ -207,14 +207,19 @@ class TextStyles {
     );
   }
 
-  static RichText TextAsociative(String title, String content,
-      {bool isInverted = false,
-      double size = 12,
-      Color? color,
-      bool boldInversed = false,
-      TextOverflow overflow = TextOverflow.ellipsis}) {
+  static RichText TextAsociative(
+    String title,
+    String content, {
+    bool isInverted = false,
+    double size = 12,
+    Color? color,
+    bool boldInversed = false,
+    TextOverflow overflow = TextOverflow.ellipsis,
+    TextAlign? textAling,
+  }) {
     return RichText(
       overflow: overflow,
+      textAlign: textAling ?? TextAlign.start,
       text: TextSpan(children: [
         if (!isInverted)
           TextSpan(

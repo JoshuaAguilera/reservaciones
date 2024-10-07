@@ -13,6 +13,7 @@ class RegistroTarifa {
   List<PeriodoData>? periodos;
   List<TemporadaData>? temporadas;
   List<TarifaData>? tarifas;
+  int numDays;
 
   RegistroTarifa({
     this.id,
@@ -25,5 +26,33 @@ class RegistroTarifa {
     this.temporadas,
     this.tarifas,
     this.userId,
+    this.numDays = 1,
   });
+
+  RegistroTarifa copyWith({
+    int? id,
+    bool? isSelected,
+    String? code,
+    String? nombre,
+    Color? color,
+    DateTime? fechaRegistro,
+    int? userId,
+    List<PeriodoData>? periodos,
+    List<TemporadaData>? temporadas,
+    List<TarifaData>? tarifas,
+    int? numDays,
+  }) =>
+      RegistroTarifa(
+        id: id ?? this.id,
+        isSelected: isSelected ?? this.isSelected,
+        code: code ?? this.code,
+        nombre: nombre ?? this.nombre,
+        color: color ?? this.color,
+        fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+        periodos: periodos ?? this.periodos,
+        temporadas: temporadas ?? this.temporadas,
+        tarifas: tarifas ?? this.tarifas,
+        userId: userId ?? this.userId,
+        numDays: numDays ?? this.numDays,
+      );
 }

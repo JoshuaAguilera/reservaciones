@@ -14,6 +14,7 @@ import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/show_snackbar.dart';
 import '../../ui/title_page.dart';
+import '../../utils/helpers/utility.dart';
 import '../../widgets/dialogs.dart';
 import 'tarifario_calendary_view.dart';
 
@@ -46,6 +47,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
 
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
+      ref
+          .read(temporadasProvider.notifier)
+          .update((state) => Utility.getTemporadas(register.temporadas));
       onCreate.call();
     }
 

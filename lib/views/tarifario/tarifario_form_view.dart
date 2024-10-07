@@ -12,7 +12,6 @@ import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
@@ -52,12 +51,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   TextEditingController _fechaSalida = TextEditingController(text: "");
   String codeTarifa =
       "${UniqueKey()} - ${Preferences.username} - ${Preferences.userId} - ${DateTime.now().toString()}";
-  TextEditingController estanciaPromController = TextEditingController();
-  TextEditingController estanciaBar1Controller = TextEditingController();
-  TextEditingController estanciaBar2Controller = TextEditingController();
-  TextEditingController promocionController = TextEditingController();
-  TextEditingController bar1Controller = TextEditingController();
-  TextEditingController bar2Controller = TextEditingController();
+
   TextEditingController adults1_2VRController = TextEditingController();
   TextEditingController adults3VRController = TextEditingController(text: "0");
   TextEditingController adults4VRController = TextEditingController(text: "0");
@@ -104,9 +98,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     nombreTarifaController.dispose();
     _fechaEntrada.dispose();
     _fechaSalida.dispose();
-    promocionController.dispose();
-    bar1Controller.dispose();
-    bar2Controller.dispose();
     adults1_2VRController.dispose();
     adults3VRController.dispose();
     adults4VRController.dispose();
@@ -117,9 +108,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     adults4VPMController.dispose();
     paxAdicVPMController.dispose();
     minors7_12VPMController.dispose();
-    estanciaPromController.dispose();
-    estanciaBar1Controller.dispose();
-    estanciaBar2Controller.dispose();
 
     super.dispose();
   }
@@ -148,26 +136,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
         selectedDayWeek[6] = actualTarifa.periodos!.first.enDomingo ?? false;
       }
       periodos = Utility.getPeriodsRegister(actualTarifa.periodos);
-
-      promocionController.text = actualTarifa
-          .temporadas!.first.porcentajePromocion!
-          .round()
-          .toString();
-
-      bar1Controller.text =
-          actualTarifa.temporadas![1].porcentajePromocion!.round().toString();
-
-      bar2Controller.text =
-          actualTarifa.temporadas![2].porcentajePromocion!.round().toString();
-
-      estanciaPromController.text =
-          actualTarifa.temporadas!.first.estanciaMinima!.toString();
-
-      estanciaBar1Controller.text =
-          actualTarifa.temporadas![1].estanciaMinima!.toString();
-
-      estanciaBar2Controller.text =
-          actualTarifa.temporadas![2].estanciaMinima!.toString();
 
       adults1_2VRController.text =
           actualTarifa.tarifas!.first.tarifaAdultoSGLoDBL!.round().toString();
@@ -228,7 +196,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         500.ms, () => widget.sideController.selectIndex(5));
                   },
                   onPressedSaveButton: () async {
-                    await savedTariff();
+                    await savedTariff(temporadaListProvider);
                   },
                 ),
                 const SizedBox(height: 10),
@@ -387,45 +355,49 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (!evaluatedDates(
-                                        periodos,
-                                        _fechaEntrada.text,
-                                        _fechaSalida.text)) {
-                                      periodos.add(
-                                        Periodo(
-                                          fechaInicial: DateTime.parse(
-                                              _fechaEntrada.text),
-                                          fechaFinal:
-                                              DateTime.parse(_fechaSalida.text),
-                                        ),
-                                      );
-                                      setState(() {});
-                                      resetDates();
-                                    } else {
-                                      showSnackBar(
-                                        context: context,
-                                        title: "Concurrencia de periodo",
-                                        message:
-                                            "Ya existe un periodo que contempla o abarca estas fechas de implementación",
-                                        type: "alert",
-                                      );
-                                    }
-                                  },
-                                  style: ButtonStyle(
-                                    padding: const WidgetStatePropertyAll(
-                                        EdgeInsets.zero),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Theme.of(context).primaryColorDark),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 30,
-                                      color: Theme.of(context).primaryColor,
+                                Tooltip(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  message: "Agregar periodo",
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (!evaluatedDates(
+                                          periodos,
+                                          _fechaEntrada.text,
+                                          _fechaSalida.text)) {
+                                        periodos.add(
+                                          Periodo(
+                                            fechaInicial: DateTime.parse(
+                                                _fechaEntrada.text),
+                                            fechaFinal: DateTime.parse(
+                                                _fechaSalida.text),
+                                          ),
+                                        );
+                                        setState(() {});
+                                        resetDates();
+                                      } else {
+                                        showSnackBar(
+                                          context: context,
+                                          title: "Concurrencia de periodo",
+                                          message:
+                                              "Ya existe un periodo que contempla o abarca estas fechas de implementación",
+                                          type: "alert",
+                                        );
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      padding: const WidgetStatePropertyAll(
+                                          EdgeInsets.zero),
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          Theme.of(context).primaryColorDark),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 30,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -527,10 +499,11 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           size: 35,
                                           color: Theme.of(context).dividerColor,
                                         ),
-                                        TextStyles.titleText(
-                                          text: "Agregar",
+                                        TextStyles.standardText(
+                                          text: "Agregar\nTemporada",
+                                          aling: TextAlign.center,
                                           color: Theme.of(context).primaryColor,
-                                          size: 15,
+                                          size: 11,
                                         )
                                       ],
                                     ),
@@ -932,7 +905,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             width: 130,
                             child: Buttons.commonButton(
                               onPressed: () async {
-                                await savedTariff();
+                                await savedTariff(temporadaListProvider);
                               },
                               sizeText: 15,
                               text: "Guardar",
@@ -999,7 +972,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
         : WrapAlignment.center;
   }
 
-  Future<void> savedTariff() async {
+  Future<void> savedTariff(List<Temporada> temporadas) async {
     if (!_formKeyTarifa.currentState!.validate()) return;
 
     if (periodos.isEmpty) {
@@ -1027,15 +1000,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
         tarifaAdulto4: double.parse(adults4VPMController.text),
         tarifaMenores7a12: double.parse(minors7_12VPMController.text),
         tarifaPaxAdicional: double.parse(paxAdicVPMController.text));
-    Temporada temporadaPromocion = Temporada(
-        estanciaMinima: int.parse(estanciaPromController.text),
-        porcentajePromocion: double.parse(promocionController.text));
-    Temporada temporadaBar1 = Temporada(
-        estanciaMinima: int.parse(estanciaBar1Controller.text),
-        porcentajePromocion: double.parse(bar1Controller.text));
-    Temporada temporadaBar2 = Temporada(
-        estanciaMinima: int.parse(estanciaBar2Controller.text),
-        porcentajePromocion: double.parse(bar2Controller.text));
 
     bool isSaves = oldRegister != null
         ? await TarifaService().UpdateTarifaBD(
@@ -1045,9 +1009,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
             colorIdentificativo: colorTarifa,
             diasAplicacion: selectedDayWeek,
             periodos: periodos,
-            tempProm: temporadaPromocion,
-            tempBar1: temporadaBar1,
-            tempBar2: temporadaBar2,
+            temporadas: temporadas,
             tarifaVPM: tarifaVPM,
             tarifaVR: tarifaVR,
           )
@@ -1055,10 +1017,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
             name: nombreTarifaController.text,
             colorIdentificativo: colorTarifa,
             diasAplicacion: selectedDayWeek,
+            temporadas: temporadas,
             periodos: periodos,
-            tempProm: temporadaPromocion,
-            tempBar1: temporadaBar1,
-            tempBar2: temporadaBar2,
             tarifaVPM: tarifaVPM,
             tarifaVR: tarifaVR,
           );

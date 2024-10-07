@@ -95,7 +95,6 @@ class CotizacionService extends BaseService {
         comprobantes = await database.select(database.cotizacion).get();
       } else {
         if (periodo.isNotEmpty) {
-          print(periodo);
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
           DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
           comprobantes = await database

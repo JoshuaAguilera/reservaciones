@@ -17,9 +17,7 @@ class TarifaService extends BaseService {
     required List<Periodo> periodos,
     required Color colorIdentificativo,
     required List<bool> diasAplicacion,
-    required Temporada tempProm,
-    required Temporada tempBar1,
-    required Temporada tempBar2,
+    required List<Temporada> temporadas,
     required TarifaTemporada tarifaVR,
     required TarifaTemporada tarifaVPM,
   }) async {
@@ -76,36 +74,18 @@ class TarifaService extends BaseService {
                 ),
               );
 
-          await database.into(database.temporada).insert(
-                TemporadaCompanion.insert(
-                  code: codeUniversal,
-                  nombre: "Promoción ${tempProm.porcentajePromocion}%",
-                  codeTarifa: Value(codeUniversal),
-                  estanciaMinima: Value(tempProm.estanciaMinima),
-                  fecha: Value(now),
-                  porcentajePromocion: Value(tempProm.porcentajePromocion),
-                ),
-              );
-          await database.into(database.temporada).insert(
-                TemporadaCompanion.insert(
-                  code: codeUniversal,
-                  nombre: "BAR I",
-                  codeTarifa: Value(codeUniversal),
-                  estanciaMinima: Value(tempBar1.estanciaMinima),
-                  fecha: Value(now),
-                  porcentajePromocion: Value(tempBar1.porcentajePromocion),
-                ),
-              );
-          await database.into(database.temporada).insert(
-                TemporadaCompanion.insert(
-                  code: codeUniversal,
-                  nombre: "BAR II",
-                  codeTarifa: Value(codeUniversal),
-                  estanciaMinima: Value(tempBar2.estanciaMinima),
-                  fecha: Value(now),
-                  porcentajePromocion: Value(tempBar2.porcentajePromocion),
-                ),
-              );
+          for (var element in temporadas) {
+            await database.into(database.temporada).insert(
+                  TemporadaCompanion.insert(
+                    code: codeUniversal,
+                    nombre: element.nombre ?? '',
+                    codeTarifa: Value(codeUniversal),
+                    estanciaMinima: Value(element.estanciaMinima),
+                    fecha: Value(now),
+                    porcentajePromocion: Value(element.porcentajePromocion),
+                  ),
+                );
+          }
 
           await database.into(database.tarifaRack).insert(
                 TarifaRackCompanion.insert(
@@ -137,13 +117,13 @@ class TarifaService extends BaseService {
     required List<Periodo> periodos,
     required Color colorIdentificativo,
     required List<bool> diasAplicacion,
-    required Temporada tempProm,
-    required Temporada tempBar1,
-    required Temporada tempBar2,
+    required List<Temporada> temporadas,
     required TarifaTemporada tarifaVR,
     required TarifaTemporada tarifaVPM,
   }) async {
     final database = AppDatabase();
+    DateTime now =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     try {
       database.transaction(
@@ -194,27 +174,37 @@ class TarifaService extends BaseService {
             ),
           );
 
-          await database.updateSeason(
-              tempUpdate: TemporadaCompanion(
-                estanciaMinima: Value(tempProm.estanciaMinima),
-                porcentajePromocion: Value(tempProm.porcentajePromocion),
-              ),
-              codeUniv: codeUniversal,
-              id: oldRegister.temporadas![0].id);
-          await database.updateSeason(
-              tempUpdate: TemporadaCompanion(
-                estanciaMinima: Value(tempBar1.estanciaMinima),
-                porcentajePromocion: Value(tempBar1.porcentajePromocion),
-              ),
-              codeUniv: codeUniversal,
-              id: oldRegister.temporadas![1].id);
-          await database.updateSeason(
-              tempUpdate: TemporadaCompanion(
-                estanciaMinima: Value(tempBar2.estanciaMinima),
-                porcentajePromocion: Value(tempBar2.porcentajePromocion),
-              ),
-              codeUniv: codeUniversal,
-              id: oldRegister.temporadas![2].id);
+          for (var element in oldRegister.temporadas!) {
+            if (!temporadas.any((elementInt) =>
+                elementInt.id != null && elementInt.id == element.id)) {
+              await database.deleteSeasonByIDandCode(codeUniversal, element.id);
+              print("Delete ${element.id}: ${element.nombre}");
+            }
+          }
+
+          for (var element in temporadas) {
+            if (element.id != null) {
+              await database.updateSeason(
+                tempUpdate: TemporadaCompanion(
+                  estanciaMinima: Value(element.estanciaMinima),
+                  porcentajePromocion: Value(element.porcentajePromocion),
+                ),
+                codeUniv: codeUniversal,
+                id: element.id!,
+              );
+            } else {
+              await database.into(database.temporada).insert(
+                    TemporadaCompanion.insert(
+                      code: codeUniversal,
+                      nombre: element.nombre ?? '',
+                      codeTarifa: Value(codeUniversal),
+                      estanciaMinima: Value(element.estanciaMinima),
+                      fecha: Value(now),
+                      porcentajePromocion: Value(element.porcentajePromocion),
+                    ),
+                  );
+            }
+          }
 
           await database.updateTariffRack(
               tarifaUpdate: TarifaRackCompanion(

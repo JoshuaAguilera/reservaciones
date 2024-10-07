@@ -13,7 +13,7 @@ import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
-import 'package:generador_formato/widgets/controller_cotizacion_widget.dart';
+import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -229,6 +229,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               menores0a6: 0,
                                               menores7a12: 0,
                                               paxAdic: 0,
+                                              tarifaXDia: [],
                                             ),
                                           );
 
@@ -466,7 +467,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       ),
                     ),
                   ),
-                  const CalculateSummaryControllerWidget()
+                  const SummaryControllerWidget()
                       .animate(target: targetHabitaciones)
                       .fadeIn(duration: 450.ms),
                 ],

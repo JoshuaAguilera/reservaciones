@@ -7,6 +7,7 @@ import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -1013,7 +1014,6 @@ class Utility {
       nowTotalDays = DateTime.now().difference(nowPeriod.fechaInicial!).inHours;
     }
     porcentaje = (nowTotalDays / totalDays) * 100;
-//    print("$nowTotalDays  / $totalDays =  $porcentaje");
 
     if (porcentaje.isNegative) {
       porcentaje = 0;
@@ -1156,7 +1156,11 @@ class Utility {
         .where((element) => showTariffNow(daySelect, element.periodos))
         .firstOrNull;
 
-    return first;
+    if (first == null) {
+      return first;
+    } else {
+      return first.copyWith();
+    }
   }
 
   static List<Periodo> getPeriodsRegister(List<PeriodoData>? periods) {
@@ -1332,5 +1336,34 @@ class Utility {
     nowSeason ??= nowRegister.temporadas!.last;
 
     return nowSeason;
+  }
+
+  static List<Temporada> getTemporadas(List<TemporadaData>? temporadasData) {
+    List<Temporada> temporadas = [];
+
+    int count = 0;
+
+    for (var element in temporadasData!) {
+      temporadas.add(
+        Temporada(
+          id: element.id,
+          code: element.code,
+          estanciaMinima: element.estanciaMinima,
+          nombre: element.nombre,
+          porcentajePromocion: element.porcentajePromocion,
+          editable: !(count < 3),
+        ),
+      );
+      count++;
+    }
+
+    return temporadas;
+  }
+
+  static Color darken(Color color, [double amount = .1]) {
+    final hsl = HSLColor.fromColor(color);
+    final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
   }
 }

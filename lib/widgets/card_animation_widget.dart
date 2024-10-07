@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
+import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
+import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../providers/habitacion_provider.dart';
 import '../utils/helpers/constants.dart';
@@ -21,20 +23,14 @@ import 'text_styles.dart';
 class CardAnimationWidget extends ConsumerStatefulWidget {
   const CardAnimationWidget({
     super.key,
-    required this.day,
     this.resetTime = const Duration(milliseconds: 3500),
-    required this.dateNow,
-    required this.registros,
-    required this.totalDays,
-    required this.isLastDay,
+    required this.sideController,
+    required this.tarifaXDia,
   });
 
-  final int day;
   final Duration resetTime;
-  final DateTime dateNow;
-  final List<RegistroTarifa> registros;
-  final int totalDays;
-  final bool isLastDay;
+  final SidebarXController sideController;
+  final TarifaXDia tarifaXDia;
 
   @override
   _CardAnimationWidgetState createState() => _CardAnimationWidgetState();
@@ -52,7 +48,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   void initState() {
     _showFrontSide = true;
     _flipXAxis = true;
-    nowRegister = Utility.revisedTariffDay(widget.dateNow, widget.registros);
+    nowRegister = widget.tarifaXDia.tarifa == null
+        ? null
+        : RegistroTarifa(
+            tarifas: [widget.tarifaXDia.tarifa!],
+            temporadas: [widget.tarifaXDia.temporadaSelect!]);
     super.initState();
   }
 
@@ -152,61 +152,77 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         child: Column(
           children: [
             TextStyles.TextTitleList(
-              index: widget.day,
-              color: nowRegister != null
-                  ? nowRegister!.color!
-                  : Theme.of(context).dividerColor,
-              size: 28,
+              index: widget.tarifaXDia.fecha!.day,
+              color: widget.tarifaXDia.color ?? Theme.of(context).dividerColor,
+              size: (MediaQuery.of(context).size.width >
+                      (1110 - (widget.sideController.extended ? 0 : 100)))
+                  ? 28
+                  : 23,
             ),
             if (MediaQuery.of(context).size.width > 1345)
               const SizedBox(height: 7),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (MediaQuery.of(context).size.width > 1310)
+                if (MediaQuery.of(context).size.width >
+                    (1310 - (widget.sideController.extended ? 0 : 100)))
                   TextStyles.standardText(
-                    text: nowRegister != null
-                        ? nowRegister!.nombre ?? ''
-                        : "No definido",
+                    text: widget.tarifaXDia.nombreTarif ?? '',
                     size: 11,
                     color: Theme.of(context).primaryColor,
                   ),
-                if (MediaQuery.of(context).size.width > 1510)
+                if (MediaQuery.of(context).size.width >
+                    (1510 - (widget.sideController.extended ? 50 : 175)))
                   TextStyles.TextAsociative(
                       "Adulto: ",
-                      widget.isLastDay
+                      widget.tarifaXDia.tarifa == null
                           ? "\$0.00"
                           : Utility.formatterNumber(
                               Utility.calculateTariffAdult(
-                                  nowRegister, habitacion, widget.totalDays)),
+                              nowRegister,
+                              habitacion,
+                              habitacion.tarifaXDia!.length,
+                            )),
                       boldInversed: true,
                       size: 11,
                       color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1610)
+                if (MediaQuery.of(context).size.width >
+                    (1610 - (widget.sideController.extended ? 50 : 175)))
                   TextStyles.TextAsociative(
                       "Men 7-12: ",
                       boldInversed: true,
                       size: 11,
-                      widget.isLastDay
+                      widget.tarifaXDia.tarifa == null
                           ? "\$0.00"
                           : Utility.formatterNumber(
                               Utility.calculateTariffChildren(
-                                  nowRegister, habitacion, widget.totalDays)),
+                                nowRegister,
+                                habitacion,
+                                habitacion.tarifaXDia!.length,
+                              ),
+                            ),
                       color: Theme.of(context).primaryColor),
                 if (MediaQuery.of(context).size.width > 1710)
                   const SizedBox(height: 10),
-                if (MediaQuery.of(context).size.width > 1710)
+                if (MediaQuery.of(context).size.width >
+                    (1710 - (widget.sideController.extended ? 100 : 200)))
                   TextStyles.TextAsociative(
                       "Total: ",
                       boldInversed: true,
                       size: 11,
-                      widget.isLastDay
+                      widget.tarifaXDia.tarifa == null
                           ? "\$0.00"
                           : Utility.formatterNumber(
-                              Utility.calculateTariffAdult(nowRegister,
-                                      habitacion, widget.totalDays) +
-                                  Utility.calculateTariffChildren(nowRegister,
-                                      habitacion, widget.totalDays)),
+                              Utility.calculateTariffAdult(
+                                    nowRegister,
+                                    habitacion,
+                                    habitacion.tarifaXDia!.length,
+                                  ) +
+                                  Utility.calculateTariffChildren(
+                                    nowRegister,
+                                    habitacion,
+                                    habitacion.tarifaXDia!.length,
+                                  )),
                       color: Theme.of(context).primaryColor),
               ],
             ),
@@ -221,72 +237,74 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
     return __buildLayout(
       key: ValueKey(false),
-      backgroundColor:
-          nowRegister != null ? nowRegister!.color! : DesktopColors.cerulean,
+      backgroundColor: widget.tarifaXDia.color != null
+          ? widget.tarifaXDia.color!
+          : DesktopColors.cerulean,
       faceName: "Rear",
       child: Padding(
-        padding: EdgeInsets.fromLTRB(padding, 10, padding, 0),
+        padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: (MediaQuery.of(context).size.width > 1200)
                 ? MainAxisAlignment.center
-                : MainAxisAlignment.start,
+                : MainAxisAlignment.center,
             children: [
-              if (MediaQuery.of(context).size.width > 1200)
+              if (MediaQuery.of(context).size.width >
+                  (1100 + (widget.sideController.extended ? 120 : 0)))
                 TextStyles.TextTitleList(
-                  index: widget.day,
-                  color: nowRegister == null
+                  index: widget.tarifaXDia.fecha!.day,
+                  color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(nowRegister!.color!)
+                      : useWhiteForeground(widget.tarifaXDia.color!)
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
-                  size: (MediaQuery.of(context).size.width > 1390)
-                      ? 28
-                      : (MediaQuery.of(context).size.width > 1160)
-                          ? 20
-                          : 28,
+                  size: (MediaQuery.of(context).size.width > 1390) ? 28 : 20,
                 ),
               if (MediaQuery.of(context).size.width > 1590)
                 const SizedBox(height: 8),
-              if (MediaQuery.of(context).size.width > 1500)
+              if (MediaQuery.of(context).size.width >
+                  (1500 - (widget.sideController.extended ? 0 : 250)))
                 TextStyles.TextAsociative(
                   "Periodo: ",
-                  nowRegister == null
+                  widget.tarifaXDia.periodo == null
                       ? "No definido"
-                      : Utility.definePeriodNow(
-                          widget.dateNow, nowRegister!.periodos,
-                          compact: true),
+                      : Utility.getStringPeriod(
+                          initDate:
+                              widget.tarifaXDia.periodo!.fechaInicial!,
+                          lastDate:
+                              widget.tarifaXDia.periodo!.fechaFinal!,
+                          compact: true,
+                        ),
                   boldInversed: true,
+                  textAling: TextAlign.center,
                   size: 11,
-                  color: nowRegister == null
+                  color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(nowRegister!.color!)
+                      : useWhiteForeground(widget.tarifaXDia.color!)
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                   overflow: (MediaQuery.of(context).size.width > 1590)
                       ? TextOverflow.clip
                       : TextOverflow.ellipsis,
                 ),
-              if (MediaQuery.of(context).size.width > 1590)
+              if (MediaQuery.of(context).size.width >
+                  (1590 - (widget.sideController.extended ? 0 : 150)))
                 TextStyles.TextAsociative(
                   "Temporada: ",
-                  nowRegister != null
-                      ? Utility.getSeasonNow(nowRegister!, widget.totalDays)
-                              ?.nombre ??
-                          ''
-                      : "---",
+                  widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                   boldInversed: true,
+                  textAling: TextAlign.center,
                   size: 11,
-                  color: nowRegister == null
+                  color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(nowRegister!.color!)
+                      : useWhiteForeground(widget.tarifaXDia.color!)
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                 ),
               if (MediaQuery.of(context).size.width > 1460)
                 const SizedBox(height: 8),
-              if (MediaQuery.of(context).size.width > 1490 && !widget.isLastDay)
+              if (MediaQuery.of(context).size.width > 1490)
                 SizedBox(
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
@@ -296,20 +314,29 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                     sizeText: 11.5,
                     isBold: true,
                     withRoundedBorder: true,
-                    color: nowRegister?.color,
-                    colorText: nowRegister == null
+                    color: Utility.darken(
+                        widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
+                    colorText: widget.tarifaXDia.color == null
                         ? Colors.white
-                        : useWhiteForeground(nowRegister!.color!)
+                        : useWhiteForeground(Utility.darken(
+                                widget.tarifaXDia.color ??
+                                    DesktopColors.cerulean,
+                                0.2))
                             ? Colors.white
                             : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 ),
               if (MediaQuery.of(context).size.width <= 1490)
-                IconButton(
-                  onPressed: () => showDialogEditQuote(),
-                  icon: Icon(
-                    Icons.mode_edit_outline_outlined,
-                    color: Theme.of(context).dividerColor,
+                Tooltip(
+                  message: "Cambiar",
+                  child: IconButton(
+                    onPressed: () => showDialogEditQuote(),
+                    icon: Icon(
+                      Icons.mode_edit_outline_outlined,
+                      color: useWhiteForeground(widget.tarifaXDia.color!)
+                          ? Colors.white
+                          : const Color.fromARGB(255, 43, 43, 43),
+                    ),
                   ),
                 ),
             ],
@@ -326,16 +353,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     });
     showDialog(
       context: context,
-      builder: (context) => Dialogs.taridaAlertDialog(
-        context: context,
-        title: "Modificar de tarifas ${widget.day} / ${getNameMonth()}",
-        iconData: CupertinoIcons.pencil_circle,
-        iconColor: DesktopColors.cerulean,
-        nameButtonMain: "ACEPTAR",
-        funtionMain: () {},
-        nameButtonCancel: "CANCELAR",
-        withButtonCancel: true,
-      ),
+      builder: (context) =>
+          ManagerTariffDayWidget(tarifaXDia: widget.tarifaXDia),
     ).then(
       (value) {
         if (mounted) {
@@ -400,6 +419,6 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   }
 
   String getNameMonth() {
-    return monthNames[widget.dateNow.month - 1];
+    return monthNames[widget.tarifaXDia.fecha!.month - 1];
   }
 }

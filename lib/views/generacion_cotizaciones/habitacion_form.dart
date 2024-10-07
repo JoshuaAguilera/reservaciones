@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list.dart';
-import 'package:generador_formato/widgets/controller_cotizacion_widget.dart';
+import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
@@ -20,12 +22,11 @@ import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 
 class HabitacionForm extends ConsumerStatefulWidget {
-  const HabitacionForm(
-      {super.key,
-      required this.cancelarFunction,
-      required this.sideController});
+  const HabitacionForm({
+    super.key,
+    required this.sideController,
+  });
 
-  final void Function()? cancelarFunction;
   final SidebarXController sideController;
 
   @override
@@ -36,7 +37,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   final _formKeyHabitacion = GlobalKey<FormState>();
   TextEditingController _fechaEntrada = TextEditingController();
   TextEditingController _fechaSalida = TextEditingController();
-  bool isError = false;
   bool changedDate = false;
   bool startflow = false;
   bool showSaveButton = false;
@@ -45,13 +45,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     const Icon(Icons.dehaze_sharp),
   ];
   double target = 1;
-  int totalHuespedes = 1;
+  List<RegistroTarifa> tarifasSelect = [];
 
   final List<bool> _selectedModeRange = <bool>[
     true,
     false,
   ];
-
   final List<bool> selectedMode = <bool>[
     true,
     false,
@@ -130,6 +129,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                       .toString()
                                       .substring(0, 10));
 
+                          getTarifasSelect(list, habitacionProvider);
+
                           startflow = true;
                         }
 
@@ -172,6 +173,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                 onSelected: (String? value) {
                                                   habitacionProvider.categoria =
                                                       value!;
+                                                  getTarifasSelect(
+                                                      list, habitacionProvider);
                                                   setState(() {});
                                                 },
                                                 elements: tipoHabitacion,
@@ -225,6 +228,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                       .text);
                                                           changedDate = true;
                                                         });
+                                                        getTarifasSelect(list,
+                                                            habitacionProvider);
                                                         Future.delayed(
                                                           Durations.medium1,
                                                           () => setState(
@@ -254,6 +259,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       onChanged: () {
                                                         setState(() =>
                                                             changedDate = true);
+                                                        getTarifasSelect(list,
+                                                            habitacionProvider);
                                                         Future.delayed(
                                                             Durations.medium1,
                                                             () => setState(() =>
@@ -305,12 +312,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   ]),
                                                   TableRow(children: [
                                                     NumberInputWithIncrementDecrement(
-                                                      onChanged: (p0) {
-                                                        habitacionProvider
-                                                                .adultos =
-                                                            int.tryParse(p0);
-                                                        setState(() {});
-                                                      },
+                                                      onChanged: (p0) =>
+                                                          setState(() =>
+                                                              habitacionProvider
+                                                                      .adultos =
+                                                                  int.tryParse(
+                                                                      p0)),
                                                       initialValue:
                                                           habitacionProvider
                                                               .adultos!
@@ -340,13 +347,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                               : 1,
                                                           child:
                                                               NumberInputWithIncrementDecrement(
-                                                            onChanged: (p0) {
-                                                              habitacionProvider
-                                                                      .menores0a6 =
-                                                                  int.tryParse(
-                                                                      p0);
-                                                              setState(() {});
-                                                            },
+                                                            onChanged: (p0) => setState(() =>
+                                                                habitacionProvider
+                                                                        .menores0a6 =
+                                                                    int.tryParse(
+                                                                        p0)),
                                                             initialValue:
                                                                 habitacionProvider
                                                                     .menores0a6!
@@ -374,13 +379,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                             : 1,
                                                         child:
                                                             NumberInputWithIncrementDecrement(
-                                                          onChanged: (p0) {
-                                                            habitacionProvider
-                                                                    .menores7a12 =
-                                                                int.tryParse(
-                                                                    p0);
-                                                            setState(() {});
-                                                          },
+                                                          onChanged: (p0) => setState(() =>
+                                                              habitacionProvider
+                                                                      .menores7a12 =
+                                                                  int.tryParse(
+                                                                      p0)),
                                                           initialValue:
                                                               habitacionProvider
                                                                   .menores7a12!
@@ -414,20 +417,22 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 CustomWidgets.sectionButton(
-                                  listModes: Utility.revisedLimitDateTime(
-                                          DateTime.parse(_fechaEntrada.text),
-                                          DateTime.parse(_fechaSalida.text))
+                                  listModes: (Utility.revisedLimitDateTime(
+                                            DateTime.parse(_fechaEntrada.text),
+                                            DateTime.parse(_fechaSalida.text),
+                                          ) &&
+                                          defineUseScreenWidth(screenWidth))
                                       ? selectedMode
                                       : _selectedModeRange,
-                                  modesVisual: Utility.revisedLimitDateTime(
-                                          DateTime.parse(_fechaEntrada.text),
-                                          DateTime.parse(_fechaSalida.text))
+                                  modesVisual: (Utility.revisedLimitDateTime(
+                                            DateTime.parse(_fechaEntrada.text),
+                                            DateTime.parse(_fechaSalida.text),
+                                          ) &&
+                                          defineUseScreenWidth(screenWidth))
                                       ? modesVisual
                                       : modesVisualRange,
-                                  onChanged: (p0, p1) {
-                                    selectedMode[p0] = p0 == p1;
-                                    setState(() {});
-                                  },
+                                  onChanged: (p0, p1) => setState(
+                                      () => selectedMode[p0] = p0 == p1),
                                 ),
                               ],
                             ),
@@ -437,10 +442,28 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 child: DiasList(
                                   initDay: _fechaEntrada.text,
                                   lastDay: _fechaSalida.text,
-                                  isCalendary: selectedMode.first,
-                                  isTable: selectedMode[1],
-                                  isCheckList: selectedMode[2],
-                                  tarifas: list,
+                                  isCalendary: (Utility.revisedLimitDateTime(
+                                            DateTime.parse(_fechaEntrada.text),
+                                            DateTime.parse(_fechaSalida.text),
+                                          ) &&
+                                          defineUseScreenWidth(screenWidth))
+                                      ? selectedMode.first
+                                      : false,
+                                  isTable: (Utility.revisedLimitDateTime(
+                                            DateTime.parse(_fechaEntrada.text),
+                                            DateTime.parse(_fechaSalida.text),
+                                          ) &&
+                                          defineUseScreenWidth(screenWidth))
+                                      ? selectedMode[1]
+                                      : _selectedModeRange[0],
+                                  isCheckList: (Utility.revisedLimitDateTime(
+                                            DateTime.parse(_fechaEntrada.text),
+                                            DateTime.parse(_fechaSalida.text),
+                                          ) &&
+                                          defineUseScreenWidth(screenWidth))
+                                      ? selectedMode[2]
+                                      : _selectedModeRange[1],
+                                  sideController: widget.sideController,
                                 ),
                               ),
                             const SizedBox(height: 15),
@@ -473,26 +496,40 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             ),
             tarifaProvider.when(
               data: (list) {
-                return CalculateSummaryControllerWidget(
+                double tariffTotalAdult = Utility.calculateTariffRoom(
+                  habitacion: habitacionProvider,
+                  initDay: _fechaEntrada.text,
+                  lastDay: _fechaSalida.text,
+                  regitros: list,
+                  onlyAdults: true,
+                  withFormat: false,
+                  withDiscount: false,
+                );
+
+                double tariffTotalChildren = Utility.calculateTariffRoom(
+                  habitacion: habitacionProvider,
+                  initDay: _fechaEntrada.text,
+                  lastDay: _fechaSalida.text,
+                  regitros: list,
+                  onlyChildren: true,
+                  withFormat: false,
+                  withDiscount: false,
+                );
+
+                double descuento = Utility.calculateTariffRoom(
+                  habitacion: habitacionProvider,
+                  initDay: _fechaEntrada.text,
+                  lastDay: _fechaSalida.text,
+                  regitros: list,
+                  onlyDiscount: true,
+                  withFormat: false,
+                  withDiscount: false,
+                );
+
+                return SummaryControllerWidget(
                   calculateRoom: true,
-                  totalAdulto: Utility.calculateTariffRoom(
-                    habitacion: habitacionProvider,
-                    initDay: _fechaEntrada.text,
-                    lastDay: _fechaSalida.text,
-                    regitros: list,
-                    onlyAdults: true,
-                    withFormat: false,
-                    withDiscount: false,
-                  ),
-                  totalMenores: Utility.calculateTariffRoom(
-                    habitacion: habitacionProvider,
-                    initDay: _fechaEntrada.text,
-                    lastDay: _fechaSalida.text,
-                    regitros: list,
-                    onlyChildren: true,
-                    withFormat: false,
-                    withDiscount: false,
-                  ),
+                  totalAdulto: tariffTotalAdult,
+                  totalMenores: tariffTotalChildren,
                   total: Utility.calculateTariffRoom(
                     habitacion: habitacionProvider,
                     initDay: _fechaEntrada.text,
@@ -500,23 +537,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     regitros: list,
                     withFormat: false,
                   ),
-                  totalReal: Utility.calculateTariffRoom(
-                    habitacion: habitacionProvider,
-                    initDay: _fechaEntrada.text,
-                    lastDay: _fechaSalida.text,
-                    regitros: list,
-                    withFormat: false,
-                    withDiscount: false,
-                  ),
-                  descuento: Utility.calculateTariffRoom(
-                    habitacion: habitacionProvider,
-                    initDay: _fechaEntrada.text,
-                    lastDay: _fechaSalida.text,
-                    regitros: list,
-                    onlyDiscount: true,
-                    withFormat: false,
-                    withDiscount: false,
-                  ),
+                  totalReal: (tariffTotalAdult + tariffTotalChildren),
+                  descuento: descuento,
+                  tarifas: tarifasSelect,
+                  numDays: DateTime.parse(_fechaSalida.text)
+                      .difference(DateTime.parse(_fechaEntrada.text))
+                      .inDays,
                 ).animate(target: target).fadeIn(duration: 500.ms);
               },
               error: (error, stackTrace) => const SizedBox(),
@@ -529,14 +555,72 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   }
 
   bool revisedLimitPax(Habitacion habitacionProvider, int cantidad) {
-    if (habitacionProvider.adultos == 4) {
-      return true;
-    }
-
-    if ((habitacionProvider.adultos! + cantidad) >= 4) {
-      return true;
-    }
+    if (habitacionProvider.adultos == 4) return true;
+    if ((habitacionProvider.adultos! + cantidad) >= 4) return true;
 
     return false;
+  }
+
+  bool defineUseScreenWidth(double screenWidth) {
+    bool enable = false;
+
+    if (widget.sideController.extended) {
+      enable = screenWidth > 1115;
+    } else {
+      enable = screenWidth > 950;
+    }
+
+    return enable;
+  }
+
+  void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion) {
+    tarifasSelect = [];
+    tarifasSelect.clear();
+    habitacion.tarifaXDia!.clear();
+
+    int days = DateTime.parse(_fechaSalida.text)
+        .difference(DateTime.parse(_fechaEntrada.text))
+        .inDays;
+
+    for (var ink = 0; ink < days; ink++) {
+      DateTime dateNow =
+          DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+
+      RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
+
+      if (newTariff == null) {
+        habitacion.tarifaXDia!.add(TarifaXDia(
+          dia: ink,
+          fecha: dateNow,
+          nombreTarif: "No definido",
+          code: "Unknow$ink",
+        ));
+        continue;
+      }
+
+      habitacion.tarifaXDia!.add(
+        TarifaXDia(
+          dia: ink,
+          fecha: dateNow,
+          color: newTariff.color,
+          nombreTarif: newTariff.nombre,
+          code: newTariff.code,
+          id: newTariff.id,
+          periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
+          tarifa: newTariff.tarifas!.firstWhere(
+              (element) => element.categoria == habitacion.categoria),
+          temporadaSelect: Utility.getSeasonNow(newTariff, days),
+          temporadas: newTariff.temporadas,
+        ),
+      );
+
+      if (!tarifasSelect.any((element) => element.code == newTariff.code)) {
+        tarifasSelect.add(newTariff);
+      } else {
+        tarifasSelect
+            .firstWhere((element) => element.code == newTariff.code)
+            .numDays++;
+      }
+    }
   }
 }

@@ -123,6 +123,7 @@ class CustomWidgets {
                             name: "Estancia min.",
                             isNumeric: true,
                             icon: const Icon(CupertinoIcons.person_3_fill),
+                            initialValue: temporada.estanciaMinima?.toString(),
                             onChanged: (p0) {
                               onChangedEstancia!.call(p0);
                             },
@@ -135,6 +136,8 @@ class CustomWidgets {
                           child: TextFormFieldCustom.textFormFieldwithBorder(
                             name: "Descuento",
                             isNumeric: true,
+                            initialValue:
+                                temporada.porcentajePromocion?.toString(),
                             icon: const Icon(
                               CupertinoIcons.percent,
                               size: 20,
@@ -453,39 +456,55 @@ class CustomWidgets {
                       height: 50,
                       child: Center(
                         child: TextStyles.mediumText(
-                            text: "Temporada",
-                            color: Theme.of(context).primaryColor),
+                          text: "Temporada",
+                          color: Theme.of(context).primaryColor,
+                          aling: TextAlign.center,
+                        ),
                       ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "SGL/DBL",
-                          color: Theme.of(context).primaryColor),
+                        text: "SGL/DBL",
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "TPL", color: Theme.of(context).primaryColor),
+                        text: "TPL",
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "CPLE", color: Theme.of(context).primaryColor),
+                        text: "CPLE",
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "PAX ADIC",
-                          color: Theme.of(context).primaryColor),
+                        text: "PAX ADIC",
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "MENORES 7 A 12",
-                          color: Theme.of(context).primaryColor,
-                          size: 10),
+                        text: "MENORES 7 A 12",
+                        color: Theme.of(context).primaryColor,
+                        size: 10,
+                        aling: TextAlign.center,
+                      ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                          text: "MENORES 0 A 6",
-                          color: Theme.of(context).primaryColor,
-                          size: 10),
+                        text: "MENORES 0 A 6",
+                        color: Theme.of(context).primaryColor,
+                        size: 10,
+                        aling: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
@@ -496,60 +515,69 @@ class CustomWidgets {
                         height: 50,
                         child: Center(
                             child: TextStyles.mediumText(
-                                text: element.nombre ?? '',
-                                color: Theme.of(context).primaryColor)),
+                          text: element.nombre ?? '',
+                          color: Theme.of(context).primaryColor,
+                          aling: TextAlign.center,
+                        )),
                       ),
                       Center(
                           child: TextStyles.mediumText(
-                              text: (adults1a2.text.isEmpty &&
-                                      element.porcentajePromocion == null)
-                                  ? "—"
-                                  : Utility.calculatePromotion(
-                                      adults1a2,
-                                      TextEditingController(
-                                          text: element.porcentajePromocion
-                                              ?.toString()),
-                                      0),
-                              color: Theme.of(context).primaryColor)),
+                        text: (adults1a2.text.isEmpty &&
+                                element.porcentajePromocion == null)
+                            ? "—"
+                            : Utility.calculatePromotion(
+                                adults1a2,
+                                TextEditingController(
+                                    text: element.porcentajePromocion
+                                        ?.toString()),
+                                0),
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      )),
                       Center(
                           child: TextStyles.mediumText(
-                              text: ((adults3.text.isEmpty ||
-                                          adults3.text == '0') &&
-                                      element.porcentajePromocion == null)
-                                  ? "—"
-                                  : Utility.calculatePromotion(
-                                      adults3,
-                                      TextEditingController(
-                                          text: element.porcentajePromocion
-                                              ?.toString()),
-                                      0),
-                              color: Theme.of(context).primaryColor)),
+                        text: ((adults3.text.isEmpty || adults3.text == '0') &&
+                                element.porcentajePromocion == null)
+                            ? "—"
+                            : Utility.calculatePromotion(
+                                adults3,
+                                TextEditingController(
+                                    text: element.porcentajePromocion
+                                        ?.toString()),
+                                0),
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      )),
                       Center(
                         child: TextStyles.mediumText(
-                            text: ((adults4.text.isEmpty ||
-                                        adults4.text == '0') &&
-                                    element.porcentajePromocion == null)
-                                ? "—"
-                                : Utility.calculatePromotion(
-                                    adults4,
-                                    TextEditingController(
-                                        text: element.porcentajePromocion
-                                            ?.toString()),
-                                    0),
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      Center(
-                          child: TextStyles.mediumText(
-                              text: (paxAdic.text.isEmpty &&
+                          text:
+                              ((adults4.text.isEmpty || adults4.text == '0') &&
                                       element.porcentajePromocion == null)
                                   ? "—"
                                   : Utility.calculatePromotion(
-                                      paxAdic,
+                                      adults4,
                                       TextEditingController(
                                           text: element.porcentajePromocion
                                               ?.toString()),
                                       0),
-                              color: Theme.of(context).primaryColor)),
+                          color: Theme.of(context).primaryColor,
+                          aling: TextAlign.center,
+                        ),
+                      ),
+                      Center(
+                          child: TextStyles.mediumText(
+                        text: (paxAdic.text.isEmpty &&
+                                element.porcentajePromocion == null)
+                            ? "—"
+                            : Utility.calculatePromotion(
+                                paxAdic,
+                                TextEditingController(
+                                    text: element.porcentajePromocion
+                                        ?.toString()),
+                                0),
+                        color: Theme.of(context).primaryColor,
+                        aling: TextAlign.center,
+                      )),
                       Center(
                         child: TextStyles.mediumText(
                           text: (minor7a12.text.isEmpty &&
@@ -562,12 +590,15 @@ class CustomWidgets {
                                           ?.toString()),
                                   0),
                           color: Theme.of(context).primaryColor,
+                          aling: TextAlign.center,
                         ),
                       ),
                       Center(
                         child: TextStyles.mediumText(
-                            text: "GRATIS",
-                            color: Theme.of(context).primaryColor),
+                          text: "GRATIS",
+                          color: Theme.of(context).primaryColor,
+                          aling: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),
@@ -593,29 +624,33 @@ class CustomWidgets {
               ? MainAxisAlignment.spaceBetween
               : MainAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    if (onPressedBack != null) {
-                      onPressedBack.call();
-                    }
-                  },
-                  iconSize: 30,
-                  icon: Icon(
-                    CupertinoIcons.chevron_left_circle,
-                    color: Theme.of(context).primaryColor,
-                    size: 30,
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (onPressedBack != null) {
+                        onPressedBack.call();
+                      }
+                    },
+                    iconSize: 30,
+                    icon: Icon(
+                      CupertinoIcons.chevron_left_circle,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    ),
                   ),
-                ),
-                TextStyles.titlePagText(
-                  text: title,
-                  overflow: TextOverflow.ellipsis,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ],
+                  Expanded(
+                    child: TextStyles.titlePagText(
+                      text: title,
+                      overflow: TextOverflow.ellipsis,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
             if (showSaveButton)
               SizedBox(
@@ -643,6 +678,9 @@ class CustomWidgets {
     required bool showList,
     required void Function(bool) onExpansionChanged,
     required BuildContext context,
+    required String messageNotFound,
+    required double total,
+    required List<Widget> children,
   }) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.all(4),
@@ -666,22 +704,24 @@ class CustomWidgets {
         ],
       ),
       trailing: TextStyles.standardText(
-        text: Utility.formatterNumber(0),
+        text: Utility.formatterNumber(total),
         color: Theme.of(context).primaryColor,
         size: 13,
       ),
-      children: [
-        SizedBox(
-          height: 35,
-          child: Center(
-            child: TextStyles.standardText(
-              text: "Sin habitaciones",
-              color: Theme.of(context).primaryColor,
-              size: 11,
-            ),
-          ),
-        ),
-      ],
+      children: children.isNotEmpty
+          ? children
+          : [
+              SizedBox(
+                height: 35,
+                child: Center(
+                  child: TextStyles.standardText(
+                    text: messageNotFound,
+                    color: Theme.of(context).primaryColor,
+                    size: 11,
+                  ),
+                ),
+              ),
+            ],
     );
   }
 
@@ -699,11 +739,13 @@ class CustomWidgets {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextStyles.standardText(
-              text: nameItem,
-              color: Theme.of(context).primaryColor,
-              size: sizeText,
-              isBold: isBold,
+            Expanded(
+              child: TextStyles.standardText(
+                text: nameItem,
+                color: Theme.of(context).primaryColor,
+                size: sizeText,
+                isBold: isBold,
+              ),
             ),
             TextStyles.standardText(
               text: Utility.formatterNumber(count),

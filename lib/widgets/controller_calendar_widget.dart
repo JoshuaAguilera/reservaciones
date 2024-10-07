@@ -275,10 +275,18 @@ class _ControllerCalendarWidgetState
                                             registroTarifa: list[index],
                                             onEdit: () {
                                               ref
+                                                  .read(temporadasProvider
+                                                      .notifier)
+                                                  .update((state) =>
+                                                      Utility.getTemporadas(
+                                                          list[index]
+                                                              .temporadas));
+                                              ref
                                                   .read(editTarifaProvider
                                                       .notifier)
                                                   .update(
                                                       (state) => list[index]);
+
                                               widget.onCreated!.call();
                                             },
                                             onDelete: () async {

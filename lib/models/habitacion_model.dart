@@ -1,4 +1,4 @@
-import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 
 class Habitacion {
   int? id;
@@ -28,31 +28,4 @@ class Habitacion {
     this.menores7a12,
     this.paxAdic,
   });
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "folioHabitacion": folioHabitacion,
-        "esPreventa": esPreventa,
-        "categoria": categoria,
-        "fechaCheckIn": fechaCheckIn,
-        "fechaCheckOut": fechaCheckOut,
-        "fecha": fecha,
-        "adultos": adultos,
-        "menores0a6": menores0a6,
-        "menores7a12": menores7a12,
-        "paxAdic": paxAdic,
-      };
-
-  Map<String, dynamic> toMapUpdate() => {
-        "folioHabitacion": folioHabitacion,
-        "esPreventa": esPreventa,
-        "categoria": categoria,
-        "fechaCheckIn": fechaCheckIn,
-        "fechaCheckOut": fechaCheckOut,
-        "fecha": fecha,
-        "adultos": adultos,
-        "menores0a6": menores0a6,
-        "menores7a12": menores7a12,
-        "pax": paxAdic,
-      };
 }

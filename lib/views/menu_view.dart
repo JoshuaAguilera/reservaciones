@@ -53,8 +53,7 @@ class _MenuViewState extends State<MenuView> {
           case 15:
             return TarifarioFormView(sideController: widget.controller);
           case 16:
-            return HabitacionForm(
-                sideController: widget.controller, cancelarFunction: () {});
+            return HabitacionForm(sideController: widget.controller);
           default:
             return Text(
               pageTitle,

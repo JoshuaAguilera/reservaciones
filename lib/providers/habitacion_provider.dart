@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -20,20 +21,15 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
     state = [...state, item];
   }
 
-  void remove(int id) {
-    state = [...state.where((element) => element.id != id)];
-  }
+  void remove(int id) =>
+      state = [...state.where((element) => element.id != id)];
 
-  void clear() {
-    state = [];
-  }
+  void clear() => state = [];
 
-  Future<pw.Document> generarComprobante(Cotizacion cotizacion) async {
-    pdfPrinc = await GeneradorDocService()
-        .generarComprobanteCotizacionIndividual(
-            habitaciones: state, cotizacion: cotizacion);
-    return pdfPrinc;
-  }
+  Future<pw.Document> generarComprobante(Cotizacion cotizacion) async =>
+      pdfPrinc = await GeneradorDocService()
+          .generarComprobanteCotizacionIndividual(
+              habitaciones: state, cotizacion: cotizacion);
 }
 
 final habitacionSelectProvider =

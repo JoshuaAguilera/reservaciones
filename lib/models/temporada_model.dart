@@ -1,6 +1,7 @@
 import 'tarifa_model.dart';
 
 class Temporada {
+  int? id;
   String? code;
   String? nombre;
   int? estanciaMinima;
@@ -9,6 +10,7 @@ class Temporada {
   bool? editable;
 
   Temporada({
+    this.id,
     this.code,
     this.nombre,
     this.estanciaMinima,
