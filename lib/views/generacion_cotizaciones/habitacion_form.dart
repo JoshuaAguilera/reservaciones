@@ -598,21 +598,19 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         continue;
       }
 
-      habitacion.tarifaXDia!.add(
-        TarifaXDia(
-          dia: ink,
-          fecha: dateNow,
-          color: newTariff.color,
-          nombreTarif: newTariff.nombre,
-          code: newTariff.code,
-          id: newTariff.id,
-          periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
-          tarifa: newTariff.tarifas!.firstWhere(
-              (element) => element.categoria == habitacion.categoria),
-          temporadaSelect: Utility.getSeasonNow(newTariff, days),
-          temporadas: newTariff.temporadas,
-        ),
-      );
+      habitacion.tarifaXDia!.add(TarifaXDia(
+        dia: ink,
+        fecha: dateNow,
+        color: newTariff.color,
+        nombreTarif: newTariff.nombre,
+        code: newTariff.code,
+        id: newTariff.id,
+        periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
+        tarifa: newTariff.tarifas!
+            .firstWhere((element) => element.categoria == habitacion.categoria),
+        temporadaSelect: Utility.getSeasonNow(newTariff, days),
+        temporadas: newTariff.temporadas,
+      ));
 
       if (!tarifasSelect.any((element) => element.code == newTariff.code)) {
         tarifasSelect.add(newTariff);

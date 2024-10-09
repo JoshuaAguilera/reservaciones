@@ -6,6 +6,7 @@ import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../providers/habitacion_provider.dart';
 import '../ui/custom_widgets.dart';
+import 'dynamic_widget.dart';
 import 'text_styles.dart';
 
 class SummaryControllerWidget extends ConsumerStatefulWidget {
@@ -50,6 +51,7 @@ class _SummaryControllerWidgetState
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    final listTariffProvider = ref.watch(listTariffDayProvider);
 
     return SizedBox(
       width: 310,
@@ -60,136 +62,153 @@ class _SummaryControllerWidgetState
           elevation: 8,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextStyles.standardText(
-                  text:
-                      "Resumen de ${widget.calculateRoom ? "habitación" : "cotización"}",
-                  size: 17,
-                  color: Theme.of(context).primaryColor,
-                  isBold: true,
-                ),
-                SizedBox(height: widget.calculateRoom ? 2 : 8),
-                Divider(color: Theme.of(context).primaryColor),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 35),
-                        if (!widget.calculateRoom)
-                          Column(
-                            children: [
-                              CustomWidgets.expansionTileList(
-                                title: "Hab. Vista Reserva:",
-                                showList: showListVR,
-                                onExpansionChanged: (value) =>
-                                    setState(() => showListVR = value),
-                                context: context,
-                                messageNotFound: "Sin habitaciones",
-                                total: 0,
-                                children: [],
-                              ),
-                              const SizedBox(height: 5),
-                              CustomWidgets.expansionTileList(
-                                title: "Hab. Vista Parcial al Mar:",
-                                showList: showListVPM,
-                                onExpansionChanged: (value) =>
-                                    setState(() => showListVPM = value),
-                                context: context,
-                                messageNotFound: "Sin habitaciones",
-                                total: 0,
-                                children: [],
-                              ),
-                            ],
-                          )
-                        else
-                          Column(
-                            children: [
-                              CustomWidgets.expansionTileList(
-                                title: "Adultos:",
-                                showList: showListTotalAdulto,
-                                onExpansionChanged: (value) =>
-                                    setState(() => showListTotalAdulto = value),
-                                context: context,
-                                messageNotFound: "Sin tarifas",
-                                total: widget.totalAdulto,
-                                children: [
-                                  for (var element in widget.tarifas!)
-                                    CustomWidgets.itemListCount(
-                                      nameItem:
-                                          "${element.numDays}x ${element.nombre ?? ''}",
-                                      count: Utility.calculateTariffAdult(
-                                            element,
-                                            habitacionProvider,
-                                            widget.numDays,
-                                            withDiscount: false,
-                                          ) *
-                                          element.numDays,
-                                      context: context,
-                                      sizeText: 11.5,
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              CustomWidgets.expansionTileList(
-                                title: "Menores de 7 a 12:",
-                                showList: showListTotalMenores,
-                                onExpansionChanged: (value) => setState(
-                                    () => showListTotalMenores = value),
-                                context: context,
-                                messageNotFound: "Sin tarifas",
-                                total: widget.totalMenores,
-                                children: [
-                                  for (var element in widget.tarifas!)
-                                    CustomWidgets.itemListCount(
-                                      nameItem:
-                                          "${element.numDays}x ${element.nombre ?? ''}",
-                                      count: Utility.calculateTariffChildren(
-                                            element,
-                                            habitacionProvider,
-                                            widget.numDays,
-                                            withDiscount: false,
-                                          ) *
-                                          element.numDays,
-                                      context: context,
-                                      sizeText: 11.5,
-                                    ),
-                                ],
-                              ),
-                              CustomWidgets.itemListCount(
-                                nameItem: "Menores de 0 a 6:",
-                                count: 0,
-                                context: context,
-                              ),
-                              const SizedBox(height: 5),
-                              Divider(color: Theme.of(context).primaryColor),
-                            ],
+            child: listTariffProvider.when(
+              data: (list) => Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextStyles.standardText(
+                    text:
+                        "Resumen de ${widget.calculateRoom ? "habitación" : "cotización"}",
+                    size: 17,
+                    color: Theme.of(context).primaryColor,
+                    isBold: true,
+                  ),
+                  SizedBox(height: widget.calculateRoom ? 2 : 8),
+                  Divider(color: Theme.of(context).primaryColor),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 35),
+                          if (!widget.calculateRoom)
+                            Column(
+                              children: [
+                                CustomWidgets.expansionTileList(
+                                  title: "Hab. Vista Reserva:",
+                                  showList: showListVR,
+                                  onExpansionChanged: (value) =>
+                                      setState(() => showListVR = value),
+                                  context: context,
+                                  messageNotFound: "Sin habitaciones",
+                                  total: 0,
+                                  children: [],
+                                ),
+                                const SizedBox(height: 5),
+                                CustomWidgets.expansionTileList(
+                                  title: "Hab. Vista Parcial al Mar:",
+                                  showList: showListVPM,
+                                  onExpansionChanged: (value) =>
+                                      setState(() => showListVPM = value),
+                                  context: context,
+                                  messageNotFound: "Sin habitaciones",
+                                  total: 0,
+                                  children: [],
+                                ),
+                              ],
+                            )
+                          else
+                            Column(
+                              children: [
+                                CustomWidgets.expansionTileList(
+                                  title: "Adultos:",
+                                  showList: showListTotalAdulto,
+                                  onExpansionChanged: (value) => setState(
+                                      () => showListTotalAdulto = value),
+                                  context: context,
+                                  messageNotFound: "Sin tarifas",
+                                  total: widget.totalAdulto,
+                                  children: [
+                                    for (var element in widget.tarifas!)
+                                      CustomWidgets.itemListCount(
+                                        nameItem:
+                                            "${element.numDays}x ${element.nombre ?? ''}",
+                                        count: Utility.calculateTariffAdult(
+                                              element,
+                                              habitacionProvider,
+                                              widget.numDays,
+                                              withDiscount: false,
+                                            ) *
+                                            element.numDays,
+                                        context: context,
+                                        sizeText: 11.5,
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                CustomWidgets.expansionTileList(
+                                  title: "Menores de 7 a 12:",
+                                  showList: showListTotalMenores,
+                                  onExpansionChanged: (value) => setState(
+                                      () => showListTotalMenores = value),
+                                  context: context,
+                                  messageNotFound: "Sin tarifas",
+                                  total: widget.totalMenores,
+                                  children: [
+                                    for (var element in widget.tarifas!)
+                                      CustomWidgets.itemListCount(
+                                        nameItem:
+                                            "${element.numDays}x ${element.nombre ?? ''}",
+                                        count: Utility.calculateTariffChildren(
+                                              element,
+                                              habitacionProvider,
+                                              widget.numDays,
+                                              withDiscount: false,
+                                            ) *
+                                            element.numDays,
+                                        context: context,
+                                        sizeText: 11.5,
+                                      ),
+                                  ],
+                                ),
+                                CustomWidgets.itemListCount(
+                                  nameItem: "Menores de 0 a 6:",
+                                  count: 0,
+                                  context: context,
+                                ),
+                                const SizedBox(height: 5),
+                                Divider(color: Theme.of(context).primaryColor),
+                              ],
+                            ),
+                          const SizedBox(height: 5),
+                          CustomWidgets.itemListCount(
+                            nameItem: "Total:",
+                            count: widget.totalReal,
+                            context: context,
                           ),
-                        const SizedBox(height: 5),
-                        CustomWidgets.itemListCount(
-                          nameItem: "Total:",
-                          count: widget.totalReal,
-                          context: context,
-                        ),
-                        const SizedBox(height: 5),
-                        CustomWidgets.itemListCount(
-                          nameItem: "Descuento:",
-                          count: -widget.descuento,
-                          context: context,
-                        ),
-                      ],
+                          const SizedBox(height: 5),
+                          CustomWidgets.itemListCount(
+                            nameItem: "Descuento:",
+                            count: -widget.descuento,
+                            context: context,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  CustomWidgets.itemListCount(
+                    nameItem: "Total cotizado:",
+                    count: widget.total,
+                    context: context,
+                    isBold: true,
+                    sizeText: 14,
+                  ),
+                ],
+              ),
+              error: (error, stackTrace) => TextStyles.standardText(
+                  text: "Error de calculación de tarifas.",
+                  color: Theme.of(context).primaryColor),
+              loading: () => SizedBox(
+                height: screenHeight * 0.7,
+                child: dynamicWidget.loadingWidget(
+                  310,
+                  screenHeight * 0.2,
+                  false,
+                  isEstandar: true,
+                  message: TextStyles.standardText(
+                      text: "Calculando...",
+                      color: Theme.of(context).primaryColor),
                 ),
-                CustomWidgets.itemListCount(
-                  nameItem: "Total cotizado:",
-                  count: widget.total,
-                  context: context,
-                  isBold: true,
-                  sizeText: 14,
-                ),
-              ],
+              ),
             ),
           ),
         ),

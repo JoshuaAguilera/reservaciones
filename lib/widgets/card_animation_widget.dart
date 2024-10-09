@@ -11,7 +11,6 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -52,7 +51,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         ? null
         : RegistroTarifa(
             tarifas: [widget.tarifaXDia.tarifa!],
-            temporadas: [widget.tarifaXDia.temporadaSelect!]);
+            temporadas: widget.tarifaXDia.temporadaSelect != null
+                ? [widget.tarifaXDia.temporadaSelect!]
+                : []);
     super.initState();
   }
 
@@ -174,7 +175,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 if (MediaQuery.of(context).size.width >
                     (1510 - (widget.sideController.extended ? 50 : 175)))
                   TextStyles.TextAsociative(
-                      "Adulto: ",
+                      "Adul: ",
                       widget.tarifaXDia.tarifa == null
                           ? "\$0.00"
                           : Utility.formatterNumber(
@@ -270,10 +271,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   widget.tarifaXDia.periodo == null
                       ? "No definido"
                       : Utility.getStringPeriod(
-                          initDate:
-                              widget.tarifaXDia.periodo!.fechaInicial!,
-                          lastDate:
-                              widget.tarifaXDia.periodo!.fechaFinal!,
+                          initDate: widget.tarifaXDia.periodo!.fechaInicial!,
+                          lastDate: widget.tarifaXDia.periodo!.fechaFinal!,
                           compact: true,
                         ),
                   boldInversed: true,
@@ -369,6 +368,14 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
             },
           );
         }
+
+        nowRegister = widget.tarifaXDia.tarifa == null
+            ? null
+            : RegistroTarifa(
+                tarifas: [widget.tarifaXDia.tarifa!],
+                temporadas: widget.tarifaXDia.temporadaSelect != null
+                    ? [widget.tarifaXDia.temporadaSelect!]
+                    : []);
 
         Future.delayed(
           1200.ms,

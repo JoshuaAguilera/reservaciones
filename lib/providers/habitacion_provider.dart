@@ -34,3 +34,13 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
 
 final habitacionSelectProvider =
     StateProvider<Habitacion>((ref) => Habitacion());
+
+final detectChangeProvider = StateProvider<int>((ref) => 0);
+
+final listTariffDayProvider =
+    FutureProvider<List<TarifaXDia>>((ref) async {
+  final detectChanged = ref.watch(detectChangeProvider);
+  final list = ref.watch(habitacionSelectProvider).tarifaXDia ?? [];
+
+  return list;
+});

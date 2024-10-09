@@ -731,11 +731,12 @@ class CustomWidgets {
     required BuildContext context,
     bool isBold = false,
     double sizeText = 13,
+    double height = 60,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: SizedBox(
-        height: 60,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

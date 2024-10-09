@@ -6,9 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/widgets/check_listtile_tariff_widget.dart';
 import 'package:generador_formato/widgets/item_row.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
+
+import '../../ui/progress_indicator.dart';
 
 class DiasList extends ConsumerStatefulWidget {
   const DiasList({
@@ -59,228 +62,241 @@ class _DiasListState extends ConsumerState<DiasList> {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenWidth = MediaQuery.of(context).size.width;
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    final listTariffProvider = ref.watch(listTariffDayProvider);
 
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: TextStyles.titleText(
-                text: Utility.defineMonthPeriod(widget.initDay, widget.lastDay),
-                color: Theme.of(context).dividerColor,
-                size: 21),
-          ),
-          if (widget.isCalendary &&
-              Utility.revisedLimitDateTime(checkIn, checkOut) &&
-              defineUseScreenWidth(screenWidth))
-            Card(
-              elevation: 7,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 25, horizontal: screenWidth * 0.025),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: screenWidth < 1100 ? double.infinity : 1100,
-                      height: 50,
-                      child: GridView.builder(
-                        padding: EdgeInsets.zero,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 7,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 7, childAspectRatio: 1),
-                        itemBuilder: (context, index) {
-                          return ItemRow.getTitleDay(
-                            title: 0,
-                            withOutDay: true,
-                            subTitle: daysNameShort[index],
-                            select: false,
-                            index: index,
-                            brightness: brightness,
-                          );
-                        },
+      child: listTariffProvider.when(
+        data: (list) => Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: TextStyles.titleText(
+                  text:
+                      Utility.defineMonthPeriod(widget.initDay, widget.lastDay),
+                  color: Theme.of(context).dividerColor,
+                  size: 21),
+            ),
+            if (widget.isCalendary &&
+                Utility.revisedLimitDateTime(checkIn, checkOut) &&
+                defineUseScreenWidth(screenWidth))
+              Card(
+                elevation: 7,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 25, horizontal: screenWidth * 0.025),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: screenWidth < 1100 ? double.infinity : 1100,
+                        height: 50,
+                        child: GridView.builder(
+                          padding: EdgeInsets.zero,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: 7,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 7, childAspectRatio: 1),
+                          itemBuilder: (context, index) {
+                            return ItemRow.getTitleDay(
+                              title: 0,
+                              withOutDay: true,
+                              subTitle: daysNameShort[index],
+                              select: false,
+                              index: index,
+                              brightness: brightness,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    Stack(
-                      children: [
-                        SizedBox(
-                          width: screenWidth < 1100 ? double.infinity : 1100,
-                          child: GridView.count(
-                            crossAxisCount: 7,
-                            shrinkWrap: true,
-                            childAspectRatio: 0.9,
-                            children: [
-                              for (var ink = 0;
-                                  ink < checkIn.difference(checkInLimit).inDays;
-                                  ink++)
-                                ItemRow.dayRateRow(
-                                  context: context,
-                                  day:
-                                      checkInLimit.add(Duration(days: ink)).day,
-                                  inPeriod: false,
-                                  dateNow:
-                                      checkInLimit.add(Duration(days: ink)),
-                                  sideController: widget.sideController,
-                                ),
-                              for (var element
-                                  in habitacionProvider.tarifaXDia!)
-                                ItemRow.dayRateRow(
-                                  context: context,
-                                  inPeriod: true,
-                                  sideController: widget.sideController,
-                                  tarifaXDia: element,
-                                ),
-                              for (var ink = -1;
-                                  ink <
-                                      checkOutLimit
-                                              .difference(checkOut)
-                                              .inDays -
-                                          1;
-                                  ink++)
-                                ItemRow.dayRateRow(
-                                  context: context,
-                                  day:
-                                      checkOut.add(Duration(days: ink + 1)).day,
-                                  inPeriod: false,
-                                  dateNow:
-                                      checkOut.add(Duration(days: ink + 1)),
-                                  sideController: widget.sideController,
-                                ),
-                            ],
+                      Stack(
+                        children: [
+                          SizedBox(
+                            width: screenWidth < 1100 ? double.infinity : 1100,
+                            child: GridView.count(
+                              crossAxisCount: 7,
+                              shrinkWrap: true,
+                              childAspectRatio: 0.9,
+                              children: [
+                                for (var ink = 0;
+                                    ink <
+                                        checkIn.difference(checkInLimit).inDays;
+                                    ink++)
+                                  ItemRow.dayRateRow(
+                                    context: context,
+                                    day: checkInLimit
+                                        .add(Duration(days: ink))
+                                        .day,
+                                    inPeriod: false,
+                                    dateNow:
+                                        checkInLimit.add(Duration(days: ink)),
+                                    sideController: widget.sideController,
+                                  ),
+                                for (var element in list)
+                                  ItemRow.dayRateRow(
+                                    context: context,
+                                    inPeriod: true,
+                                    sideController: widget.sideController,
+                                    tarifaXDia: element,
+                                  ),
+                                for (var ink = -1;
+                                    ink <
+                                        checkOutLimit
+                                                .difference(checkOut)
+                                                .inDays -
+                                            1;
+                                    ink++)
+                                  ItemRow.dayRateRow(
+                                    context: context,
+                                    day: checkOut
+                                        .add(Duration(days: ink + 1))
+                                        .day,
+                                    inPeriod: false,
+                                    dateNow:
+                                        checkOut.add(Duration(days: ink + 1)),
+                                    sideController: widget.sideController,
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width > 1280)
-                                ? 135
-                                : 80,
-                            width: 7800,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                  Theme.of(context).cardColor,
-                                  if (brightness == Brightness.dark)
-                                    const Color.fromARGB(0, 68, 68, 68),
-                                  if (brightness == Brightness.light)
-                                    const Color.fromARGB(0, 255, 255, 255)
-                                ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter)),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width > 1280)
-                                ? 135
-                                : 80,
-                            width: 7800,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [
+                          Positioned(
+                            top: 0,
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width > 1280)
+                                  ? 135
+                                  : 80,
+                              width: 7800,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [
                                     Theme.of(context).cardColor,
                                     if (brightness == Brightness.dark)
                                       const Color.fromARGB(0, 68, 68, 68),
                                     if (brightness == Brightness.light)
                                       const Color.fromARGB(0, 255, 255, 255)
                                   ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter),
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter)),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-                    .animate()
-                    .slideY(begin: 2, duration: 500.ms)
-                    .fadeIn(delay: 400.ms),
-              ),
-            ),
-          if (widget.isTable)
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Column(
-                children: [
-                  Table(
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    border: TableBorder(
-                      verticalInside: BorderSide(
-                        color: Theme.of(context).primaryColorLight,
-                        width: 2,
-                      ),
-                    ),
-                    children: [
-                      TableRow(
-                        children: [
-                          for (var element in tableTitles)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 5.0),
-                              child: Center(
-                                child: TextStyles.standardText(
-                                    text: element,
-                                    isBold: true,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 14),
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width > 1280)
+                                  ? 135
+                                  : 80,
+                              width: 7800,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Theme.of(context).cardColor,
+                                      if (brightness == Brightness.dark)
+                                        const Color.fromARGB(0, 68, 68, 68),
+                                      if (brightness == Brightness.light)
+                                        const Color.fromARGB(0, 255, 255, 255)
+                                    ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter),
                               ),
                             ),
+                          ),
                         ],
                       ),
                     ],
-                  ),
-                  Divider(color: Theme.of(context).primaryColorLight),
-                  SizedBox(
-                    height: Utility.limitHeightList(
-                        checkOut.difference(checkIn).inDays, 9, 392),
-                    child: SingleChildScrollView(
-                      child: Table(
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        border: TableBorder(
-                          horizontalInside:
-                              BorderSide(color: Theme.of(context).dividerColor),
-                        ),
-                        children: [
-                          for (var element in habitacionProvider.tarifaXDia!)
-                            ItemRow.tableRowTarifaDay(
-                              context,
-                              habitacion: habitacionProvider,
-                              screenWidth: screenWidth,
-                              tarifaXDia: element,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(duration: 700.ms),
-          if (widget.isCheckList)
-            SizedBox(
-              height: Utility.limitHeightList(
-                  checkOut.difference(checkIn).inDays, 4, 472),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: habitacionProvider.tarifaXDia!.length,
-                  itemBuilder: (context, ink) {
-                    return ItemRow.itemTarifaDia(
-                      context,
-                      habitacion: habitacionProvider,
-                      tarifaXDia: habitacionProvider.tarifaXDia![ink],
-                    );
-                  },
+                  )
+                      .animate()
+                      .slideY(begin: 2, duration: 500.ms)
+                      .fadeIn(delay: 400.ms),
                 ),
               ),
-            ).animate().shimmer(delay: 500.ms).fadeIn(),
-        ],
+            if (widget.isTable)
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Column(
+                  children: [
+                    Table(
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      border: TableBorder(
+                        verticalInside: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                          width: 2,
+                        ),
+                      ),
+                      children: [
+                        TableRow(
+                          children: [
+                            for (var element in tableTitles)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Center(
+                                  child: TextStyles.standardText(
+                                      text: element,
+                                      isBold: true,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 14),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Divider(color: Theme.of(context).primaryColorLight),
+                    SizedBox(
+                      height: Utility.limitHeightList(
+                          checkOut.difference(checkIn).inDays, 9, 392),
+                      child: SingleChildScrollView(
+                        child: Table(
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          border: TableBorder(
+                            horizontalInside: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                          ),
+                          children: [
+                            for (var element in list)
+                              ItemRow.tableRowTarifaDay(
+                                context,
+                                habitacion: habitacionProvider,
+                                screenWidth: screenWidth,
+                                tarifaXDia: element,
+                                setState: () => setState(() {}),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fadeIn(duration: 700.ms),
+            if (widget.isCheckList)
+              SizedBox(
+                height: Utility.limitHeightList(
+                    checkOut.difference(checkIn).inDays, 4, 472),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: list.length,
+                    itemBuilder: (context, ink) {
+                      return CheckListtileTariffWidget(
+                        habitacion: habitacionProvider,
+                        tarifaXDia: list[ink],
+                      );
+                    },
+                  ),
+                ),
+              ).animate().shimmer(delay: 500.ms).fadeIn(),
+          ],
+        ),
+        error: (error, stackTrace) =>
+            TextStyles.standardText(text: "Error de calculación de tarifas"),
+        loading: () => SizedBox(
+          height: 350,
+          child: ProgressIndicatorCustom(screenHight: 0),
+        ),
       ),
     );
   }

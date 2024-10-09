@@ -359,9 +359,7 @@ class Utility {
     //   menores7a12 += element.menores7a12!;
     // }
 
-    if (adultos > 0) {
-      occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
-    }
+    if (adultos > 0) occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
 
     if (menores0a6 > 0) {
       occupation +=
@@ -1261,7 +1259,7 @@ class Utility {
         .firstWhere((element) => element.categoria == habitacion.categoria);
 
     double descuento =
-        getSeasonNow(nowRegister, totalDays)!.porcentajePromocion ?? 0;
+        getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
 
     switch (habitacion.adultos) {
       case 1 || 2:
@@ -1308,7 +1306,7 @@ class Utility {
     tariffChildren = nowTarifa.tarifaMenores7a12! * habitacion.menores7a12!;
 
     double descuento =
-        getSeasonNow(nowRegister, totalDays)!.porcentajePromocion ?? 0;
+        getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
 
     if (withDiscount) {
       tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
@@ -1325,15 +1323,18 @@ class Utility {
 
   static TemporadaData? getSeasonNow(
       RegistroTarifa? nowRegister, int totalDays) {
-    if (nowRegister == null) {
+    if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
 
-    TemporadaData? nowSeason = nowRegister.temporadas
-        ?.where((element) => element.estanciaMinima == totalDays)
-        .firstOrNull;
+    TemporadaData? nowSeason;
 
-    nowSeason ??= nowRegister.temporadas!.last;
+    for (var element in nowRegister.temporadas!) {
+      if (totalDays == element.estanciaMinima ||
+          totalDays > element.estanciaMinima!) {
+        nowSeason = element;
+      }
+    }
 
     return nowSeason;
   }

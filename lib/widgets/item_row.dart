@@ -127,11 +127,15 @@ class ItemRow {
     required Habitacion habitacion,
     required double screenWidth,
     required TarifaXDia tarifaXDia,
+    void Function()? setState,
   }) {
     RegistroTarifa? tarifa = tarifaXDia.tarifa == null
         ? null
         : RegistroTarifa(
-            tarifas: [tarifaXDia.tarifa!], temporadas: [tarifaXDia.temporadaSelect!]);
+            tarifas: [tarifaXDia.tarifa!],
+            temporadas: tarifaXDia.temporadaSelect != null
+                ? [tarifaXDia.temporadaSelect!]
+                : []);
 
     double tarifaAdulto = Utility.calculateTariffAdult(
       tarifa,
@@ -190,6 +194,19 @@ class ItemRow {
                     context: context,
                     builder: (context) =>
                         ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
+                  ).then(
+                    (value) {
+                      if (value != null) {
+                        tarifa = tarifaXDia.tarifa == null
+                            ? null
+                            : RegistroTarifa(
+                                tarifas: [tarifaXDia.tarifa!],
+                                temporadas: tarifaXDia.temporadaSelect != null
+                                    ? [tarifaXDia.temporadaSelect!]
+                                    : []);
+                        setState!.call();
+                      }
+                    },
                   );
                 },
                 text: "Editar",
@@ -207,6 +224,19 @@ class ItemRow {
                     context: context,
                     builder: (context) =>
                         ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
+                  ).then(
+                    (value) {
+                      if (value != null) {
+                        tarifa = tarifaXDia.tarifa == null
+                            ? null
+                            : RegistroTarifa(
+                                tarifas: [tarifaXDia.tarifa!],
+                                temporadas: tarifaXDia.temporadaSelect != null
+                                    ? [tarifaXDia.temporadaSelect!]
+                                    : []);
+                        setState!.call();
+                      }
+                    },
                   );
                 },
                 tooltip: "Editar",
@@ -219,140 +249,6 @@ class ItemRow {
           ],
         )
       ],
-    );
-  }
-
-  static Widget itemTarifaDia(
-    BuildContext context, {
-    required TarifaXDia tarifaXDia,
-    required Habitacion habitacion,
-  }) {
-    RegistroTarifa? tarifa = tarifaXDia.tarifa == null
-        ? null
-        : RegistroTarifa(
-            tarifas: [tarifaXDia.tarifa!], temporadas: [tarifaXDia.temporadaSelect!]);
-
-    double tarifaAdulto = Utility.calculateTariffAdult(
-      tarifa,
-      habitacion,
-      habitacion.tarifaXDia!.length,
-    );
-
-    double tarifaMenores = Utility.calculateTariffChildren(
-      tarifa,
-      habitacion,
-      habitacion.tarifaXDia!.length,
-    );
-
-    void showDialogEditQuote() {
-      showDialog(
-        context: context,
-        builder: (context) => ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
-      );
-    }
-
-    return Card(
-      elevation: 5,
-      color: Theme.of(context).primaryColorDark,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListTile(
-          visualDensity: VisualDensity.comfortable,
-          leading: TextStyles.TextSpecial(
-            day: tarifaXDia.dia! + 1,
-            subtitle: "DIA",
-            sizeTitle: 22,
-            colorsubTitle: Theme.of(context).dividerColor,
-            colorTitle: tarifaXDia.color ?? DesktopColors.cerulean,
-          ),
-          title: Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Wrap(
-              spacing: 20,
-              runSpacing: 5,
-              children: [
-                TextStyles.TextAsociative(
-                  "Fecha:  ",
-                  Utility.getCompleteDate(data: tarifaXDia.fecha!),
-                  color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                ),
-                TextStyles.TextAsociative(
-                  "Tarifa aplicada:  ",
-                  tarifaXDia.nombreTarif ?? '',
-                  color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                ),
-              ],
-            ),
-          ),
-          subtitle: Wrap(
-            spacing: 20,
-            runSpacing: 5,
-            children: [
-              TextStyles.TextAsociative(
-                "Tarifa de adultos:  ",
-                Utility.formatterNumber(tarifaAdulto),
-                color: Theme.of(context).primaryColor,
-                size: 13.5,
-              ),
-              TextStyles.TextAsociative(
-                "Tarifa de Menores de 7 a 12:  ",
-                Utility.formatterNumber(tarifaMenores),
-                color: Theme.of(context).primaryColor,
-                size: 13.5,
-              ),
-              TextStyles.TextAsociative(
-                "Tarifa de Menores de 0 a 6:  ",
-                Utility.formatterNumber(0),
-                color: Theme.of(context).primaryColor,
-                size: 13.5,
-              ),
-              if (MediaQuery.of(context).size.width > 1300)
-                TextStyles.TextAsociative(
-                  "Periodo:  ",
-                  tarifaXDia.periodo == null
-                      ? "No definido"
-                      : Utility.getStringPeriod(
-                          initDate: tarifaXDia.periodo!.fechaInicial!,
-                          lastDate: tarifaXDia.periodo!.fechaFinal!,
-                          compact: true,
-                        ),
-                  color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                ),
-              if (MediaQuery.of(context).size.width > 1500)
-                TextStyles.TextAsociative(
-                  "Temporada:  ",
-                  tarifaXDia.temporadaSelect?.nombre ?? "---",
-                  color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                ),
-            ],
-          ),
-          trailing: (MediaQuery.of(context).size.width > 1400)
-              ? SizedBox(
-                  width: 115,
-                  child: Buttons.commonButton(
-                    onPressed: () => showDialogEditQuote(),
-                    text: "Editar",
-                    color: tarifaXDia.color,
-                    colorText: useWhiteForeground(tarifaXDia.color!)
-                        ? Colors.white
-                        : const Color.fromARGB(255, 43, 43, 43),
-                  ),
-                )
-              : IconButton(
-                  onPressed: () => showDialogEditQuote(),
-                  tooltip: "Editar",
-                  icon: Icon(
-                    CupertinoIcons.pencil,
-                    size: 30,
-                    color: tarifaXDia.color,
-                  ),
-                ),
-        ),
-      ),
     );
   }
 
