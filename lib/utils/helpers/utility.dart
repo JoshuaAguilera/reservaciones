@@ -1248,31 +1248,41 @@ class Utility {
 
   static double calculateTariffAdult(
       RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays,
-      {bool withDiscount = true, bool onlyDiscount = false}) {
+      {bool withDiscount = true,
+      bool onlyDiscount = false,
+      double? descuentoProvisional}) {
     double tariffAdult = 0;
 
     if (nowRegister == null) {
+      print("tarifa nula");
       return 0;
     }
 
-    TarifaData nowTarifa = nowRegister.tarifas!
-        .firstWhere((element) => element.categoria == habitacion.categoria);
+    TarifaData? nowTarifa = nowRegister.tarifas!
+        .where((element) => element.categoria == habitacion.categoria)
+        .firstOrNull;
 
-    double descuento =
-        getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+    double descuento = 0;
+
+    if (nowRegister.temporadas!.isNotEmpty) {
+      descuento =
+          getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+    } else {
+      descuento = descuentoProvisional ?? 0;
+    }
 
     switch (habitacion.adultos) {
       case 1 || 2:
-        tariffAdult = nowTarifa.tarifaAdultoSGLoDBL!;
+        tariffAdult = nowTarifa?.tarifaAdultoSGLoDBL ?? 0;
         break;
       case 3:
-        tariffAdult = nowTarifa.tarifaAdultoTPL!;
+        tariffAdult = nowTarifa?.tarifaAdultoTPL ?? 0;
         break;
       case 4:
-        tariffAdult = nowTarifa.tarifaAdultoCPLE!;
+        tariffAdult = nowTarifa?.tarifaAdultoCPLE ?? 0;
         break;
       default:
-        tariffAdult = nowTarifa.tarifaPaxAdicional!;
+        tariffAdult = nowTarifa?.tarifaPaxAdicional ?? 0;
     }
 
     if (withDiscount) {
@@ -1293,6 +1303,7 @@ class Utility {
     int totalDays, {
     bool withDiscount = true,
     bool onlyDiscount = false,
+    double? descuentoProvisional,
   }) {
     double tariffChildren = 0;
 
@@ -1300,13 +1311,19 @@ class Utility {
       return 0;
     }
 
-    TarifaData nowTarifa = nowRegister.tarifas!
-        .firstWhere((element) => element.categoria == habitacion.categoria);
+    TarifaData? nowTarifa = nowRegister.tarifas!
+        .where((element) => element.categoria == habitacion.categoria).firstOrNull;
 
-    tariffChildren = nowTarifa.tarifaMenores7a12! * habitacion.menores7a12!;
+    tariffChildren = (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
-    double descuento =
-        getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+    double descuento = 0;
+
+    if (nowRegister.temporadas!.isNotEmpty) {
+      descuento =
+          getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+    } else {
+      descuento = descuentoProvisional ?? 0;
+    }
 
     if (withDiscount) {
       tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))

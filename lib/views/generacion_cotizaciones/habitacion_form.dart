@@ -174,7 +174,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   habitacionProvider.categoria =
                                                       value!;
                                                   getTarifasSelect(
-                                                      list, habitacionProvider);
+                                                      list, habitacionProvider,
+                                                      onlyCategory: true);
                                                   setState(() {});
                                                 },
                                                 elements: tipoHabitacion,
@@ -573,51 +574,75 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     return enable;
   }
 
-  void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion) {
-    tarifasSelect = [];
-    tarifasSelect.clear();
-    habitacion.tarifaXDia!.clear();
+  void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion,
+      {bool onlyCategory = false}) {
+    if (onlyCategory) {
+      for (var tariffDay in habitacion.tarifaXDia!) {
+        if (tariffDay.tarifas != null) {
+          if (tariffDay.tarifa != null) {
+            tariffDay.tarifas!.removeWhere(
+                (element) => element.categoria == tariffDay.tarifa!.categoria);
+            tariffDay.tarifas!.add(tariffDay.tarifa!);
+          }
 
-    int days = DateTime.parse(_fechaSalida.text)
-        .difference(DateTime.parse(_fechaEntrada.text))
-        .inDays;
-
-    for (var ink = 0; ink < days; ink++) {
-      DateTime dateNow =
-          DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
-
-      RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
-
-      if (newTariff == null) {
-        habitacion.tarifaXDia!.add(TarifaXDia(
-          dia: ink,
-          fecha: dateNow,
-          nombreTarif: "No definido",
-          code: "Unknow$ink",
-        ));
-        continue;
+          tariffDay.tarifa = tariffDay.tarifas!.where(
+              (element) => element.categoria == habitacion.categoria).firstOrNull;
+        } else {
+          tariffDay.tarifas = [];
+          tariffDay.tarifas!.add(tariffDay.tarifa!);
+          tariffDay.tarifa = null;
+        }
       }
+    } else {
+      tarifasSelect = [];
+      tarifasSelect.clear();
+      habitacion.tarifaXDia!.clear();
 
-      habitacion.tarifaXDia!.add(TarifaXDia(
-        dia: ink,
-        fecha: dateNow,
-        color: newTariff.color,
-        nombreTarif: newTariff.nombre,
-        code: newTariff.code,
-        id: newTariff.id,
-        periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
-        tarifa: newTariff.tarifas!
-            .firstWhere((element) => element.categoria == habitacion.categoria),
-        temporadaSelect: Utility.getSeasonNow(newTariff, days),
-        temporadas: newTariff.temporadas,
-      ));
+      int days = DateTime.parse(_fechaSalida.text)
+          .difference(DateTime.parse(_fechaEntrada.text))
+          .inDays;
+      for (var ink = 0; ink < days; ink++) {
+        DateTime dateNow =
+            DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
 
-      if (!tarifasSelect.any((element) => element.code == newTariff.code)) {
-        tarifasSelect.add(newTariff);
-      } else {
-        tarifasSelect
-            .firstWhere((element) => element.code == newTariff.code)
-            .numDays++;
+        RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
+
+        if (newTariff == null) {
+          habitacion.tarifaXDia!.add(TarifaXDia(
+            dia: ink,
+            fecha: dateNow,
+            nombreTarif: "No definido",
+            code: "Unknow$ink",
+            descuentoProvisional: 0,
+            categoria: habitacion.categoria,
+          ));
+          continue;
+        }
+
+        habitacion.tarifaXDia!.add(
+          TarifaXDia(
+            dia: ink,
+            fecha: dateNow,
+            color: newTariff.color,
+            nombreTarif: newTariff.nombre,
+            code: newTariff.code,
+            id: newTariff.id,
+            periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
+            tarifa: newTariff.tarifas!.firstWhere(
+                (element) => element.categoria == habitacion.categoria),
+            temporadaSelect: Utility.getSeasonNow(newTariff, days),
+            temporadas: newTariff.temporadas,
+            tarifas: newTariff.tarifas,
+          ),
+        );
+
+        if (!tarifasSelect.any((element) => element.code == newTariff.code)) {
+          tarifasSelect.add(newTariff);
+        } else {
+          tarifasSelect
+              .firstWhere((element) => element.code == newTariff.code)
+              .numDays++;
+        }
       }
     }
   }

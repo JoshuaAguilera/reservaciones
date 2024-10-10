@@ -51,9 +51,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         ? null
         : RegistroTarifa(
             tarifas: [widget.tarifaXDia.tarifa!],
-            temporadas: widget.tarifaXDia.temporadaSelect != null
-                ? [widget.tarifaXDia.temporadaSelect!]
-                : []);
+            temporadas: widget.tarifaXDia.temporadas ??
+                (widget.tarifaXDia.temporadaSelect != null
+                    ? [widget.tarifaXDia.temporadaSelect!]
+                    : []),
+          );
     super.initState();
   }
 
@@ -154,7 +156,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
           children: [
             TextStyles.TextTitleList(
               index: widget.tarifaXDia.fecha!.day,
-              color: widget.tarifaXDia.color ?? Theme.of(context).dividerColor,
+              color: widget.tarifaXDia.subCode == null
+                  ? widget.tarifaXDia.color ?? Theme.of(context).dividerColor
+                  : Utility.darken(
+                      widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
               size: (MediaQuery.of(context).size.width >
                       (1110 - (widget.sideController.extended ? 0 : 100)))
                   ? 28
@@ -180,10 +185,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           ? "\$0.00"
                           : Utility.formatterNumber(
                               Utility.calculateTariffAdult(
-                              nowRegister,
-                              habitacion,
-                              habitacion.tarifaXDia!.length,
-                            )),
+                                nowRegister,
+                                habitacion,
+                                habitacion.tarifaXDia!.length,
+                                descuentoProvisional:
+                                    widget.tarifaXDia.descuentoProvisional,
+                              ),
+                            ),
                       boldInversed: true,
                       size: 11,
                       color: Theme.of(context).primaryColor),
@@ -200,6 +208,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                                 nowRegister,
                                 habitacion,
                                 habitacion.tarifaXDia!.length,
+                                descuentoProvisional:
+                                    widget.tarifaXDia.descuentoProvisional,
                               ),
                             ),
                       color: Theme.of(context).primaryColor),
@@ -218,11 +228,15 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                                     nowRegister,
                                     habitacion,
                                     habitacion.tarifaXDia!.length,
+                                    descuentoProvisional:
+                                        widget.tarifaXDia.descuentoProvisional,
                                   ) +
                                   Utility.calculateTariffChildren(
                                     nowRegister,
                                     habitacion,
                                     habitacion.tarifaXDia!.length,
+                                    descuentoProvisional:
+                                        widget.tarifaXDia.descuentoProvisional,
                                   )),
                       color: Theme.of(context).primaryColor),
               ],
@@ -238,9 +252,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
     return __buildLayout(
       key: ValueKey(false),
-      backgroundColor: widget.tarifaXDia.color != null
-          ? widget.tarifaXDia.color!
-          : DesktopColors.cerulean,
+      backgroundColor: widget.tarifaXDia.subCode == null
+          ? widget.tarifaXDia.color ?? DesktopColors.cerulean
+          : Utility.darken(
+              widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
       faceName: "Rear",
       child: Padding(
         padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
@@ -257,7 +272,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   index: widget.tarifaXDia.fecha!.day,
                   color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.color!)
+                      : useWhiteForeground(widget.tarifaXDia.subCode == null
+                              ? widget.tarifaXDia.color ??
+                                  DesktopColors.cerulean
+                              : Utility.darken(
+                                  widget.tarifaXDia.color ??
+                                      DesktopColors.cerulean,
+                                  0.2))
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                   size: (MediaQuery.of(context).size.width > 1390) ? 28 : 20,
@@ -280,7 +301,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   size: 11,
                   color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.color!)
+                      : useWhiteForeground(widget.tarifaXDia.subCode == null
+                              ? widget.tarifaXDia.color ??
+                                  DesktopColors.cerulean
+                              : Utility.darken(
+                                  widget.tarifaXDia.color ??
+                                      DesktopColors.cerulean,
+                                  0.2))
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                   overflow: (MediaQuery.of(context).size.width > 1590)
@@ -297,7 +324,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   size: 11,
                   color: widget.tarifaXDia.color == null
                       ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.color!)
+                      : useWhiteForeground(widget.tarifaXDia.subCode == null
+                              ? widget.tarifaXDia.color ??
+                                  DesktopColors.cerulean
+                              : Utility.darken(
+                                  widget.tarifaXDia.color ??
+                                      DesktopColors.cerulean,
+                                  0.2))
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                 ),
@@ -314,12 +347,23 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                     isBold: true,
                     withRoundedBorder: true,
                     color: Utility.darken(
-                        widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
+                        widget.tarifaXDia.subCode == null
+                            ? widget.tarifaXDia.color ?? DesktopColors.cerulean
+                            : Utility.darken(
+                                widget.tarifaXDia.color ??
+                                    DesktopColors.cerulean,
+                                0.2),
+                        0.2),
                     colorText: widget.tarifaXDia.color == null
                         ? Colors.white
                         : useWhiteForeground(Utility.darken(
-                                widget.tarifaXDia.color ??
-                                    DesktopColors.cerulean,
+                                widget.tarifaXDia.subCode == null
+                                    ? widget.tarifaXDia.color ??
+                                        DesktopColors.cerulean
+                                    : Utility.darken(
+                                        widget.tarifaXDia.color ??
+                                            DesktopColors.cerulean,
+                                        0.2),
                                 0.2))
                             ? Colors.white
                             : const Color.fromARGB(255, 43, 43, 43),

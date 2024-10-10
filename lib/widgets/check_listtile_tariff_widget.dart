@@ -160,7 +160,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     onPressed: () => showDialogEditQuote(),
                     text: "Editar",
                     color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
-                    colorText: useWhiteForeground(widget.tarifaXDia.color!)
+                    colorText: useWhiteForeground(widget.tarifaXDia.color ?? DesktopColors.cerulean)
                         ? Colors.white
                         : const Color.fromARGB(255, 43, 43, 43),
                   ),

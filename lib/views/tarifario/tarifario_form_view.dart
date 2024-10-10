@@ -477,7 +477,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                 child: InkWell(
                                   onTap: () => setState(() {
                                     temporadaListProvider
-                                        .add(Temporada(nombre: "Template"));
+                                        .add(Temporada(nombre: "New Season(${temporadaListProvider.length + 1})"));
                                   }),
                                   child: Container(
                                     width: 95,
