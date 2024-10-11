@@ -1680,7 +1680,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   }
 }
 
-class $TarifaXDiaTable extends TarifaXDia
+class $TarifaXDiaTable extends TarifaXDiaTable
     with TableInfo<$TarifaXDiaTable, TarifaXDiaData> {
   @override
   final GeneratedDatabase attachedDatabase;

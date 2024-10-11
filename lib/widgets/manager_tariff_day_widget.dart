@@ -34,15 +34,15 @@ class _ManagerTariffDayWidgetState
 
   List<String> promociones = [];
   final TextEditingController _tarifaAdultoController =
-      TextEditingController(text: "0");
+      TextEditingController(text: "");
   final TextEditingController _tarifaAdultoTPLController =
-      TextEditingController(text: "0");
+      TextEditingController(text: "");
   final TextEditingController _tarifaAdultoCPLController =
-      TextEditingController(text: "0");
+      TextEditingController(text: "");
   final TextEditingController _tarifaMenoresController =
-      TextEditingController(text: "0");
+      TextEditingController(text: "");
   final TextEditingController _tarifaPaxAdicionalController =
-      TextEditingController(text: "0");
+      TextEditingController(text: "");
   final TextEditingController _descuentoController = TextEditingController();
 
   @override
@@ -114,7 +114,10 @@ class _ManagerTariffDayWidgetState
             child: TextStyles.titleText(
                 text:
                     "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTarif} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
-                size: (widget.tarifaXDia.subCode != null) ? 13 : 16,
+                size: (widget.tarifaXDia.subCode != null &&
+                        !widget.tarifaXDia.code!.contains("Unknow"))
+                    ? 13
+                    : 16,
                 color: Theme.of(context).primaryColor),
           ),
         ],
@@ -372,7 +375,7 @@ class _ManagerTariffDayWidgetState
                                 height: 40),
                             CustomWidgets.itemListCount(
                                 nameItem:
-                                    "Descuento (${getSeasonSelect()?.porcentajePromocion ?? 0}%):",
+                                    "Descuento (${(getSeasonSelect() != null) ? getSeasonSelect()?.porcentajePromocion ?? 0 : _descuentoController.text}%):",
                                 count: -discount.round() + 0.0,
                                 context: context,
                                 height: 40),
@@ -415,8 +418,8 @@ class _ManagerTariffDayWidgetState
             onPressed: () {
               if (!_formKeyTariffDay.currentState!.validate()) return;
 
-              if (!detectFixInChanges()) {
-                print("sin cambios");
+              if (!detectFixInChanges() && widget.tarifaXDia.tarifa != null) {
+                print("Sin cambios");
                 Navigator.pop(context);
                 return;
               }
@@ -437,40 +440,52 @@ class _ManagerTariffDayWidgetState
               );
 
               widget.tarifaXDia.temporadaSelect = getSeasonSelect();
-              widget.tarifaXDia.descuentoProvisional =
-                  double.parse(_descuentoController.text);
+
+              if (widget.tarifaXDia.code!.contains("Unknow")) {
+                widget.tarifaXDia.descuentoProvisional =
+                    double.parse(_descuentoController.text);
+              }
 
               if (applyAllTariff) {
                 for (var element in habitacionProvider.tarifaXDia!) {
                   if (element.code == widget.tarifaXDia.code) {
                     element.tarifa = widget.tarifaXDia.tarifa;
+                    widget.tarifaXDia.subCode = null;
                     element.temporadaSelect = getSeasonSelect();
                   }
                 }
-                widget.tarifaXDia.subCode = null;
-
-                ref
-                    .read(detectChangeProvider.notifier)
-                    .update((state) => UniqueKey().hashCode);
               }
 
               if (applyAllNoTariff) {
                 for (var element in habitacionProvider.tarifaXDia!
                     .where((element) => element.code!.contains("Unknow"))) {
                   element.tarifa = widget.tarifaXDia.tarifa;
-                  element.descuentoProvisional = double.parse(_descuentoController.text);
+                  element.subCode = null;
+                  element.descuentoProvisional =
+                      double.parse(_descuentoController.text);
                 }
 
-                widget.tarifaXDia.subCode = null;
+                ref
+                    .read(descuentoProvisionalProvider.notifier)
+                    .update((state) => double.parse(_descuentoController.text));
+
+                final tarifasProvider = TarifasProvisionalesProvider.provider;
 
                 ref
-                    .read(detectChangeProvider.notifier)
-                    .update((state) => UniqueKey().hashCode);
+                    .read(tarifasProvider.notifier)
+                    .remove(widget.tarifaXDia.categoria!);
+                ref
+                    .read(tarifasProvider.notifier)
+                    .addItem(widget.tarifaXDia.tarifa!);
               }
 
               if (!applyAllTariff && !applyAllNoTariff) {
                 widget.tarifaXDia.subCode = UniqueKey().hashCode.toString();
               }
+
+              ref
+                  .read(detectChangeProvider.notifier)
+                  .update((state) => UniqueKey().hashCode);
 
               Navigator.of(context).pop(true);
             },
@@ -526,10 +541,12 @@ class _ManagerTariffDayWidgetState
     if (getSeasonSelect() != null) {
       discount = (total * 0.01) * getSeasonSelect()!.porcentajePromocion!;
     } else {
-      discount = (total * 0.01) *
-          double.parse(_descuentoController.text.isEmpty
-              ? '0'
-              : _descuentoController.text);
+      if (widget.tarifaXDia.code!.contains("Unknow")) {
+        discount = (total * 0.01) *
+            double.parse(_descuentoController.text.isEmpty
+                ? '0'
+                : _descuentoController.text);
+      }
     }
 
     return discount;
@@ -537,8 +554,15 @@ class _ManagerTariffDayWidgetState
 
   bool isSameSeason() {
     bool isSame = false;
-    if (widget.tarifaXDia.temporadaSelect != null)
+    if (widget.tarifaXDia.temporadaSelect != null) {
       isSame = widget.tarifaXDia.temporadaSelect!.nombre == tarifaSelect;
+    }
+
+    if (widget.tarifaXDia.code!.contains("Unknow")) {
+      isSame = double.parse(_descuentoController.text) ==
+          widget.tarifaXDia.descuentoProvisional!;
+    }
+
     return isSame;
   }
 
@@ -546,16 +570,22 @@ class _ManagerTariffDayWidgetState
     bool withChanges = false;
 
     if (!isSameSeason()) return true;
-    if (widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL !=
-        double.parse(_tarifaAdultoController.text)) return true;
-    if (widget.tarifaXDia.tarifa!.tarifaAdultoTPL !=
-        double.parse(_tarifaAdultoTPLController.text)) return true;
-    if (widget.tarifaXDia.tarifa!.tarifaAdultoCPLE !=
-        double.parse(_tarifaAdultoCPLController.text)) return true;
-    if (widget.tarifaXDia.tarifa!.tarifaMenores7a12 !=
-        double.parse(_tarifaMenoresController.text)) return true;
-    if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
-        double.parse(_tarifaPaxAdicionalController.text)) return true;
+    if (widget.tarifaXDia.tarifa != null) {
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL !=
+          double.parse(_tarifaAdultoController.text)) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoTPL !=
+          double.parse(_tarifaAdultoTPLController.text)) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoCPLE !=
+          double.parse(_tarifaAdultoCPLController.text)) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaMenores7a12 !=
+          double.parse(_tarifaMenoresController.text)) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
+          double.parse(_tarifaPaxAdicionalController.text)) return true;
+    }
+
+    if (applyAllDays) return true;
+    if (applyAllNoTariff) return true;
+    if (applyAllTariff) return true;
 
     return withChanges;
   }

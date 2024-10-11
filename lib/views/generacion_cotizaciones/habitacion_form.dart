@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
@@ -45,7 +46,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     const Icon(Icons.dehaze_sharp),
   ];
   double target = 1;
-  List<RegistroTarifa> tarifasSelect = [];
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -75,6 +75,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     double screenHeight = MediaQuery.of(context).size.height;
     final tarifaProvider = ref.watch(allTarifaProvider(""));
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    final tarifasProvisionalesProvider =
+        ref.watch(TarifasProvisionalesProvider.provider);
+    final descuentoProvider = ref.watch(descuentoProvisionalProvider);
 
     return Scaffold(
       body: Padding(
@@ -129,7 +132,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                       .toString()
                                       .substring(0, 10));
 
-                          getTarifasSelect(list, habitacionProvider);
+                          getTarifasSelect(list, habitacionProvider,
+                              tarifasProvisionalesProvider, descuentoProvider);
 
                           startflow = true;
                         }
@@ -174,7 +178,10 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   habitacionProvider.categoria =
                                                       value!;
                                                   getTarifasSelect(
-                                                      list, habitacionProvider,
+                                                      list,
+                                                      habitacionProvider,
+                                                      tarifasProvisionalesProvider,
+                                                      descuentoProvider,
                                                       onlyCategory: true);
                                                   setState(() {});
                                                 },
@@ -229,8 +236,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                       .text);
                                                           changedDate = true;
                                                         });
-                                                        getTarifasSelect(list,
-                                                            habitacionProvider);
+                                                        getTarifasSelect(
+                                                            list,
+                                                            habitacionProvider,
+                                                            tarifasProvisionalesProvider,
+                                                            descuentoProvider);
                                                         Future.delayed(
                                                           Durations.medium1,
                                                           () => setState(
@@ -260,8 +270,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       onChanged: () {
                                                         setState(() =>
                                                             changedDate = true);
-                                                        getTarifasSelect(list,
-                                                            habitacionProvider);
+                                                        getTarifasSelect(
+                                                          list,
+                                                          habitacionProvider,
+                                                          tarifasProvisionalesProvider,
+                                                          descuentoProvider,
+                                                        );
                                                         Future.delayed(
                                                             Durations.medium1,
                                                             () => setState(() =>
@@ -540,7 +554,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   ),
                   totalReal: (tariffTotalAdult + tariffTotalChildren),
                   descuento: descuento,
-                  tarifas: tarifasSelect,
                   numDays: DateTime.parse(_fechaSalida.text)
                       .difference(DateTime.parse(_fechaEntrada.text))
                       .inDays,
@@ -575,9 +588,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   }
 
   void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion,
+      List<TarifaData> tarifasProvisionales, double descuentoProvisional,
       {bool onlyCategory = false}) {
     if (onlyCategory) {
       for (var tariffDay in habitacion.tarifaXDia!) {
+        tariffDay.categoria = habitacion.categoria;
         if (tariffDay.tarifas != null) {
           if (tariffDay.tarifa != null) {
             tariffDay.tarifas!.removeWhere(
@@ -585,17 +600,18 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             tariffDay.tarifas!.add(tariffDay.tarifa!);
           }
 
-          tariffDay.tarifa = tariffDay.tarifas!.where(
-              (element) => element.categoria == habitacion.categoria).firstOrNull;
+          tariffDay.tarifa = tariffDay.tarifas!
+              .where((element) => element.categoria == habitacion.categoria)
+              .firstOrNull;
         } else {
           tariffDay.tarifas = [];
-          tariffDay.tarifas!.add(tariffDay.tarifa!);
+          if (tariffDay.tarifa != null) {
+            tariffDay.tarifas!.add(tariffDay.tarifa!);
+          }
           tariffDay.tarifa = null;
         }
       }
     } else {
-      tarifasSelect = [];
-      tarifasSelect.clear();
       habitacion.tarifaXDia!.clear();
 
       int days = DateTime.parse(_fechaSalida.text)
@@ -608,14 +624,28 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
 
         if (newTariff == null) {
-          habitacion.tarifaXDia!.add(TarifaXDia(
+          TarifaXDia tarifaNoDefinida = TarifaXDia();
+
+          tarifaNoDefinida = TarifaXDia(
             dia: ink,
             fecha: dateNow,
             nombreTarif: "No definido",
-            code: "Unknow$ink",
-            descuentoProvisional: 0,
+            code: "Unknow",
             categoria: habitacion.categoria,
-          ));
+            descuentoProvisional:
+                (tarifasProvisionales.isEmpty) ? 0 : descuentoProvisional,
+            tarifas:
+                (tarifasProvisionales.isEmpty) ? null : tarifasProvisionales,
+            tarifa: (tarifasProvisionales.isEmpty)
+                ? null
+                : (tarifasProvisionales
+                    .where(
+                        (element) => element.categoria == habitacion.categoria)
+                    .firstOrNull),
+          );
+
+          habitacion.tarifaXDia!.add(tarifaNoDefinida);
+
           continue;
         }
 
@@ -635,14 +665,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             tarifas: newTariff.tarifas,
           ),
         );
-
-        if (!tarifasSelect.any((element) => element.code == newTariff.code)) {
-          tarifasSelect.add(newTariff);
-        } else {
-          tarifasSelect
-              .firstWhere((element) => element.code == newTariff.code)
-              .numDays++;
-        }
       }
     }
   }

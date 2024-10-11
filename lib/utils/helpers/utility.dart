@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
@@ -1254,7 +1256,6 @@ class Utility {
     double tariffAdult = 0;
 
     if (nowRegister == null) {
-      print("tarifa nula");
       return 0;
     }
 
@@ -1264,7 +1265,7 @@ class Utility {
 
     double descuento = 0;
 
-    if (nowRegister.temporadas!.isNotEmpty) {
+    if (nowRegister.temporadas != null && nowRegister.temporadas!.isNotEmpty) {
       descuento =
           getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
     } else {
@@ -1312,9 +1313,11 @@ class Utility {
     }
 
     TarifaData? nowTarifa = nowRegister.tarifas!
-        .where((element) => element.categoria == habitacion.categoria).firstOrNull;
+        .where((element) => element.categoria == habitacion.categoria)
+        .firstOrNull;
 
-    tariffChildren = (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
+    tariffChildren =
+        (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     double descuento = 0;
 
@@ -1383,5 +1386,38 @@ class Utility {
     final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
 
     return hslDark.toColor();
+  }
+
+  static List<TarifaXDia> getUniqueTariffs(List<TarifaXDia> list) {
+    List<TarifaXDia> tarifasFiltradas = [];
+    tarifasFiltradas.clear();
+
+    for (var element in list) {
+      if (!tarifasFiltradas
+          .any((elementInt) => elementInt.code == element.code)) {
+        tarifasFiltradas.add(element.copyWith());
+      } else {
+        if (element.subCode == null) {
+          if (tarifasFiltradas
+              .any((elementInt) => elementInt.code == element.code)) {
+            TarifaXDia? tarifaNow = tarifasFiltradas
+                .where((elementInt) =>
+                    elementInt.code == element.code &&
+                    elementInt.subCode == null)
+                .firstOrNull;
+            if (tarifaNow != null) {
+              tarifaNow.numDays++;
+            } else {
+              tarifasFiltradas.add(element.copyWith());
+            }
+          } else {
+            tarifasFiltradas.add(element.copyWith());
+          }
+        } else {
+          tarifasFiltradas.add(element.copyWith());
+        }
+      }
+    }
+    return tarifasFiltradas;
   }
 }

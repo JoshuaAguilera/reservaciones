@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
@@ -684,7 +683,7 @@ class CustomWidgets {
   }) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.all(4),
-      shape: Border.all(color: Colors.transparent),
+      shape: Border(top: BorderSide(color: Theme.of(context).primaryColor)),
       initiallyExpanded: showList,
       onExpansionChanged: onExpansionChanged,
       title: Row(
@@ -732,6 +731,7 @@ class CustomWidgets {
     bool isBold = false,
     double sizeText = 13,
     double height = 60,
+    String subTitle = '',
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -748,6 +748,16 @@ class CustomWidgets {
                 isBold: isBold,
               ),
             ),
+            if (subTitle.isNotEmpty)
+              SizedBox(
+                width: 40,
+                child: TextStyles.standardText(
+                  text: subTitle,
+                  size: sizeText,
+                  color: Theme.of(context).primaryColor,
+                  isBold: true,
+                ),
+              ),
             TextStyles.standardText(
               text: Utility.formatterNumber(count),
               color: Theme.of(context).primaryColor,

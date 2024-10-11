@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class TarifaXDia extends Table {
+class TarifaXDiaTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get subfolio => text().nullable()();
   IntColumn get dia => integer().nullable()();

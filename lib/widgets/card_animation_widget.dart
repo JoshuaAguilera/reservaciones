@@ -51,10 +51,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         ? null
         : RegistroTarifa(
             tarifas: [widget.tarifaXDia.tarifa!],
-            temporadas: widget.tarifaXDia.temporadas ??
-                (widget.tarifaXDia.temporadaSelect != null
-                    ? [widget.tarifaXDia.temporadaSelect!]
-                    : []),
+            temporadas: (widget.tarifaXDia.temporadaSelect != null
+                ? [widget.tarifaXDia.temporadaSelect!]
+                : []),
           );
     super.initState();
   }

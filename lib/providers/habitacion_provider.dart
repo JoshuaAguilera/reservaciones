@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
@@ -37,10 +38,31 @@ final habitacionSelectProvider =
 
 final detectChangeProvider = StateProvider<int>((ref) => 0);
 
-final listTariffDayProvider =
-    FutureProvider<List<TarifaXDia>>((ref) async {
+final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   final detectChanged = ref.watch(detectChangeProvider);
   final list = ref.watch(habitacionSelectProvider).tarifaXDia ?? [];
-
   return list;
 });
+
+class TarifasProvisionalesProvider extends StateNotifier<List<TarifaData>> {
+  TarifasProvisionalesProvider() : super([]);
+
+  static final provider =
+      StateNotifierProvider<TarifasProvisionalesProvider, List<TarifaData>>(
+          (ref) => TarifasProvisionalesProvider());
+
+  TarifaData _current = const TarifaData(id: 0, code: "");
+  TarifaData get current => _current;
+
+  void addItem(TarifaData item) {
+    _current = item;
+    state = [...state, item];
+  }
+
+  void remove(String categoria) =>
+      state = [...state.where((element) => element.categoria != categoria)];
+
+  void clear() => state = [];
+}
+
+final descuentoProvisionalProvider = StateProvider<double>((ref) => 0);

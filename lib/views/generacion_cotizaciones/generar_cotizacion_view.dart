@@ -233,6 +233,17 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             ),
                                           );
 
+                                      final tarifasProvider =
+                                          TarifasProvisionalesProvider.provider;
+                                      ref
+                                          .read(tarifasProvider.notifier)
+                                          .clear();
+
+                                      ref
+                                          .read(descuentoProvisionalProvider
+                                              .notifier)
+                                          .update((state) => 0);
+
                                       setState(() => targetHabitaciones = 0);
                                       Future.delayed(
                                         800.ms,

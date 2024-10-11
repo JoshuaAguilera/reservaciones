@@ -34,7 +34,7 @@ part 'database.g.dart';
   Usuario,
   Cotizacion,
   Habitacion,
-  TarifaXDia,
+  TarifaXDiaTable,
   Periodo,
   Temporada,
   Tarifa,
