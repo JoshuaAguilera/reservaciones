@@ -36,15 +36,6 @@ class DiasList extends ConsumerStatefulWidget {
 }
 
 class _DiasListState extends ConsumerState<DiasList> {
-  final List<String> tableTitles = [
-    "Fecha",
-    "Tarifa Adultos",
-    "Tarifa Menores de 7 a 12 años",
-    "Tarifa Menores de 0 a 6 años",
-    "Tarifa Total",
-    "Opciones",
-  ];
-
   //prepare V4
   DateTime checkIn = DateTime.now();
   DateTime checkOut = DateTime.now();
@@ -227,7 +218,15 @@ class _DiasListState extends ConsumerState<DiasList> {
                       children: [
                         TableRow(
                           children: [
-                            for (var element in tableTitles)
+                            for (var element in [
+                              "Fecha",
+                              "Tarifa Adultos",
+                              "Tarifa Menores de 7 a 12 años",
+                              if (screenWidth > 1400)
+                                "Tarifa Menores de 0 a 6 años",
+                              "Tarifa Total",
+                              "Opciones",
+                            ])
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5.0),

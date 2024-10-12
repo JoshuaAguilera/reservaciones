@@ -230,6 +230,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               menores7a12: 0,
                                               paxAdic: 0,
                                               tarifaXDia: [],
+                                              fechaCheckIn: DateTime.now()
+                                                  .toString()
+                                                  .substring(0, 10),
+                                              fechaCheckOut: DateTime.now()
+                                                  .add(const Duration(days: 1))
+                                                  .toString()
+                                                  .substring(0, 10),
                                             ),
                                           );
 

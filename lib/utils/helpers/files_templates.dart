@@ -519,12 +519,12 @@ class FilesTemplate {
       // diasFila.add("${cotizacion.adultos}");
       // diasFila.add("${cotizacion.menores0a6}");
       // diasFila.add("${cotizacion.menores7a12}");
-      diasFila.add(Utility.formatterNumber(
-          Utility.calculateTarifaDiaria(cotizacion: cotizacion)));
-      if (cotizacion.esPreventa!) {
-        diasFila.add(Utility.formatterNumber(Utility.calculateTarifaDiaria(
-            cotizacion: cotizacion, esPreventa: true)));
-      }
+      // diasFila.add(Utility.formatterNumber(
+      //     Utility.calculateTarifaDiaria(cotizacion: cotizacion)));
+      // if (cotizacion.esPreventa!) {
+      //   diasFila.add(Utility.formatterNumber(Utility.calculateTarifaDiaria(
+      //       cotizacion: cotizacion, esPreventa: true)));
+      // }
       dias.add(diasFila);
     }
 

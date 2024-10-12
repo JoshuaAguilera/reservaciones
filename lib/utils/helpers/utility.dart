@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/database/tables/tarifa_x_dia_table.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
@@ -55,41 +54,9 @@ class Utility {
     return outWidth;
   }
 
-  static String getLengthStay(String? fechaEntrada, int? noches) {
-    String date = "";
-    DateTime time = DateTime.parse(fechaEntrada!);
-    date =
-        "$fechaEntrada a ${time.add(Duration(days: noches! + 1)).toString().substring(0, 10)}";
-    return date;
-  }
-
   static String formatterNumber(double number) {
     return NumberFormat.simpleCurrency(locale: 'EN-us', decimalDigits: 2)
         .format(number);
-  }
-
-  static String calculateTotal(int? numNoches, double? tarifaNoche) {
-    double total = 0;
-    total = (numNoches ?? 0) * (tarifaNoche ?? 0);
-    return formatterNumber(total);
-  }
-
-  static String getPax(int pax) {
-    String paxName = "";
-
-    switch (pax) {
-      case 1 || 2:
-        paxName = "1 o 2";
-        break;
-      case 3:
-        paxName = "3";
-        break;
-      case 4:
-        paxName = "4";
-        break;
-      default:
-    }
-    return paxName;
   }
 
   static String getCompleteDate({DateTime? data}) {
@@ -355,12 +322,6 @@ class Utility {
     int menores0a6 = 0;
     int menores7a12 = 0;
 
-    // for (var element in cotizaciones) {
-    //   adultos += element.adultos!;
-    //   menores0a6 += element.menores0a6!;
-    //   menores7a12 += element.menores7a12!;
-    // }
-
     if (adultos > 0) occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
 
     if (menores0a6 > 0) {
@@ -521,17 +482,6 @@ class Utility {
     return null;
   }
 
-  static bool valueShowLimitDays(
-      int numDays, int dayCheckIn, int dayCheckOut, int afterDay, int lastDay) {
-    bool show = false;
-
-    if ((dayCheckOut) >= afterDay || (dayCheckOut + 9) >= afterDay) {
-      show = true;
-    }
-
-    return show;
-  }
-
   static String defineMonthPeriod(String initDay, String lastDay) {
     String period = "";
     DateTime dataInit = DateTime.parse(initDay);
@@ -545,60 +495,6 @@ class Utility {
     }
 
     return period;
-  }
-
-  static List<int> calcularMultiplos(int numero, int limite) {
-    List<int> multiplos = [0];
-    for (int i = 1; i <= limite; i++) {
-      multiplos.add(numero * i);
-    }
-    return multiplos;
-  }
-
-  static int getLimitDays(
-      int numDays, int dayWeekInit, int dayWeekLater, int numDayInit) {
-    int day = 0;
-    int daysExtras = 7 - dayWeekInit;
-    daysExtras += 7 - dayWeekLater;
-    int totalDays = numDayInit + numDays + daysExtras;
-    double ceil = (totalDays / 7);
-    day = ceil.ceil() + 2;
-    // List<int> listWeeks = calcularMultiplos(7, (totalDays/7).ceil());
-
-    return day;
-  }
-
-  static List<int> getLimitWeeks(
-      int numDays, int dayWeekInit, int dayWeekLater, int numDayInit) {
-    List<int> weeks = [];
-    int daysExtras = 7 - dayWeekInit;
-    daysExtras += 7 - dayWeekLater;
-    int totalDays = numDayInit + numDays + daysExtras;
-    double ceil = (totalDays / 7);
-    weeks = calcularMultiplos(7, (ceil).ceil() + 2);
-
-    return weeks;
-  }
-
-  static String getNameDay(int day) {
-    switch (day) {
-      case 1:
-        return "Lunes";
-      case 2:
-        return "Martes";
-      case 3:
-        return "Miercoles";
-      case 4:
-        return "Jueves";
-      case 5:
-        return "Viernes";
-      case 6:
-        return "Sabado";
-      case 7:
-        return "Domingo";
-      default:
-        return "Unknow";
-    }
   }
 
   static bool revisedLimitDateTime(DateTime checkIn, DateTime checkOut) {
@@ -656,15 +552,7 @@ class Utility {
 
     subtotal = tarifaNum - descuento;
 
-    // subtotalString = subtotal.round().toString();
-
     return formatterNumber(subtotal.round().toDouble());
-  }
-
-  static double parseDoubleText(String value) {
-    double valor = 0;
-    valor = value.isEmpty ? 0 : double.parse(value);
-    return valor;
   }
 
   static bool showTariffByWeek(
@@ -761,100 +649,6 @@ class Utility {
     return periodo;
   }
 
-  static double defineRightPeriodWeek(
-      DateTime weekNow, List<PeriodoData>? periodos, double sectionDay) {
-    double rightPadding = 0;
-
-    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
-
-    if (!periodNow.enDomingo!) {
-      rightPadding = sectionDay;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enSabado!) {
-      rightPadding = sectionDay * 2;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enViernes!) {
-      rightPadding = sectionDay * 3;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enJueves!) {
-      rightPadding = sectionDay * 4;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enMiercoles!) {
-      rightPadding = sectionDay * 5;
-    } else {
-      return rightPadding;
-    }
-    if (!periodNow.enMartes!) {
-      rightPadding = sectionDay * 6;
-    } else {
-      return rightPadding;
-    }
-
-    return rightPadding;
-  }
-
-  static double defineLeftPeriodWeek(
-      DateTime weekNow, List<PeriodoData>? periodos, double sectionDay) {
-    double rightPadding = 0;
-
-    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
-
-    if (!periodNow.enLunes!) {
-      rightPadding = sectionDay;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enMartes!) {
-      rightPadding = sectionDay * 2;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enMiercoles!) {
-      rightPadding = sectionDay * 3;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enJueves!) {
-      rightPadding = sectionDay * 4;
-    } else {
-      return rightPadding;
-    }
-
-    if (!periodNow.enViernes!) {
-      rightPadding = sectionDay * 5;
-    } else {
-      return rightPadding;
-    }
-    if (!periodNow.enSabado!) {
-      rightPadding = sectionDay * 6;
-    } else {
-      return rightPadding;
-    }
-
-    return rightPadding;
-  }
-
-  static bool revisedInsideDays(DateTime weekNow, PeriodoData periodNow) {
-    bool isValid = false;
-
-    return isValid;
-  }
-
   static List<DateTime> generateSegmentWeek(DateTime weekNow) {
     List<DateTime> weekSegment = [];
 
@@ -864,25 +658,6 @@ class Utility {
     }
 
     return weekSegment;
-  }
-
-  static bool foundExpansionCard(List<DateTime> weekNowSegment, int indexOf,
-      DateTime weekNow, List<PeriodoData>? periodos) {
-    bool notFound = true;
-
-    int index =
-        ((weekNowSegment.length - 1) == indexOf) ? indexOf : indexOf + 1;
-
-    if (weekNowSegment[index].compareTo(
-                Utility.getPeriodNow(weekNow, periodos).fechaInicial!) >=
-            0 &&
-        weekNowSegment[index].compareTo(
-                Utility.getPeriodNow(weekNow, periodos).fechaFinal!) <=
-            0) {
-      notFound = false;
-    }
-
-    return notFound;
   }
 
   static bool revisedValidDays(int indexOf, List<DateTime> weekNowSegment,
@@ -1414,10 +1189,40 @@ class Utility {
             tarifasFiltradas.add(element.copyWith());
           }
         } else {
-          tarifasFiltradas.add(element.copyWith());
+          if (tarifasFiltradas
+              .any((elementInt) => elementInt.subCode == element.subCode)) {
+            TarifaXDia? tarifaNow = tarifasFiltradas
+                .where((elementInt) =>
+                    elementInt.code == element.code &&
+                    elementInt.subCode == element.subCode)
+                .firstOrNull;
+            if (tarifaNow != null) {
+              tarifaNow.numDays++;
+            } else {
+              tarifasFiltradas.add(element.copyWith());
+            }
+          } else {
+            tarifasFiltradas.add(element.copyWith());
+          }
         }
       }
     }
     return tarifasFiltradas;
+  }
+
+  static bool showWidgetResizable(
+      {required double screenWidth,
+      required bool extendSideBar,
+      double limitWithExtend = 0,
+      double limit = 0}) {
+    bool showWidget = false;
+
+    if (extendSideBar) {
+      showWidget = screenWidth > limitWithExtend;
+    } else {
+      showWidget = screenWidth > limit;
+    }
+
+    return showWidget;
   }
 }

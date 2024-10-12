@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
@@ -9,6 +10,7 @@ void showSnackBar({
   required String message,
   required String type,
   IconData? iconCustom,
+  Duration? duration,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     elevation: 0,
@@ -51,5 +53,6 @@ void showSnackBar({
         ),
       ),
     ),
+    duration: duration ?? 3000.ms,
   ));
 }

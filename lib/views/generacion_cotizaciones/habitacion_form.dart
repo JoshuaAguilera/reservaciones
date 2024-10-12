@@ -94,8 +94,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     CustomWidgets.titleFormPage(
                       context: context,
                       title: "Nueva Habitación",
-                      onPressedSaveButton: () {},
-                      showSaveButton: showSaveButton,
+                      showSaveButton: false,
                       onPressedBack: () {
                         if (target == 1) {
                           setState(() => target = 0);
@@ -236,6 +235,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                       .text);
                                                           changedDate = true;
                                                         });
+
+                                                        habitacionProvider
+                                                                .fechaCheckIn =
+                                                            _fechaEntrada.text;
+                                                        habitacionProvider
+                                                                .fechaCheckOut =
+                                                            _fechaSalida.text;
+
                                                         getTarifasSelect(
                                                             list,
                                                             habitacionProvider,
@@ -270,6 +277,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       onChanged: () {
                                                         setState(() =>
                                                             changedDate = true);
+                                                        habitacionProvider
+                                                                .fechaCheckOut =
+                                                            _fechaSalida.text;
                                                         getTarifasSelect(
                                                           list,
                                                           habitacionProvider,
@@ -427,9 +437,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                TextStyles.titleText(
-                                  text: "Tarifas por dia",
-                                  color: Theme.of(context).primaryColor,
+                                Expanded(
+                                  child: TextStyles.titleText(
+                                    text: "Tarifas por dia",
+                                    color: Theme.of(context).primaryColor,
+                                  ),
                                 ),
                                 CustomWidgets.sectionButton(
                                   listModes: (Utility.revisedLimitDateTime(
@@ -511,52 +523,19 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             ),
             tarifaProvider.when(
               data: (list) {
-                double tariffTotalAdult = Utility.calculateTariffRoom(
-                  habitacion: habitacionProvider,
-                  initDay: _fechaEntrada.text,
-                  lastDay: _fechaSalida.text,
-                  regitros: list,
-                  onlyAdults: true,
-                  withFormat: false,
-                  withDiscount: false,
-                );
-
-                double tariffTotalChildren = Utility.calculateTariffRoom(
-                  habitacion: habitacionProvider,
-                  initDay: _fechaEntrada.text,
-                  lastDay: _fechaSalida.text,
-                  regitros: list,
-                  onlyChildren: true,
-                  withFormat: false,
-                  withDiscount: false,
-                );
-
-                double descuento = Utility.calculateTariffRoom(
-                  habitacion: habitacionProvider,
-                  initDay: _fechaEntrada.text,
-                  lastDay: _fechaSalida.text,
-                  regitros: list,
-                  onlyDiscount: true,
-                  withFormat: false,
-                  withDiscount: false,
-                );
-
                 return SummaryControllerWidget(
                   calculateRoom: true,
-                  totalAdulto: tariffTotalAdult,
-                  totalMenores: tariffTotalChildren,
-                  total: Utility.calculateTariffRoom(
-                    habitacion: habitacionProvider,
-                    initDay: _fechaEntrada.text,
-                    lastDay: _fechaSalida.text,
-                    regitros: list,
-                    withFormat: false,
-                  ),
-                  totalReal: (tariffTotalAdult + tariffTotalChildren),
-                  descuento: descuento,
                   numDays: DateTime.parse(_fechaSalida.text)
                       .difference(DateTime.parse(_fechaEntrada.text))
                       .inDays,
+                  onPressed: () {
+                    if (target == 1) {
+                      setState(() => target = 0);
+
+                      Future.delayed(
+                          500.ms, () => widget.sideController.selectIndex(1));
+                    }
+                  },
                 ).animate(target: target).fadeIn(duration: 500.ms);
               },
               error: (error, stackTrace) => const SizedBox(),

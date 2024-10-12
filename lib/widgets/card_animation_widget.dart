@@ -145,104 +145,147 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildFront(Habitacion habitacion) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
+    double totalAdulto = Utility.calculateTariffAdult(
+      nowRegister,
+      habitacion,
+      habitacion.tarifaXDia!.length,
+      descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+    );
+
+    double totalMenores = Utility.calculateTariffChildren(
+      nowRegister,
+      habitacion,
+      habitacion.tarifaXDia!.length,
+      descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+    );
+
+    bool showToolTip = (MediaQuery.of(context).size.width >
+        (1710 - (widget.sideController.extended ? 100 : 200)));
+
     return __buildLayout(
       key: ValueKey(true),
       backgroundColor: Theme.of(context).primaryColorDark,
       faceName: "Front",
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(15, padding, 15, padding),
-        child: Column(
-          children: [
-            TextStyles.TextTitleList(
-              index: widget.tarifaXDia.fecha!.day,
-              color: widget.tarifaXDia.subCode == null
-                  ? widget.tarifaXDia.color ?? Theme.of(context).dividerColor
-                  : Utility.darken(
-                      widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
-              size: (MediaQuery.of(context).size.width >
-                      (1110 - (widget.sideController.extended ? 0 : 100)))
-                  ? 28
-                  : 23,
-            ),
-            if (MediaQuery.of(context).size.width > 1345)
-              const SizedBox(height: 7),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (MediaQuery.of(context).size.width >
-                    (1310 - (widget.sideController.extended ? 0 : 100)))
-                  TextStyles.standardText(
-                    text: widget.tarifaXDia.nombreTarif ?? '',
-                    size: 11,
-                    color: Theme.of(context).primaryColor,
+      child: Tooltip(
+        richMessage: showToolTip
+            ? TextSpan()
+            : WidgetSpan(
+                child: SizedBox(
+                  width: 95,
+                  child: Column(
+                    children: [
+                      if (MediaQuery.of(context).size.width <
+                          (1210 - (widget.sideController.extended ? 0 : 100)))
+                        TextStyles.standardText(
+                          text: widget.tarifaXDia.nombreTarif ?? '',
+                          size: 11,
+                          color: Theme.of(context).primaryColorDark,
+                        ),
+                      if (MediaQuery.of(context).size.width <
+                          (1510 - (widget.sideController.extended ? 50 : 175)))
+                        _messageAsociate(
+                          title: "Adul: ",
+                          subtitle: widget.tarifaXDia.tarifa == null
+                              ? "\$0.00"
+                              : Utility.formatterNumber(totalAdulto),
+                          isTooltip: true,
+                        ),
+                      if (MediaQuery.of(context).size.width <
+                          (1610 - (widget.sideController.extended ? 50 : 175)))
+                        _messageAsociate(
+                          title: "Men 7-12: ",
+                          subtitle: widget.tarifaXDia.tarifa == null
+                              ? "\$0.00"
+                              : Utility.formatterNumber(totalMenores),
+                          isTooltip: true,
+                        ),
+                      if (MediaQuery.of(context).size.width <
+                          (1710 - (widget.sideController.extended ? 100 : 200)))
+                        _messageAsociate(
+                          title: "Total: ",
+                          subtitle: widget.tarifaXDia.tarifa == null
+                              ? "\$0.00"
+                              : Utility.formatterNumber(
+                                  totalAdulto + totalMenores),
+                          isTooltip: true,
+                        ),
+                    ],
                   ),
-                if (MediaQuery.of(context).size.width >
-                    (1510 - (widget.sideController.extended ? 50 : 175)))
-                  TextStyles.TextAsociative(
-                      "Adul: ",
-                      widget.tarifaXDia.tarifa == null
-                          ? "\$0.00"
-                          : Utility.formatterNumber(
-                              Utility.calculateTariffAdult(
-                                nowRegister,
-                                habitacion,
-                                habitacion.tarifaXDia!.length,
-                                descuentoProvisional:
-                                    widget.tarifaXDia.descuentoProvisional,
-                              ),
-                            ),
-                      boldInversed: true,
+                ),
+              ),
+        verticalOffset: 40,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(15, padding, 15, padding),
+          child: Column(
+            children: [
+              TextStyles.TextTitleList(
+                index: widget.tarifaXDia.fecha!.day,
+                color: widget.tarifaXDia.subCode == null
+                    ? widget.tarifaXDia.color ?? Theme.of(context).dividerColor
+                    : Utility.darken(
+                        widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
+                size: (MediaQuery.of(context).size.width >
+                        (1110 - (widget.sideController.extended ? 0 : 100)))
+                    ? 28
+                    : 23,
+              ),
+              if (MediaQuery.of(context).size.width > 1345)
+                const SizedBox(height: 7),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (MediaQuery.of(context).size.width >
+                      (1210 - (widget.sideController.extended ? 0 : 100)))
+                    TextStyles.standardText(
+                      text: widget.tarifaXDia.nombreTarif ?? '',
                       size: 11,
-                      color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width >
-                    (1610 - (widget.sideController.extended ? 50 : 175)))
-                  TextStyles.TextAsociative(
-                      "Men 7-12: ",
-                      boldInversed: true,
-                      size: 11,
-                      widget.tarifaXDia.tarifa == null
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  if (MediaQuery.of(context).size.width >
+                      (1510 - (widget.sideController.extended ? 50 : 175)))
+                    _messageAsociate(
+                        title: "Adul: ",
+                        subtitle: widget.tarifaXDia.tarifa == null
+                            ? "\$0.00"
+                            : Utility.formatterNumber(totalAdulto)),
+                  if (MediaQuery.of(context).size.width >
+                      (1610 - (widget.sideController.extended ? 50 : 175)))
+                    _messageAsociate(
+                        title: "Men 7-12: ",
+                        subtitle: widget.tarifaXDia.tarifa == null
+                            ? "\$0.00"
+                            : Utility.formatterNumber(totalMenores)),
+                  if (MediaQuery.of(context).size.width > 1710)
+                    const SizedBox(height: 10),
+                  if (showToolTip)
+                    _messageAsociate(
+                      title: "Total: ",
+                      subtitle: widget.tarifaXDia.tarifa == null
                           ? "\$0.00"
-                          : Utility.formatterNumber(
-                              Utility.calculateTariffChildren(
-                                nowRegister,
-                                habitacion,
-                                habitacion.tarifaXDia!.length,
-                                descuentoProvisional:
-                                    widget.tarifaXDia.descuentoProvisional,
-                              ),
-                            ),
-                      color: Theme.of(context).primaryColor),
-                if (MediaQuery.of(context).size.width > 1710)
-                  const SizedBox(height: 10),
-                if (MediaQuery.of(context).size.width >
-                    (1710 - (widget.sideController.extended ? 100 : 200)))
-                  TextStyles.TextAsociative(
-                      "Total: ",
-                      boldInversed: true,
-                      size: 11,
-                      widget.tarifaXDia.tarifa == null
-                          ? "\$0.00"
-                          : Utility.formatterNumber(
-                              Utility.calculateTariffAdult(
-                                    nowRegister,
-                                    habitacion,
-                                    habitacion.tarifaXDia!.length,
-                                    descuentoProvisional:
-                                        widget.tarifaXDia.descuentoProvisional,
-                                  ) +
-                                  Utility.calculateTariffChildren(
-                                    nowRegister,
-                                    habitacion,
-                                    habitacion.tarifaXDia!.length,
-                                    descuentoProvisional:
-                                        widget.tarifaXDia.descuentoProvisional,
-                                  )),
-                      color: Theme.of(context).primaryColor),
-              ],
-            ),
-          ],
+                          : Utility.formatterNumber(totalMenores + totalAdulto),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _messageAsociate({
+    required String title,
+    required String subtitle,
+    bool isTooltip = false,
+  }) {
+    return TextStyles.TextAsociative(
+      title,
+      subtitle,
+      boldInversed: true,
+      size: 11,
+      color: isTooltip
+          ? Theme.of(context).primaryColorDark
+          : Theme.of(context).primaryColor,
     );
   }
 
@@ -375,7 +418,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                     onPressed: () => showDialogEditQuote(),
                     icon: Icon(
                       Icons.mode_edit_outline_outlined,
-                      color: useWhiteForeground(widget.tarifaXDia.color!)
+                      color: useWhiteForeground(
+                              widget.tarifaXDia.color ?? DesktopColors.cerulean)
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                     ),

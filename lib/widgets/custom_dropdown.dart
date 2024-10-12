@@ -10,10 +10,12 @@ class CustomDropdown {
     required String initialSelection,
     required void Function(String?)? onSelected,
     required List<String> elements,
+    List<String>? notElements,
     double fontSize = 13,
     double? screenWidth,
     String removeItem = '',
     String label = '',
+    String excepcionItem = '',
   }) {
     List<String> items = elements.toList();
 
@@ -33,18 +35,25 @@ class CustomDropdown {
           label: Text(label),
           textStyle:
               TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
-          dropdownMenuEntries:
-              items.map<DropdownMenuEntry<String>>((String value) {
-            return DropdownMenuEntry<String>(
-              value: value,
-              label: value,
-              style: ButtonStyle(
-                textStyle: WidgetStatePropertyAll(
-                  TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
+          dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
+            (String value) {
+              return DropdownMenuEntry<String>(
+                value: value,
+                label: value,
+                enabled: (excepcionItem.isNotEmpty && value == excepcionItem)
+                    ? true
+                    : (notElements != null)
+                        ? notElements.any((element) => element == value)
+                        : true,
+                style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(
+                    TextStyle(
+                        fontFamily: "poppins_regular", fontSize: fontSize),
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            },
+          ).toList(),
         );
       },
     );

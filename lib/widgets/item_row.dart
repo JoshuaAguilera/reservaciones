@@ -15,7 +15,6 @@ import 'package:generador_formato/widgets/controller_calendar_widget.dart';
 import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../utils/helpers/constants.dart';
 import '../utils/helpers/web_colors.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
@@ -141,13 +140,35 @@ class ItemRow {
       tarifa,
       habitacion,
       habitacion.tarifaXDia!.length,
+      descuentoProvisional: tarifaXDia.descuentoProvisional,
     );
 
     double tarifaMenores = Utility.calculateTariffChildren(
       tarifa,
       habitacion,
       habitacion.tarifaXDia!.length,
+      descuentoProvisional: tarifaXDia.descuentoProvisional,
     );
+
+    void showDialogManagerTariff() {
+      showDialog(
+        context: context,
+        builder: (context) => ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
+      ).then(
+        (value) {
+          if (value != null) {
+            tarifa = tarifaXDia.tarifa == null
+                ? null
+                : RegistroTarifa(
+                    tarifas: [tarifaXDia.tarifa!],
+                    temporadas: tarifaXDia.temporadaSelect != null
+                        ? [tarifaXDia.temporadaSelect!]
+                        : []);
+            setState!.call();
+          }
+        },
+      );
+    }
 
     return TableRow(
       children: [
@@ -172,6 +193,7 @@ class ItemRow {
               color: Theme.of(context).primaryColor,
               size: 14),
         ),
+        if (screenWidth > 1400)
         Center(
           child: TextStyles.standardText(
               text: Utility.formatterNumber(0),
@@ -189,26 +211,7 @@ class ItemRow {
           children: [
             if (screenWidth > 1400)
               Buttons.commonButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
-                  ).then(
-                    (value) {
-                      if (value != null) {
-                        tarifa = tarifaXDia.tarifa == null
-                            ? null
-                            : RegistroTarifa(
-                                tarifas: [tarifaXDia.tarifa!],
-                                temporadas: tarifaXDia.temporadaSelect != null
-                                    ? [tarifaXDia.temporadaSelect!]
-                                    : []);
-                        setState!.call();
-                      }
-                    },
-                  );
-                },
+                onPressed: () => showDialogManagerTariff(),
                 text: "Editar",
                 color: tarifaXDia.color,
                 colorText: tarifaXDia.color == null
@@ -219,31 +222,12 @@ class ItemRow {
               )
             else
               IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
-                  ).then(
-                    (value) {
-                      if (value != null) {
-                        tarifa = tarifaXDia.tarifa == null
-                            ? null
-                            : RegistroTarifa(
-                                tarifas: [tarifaXDia.tarifa!],
-                                temporadas: tarifaXDia.temporadaSelect != null
-                                    ? [tarifaXDia.temporadaSelect!]
-                                    : []);
-                        setState!.call();
-                      }
-                    },
-                  );
-                },
+                onPressed: () => showDialogManagerTariff(),
                 tooltip: "Editar",
                 icon: Icon(
                   CupertinoIcons.pencil,
                   size: 30,
-                  color: tarifa?.color,
+                  color: tarifaXDia.color ?? DesktopColors.cerulean,
                 ),
               ),
           ],

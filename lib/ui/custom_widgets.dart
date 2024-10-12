@@ -609,11 +609,56 @@ class CustomWidgets {
     );
   }
 
+  static Widget checkBoxWithDescription(BuildContext context,
+      {required String title,
+      required String description,
+      required bool value,
+      required void Function(bool?) onChanged,
+      Color? activeColor}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              height: 35,
+              width: 30,
+              child: Checkbox(
+                value: value,
+                onChanged: (value) => onChanged.call(value),
+                activeColor: activeColor ?? Colors.amber,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(3),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: TextStyles.standardText(
+                text: title,
+                color: Theme.of(context).primaryColor,
+                size: 12,
+                overClip: true,
+              ),
+            )
+          ],
+        ),
+        TextStyles.standardText(
+            text: description,
+            color: Theme.of(context).primaryColor,
+            size: 10,
+            overClip: true,
+            aling: TextAlign.justify),
+        const SizedBox(height: 30),
+      ],
+    );
+  }
+
   static Widget titleFormPage({
     required void Function()? onPressedBack,
     required BuildContext context,
     required String title,
-    required void Function()? onPressedSaveButton,
+    void Function()? onPressedSaveButton,
     bool showSaveButton = true,
   }) {
     return Column(

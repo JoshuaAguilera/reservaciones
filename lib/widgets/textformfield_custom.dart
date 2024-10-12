@@ -199,35 +199,38 @@ class TextFormFieldCustom {
               Positioned(
                 right: 5,
                 top: 5,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.calendar_month,
-                    color: DesktopColors.azulCielo,
+                child: Container(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.calendar_month,
+                      color: DesktopColors.azulCielo,
+                    ),
+                    onPressed: () {
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.parse(dateController.text),
+                        firstDate: fechaLimite.isNotEmpty
+                            ? DateTime.parse(fechaLimite)
+                                .add(const Duration(days: 1))
+                            : DateTime(DateTime.now().year - firstYear),
+                        lastDate: nowLastYear
+                            ? DateTime.now()
+                            : DateTime((DateTime.now().year + lastYear)),
+                        locale: const Locale('es', 'ES'),
+                      ).then(
+                        (date) {
+                          if (date != null) {
+                            setState(() {
+                              dateController.text =
+                                  date.toIso8601String().substring(0, 10);
+                              if (onChanged != null) onChanged.call();
+                            });
+                          }
+                        },
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    showDatePicker(
-                      context: context,
-                      initialDate: DateTime.parse(dateController.text),
-                      firstDate: fechaLimite.isNotEmpty
-                          ? DateTime.parse(fechaLimite)
-                              .add(const Duration(days: 1))
-                          : DateTime(DateTime.now().year - firstYear),
-                      lastDate: nowLastYear
-                          ? DateTime.now()
-                          : DateTime((DateTime.now().year + lastYear)),
-                      locale: const Locale('es', 'ES'),
-                    ).then(
-                      (date) {
-                        if (date != null) {
-                          setState(() {
-                            dateController.text =
-                                date.toIso8601String().substring(0, 10);
-                            if (onChanged != null) onChanged.call();
-                          });
-                        }
-                      },
-                    );
-                  },
                 ),
               ),
             ],

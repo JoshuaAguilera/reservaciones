@@ -110,6 +110,8 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     tarifa,
                     widget.habitacion,
                     widget.habitacion.tarifaXDia!.length,
+                    descuentoProvisional:
+                        widget.tarifaXDia.descuentoProvisional,
                   ),
                 ),
                 color: Theme.of(context).primaryColor,
@@ -121,6 +123,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   tarifa,
                   widget.habitacion,
                   widget.habitacion.tarifaXDia!.length,
+                  descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
                 )),
                 color: Theme.of(context).primaryColor,
                 size: 13.5,
@@ -144,13 +147,21 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   color: Theme.of(context).primaryColor,
                   size: 13.5,
                 ),
-              if (MediaQuery.of(context).size.width > 1500)
+              if (MediaQuery.of(context).size.width > 1500 &&
+                  widget.tarifaXDia.temporadas != null)
                 TextStyles.TextAsociative(
                   "Temporada:  ",
                   widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                   color: Theme.of(context).primaryColor,
                   size: 13.5,
-                ),
+                )
+              else
+                TextStyles.TextAsociative(
+                  "Descuento:  ",
+                  "${widget.tarifaXDia.descuentoProvisional ?? 0}%",
+                  color: Theme.of(context).primaryColor,
+                  size: 13.5,
+                )
             ],
           ),
           trailing: (MediaQuery.of(context).size.width > 1400)
@@ -160,7 +171,8 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     onPressed: () => showDialogEditQuote(),
                     text: "Editar",
                     color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
-                    colorText: useWhiteForeground(widget.tarifaXDia.color ?? DesktopColors.cerulean)
+                    colorText: useWhiteForeground(
+                            widget.tarifaXDia.color ?? DesktopColors.cerulean)
                         ? Colors.white
                         : const Color.fromARGB(255, 43, 43, 43),
                   ),
