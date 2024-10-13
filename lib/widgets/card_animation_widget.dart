@@ -359,8 +359,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
               if (MediaQuery.of(context).size.width >
                   (1590 - (widget.sideController.extended ? 0 : 150)))
                 TextStyles.TextAsociative(
-                  "Temporada: ",
-                  widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
+                 (widget.tarifaXDia.code!.contains("Unknow")) ? "Descuento: " : "Temporada: ",
+                (widget.tarifaXDia.code!.contains("Unknow")) ? "${widget.tarifaXDia.descuentoProvisional}%" :  widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                   boldInversed: true,
                   textAling: TextAlign.center,
                   size: 11,

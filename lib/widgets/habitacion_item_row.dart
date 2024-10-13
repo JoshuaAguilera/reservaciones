@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 
 import '../utils/helpers/web_colors.dart';
+import 'dialogs.dart';
+import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
 
 class HabitacionItemRow extends StatefulWidget {
   final int index;
   final Habitacion habitacion;
-  final bool compact;
+  final bool isTable;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
@@ -17,7 +21,7 @@ class HabitacionItemRow extends StatefulWidget {
     super.key,
     required this.index,
     required this.habitacion,
-    required this.compact,
+    required this.isTable,
     this.onPressedEdit,
     this.onPressedDelete,
     this.esDetalle = false,
@@ -29,14 +33,39 @@ class HabitacionItemRow extends StatefulWidget {
 
 class _HabitacionItemRowState extends State<HabitacionItemRow> {
   bool selected = false;
+
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialogs.customAlertDialog(
+        context: context,
+        title: "Eliminar Habitación",
+        content:
+            "¿Desea eliminar la presente habitación\nde la cotización actual?",
+        funtionMain: () {
+          setState(() {
+            selected = !selected;
+          });
+          Future.delayed(Durations.extralong2, widget.onPressedDelete);
+        },
+        nameButtonCancel: "NO",
+        nameButtonMain: "SI",
+        withButtonCancel: true,
+        iconData: Icons.delete,
+        iconColor: Theme.of(context).primaryColor,
+        colorTextButton: Theme.of(context).dividerColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: !widget.compact
+      child: !widget.isTable
           ? selected
               ? _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.habitacion,
+                  habitacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
@@ -46,21 +75,15 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _ListTileCotizacion(
                   index: widget.index,
-                  cotizacion: widget.habitacion,
-                  onPressedDelete: () {
-                    setState(() {
-                      selected = !selected;
-                    });
-                    Future.delayed(
-                        Durations.extralong2, widget.onPressedDelete);
-                  },
+                  habitacion: widget.habitacion,
+                  onPressedDelete: () => showDeleteDialog(),
                   onPressedEdit: widget.onPressedEdit,
                   esDetalle: widget.esDetalle,
                 )
           : selected
               ? _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.habitacion,
+                  habitacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
@@ -70,14 +93,8 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
               : _TableRowCotizacion(
                   index: widget.index,
-                  cotizacion: widget.habitacion,
-                  onPressedDelete: () {
-                    setState(() {
-                      selected = !selected;
-                    });
-                    Future.delayed(
-                        Durations.extralong2, widget.onPressedDelete);
-                  },
+                  habitacion: widget.habitacion,
+                  onPressedDelete: () => showDeleteDialog(),
                   onPressedEdit: widget.onPressedEdit,
                   esDetalle: widget.esDetalle,
                 ),
@@ -88,9 +105,9 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
   }
 }
 
-class _TableRowCotizacion extends StatelessWidget {
+class _TableRowCotizacion extends StatefulWidget {
   final int index;
-  final Habitacion cotizacion;
+  final Habitacion habitacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
@@ -98,33 +115,43 @@ class _TableRowCotizacion extends StatelessWidget {
   const _TableRowCotizacion({
     super.key,
     required this.index,
-    required this.cotizacion,
+    required this.habitacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
     required this.esDetalle,
   });
 
   @override
+  State<_TableRowCotizacion> createState() => _TableRowCotizacionState();
+}
+
+class _TableRowCotizacionState extends State<_TableRowCotizacion> {
+  @override
   Widget build(BuildContext context) {
+    Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
+        ? DesktopColors.cotIndColor
+        : DesktopColors.cotIndPreColor;
+    Color colorText = widget.habitacion.categoria == tipoHabitacion.first
+        ? DesktopColors.azulUltClaro
+        : DesktopColors.ceruleanOscure;
+
     return Card(
-      color: cotizacion.esPreventa!
-          ? DesktopColors.cotIndPreColor
-          : DesktopColors.cotIndColor,
+      color: colorCard,
       elevation: 5,
       child: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
         child: Column(
           children: [
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: {
-                0: const FractionColumnWidth(.05),
-                1: const FractionColumnWidth(.15),
-                2: const FractionColumnWidth(.1),
-                3: const FractionColumnWidth(.1),
-                4: const FractionColumnWidth(.1),
-                5: const FractionColumnWidth(.1),
-                if (!esDetalle) 6: const FractionColumnWidth(.21),
+              columnWidths: const {
+                0: FractionColumnWidth(.05),
+                1: FractionColumnWidth(.2),
+                2: FractionColumnWidth(.1),
+                3: FractionColumnWidth(.1),
+                5: FractionColumnWidth(.1),
+                6: FractionColumnWidth(.1),
+                7: FractionColumnWidth(.2),
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),
@@ -132,104 +159,104 @@ class _TableRowCotizacion extends StatelessWidget {
                 TableRow(
                   children: [
                     TextStyles.standardText(
-                      text: (index + 1).toString(),
+                      text: (widget.index + 1).toString(),
                       aling: TextAlign.center,
                       overClip: true,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
                       text:
-                          "${cotizacion.fechaCheckIn} a ${cotizacion.fechaCheckOut}",
+                          "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
                       aling: TextAlign.center,
-                      overClip: true,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
-                      text: cotizacion.folioHabitacion.toString(),
+                      text: widget.habitacion.adultos!.toString(),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
-                      text: cotizacion.folioHabitacion.toString(),
+                      text: widget.habitacion.menores0a6!.toString(),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
-                      text: cotizacion.folioHabitacion.toString(),
+                      text: widget.habitacion.menores7a12!.toString(),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
                       text: Utility.formatterNumber(
-                          Utility.calculateTarifaDiaria(
-                              cotizacion: cotizacion)),
+                          widget.habitacion.totalReal ?? 0),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
+                      color: colorText,
+                      size: 12,
                     ),
                     TextStyles.standardText(
-                      text: Utility.formatterNumber(
-                          Utility.calculateTarifaDiaria(
-                              cotizacion: cotizacion,
-                              esPreventa: cotizacion.esPreventa!)),
+                      text:
+                          Utility.formatterNumber(widget.habitacion.total ?? 0),
                       aling: TextAlign.center,
-                      color: cotizacion.esPreventa!
-                          ? null
-                          : DesktopColors.azulUltClaro,
-                      overClip: true,
+                      color: colorText,
+                      size: 12,
                     ),
-                    if (!esDetalle)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                    if (!widget.esDetalle)
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
                         children: [
-                          IconButton(
-                            onPressed: onPressedEdit,
-                            icon: Icon(
-                              Icons.edit,
-                              color: cotizacion.esPreventa!
-                                  ? DesktopColors.ceruleanOscure
-                                  : DesktopColors.azulClaro,
+                          SizedBox(
+                            width: 87,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                TextStyles.standardText(
+                                  text: "Cant: ",
+                                  color: colorText,
+                                  size: 12,
+                                ),
+                                SizedBox(
+                                  width: 50,
+                                  height: 40,
+                                  child: NumberInputWithIncrementDecrement(
+                                    onChanged: (p0) => setState(() =>
+                                        widget.habitacion.count =
+                                            p0.isEmpty ? 1 : int.parse(p0)),
+                                    initialValue:
+                                        widget.habitacion.count.toString(),
+                                    minimalValue: 1,
+                                    sizeIcons: 14,
+                                    height: 10,
+                                    focused: true,
+                                    maxValue: 106,
+                                    onDecrement: (p0) => setState(
+                                        () => widget.habitacion.count = p0),
+                                    onIncrement: (p0) => setState(
+                                        () => widget.habitacion.count = p0),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          IconButton(
-                            onPressed: onPressedDelete,
-                            icon: Icon(
-                              Icons.delete,
-                              color: cotizacion.esPreventa!
-                                  ? DesktopColors.prussianBlue
-                                  : DesktopColors.azulCielo,
+                          SizedBox(
+                            width: 35,
+                            child: CustomWidgets.compactOptions(
+                              context,
+                              onPreseedDelete: widget.onPressedDelete,
+                              onPreseedEdit: widget.onPressedEdit,
+                              colorIcon: colorText,
                             ),
-                          ),
+                          )
                         ],
                       ),
                   ],
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextStyles.standardText(
-                text: "Categoría: ${cotizacion.categoria!} ",
-                isBold: true,
-                color:
-                    cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
-              ),
-            )
           ],
         ),
       ),
@@ -237,9 +264,9 @@ class _TableRowCotizacion extends StatelessWidget {
   }
 }
 
-class _ListTileCotizacion extends StatelessWidget {
+class _ListTileCotizacion extends StatefulWidget {
   final int index;
-  final Habitacion cotizacion;
+  final Habitacion habitacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
@@ -247,94 +274,90 @@ class _ListTileCotizacion extends StatelessWidget {
   const _ListTileCotizacion({
     super.key,
     required this.index,
-    required this.cotizacion,
+    required this.habitacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
     required this.esDetalle,
   });
 
   @override
+  State<_ListTileCotizacion> createState() => _ListTileCotizacionState();
+}
+
+class _ListTileCotizacionState extends State<_ListTileCotizacion> {
+  @override
   Widget build(BuildContext context) {
+    Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
+        ? DesktopColors.cotIndColor
+        : DesktopColors.cotIndPreColor;
+    Color colorText = widget.habitacion.categoria == tipoHabitacion.first
+        ? DesktopColors.azulUltClaro
+        : DesktopColors.ceruleanOscure;
+
     return Card(
-      color: cotizacion.esPreventa!
-          ? DesktopColors.cotIndPreColor
-          : DesktopColors.cotIndColor,
+      color: colorCard,
       elevation: 5,
       child: ListTile(
         leading: TextStyles.TextSpecial(
-          day: index + 1,
-          colorTitle:
-              cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
-          colorsubTitle:
-              cotizacion.esPreventa! ? null : DesktopColors.azulCielo,
+          day: widget.index + 1,
+          colorTitle: colorText,
+          colorsubTitle: colorText,
+          subtitle: "Room",
+          sizeSubtitle: 12,
         ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.standardText(
-          text: "${cotizacion.categoria}",
+          text: "${widget.habitacion.categoria}",
           isBold: true,
-          color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
+          color: colorText,
         ),
-        subtitle:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          TextStyles.standardText(
-            text: "${cotizacion.fechaCheckIn} a ${cotizacion.fechaCheckOut}",
-            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
-          ),
-          TextStyles.TextAsociative(
-            "Tarifa real:",
-            Utility.formatterNumber(
-                Utility.calculateTarifaDiaria(cotizacion: cotizacion)),
-            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
-          ),
-          TextStyles.TextAsociative(
-            "Tarifa preventa: ",
-            Utility.formatterNumber(Utility.calculateTarifaDiaria(
-                cotizacion: cotizacion, esPreventa: true)),
-            color: cotizacion.esPreventa! ? null : DesktopColors.azulUltClaro,
-          ),
-          if (esDetalle)
+        subtitle: Wrap(
+          spacing: 12,
+          runSpacing: 5,
+          children: [
+            TextStyles.standardText(
+              text:
+                  "Fechas de estancia: ${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
+              color: colorText,
+            ),
+            TextStyles.TextAsociative(
+              "Tarifa real: ",
+              Utility.formatterNumber(widget.habitacion.totalReal ?? 0),
+              color: colorText,
+            ),
+            TextStyles.TextAsociative(
+              "Tarifa descontada: ",
+              Utility.formatterNumber(-(widget.habitacion.descuento ?? 0)),
+              color: colorText,
+            ),
+            TextStyles.TextAsociative(
+              "Tarifa total: ",
+              Utility.formatterNumber(widget.habitacion.total ?? 0),
+              color: colorText,
+            ),
             Wrap(
+              spacing: 15,
               children: [
                 TextStyles.TextAsociative(
-                    'Menores 0-6: ', "${cotizacion.folioHabitacion}    ",
-                    color: DesktopColors.azulUltClaro),
+                    'Menores 0-6: ', "${widget.habitacion.menores0a6}",
+                    color: colorText),
                 TextStyles.TextAsociative(
-                    'Menores 7-12: ', "${cotizacion.folioHabitacion}    ",
-                    color: DesktopColors.azulUltClaro),
+                    'Menores 7-12: ', "${widget.habitacion.menores7a12}",
+                    color: colorText),
                 TextStyles.TextAsociative(
-                    'Adultos: ', "${cotizacion.folioHabitacion}",
-                    color: DesktopColors.azulUltClaro),
+                    'Adultos: ', "${widget.habitacion.adultos}",
+                    color: colorText),
               ],
             ),
-        ]),
-        trailing: esDetalle
+          ],
+        ),
+        trailing: widget.esDetalle
             ? null
-            : PopupMenuButton<ListTileTitleAlignment>(
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<ListTileTitleAlignment>>[
-                  PopupMenuItem<ListTileTitleAlignment>(
-                    value: ListTileTitleAlignment.threeLine,
-                    onTap: onPressedEdit,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.edit, color: DesktopColors.turqueza),
-                        TextStyles.standardText(text: "Editar")
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<ListTileTitleAlignment>(
-                    value: ListTileTitleAlignment.titleHeight,
-                    onTap: onPressedDelete,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.delete, color: Colors.red[800]),
-                        TextStyles.standardText(text: "Eliminar")
-                      ],
-                    ),
-                  ),
-                ],
+            : CustomWidgets.compactOptions(
+                context,
+                onPreseedDelete: widget.onPressedDelete,
+                onPreseedEdit: widget.onPressedEdit,
+                colorIcon: colorText,
               ),
         isThreeLine: true,
       ),

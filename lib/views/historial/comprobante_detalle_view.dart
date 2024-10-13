@@ -209,7 +209,7 @@ class _ComprobanteDetalleViewState
                                       cotizacion.habitaciones![index].hashCode),
                                   index: index,
                                   habitacion: cotizacion.habitaciones![index],
-                                  compact: !Utility.isResizable(
+                                  isTable: !Utility.isResizable(
                                       extended: widget.sideController.extended,
                                       context: context),
                                   esDetalle: true,
@@ -236,7 +236,7 @@ class _ComprobanteDetalleViewState
                                       cotizacion.habitaciones![index].hashCode),
                                   index: index,
                                   habitacion: cotizacion.habitaciones![index],
-                                  compact: !Utility.isResizable(
+                                  isTable: !Utility.isResizable(
                                       extended: widget.sideController.extended,
                                       context: context),
                                   esDetalle: true,

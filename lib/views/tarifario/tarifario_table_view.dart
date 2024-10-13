@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/widgets/table_rows.dart';
+import 'package:path/path.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
@@ -11,7 +13,7 @@ import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/item_row.dart';
+import '../../widgets/item_rows.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
@@ -148,120 +150,12 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         },
                         children: [
                           for (var element in list)
-                            TableRow(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0),
-                                  child: Center(
-                                    child: TextStyles.standardText(
-                                        text: element.id?.toString() ?? "",
-                                        color: Theme.of(context).primaryColor,
-                                        size: 14),
-                                  ),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: element.fechaRegistro!
-                                          .toIso8601String()
-                                          .substring(0, 10)
-                                          .replaceAll('-', '/'),
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                Center(
-                                  child: TextStyles.standardText(
-                                      text: element.nombre ?? '',
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
-                                ),
-                                if (screenWidth > 1525)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: TextStyles.standardText(
-                                          text: Utility.defineStatusTariff(
-                                              element.periodos),
-                                          color: Theme.of(context).primaryColor,
-                                          size: 14),
-                                    ),
-                                  ),
-                                Center(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: SizedBox(
-                                      child: Wrap(
-                                        alignment: WrapAlignment.center,
-                                        children: [
-                                          for (var elementInt
-                                              in element.periodos ?? [])
-                                            ItemRow.filterItemRow(
-                                              withDeleteButton: false,
-                                              colorCard: element.color!,
-                                              initDate:
-                                                  elementInt.fechaInicial!,
-                                              lastDate: elementInt.fechaFinal!,
-                                              onRemove: () {
-                                                element.periodos!
-                                                    .remove(elementInt);
-                                                setState(() {});
-                                              },
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      if (screenWidth > 1300)
-                                        Expanded(
-                                          child: Buttons.commonButton(
-                                            onPressed: () =>
-                                                widget.onEdit!.call(element),
-                                            text: "Editar",
-                                            color: DesktopColors.turquezaOscure,
-                                          ),
-                                        )
-                                      else
-                                        IconButton(
-                                          onPressed: () =>
-                                              widget.onEdit!.call(element),
-                                          tooltip: "Editar",
-                                          icon: Icon(
-                                            CupertinoIcons.pencil,
-                                            size: 30,
-                                            color: DesktopColors.turquezaOscure,
-                                          ),
-                                        ),
-                                      const SizedBox(width: 10),
-                                      if (screenWidth > 1300)
-                                        Expanded(
-                                          child: Buttons.commonButton(
-                                            onPressed: () =>
-                                                widget.onDelete!.call(element),
-                                            text: "Eliminar",
-                                            color: DesktopColors.ceruleanOscure,
-                                          ),
-                                        )
-                                      else
-                                        IconButton(
-                                          onPressed: () =>
-                                              widget.onDelete!.call(element),
-                                          tooltip: "Eliminar",
-                                          icon: Icon(
-                                            CupertinoIcons.delete,
-                                            size: 30,
-                                            color: DesktopColors.ceruleanOscure,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                            TableRows.tableRowTarifario(
+                              element: element,
+                              context: context,
+                              screenWidth: screenWidth,
+                              onEdit: (p0) => widget.onEdit!.call(element),
+                              onDelete: (p0) => widget.onDelete!.call(element),
                             ),
                         ],
                       );

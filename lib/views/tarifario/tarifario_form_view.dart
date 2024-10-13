@@ -15,7 +15,7 @@ import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
-import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/custom_widgets.dart';
@@ -410,7 +410,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                               child: Wrap(
                                 children: [
                                   for (var element in periodos)
-                                    ItemRow.filterItemRow(
+                                    ItemRows.filterItemRow(
                                       colorCard: colorTarifa,
                                       initDate: element.fechaInicial!,
                                       lastDate: element.fechaFinal!,

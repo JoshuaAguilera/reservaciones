@@ -64,6 +64,8 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Card(
       elevation: 5,
       color: Theme.of(context).primaryColorDark,
@@ -88,14 +90,15 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   "Fecha:  ",
                   Utility.getCompleteDate(data: widget.tarifaXDia.fecha!),
                   color: Theme.of(context).primaryColor,
-                  size: 13.5,
+                  size: 12,
                 ),
-                TextStyles.TextAsociative(
-                  "Tarifa aplicada:  ",
-                  widget.tarifaXDia.nombreTarif ?? '',
-                  color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                ),
+                if (screenWidth > 925)
+                  TextStyles.TextAsociative(
+                    "Tarifa aplicada:  ",
+                    widget.tarifaXDia.nombreTarif ?? '',
+                    color: Theme.of(context).primaryColor,
+                    size: 12,
+                  ),
               ],
             ),
           ),
@@ -104,7 +107,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
             runSpacing: 5,
             children: [
               TextStyles.TextAsociative(
-                "Tarifa de adultos:  ",
+                "${(screenWidth > 925) ? "Tarifa de adulto" : "Adul."}:  ",
                 Utility.formatterNumber(
                   Utility.calculateTariffAdult(
                     tarifa,
@@ -115,10 +118,10 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   ),
                 ),
                 color: Theme.of(context).primaryColor,
-                size: 13.5,
+                size: 12,
               ),
               TextStyles.TextAsociative(
-                "Tarifa de Menores de 7 a 12:  ",
+                "${(screenWidth > 1000) ? "Tarifa de Menores de 7 a 12" : "Men. 7 a 12"}:  ",
                 Utility.formatterNumber(Utility.calculateTariffChildren(
                   tarifa,
                   widget.habitacion,
@@ -126,13 +129,13 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
                 )),
                 color: Theme.of(context).primaryColor,
-                size: 13.5,
+                size: 12,
               ),
               TextStyles.TextAsociative(
-                "Tarifa de Menores de 0 a 6:  ",
+                "${(screenWidth > 1000) ? "Tarifa de Menores de 0 a 6" : "Men. 0 a 6"}:  ",
                 Utility.formatterNumber(0),
                 color: Theme.of(context).primaryColor,
-                size: 13.5,
+                size: 12,
               ),
               if (MediaQuery.of(context).size.width > 1300)
                 TextStyles.TextAsociative(
@@ -145,7 +148,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                           compact: true,
                         ),
                   color: Theme.of(context).primaryColor,
-                  size: 13.5,
+                  size: 12,
                 ),
               if (MediaQuery.of(context).size.width > 1500 &&
                   widget.tarifaXDia.temporadas != null)
@@ -153,14 +156,14 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   "Temporada:  ",
                   widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                   color: Theme.of(context).primaryColor,
-                  size: 13.5,
-                )
-              else
+                  size: 12,
+                ),
+              if (widget.tarifaXDia.temporadas == null)
                 TextStyles.TextAsociative(
                   "Descuento:  ",
                   "${widget.tarifaXDia.descuentoProvisional ?? 0}%",
                   color: Theme.of(context).primaryColor,
-                  size: 13.5,
+                  size: 12,
                 )
             ],
           ),

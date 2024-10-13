@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/registro_tarifa_model.dart';
@@ -51,7 +51,7 @@ class _TarifarioChecklistViewState
                           itemCount: list.length,
                           shrinkWrap: false,
                           itemBuilder: (context, index) {
-                            return ItemRow.tarifaCheckListItemRow(
+                            return ItemRows.tarifaCheckListItemRow(
                               registro: list[index],
                               screenWidth: screenWidth,
                               onEdit: (register) =>

@@ -69,6 +69,29 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final comprobante = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
 
+    void _goDetailRoom(Habitacion habitacion) {
+      ref.read(habitacionSelectProvider.notifier).update((state) => habitacion);
+
+      final tarifasProvider = TarifasProvisionalesProvider.provider;
+      ref.read(tarifasProvider.notifier).clear();
+
+      ref.read(descuentoProvisionalProvider.notifier).update((state) => 0);
+
+      setState(() => targetHabitaciones = 0);
+      Future.delayed(
+        800.ms,
+        () => setState(
+          () {
+            inList = false;
+            inDetail = true;
+            targetDetalleHabitacion = 1;
+          },
+        ),
+      );
+
+      Future.delayed(1000.ms, () => widget.sideController.selectIndex(16));
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -218,58 +241,22 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 const SizedBox(height: 10),
                                 SizedBox(
                                   child: HabitacionesList(
-                                    nuevaHabitacion: () {
-                                      ref
-                                          .read(
-                                              habitacionSelectProvider.notifier)
-                                          .update(
-                                            (state) => Habitacion(
-                                              categoria: tipoHabitacion.first,
-                                              adultos: 1,
-                                              menores0a6: 0,
-                                              menores7a12: 0,
-                                              paxAdic: 0,
-                                              tarifaXDia: [],
-                                              fechaCheckIn: DateTime.now()
-                                                  .toString()
-                                                  .substring(0, 10),
-                                              fechaCheckOut: DateTime.now()
-                                                  .add(const Duration(days: 1))
-                                                  .toString()
-                                                  .substring(0, 10),
-                                            ),
-                                          );
-
-                                      final tarifasProvider =
-                                          TarifasProvisionalesProvider.provider;
-                                      ref
-                                          .read(tarifasProvider.notifier)
-                                          .clear();
-
-                                      ref
-                                          .read(descuentoProvisionalProvider
-                                              .notifier)
-                                          .update((state) => 0);
-
-                                      setState(() => targetHabitaciones = 0);
-                                      Future.delayed(
-                                        800.ms,
-                                        () => setState(
-                                          () {
-                                            inList = false;
-                                            inDetail = true;
-                                            targetDetalleHabitacion = 1;
-                                          },
-                                        ),
-                                      );
-
-                                      Future.delayed(
-                                          1000.ms,
-                                          () => widget.sideController
-                                              .selectIndex(16));
-                                    },
+                                    newRoom: () => _goDetailRoom(Habitacion(
+                                      categoria: tipoHabitacion.first,
+                                      adultos: 1,
+                                      menores0a6: 0,
+                                      menores7a12: 0,
+                                      tarifaXDia: [],
+                                      fechaCheckIn: DateTime.now()
+                                          .toString()
+                                          .substring(0, 10),
+                                      fechaCheckOut: DateTime.now()
+                                          .add(const Duration(days: 1))
+                                          .toString()
+                                          .substring(0, 10),
+                                    )),
+                                    editRoom: (p0) => _goDetailRoom(p0),
                                     sideController: widget.sideController,
-                                    esGrupo: habitaciones.length > 9,
                                     habitaciones: habitaciones,
                                   ),
                                 )

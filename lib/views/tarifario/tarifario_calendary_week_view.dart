@@ -9,7 +9,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
-import '../../widgets/item_row.dart';
+import '../../widgets/item_rows.dart';
 import '../../widgets/period_item_row.dart';
 
 class TarifarioCalendaryWeekView extends ConsumerStatefulWidget {
@@ -93,7 +93,7 @@ class _TarifarioCalendaryWeekViewState
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7, childAspectRatio: 0.5),
               itemBuilder: (context, index) {
-                return ItemRow.getTitleDay(
+                return ItemRows.getTitleDay(
                   title:
                       widget.initDayWeekGraphics.add(Duration(days: index)).day,
                   subTitle: daysNameShort[widget.initDayWeekGraphics

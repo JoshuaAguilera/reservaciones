@@ -529,6 +529,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                       .difference(DateTime.parse(_fechaEntrada.text))
                       .inDays,
                   onPressed: () {
+                    final habitacionesProvider = HabitacionProvider.provider;
+
+                    ref
+                        .read(habitacionesProvider.notifier)
+                        .addItem(habitacionProvider);
+
                     if (target == 1) {
                       setState(() => target = 0);
 

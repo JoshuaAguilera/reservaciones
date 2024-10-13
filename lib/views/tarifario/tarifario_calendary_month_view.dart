@@ -10,7 +10,7 @@ import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/item_row.dart';
+import '../../widgets/item_rows.dart';
 import '../../widgets/period_item_row.dart';
 import '../../widgets/text_styles.dart';
 
@@ -75,7 +75,7 @@ class _TarifarioCalendaryMonthViewState
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 7, childAspectRatio: 0.5),
                       itemBuilder: (context, index) {
-                        return ItemRow.getTitleDay(
+                        return ItemRows.getTitleDay(
                           title: 0,
                           withOutDay: true,
                           subTitle: daysNameShort[widget.initDayWeekGraphics

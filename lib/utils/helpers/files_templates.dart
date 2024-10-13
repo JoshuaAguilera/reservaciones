@@ -220,8 +220,8 @@ class FilesTemplate {
         'MENORES\n0-6',
         'MENORES\n7-12',
         '       TARIFA REAL       ',
-        if (cotizaciones.any((element) => element.esPreventa!))
-          'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
+        // if (cotizaciones.any((element) => element.esPreventa!))
+        //   'TARIFA DE PREVENTA\nOFERTA POR TIEMPO LIMITADO',
       ]
     ];
 
@@ -258,18 +258,16 @@ class FilesTemplate {
         data: contenido,
       ),
       pw.Padding(
-        padding: pw.EdgeInsets.only(
-            left: (cotizaciones.any((element) => element.esPreventa!))
-                ? 119
-                : 177),
+        padding: const pw.EdgeInsets.only(
+            left: 177),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.9),
             headerStyle: styleHeader,
             columnWidths: {
               0: const pw.FixedColumnWidth(100),
               1: const pw.FixedColumnWidth(100),
-              if (cotizaciones.any((element) => element.esPreventa!))
-                2: const pw.FixedColumnWidth(160)
+              // if (cotizaciones.any((element) => element.esPreventa!))
+              //   2: const pw.FixedColumnWidth(160)
             },
             cellPadding:
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
@@ -279,10 +277,10 @@ class FilesTemplate {
               "TOTAL DE ESTANCIA",
               Utility.formatterNumber(
                   Utility.calculateTarifaTotal(cotizaciones)),
-              if (cotizaciones.any((element) => element.esPreventa!))
-                Utility.formatterNumber(Utility.calculateTarifaTotal(
-                    cotizaciones,
-                    esPreventa: true)),
+              // if (cotizaciones.any((element) => element.esPreventa!))
+              //   Utility.formatterNumber(Utility.calculateTarifaTotal(
+              //       cotizaciones,
+              //       esPreventa: true)),
             ],
             data: []),
       )

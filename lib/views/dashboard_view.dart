@@ -13,7 +13,7 @@ import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -293,7 +293,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               data: (list) {
                                 List<Widget> cards = [];
                                 for (var element in list) {
-                                  cards.add(ItemRow.statusQuoteRow(element));
+                                  cards.add(ItemRows.statusQuoteRow(element));
                                 }
 
                                 return Wrap(children: cards);

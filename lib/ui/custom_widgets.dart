@@ -725,18 +725,26 @@ class CustomWidgets {
     required String messageNotFound,
     required double total,
     required List<Widget> children,
+    Color? collapsedBackgroundColor,
+    bool overClipText = false,
   }) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.all(4),
       shape: Border(top: BorderSide(color: Theme.of(context).primaryColor)),
+      collapsedShape: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent)),
       initiallyExpanded: showList,
       onExpansionChanged: onExpansionChanged,
+      collapsedBackgroundColor: collapsedBackgroundColor,
       title: Row(
         children: [
-          TextStyles.standardText(
-            text: title,
-            color: Theme.of(context).primaryColor,
-            size: 13,
+          Expanded(
+            child: TextStyles.standardText(
+              text: title,
+              color: Theme.of(context).primaryColor,
+              size: 13,
+              overClip: overClipText,
+            ),
           ),
           Icon(
             showList
@@ -812,6 +820,46 @@ class CustomWidgets {
           ],
         ),
       ),
+    );
+  }
+
+  static Widget compactOptions(BuildContext context,
+      {void Function()? onPreseedEdit,
+      void Function()? onPreseedDelete,
+      Color? colorIcon}) {
+    return PopupMenuButton<ListTileTitleAlignment>(
+      iconColor: colorIcon,
+      itemBuilder: (BuildContext context) =>
+          <PopupMenuEntry<ListTileTitleAlignment>>[
+        PopupMenuItem<ListTileTitleAlignment>(
+          value: ListTileTitleAlignment.threeLine,
+          onTap: onPreseedEdit,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(Icons.edit, color: DesktopColors.turqueza),
+              TextStyles.standardText(
+                text: "Editar",
+                color: Theme.of(context).primaryColor,
+              )
+            ],
+          ),
+        ),
+        PopupMenuItem<ListTileTitleAlignment>(
+          value: ListTileTitleAlignment.titleHeight,
+          onTap: onPreseedDelete,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(Icons.delete, color: Colors.red[800]),
+              TextStyles.standardText(
+                text: "Eliminar",
+                color: Theme.of(context).primaryColor,
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

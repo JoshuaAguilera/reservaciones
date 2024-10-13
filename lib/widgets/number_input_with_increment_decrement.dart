@@ -8,6 +8,10 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
   final String? initialValue;
   final int? minimalValue;
   final int? maxValue;
+  final double? sizeIcons;
+  final double? height;
+  final bool focused;
+
   const NumberInputWithIncrementDecrement({
     super.key,
     required this.onChanged,
@@ -16,6 +20,9 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
     this.maxValue,
     this.onIncrement,
     this.onDecrement,
+    this.sizeIcons,
+    this.height,
+    this.focused = false,
   });
 
   @override
@@ -46,33 +53,46 @@ class _NumberInputWithIncrementDecrementState
       constraints: const BoxConstraints(
         minWidth: 40,
         maxWidth: 40,
-        minHeight: 25.0,
+        minHeight: 10.0,
         maxHeight: 100.0,
       ),
       child: Row(
         children: <Widget>[
           Expanded(
             flex: 1,
-            child: AbsorbPointer(
-              absorbing: true,
-              child: TextFormField(
-                onChanged: (value) => widget.onChanged.call(value),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontFamily: "poppins_regular", fontSize: 13),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  labelStyle:
-                      TextStyle(fontFamily: "poppins_regular", fontSize: 13),
+            child: SizedBox(
+              height: widget.height,
+              child: AbsorbPointer(
+                absorbing: !widget.focused,
+                child: Focus(
+                  onFocusChange: (value) {
+                    if (!value && _controller.text.isEmpty) {
+                      setState(() =>
+                          _controller.text = widget.minimalValue!.toString());
+                    }
+                  },
+                  child: TextFormField(
+                    onChanged: (value) => widget.onChanged.call(value),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontFamily: "poppins_regular", fontSize: 13),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      labelStyle: TextStyle(
+                        fontFamily: "poppins_regular",
+                        fontSize: 13,
+                      ),
+                    ),
+                    controller: _controller,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: false,
+                      signed: true,
+                    ),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                  ),
                 ),
-                controller: _controller,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: false,
-                  signed: true,
-                ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
               ),
             ),
           ),
@@ -91,9 +111,9 @@ class _NumberInputWithIncrementDecrementState
                     ),
                   ),
                   child: InkWell(
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_drop_up,
-                      size: 18.0,
+                      size: widget.sizeIcons ?? 18.0,
                     ),
                     onTap: () {
                       int currentValue = int.parse(_controller.text);
@@ -115,9 +135,9 @@ class _NumberInputWithIncrementDecrementState
                   ),
                 ),
                 InkWell(
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_drop_down,
-                    size: 18.0,
+                    size: widget.sizeIcons ?? 18.0,
                   ),
                   onTap: () {
                     int currentValue = int.parse(_controller.text);

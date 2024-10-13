@@ -18,190 +18,6 @@ import '../utils/helpers/constants.dart';
 import '../models/habitacion_model.dart';
 
 class Dialogs {
-  Widget habitacionDialog({
-    required BuildContext buildContext,
-    Habitacion? cotizacion,
-    void Function(Habitacion?)? onInsert,
-    void Function(Habitacion?)? onUpdate,
-  }) {
-    Habitacion nuevaHabitacion = cotizacion ??
-        Habitacion(
-          categoria: categorias.first,
-          fechaCheckIn: DateTime.now().toString().substring(0, 10),
-          adultos: 0,
-          menores0a6: 0,
-          menores7a12: 0,
-          paxAdic: 0,
-        );
-    final _formKeyHabitacion = GlobalKey<FormState>();
-    TextEditingController _fechaEntrada = TextEditingController(
-        text: cotizacion != null
-            ? cotizacion.fechaCheckIn
-            : DateTime.now().toString().substring(0, 10));
-    TextEditingController _fechaSalida = TextEditingController(
-        text: cotizacion != null
-            ? cotizacion.fechaCheckOut
-            : DateTime.now()
-                .add(const Duration(days: 1))
-                .toString()
-                .substring(0, 10));
-    bool esOferta = cotizacion != null ? cotizacion.esPreventa! : false;
-    bool isError = false;
-
-    return StatefulBuilder(builder: (context, setState) {
-      return AlertDialog(
-        insetPadding: const EdgeInsets.all(10),
-        title: TextStyles.titleText(
-          text: cotizacion != null ? "Editar" : "Agregar" " habitación",
-          color: Theme.of(context).primaryColor,
-        ),
-        content: SingleChildScrollView(
-          child: Form(
-            key: _formKeyHabitacion,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        child: TextStyles.standardText(
-                      text: "Categoría: ",
-                      overClip: true,
-                      color: Theme.of(context).primaryColor,
-                    )),
-                    const SizedBox(width: 15),
-                    CustomDropdown.dropdownMenuCustom(
-                        initialSelection: cotizacion != null
-                            ? cotizacion.categoria!
-                            : categorias.first,
-                        onSelected: (String? value) {
-                          nuevaHabitacion.categoria = value!;
-                        },
-                        elements: categorias,
-                        screenWidth: MediaQuery.of(context).size.width),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child:
-                          TextFormFieldCustom.textFormFieldwithBorderCalendar(
-                        name: "Fecha de entrada",
-                        msgError: "Campo requerido*",
-                        fechaLimite: DateTime.now()
-                            .subtract(const Duration(days: 1))
-                            .toIso8601String()
-                            .substring(0, 10),
-                        dateController: _fechaEntrada,
-                        onChanged: () => setState(
-                          () {
-                            _fechaSalida.text =
-                                Utility.getNextDay(_fechaEntrada.text);
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child:
-                          TextFormFieldCustom.textFormFieldwithBorderCalendar(
-                        name: "Fecha de salida",
-                        msgError: "Campo requerido*",
-                        dateController: _fechaSalida,
-                        fechaLimite: _fechaEntrada.text,
-                      ),
-                    ),
-                  ],
-                ),
-                Table(
-                  children: [
-                    TableRow(children: [
-                      TextStyles.standardText(
-                          text: "Adultos",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor),
-                      TextStyles.standardText(
-                          text: "Menores 0-6",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor),
-                      TextStyles.standardText(
-                          text: "Menores 7-12",
-                          aling: TextAlign.center,
-                          color: Theme.of(context).primaryColor),
-                    ]),
-                    TableRow(children: [
-                      NumberInputWithIncrementDecrement(
-                        onChanged: (p0) {
-                          nuevaHabitacion.adultos = int.tryParse(p0);
-                        },
-                        initialValue: cotizacion?.adultos!.toString(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: NumberInputWithIncrementDecrement(
-                          onChanged: (p0) {
-                            nuevaHabitacion.menores0a6 = int.tryParse(p0);
-                          },
-                          initialValue: cotizacion?.menores0a6!.toString(),
-                        ),
-                      ),
-                      NumberInputWithIncrementDecrement(
-                        onChanged: (p0) {
-                          nuevaHabitacion.menores7a12 = int.tryParse(p0);
-                        },
-                        initialValue: cotizacion?.menores7a12!.toString(),
-                      )
-                    ]),
-                  ],
-                ),
-                SizedBox(
-                    height: 16,
-                    child: isError
-                        ? TextStyles.errorText(
-                            text:
-                                "Se requiere de al menos un adulto para generar la reservación",
-                            size: 12)
-                        : null),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                if (_formKeyHabitacion.currentState!.validate()) {
-                  nuevaHabitacion.fechaCheckIn = _fechaEntrada.text;
-                  nuevaHabitacion.fechaCheckOut = _fechaSalida.text;
-                  nuevaHabitacion.esPreventa = esOferta;
-                  if (nuevaHabitacion.adultos == 0) {
-                    setState(() => isError = true);
-                    return;
-                  } else {
-                    setState(() => isError = false);
-                  }
-
-                  if (onUpdate != null) {
-                    onUpdate.call(nuevaHabitacion);
-                  }
-
-                  Navigator.of(buildContext).pop(nuevaHabitacion);
-                }
-              },
-              child: TextStyles.buttonText(
-                  text: cotizacion != null ? "Editar" : "Agregar")),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(buildContext);
-            },
-            child: TextStyles.buttonText(text: "Cancelar"),
-          ),
-        ],
-      );
-    });
-  }
-
   static Widget tarifaFormDialog({
     required BuildContext context,
     Habitacion? habitacion,
@@ -676,6 +492,7 @@ class Dialogs {
   static AlertDialog customAlertDialog({
     IconData? iconData,
     Color? iconColor,
+    Color? colorTextButton,
     required BuildContext context,
     required String title,
     required String content,
@@ -705,10 +522,14 @@ class Dialogs {
       actions: [
         if (withButtonCancel)
           TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: TextStyles.buttonText(text: nameButtonCancel)),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: TextStyles.buttonText(
+              text: nameButtonCancel,
+              color: colorTextButton,
+            ),
+          ),
         TextButton(
           onPressed: () {
             funtionMain.call();
@@ -716,6 +537,7 @@ class Dialogs {
           },
           child: TextStyles.buttonText(
             text: nameButtonMain,
+            color: colorTextButton,
           ),
         ),
       ],

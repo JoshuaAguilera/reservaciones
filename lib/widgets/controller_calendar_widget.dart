@@ -12,7 +12,7 @@ import '../ui/custom_widgets.dart';
 import '../ui/progress_indicator.dart';
 import '../ui/show_snackbar.dart';
 import '../utils/helpers/utility.dart';
-import 'item_row.dart';
+import 'item_rows.dart';
 import 'text_styles.dart';
 
 class ControllerCalendarWidget extends ConsumerStatefulWidget {
@@ -270,7 +270,7 @@ class _ControllerCalendarWidgetState
                                             const EdgeInsets.only(bottom: 10),
                                         shrinkWrap: true,
                                         itemBuilder: (context, index) {
-                                          return ItemRow.tarifaItemRow(
+                                          return ItemRows.tarifaItemRow(
                                             context,
                                             registroTarifa: list[index],
                                             onEdit: () {
@@ -384,7 +384,7 @@ class _ControllerCalendarWidgetState
                           size: 14,
                         ),
                         children: [
-                          ItemRow.userTarifaItemRow(context,
+                          ItemRows.userTarifaItemRow(context,
                               nameUser: "Neli", rolUser: "Administrador")
                         ],
                       ),

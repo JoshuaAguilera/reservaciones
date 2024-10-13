@@ -4,22 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
 import 'package:generador_formato/widgets/controller_calendar_widget.dart';
-import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../utils/helpers/web_colors.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 
-class ItemRow {
+class ItemRows {
   static Widget statusQuoteRow(NumeroCotizacion register) {
     return Container(
       decoration: BoxDecoration(
@@ -118,121 +115,6 @@ class ItemRow {
                 ),
               ),
       ),
-    );
-  }
-
-  static TableRow tableRowTarifaDay(
-    BuildContext context, {
-    required Habitacion habitacion,
-    required double screenWidth,
-    required TarifaXDia tarifaXDia,
-    void Function()? setState,
-  }) {
-    RegistroTarifa? tarifa = tarifaXDia.tarifa == null
-        ? null
-        : RegistroTarifa(
-            tarifas: [tarifaXDia.tarifa!],
-            temporadas: tarifaXDia.temporadaSelect != null
-                ? [tarifaXDia.temporadaSelect!]
-                : []);
-
-    double tarifaAdulto = Utility.calculateTariffAdult(
-      tarifa,
-      habitacion,
-      habitacion.tarifaXDia!.length,
-      descuentoProvisional: tarifaXDia.descuentoProvisional,
-    );
-
-    double tarifaMenores = Utility.calculateTariffChildren(
-      tarifa,
-      habitacion,
-      habitacion.tarifaXDia!.length,
-      descuentoProvisional: tarifaXDia.descuentoProvisional,
-    );
-
-    void showDialogManagerTariff() {
-      showDialog(
-        context: context,
-        builder: (context) => ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
-      ).then(
-        (value) {
-          if (value != null) {
-            tarifa = tarifaXDia.tarifa == null
-                ? null
-                : RegistroTarifa(
-                    tarifas: [tarifaXDia.tarifa!],
-                    temporadas: tarifaXDia.temporadaSelect != null
-                        ? [tarifaXDia.temporadaSelect!]
-                        : []);
-            setState!.call();
-          }
-        },
-      );
-    }
-
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 11.0),
-          child: Center(
-            child: TextStyles.standardText(
-                text: tarifaXDia.fecha!.toIso8601String().substring(0, 10),
-                color: Theme.of(context).primaryColor,
-                size: 14),
-          ),
-        ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber(tarifaAdulto),
-              color: Theme.of(context).primaryColor,
-              size: 14),
-        ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber(tarifaMenores),
-              color: Theme.of(context).primaryColor,
-              size: 14),
-        ),
-        if (screenWidth > 1400)
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber(0),
-              color: Theme.of(context).primaryColor,
-              size: 14),
-        ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber((tarifaAdulto + tarifaMenores)),
-              color: Theme.of(context).primaryColor,
-              size: 14),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (screenWidth > 1400)
-              Buttons.commonButton(
-                onPressed: () => showDialogManagerTariff(),
-                text: "Editar",
-                color: tarifaXDia.color,
-                colorText: tarifaXDia.color == null
-                    ? Colors.white
-                    : useWhiteForeground(tarifaXDia.color!)
-                        ? Colors.white
-                        : const Color.fromARGB(255, 43, 43, 43),
-              )
-            else
-              IconButton(
-                onPressed: () => showDialogManagerTariff(),
-                tooltip: "Editar",
-                icon: Icon(
-                  CupertinoIcons.pencil,
-                  size: 30,
-                  color: tarifaXDia.color ?? DesktopColors.cerulean,
-                ),
-              ),
-          ],
-        )
-      ],
     );
   }
 

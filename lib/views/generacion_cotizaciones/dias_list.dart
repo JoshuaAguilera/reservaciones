@@ -7,7 +7,8 @@ import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/check_listtile_tariff_widget.dart';
-import 'package:generador_formato/widgets/item_row.dart';
+import 'package:generador_formato/widgets/item_rows.dart';
+import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -90,7 +91,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 7, childAspectRatio: 1),
                           itemBuilder: (context, index) {
-                            return ItemRow.getTitleDay(
+                            return ItemRows.getTitleDay(
                               title: 0,
                               withOutDay: true,
                               subTitle: daysNameShort[index],
@@ -114,7 +115,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                                     ink <
                                         checkIn.difference(checkInLimit).inDays;
                                     ink++)
-                                  ItemRow.dayRateRow(
+                                  ItemRows.dayRateRow(
                                     context: context,
                                     day: checkInLimit
                                         .add(Duration(days: ink))
@@ -125,7 +126,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                                     sideController: widget.sideController,
                                   ),
                                 for (var element in list)
-                                  ItemRow.dayRateRow(
+                                  ItemRows.dayRateRow(
                                     context: context,
                                     inPeriod: true,
                                     sideController: widget.sideController,
@@ -138,7 +139,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                                                 .inDays -
                                             1;
                                     ink++)
-                                  ItemRow.dayRateRow(
+                                  ItemRows.dayRateRow(
                                     context: context,
                                     day: checkOut
                                         .add(Duration(days: ink + 1))
@@ -221,7 +222,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                             for (var element in [
                               "Fecha",
                               "Tarifa Adultos",
-                              "Tarifa Menores de 7 a 12 años",
+                              ((screenWidth > 1400) ? "Tarifa Menores de 7 a 12 años" : "Men. 7 a 12"),
                               if (screenWidth > 1400)
                                 "Tarifa Menores de 0 a 6 años",
                               "Tarifa Total",
@@ -232,10 +233,11 @@ class _DiasListState extends ConsumerState<DiasList> {
                                     const EdgeInsets.symmetric(vertical: 5.0),
                                 child: Center(
                                   child: TextStyles.standardText(
-                                      text: element,
-                                      isBold: true,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 14),
+                                    text: element,
+                                    isBold: true,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 12,
+                                  ),
                                 ),
                               ),
                           ],
@@ -256,7 +258,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                           ),
                           children: [
                             for (var element in list)
-                              ItemRow.tableRowTarifaDay(
+                              TableRows.tableRowTarifaDay(
                                 context,
                                 habitacion: habitacionProvider,
                                 screenWidth: screenWidth,
