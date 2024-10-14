@@ -90,7 +90,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   border: TableBorder(
                     verticalInside: BorderSide(
                       color: Theme.of(context).primaryColorLight,
-                      width: 2.5,
+                      width: 2,
                     ),
                   ),
                   columnWidths: const {
@@ -145,6 +145,15 @@ class _HabitacionesListState extends State<HabitacionesList> {
                 ),
               ),
             ),
+            if (widget.habitaciones.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 18.0),
+                child: CustomWidgets.messageNotResult(
+                  context: context,
+                  sizeImage: 90,
+                  message: "Sin habitaciones asignadas",
+                ),
+              ),
           ],
         ),
       ),

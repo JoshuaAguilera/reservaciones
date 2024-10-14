@@ -91,6 +91,9 @@ class _SummaryControllerWidgetState
                                       children: [
                                         CustomWidgets.expansionTileList(
                                           title: "Hab. Vista Reserva:",
+                                          colorText: showListVR
+                                              ? null
+                                              : DesktopColors.azulUltClaro,
                                           showList: showListVR,
                                           collapsedBackgroundColor:
                                               DesktopColors.cotIndColor,
@@ -115,7 +118,12 @@ class _SummaryControllerWidgetState
                                                     .toList())
                                               CustomWidgets.itemListCount(
                                                 nameItem:
-                                                    "${element.fechaCheckIn} a ${element.fechaCheckOut}",
+                                                    "${element.count}x ${Utility.getStringPeriod(
+                                                  initDate: DateTime.parse(
+                                                      element.fechaCheckIn!),
+                                                  lastDate: DateTime.parse(
+                                                      element.fechaCheckOut!),
+                                                )}",
                                                 count: element.totalReal ?? 0,
                                                 context: context,
                                                 sizeText: 11.5,

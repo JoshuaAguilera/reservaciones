@@ -278,7 +278,7 @@ class _ManagerTariffDayWidgetState
                               activeColor: widget.tarifaXDia.color,
                               title: "Aplicar en toda la tarifa",
                               description:
-                                  "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTarif}\").",
+                                  "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTarif}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
                               value: applyAllTariff,
                               onChanged: (value) => setState(() {
                                 applyAllTariff = value!;
@@ -400,8 +400,11 @@ class _ManagerTariffDayWidgetState
             onPressed: () {
               if (!_formKeyTariffDay.currentState!.validate()) return;
 
-              if (!detectFixInChanges() && widget.tarifaXDia.tarifa != null) {
-                print("Sin cambios");
+              if (!detectFixInChanges() &&
+                  widget.tarifaXDia.tarifa != null &&
+                  !applyAllDays &&
+                  !applyAllNoTariff &&
+                  !applyAllDays) {
                 Navigator.pop(context);
                 return;
               }
@@ -439,7 +442,9 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllNoTariff && !isUnknow) {
-                widget.tarifaXDia.subCode = UniqueKey().hashCode.toString();
+                widget.tarifaXDia.subCode = !detectFixInChanges()
+                    ? null
+                    : UniqueKey().hashCode.toString();
 
                 for (var element in habitacionProvider.tarifaXDia!
                     .where((element) => element.code!.contains("Unknow"))) {
@@ -454,7 +459,6 @@ class _ManagerTariffDayWidgetState
                   element.tarifas = widget.tarifaXDia.tarifas;
                   element.periodo = widget.tarifaXDia.periodo;
                 }
-                
               }
 
               if (applyAllNoTariff && isUnknow) {
@@ -617,9 +621,9 @@ class _ManagerTariffDayWidgetState
           double.parse(_tarifaPaxAdicionalController.text)) return true;
     }
 
-    if (applyAllDays) return true;
-    if (applyAllNoTariff) return true;
-    if (applyAllTariff) return true;
+    // if (applyAllDays) return true;
+    // if (applyAllNoTariff) return true;
+    // if (applyAllTariff) return true;
 
     return withChanges;
   }

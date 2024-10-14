@@ -235,7 +235,7 @@ class Utility {
 
     DateTime firstDayNextMonth = DateTime(nextMonthYear, nextMonth, 1);
     DateTime lastDayCurrentMonth =
-        firstDayNextMonth.subtract(Duration(days: 1));
+        firstDayNextMonth.subtract(const Duration(days: 1));
 
     return lastDayCurrentMonth.day;
   }
@@ -246,9 +246,6 @@ class Utility {
 
     NumeroCotizacion cotizacionesGrupales =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales");
-
-    // NumeroCotizacion cotizacionesGrupalesPreventa =
-    //     NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales en Preventa");
 
     NumeroCotizacion cotizacionesIndividuales =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones individuales");
@@ -267,7 +264,6 @@ class Utility {
     cot.addAll([
       cotizacionesGrupales,
       cotizacionesIndividuales,
-      // cotizacionesGrupalesPreventa,
       cotizacionesIndividualesPreventa,
     ]);
 

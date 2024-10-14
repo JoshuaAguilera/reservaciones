@@ -376,8 +376,6 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                 ),
-              if (MediaQuery.of(context).size.width > 1460)
-                const SizedBox(height: 8),
               if (MediaQuery.of(context).size.width > 1490)
                 SizedBox(
                   width:

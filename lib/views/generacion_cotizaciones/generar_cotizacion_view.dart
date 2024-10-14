@@ -70,14 +70,23 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final folio = ref.watch(uniqueFolioProvider);
 
     void _goDetailRoom(Habitacion habitacion) {
-      ref.read(habitacionSelectProvider.notifier).update((state) => habitacion);
+      Habitacion habitacionSelect = habitacion.CopyWith();
+      habitacionSelect.tarifaXDia = [];
+      for (var element in habitacion.tarifaXDia!) {
+        habitacionSelect.tarifaXDia!.add(element.copyWith());
+      }
 
+      ref
+          .read(habitacionSelectProvider.notifier)
+          .update((state) => habitacionSelect);
       final tarifasProvider = TarifasProvisionalesProvider.provider;
       ref.read(tarifasProvider.notifier).clear();
-
       ref.read(descuentoProvisionalProvider.notifier).update((state) => 0);
-
       setState(() => targetHabitaciones = 0);
+      ref
+          .read(detectChangeProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
       Future.delayed(
         800.ms,
         () => setState(
@@ -255,7 +264,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           .toString()
                                           .substring(0, 10),
                                     )),
-                                    editRoom: (p0) => _goDetailRoom(p0),
+                                    editRoom: (p0) =>
+                                        _goDetailRoom(p0.CopyWith()),
                                     sideController: widget.sideController,
                                     habitaciones: habitaciones,
                                   ),

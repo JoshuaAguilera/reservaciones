@@ -232,9 +232,10 @@ class _TableRowCotizacionState extends State<_TableRowCotizacion> {
                                     sizeIcons: 14,
                                     height: 10,
                                     focused: true,
+                                    colorText: colorText,
                                     maxValue: 106,
-                                    onDecrement: (p0) => setState(
-                                        () => widget.habitacion.count = p0),
+                                    onDecrement: (p0) => setState(() => widget
+                                        .habitacion.count = p0 < 1 ? 1 : p0),
                                     onIncrement: (p0) => setState(
                                         () => widget.habitacion.count = p0),
                                   ),
@@ -353,11 +354,52 @@ class _ListTileCotizacionState extends State<_ListTileCotizacion> {
         ),
         trailing: widget.esDetalle
             ? null
-            : CustomWidgets.compactOptions(
-                context,
-                onPreseedDelete: widget.onPressedDelete,
-                onPreseedEdit: widget.onPressedEdit,
-                colorIcon: colorText,
+            : Wrap(
+                spacing: 5,
+                children: [
+                  SizedBox(
+                    width: 87,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextStyles.standardText(
+                          text: "Cant: ",
+                          color: colorText,
+                          size: 12,
+                        ),
+                        SizedBox(
+                          width: 50,
+                          height: 40,
+                          child: NumberInputWithIncrementDecrement(
+                            onChanged: (p0) => setState(() => widget.habitacion
+                                .count = p0.isEmpty ? 1 : int.parse(p0)),
+                            initialValue: widget.habitacion.count.toString(),
+                            minimalValue: 1,
+                            sizeIcons: 14,
+                            height: 10,
+                            focused: true,
+                            colorText: colorText,
+                            maxValue: 106,
+                            onDecrement: (p0) => setState(() =>
+                                widget.habitacion.count = p0 < 1 ? 1 : p0),
+                            onIncrement: (p0) =>
+                                setState(() => widget.habitacion.count = p0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 35,
+                    width: 40,
+                    child: CustomWidgets.compactOptions(
+                      context,
+                      onPreseedDelete: widget.onPressedDelete,
+                      onPreseedEdit: widget.onPressedEdit,
+                      colorIcon: colorText,
+                    ),
+                  ),
+                ],
               ),
         isThreeLine: true,
       ),

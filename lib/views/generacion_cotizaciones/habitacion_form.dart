@@ -46,6 +46,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     const Icon(Icons.dehaze_sharp),
   ];
   double target = 1;
+  bool isEditing = false;
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -93,7 +94,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   children: [
                     CustomWidgets.titleFormPage(
                       context: context,
-                      title: "Nueva Habitación",
+                      title:
+                          isEditing ? "Editar Habitación" : "Nueva Habitación",
                       showSaveButton: false,
                       onPressedBack: () {
                         if (target == 1) {
@@ -107,6 +109,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     tarifaProvider.when(
                       data: (list) {
                         if (!startflow) {
+                          isEditing = habitacionProvider.tarifaXDia!.isNotEmpty;
                           if (list.isEmpty) {
                             Future.delayed(
                               600.ms,
@@ -244,10 +247,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                             _fechaSalida.text;
 
                                                         getTarifasSelect(
-                                                            list,
-                                                            habitacionProvider,
-                                                            tarifasProvisionalesProvider,
-                                                            descuentoProvider);
+                                                          list,
+                                                          habitacionProvider,
+                                                          tarifasProvisionalesProvider,
+                                                          descuentoProvider,
+                                                          refreshTariff:
+                                                              isEditing,
+                                                        );
                                                         Future.delayed(
                                                           Durations.medium1,
                                                           () => setState(
@@ -285,6 +291,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                           habitacionProvider,
                                                           tarifasProvisionalesProvider,
                                                           descuentoProvider,
+                                                          refreshTariff:
+                                                              isEditing,
                                                         );
                                                         Future.delayed(
                                                             Durations.medium1,
@@ -495,7 +503,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                               ),
                             const SizedBox(height: 15),
                           ],
-                        ).animate(target: target).fadeIn(duration: 500.ms);
+                        ).animate(target: target).fadeIn(duration: 400.ms);
                       },
                       error: (error, stackTrace) => SizedBox(
                           height: 150,
@@ -531,9 +539,23 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   onPressed: () {
                     final habitacionesProvider = HabitacionProvider.provider;
 
-                    ref
-                        .read(habitacionesProvider.notifier)
-                        .addItem(habitacionProvider);
+                    if (!isEditing) {
+                      habitacionProvider.folioHabitacion = UniqueKey()
+                          .toString()
+                          .replaceAll('[', '')
+                          .replaceAll(']', '');
+                      print(habitacionProvider.folioHabitacion);
+                    }
+
+                    if (isEditing) {
+                      ref
+                          .read(habitacionesProvider.notifier)
+                          .editItem(habitacionProvider);
+                    } else {
+                      ref
+                          .read(habitacionesProvider.notifier)
+                          .addItem(habitacionProvider);
+                    }
 
                     if (target == 1) {
                       setState(() => target = 0);
@@ -542,7 +564,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           500.ms, () => widget.sideController.selectIndex(1));
                     }
                   },
-                ).animate(target: target).fadeIn(duration: 500.ms);
+                ).animate(target: target).fadeIn(duration: 800.ms);
               },
               error: (error, stackTrace) => const SizedBox(),
               loading: () => const SizedBox(),
@@ -574,7 +596,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
   void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion,
       List<TarifaData> tarifasProvisionales, double descuentoProvisional,
-      {bool onlyCategory = false}) {
+      {bool onlyCategory = false, bool refreshTariff = false}) {
     if (onlyCategory) {
       for (var tariffDay in habitacion.tarifaXDia!) {
         tariffDay.categoria = habitacion.categoria;
@@ -597,6 +619,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         }
       }
     } else {
+      if (isEditing && !refreshTariff) return;
+
       habitacion.tarifaXDia!.clear();
 
       int days = DateTime.parse(_fechaSalida.text)

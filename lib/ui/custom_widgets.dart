@@ -315,12 +315,14 @@ class CustomWidgets {
     );
   }
 
-  static Widget messageNotResult(
-      {double sizeMessage = 11,
-      required BuildContext context,
-      double sizeImage = 120,
-      double? screenWidth,
-      bool extended = false}) {
+  static Widget messageNotResult({
+    double sizeMessage = 11,
+    required BuildContext context,
+    double sizeImage = 120,
+    double? screenWidth,
+    bool extended = false,
+    String message = "No se encontraron resultados",
+  }) {
     return SizedBox(
       width: screenWidth != null
           ? (screenWidth > 1280)
@@ -340,7 +342,7 @@ class CustomWidgets {
               height: sizeImage,
             ),
             TextStyles.standardText(
-              text: "No se encontraron resultados",
+              text: message,
               size: sizeMessage,
               color: Theme.of(context).primaryColor,
             ),
@@ -727,6 +729,7 @@ class CustomWidgets {
     required List<Widget> children,
     Color? collapsedBackgroundColor,
     bool overClipText = false,
+    Color? colorText,
   }) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.all(4),
@@ -741,7 +744,7 @@ class CustomWidgets {
           Expanded(
             child: TextStyles.standardText(
               text: title,
-              color: Theme.of(context).primaryColor,
+              color: colorText ?? Theme.of(context).primaryColor,
               size: 13,
               overClip: overClipText,
             ),
@@ -751,13 +754,13 @@ class CustomWidgets {
                 ? Icons.keyboard_arrow_up_rounded
                 : Icons.keyboard_arrow_down_rounded,
             size: 20,
-            color: Theme.of(context).primaryColor,
+            color: colorText ?? Theme.of(context).primaryColor,
           ),
         ],
       ),
       trailing: TextStyles.standardText(
         text: Utility.formatterNumber(total),
-        color: Theme.of(context).primaryColor,
+        color: colorText ?? Theme.of(context).primaryColor,
         size: 13,
       ),
       children: children.isNotEmpty

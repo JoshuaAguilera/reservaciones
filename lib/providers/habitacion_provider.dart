@@ -22,8 +22,13 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
     state = [...state, item];
   }
 
-  void remove(int id) =>
-      state = [...state.where((element) => element.id != id)];
+  void editItem(Habitacion item) {
+    remove(item.folioHabitacion ?? '');
+    addItem(item);
+  }
+
+  void remove(String folio) =>
+    state.removeWhere((element) => element.folioHabitacion == folio);
 
   void clear() => state = [];
 

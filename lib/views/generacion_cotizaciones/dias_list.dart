@@ -222,7 +222,9 @@ class _DiasListState extends ConsumerState<DiasList> {
                             for (var element in [
                               "Fecha",
                               "Tarifa Adultos",
-                              ((screenWidth > 1400) ? "Tarifa Menores de 7 a 12 años" : "Men. 7 a 12"),
+                              ((screenWidth > 1400)
+                                  ? "Tarifa Menores de 7 a 12 años"
+                                  : "Men. 7 a 12"),
                               if (screenWidth > 1400)
                                 "Tarifa Menores de 0 a 6 años",
                               "Tarifa Total",

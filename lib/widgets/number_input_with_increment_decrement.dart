@@ -11,6 +11,7 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
   final double? sizeIcons;
   final double? height;
   final bool focused;
+  final Color? colorText;
 
   const NumberInputWithIncrementDecrement({
     super.key,
@@ -23,6 +24,7 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
     this.sizeIcons,
     this.height,
     this.focused = false,
+    this.colorText,
   });
 
   @override
@@ -48,7 +50,7 @@ class _NumberInputWithIncrementDecrementState
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.black38),
+        border: Border.all(color: widget.colorText ?? Colors.black38),
       ),
       constraints: const BoxConstraints(
         minWidth: 40,
@@ -66,7 +68,10 @@ class _NumberInputWithIncrementDecrementState
                 absorbing: !widget.focused,
                 child: Focus(
                   onFocusChange: (value) {
-                    if (!value && _controller.text.isEmpty) {
+                    if (!value &&
+                        (_controller.text.isEmpty ||
+                            int.parse(_controller.text) <
+                                widget.minimalValue!)) {
                       setState(() =>
                           _controller.text = widget.minimalValue!.toString());
                     }
@@ -74,8 +79,10 @@ class _NumberInputWithIncrementDecrementState
                   child: TextFormField(
                     onChanged: (value) => widget.onChanged.call(value),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontFamily: "poppins_regular", fontSize: 13),
+                    style: TextStyle(
+                        fontFamily: "poppins_regular",
+                        fontSize: 13,
+                        color: widget.colorText),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       labelStyle: TextStyle(
