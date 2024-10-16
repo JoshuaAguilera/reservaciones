@@ -42,11 +42,13 @@ class _SummaryControllerWidgetState
   List<TarifaXDia> tarifasFiltradas = [];
   double totalRoom = 0;
   double totalRealRoom = 0;
+  double discount = 0;
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     final listTariffProvider = ref.watch(listTariffDayProvider);
+    final listRoomProviderView = ref.watch(listRoomProvider);
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
 
@@ -87,89 +89,71 @@ class _SummaryControllerWidgetState
                                 children: [
                                   const SizedBox(height: 35),
                                   if (!widget.calculateRoom)
-                                    Column(
-                                      children: [
-                                        CustomWidgets.expansionTileList(
-                                          title: "Hab. Vista Reserva:",
-                                          colorText: showListVR
-                                              ? null
-                                              : DesktopColors.azulUltClaro,
-                                          showList: showListVR,
-                                          collapsedBackgroundColor:
-                                              DesktopColors.cotIndColor,
-                                          onExpansionChanged: (value) =>
-                                              setState(
-                                                  () => showListVR = value),
-                                          context: context,
-                                          messageNotFound: "Sin habitaciones",
-                                          total: calculateTotalRooms(
-                                            habitacionesProvider,
-                                            onlyFirstCategory: true,
-                                            onlyTotalReal: true,
-                                          ),
+                                    listRoomProviderView.when(
+                                      data: (data) {
+                                        return Column(
                                           children: [
-                                            for (var element
-                                                in habitacionesProvider
-                                                    .where(
-                                                      (element) =>
-                                                          element.categoria ==
-                                                          tipoHabitacion.first,
-                                                    )
-                                                    .toList())
-                                              CustomWidgets.itemListCount(
-                                                nameItem:
-                                                    "${element.count}x ${Utility.getStringPeriod(
-                                                  initDate: DateTime.parse(
-                                                      element.fechaCheckIn!),
-                                                  lastDate: DateTime.parse(
-                                                      element.fechaCheckOut!),
-                                                )}",
-                                                count: element.totalReal ?? 0,
-                                                context: context,
-                                                sizeText: 11.5,
-                                              ),
+                                            roomExpansionTileList(
+                                              showList: showListVR,
+                                              habitaciones:
+                                                  habitacionesProvider,
+                                              isVR: true,
+                                              changeColor: true,
+                                              onExpansionChanged: (p0) =>
+                                                  setState(
+                                                      () => showListVR = p0),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            roomExpansionTileList(
+                                              showList: showListVPM,
+                                              habitaciones:
+                                                  habitacionesProvider,
+                                              isVR: false,
+                                              onExpansionChanged: (p0) =>
+                                                  showListVR = p0,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Divider(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ],
-                                        ),
-                                        const SizedBox(height: 5),
-                                        CustomWidgets.expansionTileList(
-                                          title: "Hab. Vista Parcial al Mar:",
-                                          overClipText: true,
-                                          showList: showListVPM,
-                                          collapsedBackgroundColor:
-                                              DesktopColors.cotIndPreColor,
-                                          onExpansionChanged: (value) =>
-                                              setState(
-                                                  () => showListVPM = value),
-                                          context: context,
-                                          messageNotFound: "Sin habitaciones",
-                                          total: calculateTotalRooms(
-                                            habitacionesProvider,
-                                            onlySecoundCategory: true,
-                                            onlyTotalReal: true,
-                                          ),
+                                        );
+                                      },
+                                      error: (error, stackTrace) =>
+                                          TextStyles.standardText(
+                                              text:
+                                                  "Error de calculación de habitaciones.",
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                      loading: () {
+                                        return Column(
                                           children: [
-                                            for (var element
-                                                in habitacionesProvider
-                                                    .where(
-                                                      (element) =>
-                                                          element.categoria ==
-                                                          tipoHabitacion[1],
-                                                    )
-                                                    .toList())
-                                              CustomWidgets.itemListCount(
-                                                nameItem:
-                                                    "${element.fechaCheckIn} a ${element.fechaCheckOut}",
-                                                count: element.totalReal ?? 0,
-                                                context: context,
-                                                sizeText: 11.5,
-                                              ),
+                                            roomExpansionTileList(
+                                              showList: showListVR,
+                                              habitaciones:
+                                                  habitacionesProvider,
+                                              isVR: true,
+                                              changeColor: true,
+                                              onExpansionChanged: (p0) =>
+                                                  setState(
+                                                      () => showListVR = p0),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            roomExpansionTileList(
+                                              showList: showListVPM,
+                                              habitaciones:
+                                                  habitacionesProvider,
+                                              isVR: false,
+                                              onExpansionChanged: (p0) =>
+                                                  showListVR = p0,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Divider(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ],
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Divider(
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      ],
+                                        );
+                                      },
                                     )
                                   else
                                     Column(
@@ -306,7 +290,7 @@ class _SummaryControllerWidgetState
                                   if (!widget.calculateRoom)
                                     CustomWidgets.itemListCount(
                                       nameItem: "Descuento:",
-                                      count: calculateTotalRooms(
+                                      count: -calculateTotalRooms(
                                         habitacionesProvider,
                                         onlyDiscount: true,
                                       ),
@@ -559,11 +543,57 @@ class _SummaryControllerWidgetState
     }
 
     for (var element in rooms) {
-      if (onlyTotalReal) total += element.totalReal ?? 0;
-      if (onlyDiscount) total += element.descuento ?? 0;
-      if (onlyTotal) total += element.total ?? 0;
+      if (onlyTotalReal) total += (element.totalReal ?? 0) * element.count;
+      if (onlyDiscount) total += (element.descuento ?? 0) * element.count;
+      if (onlyTotal) total += (element.total ?? 0) * element.count;
     }
 
     return total;
+  }
+
+  Widget roomExpansionTileList(
+      {bool isVR = true,
+      required bool showList,
+      required List<Habitacion> habitaciones,
+      bool changeColor = false,
+      required void Function(bool) onExpansionChanged}) {
+    return CustomWidgets.expansionTileList(
+      title: isVR ? "Hab. Vista Reserva:" : "Hab. Vista Parcial al Mar:",
+      colorText: (!changeColor)
+          ? null
+          : (showList)
+              ? null
+              : DesktopColors.azulUltClaro,
+      showList: showList,
+      collapsedBackgroundColor:
+          !isVR ? DesktopColors.cotIndPreColor : DesktopColors.cotIndColor,
+      onExpansionChanged: onExpansionChanged,
+      context: context,
+      messageNotFound: "Sin habitaciones",
+      total: calculateTotalRooms(
+        habitaciones,
+        onlyFirstCategory: isVR,
+        onlySecoundCategory: !isVR,
+        onlyTotalReal: true,
+      ),
+      children: [
+        for (var element in habitaciones
+            .where(
+              (element) =>
+                  element.categoria ==
+                  (isVR ? tipoHabitacion.first : tipoHabitacion[1]),
+            )
+            .toList())
+          CustomWidgets.itemListCount(
+            nameItem: "${element.count}x ${Utility.getStringPeriod(
+              initDate: DateTime.parse(element.fechaCheckIn!),
+              lastDate: DateTime.parse(element.fechaCheckOut!),
+            )}",
+            count: element.totalReal ?? 0,
+            context: context,
+            sizeText: 11.5,
+          ),
+      ],
+    );
   }
 }

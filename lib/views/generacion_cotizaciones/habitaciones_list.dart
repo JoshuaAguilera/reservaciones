@@ -9,15 +9,18 @@ import '../../widgets/habitacion_item_row.dart';
 import '../../widgets/text_styles.dart';
 
 class HabitacionesList extends StatefulWidget {
-  const HabitacionesList(
-      {super.key,
-      required this.newRoom,
-      required this.editRoom,
-      required this.sideController,
-      required this.habitaciones});
+  const HabitacionesList({
+    super.key,
+    required this.newRoom,
+    required this.editRoom,
+    required this.sideController,
+    required this.habitaciones,
+    required this.deleteRoom,
+  });
 
   final void Function()? newRoom;
   final void Function(Habitacion)? editRoom;
+  final void Function()? deleteRoom;
   final SidebarXController sideController;
   final List<Habitacion> habitaciones;
 
@@ -134,9 +137,11 @@ class _HabitacionesListState extends State<HabitacionesList> {
                         index: index,
                         habitacion: widget.habitaciones[index],
                         isTable: viewTable,
-                        onPressedDelete: () => setState(() => widget
-                            .habitaciones
-                            .remove(widget.habitaciones[index])),
+                        onPressedDelete: () {
+                          setState(() => widget.habitaciones
+                              .remove(widget.habitaciones[index]));
+                          widget.deleteRoom!.call();
+                        },
                         onPressedEdit: () =>
                             widget.editRoom!.call(widget.habitaciones[index]),
                       );

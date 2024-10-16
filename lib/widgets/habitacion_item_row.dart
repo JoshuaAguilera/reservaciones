@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 
+import '../providers/habitacion_provider.dart';
 import '../utils/helpers/web_colors.dart';
 import 'dialogs.dart';
 import 'number_input_with_increment_decrement.dart';
@@ -105,7 +107,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
   }
 }
 
-class _TableRowCotizacion extends StatefulWidget {
+class _TableRowCotizacion extends ConsumerStatefulWidget {
   final int index;
   final Habitacion habitacion;
   final void Function()? onPressedEdit;
@@ -122,10 +124,10 @@ class _TableRowCotizacion extends StatefulWidget {
   });
 
   @override
-  State<_TableRowCotizacion> createState() => _TableRowCotizacionState();
+  _TableRowCotizacionState createState() => _TableRowCotizacionState();
 }
 
-class _TableRowCotizacionState extends State<_TableRowCotizacion> {
+class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
   @override
   Widget build(BuildContext context) {
     Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
@@ -134,6 +136,13 @@ class _TableRowCotizacionState extends State<_TableRowCotizacion> {
     Color colorText = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
+
+    void updateList(int value) {
+      setState(() => widget.habitacion.count = value);
+      ref
+          .read(detectChangeRoomProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+    }
 
     return Card(
       color: colorCard,
@@ -223,9 +232,8 @@ class _TableRowCotizacionState extends State<_TableRowCotizacion> {
                                   width: 50,
                                   height: 40,
                                   child: NumberInputWithIncrementDecrement(
-                                    onChanged: (p0) => setState(() =>
-                                        widget.habitacion.count =
-                                            p0.isEmpty ? 1 : int.parse(p0)),
+                                    onChanged: (p0) => updateList(
+                                        p0.isEmpty ? 1 : int.parse(p0)),
                                     initialValue:
                                         widget.habitacion.count.toString(),
                                     minimalValue: 1,
@@ -234,10 +242,9 @@ class _TableRowCotizacionState extends State<_TableRowCotizacion> {
                                     focused: true,
                                     colorText: colorText,
                                     maxValue: 106,
-                                    onDecrement: (p0) => setState(() => widget
-                                        .habitacion.count = p0 < 1 ? 1 : p0),
-                                    onIncrement: (p0) => setState(
-                                        () => widget.habitacion.count = p0),
+                                    onDecrement: (p0) =>
+                                        updateList(p0 < 1 ? 1 : p0),
+                                    onIncrement: (p0) => updateList(p0),
                                   ),
                                 ),
                               ],
@@ -265,7 +272,7 @@ class _TableRowCotizacionState extends State<_TableRowCotizacion> {
   }
 }
 
-class _ListTileCotizacion extends StatefulWidget {
+class _ListTileCotizacion extends ConsumerStatefulWidget {
   final int index;
   final Habitacion habitacion;
   final void Function()? onPressedEdit;
@@ -282,10 +289,10 @@ class _ListTileCotizacion extends StatefulWidget {
   });
 
   @override
-  State<_ListTileCotizacion> createState() => _ListTileCotizacionState();
+  _ListTileCotizacionState createState() => _ListTileCotizacionState();
 }
 
-class _ListTileCotizacionState extends State<_ListTileCotizacion> {
+class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   @override
   Widget build(BuildContext context) {
     Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
@@ -294,6 +301,13 @@ class _ListTileCotizacionState extends State<_ListTileCotizacion> {
     Color colorText = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
+
+    void updateList(int value) {
+      setState(() => widget.habitacion.count = value);
+      ref
+          .read(detectChangeRoomProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+    }
 
     return Card(
       color: colorCard,
@@ -371,8 +385,8 @@ class _ListTileCotizacionState extends State<_ListTileCotizacion> {
                           width: 50,
                           height: 40,
                           child: NumberInputWithIncrementDecrement(
-                            onChanged: (p0) => setState(() => widget.habitacion
-                                .count = p0.isEmpty ? 1 : int.parse(p0)),
+                            onChanged: (p0) =>
+                                updateList(p0.isEmpty ? 1 : int.parse(p0)),
                             initialValue: widget.habitacion.count.toString(),
                             minimalValue: 1,
                             sizeIcons: 14,
@@ -380,10 +394,8 @@ class _ListTileCotizacionState extends State<_ListTileCotizacion> {
                             focused: true,
                             colorText: colorText,
                             maxValue: 106,
-                            onDecrement: (p0) => setState(() =>
-                                widget.habitacion.count = p0 < 1 ? 1 : p0),
-                            onIncrement: (p0) =>
-                                setState(() => widget.habitacion.count = p0),
+                            onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                            onIncrement: (p0) => updateList(p0),
                           ),
                         ),
                       ],

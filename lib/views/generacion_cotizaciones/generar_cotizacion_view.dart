@@ -266,6 +266,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     )),
                                     editRoom: (p0) =>
                                         _goDetailRoom(p0.CopyWith()),
+                                    deleteRoom: () => ref
+                                        .read(detectChangeRoomProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode),
                                     sideController: widget.sideController,
                                     habitaciones: habitaciones,
                                   ),

@@ -6,12 +6,9 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class HabitacionProvider extends StateNotifier<List<Habitacion>> {
-  HabitacionProvider() : super([]);
-
-  static final provider =
-      StateNotifierProvider<HabitacionProvider, List<Habitacion>>(
-          (ref) => HabitacionProvider());
+class HabitacionProvider extends Notifier<List<Habitacion>> {
+  @override
+  List<Habitacion> build() => [];
 
   Habitacion _current = Habitacion();
   Habitacion get current => _current;
@@ -27,8 +24,13 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
     addItem(item);
   }
 
+  void changeCountItem(String? folio, int count) {
+    state.firstWhere((element) => element.folioHabitacion == folio).count =
+        count;
+  }
+
   void remove(String folio) =>
-    state.removeWhere((element) => element.folioHabitacion == folio);
+      state.removeWhere((element) => element.folioHabitacion == folio);
 
   void clear() => state = [];
 
@@ -36,6 +38,11 @@ class HabitacionProvider extends StateNotifier<List<Habitacion>> {
       pdfPrinc = await GeneradorDocService()
           .generarComprobanteCotizacionIndividual(
               habitaciones: state, cotizacion: cotizacion);
+
+  //Definición del provider
+  static final provider =
+      NotifierProvider<HabitacionProvider, List<Habitacion>>(
+          HabitacionProvider.new);
 }
 
 final habitacionSelectProvider =
@@ -46,6 +53,14 @@ final detectChangeProvider = StateProvider<int>((ref) => 0);
 final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   final detectChanged = ref.watch(detectChangeProvider);
   final list = ref.watch(habitacionSelectProvider).tarifaXDia ?? [];
+  return list;
+});
+
+final detectChangeRoomProvider = StateProvider<int>((ref) => 0);
+
+final listRoomProvider = FutureProvider<List<Habitacion>>((ref) async {
+  final detectChanged = ref.watch(detectChangeRoomProvider);
+  final list = ref.watch(HabitacionProvider.provider);
   return list;
 });
 
