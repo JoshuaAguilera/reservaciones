@@ -153,6 +153,7 @@ class TextFormFieldCustom {
     int lastYear = 2,
     bool nowLastYear = false,
     bool changed = false,
+    bool compact = false,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -184,9 +185,8 @@ class TextFormFieldCustom {
                   },
                   controller: TextEditingController(
                     text: Utility.getCompleteDate(
-                      data: DateTime.parse(
-                        dateController.text,
-                      ),
+                      data: DateTime.parse(dateController.text),
+                      compact: compact,
                     ),
                   ),
                   style: const TextStyle(

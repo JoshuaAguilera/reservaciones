@@ -186,7 +186,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   icon: Icon(
                     CupertinoIcons.pencil,
                     size: 30,
-                    color: widget.tarifaXDia.color,
+                    color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
                   ),
                 ),
         ),

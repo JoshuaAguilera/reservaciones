@@ -47,13 +47,14 @@ class _SummaryControllerWidgetState
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     final listTariffProvider = ref.watch(listTariffDayProvider);
     final listRoomProviderView = ref.watch(listRoomProvider);
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
 
     return SizedBox(
-      width: 310,
+      width: screenWidth < 800 ? 260 : 310,
       height: screenHeight * 0.975,
       child: Padding(
         padding: const EdgeInsets.only(left: 5),
@@ -110,7 +111,7 @@ class _SummaryControllerWidgetState
                                                   habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
-                                                  showListVR = p0,
+                                                  showListVPM = p0,
                                             ),
                                             const SizedBox(height: 5),
                                             Divider(
@@ -145,7 +146,7 @@ class _SummaryControllerWidgetState
                                                   habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
-                                                  showListVR = p0,
+                                                  showListVPM = p0,
                                             ),
                                             const SizedBox(height: 5),
                                             Divider(
@@ -375,6 +376,9 @@ class _SummaryControllerWidgetState
                 child: SizedBox(
                   height: 35,
                   child: Buttons.commonButton(
+                    sizeText: 15,
+                    text: "Guardar Habitación",
+                    color: DesktopColors.prussianWhiteBlue,
                     onPressed: () {
                       if (revisedValidTariff(habitacionProvider)) {
                         showSnackBar(
@@ -405,8 +409,6 @@ class _SummaryControllerWidgetState
                         widget.onPressed!.call();
                       }
                     },
-                    sizeText: 15,
-                    text: "Guardar Habitación",
                   ),
                 ),
               ),

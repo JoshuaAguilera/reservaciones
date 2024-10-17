@@ -291,6 +291,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildRear(Habitacion habitacion) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
+    bool isUnknow = widget.tarifaXDia.code!.contains("Unknow") ||
+        widget.tarifaXDia.code!.contains("tariffFree");
 
     return __buildLayout(
       key: ValueKey(false),
@@ -329,6 +331,35 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 const SizedBox(height: 8),
               if (MediaQuery.of(context).size.width >
                   (1500 - (widget.sideController.extended ? 0 : 250)))
+                Padding(
+                  padding: EdgeInsets.only(bottom: isUnknow ? 10 : 0),
+                  child: TextStyles.TextAsociative(
+                    isUnknow ? "Descuento: " : "Temporada: ",
+                    isUnknow
+                        ? "${widget.tarifaXDia.descuentoProvisional}%"
+                        : widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
+                    boldInversed: true,
+                    textAling: TextAlign.center,
+                    size: 11,
+                    color: widget.tarifaXDia.color == null
+                        ? Colors.white
+                        : useWhiteForeground(widget.tarifaXDia.subCode == null
+                                ? widget.tarifaXDia.color ??
+                                    DesktopColors.cerulean
+                                : Utility.darken(
+                                    widget.tarifaXDia.color ??
+                                        DesktopColors.cerulean,
+                                    0.2))
+                            ? Colors.white
+                            : const Color.fromARGB(255, 43, 43, 43),
+                    overflow: (MediaQuery.of(context).size.width > 1590)
+                        ? TextOverflow.clip
+                        : TextOverflow.ellipsis,
+                  ),
+                ),
+              if (MediaQuery.of(context).size.width >
+                      (1590 - (widget.sideController.extended ? 0 : 150)) &&
+                  !isUnknow)
                 TextStyles.TextAsociative(
                   "Periodo: ",
                   widget.tarifaXDia.periodo == null
@@ -338,29 +369,6 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           lastDate: widget.tarifaXDia.periodo!.fechaFinal!,
                           compact: true,
                         ),
-                  boldInversed: true,
-                  textAling: TextAlign.center,
-                  size: 11,
-                  color: widget.tarifaXDia.color == null
-                      ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.subCode == null
-                              ? widget.tarifaXDia.color ??
-                                  DesktopColors.cerulean
-                              : Utility.darken(
-                                  widget.tarifaXDia.color ??
-                                      DesktopColors.cerulean,
-                                  0.2))
-                          ? Colors.white
-                          : const Color.fromARGB(255, 43, 43, 43),
-                  overflow: (MediaQuery.of(context).size.width > 1590)
-                      ? TextOverflow.clip
-                      : TextOverflow.ellipsis,
-                ),
-              if (MediaQuery.of(context).size.width >
-                  (1590 - (widget.sideController.extended ? 0 : 150)))
-                TextStyles.TextAsociative(
-                 (widget.tarifaXDia.code!.contains("Unknow")) ? "Descuento: " : "Temporada: ",
-                (widget.tarifaXDia.code!.contains("Unknow")) ? "${widget.tarifaXDia.descuentoProvisional}%" :  widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                   boldInversed: true,
                   textAling: TextAlign.center,
                   size: 11,

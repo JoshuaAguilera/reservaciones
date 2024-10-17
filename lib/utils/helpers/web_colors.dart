@@ -5,6 +5,7 @@ class DesktopColors {
   static Color cerulean = Color.fromARGB(255, 0, 125, 167);
   static Color ceruleanOscure = Color.fromARGB(255, 0, 97, 129);
   static Color prussianBlue = Color.fromARGB(255, 0, 50, 73);
+  static Color prussianWhiteBlue = Color.fromARGB(255, 0, 63, 92);
   static Color azulCielo = Color.fromARGB(255, 128, 206, 215);
   static Color azulClaro = Color.fromARGB(255, 154, 209, 212);
   static Color azulUltClaro = Color.fromARGB(255, 176, 239, 242);

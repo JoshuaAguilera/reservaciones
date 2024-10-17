@@ -16,9 +16,11 @@ import 'text_styles.dart';
 import 'textformfield_custom.dart';
 
 class ManagerTariffDayWidget extends ConsumerStatefulWidget {
-  const ManagerTariffDayWidget({super.key, required this.tarifaXDia});
+  const ManagerTariffDayWidget(
+      {super.key, required this.tarifaXDia, this.isAppling = false});
 
   final TarifaXDia tarifaXDia;
+  final bool isAppling;
 
   @override
   _ManagerTariffDayWidgetState createState() => _ManagerTariffDayWidgetState();
@@ -31,6 +33,7 @@ class _ManagerTariffDayWidgetState
   bool applyAllDays = false;
   bool applyAllNoTariff = false;
   bool isUnknow = false;
+  bool isFreeTariff = false;
   final _formKeyTariffDay = GlobalKey<FormState>();
 
   List<String> promociones = [];
@@ -51,6 +54,7 @@ class _ManagerTariffDayWidgetState
     _descuentoController.text =
         (widget.tarifaXDia.descuentoProvisional ?? 0).toString();
     isUnknow = widget.tarifaXDia.code!.contains("Unknow");
+    isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
     tarifaSelect = widget.tarifaXDia.temporadaSelect?.nombre ?? 'No aplicar';
     promociones.add("No aplicar");
 
@@ -113,8 +117,9 @@ class _ManagerTariffDayWidgetState
           const SizedBox(width: 10),
           Expanded(
             child: TextStyles.titleText(
-                text:
-                    "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTarif} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
+                text: widget.isAppling
+                    ? "Aplicar nueva Tarifa libre de ${Utility.getStringPeriod(initDate: DateTime.parse(habitacionProvider.fechaCheckIn!), lastDate: DateTime.parse(habitacionProvider.fechaCheckOut!))}\nen categoria: ${habitacionProvider.categoria}"
+                    : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTarif} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
                 size:
                     (widget.tarifaXDia.subCode != null && !isUnknow) ? 13 : 16,
                 color: Theme.of(context).primaryColor),
@@ -258,7 +263,9 @@ class _ManagerTariffDayWidgetState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          if (isValidForApplyNotTariff(habitacionProvider))
+                          if (isValidForApplyNotTariff(habitacionProvider) &&
+                              !widget.isAppling &&
+                              !isFreeTariff)
                             CustomWidgets.checkBoxWithDescription(
                               context,
                               activeColor: widget.tarifaXDia.color,
@@ -272,7 +279,7 @@ class _ManagerTariffDayWidgetState
                                 applyAllDays = false;
                               }),
                             ),
-                          if (!isUnknow)
+                          if (!isUnknow && !widget.isAppling && !isFreeTariff)
                             CustomWidgets.checkBoxWithDescription(
                               context,
                               activeColor: widget.tarifaXDia.color,
@@ -286,34 +293,19 @@ class _ManagerTariffDayWidgetState
                                 applyAllDays = false;
                               }),
                             ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 35,
-                                width: 30,
-                                child: Checkbox(
-                                  value: applyAllDays,
-                                  onChanged: (value) => setState(() {
-                                    applyAllDays = value!;
-                                    applyAllTariff = false;
-                                    applyAllNoTariff = false;
-                                  }),
-                                  activeColor:
-                                      widget.tarifaXDia.color ?? Colors.amber,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(3),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              TextStyles.standardText(
-                                text: "Aplicar en todos los dias",
-                                color: Theme.of(context).primaryColor,
-                                size: 12,
-                              )
-                            ],
-                          ),
+                          if (!widget.isAppling)
+                            CustomWidgets.checkBoxWithDescription(
+                              context,
+                              activeColor: widget.tarifaXDia.color,
+                              title: "Aplicar en todos los dias",
+                              description: "",
+                              value: applyAllDays,
+                              onChanged: (value) => setState(() {
+                                applyAllDays = value!;
+                                applyAllTariff = false;
+                                applyAllNoTariff = false;
+                              }),
+                            ),
                         ],
                       ),
                     ),
@@ -426,7 +418,7 @@ class _ManagerTariffDayWidgetState
 
               widget.tarifaXDia.temporadaSelect = getSeasonSelect();
 
-              if (isUnknow) {
+              if (isUnknow || isFreeTariff) {
                 widget.tarifaXDia.descuentoProvisional =
                     double.parse(_descuentoController.text);
               }
@@ -484,7 +476,7 @@ class _ManagerTariffDayWidgetState
                     .addItem(widget.tarifaXDia.tarifa!);
               }
 
-              if (!applyAllTariff && !applyAllNoTariff) {
+              if (!applyAllTariff && !applyAllNoTariff && !widget.isAppling) {
                 widget.tarifaXDia.subCode = UniqueKey().hashCode.toString();
               }
 
@@ -495,7 +487,7 @@ class _ManagerTariffDayWidgetState
                   element.code = widget.tarifaXDia.code;
                   element.color = widget.tarifaXDia.color;
                   element.subCode = null;
-                  if (isUnknow) {
+                  if (isUnknow || isFreeTariff) {
                     element.descuentoProvisional =
                         double.parse(_descuentoController.text);
                   }

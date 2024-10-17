@@ -188,32 +188,37 @@ class FormWidgets {
     Color? activeColor,
     void Function(bool)? onChanged,
     bool bloked = false,
+    bool compact = false,
     required BuildContext context,
   }) {
     return Opacity(
       opacity: bloked ? 0.6 : 1,
       child: AbsorbPointer(
         absorbing: bloked,
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            TextStyles.standardText(
-              text: name,
-              color: Theme.of(context).primaryColor,
-            ),
-            Switch(
-              value: value,
-              activeColor: activeColor ?? Colors.white,
-              inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
-              inactiveThumbColor: !isModeDark
-                  ? null
-                  : value
-                      ? Colors.white
-                      : Colors.amber,
-              activeTrackColor: !isModeDark ? null : Colors.black54,
-              onChanged: onChanged,
-            ),
-          ],
+        child: Tooltip(
+          message: compact ? name : "",
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (!compact)
+                TextStyles.standardText(
+                  text: name,
+                  color: Theme.of(context).primaryColor,
+                ),
+              Switch(
+                value: value,
+                activeColor: activeColor ?? Colors.white,
+                inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
+                inactiveThumbColor: !isModeDark
+                    ? null
+                    : value
+                        ? Colors.white
+                        : Colors.amber,
+                activeTrackColor: !isModeDark ? null : Colors.black54,
+                onChanged: onChanged,
+              ),
+            ],
+          ),
         ),
       ),
     );

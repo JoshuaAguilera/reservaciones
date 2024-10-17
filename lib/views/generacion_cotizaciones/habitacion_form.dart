@@ -7,7 +7,9 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list.dart';
+import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -18,6 +20,7 @@ import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/dynamic_widget.dart';
+import '../../widgets/manager_tariff_day_widget.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
@@ -47,6 +50,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   ];
   double target = 1;
   bool isEditing = false;
+  bool applyFreeTariff = false;
+  TarifaXDia tarifaLibre = TarifaXDia(
+    color: DesktopColors.turquezaOscure,
+    descuentoProvisional: 0,
+    code: "tariffFree",
+    nombreTarif: "Tarifa Libre",
+  );
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -188,6 +198,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   setState(() {});
                                                 },
                                                 elements: tipoHabitacion,
+                                                screenWidth: screenWidth > 800
+                                                    ? (screenWidth +
+                                                            (widget.sideController
+                                                                    .extended
+                                                                ? 0
+                                                                : 250)) *
+                                                        0.26
+                                                    : 295,
+                                                calculateWidth: false,
                                               ),
                                             ),
                                           ],
@@ -218,6 +237,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   Expanded(
                                                     child: TextFormFieldCustom
                                                         .textFormFieldwithBorderCalendar(
+                                                      compact: (screenWidth <
+                                                                  1000 &&
+                                                              widget
+                                                                  .sideController
+                                                                  .extended) ||
+                                                          (screenWidth < 900 &&
+                                                              !widget
+                                                                  .sideController
+                                                                  .extended),
                                                       name: "Fecha de entrada",
                                                       msgError:
                                                           "Campo requerido*",
@@ -273,6 +301,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   Expanded(
                                                     child: TextFormFieldCustom
                                                         .textFormFieldwithBorderCalendar(
+                                                      compact: (screenWidth <
+                                                                  1000 &&
+                                                              widget
+                                                                  .sideController
+                                                                  .extended) ||
+                                                          (screenWidth < 900 &&
+                                                              !widget
+                                                                  .sideController
+                                                                  .extended),
                                                       name: "Fecha de salida",
                                                       msgError:
                                                           "Campo requerido*",
@@ -451,23 +488,87 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ),
-                                CustomWidgets.sectionButton(
-                                  listModes: (Utility.revisedLimitDateTime(
-                                            DateTime.parse(_fechaEntrada.text),
-                                            DateTime.parse(_fechaSalida.text),
-                                          ) &&
-                                          defineUseScreenWidth(screenWidth))
-                                      ? selectedMode
-                                      : _selectedModeRange,
-                                  modesVisual: (Utility.revisedLimitDateTime(
-                                            DateTime.parse(_fechaEntrada.text),
-                                            DateTime.parse(_fechaSalida.text),
-                                          ) &&
-                                          defineUseScreenWidth(screenWidth))
-                                      ? modesVisual
-                                      : modesVisualRange,
-                                  onChanged: (p0, p1) => setState(
-                                      () => selectedMode[p0] = p0 == p1),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 5),
+                                  child: SizedBox(
+                                    height: 35,
+                                    child: FormWidgets.inputSwitch(
+                                      name: "Tarifa Libre",
+                                      value: applyFreeTariff,
+                                      activeColor: DesktopColors.cerulean,
+                                      context: context,
+                                      compact: (screenWidth < 950 &&
+                                              widget.sideController.extended) ||
+                                          (screenWidth < 850 &&
+                                              !widget.sideController.extended),
+                                      onChanged: (p0) {
+                                        setState(() => applyFreeTariff = p0);
+                                        if (applyFreeTariff) {
+                                          tarifaLibre.categoria =
+                                              habitacionProvider.categoria;
+                                          tarifaLibre.tarifa = null;
+                                          tarifaLibre.descuentoProvisional = 0;
+
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                ManagerTariffDayWidget(
+                                              tarifaXDia: tarifaLibre,
+                                              isAppling: true,
+                                            ),
+                                          ).then(
+                                            (value) {
+                                              if (value != null) {
+                                                getTarifasSelect(
+                                                  list,
+                                                  habitacionProvider,
+                                                  tarifasProvisionalesProvider,
+                                                  descuentoProvider,
+                                                  refreshTariff: isEditing,
+                                                );
+                                              } else {
+                                                setState(() =>
+                                                    applyFreeTariff = false);
+                                              }
+                                            },
+                                          );
+                                        } else {
+                                          getTarifasSelect(
+                                            list,
+                                            habitacionProvider,
+                                            tarifasProvisionalesProvider,
+                                            descuentoProvider,
+                                            refreshTariff: isEditing,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  child: CustomWidgets.sectionButton(
+                                    isCompact: (screenWidth < 925 &&
+                                        widget.sideController.extended),
+                                    listModes: (Utility.revisedLimitDateTime(
+                                              DateTime.parse(
+                                                  _fechaEntrada.text),
+                                              DateTime.parse(_fechaSalida.text),
+                                            ) &&
+                                            defineUseScreenWidth(screenWidth))
+                                        ? selectedMode
+                                        : _selectedModeRange,
+                                    modesVisual: (Utility.revisedLimitDateTime(
+                                              DateTime.parse(
+                                                  _fechaEntrada.text),
+                                              DateTime.parse(_fechaSalida.text),
+                                            ) &&
+                                            defineUseScreenWidth(screenWidth))
+                                        ? modesVisual
+                                        : modesVisualRange,
+                                    onChanged: (p0, p1) => setState(
+                                        () => selectedMode[p0] = p0 == p1),
+                                  ),
                                 ),
                               ],
                             ),
@@ -544,13 +645,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           .toString()
                           .replaceAll('[', '')
                           .replaceAll(']', '');
-                      print(habitacionProvider.folioHabitacion);
                     }
 
                     if (isEditing) {
-                      ref
-                          .read(habitacionesProvider.notifier)
-                          .editItem(habitacionProvider);
+                      ref.read(habitacionesProvider.notifier).editItem(
+                          habitacionProvider.folioHabitacion,
+                          habitacionProvider);
                     } else {
                       ref
                           .read(habitacionesProvider.notifier)
@@ -594,9 +694,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     return enable;
   }
 
-  void getTarifasSelect(List<RegistroTarifa> list, Habitacion habitacion,
-      List<TarifaData> tarifasProvisionales, double descuentoProvisional,
-      {bool onlyCategory = false, bool refreshTariff = false}) {
+  void getTarifasSelect(
+    List<RegistroTarifa> list,
+    Habitacion habitacion,
+    List<TarifaData> tarifasProvisionales,
+    double descuentoProvisional, {
+    bool onlyCategory = false,
+    bool refreshTariff = false,
+  }) {
     if (onlyCategory) {
       for (var tariffDay in habitacion.tarifaXDia!) {
         tariffDay.categoria = habitacion.categoria;
@@ -632,9 +737,16 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
         RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
 
+        if (applyFreeTariff) {
+          TarifaXDia newTarifaLibre = tarifaLibre.copyWith();
+          newTarifaLibre.dia = ink;
+          newTarifaLibre.fecha = dateNow;
+          habitacion.tarifaXDia!.add(newTarifaLibre);
+          continue;
+        }
+
         if (newTariff == null) {
           TarifaXDia tarifaNoDefinida = TarifaXDia();
-
           tarifaNoDefinida = TarifaXDia(
             dia: ink,
             fecha: dateNow,
@@ -654,7 +766,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           );
 
           habitacion.tarifaXDia!.add(tarifaNoDefinida);
-
           continue;
         }
 

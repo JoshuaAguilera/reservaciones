@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -29,17 +30,6 @@ class HabitacionesList extends StatefulWidget {
 }
 
 class _HabitacionesListState extends State<HabitacionesList> {
-  List<String> tableTitles = [
-    "#",
-    "Fechas de estancia",
-    "Adultos",
-    "Menores 0-6",
-    "Menores 7-12",
-    "Tarifa Real",
-    "Tarifa Total",
-    "Opciones",
-  ];
-
   bool viewTable = true;
 
   List<Widget> modesVisualRange = <Widget>[
@@ -49,6 +39,10 @@ class _HabitacionesListState extends State<HabitacionesList> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidthWithSideBar = screenWidth +
+        (screenWidth > 800 ? (widget.sideController.extended ? 0 : 180) : 300);
+
     return Card(
       elevation: 6,
       child: Padding(
@@ -71,10 +65,19 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   onChanged: (p0, p1) => setState(() => viewTable = p0 != p1),
                 ),
                 SizedBox(
-                  width: 200,
+                  width: ((screenWidth +
+                              (!widget.sideController.extended ? 180 : 0)) >
+                          925)
+                      ? 200
+                      : 55,
                   height: 40,
                   child: Buttons.commonButton(
                     text: "Agregar habitación",
+                    auxwidget: ((screenWidth +
+                                (!widget.sideController.extended ? 180 : 0)) >
+                            925)
+                        ? null
+                        : const Icon(CupertinoIcons.add, size: 22),
                     onPressed: () {
                       widget.newRoom!.call();
                     },
@@ -96,19 +99,35 @@ class _HabitacionesListState extends State<HabitacionesList> {
                       width: 2,
                     ),
                   ),
-                  columnWidths: const {
-                    0: FractionColumnWidth(.05),
-                    1: FractionColumnWidth(.2),
-                    2: FractionColumnWidth(.1),
-                    3: FractionColumnWidth(.1),
-                    5: FractionColumnWidth(.1),
-                    6: FractionColumnWidth(.1),
-                    7: FractionColumnWidth(.2),
+                  columnWidths: {
+                    0: const FractionColumnWidth(0.1),
+                    if (screenWidthWithSideBar < 1250 &&
+                        screenWidthWithSideBar > 950)
+                      1: const FractionColumnWidth(0.35),
+                    if (screenWidthWithSideBar < 1550 &&
+                        screenWidthWithSideBar > 1250)
+                      2: const FractionColumnWidth(0.1),
+                    if (screenWidthWithSideBar < 1550 &&
+                        screenWidthWithSideBar > 1350)
+                      3: const FractionColumnWidth(0.1),
+                    if (screenWidthWithSideBar < 1550 &&
+                        screenWidthWithSideBar > 1450)
+                      4: const FractionColumnWidth(0.1),
                   },
                   children: [
                     TableRow(
                       children: [
-                        for (var item in tableTitles)
+                        for (var item in [
+                          "#",
+                          if (screenWidthWithSideBar > 950)
+                            "Fechas de estancia",
+                          if (screenWidthWithSideBar > 1250) "Adultos",
+                          if (screenWidthWithSideBar > 1450) "Menores 0-6",
+                          if (screenWidthWithSideBar > 1350) "Menores 7-12",
+                          if (screenWidthWithSideBar > 1700) "Tarifa Real",
+                          if (screenWidthWithSideBar > 1550) "Tarifa Total",
+                          "Opciones",
+                        ])
                           TextStyles.standardText(
                             text: item,
                             aling: TextAlign.center,
@@ -134,6 +153,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                     if (index < widget.habitaciones.length) {
                       return HabitacionItemRow(
                         key: ObjectKey(widget.habitaciones[index].hashCode),
+                        sideController: widget.sideController,
                         index: index,
                         habitacion: widget.habitaciones[index],
                         isTable: viewTable,

@@ -59,13 +59,22 @@ class Utility {
         .format(number);
   }
 
-  static String getCompleteDate({DateTime? data}) {
+  static String getCompleteDate({DateTime? data, bool compact = false}) {
     String date = "";
-    Intl.defaultLocale = "es_ES";
-    DateTime nowDate = data ?? DateTime.now();
-    DateFormat formatter = DateFormat('dd - MMMM - yyyy');
-    date = formatter.format(nowDate);
-    date = date.replaceAll(r'-', "de");
+
+    if (!compact) {
+      Intl.defaultLocale = "es_ES";
+      DateTime nowDate = data ?? DateTime.now();
+      DateFormat formatter = DateFormat('dd - MMMM - yyyy');
+      date = formatter.format(nowDate);
+      date = date.replaceAll(r'-', "de");
+    } else {
+      DateTime nowDate = data ?? DateTime.now();
+      DateFormat formatter = DateFormat('dd - MM - yy');
+      date = formatter.format(nowDate);
+      date = date.replaceAll(r'-', "/");
+    }
+
     return date;
   }
 

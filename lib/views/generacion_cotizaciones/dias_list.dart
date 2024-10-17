@@ -227,7 +227,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                                   : "Men. 7 a 12"),
                               if (screenWidth > 1400)
                                 "Tarifa Menores de 0 a 6 años",
-                              "Tarifa Total",
+                              if (screenWidth > 1000) "Tarifa Total",
                               "Opciones",
                             ])
                               Padding(
@@ -250,25 +250,18 @@ class _DiasListState extends ConsumerState<DiasList> {
                     SizedBox(
                       height: Utility.limitHeightList(
                           checkOut.difference(checkIn).inDays, 9, 392),
-                      child: SingleChildScrollView(
-                        child: Table(
-                          defaultVerticalAlignment:
-                              TableCellVerticalAlignment.middle,
-                          border: TableBorder(
-                            horizontalInside: BorderSide(
-                                color: Theme.of(context).dividerColor),
-                          ),
-                          children: [
-                            for (var element in list)
-                              TableRows.tableRowTarifaDay(
-                                context,
-                                habitacion: habitacionProvider,
-                                screenWidth: screenWidth,
-                                tarifaXDia: element,
-                                setState: () => setState(() {}),
-                              ),
-                          ],
-                        ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: list.length,
+                        itemBuilder: (context, ink) {
+                          return TableRows.tableRowTarifaDay(
+                            context,
+                            habitacion: habitacionProvider,
+                            screenWidth: screenWidth,
+                            tarifaXDia: list[ink],
+                            setState: () => setState(() {}),
+                          );
+                        },
                       ),
                     ),
                   ],

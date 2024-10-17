@@ -78,7 +78,7 @@ class _SelectableButtonState extends State<SelectableButton> {
 }
 
 class Buttons {
-  static ElevatedButton commonButton({
+  static Widget commonButton({
     required void Function()? onPressed,
     Color? color,
     String text = "",
@@ -87,47 +87,54 @@ class Buttons {
     bool isBold = false,
     bool withRoundedBorder = false,
     Color colorText = Colors.white,
+    Widget? auxwidget,
   }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        elevation: 4,
-        backgroundColor: color ?? DesktopColors.ceruleanOscure,
-        shape: !withRoundedBorder
-            ? null
-            : const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
+    return Tooltip(
+      message: auxwidget != null ? text : "",
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          elevation: 4,
+          backgroundColor: color ?? DesktopColors.ceruleanOscure,
+          shape: !withRoundedBorder
+              ? null
+              : const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
                 ),
+        ),
+        child: Row(
+          mainAxisAlignment: isLoading
+              ? MainAxisAlignment.spaceAround
+              : MainAxisAlignment.center,
+          children: [
+            if (isLoading)
+              const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
               ),
-      ),
-      child: Row(
-        mainAxisAlignment: isLoading
-            ? MainAxisAlignment.spaceAround
-            : MainAxisAlignment.center,
-        children: [
-          if (isLoading)
-            const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: Colors.white),
-            ),
-          isBold
-              ? TextStyles.standardText(
-                  text: !isLoading ? text : "Espere",
-                  aling: TextAlign.center,
-                  size: sizeText,
-                  isBold: true,
-                  color: colorText,
-                )
-              : TextStyles.buttonTextStyle(
-                  text: !isLoading ? text : "Espere",
-                  aling: TextAlign.center,
-                  size: sizeText,
-                  color: colorText,
-                ),
-        ],
+            if (auxwidget != null)
+              Expanded(child: auxwidget)
+            else
+              isBold
+                  ? TextStyles.standardText(
+                      text: !isLoading ? text : "Espere",
+                      aling: TextAlign.center,
+                      size: sizeText,
+                      isBold: true,
+                      color: colorText,
+                    )
+                  : TextStyles.buttonTextStyle(
+                      text: !isLoading ? text : "Espere",
+                      aling: TextAlign.center,
+                      size: sizeText,
+                      color: colorText,
+                    ),
+          ],
+        ),
       ),
     );
   }

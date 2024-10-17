@@ -13,7 +13,7 @@ import 'manager_tariff_day_widget.dart';
 import 'text_styles.dart';
 
 class TableRows {
-  static TableRow tableRowTarifaDay(
+  static Widget tableRowTarifaDay(
     BuildContext context, {
     required Habitacion habitacion,
     required double screenWidth,
@@ -62,69 +62,85 @@ class TableRows {
       );
     }
 
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 11.0),
-          child: Center(
-            child: TextStyles.standardText(
-                text: tarifaXDia.fecha!.toIso8601String().substring(0, 10),
-                color: Theme.of(context).primaryColor,
-                size: 12),
-          ),
-        ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber(tarifaAdulto),
-              color: Theme.of(context).primaryColor,
-              size: 12),
-        ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber(tarifaMenores),
-              color: Theme.of(context).primaryColor,
-              size: 12),
-        ),
-        if (screenWidth > 1400)
-          Center(
-            child: TextStyles.standardText(
-                text: Utility.formatterNumber(0),
-                color: Theme.of(context).primaryColor,
-                size: 12),
-          ),
-        Center(
-          child: TextStyles.standardText(
-              text: Utility.formatterNumber((tarifaAdulto + tarifaMenores)),
-              color: Theme.of(context).primaryColor,
-              size: 12),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    Color colorTariff = tarifaXDia.subCode == null
+        ? tarifaXDia.color ?? DesktopColors.cerulean
+        : Utility.darken(tarifaXDia.color ?? DesktopColors.cerulean, 0.2);
+
+    return Card(
+      child: SizedBox(
+        child: Table(
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           children: [
-            if (screenWidth > 1400)
-              Buttons.commonButton(
-                onPressed: () => showDialogManagerTariff(),
-                text: "Editar",
-                color: tarifaXDia.color,
-                colorText: tarifaXDia.color == null
-                    ? Colors.white
-                    : useWhiteForeground(tarifaXDia.color!)
-                        ? Colors.white
-                        : const Color.fromARGB(255, 43, 43, 43),
-              )
-            else
-              IconButton(
-                onPressed: () => showDialogManagerTariff(),
-                tooltip: "Editar",
-                icon: Icon(
-                  CupertinoIcons.pencil,
-                  size: 25,
-                  color: tarifaXDia.color ?? DesktopColors.cerulean,
+            TableRow(
+              children: [
+                Center(
+                  child: TextStyles.standardText(
+                      text:
+                          tarifaXDia.fecha!.toIso8601String().substring(0, 10),
+                      color: Theme.of(context).primaryColor,
+                      size: 12),
                 ),
-              ),
+                Center(
+                  child: TextStyles.standardText(
+                      text: Utility.formatterNumber(tarifaAdulto),
+                      color: Theme.of(context).primaryColor,
+                      size: 12),
+                ),
+                Center(
+                  child: TextStyles.standardText(
+                      text: Utility.formatterNumber(tarifaMenores),
+                      color: Theme.of(context).primaryColor,
+                      size: 12),
+                ),
+                if (screenWidth > 1400)
+                  Center(
+                    child: TextStyles.standardText(
+                        text: Utility.formatterNumber(0),
+                        color: Theme.of(context).primaryColor,
+                        size: 12),
+                  ),
+                if (screenWidth > 1000)
+                  Center(
+                    child: TextStyles.standardText(
+                        text: Utility.formatterNumber(
+                            (tarifaAdulto + tarifaMenores)),
+                        color: Theme.of(context).primaryColor,
+                        size: 12),
+                  ),
+                if (screenWidth > 1400)
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Center(
+                      child: SizedBox(
+                        width: 95,
+                        child: Buttons.commonButton(
+                          onPressed: () => showDialogManagerTariff(),
+                          text: "Editar",
+                          color: colorTariff,
+                          colorText: tarifaXDia.color == null
+                              ? Colors.white
+                              : useWhiteForeground(colorTariff)
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 43, 43, 43),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  IconButton(
+                    onPressed: () => showDialogManagerTariff(),
+                    tooltip: "Editar",
+                    icon: Icon(
+                      CupertinoIcons.pencil,
+                      size: 25,
+                      color: colorTariff,
+                    ),
+                  ),
+              ],
+            )
           ],
-        )
-      ],
+        ),
+      ),
     );
   }
 

@@ -16,6 +16,7 @@ class CustomDropdown {
     String removeItem = '',
     String label = '',
     String excepcionItem = '',
+    bool calculateWidth = true,
   }) {
     List<String> items = elements.toList();
 
@@ -28,7 +29,7 @@ class CustomDropdown {
         return DropdownMenu<String>(
           menuHeight: 200,
           width:
-              screenWidth == null ? null : Utility.getWidthDynamic(screenWidth),
+              screenWidth == null ? null : calculateWidth ? Utility.getWidthDynamic(screenWidth) :screenWidth,
           requestFocusOnTap: false,
           initialSelection: initialSelection,
           onSelected: onSelected,

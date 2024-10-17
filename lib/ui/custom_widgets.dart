@@ -368,6 +368,7 @@ class CustomWidgets {
         return Align(
           alignment: Alignment.centerRight,
           child: ToggleButtons(
+            
             direction: Axis.horizontal,
             onPressed: (int index) {
               snapshot(

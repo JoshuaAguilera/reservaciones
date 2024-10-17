@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/services/send_quote_service.dart';
-import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';

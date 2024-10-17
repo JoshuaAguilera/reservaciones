@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:sidebarx/sidebarx.dart';
 
 import '../providers/habitacion_provider.dart';
 import '../utils/helpers/web_colors.dart';
@@ -19,6 +20,7 @@ class HabitacionItemRow extends StatefulWidget {
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
+  final SidebarXController sideController;
   const HabitacionItemRow({
     super.key,
     required this.index,
@@ -27,6 +29,7 @@ class HabitacionItemRow extends StatefulWidget {
     this.onPressedEdit,
     this.onPressedDelete,
     this.esDetalle = false,
+    required this.sideController,
   });
 
   @override
@@ -71,6 +74,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
+                  sideController: widget.sideController,
                 )
                   .animate()
                   .fadeOut()
@@ -81,6 +85,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   onPressedDelete: () => showDeleteDialog(),
                   onPressedEdit: widget.onPressedEdit,
                   esDetalle: widget.esDetalle,
+                  sideController: widget.sideController,
                 )
           : selected
               ? _TableRowCotizacion(
@@ -89,6 +94,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   onPressedDelete: null,
                   onPressedEdit: null,
                   esDetalle: widget.esDetalle,
+                  sideController: widget.sideController,
                 )
                   .animate()
                   .fadeOut()
@@ -99,6 +105,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   onPressedDelete: () => showDeleteDialog(),
                   onPressedEdit: widget.onPressedEdit,
                   esDetalle: widget.esDetalle,
+                  sideController: widget.sideController,
                 ),
     )
         .animate()
@@ -113,6 +120,7 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
+  final SidebarXController sideController;
 
   const _TableRowCotizacion({
     super.key,
@@ -121,6 +129,7 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
     required this.onPressedDelete,
     required this.onPressedEdit,
     required this.esDetalle,
+    required this.sideController,
   });
 
   @override
@@ -136,6 +145,9 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     Color colorText = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidthWithSideBar =
+        screenWidth + (screenWidth > 800 ? (widget.sideController.extended ? 0 : 180) : 300);
 
     void updateList(int value) {
       setState(() => widget.habitacion.count = value);
@@ -153,14 +165,20 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
           children: [
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: const {
-                0: FractionColumnWidth(.05),
-                1: FractionColumnWidth(.2),
-                2: FractionColumnWidth(.1),
-                3: FractionColumnWidth(.1),
-                5: FractionColumnWidth(.1),
-                6: FractionColumnWidth(.1),
-                7: FractionColumnWidth(.2),
+              columnWidths: {
+                0: const FractionColumnWidth(0.1),
+                if (screenWidthWithSideBar < 1250 &&
+                    screenWidthWithSideBar > 950)
+                  1: const FractionColumnWidth(0.35),
+                if (screenWidthWithSideBar < 1550 &&
+                    screenWidthWithSideBar > 1250)
+                  2: const FractionColumnWidth(0.1),
+                if (screenWidthWithSideBar < 1550 &&
+                    screenWidthWithSideBar > 1350)
+                  3: const FractionColumnWidth(0.1),
+                if (screenWidthWithSideBar < 1550 &&
+                    screenWidthWithSideBar > 1450)
+                  4: const FractionColumnWidth(0.1),
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),
@@ -174,45 +192,51 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       color: colorText,
                       size: 12,
                     ),
-                    TextStyles.standardText(
-                      text:
-                          "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
-                    TextStyles.standardText(
-                      text: widget.habitacion.adultos!.toString(),
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
-                    TextStyles.standardText(
-                      text: widget.habitacion.menores0a6!.toString(),
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
-                    TextStyles.standardText(
-                      text: widget.habitacion.menores7a12!.toString(),
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
-                    TextStyles.standardText(
-                      text: Utility.formatterNumber(
-                          widget.habitacion.totalReal ?? 0),
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
-                    TextStyles.standardText(
-                      text:
-                          Utility.formatterNumber(widget.habitacion.total ?? 0),
-                      aling: TextAlign.center,
-                      color: colorText,
-                      size: 12,
-                    ),
+                    if (screenWidthWithSideBar > 950)
+                      TextStyles.standardText(
+                        text:
+                            "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
+                    if (screenWidthWithSideBar > 1250)
+                      TextStyles.standardText(
+                        text: widget.habitacion.adultos!.toString(),
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
+                    if (screenWidthWithSideBar > 1450)
+                      TextStyles.standardText(
+                        text: widget.habitacion.menores0a6!.toString(),
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
+                    if (screenWidthWithSideBar > 1350)
+                      TextStyles.standardText(
+                        text: widget.habitacion.menores7a12!.toString(),
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
+                    if (screenWidthWithSideBar > 1700)
+                      TextStyles.standardText(
+                        text: Utility.formatterNumber(
+                            widget.habitacion.totalReal ?? 0),
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
+                    if (screenWidthWithSideBar > 1550)
+                      TextStyles.standardText(
+                        text: Utility.formatterNumber(
+                            widget.habitacion.total ?? 0),
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                      ),
                     if (!widget.esDetalle)
                       Wrap(
                         alignment: WrapAlignment.center,
@@ -278,6 +302,7 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final bool esDetalle;
+  final SidebarXController sideController;
 
   const _ListTileCotizacion({
     super.key,
@@ -286,6 +311,7 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
     required this.onPressedDelete,
     required this.onPressedEdit,
     required this.esDetalle,
+    required this.sideController,
   });
 
   @override
@@ -330,9 +356,9 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
           spacing: 12,
           runSpacing: 5,
           children: [
-            TextStyles.standardText(
-              text:
-                  "Fechas de estancia: ${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
+            TextStyles.TextAsociative(
+              "Fechas de estancia: ",
+              "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
               color: colorText,
             ),
             TextStyles.TextAsociative(

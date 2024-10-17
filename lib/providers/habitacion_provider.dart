@@ -19,9 +19,13 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     state = [...state, item];
   }
 
-  void editItem(Habitacion item) {
-    remove(item.folioHabitacion ?? '');
-    addItem(item);
+  void editItem(String? folio, Habitacion item) {
+    int index = state.indexWhere((element) => element.folioHabitacion == folio);
+    if (index != -1) {
+      state[index] = item;
+    } else {
+      print("Error al editar Habitacion");
+    }
   }
 
   void changeCountItem(String? folio, int count) {

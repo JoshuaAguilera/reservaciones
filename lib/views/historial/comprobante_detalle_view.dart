@@ -213,6 +213,7 @@ class _ComprobanteDetalleViewState
                                       extended: widget.sideController.extended,
                                       context: context),
                                   esDetalle: true,
+                                  sideController: widget.sideController,
                                 );
                               }
                             },
@@ -240,6 +241,7 @@ class _ComprobanteDetalleViewState
                                       extended: widget.sideController.extended,
                                       context: context),
                                   esDetalle: true,
+                                  sideController: widget.sideController,
                                 );
                               }
                             },
