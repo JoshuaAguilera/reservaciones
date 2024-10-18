@@ -8,6 +8,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/web_colors.dart';
+import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 
 class FormWidgets {
@@ -245,8 +246,6 @@ class FormWidgets {
     String? Function(String?)? validator,
     void Function()? onEditingComplete,
   }) {
-    bool withContent = false;
-
     validator ??= (value) {
       if ((value == null || value.isEmpty)) {
         return msgError;
@@ -260,11 +259,6 @@ class FormWidgets {
         controller: controller,
         onEditingComplete: onEditingComplete,
         onChanged: (value) {
-          if (value.isEmpty) {
-            withContent = false;
-          } else {
-            withContent = true;
-          }
           if (onChanged != null) onChanged.call(value);
         },
         obscureText: passwordVisible,
@@ -325,6 +319,52 @@ class FormWidgets {
         ),
         initialValue: initialValue,
       ),
+    );
+  }
+
+  static Widget inputCountField({
+    required Color colorText,
+    required String nameField,
+    required String initialValue,
+    String definition = "",
+    double sizeText = 12,
+    double widthInput = 50,
+    required void Function(String) onChanged,
+    void Function(int)? onDecrement,
+    void Function(int)? onIncrement,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextStyles.standardText(
+          text: nameField,
+          color: colorText,
+          size: sizeText,
+        ),
+        SizedBox(
+          width: widthInput,
+          height: 40,
+          child: NumberInputWithIncrementDecrement(
+            onChanged: onChanged,
+            initialValue: initialValue,
+            minimalValue: 1,
+            sizeIcons: 14,
+            height: 10,
+            focused: true,
+            colorText: colorText,
+            maxValue: 106,
+            onDecrement: onDecrement,
+            onIncrement: onIncrement,
+          ),
+        ),
+        if (definition.isNotEmpty)
+          TextStyles.standardText(
+            text: definition,
+            color: colorText,
+            size: 12,
+          ),
+      ],
     );
   }
 }

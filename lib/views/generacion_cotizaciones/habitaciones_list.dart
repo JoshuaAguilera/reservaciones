@@ -41,7 +41,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
-        (screenWidth > 800 ? (widget.sideController.extended ? 0 : 180) : 300);
+        (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
     return Card(
       elevation: 6,
@@ -64,25 +64,23 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   modesVisual: modesVisualRange,
                   onChanged: (p0, p1) => setState(() => viewTable = p0 != p1),
                 ),
-                SizedBox(
-                  width: ((screenWidth +
-                              (!widget.sideController.extended ? 180 : 0)) >
-                          925)
-                      ? 200
-                      : 55,
-                  height: 40,
-                  child: Buttons.commonButton(
-                    text: "Agregar habitación",
-                    auxwidget: ((screenWidth +
-                                (!widget.sideController.extended ? 180 : 0)) >
-                            925)
-                        ? null
-                        : const Icon(CupertinoIcons.add, size: 22),
-                    onPressed: () {
-                      widget.newRoom!.call();
-                    },
+                if ((screenWidth + (!widget.sideController.extended ? 60 : 0)) >
+                    975)
+                  SizedBox(
+                    width: 200,
+                    height: 40,
+                    child: Buttons.commonButton(
+                      text: "Agregar habitación",
+                      onPressed: () {
+                        widget.newRoom!.call();
+                      },
+                    ),
+                  )
+                else
+                  Buttons.iconButtonCard(
+                    icon: CupertinoIcons.add,
+                    onPressed: () {},
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 12),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../providers/habitacion_provider.dart';
@@ -45,7 +46,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
       builder: (context) => Dialogs.customAlertDialog(
         context: context,
         title: "Eliminar Habitación",
-        content:
+        contentText:
             "¿Desea eliminar la presente habitación\nde la cotización actual?",
         funtionMain: () {
           setState(() {
@@ -146,8 +147,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenWidthWithSideBar =
-        screenWidth + (screenWidth > 800 ? (widget.sideController.extended ? 0 : 180) : 300);
+    double screenWidthWithSideBar = screenWidth +
+        (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
     void updateList(int value) {
       setState(() => widget.habitacion.count = value);
@@ -244,34 +245,14 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         children: [
                           SizedBox(
                             width: 87,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                TextStyles.standardText(
-                                  text: "Cant: ",
-                                  color: colorText,
-                                  size: 12,
-                                ),
-                                SizedBox(
-                                  width: 50,
-                                  height: 40,
-                                  child: NumberInputWithIncrementDecrement(
-                                    onChanged: (p0) => updateList(
-                                        p0.isEmpty ? 1 : int.parse(p0)),
-                                    initialValue:
-                                        widget.habitacion.count.toString(),
-                                    minimalValue: 1,
-                                    sizeIcons: 14,
-                                    height: 10,
-                                    focused: true,
-                                    colorText: colorText,
-                                    maxValue: 106,
-                                    onDecrement: (p0) =>
-                                        updateList(p0 < 1 ? 1 : p0),
-                                    onIncrement: (p0) => updateList(p0),
-                                  ),
-                                ),
-                              ],
+                            child: FormWidgets.inputCountField(
+                              colorText: colorText,
+                              initialValue: widget.habitacion.count.toString(),
+                              nameField: "Cant: ",
+                              onChanged: (p0) =>
+                                  updateList(p0.isEmpty ? 1 : int.parse(p0)),
+                              onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                              onIncrement: (p0) => updateList(p0),
                             ),
                           ),
                           SizedBox(
@@ -327,6 +308,9 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     Color colorText = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidthWithSideBar = screenWidth +
+        (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
 
     void updateList(int value) {
       setState(() => widget.habitacion.count = value);
@@ -357,7 +341,9 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
           runSpacing: 5,
           children: [
             TextStyles.TextAsociative(
-              "Fechas de estancia: ",
+              (screenWidthWithSideBar < 1100)
+                  ? "Fechas: "
+                  : "Fechas de estancia: ",
               "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
               color: colorText,
             ),
@@ -367,7 +353,9 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               color: colorText,
             ),
             TextStyles.TextAsociative(
-              "Tarifa descontada: ",
+              (screenWidthWithSideBar < 1100)
+                  ? "Tarifa desc: "
+                  : "Tarifa descontada: ",
               Utility.formatterNumber(-(widget.habitacion.descuento ?? 0)),
               color: colorText,
             ),
@@ -390,57 +378,57 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
                     color: colorText),
               ],
             ),
+            if (screenWidthWithSideBar < 1100)
+              optionsListTile(
+                colorText: colorText,
+                onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
+                onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                onIncrement: (p0) => updateList(p0),
+              )
           ],
         ),
-        trailing: widget.esDetalle
+        trailing: (widget.esDetalle || screenWidthWithSideBar < 1100)
             ? null
-            : Wrap(
-                spacing: 5,
-                children: [
-                  SizedBox(
-                    width: 87,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextStyles.standardText(
-                          text: "Cant: ",
-                          color: colorText,
-                          size: 12,
-                        ),
-                        SizedBox(
-                          width: 50,
-                          height: 40,
-                          child: NumberInputWithIncrementDecrement(
-                            onChanged: (p0) =>
-                                updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                            initialValue: widget.habitacion.count.toString(),
-                            minimalValue: 1,
-                            sizeIcons: 14,
-                            height: 10,
-                            focused: true,
-                            colorText: colorText,
-                            maxValue: 106,
-                            onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                            onIncrement: (p0) => updateList(p0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 35,
-                    width: 40,
-                    child: CustomWidgets.compactOptions(
-                      context,
-                      onPreseedDelete: widget.onPressedDelete,
-                      onPreseedEdit: widget.onPressedEdit,
-                      colorIcon: colorText,
-                    ),
-                  ),
-                ],
+            : optionsListTile(
+                colorText: colorText,
+                onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
+                onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                onIncrement: (p0) => updateList(p0),
               ),
         isThreeLine: true,
       ),
+    );
+  }
+
+  Widget optionsListTile(
+      {required Color colorText,
+      required void Function(String) onChanged,
+      required void Function(int) onDecrement,
+      required void Function(int) onIncrement}) {
+    return Wrap(
+      spacing: 5,
+      children: [
+        SizedBox(
+            width: 87,
+            child: FormWidgets.inputCountField(
+              colorText: colorText,
+              initialValue: widget.habitacion.count.toString(),
+              nameField: "Cant: ",
+              onChanged: onChanged,
+              onDecrement: onDecrement,
+              onIncrement: onIncrement,
+            )),
+        SizedBox(
+          height: 35,
+          width: 40,
+          child: CustomWidgets.compactOptions(
+            context,
+            onPreseedDelete: widget.onPressedDelete,
+            onPreseedEdit: widget.onPressedEdit,
+            colorIcon: colorText,
+          ),
+        ),
+      ],
     );
   }
 

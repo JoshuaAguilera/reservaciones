@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -134,6 +135,29 @@ class Buttons {
                       color: colorText,
                     ),
           ],
+        ),
+      ),
+    );
+  }
+
+  static Widget iconButtonCard({
+    required IconData icon,
+    required void Function()? onPressed,
+    Color? backgroundColor,
+    Color? colorIcon,
+  }) {
+    return Card(
+      color: backgroundColor ?? DesktopColors.ceruleanOscure,
+      child: SizedBox(
+        height: 40,
+        width: 40,
+        child: IconButton(
+          onPressed: onPressed,
+          icon: Icon(
+            icon,
+            color: colorIcon ?? Colors.white,
+            size: 25,
+          ),
         ),
       ),
     );

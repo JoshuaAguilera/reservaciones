@@ -14,6 +14,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 
+import '../ui/buttons.dart';
 import '../utils/helpers/constants.dart';
 import '../models/habitacion_model.dart';
 
@@ -495,8 +496,10 @@ class Dialogs {
     Color? colorTextButton,
     required BuildContext context,
     required String title,
-    required String content,
+    String contentText = '',
+    Widget? contentCustom,
     String? contentBold,
+    bool otherButton = false,
     required String nameButtonMain,
     required VoidCallback funtionMain,
     required String nameButtonCancel,
@@ -516,9 +519,10 @@ class Dialogs {
             child: TextStyles.titleText(
                 text: title, size: 18, color: Theme.of(context).primaryColor))
       ]),
-      content: TextStyles.TextAsociative(contentBold ?? "", content,
-          isInverted: contentBold != null,
-          color: Theme.of(context).primaryColor),
+      content: contentCustom ??
+          TextStyles.TextAsociative(contentBold ?? "", contentText,
+              isInverted: contentBold != null,
+              color: Theme.of(context).primaryColor),
       actions: [
         if (withButtonCancel)
           TextButton(
@@ -530,16 +534,28 @@ class Dialogs {
               color: colorTextButton,
             ),
           ),
-        TextButton(
-          onPressed: () {
-            funtionMain.call();
-            Navigator.of(context).pop(true);
-          },
-          child: TextStyles.buttonText(
-            text: nameButtonMain,
-            color: colorTextButton,
+        if (otherButton)
+          SizedBox(
+            width: 120,
+            child: Buttons.commonButton(
+              text: "ACEPTAR",
+              onPressed: () {
+                funtionMain.call();
+                Navigator.of(context).pop(true);
+              },
+            ),
+          )
+        else
+          TextButton(
+            onPressed: () {
+              funtionMain.call();
+              Navigator.of(context).pop(true);
+            },
+            child: TextStyles.buttonText(
+              text: nameButtonMain,
+              color: colorTextButton,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -1680,12 +1680,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   }
 }
 
-class $TarifaXDiaTable extends TarifaXDiaTable
-    with TableInfo<$TarifaXDiaTable, TarifaXDiaData> {
+class $TarifaXDiaTableTable extends TarifaXDiaTable
+    with TableInfo<$TarifaXDiaTableTable, TarifaXDiaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TarifaXDiaTable(this.attachedDatabase, [this._alias]);
+  $TarifaXDiaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1785,9 +1785,10 @@ class $TarifaXDiaTable extends TarifaXDiaTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tarifa_x_dia';
+  static const String $name = 'tarifa_x_dia_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TarifaXDiaData> instance,
+  VerificationContext validateIntegrity(
+      Insertable<TarifaXDiaTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -1869,9 +1870,9 @@ class $TarifaXDiaTable extends TarifaXDiaTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TarifaXDiaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TarifaXDiaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TarifaXDiaData(
+    return TarifaXDiaTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       subfolio: attachedDatabase.typeMapping
@@ -1906,12 +1907,13 @@ class $TarifaXDiaTable extends TarifaXDiaTable
   }
 
   @override
-  $TarifaXDiaTable createAlias(String alias) {
-    return $TarifaXDiaTable(attachedDatabase, alias);
+  $TarifaXDiaTableTable createAlias(String alias) {
+    return $TarifaXDiaTableTable(attachedDatabase, alias);
   }
 }
 
-class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
+class TarifaXDiaTableData extends DataClass
+    implements Insertable<TarifaXDiaTableData> {
   final int id;
   final String? subfolio;
   final int? dia;
@@ -1925,7 +1927,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
   final String? codePeriodo;
   final String? codeTemporada;
   final String? codeTarifa;
-  const TarifaXDiaData(
+  const TarifaXDiaTableData(
       {required this.id,
       this.subfolio,
       this.dia,
@@ -1981,8 +1983,8 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
     return map;
   }
 
-  TarifaXDiaCompanion toCompanion(bool nullToAbsent) {
-    return TarifaXDiaCompanion(
+  TarifaXDiaTableCompanion toCompanion(bool nullToAbsent) {
+    return TarifaXDiaTableCompanion(
       id: Value(id),
       subfolio: subfolio == null && nullToAbsent
           ? const Value.absent()
@@ -2020,10 +2022,10 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
     );
   }
 
-  factory TarifaXDiaData.fromJson(Map<String, dynamic> json,
+  factory TarifaXDiaTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TarifaXDiaData(
+    return TarifaXDiaTableData(
       id: serializer.fromJson<int>(json['id']),
       subfolio: serializer.fromJson<String?>(json['subfolio']),
       dia: serializer.fromJson<int?>(json['dia']),
@@ -2067,7 +2069,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
     };
   }
 
-  TarifaXDiaData copyWith(
+  TarifaXDiaTableData copyWith(
           {int? id,
           Value<String?> subfolio = const Value.absent(),
           Value<int?> dia = const Value.absent(),
@@ -2081,7 +2083,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
           Value<String?> codePeriodo = const Value.absent(),
           Value<String?> codeTemporada = const Value.absent(),
           Value<String?> codeTarifa = const Value.absent()}) =>
-      TarifaXDiaData(
+      TarifaXDiaTableData(
         id: id ?? this.id,
         subfolio: subfolio.present ? subfolio.value : this.subfolio,
         dia: dia.present ? dia.value : this.dia,
@@ -2111,7 +2113,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
       );
   @override
   String toString() {
-    return (StringBuffer('TarifaXDiaData(')
+    return (StringBuffer('TarifaXDiaTableData(')
           ..write('id: $id, ')
           ..write('subfolio: $subfolio, ')
           ..write('dia: $dia, ')
@@ -2147,7 +2149,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TarifaXDiaData &&
+      (other is TarifaXDiaTableData &&
           other.id == this.id &&
           other.subfolio == this.subfolio &&
           other.dia == this.dia &&
@@ -2163,7 +2165,7 @@ class TarifaXDiaData extends DataClass implements Insertable<TarifaXDiaData> {
           other.codeTarifa == this.codeTarifa);
 }
 
-class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
+class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
   final Value<int> id;
   final Value<String?> subfolio;
   final Value<int?> dia;
@@ -2177,7 +2179,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
   final Value<String?> codePeriodo;
   final Value<String?> codeTemporada;
   final Value<String?> codeTarifa;
-  const TarifaXDiaCompanion({
+  const TarifaXDiaTableCompanion({
     this.id = const Value.absent(),
     this.subfolio = const Value.absent(),
     this.dia = const Value.absent(),
@@ -2192,7 +2194,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
     this.codeTemporada = const Value.absent(),
     this.codeTarifa = const Value.absent(),
   });
-  TarifaXDiaCompanion.insert({
+  TarifaXDiaTableCompanion.insert({
     this.id = const Value.absent(),
     this.subfolio = const Value.absent(),
     this.dia = const Value.absent(),
@@ -2207,7 +2209,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
     this.codeTemporada = const Value.absent(),
     this.codeTarifa = const Value.absent(),
   }) : fecha = Value(fecha);
-  static Insertable<TarifaXDiaData> custom({
+  static Insertable<TarifaXDiaTableData> custom({
     Expression<int>? id,
     Expression<String>? subfolio,
     Expression<int>? dia,
@@ -2243,7 +2245,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
     });
   }
 
-  TarifaXDiaCompanion copyWith(
+  TarifaXDiaTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? subfolio,
       Value<int?>? dia,
@@ -2257,7 +2259,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
       Value<String?>? codePeriodo,
       Value<String?>? codeTemporada,
       Value<String?>? codeTarifa}) {
-    return TarifaXDiaCompanion(
+    return TarifaXDiaTableCompanion(
       id: id ?? this.id,
       subfolio: subfolio ?? this.subfolio,
       dia: dia ?? this.dia,
@@ -2328,7 +2330,7 @@ class TarifaXDiaCompanion extends UpdateCompanion<TarifaXDiaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaXDiaCompanion(')
+    return (StringBuffer('TarifaXDiaTableCompanion(')
           ..write('id: $id, ')
           ..write('subfolio: $subfolio, ')
           ..write('dia: $dia, ')
@@ -4499,18 +4501,350 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
   }
 }
 
+class $PoliticasTable extends Politicas
+    with TableInfo<$PoliticasTable, Politica> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PoliticasTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _fechaActualizacionMeta =
+      const VerificationMeta('fechaActualizacion');
+  @override
+  late final GeneratedColumn<DateTime> fechaActualizacion =
+      GeneratedColumn<DateTime>('fecha_actualizacion', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _intervaloHabitacionGratuitaMeta =
+      const VerificationMeta('intervaloHabitacionGratuita');
+  @override
+  late final GeneratedColumn<int> intervaloHabitacionGratuita =
+      GeneratedColumn<int>('intervalo_habitacion_gratuita', aliasedName, true,
+          type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _limiteHabitacionCotizacionMeta =
+      const VerificationMeta('limiteHabitacionCotizacion');
+  @override
+  late final GeneratedColumn<int> limiteHabitacionCotizacion =
+      GeneratedColumn<int>('limite_habitacion_cotizacion', aliasedName, true,
+          type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        fechaActualizacion,
+        intervaloHabitacionGratuita,
+        limiteHabitacionCotizacion,
+        userId
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'politicas';
+  @override
+  VerificationContext validateIntegrity(Insertable<Politica> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('fecha_actualizacion')) {
+      context.handle(
+          _fechaActualizacionMeta,
+          fechaActualizacion.isAcceptableOrUnknown(
+              data['fecha_actualizacion']!, _fechaActualizacionMeta));
+    }
+    if (data.containsKey('intervalo_habitacion_gratuita')) {
+      context.handle(
+          _intervaloHabitacionGratuitaMeta,
+          intervaloHabitacionGratuita.isAcceptableOrUnknown(
+              data['intervalo_habitacion_gratuita']!,
+              _intervaloHabitacionGratuitaMeta));
+    }
+    if (data.containsKey('limite_habitacion_cotizacion')) {
+      context.handle(
+          _limiteHabitacionCotizacionMeta,
+          limiteHabitacionCotizacion.isAcceptableOrUnknown(
+              data['limite_habitacion_cotizacion']!,
+              _limiteHabitacionCotizacionMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Politica map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Politica(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      fechaActualizacion: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}fecha_actualizacion']),
+      intervaloHabitacionGratuita: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}intervalo_habitacion_gratuita']),
+      limiteHabitacionCotizacion: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}limite_habitacion_cotizacion']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
+    );
+  }
+
+  @override
+  $PoliticasTable createAlias(String alias) {
+    return $PoliticasTable(attachedDatabase, alias);
+  }
+}
+
+class Politica extends DataClass implements Insertable<Politica> {
+  final int id;
+  final DateTime? fechaActualizacion;
+  final int? intervaloHabitacionGratuita;
+  final int? limiteHabitacionCotizacion;
+  final int? userId;
+  const Politica(
+      {required this.id,
+      this.fechaActualizacion,
+      this.intervaloHabitacionGratuita,
+      this.limiteHabitacionCotizacion,
+      this.userId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || fechaActualizacion != null) {
+      map['fecha_actualizacion'] = Variable<DateTime>(fechaActualizacion);
+    }
+    if (!nullToAbsent || intervaloHabitacionGratuita != null) {
+      map['intervalo_habitacion_gratuita'] =
+          Variable<int>(intervaloHabitacionGratuita);
+    }
+    if (!nullToAbsent || limiteHabitacionCotizacion != null) {
+      map['limite_habitacion_cotizacion'] =
+          Variable<int>(limiteHabitacionCotizacion);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
+    }
+    return map;
+  }
+
+  PoliticasCompanion toCompanion(bool nullToAbsent) {
+    return PoliticasCompanion(
+      id: Value(id),
+      fechaActualizacion: fechaActualizacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaActualizacion),
+      intervaloHabitacionGratuita:
+          intervaloHabitacionGratuita == null && nullToAbsent
+              ? const Value.absent()
+              : Value(intervaloHabitacionGratuita),
+      limiteHabitacionCotizacion:
+          limiteHabitacionCotizacion == null && nullToAbsent
+              ? const Value.absent()
+              : Value(limiteHabitacionCotizacion),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
+    );
+  }
+
+  factory Politica.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Politica(
+      id: serializer.fromJson<int>(json['id']),
+      fechaActualizacion:
+          serializer.fromJson<DateTime?>(json['fechaActualizacion']),
+      intervaloHabitacionGratuita:
+          serializer.fromJson<int?>(json['intervaloHabitacionGratuita']),
+      limiteHabitacionCotizacion:
+          serializer.fromJson<int?>(json['limiteHabitacionCotizacion']),
+      userId: serializer.fromJson<int?>(json['userId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'fechaActualizacion': serializer.toJson<DateTime?>(fechaActualizacion),
+      'intervaloHabitacionGratuita':
+          serializer.toJson<int?>(intervaloHabitacionGratuita),
+      'limiteHabitacionCotizacion':
+          serializer.toJson<int?>(limiteHabitacionCotizacion),
+      'userId': serializer.toJson<int?>(userId),
+    };
+  }
+
+  Politica copyWith(
+          {int? id,
+          Value<DateTime?> fechaActualizacion = const Value.absent(),
+          Value<int?> intervaloHabitacionGratuita = const Value.absent(),
+          Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+          Value<int?> userId = const Value.absent()}) =>
+      Politica(
+        id: id ?? this.id,
+        fechaActualizacion: fechaActualizacion.present
+            ? fechaActualizacion.value
+            : this.fechaActualizacion,
+        intervaloHabitacionGratuita: intervaloHabitacionGratuita.present
+            ? intervaloHabitacionGratuita.value
+            : this.intervaloHabitacionGratuita,
+        limiteHabitacionCotizacion: limiteHabitacionCotizacion.present
+            ? limiteHabitacionCotizacion.value
+            : this.limiteHabitacionCotizacion,
+        userId: userId.present ? userId.value : this.userId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Politica(')
+          ..write('id: $id, ')
+          ..write('fechaActualizacion: $fechaActualizacion, ')
+          ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
+          ..write('userId: $userId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, fechaActualizacion,
+      intervaloHabitacionGratuita, limiteHabitacionCotizacion, userId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Politica &&
+          other.id == this.id &&
+          other.fechaActualizacion == this.fechaActualizacion &&
+          other.intervaloHabitacionGratuita ==
+              this.intervaloHabitacionGratuita &&
+          other.limiteHabitacionCotizacion == this.limiteHabitacionCotizacion &&
+          other.userId == this.userId);
+}
+
+class PoliticasCompanion extends UpdateCompanion<Politica> {
+  final Value<int> id;
+  final Value<DateTime?> fechaActualizacion;
+  final Value<int?> intervaloHabitacionGratuita;
+  final Value<int?> limiteHabitacionCotizacion;
+  final Value<int?> userId;
+  const PoliticasCompanion({
+    this.id = const Value.absent(),
+    this.fechaActualizacion = const Value.absent(),
+    this.intervaloHabitacionGratuita = const Value.absent(),
+    this.limiteHabitacionCotizacion = const Value.absent(),
+    this.userId = const Value.absent(),
+  });
+  PoliticasCompanion.insert({
+    this.id = const Value.absent(),
+    this.fechaActualizacion = const Value.absent(),
+    this.intervaloHabitacionGratuita = const Value.absent(),
+    this.limiteHabitacionCotizacion = const Value.absent(),
+    this.userId = const Value.absent(),
+  });
+  static Insertable<Politica> custom({
+    Expression<int>? id,
+    Expression<DateTime>? fechaActualizacion,
+    Expression<int>? intervaloHabitacionGratuita,
+    Expression<int>? limiteHabitacionCotizacion,
+    Expression<int>? userId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fechaActualizacion != null) 'fecha_actualizacion': fechaActualizacion,
+      if (intervaloHabitacionGratuita != null)
+        'intervalo_habitacion_gratuita': intervaloHabitacionGratuita,
+      if (limiteHabitacionCotizacion != null)
+        'limite_habitacion_cotizacion': limiteHabitacionCotizacion,
+      if (userId != null) 'user_id': userId,
+    });
+  }
+
+  PoliticasCompanion copyWith(
+      {Value<int>? id,
+      Value<DateTime?>? fechaActualizacion,
+      Value<int?>? intervaloHabitacionGratuita,
+      Value<int?>? limiteHabitacionCotizacion,
+      Value<int?>? userId}) {
+    return PoliticasCompanion(
+      id: id ?? this.id,
+      fechaActualizacion: fechaActualizacion ?? this.fechaActualizacion,
+      intervaloHabitacionGratuita:
+          intervaloHabitacionGratuita ?? this.intervaloHabitacionGratuita,
+      limiteHabitacionCotizacion:
+          limiteHabitacionCotizacion ?? this.limiteHabitacionCotizacion,
+      userId: userId ?? this.userId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (fechaActualizacion.present) {
+      map['fecha_actualizacion'] = Variable<DateTime>(fechaActualizacion.value);
+    }
+    if (intervaloHabitacionGratuita.present) {
+      map['intervalo_habitacion_gratuita'] =
+          Variable<int>(intervaloHabitacionGratuita.value);
+    }
+    if (limiteHabitacionCotizacion.present) {
+      map['limite_habitacion_cotizacion'] =
+          Variable<int>(limiteHabitacionCotizacion.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PoliticasCompanion(')
+          ..write('id: $id, ')
+          ..write('fechaActualizacion: $fechaActualizacion, ')
+          ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
+          ..write('userId: $userId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
   late final $UsuarioTable usuario = $UsuarioTable(this);
   late final $CotizacionTable cotizacion = $CotizacionTable(this);
   late final $HabitacionTable habitacion = $HabitacionTable(this);
-  late final $TarifaXDiaTable tarifaXDia = $TarifaXDiaTable(this);
+  late final $TarifaXDiaTableTable tarifaXDiaTable =
+      $TarifaXDiaTableTable(this);
   late final $PeriodoTable periodo = $PeriodoTable(this);
   late final $TemporadaTable temporada = $TemporadaTable(this);
   late final $TarifaTable tarifa = $TarifaTable(this);
   late final $UserActivityTable userActivity = $UserActivityTable(this);
   late final $TarifaRackTable tarifaRack = $TarifaRackTable(this);
+  late final $PoliticasTable politicas = $PoliticasTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4519,12 +4853,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         usuario,
         cotizacion,
         habitacion,
-        tarifaXDia,
+        tarifaXDiaTable,
         periodo,
         temporada,
         tarifa,
         userActivity,
-        tarifaRack
+        tarifaRack,
+        politicas
       ];
 }
 
@@ -5236,7 +5571,8 @@ class $$HabitacionTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaXDiaTableInsertCompanionBuilder = TarifaXDiaCompanion Function({
+typedef $$TarifaXDiaTableTableInsertCompanionBuilder = TarifaXDiaTableCompanion
+    Function({
   Value<int> id,
   Value<String?> subfolio,
   Value<int?> dia,
@@ -5251,7 +5587,8 @@ typedef $$TarifaXDiaTableInsertCompanionBuilder = TarifaXDiaCompanion Function({
   Value<String?> codeTemporada,
   Value<String?> codeTarifa,
 });
-typedef $$TarifaXDiaTableUpdateCompanionBuilder = TarifaXDiaCompanion Function({
+typedef $$TarifaXDiaTableTableUpdateCompanionBuilder = TarifaXDiaTableCompanion
+    Function({
   Value<int> id,
   Value<String?> subfolio,
   Value<int?> dia,
@@ -5267,25 +5604,26 @@ typedef $$TarifaXDiaTableUpdateCompanionBuilder = TarifaXDiaCompanion Function({
   Value<String?> codeTarifa,
 });
 
-class $$TarifaXDiaTableTableManager extends RootTableManager<
+class $$TarifaXDiaTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TarifaXDiaTable,
-    TarifaXDiaData,
-    $$TarifaXDiaTableFilterComposer,
-    $$TarifaXDiaTableOrderingComposer,
-    $$TarifaXDiaTableProcessedTableManager,
-    $$TarifaXDiaTableInsertCompanionBuilder,
-    $$TarifaXDiaTableUpdateCompanionBuilder> {
-  $$TarifaXDiaTableTableManager(_$AppDatabase db, $TarifaXDiaTable table)
+    $TarifaXDiaTableTable,
+    TarifaXDiaTableData,
+    $$TarifaXDiaTableTableFilterComposer,
+    $$TarifaXDiaTableTableOrderingComposer,
+    $$TarifaXDiaTableTableProcessedTableManager,
+    $$TarifaXDiaTableTableInsertCompanionBuilder,
+    $$TarifaXDiaTableTableUpdateCompanionBuilder> {
+  $$TarifaXDiaTableTableTableManager(
+      _$AppDatabase db, $TarifaXDiaTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$TarifaXDiaTableFilterComposer(ComposerState(db, table)),
+              $$TarifaXDiaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$TarifaXDiaTableOrderingComposer(ComposerState(db, table)),
+              $$TarifaXDiaTableTableOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) =>
-              $$TarifaXDiaTableProcessedTableManager(p),
+              $$TarifaXDiaTableTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String?> subfolio = const Value.absent(),
@@ -5301,7 +5639,7 @@ class $$TarifaXDiaTableTableManager extends RootTableManager<
             Value<String?> codeTemporada = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
           }) =>
-              TarifaXDiaCompanion(
+              TarifaXDiaTableCompanion(
             id: id,
             subfolio: subfolio,
             dia: dia,
@@ -5331,7 +5669,7 @@ class $$TarifaXDiaTableTableManager extends RootTableManager<
             Value<String?> codeTemporada = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
           }) =>
-              TarifaXDiaCompanion.insert(
+              TarifaXDiaTableCompanion.insert(
             id: id,
             subfolio: subfolio,
             dia: dia,
@@ -5349,21 +5687,21 @@ class $$TarifaXDiaTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TarifaXDiaTableProcessedTableManager extends ProcessedTableManager<
+class $$TarifaXDiaTableTableProcessedTableManager extends ProcessedTableManager<
     _$AppDatabase,
-    $TarifaXDiaTable,
-    TarifaXDiaData,
-    $$TarifaXDiaTableFilterComposer,
-    $$TarifaXDiaTableOrderingComposer,
-    $$TarifaXDiaTableProcessedTableManager,
-    $$TarifaXDiaTableInsertCompanionBuilder,
-    $$TarifaXDiaTableUpdateCompanionBuilder> {
-  $$TarifaXDiaTableProcessedTableManager(super.$state);
+    $TarifaXDiaTableTable,
+    TarifaXDiaTableData,
+    $$TarifaXDiaTableTableFilterComposer,
+    $$TarifaXDiaTableTableOrderingComposer,
+    $$TarifaXDiaTableTableProcessedTableManager,
+    $$TarifaXDiaTableTableInsertCompanionBuilder,
+    $$TarifaXDiaTableTableUpdateCompanionBuilder> {
+  $$TarifaXDiaTableTableProcessedTableManager(super.$state);
 }
 
-class $$TarifaXDiaTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TarifaXDiaTable> {
-  $$TarifaXDiaTableFilterComposer(super.$state);
+class $$TarifaXDiaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaXDiaTableTable> {
+  $$TarifaXDiaTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -5431,9 +5769,9 @@ class $$TarifaXDiaTableFilterComposer
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$TarifaXDiaTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TarifaXDiaTable> {
-  $$TarifaXDiaTableOrderingComposer(super.$state);
+class $$TarifaXDiaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaXDiaTableTable> {
+  $$TarifaXDiaTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -6432,6 +6770,144 @@ class $$TarifaRackTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+typedef $$PoliticasTableInsertCompanionBuilder = PoliticasCompanion Function({
+  Value<int> id,
+  Value<DateTime?> fechaActualizacion,
+  Value<int?> intervaloHabitacionGratuita,
+  Value<int?> limiteHabitacionCotizacion,
+  Value<int?> userId,
+});
+typedef $$PoliticasTableUpdateCompanionBuilder = PoliticasCompanion Function({
+  Value<int> id,
+  Value<DateTime?> fechaActualizacion,
+  Value<int?> intervaloHabitacionGratuita,
+  Value<int?> limiteHabitacionCotizacion,
+  Value<int?> userId,
+});
+
+class $$PoliticasTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $PoliticasTable,
+    Politica,
+    $$PoliticasTableFilterComposer,
+    $$PoliticasTableOrderingComposer,
+    $$PoliticasTableProcessedTableManager,
+    $$PoliticasTableInsertCompanionBuilder,
+    $$PoliticasTableUpdateCompanionBuilder> {
+  $$PoliticasTableTableManager(_$AppDatabase db, $PoliticasTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$PoliticasTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$PoliticasTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$PoliticasTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<DateTime?> fechaActualizacion = const Value.absent(),
+            Value<int?> intervaloHabitacionGratuita = const Value.absent(),
+            Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
+          }) =>
+              PoliticasCompanion(
+            id: id,
+            fechaActualizacion: fechaActualizacion,
+            intervaloHabitacionGratuita: intervaloHabitacionGratuita,
+            limiteHabitacionCotizacion: limiteHabitacionCotizacion,
+            userId: userId,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<DateTime?> fechaActualizacion = const Value.absent(),
+            Value<int?> intervaloHabitacionGratuita = const Value.absent(),
+            Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
+          }) =>
+              PoliticasCompanion.insert(
+            id: id,
+            fechaActualizacion: fechaActualizacion,
+            intervaloHabitacionGratuita: intervaloHabitacionGratuita,
+            limiteHabitacionCotizacion: limiteHabitacionCotizacion,
+            userId: userId,
+          ),
+        ));
+}
+
+class $$PoliticasTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $PoliticasTable,
+    Politica,
+    $$PoliticasTableFilterComposer,
+    $$PoliticasTableOrderingComposer,
+    $$PoliticasTableProcessedTableManager,
+    $$PoliticasTableInsertCompanionBuilder,
+    $$PoliticasTableUpdateCompanionBuilder> {
+  $$PoliticasTableProcessedTableManager(super.$state);
+}
+
+class $$PoliticasTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $PoliticasTable> {
+  $$PoliticasTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get fechaActualizacion => $state.composableBuilder(
+      column: $state.table.fechaActualizacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get intervaloHabitacionGratuita =>
+      $state.composableBuilder(
+          column: $state.table.intervaloHabitacionGratuita,
+          builder: (column, joinBuilders) =>
+              ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get limiteHabitacionCotizacion => $state.composableBuilder(
+      column: $state.table.limiteHabitacionCotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get userId => $state.composableBuilder(
+      column: $state.table.userId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$PoliticasTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $PoliticasTable> {
+  $$PoliticasTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get fechaActualizacion => $state.composableBuilder(
+      column: $state.table.fechaActualizacion,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get intervaloHabitacionGratuita =>
+      $state.composableBuilder(
+          column: $state.table.intervaloHabitacionGratuita,
+          builder: (column, joinBuilders) =>
+              ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get limiteHabitacionCotizacion =>
+      $state.composableBuilder(
+          column: $state.table.limiteHabitacionCotizacion,
+          builder: (column, joinBuilders) =>
+              ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get userId => $state.composableBuilder(
+      column: $state.table.userId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
@@ -6441,8 +6917,8 @@ class _$AppDatabaseManager {
       $$CotizacionTableTableManager(_db, _db.cotizacion);
   $$HabitacionTableTableManager get habitacion =>
       $$HabitacionTableTableManager(_db, _db.habitacion);
-  $$TarifaXDiaTableTableManager get tarifaXDia =>
-      $$TarifaXDiaTableTableManager(_db, _db.tarifaXDia);
+  $$TarifaXDiaTableTableTableManager get tarifaXDiaTable =>
+      $$TarifaXDiaTableTableTableManager(_db, _db.tarifaXDiaTable);
   $$PeriodoTableTableManager get periodo =>
       $$PeriodoTableTableManager(_db, _db.periodo);
   $$TemporadaTableTableManager get temporada =>
@@ -6453,4 +6929,6 @@ class _$AppDatabaseManager {
       $$UserActivityTableTableManager(_db, _db.userActivity);
   $$TarifaRackTableTableManager get tarifaRack =>
       $$TarifaRackTableTableManager(_db, _db.tarifaRack);
+  $$PoliticasTableTableManager get politicas =>
+      $$PoliticasTableTableManager(_db, _db.politicas);
 }

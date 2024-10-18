@@ -168,7 +168,7 @@ class ItemRows {
                 builder: (context) => Dialogs.customAlertDialog(
                   context: context,
                   title: "Eliminar tarifa",
-                  content:
+                  contentText:
                       "¿Desea eliminar la siguiente tarifa: ${registroTarifa.nombre}?",
                   nameButtonMain: "Aceptar",
                   funtionMain: () async {

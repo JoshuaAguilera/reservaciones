@@ -9,6 +9,7 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'tables/habitacion_table.dart';
 import 'tables/cotizaciones_table.dart';
 import 'tables/periodo_table.dart';
+import 'tables/politicas_table.dart';
 import 'tables/tarifa_rack_table.dart';
 import 'tables/tarifa_table.dart';
 import 'tables/tarifa_x_dia_table.dart';
@@ -18,15 +19,16 @@ import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
 // @DriftDatabase(tables: [
-//   Usuario,
+//  Usuario,
 //   Cotizacion,
 //   Habitacion,
-//   TarifaXDia,
+//   TarifaXDiaTable,
 //   Periodo,
 //   Temporada,
 //   Tarifa,
 //   UserActivity,
 //   TarifaRack,
+//   Politicas,
 // ])
 // class AppDatabase extends _$AppDatabase {}
 
@@ -40,6 +42,7 @@ part 'database.g.dart';
   Tarifa,
   UserActivity,
   TarifaRack,
+  Politicas,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -205,17 +208,19 @@ class AppDatabase extends _$AppDatabase {
 
   //tarifaXdia DAO
 
-  Future<List<TarifaXDiaData>> getTarifaXDiaByFolio(String folio) {
-    return (select(tarifaXDia)..where((t) => t.subfolio.equals(folio))).get();
+  Future<List<TarifaXDiaTableData>> getTarifaXDiaByFolio(String folio) {
+    return (select(tarifaXDiaTable)..where((t) => t.subfolio.equals(folio)))
+        .get();
   }
 
-  Future<int> updateTarifaXDia(TarifaXDiaData tarifa) {
-    return (update(tarifaXDia)..where((t) => t.id.equals(tarifa.id)))
+  Future<int> updateTarifaXDia(TarifaXDiaTableData tarifa) {
+    return (update(tarifaXDiaTable)..where((t) => t.id.equals(tarifa.id)))
         .write(tarifa);
   }
 
   Future deleteTarifaXDiaByFolio(String folio) {
-    return (delete(tarifaXDia)..where((t) => t.subfolio.equals(folio))).go();
+    return (delete(tarifaXDiaTable)..where((t) => t.subfolio.equals(folio)))
+        .go();
   }
 
   //usuario dao
@@ -357,6 +362,17 @@ class AppDatabase extends _$AppDatabase {
           )
           ..where((t) => t.id.equals(id)))
         .go();
+  }
+
+  // -- // Policies
+
+  Future<int> updatePolicies(
+      {required Politica politica, required int user_id}) {
+    return (update(politicas)
+          ..where(
+            (tbl) => tbl.userId.equals(user_id),
+          ))
+        .write(politica);
   }
 }
 

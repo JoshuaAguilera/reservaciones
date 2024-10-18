@@ -293,7 +293,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                           Dialogs.customAlertDialog(
                                         context: context,
                                         title: "Eliminar comprobante",
-                                        content:
+                                        contentText:
                                             "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
                                         nameButtonMain: "Aceptar",
                                         funtionMain: () async {

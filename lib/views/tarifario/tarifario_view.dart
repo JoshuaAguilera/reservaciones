@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,8 @@ import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
+import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
@@ -33,12 +36,20 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   bool showForm = true;
   bool inMenu = false;
   int yearNow = DateTime.now().year;
+  int intervaloHab = 1;
+  int limitCotGrup = 1;
 
   final List<bool> selectedModeCalendar = <bool>[
     true,
     false,
     false,
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +70,8 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
         builder: (context) => Dialogs.customAlertDialog(
           context: context,
           title: "Eliminar tarifa",
-          content: "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
+          contentText:
+              "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
           nameButtonMain: "Aceptar",
           funtionMain: () async {
             bool isSaves = await TarifaService().deleteTarifaRack(register);
@@ -97,6 +109,64 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
       );
     }
 
+    void _dialogConfigTariffs() {
+      showDialog(
+        context: context,
+        builder: (context) => Dialogs.customAlertDialog(
+          context: context,
+          iconData: CupertinoIcons.slider_horizontal_3,
+          title: "Políticas y criterios de Aplicación",
+          nameButtonMain: "Guardar",
+          contentCustom: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FormWidgets.inputCountField(
+                  colorText: Theme.of(context).primaryColor,
+                  widthInput: 70,
+                  sizeText: 13.3,
+                  nameField:
+                      "Intervalo de Aplicación de Habitaciones\nGratuitas",
+                  initialValue: "1",
+                  onChanged: (p0) {},
+                  onDecrement: (p0) {},
+                  onIncrement: (p0) {},
+                ),
+                const SizedBox(height: 30),
+                FormWidgets.inputCountField(
+                  colorText: Theme.of(context).primaryColor,
+                  widthInput: 70,
+                  sizeText: 13.3,
+                  nameField: "Limite de Habitaciones para Cotización\nGrupal",
+                  initialValue: "1",
+                  onChanged: (p0) {},
+                  onDecrement: (p0) {},
+                  onIncrement: (p0) {},
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 345,
+                  child: TextStyles.standardText(
+                    text:
+                        "(Especifica el número máximo de habitaciones para una cotización individual. Más de este número será considerado una cotización grupal).",
+                    color: Theme.of(context).primaryColor,
+                    size: 11.5,
+                    aling: TextAlign.justify,
+                    overClip: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          funtionMain: () {},
+          nameButtonCancel: "Cancelar",
+          withButtonCancel: true,
+          otherButton: true,
+          colorTextButton: Theme.of(context).primaryColor,
+        ),
+      );
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -111,26 +181,39 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     "Contempla, analiza y define las principales tarifas de planes, habitaciones, PAX y promociones para complementar la generación de cotizaciones.",
                 childOptional: !showForm
                     ? const SizedBox()
-                    : SizedBox(
-                        height: 38,
-                        child: Buttons.commonButton(
-                          onPressed: () {
-                            ref
-                                .read(editTarifaProvider.notifier)
-                                .update((state) => RegistroTarifa());
-                            ref.read(temporadasProvider.notifier).update(
-                                  (state) => [
-                                    Temporada(
-                                        nombre: "Promoción", editable: false),
-                                    Temporada(nombre: "BAR I", editable: false),
-                                    Temporada(
-                                        nombre: "BAR II", editable: false),
-                                  ],
-                                );
-                            onCreate.call();
-                          },
-                          text: "Crear tarifa",
-                        ).animate(target: !targetForm ? 1 : 0).fadeIn(),
+                    : Row(
+                        children: [
+                          Buttons.iconButtonCard(
+                            icon: CupertinoIcons.slider_horizontal_3,
+                            onPressed: () {
+                              _dialogConfigTariffs();
+                            },
+                          ),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                            height: 40,
+                            child: Buttons.commonButton(
+                              onPressed: () {
+                                ref
+                                    .read(editTarifaProvider.notifier)
+                                    .update((state) => RegistroTarifa());
+                                ref.read(temporadasProvider.notifier).update(
+                                      (state) => [
+                                        Temporada(
+                                            nombre: "Promoción",
+                                            editable: false),
+                                        Temporada(
+                                            nombre: "BAR I", editable: false),
+                                        Temporada(
+                                            nombre: "BAR II", editable: false),
+                                      ],
+                                    );
+                                onCreate.call();
+                              },
+                              text: "Crear tarifa",
+                            ).animate(target: !targetForm ? 1 : 0).fadeIn(),
+                          ),
+                        ],
                       ),
               ),
               Row(

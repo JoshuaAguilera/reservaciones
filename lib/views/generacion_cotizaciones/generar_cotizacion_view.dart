@@ -448,7 +448,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     iconColor:
                                                         DesktopColors.turqueza,
                                                     title: "Correo enviado",
-                                                    content:
+                                                    contentText:
                                                         "El correo fue enviado exitosamente",
                                                     nameButtonMain: "Aceptar",
                                                     funtionMain: () {},
