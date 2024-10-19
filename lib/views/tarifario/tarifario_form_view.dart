@@ -438,10 +438,19 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 1, top: 5),
-                          child: TextStyles.titleText(
-                            text: "Temporadas",
-                            size: 18,
-                            color: Theme.of(context).dividerColor,
+                          child: Row(
+                            children: [
+                              TextStyles.titleText(
+                                text: "Temporadas ",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                               TextStyles.titleText(
+                                text: "(Solo para cotizaciones individuales)",
+                                size: 13,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
                           ),
                         ),
                         Center(
@@ -476,8 +485,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                 padding: const EdgeInsets.only(top: 23),
                                 child: InkWell(
                                   onTap: () => setState(() {
-                                    temporadaListProvider
-                                        .add(Temporada(nombre: "New Season(${temporadaListProvider.length + 1})"));
+                                    temporadaListProvider.add(Temporada(
+                                        nombre:
+                                            "New Season(${temporadaListProvider.length + 1})"));
                                   }),
                                   child: Container(
                                     width: 95,
@@ -1040,6 +1050,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           ref
               .read(changeTarifasProvider.notifier)
               .update((state) => UniqueKey().hashCode);
+          ref.read(monthsCacheYearProvider.notifier).update((state) => []);
         },
       );
 

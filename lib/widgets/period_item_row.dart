@@ -32,7 +32,7 @@ class PeriodItemRow extends StatefulWidget {
 
 class _PeriodItemRowState extends State<PeriodItemRow> {
   List<DateTime> weekNowSegment = [];
-
+  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

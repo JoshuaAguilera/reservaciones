@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
@@ -20,9 +22,20 @@ final listTarifaProvider =
   return todos!.value;
 });
 
+final monthsCacheYearProvider = StateProvider<List<Widget>>((ref) => []);
+
+final tariffPolicyProvider =
+    FutureProvider.family<Politica?, String>((ref, arg) async {
+  final detectChanged = ref.watch(changeTariffPolicyProvider);
+  final list = await TarifaService().getTariffPolicy();
+  return list;
+});
+
 final changeTarifasProvider = StateProvider<int>((ref) => 0);
 
 final changeTarifasListProvider = StateProvider<int>((ref) => 0);
+
+final changeTariffPolicyProvider = StateProvider<int>((ref) => 0);
 
 final selectedModeViewProvider =
     StateProvider<List<bool>>((ref) => <bool>[true, false, false]);

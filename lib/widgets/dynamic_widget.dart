@@ -68,6 +68,8 @@ class dynamicWidget {
     bool isRepeat = false;
     PeriodoData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
 
+    
+
     for (var element in weekNowSegment) {
       if (Utility.defineApplyDays(nowPeriod, element)) {
         isRepeat = false;
@@ -98,8 +100,6 @@ class dynamicWidget {
             child: DayInfoItemRow(
               tarifa: tarifa,
               weekNow: weekNow,
-              popupDirection:
-                  !isUpDireccion ? TooltipDirection.up : TooltipDirection.down,
               child: Card(
                 elevation: 8,
                 color: tarifa.color ?? Colors.cyan,

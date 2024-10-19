@@ -304,4 +304,46 @@ class TarifaService extends BaseService {
 
     return tarifasRegistradas;
   }
+
+  Future<Politica?> getTariffPolicy() async {
+    Politica? tariffPolicy;
+    final db = AppDatabase();
+
+    try {
+      List<Politica> resp = await db.getTariffPolicy();
+      if (resp.isNotEmpty) tariffPolicy = resp.first;
+      await db.close();
+    } catch (e) {
+      print(e);
+      await db.close();
+    }
+
+    return tariffPolicy;
+  }
+
+  Future<bool> saveTariffPolicy(Politica? policy) async {
+    final database = AppDatabase();
+
+    try {
+      if (policy?.id != 0) {
+        await database.updateTariffPolicy(politica: policy!, id: policy.id);
+      } else {
+        await database.into(database.politicas).insert(
+              PoliticasCompanion.insert(
+                fechaActualizacion: Value(DateTime.now()),
+                intervaloHabitacionGratuita:
+                    Value(policy?.intervaloHabitacionGratuita ?? 0),
+                limiteHabitacionCotizacion:
+                    Value(policy?.limiteHabitacionCotizacion ?? 0),
+              ),
+            );
+      }
+      await database.close();
+      return true;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return false;
+    }
+  }
 }

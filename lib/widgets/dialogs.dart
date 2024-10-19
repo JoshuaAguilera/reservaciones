@@ -490,7 +490,7 @@ class Dialogs {
     });
   }
 
-  static AlertDialog customAlertDialog({
+  static Widget customAlertDialog({
     IconData? iconData,
     Color? iconColor,
     Color? colorTextButton,
@@ -500,64 +500,77 @@ class Dialogs {
     Widget? contentCustom,
     String? contentBold,
     bool otherButton = false,
+    bool notCloseInstant = false,
+    bool withLoadingProcess = false,
     required String nameButtonMain,
     required VoidCallback funtionMain,
     required String nameButtonCancel,
     required bool withButtonCancel,
   }) {
-    return AlertDialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-      title: Row(children: [
-        if (iconData != null)
-          Icon(
-            iconData,
-            size: 33,
-            color: iconColor ?? DesktopColors.ceruleanOscure,
-          ),
-        const SizedBox(width: 10),
-        Expanded(
-            child: TextStyles.titleText(
-                text: title, size: 18, color: Theme.of(context).primaryColor))
-      ]),
-      content: contentCustom ??
-          TextStyles.TextAsociative(contentBold ?? "", contentText,
-              isInverted: contentBold != null,
-              color: Theme.of(context).primaryColor),
-      actions: [
-        if (withButtonCancel)
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: TextStyles.buttonText(
-              text: nameButtonCancel,
-              color: colorTextButton,
+    bool loadingProcess = false;
+
+    return StatefulBuilder(builder: (context, snapshot) {
+      return AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        title: Row(children: [
+          if (iconData != null)
+            Icon(
+              iconData,
+              size: 33,
+              color: iconColor ?? DesktopColors.ceruleanOscure,
             ),
-          ),
-        if (otherButton)
-          SizedBox(
-            width: 120,
-            child: Buttons.commonButton(
-              text: "ACEPTAR",
+          const SizedBox(width: 10),
+          Expanded(
+              child: TextStyles.titleText(
+                  text: title, size: 18, color: Theme.of(context).primaryColor))
+        ]),
+        content: contentCustom ??
+            TextStyles.TextAsociative(contentBold ?? "", contentText,
+                isInverted: contentBold != null,
+                color: Theme.of(context).primaryColor),
+        actions: [
+          if (withButtonCancel)
+            Opacity(
+              opacity: (withLoadingProcess && loadingProcess) ? 0.4 : 1,
+              child: TextButton(
+                onPressed: (withLoadingProcess && loadingProcess)
+                    ? null
+                    : () {
+                        Navigator.pop(context);
+                      },
+                child: TextStyles.buttonText(
+                  text: nameButtonCancel,
+                  color: colorTextButton,
+                ),
+              ),
+            ),
+          if (otherButton)
+            SizedBox(
+              width: 120,
+              child: Buttons.commonButton(
+                text: "ACEPTAR",
+                isLoading: loadingProcess,
+                onPressed: () {
+                  if (withLoadingProcess) snapshot(() => loadingProcess = true);
+                  funtionMain.call();
+                  if (!notCloseInstant) Navigator.of(context).pop(true);
+                },
+              ),
+            )
+          else
+            TextButton(
               onPressed: () {
                 funtionMain.call();
-                Navigator.of(context).pop(true);
+                if (!notCloseInstant) Navigator.of(context).pop(true);
               },
+              child: TextStyles.buttonText(
+                text: nameButtonMain,
+                color: colorTextButton,
+              ),
             ),
-          )
-        else
-          TextButton(
-            onPressed: () {
-              funtionMain.call();
-              Navigator.of(context).pop(true);
-            },
-            child: TextStyles.buttonText(
-              text: nameButtonMain,
-              color: colorTextButton,
-            ),
-          ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   static AlertDialog filterDateDialog({

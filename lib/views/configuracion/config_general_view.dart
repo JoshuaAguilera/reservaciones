@@ -37,6 +37,7 @@ class _ConfigGeneralViewState extends State<ConfigGeneralView> {
                       isReversed: brightness == Brightness.dark ? true : false,
                     );
                     Preferences.modeDark = !Preferences.modeDark;
+                    setState(() {});
                   },
                   child: FormWidgets.inputSwitch(
                     value: Preferences.modeDark,

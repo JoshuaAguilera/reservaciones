@@ -8,6 +8,7 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:intl/intl.dart';
 
+import '../models/temporada_model.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/progress_indicator.dart';
 import '../ui/show_snackbar.dart';
@@ -236,6 +237,16 @@ class _ControllerCalendarWidgetState
                               ref
                                   .read(editTarifaProvider.notifier)
                                   .update((state) => RegistroTarifa());
+                              ref.read(temporadasProvider.notifier).update(
+                                    (state) => [
+                                      Temporada(
+                                          nombre: "Promoción", editable: false),
+                                      Temporada(
+                                          nombre: "BAR I", editable: false),
+                                      Temporada(
+                                          nombre: "BAR II", editable: false),
+                                    ],
+                                  );
                               widget.onCreated!.call();
                             },
                             icon: const Icon(Icons.add_circle_rounded)),
@@ -315,6 +326,11 @@ class _ControllerCalendarWidgetState
                                                         .update((state) =>
                                                             UniqueKey()
                                                                 .hashCode);
+                                                    ref
+                                                        .read(
+                                                            monthsCacheYearProvider
+                                                                .notifier)
+                                                        .update((state) => []);
                                                   },
                                                 );
                                               } else {

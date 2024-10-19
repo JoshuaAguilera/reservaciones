@@ -366,12 +366,13 @@ class AppDatabase extends _$AppDatabase {
 
   // -- // Policies
 
-  Future<int> updatePolicies(
-      {required Politica politica, required int user_id}) {
-    return (update(politicas)
-          ..where(
-            (tbl) => tbl.userId.equals(user_id),
-          ))
+  Future<List<Politica>> getTariffPolicy() {
+    return (select(politicas)).get();
+  }
+
+  Future<int> updateTariffPolicy(
+      {required Politica politica, required int id}) {
+    return (update(politicas)..where((tbl) => tbl.id.equals(id)))
         .write(politica);
   }
 }

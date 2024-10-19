@@ -3823,18 +3823,25 @@ class $UserActivityTable extends UserActivity
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+  late final GeneratedColumn<int> status = GeneratedColumn<int>(
       'status', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns => [id, fecha, name, status, userId];
+  List<GeneratedColumn> get $columns =>
+      [id, fecha, name, category, status, userId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -3855,6 +3862,10 @@ class $UserActivityTable extends UserActivity
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
     }
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
@@ -3879,8 +3890,10 @@ class $UserActivityTable extends UserActivity
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name']),
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category']),
       status: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status']),
+          .read(DriftSqlType.int, data['${effectivePrefix}status']),
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
     );
@@ -3897,10 +3910,16 @@ class UserActivityData extends DataClass
   final int id;
   final DateTime? fecha;
   final String? name;
-  final String? status;
+  final String? category;
+  final int? status;
   final int? userId;
   const UserActivityData(
-      {required this.id, this.fecha, this.name, this.status, this.userId});
+      {required this.id,
+      this.fecha,
+      this.name,
+      this.category,
+      this.status,
+      this.userId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3911,8 +3930,11 @@ class UserActivityData extends DataClass
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<String>(category);
+    }
     if (!nullToAbsent || status != null) {
-      map['status'] = Variable<String>(status);
+      map['status'] = Variable<int>(status);
     }
     if (!nullToAbsent || userId != null) {
       map['user_id'] = Variable<int>(userId);
@@ -3926,6 +3948,9 @@ class UserActivityData extends DataClass
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      category: category == null && nullToAbsent
+          ? const Value.absent()
+          : Value(category),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
       userId:
@@ -3940,7 +3965,8 @@ class UserActivityData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       name: serializer.fromJson<String?>(json['name']),
-      status: serializer.fromJson<String?>(json['status']),
+      category: serializer.fromJson<String?>(json['category']),
+      status: serializer.fromJson<int?>(json['status']),
       userId: serializer.fromJson<int?>(json['userId']),
     );
   }
@@ -3951,7 +3977,8 @@ class UserActivityData extends DataClass
       'id': serializer.toJson<int>(id),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'name': serializer.toJson<String?>(name),
-      'status': serializer.toJson<String?>(status),
+      'category': serializer.toJson<String?>(category),
+      'status': serializer.toJson<int?>(status),
       'userId': serializer.toJson<int?>(userId),
     };
   }
@@ -3960,12 +3987,14 @@ class UserActivityData extends DataClass
           {int? id,
           Value<DateTime?> fecha = const Value.absent(),
           Value<String?> name = const Value.absent(),
-          Value<String?> status = const Value.absent(),
+          Value<String?> category = const Value.absent(),
+          Value<int?> status = const Value.absent(),
           Value<int?> userId = const Value.absent()}) =>
       UserActivityData(
         id: id ?? this.id,
         fecha: fecha.present ? fecha.value : this.fecha,
         name: name.present ? name.value : this.name,
+        category: category.present ? category.value : this.category,
         status: status.present ? status.value : this.status,
         userId: userId.present ? userId.value : this.userId,
       );
@@ -3975,6 +4004,7 @@ class UserActivityData extends DataClass
           ..write('id: $id, ')
           ..write('fecha: $fecha, ')
           ..write('name: $name, ')
+          ..write('category: $category, ')
           ..write('status: $status, ')
           ..write('userId: $userId')
           ..write(')'))
@@ -3982,7 +4012,7 @@ class UserActivityData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, fecha, name, status, userId);
+  int get hashCode => Object.hash(id, fecha, name, category, status, userId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3990,6 +4020,7 @@ class UserActivityData extends DataClass
           other.id == this.id &&
           other.fecha == this.fecha &&
           other.name == this.name &&
+          other.category == this.category &&
           other.status == this.status &&
           other.userId == this.userId);
 }
@@ -3998,12 +4029,14 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
   final Value<int> id;
   final Value<DateTime?> fecha;
   final Value<String?> name;
-  final Value<String?> status;
+  final Value<String?> category;
+  final Value<int?> status;
   final Value<int?> userId;
   const UserActivityCompanion({
     this.id = const Value.absent(),
     this.fecha = const Value.absent(),
     this.name = const Value.absent(),
+    this.category = const Value.absent(),
     this.status = const Value.absent(),
     this.userId = const Value.absent(),
   });
@@ -4011,6 +4044,7 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
     this.id = const Value.absent(),
     this.fecha = const Value.absent(),
     this.name = const Value.absent(),
+    this.category = const Value.absent(),
     this.status = const Value.absent(),
     this.userId = const Value.absent(),
   });
@@ -4018,13 +4052,15 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
     Expression<int>? id,
     Expression<DateTime>? fecha,
     Expression<String>? name,
-    Expression<String>? status,
+    Expression<String>? category,
+    Expression<int>? status,
     Expression<int>? userId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (fecha != null) 'fecha': fecha,
       if (name != null) 'name': name,
+      if (category != null) 'category': category,
       if (status != null) 'status': status,
       if (userId != null) 'user_id': userId,
     });
@@ -4034,12 +4070,14 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
       {Value<int>? id,
       Value<DateTime?>? fecha,
       Value<String?>? name,
-      Value<String?>? status,
+      Value<String?>? category,
+      Value<int?>? status,
       Value<int?>? userId}) {
     return UserActivityCompanion(
       id: id ?? this.id,
       fecha: fecha ?? this.fecha,
       name: name ?? this.name,
+      category: category ?? this.category,
       status: status ?? this.status,
       userId: userId ?? this.userId,
     );
@@ -4057,8 +4095,11 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
     if (status.present) {
-      map['status'] = Variable<String>(status.value);
+      map['status'] = Variable<int>(status.value);
     }
     if (userId.present) {
       map['user_id'] = Variable<int>(userId.value);
@@ -4072,6 +4113,7 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
           ..write('id: $id, ')
           ..write('fecha: $fecha, ')
           ..write('name: $name, ')
+          ..write('category: $category, ')
           ..write('status: $status, ')
           ..write('userId: $userId')
           ..write(')'))
@@ -4534,18 +4576,12 @@ class $PoliticasTable extends Politicas
   late final GeneratedColumn<int> limiteHabitacionCotizacion =
       GeneratedColumn<int>('limite_habitacion_cotizacion', aliasedName, true,
           type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
-      'user_id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         fechaActualizacion,
         intervaloHabitacionGratuita,
-        limiteHabitacionCotizacion,
-        userId
+        limiteHabitacionCotizacion
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4580,10 +4616,6 @@ class $PoliticasTable extends Politicas
               data['limite_habitacion_cotizacion']!,
               _limiteHabitacionCotizacionMeta));
     }
-    if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
-    }
     return context;
   }
 
@@ -4603,8 +4635,6 @@ class $PoliticasTable extends Politicas
       limiteHabitacionCotizacion: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
           data['${effectivePrefix}limite_habitacion_cotizacion']),
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
     );
   }
 
@@ -4619,13 +4649,11 @@ class Politica extends DataClass implements Insertable<Politica> {
   final DateTime? fechaActualizacion;
   final int? intervaloHabitacionGratuita;
   final int? limiteHabitacionCotizacion;
-  final int? userId;
   const Politica(
       {required this.id,
       this.fechaActualizacion,
       this.intervaloHabitacionGratuita,
-      this.limiteHabitacionCotizacion,
-      this.userId});
+      this.limiteHabitacionCotizacion});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4640,9 +4668,6 @@ class Politica extends DataClass implements Insertable<Politica> {
     if (!nullToAbsent || limiteHabitacionCotizacion != null) {
       map['limite_habitacion_cotizacion'] =
           Variable<int>(limiteHabitacionCotizacion);
-    }
-    if (!nullToAbsent || userId != null) {
-      map['user_id'] = Variable<int>(userId);
     }
     return map;
   }
@@ -4661,8 +4686,6 @@ class Politica extends DataClass implements Insertable<Politica> {
           limiteHabitacionCotizacion == null && nullToAbsent
               ? const Value.absent()
               : Value(limiteHabitacionCotizacion),
-      userId:
-          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
     );
   }
 
@@ -4677,7 +4700,6 @@ class Politica extends DataClass implements Insertable<Politica> {
           serializer.fromJson<int?>(json['intervaloHabitacionGratuita']),
       limiteHabitacionCotizacion:
           serializer.fromJson<int?>(json['limiteHabitacionCotizacion']),
-      userId: serializer.fromJson<int?>(json['userId']),
     );
   }
   @override
@@ -4690,7 +4712,6 @@ class Politica extends DataClass implements Insertable<Politica> {
           serializer.toJson<int?>(intervaloHabitacionGratuita),
       'limiteHabitacionCotizacion':
           serializer.toJson<int?>(limiteHabitacionCotizacion),
-      'userId': serializer.toJson<int?>(userId),
     };
   }
 
@@ -4698,8 +4719,7 @@ class Politica extends DataClass implements Insertable<Politica> {
           {int? id,
           Value<DateTime?> fechaActualizacion = const Value.absent(),
           Value<int?> intervaloHabitacionGratuita = const Value.absent(),
-          Value<int?> limiteHabitacionCotizacion = const Value.absent(),
-          Value<int?> userId = const Value.absent()}) =>
+          Value<int?> limiteHabitacionCotizacion = const Value.absent()}) =>
       Politica(
         id: id ?? this.id,
         fechaActualizacion: fechaActualizacion.present
@@ -4711,7 +4731,6 @@ class Politica extends DataClass implements Insertable<Politica> {
         limiteHabitacionCotizacion: limiteHabitacionCotizacion.present
             ? limiteHabitacionCotizacion.value
             : this.limiteHabitacionCotizacion,
-        userId: userId.present ? userId.value : this.userId,
       );
   @override
   String toString() {
@@ -4719,15 +4738,14 @@ class Politica extends DataClass implements Insertable<Politica> {
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
-          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
-          ..write('userId: $userId')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, fechaActualizacion,
-      intervaloHabitacionGratuita, limiteHabitacionCotizacion, userId);
+      intervaloHabitacionGratuita, limiteHabitacionCotizacion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4736,8 +4754,7 @@ class Politica extends DataClass implements Insertable<Politica> {
           other.fechaActualizacion == this.fechaActualizacion &&
           other.intervaloHabitacionGratuita ==
               this.intervaloHabitacionGratuita &&
-          other.limiteHabitacionCotizacion == this.limiteHabitacionCotizacion &&
-          other.userId == this.userId);
+          other.limiteHabitacionCotizacion == this.limiteHabitacionCotizacion);
 }
 
 class PoliticasCompanion extends UpdateCompanion<Politica> {
@@ -4745,27 +4762,23 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
   final Value<DateTime?> fechaActualizacion;
   final Value<int?> intervaloHabitacionGratuita;
   final Value<int?> limiteHabitacionCotizacion;
-  final Value<int?> userId;
   const PoliticasCompanion({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
     this.limiteHabitacionCotizacion = const Value.absent(),
-    this.userId = const Value.absent(),
   });
   PoliticasCompanion.insert({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
     this.limiteHabitacionCotizacion = const Value.absent(),
-    this.userId = const Value.absent(),
   });
   static Insertable<Politica> custom({
     Expression<int>? id,
     Expression<DateTime>? fechaActualizacion,
     Expression<int>? intervaloHabitacionGratuita,
     Expression<int>? limiteHabitacionCotizacion,
-    Expression<int>? userId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4774,7 +4787,6 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
         'intervalo_habitacion_gratuita': intervaloHabitacionGratuita,
       if (limiteHabitacionCotizacion != null)
         'limite_habitacion_cotizacion': limiteHabitacionCotizacion,
-      if (userId != null) 'user_id': userId,
     });
   }
 
@@ -4782,8 +4794,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
       {Value<int>? id,
       Value<DateTime?>? fechaActualizacion,
       Value<int?>? intervaloHabitacionGratuita,
-      Value<int?>? limiteHabitacionCotizacion,
-      Value<int?>? userId}) {
+      Value<int?>? limiteHabitacionCotizacion}) {
     return PoliticasCompanion(
       id: id ?? this.id,
       fechaActualizacion: fechaActualizacion ?? this.fechaActualizacion,
@@ -4791,7 +4802,6 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
           intervaloHabitacionGratuita ?? this.intervaloHabitacionGratuita,
       limiteHabitacionCotizacion:
           limiteHabitacionCotizacion ?? this.limiteHabitacionCotizacion,
-      userId: userId ?? this.userId,
     );
   }
 
@@ -4812,9 +4822,6 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
       map['limite_habitacion_cotizacion'] =
           Variable<int>(limiteHabitacionCotizacion.value);
     }
-    if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
-    }
     return map;
   }
 
@@ -4824,8 +4831,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
-          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
-          ..write('userId: $userId')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion')
           ..write(')'))
         .toString();
   }
@@ -6455,7 +6461,8 @@ typedef $$UserActivityTableInsertCompanionBuilder = UserActivityCompanion
   Value<int> id,
   Value<DateTime?> fecha,
   Value<String?> name,
-  Value<String?> status,
+  Value<String?> category,
+  Value<int?> status,
   Value<int?> userId,
 });
 typedef $$UserActivityTableUpdateCompanionBuilder = UserActivityCompanion
@@ -6463,7 +6470,8 @@ typedef $$UserActivityTableUpdateCompanionBuilder = UserActivityCompanion
   Value<int> id,
   Value<DateTime?> fecha,
   Value<String?> name,
-  Value<String?> status,
+  Value<String?> category,
+  Value<int?> status,
   Value<int?> userId,
 });
 
@@ -6490,13 +6498,15 @@ class $$UserActivityTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
-            Value<String?> status = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<int?> status = const Value.absent(),
             Value<int?> userId = const Value.absent(),
           }) =>
               UserActivityCompanion(
             id: id,
             fecha: fecha,
             name: name,
+            category: category,
             status: status,
             userId: userId,
           ),
@@ -6504,13 +6514,15 @@ class $$UserActivityTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
-            Value<String?> status = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<int?> status = const Value.absent(),
             Value<int?> userId = const Value.absent(),
           }) =>
               UserActivityCompanion.insert(
             id: id,
             fecha: fecha,
             name: name,
+            category: category,
             status: status,
             userId: userId,
           ),
@@ -6547,7 +6559,12 @@ class $$UserActivityTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get status => $state.composableBuilder(
+  ColumnFilters<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get status => $state.composableBuilder(
       column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -6576,7 +6593,12 @@ class $$UserActivityTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get status => $state.composableBuilder(
+  ColumnOrderings<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get status => $state.composableBuilder(
       column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -6775,14 +6797,12 @@ typedef $$PoliticasTableInsertCompanionBuilder = PoliticasCompanion Function({
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
   Value<int?> limiteHabitacionCotizacion,
-  Value<int?> userId,
 });
 typedef $$PoliticasTableUpdateCompanionBuilder = PoliticasCompanion Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
   Value<int?> limiteHabitacionCotizacion,
-  Value<int?> userId,
 });
 
 class $$PoliticasTableTableManager extends RootTableManager<
@@ -6809,28 +6829,24 @@ class $$PoliticasTableTableManager extends RootTableManager<
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
             Value<int?> limiteHabitacionCotizacion = const Value.absent(),
-            Value<int?> userId = const Value.absent(),
           }) =>
               PoliticasCompanion(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
-            userId: userId,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
             Value<int?> limiteHabitacionCotizacion = const Value.absent(),
-            Value<int?> userId = const Value.absent(),
           }) =>
               PoliticasCompanion.insert(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
-            userId: userId,
           ),
         ));
 }
@@ -6870,11 +6886,6 @@ class $$PoliticasTableFilterComposer
       column: $state.table.limiteHabitacionCotizacion,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$PoliticasTableOrderingComposer
@@ -6901,11 +6912,6 @@ class $$PoliticasTableOrderingComposer
           column: $state.table.limiteHabitacionCotizacion,
           builder: (column, joinBuilders) =>
               ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class _$AppDatabaseManager {

@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
@@ -47,7 +49,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -55,6 +56,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final modeViewProvider = ref.watch(selectedModeViewProvider);
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
 
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
@@ -87,9 +89,14 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
 
               Future.delayed(
                 500.ms,
-                () => ref
-                    .read(changeTarifasProvider.notifier)
-                    .update((state) => UniqueKey().hashCode),
+                () {
+                  ref
+                      .read(changeTarifasProvider.notifier)
+                      .update((state) => UniqueKey().hashCode);
+                  ref
+                      .read(monthsCacheYearProvider.notifier)
+                      .update((state) => []);
+                },
               );
             } else {
               showSnackBar(
@@ -109,11 +116,20 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
       );
     }
 
-    void _dialogConfigTariffs() {
+    void _dialogConfigTariffs(Politica? data) {
+      Politica policy = data ?? const Politica(id: 0);
+      int intervaloHabitacion =
+          data == null ? 1 : data.intervaloHabitacionGratuita ?? 0;
+      int limiteCotizacionGrupal =
+          data == null ? 1 : data.limiteHabitacionCotizacion ?? 0;
+      bool loadingProccess = false;
+
       showDialog(
         context: context,
         builder: (context) => Dialogs.customAlertDialog(
           context: context,
+          notCloseInstant: true,
+          withLoadingProcess: true,
           iconData: CupertinoIcons.slider_horizontal_3,
           title: "Políticas y criterios de Aplicación",
           nameButtonMain: "Guardar",
@@ -121,29 +137,41 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (policy.fechaActualizacion != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: TextStyles.standardText(
+                      text:
+                          "Ultima modificación: ${Utility.getCompleteDate(data: policy.fechaActualizacion)}",
+                      size: 11.5,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                 FormWidgets.inputCountField(
                   colorText: Theme.of(context).primaryColor,
                   widthInput: 70,
                   sizeText: 13.3,
                   nameField:
                       "Intervalo de Aplicación de Habitaciones\nGratuitas",
-                  initialValue: "1",
-                  onChanged: (p0) {},
-                  onDecrement: (p0) {},
-                  onIncrement: (p0) {},
+                  initialValue: intervaloHabitacion.toString(),
+                  onChanged: (p0) =>
+                      intervaloHabitacion = p0.isEmpty ? 1 : int.parse(p0),
+                  onDecrement: (p0) => intervaloHabitacion = p0 < 1 ? 1 : p0,
+                  onIncrement: (p0) => intervaloHabitacion = p0,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 FormWidgets.inputCountField(
                   colorText: Theme.of(context).primaryColor,
                   widthInput: 70,
                   sizeText: 13.3,
                   nameField: "Limite de Habitaciones para Cotización\nGrupal",
-                  initialValue: "1",
-                  onChanged: (p0) {},
-                  onDecrement: (p0) {},
-                  onIncrement: (p0) {},
+                  initialValue: limiteCotizacionGrupal.toString(),
+                  onChanged: (p0) =>
+                      limiteCotizacionGrupal = p0.isEmpty ? 1 : int.parse(p0),
+                  onDecrement: (p0) => limiteCotizacionGrupal = p0 < 1 ? 1 : p0,
+                  onIncrement: (p0) => limiteCotizacionGrupal = p0,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 7.5),
                 SizedBox(
                   width: 345,
                   child: TextStyles.standardText(
@@ -155,10 +183,50 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     overClip: true,
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
-          funtionMain: () {},
+          funtionMain: () async {
+            bool responseSavePolicy = await TarifaService().saveTariffPolicy(
+              Politica(
+                id: policy.id,
+                intervaloHabitacionGratuita: intervaloHabitacion,
+                fechaActualizacion: DateTime.now(),
+                limiteHabitacionCotizacion: limiteCotizacionGrupal,
+              ),
+            );
+            if (!context.mounted) return;
+            if (responseSavePolicy) {
+              showSnackBar(
+                context: context,
+                title:
+                    "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
+                message:
+                    "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
+                type: "success",
+                iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
+              );
+
+              Future.delayed(
+                500.ms,
+                () => ref
+                    .read(changeTariffPolicyProvider.notifier)
+                    .update((state) => UniqueKey().hashCode),
+              );
+            } else {
+              if (mounted) return;
+              showSnackBar(
+                  context: context,
+                  title: "Error de guardado",
+                  message:
+                      "Se detecto un error al intentar guardar las tarifas. Intentelo más tarde.",
+                  type: "danger");
+              return;
+            }
+
+            Navigator.pop(context);
+          },
           nameButtonCancel: "Cancelar",
           withButtonCancel: true,
           otherButton: true,
@@ -182,12 +250,26 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 childOptional: !showForm
                     ? const SizedBox()
                     : Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Buttons.iconButtonCard(
-                            icon: CupertinoIcons.slider_horizontal_3,
-                            onPressed: () {
-                              _dialogConfigTariffs();
-                            },
+                          politicaTarifaProvider.when(
+                            data: (data) => Buttons.iconButtonCard(
+                              icon: CupertinoIcons.slider_horizontal_3,
+                              onPressed: () {
+                                _dialogConfigTariffs(data);
+                              },
+                            ),
+                            error: (error, stackTrace) => const Tooltip(
+                                message: "Error de consulta",
+                                child: Icon(Icons.warning_amber_rounded,
+                                    color: Colors.amber)),
+                            loading: () => Center(
+                              child: SizedBox(
+                                width: 40,
+                                child: ProgressIndicatorEstandar(
+                                    sizeProgressIndicator: 30),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 10),
                           SizedBox(

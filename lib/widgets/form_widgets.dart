@@ -245,6 +245,9 @@ class FormWidgets {
     double verticalPadding = 10,
     String? Function(String?)? validator,
     void Function()? onEditingComplete,
+    Color? colorText,
+    Color? colorBorder,
+    Color? colorIcon,
   }) {
     validator ??= (value) {
       if ((value == null || value.isEmpty)) {
@@ -257,6 +260,7 @@ class FormWidgets {
       child: TextFormField(
         enabled: enabled,
         controller: controller,
+        readOnly: blocked,
         onEditingComplete: onEditingComplete,
         onChanged: (value) {
           if (onChanged != null) onChanged.call(value);
@@ -269,9 +273,10 @@ class FormWidgets {
             return null;
           }
         },
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: "poppins_regular",
           fontSize: 13,
+          color: colorText,
         ),
         keyboardType: isNumeric
             ? TextInputType.numberWithOptions(
@@ -294,11 +299,17 @@ class FormWidgets {
           contentPadding:
               EdgeInsets.symmetric(vertical: verticalPadding, horizontal: 10),
           border: const OutlineInputBorder(),
-          labelStyle: const TextStyle(
+          enabledBorder: colorBorder == null
+              ? null
+              : OutlineInputBorder(borderSide: BorderSide(color: colorBorder)),
+          labelStyle: TextStyle(
             fontFamily: "poppins_regular",
             fontSize: 13,
+            color: colorText,
           ),
-          prefixIcon: isMoneda ? const Icon(CupertinoIcons.money_dollar) : null,
+          prefixIcon: isMoneda
+              ? Icon(CupertinoIcons.money_dollar, color: colorIcon)
+              : null,
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(

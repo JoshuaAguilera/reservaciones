@@ -5,5 +5,4 @@ class Politicas extends Table {
   DateTimeColumn get fechaActualizacion => dateTime().nullable()();
   IntColumn get intervaloHabitacionGratuita => integer().nullable()();
   IntColumn get limiteHabitacionCotizacion => integer().nullable()();
-  IntColumn get userId => integer().nullable()();
 }

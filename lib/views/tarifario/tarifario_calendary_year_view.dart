@@ -34,12 +34,15 @@ class TarifarioCalendaryYearView extends ConsumerStatefulWidget {
 
 class _TarifarioCalendaryYearViewState
     extends ConsumerState<TarifarioCalendaryYearView> {
+  final List<Widget> _monthsCache = [];
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final listMonthsCacheProvider = ref.watch(monthsCacheYearProvider);
 
     return SizedBox(
       height: screenHeight - 160,
@@ -53,33 +56,42 @@ class _TarifarioCalendaryYearViewState
                     padding:
                         EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
                     child: GridView.builder(
-                        key: const PageStorageKey('myGridViewKey'),
-                        cacheExtent: 1000,
-                        padding: EdgeInsets.zero,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: (screenWidth > 1080) ? 3 : 2,
-                          childAspectRatio: 0.9,
-                          crossAxisSpacing: 25,
-                        ),
-                        itemCount: 12,
-                        itemBuilder: (context, index) {
-                          DateTime month = DateTime(
-                              widget.currentMonth.year, (index % 12) + 1, 1);
-                          return SizedBox(
-                            height: 380,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHeaderYear(month),
-                                _buildWeeks(),
-                                const Divider(height: 5),
-                                Expanded(
-                                  child: buildCalendarYear(month, list),
-                                ),
-                              ],
+                      key: const PageStorageKey('myGridViewKey'),
+                      //cacheExtent: 500,
+                      addRepaintBoundaries: true,
+                      padding: EdgeInsets.zero,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: (screenWidth > 1080) ? 3 : 2,
+                        childAspectRatio: 0.9,
+                        crossAxisSpacing: 25,
+                      ),
+                      itemCount: 12,
+                      itemBuilder: (context, index) {
+                        DateTime month = DateTime(
+                            widget.currentMonth.year, (index % 12) + 1, 1);
+
+                        if (listMonthsCacheProvider.length < 12) {
+                          listMonthsCacheProvider.add(
+                            SizedBox(
+                              height: 380,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHeaderYear(month),
+                                  _buildWeeks(),
+                                  const Divider(height: 5),
+                                  Expanded(
+                                    child: buildCalendarYear(month, list),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
-                        }),
+                        }
+
+                        return listMonthsCacheProvider[index];
+                      },
+                    ),
                   ).animate(target: 1).fadeIn(duration: 1800.ms, begin: -.6);
                 },
                 error: (error, stackTrace) => const SizedBox(),
@@ -158,6 +170,7 @@ class _TarifarioCalendaryYearViewState
                 else if (tariffNow != null && tariffNow.isSelected!)
                   Expanded(
                     child: DayInfoItemRow(
+                      key: UniqueKey(),
                       tarifa: tariffNow,
                       yearNow: widget.yearNow,
                       day: text,
