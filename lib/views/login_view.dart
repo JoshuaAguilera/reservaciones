@@ -94,7 +94,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   TextStyles.standardText(
-                                    text: "B 5.2",
+                                    text: "B 7.5.2",
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ],

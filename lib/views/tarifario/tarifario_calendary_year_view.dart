@@ -70,26 +70,41 @@ class _TarifarioCalendaryYearViewState
                         DateTime month = DateTime(
                             widget.currentMonth.year, (index % 12) + 1, 1);
 
-                        if (listMonthsCacheProvider.length < 12) {
-                          listMonthsCacheProvider.add(
-                            SizedBox(
-                              height: 380,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildHeaderYear(month),
-                                  _buildWeeks(),
-                                  const Divider(height: 5),
-                                  Expanded(
-                                    child: buildCalendarYear(month, list),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
+                        // if (listMonthsCacheProvider.length < 12) {
+                        //   listMonthsCacheProvider.add(
+                        //     SizedBox(
+                        //       height: 380,
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           _buildHeaderYear(month),
+                        //           _buildWeeks(),
+                        //           const Divider(height: 5),
+                        //           Expanded(
+                        //             child: buildCalendarYear(month, list),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   );
+                        // }
 
-                        return listMonthsCacheProvider[index];
+                        // return listMonthsCacheProvider[index];
+
+                        return SizedBox(
+                          height: 380,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHeaderYear(month),
+                              _buildWeeks(),
+                              const Divider(height: 5),
+                              Expanded(
+                                child: buildCalendarYear(month, list),
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     ),
                   ).animate(target: 1).fadeIn(duration: 1800.ms, begin: -.6);

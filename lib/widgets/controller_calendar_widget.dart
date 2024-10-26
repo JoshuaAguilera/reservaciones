@@ -761,11 +761,12 @@ class _ControllerCalendarWidgetState
             elevation: 10,
             child: InkWell(
               onTap: () {
+                if ((_currentMonth.month - 1) == index) return;
+
                 widget.onChangePageWeekController!.call(index);
 
-                setState(() {
-                  _currentMonth = DateTime(_currentMonth.year, index + 1, 1);
-                });
+                setState(() =>
+                    _currentMonth = DateTime(_currentMonth.year, index + 1, 1));
               },
               child: Center(
                 child: Text(

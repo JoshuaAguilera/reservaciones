@@ -24,6 +24,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
+import '../../providers/tarifario_provider.dart';
 import '../../utils/helpers/constants.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
@@ -67,6 +68,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final comprobante = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
