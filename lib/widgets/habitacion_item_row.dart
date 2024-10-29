@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
@@ -8,9 +9,9 @@ import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../providers/habitacion_provider.dart';
+import '../providers/tarifario_provider.dart';
 import '../utils/helpers/web_colors.dart';
 import 'dialogs.dart';
-import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
 
@@ -140,21 +141,45 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
 class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
   @override
   Widget build(BuildContext context) {
-    Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.cotIndColor
-        : DesktopColors.cotIndPreColor;
-    Color colorText = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.azulUltClaro
-        : DesktopColors.ceruleanOscure;
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final habitaciones = ref.watch(HabitacionProvider.provider);
+
+    Color? colorCard = widget.habitacion.isFree
+        ? Colors.green[200]
+        : widget.habitacion.categoria == tipoHabitacion.first
+            ? DesktopColors.cotIndColor
+            : DesktopColors.cotIndPreColor;
+    Color? colorText = widget.habitacion.isFree
+        ? Colors.black87
+        : widget.habitacion.categoria == tipoHabitacion.first
+            ? DesktopColors.azulUltClaro
+            : DesktopColors.ceruleanOscure;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
-    void updateList(int value) {
+    void updateList(int value, Politica? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
           .update((state) => UniqueKey().hashCode);
+
+      if (politica != null) {
+        if (Utility.verifAddRoomFree(
+            habitaciones, politica.intervaloHabitacionGratuita!)) {
+          final habitacionesProvider = HabitacionProvider.provider;
+          ref.read(habitacionesProvider.notifier).addFreeItem(
+              widget.habitacion, politica.intervaloHabitacionGratuita!);
+        } else if (Utility.verifAddRoomFree(
+            habitaciones, politica.intervaloHabitacionGratuita!,
+            isReduced: true)) {
+          final habitacionesProvider = HabitacionProvider.provider;
+          ref
+              .read(habitacionesProvider.notifier)
+              .removeFreeItem(politica.intervaloHabitacionGratuita!, widget.habitacion.folioHabitacion!);
+         // ref.watch(habitacionesProvider.notifier).state = [...habitaciones];
+        }
+      }
     }
 
     return Card(
@@ -238,21 +263,35 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         color: colorText,
                         size: 12,
                       ),
-                    if (!widget.esDetalle)
+                    if (!widget.esDetalle && !widget.habitacion.isFree)
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10,
                         children: [
-                          SizedBox(
-                            width: 87,
-                            child: FormWidgets.inputCountField(
-                              colorText: colorText,
-                              initialValue: widget.habitacion.count.toString(),
-                              nameField: "Cant: ",
-                              onChanged: (p0) =>
-                                  updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                              onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                              onIncrement: (p0) => updateList(p0),
+                          politicaTarifaProvider.when(
+                            data: (data) => SizedBox(
+                              width: 87,
+                              child: FormWidgets.inputCountField(
+                                colorText: colorText,
+                                initialValue:
+                                    widget.habitacion.count.toString(),
+                                nameField: "Cant: ",
+                                onChanged: (p0) => updateList(
+                                    (p0.isEmpty || int.parse(p0) < 1)
+                                        ? 1
+                                        : int.parse(p0),
+                                    data),
+                                onDecrement: (p0) {},
+                                onIncrement: (p0) {},
+                              ),
+                            ),
+                            error: (error, stackTrace) => TextStyles.errorText(
+                                text: "Error al cargar politicas"),
+                            loading: () => const SizedBox(
+                              height: 25,
+                              width: 25,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white),
                             ),
                           ),
                           SizedBox(
@@ -265,6 +304,14 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                             ),
                           )
                         ],
+                      )
+                    else
+                      TextStyles.standardText(
+                        text: "${widget.habitacion.count} Room(s)",
+                        aling: TextAlign.center,
+                        color: colorText,
+                        size: 12,
+                        isBold: true,
                       ),
                   ],
                 ),
@@ -302,6 +349,8 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
 class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   @override
   Widget build(BuildContext context) {
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+
     Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.cotIndColor
         : DesktopColors.cotIndPreColor;
@@ -379,45 +428,65 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               ],
             ),
             if (screenWidthWithSideBar < 1100)
-              optionsListTile(
-                colorText: colorText,
-                onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                onIncrement: (p0) => updateList(p0),
-              )
+              politicaTarifaProvider.when(
+                data: (data) => optionsListTile(
+                  colorText: colorText,
+                  onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
+                  onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                  onIncrement: (p0) => updateList(p0),
+                ),
+                error: (error, stackTrace) =>
+                    TextStyles.errorText(text: "Error al cargar politicas"),
+                loading: () => const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
           ],
         ),
         trailing: (widget.esDetalle || screenWidthWithSideBar < 1100)
             ? null
-            : optionsListTile(
-                colorText: colorText,
-                onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                onIncrement: (p0) => updateList(p0),
+            : politicaTarifaProvider.when(
+                data: (data) => optionsListTile(
+                  colorText: colorText,
+                  onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
+                  onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
+                  onIncrement: (p0) => updateList(p0),
+                ),
+                error: (error, stackTrace) =>
+                    TextStyles.errorText(text: "Error al cargar politicas"),
+                loading: () => const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
               ),
         isThreeLine: true,
       ),
     );
   }
 
-  Widget optionsListTile(
-      {required Color colorText,
-      required void Function(String) onChanged,
-      required void Function(int) onDecrement,
-      required void Function(int) onIncrement}) {
+  Widget optionsListTile({
+    required Color colorText,
+    required void Function(String) onChanged,
+    required void Function(int) onDecrement,
+    required void Function(int) onIncrement,
+  }) {
     return Wrap(
       spacing: 5,
       children: [
         SizedBox(
-            width: 87,
-            child: FormWidgets.inputCountField(
-              colorText: colorText,
-              initialValue: widget.habitacion.count.toString(),
-              nameField: "Cant: ",
-              onChanged: onChanged,
-              onDecrement: onDecrement,
-              onIncrement: onIncrement,
-            )),
+          width: 87,
+          child: FormWidgets.inputCountField(
+            colorText: colorText,
+            initialValue: widget.habitacion.count.toString(),
+            nameField: "Cant: ",
+            onChanged: onChanged,
+            onDecrement: onDecrement,
+            onIncrement: onIncrement,
+          ),
+        ),
         SizedBox(
           height: 35,
           width: 40,

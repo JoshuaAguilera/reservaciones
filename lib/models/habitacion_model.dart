@@ -15,6 +15,7 @@ class Habitacion {
   double? descuento;
   double? total;
   int count;
+  bool isFree;
 
   Habitacion({
     this.id,
@@ -31,6 +32,7 @@ class Habitacion {
     this.descuento,
     this.total,
     this.count = 1,
+    this.isFree = false,
   });
 
   Habitacion CopyWith({
@@ -48,6 +50,7 @@ class Habitacion {
     double? descuento,
     double? total,
     int? count,
+    bool? isFree,
   }) =>
       Habitacion(
         id: id ?? this.id,
@@ -62,7 +65,8 @@ class Habitacion {
         tarifaXDia: tarifaXDia ?? this.tarifaXDia,
         totalReal: totalReal ?? this.totalReal,
         descuento: descuento ?? this.descuento,
-        total: total ?? total,
+        total: total ?? this.total,
         count: count ?? this.count,
+        isFree: isFree ?? this.isFree,
       );
 }

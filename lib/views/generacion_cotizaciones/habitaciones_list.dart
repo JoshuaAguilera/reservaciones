@@ -21,7 +21,7 @@ class HabitacionesList extends StatefulWidget {
 
   final void Function()? newRoom;
   final void Function(Habitacion)? editRoom;
-  final void Function()? deleteRoom;
+  final void Function(String)? deleteRoom;
   final SidebarXController sideController;
   final List<Habitacion> habitaciones;
 
@@ -142,28 +142,30 @@ class _HabitacionesListState extends State<HabitacionesList> {
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: SizedBox(
-                height: Utility.limitHeightList(widget.habitaciones.length),
+                height: Utility.limitHeightList(
+                    widget.habitaciones.length, viewTable ? 9 : 5, 530),
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   itemCount: widget.habitaciones.length,
-                  itemBuilder: (context, index) {
-                    if (index < widget.habitaciones.length) {
-                      return HabitacionItemRow(
-                        key: ObjectKey(widget.habitaciones[index].hashCode),
-                        sideController: widget.sideController,
-                        index: index,
-                        habitacion: widget.habitaciones[index],
-                        isTable: viewTable,
-                        onPressedDelete: () {
-                          setState(() => widget.habitaciones
-                              .remove(widget.habitaciones[index]));
-                          widget.deleteRoom!.call();
-                        },
-                        onPressedEdit: () =>
-                            widget.editRoom!.call(widget.habitaciones[index]),
-                      );
-                    }
+                  itemBuilder: (_, index) {
+                    print("Reload list: ${widget.habitaciones.length}");
+
+                    return HabitacionItemRow(
+                      key: ObjectKey(widget.habitaciones[index].hashCode),
+                      sideController: widget.sideController,
+                      index: index,
+                      habitacion: widget.habitaciones[index],
+                      isTable: viewTable,
+                      onPressedDelete: () {
+                        // setState(() => widget.habitaciones
+                        //     .remove(widget.habitaciones[index]));
+                        widget.deleteRoom!
+                            .call(widget.habitaciones[index].folioHabitacion!);
+                      },
+                      onPressedEdit: () =>
+                          widget.editRoom!.call(widget.habitaciones[index]),
+                    );
                   },
                 ),
               ),

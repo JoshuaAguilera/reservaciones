@@ -96,8 +96,10 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: habitacionesProvider
+                                                  .where((element) =>
+                                                      !element.isFree)
+                                                  .toList(),
                                               isVR: true,
                                               changeColor: true,
                                               onExpansionChanged: (p0) =>
@@ -107,8 +109,10 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: habitacionesProvider
+                                                  .where((element) =>
+                                                      !element.isFree)
+                                                  .toList(),
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
                                                   showListVPM = p0,
@@ -131,8 +135,10 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: habitacionesProvider
+                                                  .where((element) =>
+                                                      !element.isFree)
+                                                  .toList(),
                                               isVR: true,
                                               changeColor: true,
                                               onExpansionChanged: (p0) =>
@@ -142,8 +148,10 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: habitacionesProvider
+                                                  .where((element) =>
+                                                      !element.isFree)
+                                                  .toList(),
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
                                                   showListVPM = p0,
@@ -288,27 +296,55 @@ class _SummaryControllerWidgetState
                                     context: context,
                                   ),
                                   const SizedBox(height: 5),
-                                  if (!widget.calculateRoom)
-                                    CustomWidgets.itemListCount(
-                                      nameItem: "Descuento:",
-                                      count: -calculateTotalRooms(
-                                        habitacionesProvider,
-                                        onlyDiscount: true,
-                                      ),
-                                      context: context,
-                                    )
-                                  else
-                                    CustomWidgets.expansionTileList(
-                                      title: "Descuento(s):",
-                                      showList: showListDescuentos,
-                                      onExpansionChanged: (value) =>
-                                          showListDescuentos = value,
-                                      context: context,
-                                      messageNotFound: "Sin descuentos",
-                                      total: -(calculateDiscountTotal(
-                                          tarifasFiltradas,
-                                          habitacionProvider)),
-                                      children: [
+                                  CustomWidgets.expansionTileList(
+                                    title: "Descuento(s):",
+                                    showList: showListDescuentos,
+                                    onExpansionChanged: (value) =>
+                                        showListDescuentos = value,
+                                    context: context,
+                                    messageNotFound: "Sin descuentos",
+                                    total: !widget.calculateRoom
+                                        ? -calculateTotalRooms(
+                                            habitacionesProvider,
+                                            onlyDiscount: true,
+                                          )
+                                        : -(calculateDiscountTotal(
+                                            tarifasFiltradas,
+                                            habitacionProvider)),
+                                    children: [
+                                      if (!widget.calculateRoom)
+                                        for (var element in habitacionesProvider
+                                            .where((element) => !element.isFree)
+                                            .toList())
+                                          CustomWidgets.itemListCount(
+                                            nameItem:
+                                                "${element.count}x ${Utility.getStringPeriod(
+                                              initDate: DateTime.parse(
+                                                  element.fechaCheckIn!),
+                                              lastDate: DateTime.parse(
+                                                  element.fechaCheckOut!),
+                                            )} Desc.",
+                                            count: -(element.descuento ?? 0),
+                                            context: context,
+                                            sizeText: 11.5,
+                                          ),
+                                      if (!widget.calculateRoom)
+                                        for (var element in habitacionesProvider
+                                            .where((element) => element.isFree)
+                                            .toList())
+                                          CustomWidgets.itemListCount(
+                                            nameItem:
+                                                "${element.count}x ${Utility.getStringPeriod(
+                                              initDate: DateTime.parse(
+                                                  element.fechaCheckIn!),
+                                              lastDate: DateTime.parse(
+                                                  element.fechaCheckOut!),
+                                            )} (Free Room)",
+                                            count: -(element.total ?? 0),
+                                            context: context,
+                                            sizeText: 11.5,
+                                          ),
+                                      if (widget.calculateRoom)
                                         for (var element in tarifasFiltradas)
                                           CustomWidgets.itemListCount(
                                             nameItem:
@@ -321,8 +357,8 @@ class _SummaryControllerWidgetState
                                             context: context,
                                             sizeText: 11.5,
                                           ),
-                                      ],
-                                    ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -530,24 +566,39 @@ class _SummaryControllerWidgetState
   }) {
     double total = 0;
 
-    List<Habitacion> rooms = habitaciones;
+    List<Habitacion> realRooms =
+        habitaciones.where((element) => !element.isFree).toList();
+    List<Habitacion> rooms = realRooms;
 
     if (onlyFirstCategory) {
-      rooms = habitaciones
+      rooms = realRooms
           .where((element) => element.categoria == tipoHabitacion.first)
           .toList();
     }
 
     if (onlySecoundCategory) {
-      rooms = habitaciones
+      rooms = realRooms
           .where((element) => element.categoria == tipoHabitacion[1])
           .toList();
     }
 
     for (var element in rooms) {
       if (onlyTotalReal) total += (element.totalReal ?? 0) * element.count;
-      if (onlyDiscount) total += (element.descuento ?? 0) * element.count;
-      if (onlyTotal) total += (element.total ?? 0) * element.count;
+      if (onlyDiscount) {
+        total += (element.descuento ?? 0) * element.count;
+        for (var element in habitaciones.where((element) => element.isFree)) {
+          total += (element.total ?? 0) * element.count;
+        }
+      }
+      if (onlyTotal) {
+        total += (element.total ?? 0) * element.count;
+        double desc = 0;
+        for (var element in habitaciones.where((element) => element.isFree)) {
+          desc += (element.total ?? 0) * element.count;
+        }
+
+        total -= desc;
+      }
     }
 
     return total;
@@ -587,10 +638,11 @@ class _SummaryControllerWidgetState
             )
             .toList())
           CustomWidgets.itemListCount(
-            nameItem: "${element.count}x ${Utility.getStringPeriod(
-              initDate: DateTime.parse(element.fechaCheckIn!),
-              lastDate: DateTime.parse(element.fechaCheckOut!),
-            )}",
+            // nameItem: "${element.count}x ${Utility.getStringPeriod(
+            //   initDate: DateTime.parse(element.fechaCheckIn!),
+            //   lastDate: DateTime.parse(element.fechaCheckOut!),
+            // )}",
+            nameItem: "${element.count}x Room ${habitaciones.indexOf(element) + 1}",
             count: element.totalReal ?? 0,
             context: context,
             sizeText: 11.5,

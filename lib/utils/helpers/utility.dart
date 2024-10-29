@@ -1230,4 +1230,32 @@ class Utility {
 
     return showWidget;
   }
+
+  static bool verifAddRoomFree(
+      List<Habitacion> habitaciones, int intervaloHabitacionGratuita,
+      {bool isReduced = false}) {
+    bool isValidForAdd = false;
+    int rooms = 0;
+    int freeRooms = 0;
+    for (var element in habitaciones) {
+      if (element.isFree) {
+        freeRooms += element.count;
+      } else {
+        rooms += element.count;
+      }
+    }
+
+    int freeRoomsValid = rooms ~/ intervaloHabitacionGratuita;
+    print("freeRoomValid: $freeRoomsValid, freeRooms: $freeRooms");
+
+    if (freeRoomsValid > freeRooms) {
+      isValidForAdd = true;
+    }
+
+    if (freeRoomsValid < freeRooms && isReduced) {
+      isValidForAdd = true;
+    }
+
+    return isValidForAdd;
+  }
 }

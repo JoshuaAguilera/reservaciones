@@ -112,7 +112,7 @@ class _ControllerCalendarWidgetState
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextStyles.standardText(
-                                  text: "Diseño de calendario",
+                                  text: "Gestor de tarifas",
                                   isBold: true,
                                   color: Theme.of(context).primaryColor,
                                   size: 14,
@@ -388,22 +388,22 @@ class _ControllerCalendarWidgetState
                           ),
                         ],
                       ),
-                      ExpansionTile(
-                        initiallyExpanded: true,
-                        collapsedShape: Border(
-                            top: BorderSide(
-                                color: Theme.of(context).dividerColor)),
-                        title: TextStyles.standardText(
-                          text: "Usuarios autorizados",
-                          isBold: true,
-                          color: Theme.of(context).primaryColor,
-                          size: 14,
-                        ),
-                        children: [
-                          ItemRows.userTarifaItemRow(context,
-                              nameUser: "Neli", rolUser: "Administrador")
-                        ],
-                      ),
+                      // ExpansionTile(
+                      //   initiallyExpanded: true,
+                      //   collapsedShape: Border(
+                      //       top: BorderSide(
+                      //           color: Theme.of(context).dividerColor)),
+                      //   title: TextStyles.standardText(
+                      //     text: "Usuarios autorizados",
+                      //     isBold: true,
+                      //     color: Theme.of(context).primaryColor,
+                      //     size: 14,
+                      //   ),
+                      //   children: [
+                      //     ItemRows.userTarifaItemRow(context,
+                      //         nameUser: "Neli", rolUser: "Administrador")
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),

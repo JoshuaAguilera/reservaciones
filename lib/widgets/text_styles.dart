@@ -31,7 +31,7 @@ class TextStyles {
         color: color ?? DesktopColors.prussianBlue,
         fontSize: size,
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        overflow: overClip ? TextOverflow.clip : overflow);
+        overflow: overClip ? TextOverflow.clip : overflow, );
   }
 
   static Text buttonText(

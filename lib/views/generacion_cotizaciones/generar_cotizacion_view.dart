@@ -68,7 +68,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final comprobante = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -104,7 +103,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -257,6 +256,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       menores0a6: 0,
                                       menores7a12: 0,
                                       tarifaXDia: [],
+                                      isFree: false,
                                       fechaCheckIn: DateTime.now()
                                           .toString()
                                           .substring(0, 10),
@@ -267,12 +267,21 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     )),
                                     editRoom: (p0) =>
                                         _goDetailRoom(p0.CopyWith()),
-                                    deleteRoom: () => ref
-                                        .read(detectChangeRoomProvider.notifier)
-                                        .update(
-                                            (state) => UniqueKey().hashCode),
+                                    deleteRoom: (p0) {
+                                      ref
+                                          .read(HabitacionProvider
+                                              .provider.notifier)
+                                          .remove(p0);
+                                      ref
+                                          .read(
+                                              detectChangeRoomProvider.notifier)
+                                          .update(
+                                              (state) => UniqueKey().hashCode);
+                                    },
                                     sideController: widget.sideController,
-                                    habitaciones: habitaciones,
+                                    habitaciones: habitaciones
+                                        .where((element) => !element.isFree)
+                                        .toList(),
                                   ),
                                 )
                                     .animate(target: targetHabitaciones)

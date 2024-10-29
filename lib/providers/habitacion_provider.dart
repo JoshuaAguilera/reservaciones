@@ -6,6 +6,8 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import 'tarifario_provider.dart';
+
 class HabitacionProvider extends Notifier<List<Habitacion>> {
   @override
   List<Habitacion> build() => [];
@@ -19,6 +21,78 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     state = [...state, item];
   }
 
+  void addFreeItem(Habitacion habitacion, int interval) {
+    int rooms = 0;
+    for (var element in state) {
+      if (!element.isFree) rooms += element.count;
+    }
+
+    int freeRoomsValid = rooms ~/ interval;
+
+    if (state.any((element) =>
+        element.isFree &&
+        element.folioHabitacion == habitacion.folioHabitacion)) {
+      state
+          .firstWhere((element) =>
+              element.isFree &&
+              element.folioHabitacion == habitacion.folioHabitacion)
+          .count++;
+      ref.notifyListeners();
+    } else {
+      Habitacion item = habitacion.CopyWith();
+      item.isFree = true;
+      item.count = 1;
+      _current = item;
+      state = [...state, item];
+    }
+  }
+
+  void revisedFreeRooms() {
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    politicaTarifaProvider.when(
+      data: (data) {
+        if (data != null) {
+          int rooms = 0;
+          List<Habitacion> freeRooms = [];
+          for (var element in state) {
+            if (!element.isFree) {
+              rooms += element.count;
+            } else {
+              freeRooms.add(element);
+            }
+          }
+
+          int freeRoomsValid = rooms ~/ data.intervaloHabitacionGratuita!;
+
+          if (rooms >= data.intervaloHabitacionGratuita!) {
+            for (var element in freeRooms) {
+              if (!state.any((element2) =>
+                  !element2.isFree &&
+                  element2.folioHabitacion == element.folioHabitacion)) {
+                state.remove(element);
+              }
+            }
+
+            
+
+          } else {
+            state.removeWhere((element) => element.isFree);
+          }
+
+          ref.notifyListeners();
+        } else {
+          print("Politicas no encontradas");
+        }
+      },
+      error: (error, stackTrace) {
+        print("Politicas no encontradas");
+      },
+      loading: () {
+        print("Cargando politicas");
+      },
+    );
+  }
+
   void editItem(String? folio, Habitacion item) {
     int index = state.indexWhere((element) => element.folioHabitacion == folio);
     if (index != -1) {
@@ -28,13 +102,41 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     }
   }
 
-  void changeCountItem(String? folio, int count) {
-    state.firstWhere((element) => element.folioHabitacion == folio).count =
-        count;
+  void remove(String folio) {
+    state.removeWhere((element) => element.folioHabitacion == folio);
+    ref.notifyListeners();
+    revisedFreeRooms();
   }
 
-  void remove(String folio) =>
-      state.removeWhere((element) => element.folioHabitacion == folio);
+  void removeFreeItem(int intervalo, String folio) {
+    int rooms = 0;
+    for (var element in state) {
+      if (!element.isFree) rooms += element.count;
+    }
+
+    int freeRoomsValid = rooms ~/ intervalo;
+    if (state.any((element) =>
+            element.folioHabitacion == folio &&
+            element.count > 1 &&
+            element.isFree) &&
+        freeRoomsValid > 0) {
+      state
+          .firstWhere(
+              (element) => element.folioHabitacion == folio && element.isFree)
+          .count--;
+    } else {
+      if (state.any(
+          (element) => element.folioHabitacion == folio && element.isFree)) {
+        state.removeWhere(
+            (element) => element.folioHabitacion == folio && element.isFree);
+      } else if (state.any((element) => element.isFree && element.count > 1)) {
+        state.firstWhere((element) => element.isFree).count--;
+      } else {
+        state.removeWhere((element) => element.isFree);
+      }
+    }
+    ref.notifyListeners();
+  }
 
   void clear() => state = [];
 
