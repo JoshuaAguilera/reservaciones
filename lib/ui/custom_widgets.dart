@@ -368,7 +368,6 @@ class CustomWidgets {
         return Align(
           alignment: Alignment.centerRight,
           child: ToggleButtons(
-            
             direction: Axis.horizontal,
             onPressed: (int index) {
               snapshot(
@@ -789,6 +788,7 @@ class CustomWidgets {
     double sizeText = 13,
     double height = 60,
     String subTitle = '',
+    void Function()? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -813,6 +813,17 @@ class CustomWidgets {
                   size: sizeText,
                   color: Theme.of(context).primaryColor,
                   isBold: true,
+                ),
+              ),
+            if (onChanged != null)
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                onPressed: () {
+                  onChanged.call();
+                },
+                icon: Icon(
+                  Icons.sync,
+                  color: Colors.green[400],
                 ),
               ),
             TextStyles.standardText(

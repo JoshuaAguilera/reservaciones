@@ -147,13 +147,13 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     Color? colorCard = widget.habitacion.isFree
         ? Colors.green[200]
         : widget.habitacion.categoria == tipoHabitacion.first
-            ? DesktopColors.cotIndColor
-            : DesktopColors.cotIndPreColor;
+            ? DesktopColors.vistaReserva
+            : DesktopColors.vistaParcialMar;
     Color? colorText = widget.habitacion.isFree
         ? Colors.black87
         : widget.habitacion.categoria == tipoHabitacion.first
-            ? DesktopColors.azulUltClaro
-            : DesktopColors.ceruleanOscure;
+            ? Colors.white
+            : Colors.white;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
@@ -174,10 +174,10 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
             habitaciones, politica.intervaloHabitacionGratuita!,
             isReduced: true)) {
           final habitacionesProvider = HabitacionProvider.provider;
-          ref
-              .read(habitacionesProvider.notifier)
-              .removeFreeItem(politica.intervaloHabitacionGratuita!, widget.habitacion.folioHabitacion!);
-         // ref.watch(habitacionesProvider.notifier).state = [...habitaciones];
+          ref.read(habitacionesProvider.notifier).removeFreeItem(
+              politica.intervaloHabitacionGratuita!,
+              widget.habitacion.folioHabitacion!);
+          // ref.watch(habitacionesProvider.notifier).state = [...habitaciones];
         }
       }
     }
@@ -220,8 +220,12 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     ),
                     if (screenWidthWithSideBar > 950)
                       TextStyles.standardText(
-                        text:
-                            "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
+                        text: Utility.getStringPeriod(
+                            initDate:
+                                DateTime.parse(widget.habitacion.fechaCheckIn!),
+                            lastDate: DateTime.parse(
+                                widget.habitacion.fechaCheckOut!)),
+                        // "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
                         aling: TextAlign.center,
                         color: colorText,
                         size: 12,
@@ -352,8 +356,8 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
 
     Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.cotIndColor
-        : DesktopColors.cotIndPreColor;
+        ? DesktopColors.cotIndiv
+        : DesktopColors.cotGrupal;
     Color colorText = widget.habitacion.categoria == tipoHabitacion.first
         ? DesktopColors.azulUltClaro
         : DesktopColors.ceruleanOscure;
@@ -393,7 +397,10 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               (screenWidthWithSideBar < 1100)
                   ? "Fechas: "
                   : "Fechas de estancia: ",
-              "${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
+              Utility.getStringPeriod(
+                  initDate: DateTime.parse(widget.habitacion.fechaCheckIn!),
+                  lastDate: DateTime.parse(widget.habitacion.fechaCheckOut!)),
+              //"${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
               color: colorText,
             ),
             TextStyles.TextAsociative(

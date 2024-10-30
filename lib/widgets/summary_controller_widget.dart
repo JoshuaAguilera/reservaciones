@@ -6,6 +6,8 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/widgets/custom_dropdown.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
 
 import '../providers/habitacion_provider.dart';
 import '../ui/buttons.dart';
@@ -115,7 +117,8 @@ class _SummaryControllerWidgetState
                                                   .toList(),
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
-                                                  showListVPM = p0,
+                                                  setState(
+                                                      () => showListVPM = p0),
                                             ),
                                             const SizedBox(height: 5),
                                             Divider(
@@ -154,7 +157,8 @@ class _SummaryControllerWidgetState
                                                   .toList(),
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
-                                                  showListVPM = p0,
+                                                  setState(
+                                                      () => showListVPM = p0),
                                             ),
                                             const SizedBox(height: 5),
                                             Divider(
@@ -318,12 +322,13 @@ class _SummaryControllerWidgetState
                                             .toList())
                                           CustomWidgets.itemListCount(
                                             nameItem:
-                                                "${element.count}x ${Utility.getStringPeriod(
-                                              initDate: DateTime.parse(
-                                                  element.fechaCheckIn!),
-                                              lastDate: DateTime.parse(
-                                                  element.fechaCheckOut!),
-                                            )} Desc.",
+                                                "${element.count}x Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
+                                            //     "${element.count}x ${Utility.getStringPeriod(
+                                            //   initDate: DateTime.parse(
+                                            //       element.fechaCheckIn!),
+                                            //   lastDate: DateTime.parse(
+                                            //       element.fechaCheckOut!),
+                                            // )} (Desc.)",
                                             count: -(element.descuento ?? 0),
                                             context: context,
                                             sizeText: 11.5,
@@ -334,15 +339,117 @@ class _SummaryControllerWidgetState
                                             .toList())
                                           CustomWidgets.itemListCount(
                                             nameItem:
-                                                "${element.count}x ${Utility.getStringPeriod(
-                                              initDate: DateTime.parse(
-                                                  element.fechaCheckIn!),
-                                              lastDate: DateTime.parse(
-                                                  element.fechaCheckOut!),
-                                            )} (Free Room)",
+                                                //     "${Utility.getStringPeriod(
+                                                //   initDate: DateTime.parse(
+                                                //       element.fechaCheckIn!),
+                                                //   lastDate: DateTime.parse(
+                                                //       element.fechaCheckOut!),
+                                                // )} (Free Room)",
+                                                "Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(habitacionesProvider.where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Free Room)",
                                             count: -(element.total ?? 0),
                                             context: context,
                                             sizeText: 11.5,
+                                            onChanged:
+                                                (habitacionesProvider
+                                                            .where((element) =>
+                                                                !element.isFree)
+                                                            .toList()
+                                                            .length <
+                                                        2)
+                                                    ? null
+                                                    : () {
+                                                        if (habitacionesProvider
+                                                                .where((element) =>
+                                                                    !element
+                                                                        .isFree)
+                                                                .toList()
+                                                                .length <
+                                                            3) {
+                                                          ref
+                                                              .read(
+                                                                  HabitacionProvider
+                                                                      .provider
+                                                                      .notifier)
+                                                              .changedFreeRoom(
+                                                                  element
+                                                                      .folioHabitacion!);
+                                                        } else {
+                                                          String selectRoom =
+                                                              "Room ${habitacionesProvider.where((elementInt) => !elementInt.isFree).toList().indexOf(habitacionesProvider.firstWhere((elementInt) => !elementInt.isFree && elementInt.folioHabitacion == element.folioHabitacion)) + 1}";
+                                                          String changedRoom =
+                                                              selectRoom;
+
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                Dialogs
+                                                                    .customAlertDialog(
+                                                              context: context,
+                                                              title:
+                                                                  "Cambiar Habitacion de Cortesía",
+                                                              iconData:
+                                                                  Icons.sync,
+                                                              iconColor: Colors
+                                                                  .green[500],
+                                                              nameButtonMain:
+                                                                  "Aceptar",
+                                                              contentCustom: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: TextStyles
+                                                                          .standardText(
+                                                                        text:
+                                                                            "Aplicar para la habitación:",
+                                                                        color: Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                    ),
+                                                                    CustomDropdown.dropdownMenuCustom(
+                                                                        initialSelection: selectRoom,
+                                                                        onSelected: (p0) {
+                                                                          changedRoom =
+                                                                              p0!;
+                                                                        },
+                                                                        elements: [
+                                                                          for (var element
+                                                                              in habitacionesProvider.where((element) => !element.isFree))
+                                                                            "Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(element) + 1}"
+                                                                        ])
+                                                                  ]),
+                                                              funtionMain: () {
+                                                                if (selectRoom ==
+                                                                    changedRoom) {
+                                                                  return;
+                                                                }
+                                                                String result =
+                                                                    changedRoom
+                                                                        .replaceFirst(
+                                                                            "Room ",
+                                                                            "");
+
+                                                                ref.read(HabitacionProvider.provider.notifier).changedFreeRoom(
+                                                                    habitacionesProvider
+                                                                        .where((element) =>
+                                                                            !element
+                                                                                .isFree)
+                                                                        .toList()[
+                                                                            int.parse(result) -
+                                                                                1]
+                                                                        .folioHabitacion!,
+                                                                    indexRoom: habitacionesProvider
+                                                                        .indexOf(
+                                                                            element));
+                                                              },
+                                                              withButtonCancel:
+                                                                  false,
+                                                              colorTextButton:
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .primaryColor,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
                                           ),
                                       if (widget.calculateRoom)
                                         for (var element in tarifasFiltradas)
@@ -612,14 +719,10 @@ class _SummaryControllerWidgetState
       required void Function(bool) onExpansionChanged}) {
     return CustomWidgets.expansionTileList(
       title: isVR ? "Hab. Vista Reserva:" : "Hab. Vista Parcial al Mar:",
-      colorText: (!changeColor)
-          ? null
-          : (showList)
-              ? null
-              : DesktopColors.azulUltClaro,
+      colorText: (showList) ? null : Colors.white,
       showList: showList,
       collapsedBackgroundColor:
-          !isVR ? DesktopColors.cotIndPreColor : DesktopColors.cotIndColor,
+          !isVR ? DesktopColors.vistaParcialMar : DesktopColors.vistaReserva,
       onExpansionChanged: onExpansionChanged,
       context: context,
       messageNotFound: "Sin habitaciones",
@@ -642,7 +745,8 @@ class _SummaryControllerWidgetState
             //   initDate: DateTime.parse(element.fechaCheckIn!),
             //   lastDate: DateTime.parse(element.fechaCheckOut!),
             // )}",
-            nameItem: "${element.count}x Room ${habitaciones.indexOf(element) + 1}",
+            nameItem:
+                "${element.count}x Room ${habitaciones.indexOf(element) + 1}",
             count: element.totalReal ?? 0,
             context: context,
             sizeText: 11.5,

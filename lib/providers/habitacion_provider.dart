@@ -19,29 +19,27 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   void addItem(Habitacion item) {
     _current = item;
     state = [...state, item];
+    if (state.length > 1) revisedFreeRooms();
   }
 
   void addFreeItem(Habitacion habitacion, int interval) {
     int rooms = 0;
+    int freeRooms = 0;
     for (var element in state) {
-      if (!element.isFree) rooms += element.count;
+      if (!element.isFree) {
+        rooms += element.count;
+      } else {
+        freeRooms++;
+      }
     }
 
     int freeRoomsValid = rooms ~/ interval;
 
-    if (state.any((element) =>
-        element.isFree &&
-        element.folioHabitacion == habitacion.folioHabitacion)) {
-      state
-          .firstWhere((element) =>
-              element.isFree &&
-              element.folioHabitacion == habitacion.folioHabitacion)
-          .count++;
-      ref.notifyListeners();
-    } else {
-      Habitacion item = habitacion.CopyWith();
-      item.isFree = true;
-      item.count = 1;
+    Habitacion item = habitacion.CopyWith();
+    item.isFree = true;
+    item.count = 1;
+
+    for (var room = freeRooms; room < freeRoomsValid; room++) {
       _current = item;
       state = [...state, item];
     }
@@ -73,8 +71,13 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               }
             }
 
-            
-
+            if (freeRoomsValid >=
+                state.where((element) => element.isFree).toList().length) {
+              addFreeItem(
+                  state.reduce((value, element) =>
+                      value.count > element.count ? value : element),
+                  data.intervaloHabitacionGratuita!);
+            }
           } else {
             state.removeWhere((element) => element.isFree);
           }
@@ -110,32 +113,52 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void removeFreeItem(int intervalo, String folio) {
     int rooms = 0;
+    int freeRooms = 0;
     for (var element in state) {
-      if (!element.isFree) rooms += element.count;
+      if (!element.isFree) {
+        rooms += element.count;
+      } else {
+        freeRooms++;
+      }
     }
 
     int freeRoomsValid = rooms ~/ intervalo;
-    if (state.any((element) =>
-            element.folioHabitacion == folio &&
-            element.count > 1 &&
-            element.isFree) &&
-        freeRoomsValid > 0) {
-      state
-          .firstWhere(
-              (element) => element.folioHabitacion == folio && element.isFree)
-          .count--;
-    } else {
-      if (state.any(
-          (element) => element.folioHabitacion == folio && element.isFree)) {
-        state.removeWhere(
-            (element) => element.folioHabitacion == folio && element.isFree);
-      } else if (state.any((element) => element.isFree && element.count > 1)) {
-        state.firstWhere((element) => element.isFree).count--;
-      } else {
-        state.removeWhere((element) => element.isFree);
+
+    if (freeRoomsValid > 0) {
+      for (var room = freeRooms; room > freeRoomsValid; room--) {
+        if (state.any(
+            (element) => element.folioHabitacion == folio && element.isFree)) {
+          state.remove(state.firstWhere(
+              (element) => element.folioHabitacion == folio && element.isFree));
+        } else {
+          state.remove(state.firstWhere((element) => element.isFree));
+        }
       }
+    } else {
+      state.removeWhere((element) => element.isFree);
     }
     ref.notifyListeners();
+  }
+
+  void changedFreeRoom(String folio, {int indexRoom = -1}) {
+    Habitacion newFreeRoom = state
+        .firstWhere((element) =>
+            !element.isFree &&
+            (indexRoom != -1
+                ? element.folioHabitacion == folio
+                : element.folioHabitacion != folio))
+        .CopyWith();
+
+    newFreeRoom.isFree = true;
+    newFreeRoom.count = 1;
+
+    if (indexRoom != -1) {
+      state[indexRoom] = newFreeRoom;
+      ref.notifyListeners();
+    } else {
+      state.remove(state.firstWhere((element) => element.isFree));
+      state = [...state, newFreeRoom];
+    }
   }
 
   void clear() => state = [];

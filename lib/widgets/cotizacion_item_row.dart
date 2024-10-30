@@ -63,7 +63,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
         elevation: 3,
         color: widget.cotizacion.esGrupo!
             ? DesktopColors.cotGroupColor
-            : DesktopColors.cotIndColor,
+            : DesktopColors.cotIndiv,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,
           leading: widget.isQuery

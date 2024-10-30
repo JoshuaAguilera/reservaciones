@@ -397,12 +397,12 @@ class Utility {
         ];
       case "Cotizaciones individuales":
         return [
-          DesktopColors.cotIndColor,
+          DesktopColors.cotIndiv,
           const Color.fromARGB(255, 73, 185, 255)
         ];
       case "Cotizaciones individuales en Preventa":
         return [
-          DesktopColors.cotIndPreColor,
+          DesktopColors.cotGrupal,
           const Color.fromARGB(255, 255, 205, 124)
         ];
       default:
@@ -466,9 +466,9 @@ class Utility {
       case "Cotizaciones grupales en Preventa":
         return DesktopColors.cotGroupPreColor;
       case "Cotizaciones individuales":
-        return DesktopColors.cotIndColor;
+        return DesktopColors.cotIndiv;
       case "Cotizaciones individuales en Preventa":
-        return DesktopColors.cotIndPreColor;
+        return DesktopColors.cotGrupal;
       default:
         return Colors.white;
     }
@@ -1246,7 +1246,6 @@ class Utility {
     }
 
     int freeRoomsValid = rooms ~/ intervaloHabitacionGratuita;
-    print("freeRoomValid: $freeRoomsValid, freeRooms: $freeRooms");
 
     if (freeRoomsValid > freeRooms) {
       isValidForAdd = true;

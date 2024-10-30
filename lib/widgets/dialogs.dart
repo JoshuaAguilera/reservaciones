@@ -504,7 +504,7 @@ class Dialogs {
     bool withLoadingProcess = false,
     required String nameButtonMain,
     required VoidCallback funtionMain,
-    required String nameButtonCancel,
+    String nameButtonCancel = "",
     required bool withButtonCancel,
   }) {
     bool loadingProcess = false;

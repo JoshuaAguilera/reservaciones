@@ -171,9 +171,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               ),
                                               palette: [
                                                 DesktopColors.cotGroupColor,
-                                                DesktopColors.cotIndColor,
+                                                DesktopColors.cotIndiv,
                                                 // DesktopColors.cotGroupPreColor,
-                                                DesktopColors.cotIndPreColor
+                                                DesktopColors.cotGrupal
                                               ],
                                               legend: Legend(
                                                   isVisible: true,
@@ -364,9 +364,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   ),
                                             palette: [
                                               DesktopColors.cotGroupColor,
-                                              DesktopColors.cotIndColor,
+                                              DesktopColors.cotIndiv,
                                               // DesktopColors.cotGroupPreColor,
-                                              DesktopColors.cotIndPreColor
+                                              DesktopColors.cotGrupal
                                             ],
                                             legend: Legend(
                                               isVisible:

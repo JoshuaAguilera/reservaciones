@@ -149,8 +149,6 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   scrollDirection: Axis.vertical,
                   itemCount: widget.habitaciones.length,
                   itemBuilder: (_, index) {
-                    print("Reload list: ${widget.habitaciones.length}");
-
                     return HabitacionItemRow(
                       key: ObjectKey(widget.habitaciones[index].hashCode),
                       sideController: widget.sideController,

@@ -66,6 +66,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    final habitacionesProvider =
+        ref.watch(HabitacionProvider.provider.notifier);
     final comprobante = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
 
@@ -153,7 +155,24 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 15),
+                                const SizedBox(height: 8),
+                                Card(
+                                  color: DesktopColors.cotIndiv,
+                                  elevation: 6,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(14.0),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: TextStyles.titleText(
+                                        text: "Cotización Individual",
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    .animate(target: targetHabitaciones)
+                                    .fadeIn(duration: 200.ms),
+                                const SizedBox(height: 8),
                                 Card(
                                   elevation: 6,
                                   child: Padding(
