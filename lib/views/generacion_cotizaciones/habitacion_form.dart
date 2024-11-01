@@ -637,7 +637,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   numDays: DateTime.parse(_fechaSalida.text)
                       .difference(DateTime.parse(_fechaEntrada.text))
                       .inDays,
-                  onPressed: () {
+                  onSaveQuote: () {
                     final habitacionesProvider = HabitacionProvider.provider;
 
                     if (!isEditing) {
@@ -655,6 +655,40 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                       ref
                           .read(habitacionesProvider.notifier)
                           .addItem(habitacionProvider);
+
+                      final typeQuote = ref.watch(typeQuoteProvider);
+                      final politicaTarifaProvider =
+                          ref.watch(tariffPolicyProvider(""));
+                      final habitaciones = ref.watch(habitacionesProvider);
+
+                      politicaTarifaProvider.when(
+                        data: (data) {
+                          if (data != null) {
+                            int rooms = 0;
+                            for (var element in habitaciones) {
+                              if (!element.isFree) rooms += element.count;
+                            }
+
+                            if (!typeQuote &&
+                                rooms >= data.limiteHabitacionCotizacion!) {
+                              ref
+                                  .watch(typeQuoteProvider.notifier)
+                                  .update((ref) => true);
+                            } else if (typeQuote &&
+                                rooms < data.limiteHabitacionCotizacion!) {
+                              ref
+                                  .watch(typeQuoteProvider.notifier)
+                                  .update((ref) => false);
+                            }
+                          }
+                        },
+                        error: (error, stackTrace) {
+                          print("Politicas no encontradas");
+                        },
+                        loading: () {
+                          print("Cargando politicas");
+                        },
+                      );
                     }
 
                     if (target == 1) {

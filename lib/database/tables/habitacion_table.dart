@@ -11,4 +11,9 @@ class Habitacion extends Table {
   IntColumn get menores0a6 => integer().nullable()();
   IntColumn get menores7a12 => integer().nullable()();
   IntColumn get paxAdic => integer().nullable()();
+  RealColumn get total => real().nullable()();
+  RealColumn get totalReal => real().nullable()();
+  RealColumn get descuento => real().nullable()();
+  IntColumn get count => integer().nullable()();
+  BoolColumn get isFree => boolean().nullable()();
 }

@@ -134,7 +134,7 @@ class _TarifarioCalendaryViewState
                   ),
                 if (!widget.inMenu || screenWidth > 1280)
                   Positioned(
-                    child: ControllerCalendarWidget(
+                    child: CalendarControllerWidget(
                       target: widget.target,
                       onTarget: widget.onTarget,
                       inMenu: widget.inMenu,

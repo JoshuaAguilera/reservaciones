@@ -21,6 +21,7 @@ class HabitacionItemRow extends StatefulWidget {
   final bool isTable;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final void Function()? onPressedDuplicate;
   final bool esDetalle;
   final SidebarXController sideController;
   const HabitacionItemRow({
@@ -30,6 +31,7 @@ class HabitacionItemRow extends StatefulWidget {
     required this.isTable,
     this.onPressedEdit,
     this.onPressedDelete,
+    this.onPressedDuplicate,
     this.esDetalle = false,
     required this.sideController,
   });
@@ -75,6 +77,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   habitacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  onPressedDuplicate: null,
                   esDetalle: widget.esDetalle,
                   sideController: widget.sideController,
                 )
@@ -86,6 +89,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   habitacion: widget.habitacion,
                   onPressedDelete: () => showDeleteDialog(),
                   onPressedEdit: widget.onPressedEdit,
+                  onPressedDuplicate: widget.onPressedDuplicate,
                   esDetalle: widget.esDetalle,
                   sideController: widget.sideController,
                 )
@@ -95,6 +99,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   habitacion: widget.habitacion,
                   onPressedDelete: null,
                   onPressedEdit: null,
+                  onPressedDuplicate: null,
                   esDetalle: widget.esDetalle,
                   sideController: widget.sideController,
                 )
@@ -108,6 +113,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
                   onPressedEdit: widget.onPressedEdit,
                   esDetalle: widget.esDetalle,
                   sideController: widget.sideController,
+                  onPressedDuplicate: widget.onPressedDuplicate,
                 ),
     )
         .animate()
@@ -121,6 +127,7 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
   final Habitacion habitacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final void Function()? onPressedDuplicate;
   final bool esDetalle;
   final SidebarXController sideController;
 
@@ -130,6 +137,7 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
     required this.habitacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    required this.onPressedDuplicate,
     required this.esDetalle,
     required this.sideController,
   });
@@ -165,19 +173,30 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
           .update((state) => UniqueKey().hashCode);
 
       if (politica != null) {
+        final habitacionesProvider = HabitacionProvider.provider;
+        final typeQuote = ref.watch(typeQuoteProvider);
+        int rooms = 0;
+
+        for (var element in habitaciones) {
+          if (!element.isFree) rooms += element.count;
+        }
+
+        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+          ref.read(typeQuoteProvider.notifier).update((state) => true);
+        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
+          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        }
+
         if (Utility.verifAddRoomFree(
             habitaciones, politica.intervaloHabitacionGratuita!)) {
-          final habitacionesProvider = HabitacionProvider.provider;
           ref.read(habitacionesProvider.notifier).addFreeItem(
               widget.habitacion, politica.intervaloHabitacionGratuita!);
         } else if (Utility.verifAddRoomFree(
             habitaciones, politica.intervaloHabitacionGratuita!,
             isReduced: true)) {
-          final habitacionesProvider = HabitacionProvider.provider;
           ref.read(habitacionesProvider.notifier).removeFreeItem(
               politica.intervaloHabitacionGratuita!,
               widget.habitacion.folioHabitacion!);
-          // ref.watch(habitacionesProvider.notifier).state = [...habitaciones];
         }
       }
     }
@@ -304,6 +323,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                               context,
                               onPreseedDelete: widget.onPressedDelete,
                               onPreseedEdit: widget.onPressedEdit,
+                              onPressedDuplicate: widget.onPressedDuplicate,
                               colorIcon: colorText,
                             ),
                           )
@@ -333,6 +353,7 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
   final Habitacion habitacion;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
+  final void Function()? onPressedDuplicate;
   final bool esDetalle;
   final SidebarXController sideController;
 
@@ -342,6 +363,7 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
     required this.habitacion,
     required this.onPressedDelete,
     required this.onPressedEdit,
+    required this.onPressedDuplicate,
     required this.esDetalle,
     required this.sideController,
   });
@@ -354,22 +376,49 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   @override
   Widget build(BuildContext context) {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final habitaciones = ref.watch(HabitacionProvider.provider);
 
     Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.cotIndiv
-        : DesktopColors.cotGrupal;
-    Color colorText = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.azulUltClaro
-        : DesktopColors.ceruleanOscure;
+        ? DesktopColors.vistaReserva
+        : DesktopColors.vistaParcialMar;
+    Color colorText = Colors.white;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
 
-    void updateList(int value) {
+    void updateList(int value, Politica? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
           .update((state) => UniqueKey().hashCode);
+
+      if (politica != null) {
+        final habitacionesProvider = HabitacionProvider.provider;
+        final typeQuote = ref.watch(typeQuoteProvider);
+        int rooms = 0;
+
+        for (var element in habitaciones) {
+          if (!element.isFree) rooms += element.count;
+        }
+
+        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+          ref.read(typeQuoteProvider.notifier).update((state) => true);
+        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
+          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        }
+
+        if (Utility.verifAddRoomFree(
+            habitaciones, politica.intervaloHabitacionGratuita!)) {
+          ref.read(habitacionesProvider.notifier).addFreeItem(
+              widget.habitacion, politica.intervaloHabitacionGratuita!);
+        } else if (Utility.verifAddRoomFree(
+            habitaciones, politica.intervaloHabitacionGratuita!,
+            isReduced: true)) {
+          ref.read(habitacionesProvider.notifier).removeFreeItem(
+              politica.intervaloHabitacionGratuita!,
+              widget.habitacion.folioHabitacion!);
+        }
+      }
     }
 
     return Card(
@@ -438,9 +487,11 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               politicaTarifaProvider.when(
                 data: (data) => optionsListTile(
                   colorText: colorText,
-                  onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                  onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                  onIncrement: (p0) => updateList(p0),
+                  onChanged: (p0) => updateList(
+                      (p0.isEmpty || int.parse(p0) < 1) ? 1 : int.parse(p0),
+                      data),
+                  onDecrement: (p0) {},
+                  onIncrement: (p0) {},
                 ),
                 error: (error, stackTrace) =>
                     TextStyles.errorText(text: "Error al cargar politicas"),
@@ -457,9 +508,11 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
             : politicaTarifaProvider.when(
                 data: (data) => optionsListTile(
                   colorText: colorText,
-                  onChanged: (p0) => updateList(p0.isEmpty ? 1 : int.parse(p0)),
-                  onDecrement: (p0) => updateList(p0 < 1 ? 1 : p0),
-                  onIncrement: (p0) => updateList(p0),
+                  onChanged: (p0) => updateList(
+                      (p0.isEmpty || int.parse(p0) < 1) ? 1 : int.parse(p0),
+                      data),
+                  onDecrement: (p0) {},
+                  onIncrement: (p0) {},
                 ),
                 error: (error, stackTrace) =>
                     TextStyles.errorText(text: "Error al cargar politicas"),
@@ -501,6 +554,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
             context,
             onPreseedDelete: widget.onPressedDelete,
             onPreseedEdit: widget.onPressedEdit,
+            onPressedDuplicate: widget.onPressedDuplicate,
             colorIcon: colorText,
           ),
         ),

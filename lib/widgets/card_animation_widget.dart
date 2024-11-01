@@ -389,7 +389,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
                   child: Buttons.commonButton(
-                    onPressed:  () => showDialogEditQuote(),
+                    onPressed: () => showDialogEditQuote(),
                     text: "Cambiar",
                     sizeText: 11.5,
                     isBold: true,

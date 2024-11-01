@@ -817,14 +817,15 @@ class CustomWidgets {
               ),
             if (onChanged != null)
               IconButton(
+                tooltip: "Cambiar de hab.",
                 visualDensity: VisualDensity.compact,
-                onPressed: () {
-                  onChanged.call();
-                },
                 icon: Icon(
                   Icons.sync,
                   color: Colors.green[400],
                 ),
+                onPressed: () {
+                  onChanged.call();
+                },
               ),
             TextStyles.standardText(
               text: Utility.formatterNumber(count),
@@ -838,12 +839,16 @@ class CustomWidgets {
     );
   }
 
-  static Widget compactOptions(BuildContext context,
-      {void Function()? onPreseedEdit,
-      void Function()? onPreseedDelete,
-      Color? colorIcon}) {
+  static Widget compactOptions(
+    BuildContext context, {
+    void Function()? onPreseedEdit,
+    void Function()? onPreseedDelete,
+    void Function()? onPressedDuplicate,
+    Color? colorIcon,
+  }) {
     return PopupMenuButton<ListTileTitleAlignment>(
       iconColor: colorIcon,
+      tooltip: "Opciones",
       itemBuilder: (BuildContext context) =>
           <PopupMenuEntry<ListTileTitleAlignment>>[
         PopupMenuItem<ListTileTitleAlignment>(
@@ -856,6 +861,23 @@ class CustomWidgets {
               TextStyles.standardText(
                 text: "Editar",
                 color: Theme.of(context).primaryColor,
+                size: 12,
+              )
+            ],
+          ),
+        ),
+        PopupMenuItem<ListTileTitleAlignment>(
+          value: ListTileTitleAlignment.titleHeight,
+          onTap: onPressedDuplicate,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(CupertinoIcons.doc_on_doc_fill,
+                  color: DesktopColors.cerulean, size: 21),
+              TextStyles.standardText(
+                text: "Duplicar",
+                color: Theme.of(context).primaryColor,
+                size: 12,
               )
             ],
           ),
@@ -870,6 +892,7 @@ class CustomWidgets {
               TextStyles.standardText(
                 text: "Eliminar",
                 color: Theme.of(context).primaryColor,
+                size: 12,
               )
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../ui/buttons.dart';
@@ -14,6 +15,7 @@ class HabitacionesList extends StatefulWidget {
     super.key,
     required this.newRoom,
     required this.editRoom,
+    required this.duplicateRoom,
     required this.sideController,
     required this.habitaciones,
     required this.deleteRoom,
@@ -21,6 +23,7 @@ class HabitacionesList extends StatefulWidget {
 
   final void Function()? newRoom;
   final void Function(Habitacion)? editRoom;
+  final void Function(Habitacion)? duplicateRoom;
   final void Function(String)? deleteRoom;
   final SidebarXController sideController;
   final List<Habitacion> habitaciones;
@@ -71,6 +74,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                     height: 40,
                     child: Buttons.commonButton(
                       text: "Agregar habitación",
+                      color: DesktopColors.prussianWhiteBlue,
                       onPressed: () {
                         widget.newRoom!.call();
                       },
@@ -156,13 +160,13 @@ class _HabitacionesListState extends State<HabitacionesList> {
                       habitacion: widget.habitaciones[index],
                       isTable: viewTable,
                       onPressedDelete: () {
-                        // setState(() => widget.habitaciones
-                        //     .remove(widget.habitaciones[index]));
                         widget.deleteRoom!
                             .call(widget.habitaciones[index].folioHabitacion!);
                       },
                       onPressedEdit: () =>
                           widget.editRoom!.call(widget.habitaciones[index]),
+                      onPressedDuplicate: () => widget.duplicateRoom!
+                          .call(widget.habitaciones[index]),
                     );
                   },
                 ),

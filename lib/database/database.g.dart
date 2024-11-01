@@ -640,9 +640,9 @@ class $CotizacionTable extends Cotizacion
   static const VerificationMeta _habitacionesMeta =
       const VerificationMeta('habitaciones');
   @override
-  late final GeneratedColumn<int> habitaciones = GeneratedColumn<int>(
+  late final GeneratedColumn<String> habitaciones = GeneratedColumn<String>(
       'habitaciones', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -770,7 +770,7 @@ class $CotizacionTable extends Cotizacion
       esConcretado: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_concretado']),
       habitaciones: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}habitaciones']),
+          .read(DriftSqlType.string, data['${effectivePrefix}habitaciones']),
     );
   }
 
@@ -793,7 +793,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final double? descuento;
   final bool? esGrupo;
   final bool? esConcretado;
-  final int? habitaciones;
+  final String? habitaciones;
   const CotizacionData(
       {required this.id,
       this.folioPrincipal,
@@ -844,7 +844,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       map['es_concretado'] = Variable<bool>(esConcretado);
     }
     if (!nullToAbsent || habitaciones != null) {
-      map['habitaciones'] = Variable<int>(habitaciones);
+      map['habitaciones'] = Variable<String>(habitaciones);
     }
     return map;
   }
@@ -902,7 +902,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       descuento: serializer.fromJson<double?>(json['descuento']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
-      habitaciones: serializer.fromJson<int?>(json['habitaciones']),
+      habitaciones: serializer.fromJson<String?>(json['habitaciones']),
     );
   }
   @override
@@ -921,7 +921,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'descuento': serializer.toJson<double?>(descuento),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
-      'habitaciones': serializer.toJson<int?>(habitaciones),
+      'habitaciones': serializer.toJson<String?>(habitaciones),
     };
   }
 
@@ -938,7 +938,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<double?> descuento = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
-          Value<int?> habitaciones = const Value.absent()}) =>
+          Value<String?> habitaciones = const Value.absent()}) =>
       CotizacionData(
         id: id ?? this.id,
         folioPrincipal:
@@ -1029,7 +1029,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<double?> descuento;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
-  final Value<int?> habitaciones;
+  final Value<String?> habitaciones;
   const CotizacionCompanion({
     this.id = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
@@ -1073,7 +1073,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     Expression<double>? descuento,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
-    Expression<int>? habitaciones,
+    Expression<String>? habitaciones,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1105,7 +1105,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<double?>? descuento,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
-      Value<int?>? habitaciones}) {
+      Value<String?>? habitaciones}) {
     return CotizacionCompanion(
       id: id ?? this.id,
       folioPrincipal: folioPrincipal ?? this.folioPrincipal,
@@ -1163,7 +1163,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       map['es_concretado'] = Variable<bool>(esConcretado.value);
     }
     if (habitaciones.present) {
-      map['habitaciones'] = Variable<int>(habitaciones.value);
+      map['habitaciones'] = Variable<String>(habitaciones.value);
     }
     return map;
   }
@@ -1257,6 +1257,36 @@ class $HabitacionTable extends Habitacion
   late final GeneratedColumn<int> paxAdic = GeneratedColumn<int>(
       'pax_adic', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _totalMeta = const VerificationMeta('total');
+  @override
+  late final GeneratedColumn<double> total = GeneratedColumn<double>(
+      'total', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _totalRealMeta =
+      const VerificationMeta('totalReal');
+  @override
+  late final GeneratedColumn<double> totalReal = GeneratedColumn<double>(
+      'total_real', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _descuentoMeta =
+      const VerificationMeta('descuento');
+  @override
+  late final GeneratedColumn<double> descuento = GeneratedColumn<double>(
+      'descuento', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _countMeta = const VerificationMeta('count');
+  @override
+  late final GeneratedColumn<int> count = GeneratedColumn<int>(
+      'count', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _isFreeMeta = const VerificationMeta('isFree');
+  @override
+  late final GeneratedColumn<bool> isFree = GeneratedColumn<bool>(
+      'is_free', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_free" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1268,7 +1298,12 @@ class $HabitacionTable extends Habitacion
         adultos,
         menores0a6,
         menores7a12,
-        paxAdic
+        paxAdic,
+        total,
+        totalReal,
+        descuento,
+        count,
+        isFree
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1337,6 +1372,26 @@ class $HabitacionTable extends Habitacion
       context.handle(_paxAdicMeta,
           paxAdic.isAcceptableOrUnknown(data['pax_adic']!, _paxAdicMeta));
     }
+    if (data.containsKey('total')) {
+      context.handle(
+          _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
+    }
+    if (data.containsKey('total_real')) {
+      context.handle(_totalRealMeta,
+          totalReal.isAcceptableOrUnknown(data['total_real']!, _totalRealMeta));
+    }
+    if (data.containsKey('descuento')) {
+      context.handle(_descuentoMeta,
+          descuento.isAcceptableOrUnknown(data['descuento']!, _descuentoMeta));
+    }
+    if (data.containsKey('count')) {
+      context.handle(
+          _countMeta, count.isAcceptableOrUnknown(data['count']!, _countMeta));
+    }
+    if (data.containsKey('is_free')) {
+      context.handle(_isFreeMeta,
+          isFree.isAcceptableOrUnknown(data['is_free']!, _isFreeMeta));
+    }
     return context;
   }
 
@@ -1366,6 +1421,16 @@ class $HabitacionTable extends Habitacion
           .read(DriftSqlType.int, data['${effectivePrefix}menores7a12']),
       paxAdic: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}pax_adic']),
+      total: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}total']),
+      totalReal: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}total_real']),
+      descuento: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}descuento']),
+      count: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}count']),
+      isFree: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_free']),
     );
   }
 
@@ -1386,6 +1451,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int? menores0a6;
   final int? menores7a12;
   final int? paxAdic;
+  final double? total;
+  final double? totalReal;
+  final double? descuento;
+  final int? count;
+  final bool? isFree;
   const HabitacionData(
       {required this.id,
       required this.subfolio,
@@ -1396,7 +1466,12 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       this.adultos,
       this.menores0a6,
       this.menores7a12,
-      this.paxAdic});
+      this.paxAdic,
+      this.total,
+      this.totalReal,
+      this.descuento,
+      this.count,
+      this.isFree});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1417,6 +1492,21 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     }
     if (!nullToAbsent || paxAdic != null) {
       map['pax_adic'] = Variable<int>(paxAdic);
+    }
+    if (!nullToAbsent || total != null) {
+      map['total'] = Variable<double>(total);
+    }
+    if (!nullToAbsent || totalReal != null) {
+      map['total_real'] = Variable<double>(totalReal);
+    }
+    if (!nullToAbsent || descuento != null) {
+      map['descuento'] = Variable<double>(descuento);
+    }
+    if (!nullToAbsent || count != null) {
+      map['count'] = Variable<int>(count);
+    }
+    if (!nullToAbsent || isFree != null) {
+      map['is_free'] = Variable<bool>(isFree);
     }
     return map;
   }
@@ -1441,6 +1531,18 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       paxAdic: paxAdic == null && nullToAbsent
           ? const Value.absent()
           : Value(paxAdic),
+      total:
+          total == null && nullToAbsent ? const Value.absent() : Value(total),
+      totalReal: totalReal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalReal),
+      descuento: descuento == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descuento),
+      count:
+          count == null && nullToAbsent ? const Value.absent() : Value(count),
+      isFree:
+          isFree == null && nullToAbsent ? const Value.absent() : Value(isFree),
     );
   }
 
@@ -1458,6 +1560,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       menores0a6: serializer.fromJson<int?>(json['menores0a6']),
       menores7a12: serializer.fromJson<int?>(json['menores7a12']),
       paxAdic: serializer.fromJson<int?>(json['paxAdic']),
+      total: serializer.fromJson<double?>(json['total']),
+      totalReal: serializer.fromJson<double?>(json['totalReal']),
+      descuento: serializer.fromJson<double?>(json['descuento']),
+      count: serializer.fromJson<int?>(json['count']),
+      isFree: serializer.fromJson<bool?>(json['isFree']),
     );
   }
   @override
@@ -1474,6 +1581,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       'menores0a6': serializer.toJson<int?>(menores0a6),
       'menores7a12': serializer.toJson<int?>(menores7a12),
       'paxAdic': serializer.toJson<int?>(paxAdic),
+      'total': serializer.toJson<double?>(total),
+      'totalReal': serializer.toJson<double?>(totalReal),
+      'descuento': serializer.toJson<double?>(descuento),
+      'count': serializer.toJson<int?>(count),
+      'isFree': serializer.toJson<bool?>(isFree),
     };
   }
 
@@ -1487,7 +1599,12 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           Value<int?> adultos = const Value.absent(),
           Value<int?> menores0a6 = const Value.absent(),
           Value<int?> menores7a12 = const Value.absent(),
-          Value<int?> paxAdic = const Value.absent()}) =>
+          Value<int?> paxAdic = const Value.absent(),
+          Value<double?> total = const Value.absent(),
+          Value<double?> totalReal = const Value.absent(),
+          Value<double?> descuento = const Value.absent(),
+          Value<int?> count = const Value.absent(),
+          Value<bool?> isFree = const Value.absent()}) =>
       HabitacionData(
         id: id ?? this.id,
         subfolio: subfolio ?? this.subfolio,
@@ -1499,6 +1616,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         menores0a6: menores0a6.present ? menores0a6.value : this.menores0a6,
         menores7a12: menores7a12.present ? menores7a12.value : this.menores7a12,
         paxAdic: paxAdic.present ? paxAdic.value : this.paxAdic,
+        total: total.present ? total.value : this.total,
+        totalReal: totalReal.present ? totalReal.value : this.totalReal,
+        descuento: descuento.present ? descuento.value : this.descuento,
+        count: count.present ? count.value : this.count,
+        isFree: isFree.present ? isFree.value : this.isFree,
       );
   @override
   String toString() {
@@ -1512,14 +1634,33 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           ..write('adultos: $adultos, ')
           ..write('menores0a6: $menores0a6, ')
           ..write('menores7a12: $menores7a12, ')
-          ..write('paxAdic: $paxAdic')
+          ..write('paxAdic: $paxAdic, ')
+          ..write('total: $total, ')
+          ..write('totalReal: $totalReal, ')
+          ..write('descuento: $descuento, ')
+          ..write('count: $count, ')
+          ..write('isFree: $isFree')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, subfolio, categoria, fechaCheckIn,
-      fechaCheckOut, fecha, adultos, menores0a6, menores7a12, paxAdic);
+  int get hashCode => Object.hash(
+      id,
+      subfolio,
+      categoria,
+      fechaCheckIn,
+      fechaCheckOut,
+      fecha,
+      adultos,
+      menores0a6,
+      menores7a12,
+      paxAdic,
+      total,
+      totalReal,
+      descuento,
+      count,
+      isFree);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1533,7 +1674,12 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.adultos == this.adultos &&
           other.menores0a6 == this.menores0a6 &&
           other.menores7a12 == this.menores7a12 &&
-          other.paxAdic == this.paxAdic);
+          other.paxAdic == this.paxAdic &&
+          other.total == this.total &&
+          other.totalReal == this.totalReal &&
+          other.descuento == this.descuento &&
+          other.count == this.count &&
+          other.isFree == this.isFree);
 }
 
 class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
@@ -1547,6 +1693,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int?> menores0a6;
   final Value<int?> menores7a12;
   final Value<int?> paxAdic;
+  final Value<double?> total;
+  final Value<double?> totalReal;
+  final Value<double?> descuento;
+  final Value<int?> count;
+  final Value<bool?> isFree;
   const HabitacionCompanion({
     this.id = const Value.absent(),
     this.subfolio = const Value.absent(),
@@ -1558,6 +1709,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.menores0a6 = const Value.absent(),
     this.menores7a12 = const Value.absent(),
     this.paxAdic = const Value.absent(),
+    this.total = const Value.absent(),
+    this.totalReal = const Value.absent(),
+    this.descuento = const Value.absent(),
+    this.count = const Value.absent(),
+    this.isFree = const Value.absent(),
   });
   HabitacionCompanion.insert({
     this.id = const Value.absent(),
@@ -1570,6 +1726,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.menores0a6 = const Value.absent(),
     this.menores7a12 = const Value.absent(),
     this.paxAdic = const Value.absent(),
+    this.total = const Value.absent(),
+    this.totalReal = const Value.absent(),
+    this.descuento = const Value.absent(),
+    this.count = const Value.absent(),
+    this.isFree = const Value.absent(),
   })  : subfolio = Value(subfolio),
         categoria = Value(categoria),
         fechaCheckIn = Value(fechaCheckIn),
@@ -1586,6 +1747,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     Expression<int>? menores0a6,
     Expression<int>? menores7a12,
     Expression<int>? paxAdic,
+    Expression<double>? total,
+    Expression<double>? totalReal,
+    Expression<double>? descuento,
+    Expression<int>? count,
+    Expression<bool>? isFree,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1598,6 +1764,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       if (menores0a6 != null) 'menores0a6': menores0a6,
       if (menores7a12 != null) 'menores7a12': menores7a12,
       if (paxAdic != null) 'pax_adic': paxAdic,
+      if (total != null) 'total': total,
+      if (totalReal != null) 'total_real': totalReal,
+      if (descuento != null) 'descuento': descuento,
+      if (count != null) 'count': count,
+      if (isFree != null) 'is_free': isFree,
     });
   }
 
@@ -1611,7 +1782,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       Value<int?>? adultos,
       Value<int?>? menores0a6,
       Value<int?>? menores7a12,
-      Value<int?>? paxAdic}) {
+      Value<int?>? paxAdic,
+      Value<double?>? total,
+      Value<double?>? totalReal,
+      Value<double?>? descuento,
+      Value<int?>? count,
+      Value<bool?>? isFree}) {
     return HabitacionCompanion(
       id: id ?? this.id,
       subfolio: subfolio ?? this.subfolio,
@@ -1623,6 +1799,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       menores0a6: menores0a6 ?? this.menores0a6,
       menores7a12: menores7a12 ?? this.menores7a12,
       paxAdic: paxAdic ?? this.paxAdic,
+      total: total ?? this.total,
+      totalReal: totalReal ?? this.totalReal,
+      descuento: descuento ?? this.descuento,
+      count: count ?? this.count,
+      isFree: isFree ?? this.isFree,
     );
   }
 
@@ -1659,6 +1840,21 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     if (paxAdic.present) {
       map['pax_adic'] = Variable<int>(paxAdic.value);
     }
+    if (total.present) {
+      map['total'] = Variable<double>(total.value);
+    }
+    if (totalReal.present) {
+      map['total_real'] = Variable<double>(totalReal.value);
+    }
+    if (descuento.present) {
+      map['descuento'] = Variable<double>(descuento.value);
+    }
+    if (count.present) {
+      map['count'] = Variable<int>(count.value);
+    }
+    if (isFree.present) {
+      map['is_free'] = Variable<bool>(isFree.value);
+    }
     return map;
   }
 
@@ -1674,7 +1870,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
           ..write('adultos: $adultos, ')
           ..write('menores0a6: $menores0a6, ')
           ..write('menores7a12: $menores7a12, ')
-          ..write('paxAdic: $paxAdic')
+          ..write('paxAdic: $paxAdic, ')
+          ..write('total: $total, ')
+          ..write('totalReal: $totalReal, ')
+          ..write('descuento: $descuento, ')
+          ..write('count: $count, ')
+          ..write('isFree: $isFree')
           ..write(')'))
         .toString();
   }
@@ -5112,7 +5313,7 @@ typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
   Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
-  Value<int?> habitaciones,
+  Value<String?> habitaciones,
 });
 typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
@@ -5127,7 +5328,7 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
-  Value<int?> habitaciones,
+  Value<String?> habitaciones,
 });
 
 class $$CotizacionTableTableManager extends RootTableManager<
@@ -5162,7 +5363,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
-            Value<int?> habitaciones = const Value.absent(),
+            Value<String?> habitaciones = const Value.absent(),
           }) =>
               CotizacionCompanion(
             id: id,
@@ -5192,7 +5393,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
-            Value<int?> habitaciones = const Value.absent(),
+            Value<String?> habitaciones = const Value.absent(),
           }) =>
               CotizacionCompanion.insert(
             id: id,
@@ -5287,7 +5488,7 @@ class $$CotizacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get habitaciones => $state.composableBuilder(
+  ColumnFilters<String> get habitaciones => $state.composableBuilder(
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -5356,7 +5557,7 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get habitaciones => $state.composableBuilder(
+  ColumnOrderings<String> get habitaciones => $state.composableBuilder(
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -5373,6 +5574,11 @@ typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
   Value<int?> menores0a6,
   Value<int?> menores7a12,
   Value<int?> paxAdic,
+  Value<double?> total,
+  Value<double?> totalReal,
+  Value<double?> descuento,
+  Value<int?> count,
+  Value<bool?> isFree,
 });
 typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
@@ -5385,6 +5591,11 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int?> menores0a6,
   Value<int?> menores7a12,
   Value<int?> paxAdic,
+  Value<double?> total,
+  Value<double?> totalReal,
+  Value<double?> descuento,
+  Value<int?> count,
+  Value<bool?> isFree,
 });
 
 class $$HabitacionTableTableManager extends RootTableManager<
@@ -5417,6 +5628,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> menores0a6 = const Value.absent(),
             Value<int?> menores7a12 = const Value.absent(),
             Value<int?> paxAdic = const Value.absent(),
+            Value<double?> total = const Value.absent(),
+            Value<double?> totalReal = const Value.absent(),
+            Value<double?> descuento = const Value.absent(),
+            Value<int?> count = const Value.absent(),
+            Value<bool?> isFree = const Value.absent(),
           }) =>
               HabitacionCompanion(
             id: id,
@@ -5429,6 +5645,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
             menores0a6: menores0a6,
             menores7a12: menores7a12,
             paxAdic: paxAdic,
+            total: total,
+            totalReal: totalReal,
+            descuento: descuento,
+            count: count,
+            isFree: isFree,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -5441,6 +5662,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> menores0a6 = const Value.absent(),
             Value<int?> menores7a12 = const Value.absent(),
             Value<int?> paxAdic = const Value.absent(),
+            Value<double?> total = const Value.absent(),
+            Value<double?> totalReal = const Value.absent(),
+            Value<double?> descuento = const Value.absent(),
+            Value<int?> count = const Value.absent(),
+            Value<bool?> isFree = const Value.absent(),
           }) =>
               HabitacionCompanion.insert(
             id: id,
@@ -5453,6 +5679,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
             menores0a6: menores0a6,
             menores7a12: menores7a12,
             paxAdic: paxAdic,
+            total: total,
+            totalReal: totalReal,
+            descuento: descuento,
+            count: count,
+            isFree: isFree,
           ),
         ));
 }
@@ -5521,6 +5752,31 @@ class $$HabitacionTableFilterComposer
       column: $state.table.paxAdic,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get total => $state.composableBuilder(
+      column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get totalReal => $state.composableBuilder(
+      column: $state.table.totalReal,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get descuento => $state.composableBuilder(
+      column: $state.table.descuento,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get count => $state.composableBuilder(
+      column: $state.table.count,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isFree => $state.composableBuilder(
+      column: $state.table.isFree,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$HabitacionTableOrderingComposer
@@ -5573,6 +5829,31 @@ class $$HabitacionTableOrderingComposer
 
   ColumnOrderings<int> get paxAdic => $state.composableBuilder(
       column: $state.table.paxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get total => $state.composableBuilder(
+      column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get totalReal => $state.composableBuilder(
+      column: $state.table.totalReal,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get descuento => $state.composableBuilder(
+      column: $state.table.descuento,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get count => $state.composableBuilder(
+      column: $state.table.count,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isFree => $state.composableBuilder(
+      column: $state.table.isFree,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

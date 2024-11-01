@@ -12,47 +12,56 @@ void showSnackBar({
   IconData? iconCustom,
   Duration? duration,
 }) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    elevation: 0,
-    width: 500,
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.transparent,
-    content: Card(
-      margin: const EdgeInsets.only(bottom: 25),
-      elevation: 4,
-      color: Utility.getColorNavbar(type),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 12, 18, 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              flex: 5,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextStyles.buttonTextStyle(text: title, size: 17),
-                  TextStyles.standardText(
-                      text: message,
-                      overClip: true,
-                      color: Colors.white,
-                      size: 12.5)
-                ],
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      elevation: 0,
+      width: 500,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: Card(
+        margin: const EdgeInsets.only(bottom: 25),
+        elevation: 4,
+        color: Utility.getColorNavbar(type),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 12, 18, 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 5,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextStyles.buttonTextStyle(text: title, size: 17),
+                    TextStyles.standardText(
+                        text: message,
+                        overClip: true,
+                        color: Colors.white,
+                        size: 12.5)
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Icon(
-                iconCustom ?? Utility.getIconNavbar(type),
-                size: 50,
-                color: Colors.white,
+              Expanded(
+                flex: 1,
+                child: Icon(
+                  iconCustom ?? Utility.getIconNavbar(type),
+                  size: 50,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ).animate(
+        effects: [
+          if (type == "alert" || type == "danger")
+            const ShakeEffect(offset: Offset(5, 0), rotation: 0),
+          if (type == "info") const FlipEffect(),
+          if (type == "success") ShimmerEffect(delay: 150.ms),
+        ],
       ),
+      duration: duration ?? 3000.ms,
     ),
-    duration: duration ?? 3000.ms,
-  ));
+  );
 }

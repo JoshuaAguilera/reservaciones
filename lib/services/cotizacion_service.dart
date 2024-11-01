@@ -52,7 +52,7 @@ class CotizacionService extends BaseService {
                   descuento: Value(cotizacion.descuento),
                   esGrupo: Value(cotizacion.esGrupo),
                   folioPrincipal: Value(cotizacion.folioPrincipal),
-                  habitaciones: Value(cotizacion.habitaciones!.length),
+                  habitaciones: Value(""),
                   nombreHuesped: Value(cotizacion.nombreHuesped),
                   numeroTelefonico: Value(cotizacion.numeroTelefonico),
                   usuarioID: Value(userId),

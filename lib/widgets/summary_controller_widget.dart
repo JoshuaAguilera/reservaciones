@@ -22,12 +22,12 @@ class SummaryControllerWidget extends ConsumerStatefulWidget {
     super.key,
     this.calculateRoom = false,
     this.numDays = 0,
-    this.onPressed,
+    this.onSaveQuote,
   });
 
   final bool calculateRoom;
   final int numDays;
-  final void Function()? onPressed;
+  final void Function()? onSaveQuote;
 
   @override
   _SummaryControllerWidgetState createState() =>
@@ -90,7 +90,7 @@ class _SummaryControllerWidgetState
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  const SizedBox(height: 35),
+                                  const SizedBox(height: 8),
                                   if (!widget.calculateRoom)
                                     listRoomProviderView.when(
                                       data: (data) {
@@ -513,48 +513,28 @@ class _SummaryControllerWidgetState
                 ),
               ),
             ),
-            if (widget.calculateRoom)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                child: SizedBox(
-                  height: 35,
-                  child: Buttons.commonButton(
-                    sizeText: 15,
-                    text: "Guardar Habitación",
-                    color: DesktopColors.prussianWhiteBlue,
-                    onPressed: () {
-                      if (revisedValidTariff(habitacionProvider)) {
-                        showSnackBar(
-                          context: context,
-                          title: "Dias sin tarifas definidas",
-                          message:
-                              "Faltan tarifas para algunos días. Por favor, ingrese los precios para calcular el total de la habitación.",
-                          type: "danger",
-                          duration: 6.seconds,
-                        );
-                        return;
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+              child: SizedBox(
+                height: 35,
+                child: Buttons.commonButton(
+                  sizeText: 15,
+                  text: (widget.calculateRoom)
+                      ? "Guardar Habitación"
+                      : "Generar Cotización",
+                  color: DesktopColors.ceruleanOscure,
+                  onPressed: () {
+                    if (widget.calculateRoom) {
+                      saveRoom(habitacionProvider);
+                    } else {
+                      if (widget.onSaveQuote != null) {
+                        widget.onSaveQuote!.call();
                       }
-
-                      habitacionProvider.totalReal = calculateTariffTotals(
-                        tarifasFiltradas,
-                        habitacionProvider,
-                        onlyChildren: true,
-                        onlyAdults: true,
-                      );
-
-                      habitacionProvider.descuento = calculateDiscountTotal(
-                          tarifasFiltradas, habitacionProvider);
-
-                      habitacionProvider.total = habitacionProvider.totalReal! -
-                          habitacionProvider.descuento!;
-
-                      if (widget.onPressed != null) {
-                        widget.onPressed!.call();
-                      }
-                    },
-                  ),
+                    }
+                  },
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -747,11 +727,42 @@ class _SummaryControllerWidgetState
             // )}",
             nameItem:
                 "${element.count}x Room ${habitaciones.indexOf(element) + 1}",
-            count: element.totalReal ?? 0,
+            count: (element.totalReal ?? 0) * element.count,
             context: context,
             sizeText: 11.5,
           ),
       ],
     );
+  }
+
+  void saveRoom(Habitacion habitacionProvider) {
+    if (revisedValidTariff(habitacionProvider)) {
+      showSnackBar(
+        context: context,
+        title: "Dias sin tarifas definidas",
+        message:
+            "Faltan tarifas para algunos días. Por favor, ingrese los precios para calcular el total de la habitación.",
+        type: "danger",
+        duration: 6.seconds,
+      );
+      return;
+    }
+
+    habitacionProvider.totalReal = calculateTariffTotals(
+      tarifasFiltradas,
+      habitacionProvider,
+      onlyChildren: true,
+      onlyAdults: true,
+    );
+
+    habitacionProvider.descuento =
+        calculateDiscountTotal(tarifasFiltradas, habitacionProvider);
+
+    habitacionProvider.total =
+        habitacionProvider.totalReal! - habitacionProvider.descuento!;
+
+    if (widget.onSaveQuote != null) {
+      widget.onSaveQuote!.call();
+    }
   }
 }

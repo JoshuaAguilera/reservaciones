@@ -100,6 +100,17 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     int index = state.indexWhere((element) => element.folioHabitacion == folio);
     if (index != -1) {
       state[index] = item;
+
+      if (state.any((element) =>
+          element.folioHabitacion == state[index].folioHabitacion)) {
+        Habitacion roomEdit = item.CopyWith();
+        roomEdit.isFree = true;
+        for (var element in state.where((element) =>
+            element.folioHabitacion == state[index].folioHabitacion &&
+            element.isFree)) {
+          state[state.indexOf(element)] = roomEdit;
+        }
+      }
     } else {
       print("Error al editar Habitacion");
     }
@@ -184,6 +195,8 @@ final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   final list = ref.watch(habitacionSelectProvider).tarifaXDia ?? [];
   return list;
 });
+
+final typeQuoteProvider = StateProvider<bool>((ref) => false);
 
 final detectChangeRoomProvider = StateProvider<int>((ref) => 0);
 

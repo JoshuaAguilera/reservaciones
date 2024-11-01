@@ -25,6 +25,7 @@ import 'package:printing/printing.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
 import '../../providers/tarifario_provider.dart';
+import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
@@ -37,7 +38,6 @@ class GenerarCotizacionView extends ConsumerStatefulWidget {
 }
 
 class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
-  String dropdownValue = cotizacionesList.first;
   final _formKeyCotizacion = GlobalKey<FormState>();
   late pw.Document comprobantePDF;
   bool isLoading = false;
@@ -66,10 +66,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     final habitaciones = ref.watch(HabitacionProvider.provider);
-    final habitacionesProvider =
-        ref.watch(HabitacionProvider.provider.notifier);
-    final comprobante = ref.watch(cotizacionProvider);
+    final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -156,22 +155,21 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 8),
-                                Card(
-                                  color: DesktopColors.cotIndiv,
-                                  elevation: 6,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      child: TextStyles.titleText(
-                                        text: "Cotización Individual",
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                                SizedBox(
+                                  child: (!typeQuote)
+                                      ? cardTypeQuote(
+                                          type: "Cotización Individual",
+                                          color: DesktopColors.cotIndiv,
+                                          withTarget: typeQuote,
+                                        )
+                                      : cardTypeQuote(
+                                          type: "Cotización Grupal",
+                                          color: DesktopColors.cotGrupal,
+                                          withTarget: !typeQuote,
+                                        ),
                                 )
                                     .animate(target: targetHabitaciones)
-                                    .fadeIn(duration: 200.ms),
+                                    .fadeIn(duration: 350.ms),
                                 const SizedBox(height: 8),
                                 Card(
                                   elevation: 6,
@@ -196,13 +194,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           name: "Nombre completo",
                                           msgError: "Campo requerido*",
                                           initialValue:
-                                              comprobante.nombreHuesped,
+                                              cotizacion.nombreHuesped,
                                           isRequired: true,
                                           onChanged: (p0) {
-                                            comprobante.nombreHuesped = p0;
+                                            cotizacion.nombreHuesped = p0;
                                           },
                                         ),
                                         Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                                 flex: 0,
@@ -232,13 +232,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   .textFormFieldwithBorder(
                                                 name: "Teléfono",
                                                 msgError: "Campo requerido*",
-                                                initialValue: comprobante
+                                                initialValue: cotizacion
                                                     .numeroTelefonico,
                                                 isNumeric: true,
                                                 isDecimal: false,
                                                 isRequired: true,
                                                 onChanged: (p0) {
-                                                  comprobante.numeroTelefonico =
+                                                  cotizacion.numeroTelefonico =
                                                       p0;
                                                 },
                                               ),
@@ -249,11 +249,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   .textFormFieldwithBorder(
                                                 name: "Correo electronico",
                                                 msgError: "Campo requerido*",
-                                                initialValue: comprobante
+                                                initialValue: cotizacion
                                                     .correoElectronico,
                                                 isRequired: true,
                                                 onChanged: (p0) {
-                                                  comprobante
+                                                  cotizacion
                                                       .correoElectronico = p0;
                                                 },
                                               ),
@@ -286,11 +286,110 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     )),
                                     editRoom: (p0) =>
                                         _goDetailRoom(p0.CopyWith()),
+                                    duplicateRoom: (p0) {
+                                      Habitacion roomDuplicate = p0.CopyWith();
+                                      roomDuplicate.folioHabitacion =
+                                          UniqueKey()
+                                              .toString()
+                                              .replaceAll('[', '')
+                                              .replaceAll(']', '');
+
+                                      roomDuplicate.count = 1;
+
+                                      ref
+                                          .read(HabitacionProvider
+                                              .provider.notifier)
+                                          .addItem(roomDuplicate);
+
+                                      final typeQuote =
+                                          ref.watch(typeQuoteProvider);
+                                      final politicaTarifaProvider =
+                                          ref.watch(tariffPolicyProvider(""));
+                                      final habitaciones = ref
+                                          .watch(HabitacionProvider.provider);
+
+                                      politicaTarifaProvider.when(
+                                        data: (data) {
+                                          if (data != null) {
+                                            int rooms = 0;
+                                            for (var element in habitaciones) {
+                                              if (!element.isFree) {
+                                                rooms += element.count;
+                                              }
+                                            }
+
+                                            if (!typeQuote &&
+                                                rooms >=
+                                                    data
+                                                        .limiteHabitacionCotizacion!) {
+                                              ref
+                                                  .watch(typeQuoteProvider
+                                                      .notifier)
+                                                  .update((ref) => true);
+                                            } else if (typeQuote &&
+                                                rooms <
+                                                    data.limiteHabitacionCotizacion!) {
+                                              ref
+                                                  .watch(typeQuoteProvider
+                                                      .notifier)
+                                                  .update((ref) => false);
+                                            }
+                                          }
+                                        },
+                                        error: (error, stackTrace) {
+                                          print("Politicas no encontradas");
+                                        },
+                                        loading: () {
+                                          print("Cargando politicas");
+                                        },
+                                      );
+                                    },
                                     deleteRoom: (p0) {
                                       ref
                                           .read(HabitacionProvider
                                               .provider.notifier)
                                           .remove(p0);
+
+                                      final typeQuote =
+                                          ref.watch(typeQuoteProvider);
+                                      final politicaTarifaProvider =
+                                          ref.watch(tariffPolicyProvider(""));
+
+                                      politicaTarifaProvider.when(
+                                        data: (data) {
+                                          if (data != null) {
+                                            int rooms = 0;
+                                            for (var element in habitaciones) {
+                                              if (!element.isFree)
+                                                rooms += element.count;
+                                            }
+
+                                            if (!typeQuote &&
+                                                rooms >=
+                                                    data
+                                                        .limiteHabitacionCotizacion!) {
+                                              ref
+                                                  .watch(typeQuoteProvider
+                                                      .notifier)
+                                                  .update((ref) => true);
+                                            } else if (typeQuote &&
+                                                rooms <
+                                                    data.limiteHabitacionCotizacion!) {
+                                              ref
+                                                  .watch(typeQuoteProvider
+                                                      .notifier)
+                                                  .update((ref) => false);
+                                            }
+                                          }
+                                        },
+                                        error: (error, stackTrace) {
+                                          print("Politicas no encontradas");
+                                        },
+                                        loading: () {
+                                          print("Cargando politicas");
+                                        },
+                                      );
+
                                       ref
                                           .read(
                                               detectChangeRoomProvider.notifier)
@@ -515,7 +614,27 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       ),
                     ),
                   ),
-                  const SummaryControllerWidget()
+                  SummaryControllerWidget(
+                    onSaveQuote: () {
+                      if (!_formKeyCotizacion.currentState!.validate()) return;
+                      if (habitaciones
+                          .where((element) => !element.isFree)
+                          .toList()
+                          .isEmpty) {
+                        showSnackBar(
+                            type: "alert",
+                            context: context,
+                            iconCustom: CupertinoIcons.tray_fill,
+                            duration: 3.seconds,
+                            title: "Habitaciones no registradas",
+                            message:
+                                "Se requiere al menos una habitación para generar esta cotización.");
+                        return;
+                      }
+
+
+                    },
+                  )
                       .animate(target: targetHabitaciones)
                       .fadeIn(duration: 450.ms),
                 ],
@@ -525,5 +644,31 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
         ),
       ),
     );
+  }
+
+  Widget cardTypeQuote({
+    required String type,
+    required Color? color,
+    bool withTarget = false,
+  }) {
+    return Card(
+      color: color,
+      elevation: 6,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextStyles.titleText(
+                text: type,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).animate(autoPlay: true, delay: 450.ms).fadeIn(duration: 200.ms).flip();
   }
 }

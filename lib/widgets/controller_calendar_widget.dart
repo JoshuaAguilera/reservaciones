@@ -16,7 +16,7 @@ import '../utils/helpers/utility.dart';
 import 'item_rows.dart';
 import 'text_styles.dart';
 
-class ControllerCalendarWidget extends ConsumerStatefulWidget {
+class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool target;
   final bool inMenu;
   final void Function()? onTarget;
@@ -40,7 +40,7 @@ class ControllerCalendarWidget extends ConsumerStatefulWidget {
   final void Function(int)? onNextPage;
   final void Function()? onCreated;
 
-  const ControllerCalendarWidget({
+  const CalendarControllerWidget({
     super.key,
     required this.target,
     required this.onTarget,
@@ -72,7 +72,7 @@ class ControllerCalendarWidget extends ConsumerStatefulWidget {
 }
 
 class _ControllerCalendarWidgetState
-    extends ConsumerState<ControllerCalendarWidget> {
+    extends ConsumerState<CalendarControllerWidget> {
   DateTime _currentMonth = DateTime.now();
 
   @override
@@ -274,7 +274,7 @@ class _ControllerCalendarWidgetState
                                     return SizedBox(
                                       width: screenWidth,
                                       height: Utility.limitHeightList(
-                                          list.length, 5, 200),
+                                          list.length, 6, 300),
                                       child: ListView.builder(
                                         itemCount: list.length,
                                         padding:
@@ -388,22 +388,6 @@ class _ControllerCalendarWidgetState
                           ),
                         ],
                       ),
-                      // ExpansionTile(
-                      //   initiallyExpanded: true,
-                      //   collapsedShape: Border(
-                      //       top: BorderSide(
-                      //           color: Theme.of(context).dividerColor)),
-                      //   title: TextStyles.standardText(
-                      //     text: "Usuarios autorizados",
-                      //     isBold: true,
-                      //     color: Theme.of(context).primaryColor,
-                      //     size: 14,
-                      //   ),
-                      //   children: [
-                      //     ItemRows.userTarifaItemRow(context,
-                      //         nameUser: "Neli", rolUser: "Administrador")
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
