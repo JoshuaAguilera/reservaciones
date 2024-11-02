@@ -2,10 +2,11 @@ import 'package:drift/drift.dart';
 
 class Habitacion extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get subfolio => text()();
-  TextColumn get categoria => text()();
-  TextColumn get fechaCheckIn => text()();
-  TextColumn get fechaCheckOut => text()();
+  TextColumn get folioHabitacion => text().nullable()();
+  TextColumn get folioCotizacion => text().nullable()();
+  TextColumn get categoria => text().nullable()();
+  TextColumn get fechaCheckIn => text().nullable()();
+  TextColumn get fechaCheckOut => text().nullable()();
   DateTimeColumn get fecha => dateTime()();
   IntColumn get adultos => integer().nullable()();
   IntColumn get menores0a6 => integer().nullable()();
@@ -16,4 +17,5 @@ class Habitacion extends Table {
   RealColumn get descuento => real().nullable()();
   IntColumn get count => integer().nullable()();
   BoolColumn get isFree => boolean().nullable()();
+  TextColumn get tarifaXDia => text().nullable()();
 }

@@ -25,6 +25,7 @@ import 'package:printing/printing.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
 import '../../providers/tarifario_provider.dart';
+import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
 
@@ -232,8 +233,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   .textFormFieldwithBorder(
                                                 name: "Teléfono",
                                                 msgError: "Campo requerido*",
-                                                initialValue: cotizacion
-                                                    .numeroTelefonico,
+                                                initialValue:
+                                                    cotizacion.numeroTelefonico,
                                                 isNumeric: true,
                                                 isDecimal: false,
                                                 isRequired: true,
@@ -253,8 +254,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     .correoElectronico,
                                                 isRequired: true,
                                                 onChanged: (p0) {
-                                                  cotizacion
-                                                      .correoElectronico = p0;
+                                                  cotizacion.correoElectronico =
+                                                      p0;
                                                 },
                                               ),
                                             ),
@@ -615,7 +616,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                     ),
                   ),
                   SummaryControllerWidget(
-                    onSaveQuote: () {
+                    isLoading: isLoading,
+                    onSaveQuote: () async {
                       if (!_formKeyCotizacion.currentState!.validate()) return;
                       if (habitaciones
                           .where((element) => !element.isFree)
@@ -632,7 +634,25 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         return;
                       }
 
+                      if (!(await CotizacionService().createCotizacion(
+                        cotizacion: cotizacion,
+                        habitaciones: habitaciones,
+                        folio: folio,
+                        prefijoInit: prefijoInit,
+                        isQuoteGroup: typeQuote,
+                      ))) {
+                        if (!context.mounted) return;
+                        showSnackBar(
+                          type: "danger",
+                          context: context,
+                          title: "Error al registrar la cotizacion",
+                          message:
+                              "Se produjo un error al insertar la nueva cotización.",
+                        );
+                        return;
+                      }
 
+                      setState(() => isLoading = true);
                     },
                   )
                       .animate(target: targetHabitaciones)

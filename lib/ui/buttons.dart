@@ -106,9 +106,7 @@ class Buttons {
                 ),
         ),
         child: Row(
-          mainAxisAlignment: isLoading
-              ? MainAxisAlignment.spaceAround
-              : MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (isLoading)
               const SizedBox(
@@ -117,6 +115,7 @@ class Buttons {
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white),
               ),
+            const SizedBox(width: 10),
             if (auxwidget != null)
               Expanded(child: auxwidget)
             else

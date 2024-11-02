@@ -1204,30 +1204,36 @@ class $HabitacionTable extends Habitacion
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _subfolioMeta =
-      const VerificationMeta('subfolio');
+  static const VerificationMeta _folioHabitacionMeta =
+      const VerificationMeta('folioHabitacion');
   @override
-  late final GeneratedColumn<String> subfolio = GeneratedColumn<String>(
-      'subfolio', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> folioHabitacion = GeneratedColumn<String>(
+      'folio_habitacion', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _folioCotizacionMeta =
+      const VerificationMeta('folioCotizacion');
+  @override
+  late final GeneratedColumn<String> folioCotizacion = GeneratedColumn<String>(
+      'folio_cotizacion', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _categoriaMeta =
       const VerificationMeta('categoria');
   @override
   late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
-      'categoria', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'categoria', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaCheckInMeta =
       const VerificationMeta('fechaCheckIn');
   @override
   late final GeneratedColumn<String> fechaCheckIn = GeneratedColumn<String>(
-      'fecha_check_in', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'fecha_check_in', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaCheckOutMeta =
       const VerificationMeta('fechaCheckOut');
   @override
   late final GeneratedColumn<String> fechaCheckOut = GeneratedColumn<String>(
-      'fecha_check_out', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'fecha_check_out', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
@@ -1287,10 +1293,17 @@ class $HabitacionTable extends Habitacion
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_free" IN (0, 1))'));
+  static const VerificationMeta _tarifaXDiaMeta =
+      const VerificationMeta('tarifaXDia');
+  @override
+  late final GeneratedColumn<String> tarifaXDia = GeneratedColumn<String>(
+      'tarifa_x_dia', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        subfolio,
+        folioHabitacion,
+        folioCotizacion,
         categoria,
         fechaCheckIn,
         fechaCheckOut,
@@ -1303,7 +1316,8 @@ class $HabitacionTable extends Habitacion
         totalReal,
         descuento,
         count,
-        isFree
+        isFree,
+        tarifaXDia
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1318,33 +1332,33 @@ class $HabitacionTable extends Habitacion
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('subfolio')) {
-      context.handle(_subfolioMeta,
-          subfolio.isAcceptableOrUnknown(data['subfolio']!, _subfolioMeta));
-    } else if (isInserting) {
-      context.missing(_subfolioMeta);
+    if (data.containsKey('folio_habitacion')) {
+      context.handle(
+          _folioHabitacionMeta,
+          folioHabitacion.isAcceptableOrUnknown(
+              data['folio_habitacion']!, _folioHabitacionMeta));
+    }
+    if (data.containsKey('folio_cotizacion')) {
+      context.handle(
+          _folioCotizacionMeta,
+          folioCotizacion.isAcceptableOrUnknown(
+              data['folio_cotizacion']!, _folioCotizacionMeta));
     }
     if (data.containsKey('categoria')) {
       context.handle(_categoriaMeta,
           categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
-    } else if (isInserting) {
-      context.missing(_categoriaMeta);
     }
     if (data.containsKey('fecha_check_in')) {
       context.handle(
           _fechaCheckInMeta,
           fechaCheckIn.isAcceptableOrUnknown(
               data['fecha_check_in']!, _fechaCheckInMeta));
-    } else if (isInserting) {
-      context.missing(_fechaCheckInMeta);
     }
     if (data.containsKey('fecha_check_out')) {
       context.handle(
           _fechaCheckOutMeta,
           fechaCheckOut.isAcceptableOrUnknown(
               data['fecha_check_out']!, _fechaCheckOutMeta));
-    } else if (isInserting) {
-      context.missing(_fechaCheckOutMeta);
     }
     if (data.containsKey('fecha')) {
       context.handle(
@@ -1392,6 +1406,12 @@ class $HabitacionTable extends Habitacion
       context.handle(_isFreeMeta,
           isFree.isAcceptableOrUnknown(data['is_free']!, _isFreeMeta));
     }
+    if (data.containsKey('tarifa_x_dia')) {
+      context.handle(
+          _tarifaXDiaMeta,
+          tarifaXDia.isAcceptableOrUnknown(
+              data['tarifa_x_dia']!, _tarifaXDiaMeta));
+    }
     return context;
   }
 
@@ -1403,14 +1423,16 @@ class $HabitacionTable extends Habitacion
     return HabitacionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      subfolio: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}subfolio'])!,
+      folioHabitacion: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}folio_habitacion']),
+      folioCotizacion: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}folio_cotizacion']),
       categoria: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}categoria'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}categoria']),
       fechaCheckIn: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}fecha_check_in'])!,
-      fechaCheckOut: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}fecha_check_out'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}fecha_check_in']),
+      fechaCheckOut: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fecha_check_out']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
       adultos: attachedDatabase.typeMapping
@@ -1431,6 +1453,8 @@ class $HabitacionTable extends Habitacion
           .read(DriftSqlType.int, data['${effectivePrefix}count']),
       isFree: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_free']),
+      tarifaXDia: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tarifa_x_dia']),
     );
   }
 
@@ -1442,10 +1466,11 @@ class $HabitacionTable extends Habitacion
 
 class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int id;
-  final String subfolio;
-  final String categoria;
-  final String fechaCheckIn;
-  final String fechaCheckOut;
+  final String? folioHabitacion;
+  final String? folioCotizacion;
+  final String? categoria;
+  final String? fechaCheckIn;
+  final String? fechaCheckOut;
   final DateTime fecha;
   final int? adultos;
   final int? menores0a6;
@@ -1456,12 +1481,14 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final double? descuento;
   final int? count;
   final bool? isFree;
+  final String? tarifaXDia;
   const HabitacionData(
       {required this.id,
-      required this.subfolio,
-      required this.categoria,
-      required this.fechaCheckIn,
-      required this.fechaCheckOut,
+      this.folioHabitacion,
+      this.folioCotizacion,
+      this.categoria,
+      this.fechaCheckIn,
+      this.fechaCheckOut,
       required this.fecha,
       this.adultos,
       this.menores0a6,
@@ -1471,15 +1498,27 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       this.totalReal,
       this.descuento,
       this.count,
-      this.isFree});
+      this.isFree,
+      this.tarifaXDia});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['subfolio'] = Variable<String>(subfolio);
-    map['categoria'] = Variable<String>(categoria);
-    map['fecha_check_in'] = Variable<String>(fechaCheckIn);
-    map['fecha_check_out'] = Variable<String>(fechaCheckOut);
+    if (!nullToAbsent || folioHabitacion != null) {
+      map['folio_habitacion'] = Variable<String>(folioHabitacion);
+    }
+    if (!nullToAbsent || folioCotizacion != null) {
+      map['folio_cotizacion'] = Variable<String>(folioCotizacion);
+    }
+    if (!nullToAbsent || categoria != null) {
+      map['categoria'] = Variable<String>(categoria);
+    }
+    if (!nullToAbsent || fechaCheckIn != null) {
+      map['fecha_check_in'] = Variable<String>(fechaCheckIn);
+    }
+    if (!nullToAbsent || fechaCheckOut != null) {
+      map['fecha_check_out'] = Variable<String>(fechaCheckOut);
+    }
     map['fecha'] = Variable<DateTime>(fecha);
     if (!nullToAbsent || adultos != null) {
       map['adultos'] = Variable<int>(adultos);
@@ -1508,16 +1547,30 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     if (!nullToAbsent || isFree != null) {
       map['is_free'] = Variable<bool>(isFree);
     }
+    if (!nullToAbsent || tarifaXDia != null) {
+      map['tarifa_x_dia'] = Variable<String>(tarifaXDia);
+    }
     return map;
   }
 
   HabitacionCompanion toCompanion(bool nullToAbsent) {
     return HabitacionCompanion(
       id: Value(id),
-      subfolio: Value(subfolio),
-      categoria: Value(categoria),
-      fechaCheckIn: Value(fechaCheckIn),
-      fechaCheckOut: Value(fechaCheckOut),
+      folioHabitacion: folioHabitacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(folioHabitacion),
+      folioCotizacion: folioCotizacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(folioCotizacion),
+      categoria: categoria == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoria),
+      fechaCheckIn: fechaCheckIn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCheckIn),
+      fechaCheckOut: fechaCheckOut == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCheckOut),
       fecha: Value(fecha),
       adultos: adultos == null && nullToAbsent
           ? const Value.absent()
@@ -1543,6 +1596,9 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           count == null && nullToAbsent ? const Value.absent() : Value(count),
       isFree:
           isFree == null && nullToAbsent ? const Value.absent() : Value(isFree),
+      tarifaXDia: tarifaXDia == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaXDia),
     );
   }
 
@@ -1551,10 +1607,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return HabitacionData(
       id: serializer.fromJson<int>(json['id']),
-      subfolio: serializer.fromJson<String>(json['subfolio']),
-      categoria: serializer.fromJson<String>(json['categoria']),
-      fechaCheckIn: serializer.fromJson<String>(json['fechaCheckIn']),
-      fechaCheckOut: serializer.fromJson<String>(json['fechaCheckOut']),
+      folioHabitacion: serializer.fromJson<String?>(json['folioHabitacion']),
+      folioCotizacion: serializer.fromJson<String?>(json['folioCotizacion']),
+      categoria: serializer.fromJson<String?>(json['categoria']),
+      fechaCheckIn: serializer.fromJson<String?>(json['fechaCheckIn']),
+      fechaCheckOut: serializer.fromJson<String?>(json['fechaCheckOut']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
       adultos: serializer.fromJson<int?>(json['adultos']),
       menores0a6: serializer.fromJson<int?>(json['menores0a6']),
@@ -1565,6 +1622,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       descuento: serializer.fromJson<double?>(json['descuento']),
       count: serializer.fromJson<int?>(json['count']),
       isFree: serializer.fromJson<bool?>(json['isFree']),
+      tarifaXDia: serializer.fromJson<String?>(json['tarifaXDia']),
     );
   }
   @override
@@ -1572,10 +1630,11 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'subfolio': serializer.toJson<String>(subfolio),
-      'categoria': serializer.toJson<String>(categoria),
-      'fechaCheckIn': serializer.toJson<String>(fechaCheckIn),
-      'fechaCheckOut': serializer.toJson<String>(fechaCheckOut),
+      'folioHabitacion': serializer.toJson<String?>(folioHabitacion),
+      'folioCotizacion': serializer.toJson<String?>(folioCotizacion),
+      'categoria': serializer.toJson<String?>(categoria),
+      'fechaCheckIn': serializer.toJson<String?>(fechaCheckIn),
+      'fechaCheckOut': serializer.toJson<String?>(fechaCheckOut),
       'fecha': serializer.toJson<DateTime>(fecha),
       'adultos': serializer.toJson<int?>(adultos),
       'menores0a6': serializer.toJson<int?>(menores0a6),
@@ -1586,15 +1645,17 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       'descuento': serializer.toJson<double?>(descuento),
       'count': serializer.toJson<int?>(count),
       'isFree': serializer.toJson<bool?>(isFree),
+      'tarifaXDia': serializer.toJson<String?>(tarifaXDia),
     };
   }
 
   HabitacionData copyWith(
           {int? id,
-          String? subfolio,
-          String? categoria,
-          String? fechaCheckIn,
-          String? fechaCheckOut,
+          Value<String?> folioHabitacion = const Value.absent(),
+          Value<String?> folioCotizacion = const Value.absent(),
+          Value<String?> categoria = const Value.absent(),
+          Value<String?> fechaCheckIn = const Value.absent(),
+          Value<String?> fechaCheckOut = const Value.absent(),
           DateTime? fecha,
           Value<int?> adultos = const Value.absent(),
           Value<int?> menores0a6 = const Value.absent(),
@@ -1604,13 +1665,21 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           Value<double?> totalReal = const Value.absent(),
           Value<double?> descuento = const Value.absent(),
           Value<int?> count = const Value.absent(),
-          Value<bool?> isFree = const Value.absent()}) =>
+          Value<bool?> isFree = const Value.absent(),
+          Value<String?> tarifaXDia = const Value.absent()}) =>
       HabitacionData(
         id: id ?? this.id,
-        subfolio: subfolio ?? this.subfolio,
-        categoria: categoria ?? this.categoria,
-        fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
-        fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
+        folioHabitacion: folioHabitacion.present
+            ? folioHabitacion.value
+            : this.folioHabitacion,
+        folioCotizacion: folioCotizacion.present
+            ? folioCotizacion.value
+            : this.folioCotizacion,
+        categoria: categoria.present ? categoria.value : this.categoria,
+        fechaCheckIn:
+            fechaCheckIn.present ? fechaCheckIn.value : this.fechaCheckIn,
+        fechaCheckOut:
+            fechaCheckOut.present ? fechaCheckOut.value : this.fechaCheckOut,
         fecha: fecha ?? this.fecha,
         adultos: adultos.present ? adultos.value : this.adultos,
         menores0a6: menores0a6.present ? menores0a6.value : this.menores0a6,
@@ -1621,12 +1690,14 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         descuento: descuento.present ? descuento.value : this.descuento,
         count: count.present ? count.value : this.count,
         isFree: isFree.present ? isFree.value : this.isFree,
+        tarifaXDia: tarifaXDia.present ? tarifaXDia.value : this.tarifaXDia,
       );
   @override
   String toString() {
     return (StringBuffer('HabitacionData(')
           ..write('id: $id, ')
-          ..write('subfolio: $subfolio, ')
+          ..write('folioHabitacion: $folioHabitacion, ')
+          ..write('folioCotizacion: $folioCotizacion, ')
           ..write('categoria: $categoria, ')
           ..write('fechaCheckIn: $fechaCheckIn, ')
           ..write('fechaCheckOut: $fechaCheckOut, ')
@@ -1639,7 +1710,8 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           ..write('totalReal: $totalReal, ')
           ..write('descuento: $descuento, ')
           ..write('count: $count, ')
-          ..write('isFree: $isFree')
+          ..write('isFree: $isFree, ')
+          ..write('tarifaXDia: $tarifaXDia')
           ..write(')'))
         .toString();
   }
@@ -1647,7 +1719,8 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   @override
   int get hashCode => Object.hash(
       id,
-      subfolio,
+      folioHabitacion,
+      folioCotizacion,
       categoria,
       fechaCheckIn,
       fechaCheckOut,
@@ -1660,13 +1733,15 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       totalReal,
       descuento,
       count,
-      isFree);
+      isFree,
+      tarifaXDia);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is HabitacionData &&
           other.id == this.id &&
-          other.subfolio == this.subfolio &&
+          other.folioHabitacion == this.folioHabitacion &&
+          other.folioCotizacion == this.folioCotizacion &&
           other.categoria == this.categoria &&
           other.fechaCheckIn == this.fechaCheckIn &&
           other.fechaCheckOut == this.fechaCheckOut &&
@@ -1679,15 +1754,17 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.totalReal == this.totalReal &&
           other.descuento == this.descuento &&
           other.count == this.count &&
-          other.isFree == this.isFree);
+          other.isFree == this.isFree &&
+          other.tarifaXDia == this.tarifaXDia);
 }
 
 class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int> id;
-  final Value<String> subfolio;
-  final Value<String> categoria;
-  final Value<String> fechaCheckIn;
-  final Value<String> fechaCheckOut;
+  final Value<String?> folioHabitacion;
+  final Value<String?> folioCotizacion;
+  final Value<String?> categoria;
+  final Value<String?> fechaCheckIn;
+  final Value<String?> fechaCheckOut;
   final Value<DateTime> fecha;
   final Value<int?> adultos;
   final Value<int?> menores0a6;
@@ -1698,9 +1775,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<double?> descuento;
   final Value<int?> count;
   final Value<bool?> isFree;
+  final Value<String?> tarifaXDia;
   const HabitacionCompanion({
     this.id = const Value.absent(),
-    this.subfolio = const Value.absent(),
+    this.folioHabitacion = const Value.absent(),
+    this.folioCotizacion = const Value.absent(),
     this.categoria = const Value.absent(),
     this.fechaCheckIn = const Value.absent(),
     this.fechaCheckOut = const Value.absent(),
@@ -1714,13 +1793,15 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.descuento = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
+    this.tarifaXDia = const Value.absent(),
   });
   HabitacionCompanion.insert({
     this.id = const Value.absent(),
-    required String subfolio,
-    required String categoria,
-    required String fechaCheckIn,
-    required String fechaCheckOut,
+    this.folioHabitacion = const Value.absent(),
+    this.folioCotizacion = const Value.absent(),
+    this.categoria = const Value.absent(),
+    this.fechaCheckIn = const Value.absent(),
+    this.fechaCheckOut = const Value.absent(),
     required DateTime fecha,
     this.adultos = const Value.absent(),
     this.menores0a6 = const Value.absent(),
@@ -1731,14 +1812,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.descuento = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
-  })  : subfolio = Value(subfolio),
-        categoria = Value(categoria),
-        fechaCheckIn = Value(fechaCheckIn),
-        fechaCheckOut = Value(fechaCheckOut),
-        fecha = Value(fecha);
+    this.tarifaXDia = const Value.absent(),
+  }) : fecha = Value(fecha);
   static Insertable<HabitacionData> custom({
     Expression<int>? id,
-    Expression<String>? subfolio,
+    Expression<String>? folioHabitacion,
+    Expression<String>? folioCotizacion,
     Expression<String>? categoria,
     Expression<String>? fechaCheckIn,
     Expression<String>? fechaCheckOut,
@@ -1752,10 +1831,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     Expression<double>? descuento,
     Expression<int>? count,
     Expression<bool>? isFree,
+    Expression<String>? tarifaXDia,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (subfolio != null) 'subfolio': subfolio,
+      if (folioHabitacion != null) 'folio_habitacion': folioHabitacion,
+      if (folioCotizacion != null) 'folio_cotizacion': folioCotizacion,
       if (categoria != null) 'categoria': categoria,
       if (fechaCheckIn != null) 'fecha_check_in': fechaCheckIn,
       if (fechaCheckOut != null) 'fecha_check_out': fechaCheckOut,
@@ -1769,15 +1850,17 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       if (descuento != null) 'descuento': descuento,
       if (count != null) 'count': count,
       if (isFree != null) 'is_free': isFree,
+      if (tarifaXDia != null) 'tarifa_x_dia': tarifaXDia,
     });
   }
 
   HabitacionCompanion copyWith(
       {Value<int>? id,
-      Value<String>? subfolio,
-      Value<String>? categoria,
-      Value<String>? fechaCheckIn,
-      Value<String>? fechaCheckOut,
+      Value<String?>? folioHabitacion,
+      Value<String?>? folioCotizacion,
+      Value<String?>? categoria,
+      Value<String?>? fechaCheckIn,
+      Value<String?>? fechaCheckOut,
       Value<DateTime>? fecha,
       Value<int?>? adultos,
       Value<int?>? menores0a6,
@@ -1787,10 +1870,12 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       Value<double?>? totalReal,
       Value<double?>? descuento,
       Value<int?>? count,
-      Value<bool?>? isFree}) {
+      Value<bool?>? isFree,
+      Value<String?>? tarifaXDia}) {
     return HabitacionCompanion(
       id: id ?? this.id,
-      subfolio: subfolio ?? this.subfolio,
+      folioHabitacion: folioHabitacion ?? this.folioHabitacion,
+      folioCotizacion: folioCotizacion ?? this.folioCotizacion,
       categoria: categoria ?? this.categoria,
       fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
       fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
@@ -1804,6 +1889,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       descuento: descuento ?? this.descuento,
       count: count ?? this.count,
       isFree: isFree ?? this.isFree,
+      tarifaXDia: tarifaXDia ?? this.tarifaXDia,
     );
   }
 
@@ -1813,8 +1899,11 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (subfolio.present) {
-      map['subfolio'] = Variable<String>(subfolio.value);
+    if (folioHabitacion.present) {
+      map['folio_habitacion'] = Variable<String>(folioHabitacion.value);
+    }
+    if (folioCotizacion.present) {
+      map['folio_cotizacion'] = Variable<String>(folioCotizacion.value);
     }
     if (categoria.present) {
       map['categoria'] = Variable<String>(categoria.value);
@@ -1855,6 +1944,9 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     if (isFree.present) {
       map['is_free'] = Variable<bool>(isFree.value);
     }
+    if (tarifaXDia.present) {
+      map['tarifa_x_dia'] = Variable<String>(tarifaXDia.value);
+    }
     return map;
   }
 
@@ -1862,7 +1954,8 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   String toString() {
     return (StringBuffer('HabitacionCompanion(')
           ..write('id: $id, ')
-          ..write('subfolio: $subfolio, ')
+          ..write('folioHabitacion: $folioHabitacion, ')
+          ..write('folioCotizacion: $folioCotizacion, ')
           ..write('categoria: $categoria, ')
           ..write('fechaCheckIn: $fechaCheckIn, ')
           ..write('fechaCheckOut: $fechaCheckOut, ')
@@ -1875,7 +1968,8 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
           ..write('totalReal: $totalReal, ')
           ..write('descuento: $descuento, ')
           ..write('count: $count, ')
-          ..write('isFree: $isFree')
+          ..write('isFree: $isFree, ')
+          ..write('tarifaXDia: $tarifaXDia')
           ..write(')'))
         .toString();
   }
@@ -5565,10 +5659,11 @@ class $$CotizacionTableOrderingComposer
 
 typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
-  required String subfolio,
-  required String categoria,
-  required String fechaCheckIn,
-  required String fechaCheckOut,
+  Value<String?> folioHabitacion,
+  Value<String?> folioCotizacion,
+  Value<String?> categoria,
+  Value<String?> fechaCheckIn,
+  Value<String?> fechaCheckOut,
   required DateTime fecha,
   Value<int?> adultos,
   Value<int?> menores0a6,
@@ -5579,13 +5674,15 @@ typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
   Value<double?> descuento,
   Value<int?> count,
   Value<bool?> isFree,
+  Value<String?> tarifaXDia,
 });
 typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
-  Value<String> subfolio,
-  Value<String> categoria,
-  Value<String> fechaCheckIn,
-  Value<String> fechaCheckOut,
+  Value<String?> folioHabitacion,
+  Value<String?> folioCotizacion,
+  Value<String?> categoria,
+  Value<String?> fechaCheckIn,
+  Value<String?> fechaCheckOut,
   Value<DateTime> fecha,
   Value<int?> adultos,
   Value<int?> menores0a6,
@@ -5596,6 +5693,7 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<double?> descuento,
   Value<int?> count,
   Value<bool?> isFree,
+  Value<String?> tarifaXDia,
 });
 
 class $$HabitacionTableTableManager extends RootTableManager<
@@ -5619,10 +5717,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
               $$HabitacionTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> subfolio = const Value.absent(),
-            Value<String> categoria = const Value.absent(),
-            Value<String> fechaCheckIn = const Value.absent(),
-            Value<String> fechaCheckOut = const Value.absent(),
+            Value<String?> folioHabitacion = const Value.absent(),
+            Value<String?> folioCotizacion = const Value.absent(),
+            Value<String?> categoria = const Value.absent(),
+            Value<String?> fechaCheckIn = const Value.absent(),
+            Value<String?> fechaCheckOut = const Value.absent(),
             Value<DateTime> fecha = const Value.absent(),
             Value<int?> adultos = const Value.absent(),
             Value<int?> menores0a6 = const Value.absent(),
@@ -5633,10 +5732,12 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<double?> descuento = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
+            Value<String?> tarifaXDia = const Value.absent(),
           }) =>
               HabitacionCompanion(
             id: id,
-            subfolio: subfolio,
+            folioHabitacion: folioHabitacion,
+            folioCotizacion: folioCotizacion,
             categoria: categoria,
             fechaCheckIn: fechaCheckIn,
             fechaCheckOut: fechaCheckOut,
@@ -5650,13 +5751,15 @@ class $$HabitacionTableTableManager extends RootTableManager<
             descuento: descuento,
             count: count,
             isFree: isFree,
+            tarifaXDia: tarifaXDia,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String subfolio,
-            required String categoria,
-            required String fechaCheckIn,
-            required String fechaCheckOut,
+            Value<String?> folioHabitacion = const Value.absent(),
+            Value<String?> folioCotizacion = const Value.absent(),
+            Value<String?> categoria = const Value.absent(),
+            Value<String?> fechaCheckIn = const Value.absent(),
+            Value<String?> fechaCheckOut = const Value.absent(),
             required DateTime fecha,
             Value<int?> adultos = const Value.absent(),
             Value<int?> menores0a6 = const Value.absent(),
@@ -5667,10 +5770,12 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<double?> descuento = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
+            Value<String?> tarifaXDia = const Value.absent(),
           }) =>
               HabitacionCompanion.insert(
             id: id,
-            subfolio: subfolio,
+            folioHabitacion: folioHabitacion,
+            folioCotizacion: folioCotizacion,
             categoria: categoria,
             fechaCheckIn: fechaCheckIn,
             fechaCheckOut: fechaCheckOut,
@@ -5684,6 +5789,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             descuento: descuento,
             count: count,
             isFree: isFree,
+            tarifaXDia: tarifaXDia,
           ),
         ));
 }
@@ -5708,8 +5814,13 @@ class $$HabitacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get subfolio => $state.composableBuilder(
-      column: $state.table.subfolio,
+  ColumnFilters<String> get folioHabitacion => $state.composableBuilder(
+      column: $state.table.folioHabitacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get folioCotizacion => $state.composableBuilder(
+      column: $state.table.folioCotizacion,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5777,6 +5888,11 @@ class $$HabitacionTableFilterComposer
       column: $state.table.isFree,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tarifaXDia => $state.composableBuilder(
+      column: $state.table.tarifaXDia,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$HabitacionTableOrderingComposer
@@ -5787,8 +5903,13 @@ class $$HabitacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get subfolio => $state.composableBuilder(
-      column: $state.table.subfolio,
+  ColumnOrderings<String> get folioHabitacion => $state.composableBuilder(
+      column: $state.table.folioHabitacion,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get folioCotizacion => $state.composableBuilder(
+      column: $state.table.folioCotizacion,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -5854,6 +5975,11 @@ class $$HabitacionTableOrderingComposer
 
   ColumnOrderings<bool> get isFree => $state.composableBuilder(
       column: $state.table.isFree,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tarifaXDia => $state.composableBuilder(
+      column: $state.table.tarifaXDia,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

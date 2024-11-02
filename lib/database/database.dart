@@ -178,7 +178,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<HabitacionData>> getHabitacionesByFolio(String folio) {
-    return (select(habitacion)..where((t) => t.subfolio.equals(folio))).get();
+    return (select(habitacion)..where((t) => t.folioCotizacion.equals(folio)))
+        .get();
   }
 
   Future<List<HabitacionData>> getHabitacionesByPeriod(
@@ -203,7 +204,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future deleteHabitacionByFolio(String folio) {
-    return (delete(habitacion)..where((t) => t.subfolio.equals(folio))).go();
+    return (delete(habitacion)..where((t) => t.folioCotizacion.equals(folio)))
+        .go();
   }
 
   //tarifaXdia DAO

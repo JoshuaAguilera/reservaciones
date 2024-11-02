@@ -18,7 +18,7 @@ class HabitacionService extends BaseService {
           fechaCheckIn: element.fechaCheckIn,
           fechaCheckOut: element.fechaCheckOut,
           fecha: element.fecha.toString(),
-          folioHabitacion: element.subfolio,
+          folioHabitacion: element.folioHabitacion,
           id: element.id,
         ));
       }

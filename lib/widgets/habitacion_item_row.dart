@@ -311,8 +311,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                             error: (error, stackTrace) => TextStyles.errorText(
                                 text: "Error al cargar politicas"),
                             loading: () => const SizedBox(
-                              height: 25,
-                              width: 25,
+                              height: 20,
+                              width: 20,
                               child: CircularProgressIndicator(
                                   color: Colors.white),
                             ),

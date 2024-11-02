@@ -233,23 +233,25 @@ class _ControllerCalendarWidgetState
                             top: BorderSide(
                                 color: Theme.of(context).dividerColor)),
                         title: IconButton(
-                            onPressed: () {
-                              ref
-                                  .read(editTarifaProvider.notifier)
-                                  .update((state) => RegistroTarifa());
-                              ref.read(temporadasProvider.notifier).update(
-                                    (state) => [
-                                      Temporada(
-                                          nombre: "Promoción", editable: false),
-                                      Temporada(
-                                          nombre: "BAR I", editable: false),
-                                      Temporada(
-                                          nombre: "BAR II", editable: false),
-                                    ],
-                                  );
-                              widget.onCreated!.call();
-                            },
-                            icon: const Icon(Icons.add_circle_rounded)),
+                          icon: const Icon(Icons.add_circle_rounded),
+                          tooltip: "Crear tarifa",
+                          onPressed: () {
+                            ref
+                                .read(editTarifaProvider.notifier)
+                                .update((state) => RegistroTarifa());
+                            ref.read(temporadasProvider.notifier).update(
+                                  (state) => [
+                                    Temporada(
+                                        nombre: "Promoción", editable: false),
+                                    Temporada(nombre: "BAR I", editable: false),
+                                    Temporada(
+                                        nombre: "BAR II", editable: false),
+                                  ],
+                                );
+                            widget.onCreated!.call();
+                          },
+                          
+                        ),
                         leading: SizedBox(
                           width: 175,
                           child: TextStyles.standardText(

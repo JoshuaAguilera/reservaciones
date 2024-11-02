@@ -13,6 +13,7 @@ List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
 
 class Habitacion {
   int? id;
+  String? folioCotizacion;
   String? folioHabitacion;
   String? categoria;
   String? fechaCheckIn;
@@ -30,6 +31,7 @@ class Habitacion {
 
   Habitacion({
     this.id,
+    this.folioCotizacion,
     this.categoria,
     this.fechaCheckIn,
     this.fechaCheckOut,
@@ -49,6 +51,7 @@ class Habitacion {
   Habitacion CopyWith({
     int? id,
     String? folioHabitacion,
+    String? folioCotizacion,
     String? categoria,
     String? fechaCheckIn,
     String? fechaCheckOut,
@@ -66,6 +69,7 @@ class Habitacion {
       Habitacion(
         id: id ?? this.id,
         folioHabitacion: folioHabitacion ?? this.folioHabitacion,
+        folioCotizacion: folioCotizacion ?? this.folioCotizacion,
         categoria: categoria ?? this.categoria,
         fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
         fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
@@ -85,6 +89,7 @@ class Habitacion {
     return {
       'id': id,
       'folioHabitacion': folioHabitacion,
+      'folioCotizacion': folioCotizacion,
       'categoria': categoria,
       'fechaCheckIn': fechaCheckIn,
       'fechaCheckOut': fechaCheckOut,
@@ -105,6 +110,7 @@ class Habitacion {
     return Habitacion(
       id: json['id'],
       folioHabitacion: json['folioHabitacion'],
+      folioCotizacion: json['folioCotizacion'],
       categoria: json['categoria'],
       fechaCheckIn: json['fechaCheckIn'],
       fechaCheckOut: json['fechaCheckOut'],
@@ -112,7 +118,11 @@ class Habitacion {
       adultos: json['adultos'],
       menores0a6: json['menores0a6'],
       menores7a12: json['menores7a12'],
-      tarifaXDia: json['tarifaXDia'],
+      tarifaXDia: json['tarifaXDia'] != null
+          ? json['tarifaXDia'] != '[]'
+              ? listTarifasXDiaFromJson(json['tarifaXDia'])
+              : List<TarifaXDia>.empty()
+          : List<TarifaXDia>.empty(),
       totalReal: json['totalReal'],
       descuento: json['descuento'],
       total: json['total'],

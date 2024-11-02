@@ -21,11 +21,13 @@ class SummaryControllerWidget extends ConsumerStatefulWidget {
   const SummaryControllerWidget({
     super.key,
     this.calculateRoom = false,
+    this.isLoading = false,
     this.numDays = 0,
     this.onSaveQuote,
   });
 
   final bool calculateRoom;
+  final bool isLoading;
   final int numDays;
   final void Function()? onSaveQuote;
 
@@ -523,6 +525,7 @@ class _SummaryControllerWidgetState
                       ? "Guardar Habitación"
                       : "Generar Cotización",
                   color: DesktopColors.ceruleanOscure,
+                  isLoading: widget.isLoading,
                   onPressed: () {
                     if (widget.calculateRoom) {
                       saveRoom(habitacionProvider);

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -34,15 +36,26 @@ class CotizacionService extends BaseService {
       database.transaction(
         () async {
           for (var element in habitaciones!) {
-            await database
-                .into(database.habitacion)
-                .insert(HabitacionCompanion.insert(
-                  categoria: element.categoria ?? '',
-                  fecha: DateTime.parse(element.fecha!),
-                  fechaCheckIn: element.fechaCheckIn ?? '',
-                  fechaCheckOut: element.fechaCheckOut ?? '',
-                  subfolio: folio,
-                ));
+            await database.into(database.habitacion).insert(
+                  HabitacionCompanion.insert(
+                    categoria: Value(element.categoria),
+                    fecha: DateTime.parse(element.fecha!),
+                    fechaCheckIn: Value(element.fechaCheckIn),
+                    fechaCheckOut: Value(element.fechaCheckOut),
+                    folioCotizacion: Value(folio),
+                    adultos: Value(element.adultos),
+                    count: Value(element.count),
+                    descuento: Value(element.descuento),
+                    folioHabitacion: Value(element.folioHabitacion),
+                    isFree: Value(element.isFree),
+                    menores0a6: Value(element.menores0a6),
+                    menores7a12: Value(element.menores7a12),
+                    paxAdic: Value(0),
+                    total: Value(element.total),
+                    totalReal: Value(element.totalReal),
+                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifaXDia!)),
+                  ),
+                );
           }
 
           await database.into(database.cotizacion).insert(
