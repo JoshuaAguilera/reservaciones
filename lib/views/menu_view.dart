@@ -4,7 +4,7 @@ import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.
 import 'package:generador_formato/views/tarifario/tarifario_form_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_view.dart';
 import 'package:generador_formato/views/gestion_usuarios_view.dart';
-import 'package:generador_formato/views/historial/comprobante_detalle_view.dart';
+import 'package:generador_formato/views/historial/cotizacion_detalle_view.dart';
 import 'package:generador_formato/views/configuracion/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/generar_cotizacion_view.dart';
@@ -49,7 +49,7 @@ class _MenuViewState extends State<MenuView> {
           case 99:
             return PerfilView(sideController: widget.controller);
           case 12:
-            return ComprobanteDetalleView(sideController: widget.controller);
+            return CotizacionDetalleView(sideController: widget.controller);
           case 15:
             return TarifarioFormView(sideController: widget.controller);
           case 16:

@@ -75,15 +75,13 @@ class _HabitacionesListState extends State<HabitacionesList> {
                     child: Buttons.commonButton(
                       text: "Agregar habitación",
                       color: DesktopColors.prussianWhiteBlue,
-                      onPressed: () {
-                        widget.newRoom!.call();
-                      },
+                      onPressed: () => widget.newRoom!.call(),
                     ),
                   )
                 else
                   Buttons.iconButtonCard(
                     icon: CupertinoIcons.add,
-                    onPressed: () {},
+                    onPressed: () => widget.newRoom!.call(),
                   ),
               ],
             ),

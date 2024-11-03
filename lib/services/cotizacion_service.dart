@@ -6,6 +6,7 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 
 import '../database/database.dart';
+import '../utils/helpers/utility.dart';
 import 'base_service.dart';
 
 class CotizacionService extends BaseService {
@@ -39,7 +40,7 @@ class CotizacionService extends BaseService {
             await database.into(database.habitacion).insert(
                   HabitacionCompanion.insert(
                     categoria: Value(element.categoria),
-                    fecha: DateTime.parse(element.fecha!),
+                    fecha: DateTime.now(),
                     fechaCheckIn: Value(element.fechaCheckIn),
                     fechaCheckOut: Value(element.fechaCheckOut),
                     folioCotizacion: Value(folio),
@@ -60,32 +61,33 @@ class CotizacionService extends BaseService {
 
           await database.into(database.cotizacion).insert(
                 CotizacionCompanion.insert(
-                  fecha: DateTime.parse(cotizacion.fecha!),
+                  fecha: DateTime.now(),
                   correoElectrico: Value(cotizacion.correoElectronico ?? ''),
-                  descuento: Value(cotizacion.descuento),
-                  esGrupo: Value(cotizacion.esGrupo),
-                  folioPrincipal: Value(cotizacion.folioPrincipal),
-                  habitaciones: Value(""),
+                  esGrupo: Value(isQuoteGroup),
+                  folioPrincipal: Value(folio),
+                  habitaciones: const Value(""),
                   nombreHuesped: Value(cotizacion.nombreHuesped),
                   numeroTelefonico: Value(cotizacion.numeroTelefonico),
                   usuarioID: Value(userId),
-                  tipo: Value(cotizacion.tipo),
-                  total: Value(cotizacion.total),
-                  // folioQuotes: folio,
-                  // mail: comprobante.correoElectronico!,
-                  // nameCustomer: comprobante.nombreHuesped!,
-                  // numPhone: prefijoInit.prefijo + comprobante.numeroTelefonico!,
-                  // userId: 1,
-                  // dateRegister: DateTime.now(),
-                  // rateDay: !isQuoteGroup
-                  //     ? Utility.calculateTarifaDiaria(
-                  //         cotizacion: habitaciones!.first)
-                  //     : 0,
-                  // total: !isQuoteGroup
-                  //     ? Utility.calculateTarifaTotal(habitaciones!)
-                  //     : 0,
-                  // rooms: comprobante.habitaciones ?? 0,
-                  // isGroup: isQuoteGroup,
+                  esConcretado: const Value(false),
+                  descuento: Value(
+                    Utility.calculateTotalRooms(
+                      habitaciones,
+                      onlyDiscount: true,
+                    ),
+                  ),
+                  total: Value(
+                    Utility.calculateTotalRooms(
+                      habitaciones,
+                      onlyTotal: true,
+                    ),
+                  ),
+                  totalReal: Value(
+                    Utility.calculateTotalRooms(
+                      habitaciones,
+                      onlyTotalReal: true,
+                    ),
+                  ),
                 ),
               );
         },

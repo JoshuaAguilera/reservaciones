@@ -6,8 +6,7 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import '../database/database.dart';
 import '../services/cotizacion_service.dart';
 
-final cotizacionProvider =
-    StateProvider<Cotizacion>((ref) => Cotizacion());
+final cotizacionProvider = StateProvider<Cotizacion>((ref) => Cotizacion());
 
 final cotizacionGeneradoProvider = StateProvider<bool>((ref) => false);
 
@@ -17,25 +16,17 @@ final uniqueFolioProvider =
 final cotizacionDetalleProvider =
     StateProvider<Cotizacion>((ref) => Cotizacion());
 
-final periodoProvider = StateProvider<String>((ref) {
-  return '';
-});
+final periodoProvider = StateProvider<String>((ref) => '');
 
-final isEmptyProvider = StateProvider<bool>((ref) {
-  return false;
-});
+final isEmptyProvider = StateProvider<bool>((ref) => false);
 
-final searchProvider = StateProvider<String>((ref) {
-  return '';
-});
+final searchProvider = StateProvider<String>((ref) => '');
 
-final paginaProvider = StateProvider<int>((ref) {
-  return 1;
-});
+final paginaProvider = StateProvider<int>((ref) => 1);
 
-final filtroProvider = StateProvider<String>((ref) {
-  return filtros.first;
-});
+final filtroProvider = StateProvider<String>((ref) => filtros.first);
+
+final changeHistoryProvider = StateProvider<int>((ref) => 0);
 
 final receiptQuoteQueryProvider =
     FutureProvider.family<List<CotizacionData>, String>((ref, arg) async {
@@ -44,6 +35,8 @@ final receiptQuoteQueryProvider =
   final search = ref.watch(searchProvider);
   final pag = ref.watch(paginaProvider);
   final filter = ref.watch(filtroProvider);
+
+  final detectChanged = ref.watch(changeHistoryProvider);
 
   final list = await CotizacionService().getCotizacionesLocales(
     search,

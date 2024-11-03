@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/files_templates.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -33,7 +34,7 @@ class GeneradorDocService extends BaseService {
     );
 
     //Header
-    final imgenLogo = await rootBundle.load('assets/image/logo_header.png');
+    final imgenLogo = await rootBundle.load('assets/image/logo_documento.png');
     final imageBytes = imgenLogo.buffer.asUint8List();
     pw.MemoryImage logoImage = pw.MemoryImage(imageBytes);
     pw.Image logoHeaderImage = pw.Image(logoImage, width: 131);
@@ -154,11 +155,12 @@ class GeneradorDocService extends BaseService {
                   pw.Text(FilesTemplate.StructureDoc(2), style: styleLigth),
                   pw.SizedBox(height: 12),
                   generateTables(
-                      habitaciones: habitaciones,
-                      styleLigth: styleLigth,
-                      styleLigthHeaderTable: styleLigthHeaderTable,
-                      styleBoldTable: styleBoldTable,
-                      color: themeDefault ? "#818282" : null),
+                    habitaciones: habitaciones,
+                    styleLigth: styleLigth,
+                    styleLigthHeaderTable: styleBoldTable,
+                    styleBoldTable: styleBoldTable,
+                    color: "#93dcf8",
+                  ),
                   pw.Text("NOTAS", style: styleBoldUnderline),
                   pw.SizedBox(height: 10),
                   pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
@@ -292,7 +294,7 @@ class GeneradorDocService extends BaseService {
     );
 
     //Header img
-    final img = await rootBundle.load('assets/image/logo_header.png');
+    final img = await rootBundle.load('assets/image/logo_documento.png');
     final imageBytes = img.buffer.asUint8List();
     pw.Image logoHeaderImage = pw.Image(pw.MemoryImage(imageBytes), width: 131);
 
@@ -440,9 +442,9 @@ class GeneradorDocService extends BaseService {
                   pw.SizedBox(height: 12),
                   generateTables(
                       styleLigth: styleLigth,
-                      styleLigthHeaderTable: styleLigthHeaderTable,
+                      styleLigthHeaderTable: styleBoldTable,
                       styleBoldTable: styleBoldTable,
-                      color: "#33CCCC"),
+                      color: "#93dcf8"),
                   pw.SizedBox(height: 10),
                   pw.Center(
                     child: pw.Text(FilesTemplate.StructureDoc(4),
@@ -583,6 +585,42 @@ class GeneradorDocService extends BaseService {
       required pw.TextStyle styleBoldTable,
       String? color}) {
     List<pw.Widget> tablas = [];
+
+    if (habitaciones == null) return pw.Column(children: tablas);
+
+    if (habitaciones.any((element) => element.categoria == tipoHabitacion[0])) {
+      tablas.add(
+        FilesTemplate.getTablesCotIndiv(
+          nameTable:
+              "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
+          habitaciones: habitaciones
+              .where((element) => element.categoria == tipoHabitacion[0])
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+          colorHeader: color,
+        ),
+      );
+      tablas.add(pw.SizedBox(height: 20));
+    }
+
+    if (habitaciones.any((element) => element.categoria == tipoHabitacion[1])) {
+      tablas.add(
+        FilesTemplate.getTablesCotIndiv(
+          nameTable:
+              "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
+          habitaciones: habitaciones
+              .where((element) => element.categoria == tipoHabitacion[1])
+              .toList(),
+          styleGeneral: styleLigth,
+          styleHeader: styleLigthHeaderTable,
+          styleBold: styleBoldTable,
+          colorHeader: color,
+        ),
+      );
+      tablas.add(pw.SizedBox(height: 20));
+    }
 
     return pw.Column(children: tablas);
   }

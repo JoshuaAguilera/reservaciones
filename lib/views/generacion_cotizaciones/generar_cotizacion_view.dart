@@ -4,26 +4,23 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/services/send_quote_service.dart';
 import 'package:generador_formato/ui/title_page.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
-import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
+import '../../providers/dahsboard_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
@@ -43,7 +40,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
-  bool isSendingEmail = false;
+
   Cotizacion receiptQuotePresent = Cotizacion();
   List<Habitacion> quotesIndPresent = [];
   double targetHabitaciones = 1;
@@ -118,36 +115,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitlePage(
+                          const TitlePage(
                             title: "Generar cotización",
                             subtitle:
                                 "Proporcione un presupuesto detallado y claro a los clientes interesados en hacer una reservación",
-                            childOptional: isFinish
-                                ? ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isFinish = false;
-                                        isLoading = false;
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        elevation: 4,
-                                        backgroundColor:
-                                            DesktopColors.prussianBlue),
-                                    child: (!Utility.isResizable(
-                                            extended:
-                                                widget.sideController.extended,
-                                            context: context,
-                                            minWidth: 425,
-                                            minWidthWithBar: 435))
-                                        ? TextStyles.buttonTextStyle(
-                                            text: "Nueva cotizacion")
-                                        : const Icon(
-                                            Icons.restore_page,
-                                            color: Colors.white,
-                                          ),
-                                  )
-                                : const SizedBox(),
                           )
                               .animate(target: targetHabitaciones)
                               .fadeIn(duration: 250.ms),
@@ -406,210 +377,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     .animate(target: targetHabitaciones)
                                     .fadeIn(duration: 450.ms),
                                 const SizedBox(height: 12),
-                                // Padding(
-                                //   padding: const EdgeInsets.only(left: 4.0),
-                                //   child: Align(
-                                //     alignment: Alignment.centerLeft,
-                                //     child: SizedBox(
-                                //       width: 200,
-                                //       height: 40,
-                                //       child: Buttons.commonButton(
-                                //               onPressed: () async {
-                                //                 if (_formKeyCotizacion.currentState!
-                                //                     .validate()) {
-                                //                   if (habitaciones.isEmpty &&
-                                //                       dropdownValue ==
-                                //                           'Cotización Individual') {
-                                //                     showSnackBar(
-                                //                       type: "alert",
-                                //                       context: context,
-                                //                       title:
-                                //                           "Cotizaciones no registradas",
-                                //                       message:
-                                //                           "Se requiere al menos una cotización",
-                                //                     );
-                                //                     return;
-                                //                   }
-
-                                //                   setState(() => isLoading = true);
-
-                                //                   if (!(await CotizacionService()
-                                //                       .createCotizacion(
-                                //                           cotizacion: comprobante,
-                                //                           habitaciones:
-                                //                               habitaciones.isNotEmpty
-                                //                                   ? habitaciones
-                                //                                   : null,
-                                //                           folio: folio,
-                                //                           prefijoInit: prefijoInit,
-                                //                           isQuoteGroup: dropdownValue ==
-                                //                               'Cotización Grupos'))) {
-                                //                     if (!context.mounted) return;
-                                //                     showSnackBar(
-                                //                       type: "danger",
-                                //                       context: context,
-                                //                       title:
-                                //                           "Error al registrar la cotizacion",
-                                //                       message:
-                                //                           "Se produjo un error al insertar la nueva cotización.",
-                                //                     );
-                                //                     return;
-                                //                   }
-
-                                //                   receiptQuotePresent = comprobante;
-                                //                   receiptQuotePresent.folioPrincipal =
-                                //                       folio;
-                                //                   quotesIndPresent = habitaciones;
-
-                                //                   comprobantePDF = await ref
-                                //                       .watch(HabitacionProvider
-                                //                           .provider.notifier)
-                                //                       .generarComprobante(
-                                //                           comprobante);
-
-                                //                   ref
-                                //                       .read(
-                                //                           cotizacionProvider.notifier)
-                                //                       .update(
-                                //                           (state) => Cotizacion());
-                                //                   ref
-                                //                       .watch(HabitacionProvider
-                                //                           .provider.notifier)
-                                //                       .clear();
-
-                                //                   ref
-                                //                       .read(uniqueFolioProvider
-                                //                           .notifier)
-                                //                       .update((state) => UniqueKey()
-                                //                           .hashCode
-                                //                           .toString());
-
-                                //                   ref
-                                //                       .read(changeProvider.notifier)
-                                //                       .update((state) =>
-                                //                           UniqueKey().hashCode);
-
-                                //                   if (!context.mounted) return;
-                                //                   Future.delayed(
-                                //                       Durations.long2,
-                                //                       () => setState(
-                                //                           () => isFinish = true));
-                                //                 }
-                                //               },
-                                //               text: "Generar cotización",
-                                //               color: DesktopColors.prussianBlue)
-                                //           .animate()
-                                //           .fadeIn(
-                                //             delay: const Duration(
-                                //               milliseconds: 1000,
-                                //             ),
-                                //           ),
-                                //     ),
-                                //   ),
-                                // ),
                               ],
                             ),
                           if (isLoading && !isFinish)
                             ProgressIndicatorCustom(screenHight: screenHeight),
                           if (isFinish)
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                              child: SizedBox(
-                                height: screenHeight * 0.89,
-                                child: PdfPreview(
-                                  loadingWidget: Center(
-                                    child:
-                                        LoadingAnimationWidget.fourRotatingDots(
-                                      color: Colors.grey,
-                                      size: 45,
-                                    ),
-                                  ),
-                                  build: (format) => comprobantePDF.save(),
-                                  actionBarTheme: PdfActionBarTheme(
-                                    backgroundColor:
-                                        DesktopColors.ceruleanOscure,
-                                  ),
-                                  canChangeOrientation: false,
-                                  canChangePageFormat: false,
-                                  canDebug: false,
-                                  allowSharing: false,
-                                  pdfFileName:
-                                      "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                                  actions: [
-                                    IconButton(
-                                      onPressed: () async {
-                                        await Printing.sharePdf(
-                                          filename:
-                                              "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                                          bytes: await comprobantePDF.save(),
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        CupertinoIcons.tray_arrow_down_fill,
-                                        color: Colors.white,
-                                        size: 22,
-                                      ),
-                                    ),
-                                    if (isSendingEmail)
-                                      const SizedBox(
-                                        height: 22,
-                                        width: 22,
-                                        child: CircularProgressIndicator(
-                                            color: Colors.white),
-                                      )
-                                    else
-                                      IconButton(
-                                        onPressed: () async {
-                                          setState(() => isSendingEmail = true);
-
-                                          if (await SendQuoteService()
-                                              .sendQuoteMail(
-                                            comprobantePDF,
-                                            receiptQuotePresent,
-                                            quotesIndPresent,
-                                          )) {
-                                            if (!mounted) return;
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return Dialogs.customAlertDialog(
-                                                    context: context,
-                                                    iconData: Icons.send,
-                                                    iconColor:
-                                                        DesktopColors.turqueza,
-                                                    title: "Correo enviado",
-                                                    contentText:
-                                                        "El correo fue enviado exitosamente",
-                                                    nameButtonMain: "Aceptar",
-                                                    funtionMain: () {},
-                                                    nameButtonCancel: "",
-                                                    withButtonCancel: false);
-                                              },
-                                            ).then((value) => setState(
-                                                () => isSendingEmail = false));
-                                          }
-                                        },
-                                        icon: const Icon(
-                                          CupertinoIcons.mail,
-                                          color: Colors.white,
-                                          size: 22,
-                                        ),
-                                      ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        SendQuoteService().sendQuoteWhatsApp(
-                                            receiptQuotePresent,
-                                            quotesIndPresent);
-                                      },
-                                      child: const Image(
-                                          image: AssetImage(
-                                              "assets/image/whatsApp_icon.png"),
-                                          width: 22,
-                                          color: Colors.white),
-                                    )
-                                  ],
-                                ),
-                              ),
+                            PdfCotizacionView(
+                              comprobantePDF: comprobantePDF,
+                              cotizacion: cotizacion,
                             ),
                         ],
                       ),
@@ -617,43 +392,90 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                   ),
                   SummaryControllerWidget(
                     isLoading: isLoading,
-                    onSaveQuote: () async {
-                      if (!_formKeyCotizacion.currentState!.validate()) return;
-                      if (habitaciones
-                          .where((element) => !element.isFree)
-                          .toList()
-                          .isEmpty) {
-                        showSnackBar(
-                            type: "alert",
-                            context: context,
-                            iconCustom: CupertinoIcons.tray_fill,
-                            duration: 3.seconds,
-                            title: "Habitaciones no registradas",
-                            message:
-                                "Se requiere al menos una habitación para generar esta cotización.");
-                        return;
-                      }
+                    saveRooms:
+                        isFinish ? receiptQuotePresent.habitaciones : null,
+                    finishQuote: isFinish,
+                    onSaveQuote: isFinish
+                        ? () => setState(() {
+                              isFinish = false;
+                              isLoading = false;
+                            })
+                        : () async {
+                            if (!_formKeyCotizacion.currentState!.validate())
+                              return;
+                            if (habitaciones
+                                .where((element) => !element.isFree)
+                                .toList()
+                                .isEmpty) {
+                              showSnackBar(
+                                  type: "alert",
+                                  context: context,
+                                  iconCustom: CupertinoIcons.tray_fill,
+                                  duration: 3.seconds,
+                                  title: "Habitaciones no registradas",
+                                  message:
+                                      "Se requiere al menos una habitación para generar esta cotización.");
+                              return;
+                            }
 
-                      if (!(await CotizacionService().createCotizacion(
-                        cotizacion: cotizacion,
-                        habitaciones: habitaciones,
-                        folio: folio,
-                        prefijoInit: prefijoInit,
-                        isQuoteGroup: typeQuote,
-                      ))) {
-                        if (!context.mounted) return;
-                        showSnackBar(
-                          type: "danger",
-                          context: context,
-                          title: "Error al registrar la cotizacion",
-                          message:
-                              "Se produjo un error al insertar la nueva cotización.",
-                        );
-                        return;
-                      }
+                            if (!(await CotizacionService().createCotizacion(
+                              cotizacion: cotizacion,
+                              habitaciones: habitaciones,
+                              folio: folio,
+                              prefijoInit: prefijoInit,
+                              isQuoteGroup: typeQuote,
+                            ))) {
+                              if (!context.mounted) return;
+                              showSnackBar(
+                                type: "danger",
+                                context: context,
+                                title: "Error al registrar la cotizacion",
+                                message:
+                                    "Se produjo un error al insertar la nueva cotización.",
+                              );
+                              return;
+                            }
 
-                      setState(() => isLoading = true);
-                    },
+                            setState(() => isLoading = true);
+
+                            receiptQuotePresent = cotizacion.CopyWith();
+                            receiptQuotePresent.folioPrincipal = folio;
+                            receiptQuotePresent.habitaciones = [];
+                            for (var element in habitaciones) {
+                              receiptQuotePresent.habitaciones!
+                                  .add(element.CopyWith());
+                            }
+
+                            comprobantePDF = await ref
+                                .watch(HabitacionProvider.provider.notifier)
+                                .generarComprobante(cotizacion);
+
+                            ref
+                                .read(cotizacionProvider.notifier)
+                                .update((state) => Cotizacion());
+                            ref
+                                .watch(HabitacionProvider.provider.notifier)
+                                .clear();
+
+                            ref.read(uniqueFolioProvider.notifier).update(
+                                (state) => UniqueKey().hashCode.toString());
+
+                            ref
+                                .read(detectChangeProvider.notifier)
+                                .update((state) => UniqueKey().hashCode);
+
+                            ref
+                                .read(changeProvider.notifier)
+                                .update((state) => UniqueKey().hashCode);
+
+                            ref
+                                .read(changeHistoryProvider.notifier)
+                                .update((state) => UniqueKey().hashCode);
+
+                            if (!context.mounted) return;
+                            Future.delayed(Durations.long2,
+                                () => setState(() => isFinish = true));
+                          },
                   )
                       .animate(target: targetHabitaciones)
                       .fadeIn(duration: 450.ms),

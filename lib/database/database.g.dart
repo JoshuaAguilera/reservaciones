@@ -592,11 +592,6 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<String> correoElectrico = GeneratedColumn<String>(
       'correo_electrico', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
-  @override
-  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
-      'tipo', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
@@ -612,6 +607,12 @@ class $CotizacionTable extends Cotizacion
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
       'total', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _totalRealMeta =
+      const VerificationMeta('totalReal');
+  @override
+  late final GeneratedColumn<double> totalReal = GeneratedColumn<double>(
+      'total_real', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _descuentoMeta =
       const VerificationMeta('descuento');
@@ -650,10 +651,10 @@ class $CotizacionTable extends Cotizacion
         nombreHuesped,
         numeroTelefonico,
         correoElectrico,
-        tipo,
         fecha,
         usuarioID,
         total,
+        totalReal,
         descuento,
         esGrupo,
         esConcretado,
@@ -696,10 +697,6 @@ class $CotizacionTable extends Cotizacion
           correoElectrico.isAcceptableOrUnknown(
               data['correo_electrico']!, _correoElectricoMeta));
     }
-    if (data.containsKey('tipo')) {
-      context.handle(
-          _tipoMeta, tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta));
-    }
     if (data.containsKey('fecha')) {
       context.handle(
           _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
@@ -715,6 +712,10 @@ class $CotizacionTable extends Cotizacion
     if (data.containsKey('total')) {
       context.handle(
           _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
+    }
+    if (data.containsKey('total_real')) {
+      context.handle(_totalRealMeta,
+          totalReal.isAcceptableOrUnknown(data['total_real']!, _totalRealMeta));
     }
     if (data.containsKey('descuento')) {
       context.handle(_descuentoMeta,
@@ -755,14 +756,14 @@ class $CotizacionTable extends Cotizacion
           DriftSqlType.string, data['${effectivePrefix}numero_telefonico']),
       correoElectrico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
-      tipo: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}tipo']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
       usuarioID: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
       total: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}total']),
+      totalReal: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}total_real']),
       descuento: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}descuento']),
       esGrupo: attachedDatabase.typeMapping
@@ -786,10 +787,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final String? nombreHuesped;
   final String? numeroTelefonico;
   final String? correoElectrico;
-  final String? tipo;
   final DateTime fecha;
   final int? usuarioID;
   final double? total;
+  final double? totalReal;
   final double? descuento;
   final bool? esGrupo;
   final bool? esConcretado;
@@ -800,10 +801,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       this.nombreHuesped,
       this.numeroTelefonico,
       this.correoElectrico,
-      this.tipo,
       required this.fecha,
       this.usuarioID,
       this.total,
+      this.totalReal,
       this.descuento,
       this.esGrupo,
       this.esConcretado,
@@ -824,15 +825,15 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     if (!nullToAbsent || correoElectrico != null) {
       map['correo_electrico'] = Variable<String>(correoElectrico);
     }
-    if (!nullToAbsent || tipo != null) {
-      map['tipo'] = Variable<String>(tipo);
-    }
     map['fecha'] = Variable<DateTime>(fecha);
     if (!nullToAbsent || usuarioID != null) {
       map['usuario_i_d'] = Variable<int>(usuarioID);
     }
     if (!nullToAbsent || total != null) {
       map['total'] = Variable<double>(total);
+    }
+    if (!nullToAbsent || totalReal != null) {
+      map['total_real'] = Variable<double>(totalReal);
     }
     if (!nullToAbsent || descuento != null) {
       map['descuento'] = Variable<double>(descuento);
@@ -864,13 +865,15 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       correoElectrico: correoElectrico == null && nullToAbsent
           ? const Value.absent()
           : Value(correoElectrico),
-      tipo: tipo == null && nullToAbsent ? const Value.absent() : Value(tipo),
       fecha: Value(fecha),
       usuarioID: usuarioID == null && nullToAbsent
           ? const Value.absent()
           : Value(usuarioID),
       total:
           total == null && nullToAbsent ? const Value.absent() : Value(total),
+      totalReal: totalReal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalReal),
       descuento: descuento == null && nullToAbsent
           ? const Value.absent()
           : Value(descuento),
@@ -895,10 +898,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       nombreHuesped: serializer.fromJson<String?>(json['nombreHuesped']),
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
       correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
-      tipo: serializer.fromJson<String?>(json['tipo']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
       usuarioID: serializer.fromJson<int?>(json['usuarioID']),
       total: serializer.fromJson<double?>(json['total']),
+      totalReal: serializer.fromJson<double?>(json['totalReal']),
       descuento: serializer.fromJson<double?>(json['descuento']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
@@ -914,10 +917,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'nombreHuesped': serializer.toJson<String?>(nombreHuesped),
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
       'correoElectrico': serializer.toJson<String?>(correoElectrico),
-      'tipo': serializer.toJson<String?>(tipo),
       'fecha': serializer.toJson<DateTime>(fecha),
       'usuarioID': serializer.toJson<int?>(usuarioID),
       'total': serializer.toJson<double?>(total),
+      'totalReal': serializer.toJson<double?>(totalReal),
       'descuento': serializer.toJson<double?>(descuento),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
@@ -931,10 +934,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<String?> nombreHuesped = const Value.absent(),
           Value<String?> numeroTelefonico = const Value.absent(),
           Value<String?> correoElectrico = const Value.absent(),
-          Value<String?> tipo = const Value.absent(),
           DateTime? fecha,
           Value<int?> usuarioID = const Value.absent(),
           Value<double?> total = const Value.absent(),
+          Value<double?> totalReal = const Value.absent(),
           Value<double?> descuento = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
@@ -951,10 +954,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
         correoElectrico: correoElectrico.present
             ? correoElectrico.value
             : this.correoElectrico,
-        tipo: tipo.present ? tipo.value : this.tipo,
         fecha: fecha ?? this.fecha,
         usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
         total: total.present ? total.value : this.total,
+        totalReal: totalReal.present ? totalReal.value : this.totalReal,
         descuento: descuento.present ? descuento.value : this.descuento,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
@@ -970,10 +973,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ..write('nombreHuesped: $nombreHuesped, ')
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
-          ..write('tipo: $tipo, ')
           ..write('fecha: $fecha, ')
           ..write('usuarioID: $usuarioID, ')
           ..write('total: $total, ')
+          ..write('totalReal: $totalReal, ')
           ..write('descuento: $descuento, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
@@ -989,10 +992,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       nombreHuesped,
       numeroTelefonico,
       correoElectrico,
-      tipo,
       fecha,
       usuarioID,
       total,
+      totalReal,
       descuento,
       esGrupo,
       esConcretado,
@@ -1006,10 +1009,10 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           other.nombreHuesped == this.nombreHuesped &&
           other.numeroTelefonico == this.numeroTelefonico &&
           other.correoElectrico == this.correoElectrico &&
-          other.tipo == this.tipo &&
           other.fecha == this.fecha &&
           other.usuarioID == this.usuarioID &&
           other.total == this.total &&
+          other.totalReal == this.totalReal &&
           other.descuento == this.descuento &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
@@ -1022,10 +1025,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<String?> nombreHuesped;
   final Value<String?> numeroTelefonico;
   final Value<String?> correoElectrico;
-  final Value<String?> tipo;
   final Value<DateTime> fecha;
   final Value<int?> usuarioID;
   final Value<double?> total;
+  final Value<double?> totalReal;
   final Value<double?> descuento;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
@@ -1036,10 +1039,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.nombreHuesped = const Value.absent(),
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
-    this.tipo = const Value.absent(),
     this.fecha = const Value.absent(),
     this.usuarioID = const Value.absent(),
     this.total = const Value.absent(),
+    this.totalReal = const Value.absent(),
     this.descuento = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
@@ -1051,10 +1054,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.nombreHuesped = const Value.absent(),
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
-    this.tipo = const Value.absent(),
     required DateTime fecha,
     this.usuarioID = const Value.absent(),
     this.total = const Value.absent(),
+    this.totalReal = const Value.absent(),
     this.descuento = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
@@ -1066,10 +1069,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     Expression<String>? nombreHuesped,
     Expression<String>? numeroTelefonico,
     Expression<String>? correoElectrico,
-    Expression<String>? tipo,
     Expression<DateTime>? fecha,
     Expression<int>? usuarioID,
     Expression<double>? total,
+    Expression<double>? totalReal,
     Expression<double>? descuento,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
@@ -1081,10 +1084,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       if (nombreHuesped != null) 'nombre_huesped': nombreHuesped,
       if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
       if (correoElectrico != null) 'correo_electrico': correoElectrico,
-      if (tipo != null) 'tipo': tipo,
       if (fecha != null) 'fecha': fecha,
       if (usuarioID != null) 'usuario_i_d': usuarioID,
       if (total != null) 'total': total,
+      if (totalReal != null) 'total_real': totalReal,
       if (descuento != null) 'descuento': descuento,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
@@ -1098,10 +1101,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<String?>? nombreHuesped,
       Value<String?>? numeroTelefonico,
       Value<String?>? correoElectrico,
-      Value<String?>? tipo,
       Value<DateTime>? fecha,
       Value<int?>? usuarioID,
       Value<double?>? total,
+      Value<double?>? totalReal,
       Value<double?>? descuento,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
@@ -1112,10 +1115,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       nombreHuesped: nombreHuesped ?? this.nombreHuesped,
       numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
       correoElectrico: correoElectrico ?? this.correoElectrico,
-      tipo: tipo ?? this.tipo,
       fecha: fecha ?? this.fecha,
       usuarioID: usuarioID ?? this.usuarioID,
       total: total ?? this.total,
+      totalReal: totalReal ?? this.totalReal,
       descuento: descuento ?? this.descuento,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
@@ -1141,9 +1144,6 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     if (correoElectrico.present) {
       map['correo_electrico'] = Variable<String>(correoElectrico.value);
     }
-    if (tipo.present) {
-      map['tipo'] = Variable<String>(tipo.value);
-    }
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
     }
@@ -1152,6 +1152,9 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     }
     if (total.present) {
       map['total'] = Variable<double>(total.value);
+    }
+    if (totalReal.present) {
+      map['total_real'] = Variable<double>(totalReal.value);
     }
     if (descuento.present) {
       map['descuento'] = Variable<double>(descuento.value);
@@ -1176,10 +1179,10 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
           ..write('nombreHuesped: $nombreHuesped, ')
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
-          ..write('tipo: $tipo, ')
           ..write('fecha: $fecha, ')
           ..write('usuarioID: $usuarioID, ')
           ..write('total: $total, ')
+          ..write('totalReal: $totalReal, ')
           ..write('descuento: $descuento, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
@@ -5400,10 +5403,10 @@ typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
   Value<String?> nombreHuesped,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  Value<String?> tipo,
   required DateTime fecha,
   Value<int?> usuarioID,
   Value<double?> total,
+  Value<double?> totalReal,
   Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
@@ -5415,10 +5418,10 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> nombreHuesped,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  Value<String?> tipo,
   Value<DateTime> fecha,
   Value<int?> usuarioID,
   Value<double?> total,
+  Value<double?> totalReal,
   Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
@@ -5450,10 +5453,10 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            Value<String?> tipo = const Value.absent(),
             Value<DateTime> fecha = const Value.absent(),
             Value<int?> usuarioID = const Value.absent(),
             Value<double?> total = const Value.absent(),
+            Value<double?> totalReal = const Value.absent(),
             Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
@@ -5465,10 +5468,10 @@ class $$CotizacionTableTableManager extends RootTableManager<
             nombreHuesped: nombreHuesped,
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
-            tipo: tipo,
             fecha: fecha,
             usuarioID: usuarioID,
             total: total,
+            totalReal: totalReal,
             descuento: descuento,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
@@ -5480,10 +5483,10 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            Value<String?> tipo = const Value.absent(),
             required DateTime fecha,
             Value<int?> usuarioID = const Value.absent(),
             Value<double?> total = const Value.absent(),
+            Value<double?> totalReal = const Value.absent(),
             Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
@@ -5495,10 +5498,10 @@ class $$CotizacionTableTableManager extends RootTableManager<
             nombreHuesped: nombreHuesped,
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
-            tipo: tipo,
             fecha: fecha,
             usuarioID: usuarioID,
             total: total,
+            totalReal: totalReal,
             descuento: descuento,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
@@ -5547,11 +5550,6 @@ class $$CotizacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get tipo => $state.composableBuilder(
-      column: $state.table.tipo,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<DateTime> get fecha => $state.composableBuilder(
       column: $state.table.fecha,
       builder: (column, joinBuilders) =>
@@ -5564,6 +5562,11 @@ class $$CotizacionTableFilterComposer
 
   ColumnFilters<double> get total => $state.composableBuilder(
       column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get totalReal => $state.composableBuilder(
+      column: $state.table.totalReal,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5616,11 +5619,6 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get tipo => $state.composableBuilder(
-      column: $state.table.tipo,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
       column: $state.table.fecha,
       builder: (column, joinBuilders) =>
@@ -5633,6 +5631,11 @@ class $$CotizacionTableOrderingComposer
 
   ColumnOrderings<double> get total => $state.composableBuilder(
       column: $state.table.total,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get totalReal => $state.composableBuilder(
+      column: $state.table.totalReal,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

@@ -48,14 +48,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
     final typePeriod = ref.watch(filterReport);
-    final reportesSync = ref.watch(
-        reporteCotizacionesIndProvider(const Tuple2<String, dynamic>('', '')));
-    final cotizacionesDiariasSync = ref.watch(
-        cotizacionesDiariasProvider(const Tuple2<String, dynamic>('', '')));
-    final ultimasCotizacionesSync = ref.watch(
-        ultimaCotizacionesProvider(const Tuple2<String, dynamic>('', '')));
-    final allQuotesSync =
-        ref.watch(allQuotesProvider(const Tuple2<String, dynamic>('', '')));
+    final reportesSync = ref.watch(reporteCotizacionesIndProvider(''));
+    final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
+    final ultimasCotizacionesSync = ref.watch(ultimaCotizacionesProvider(''));
+    final allQuotesSync = ref.watch(allQuotesProvider(''));
 
     return Scaffold(
       body: Padding(

@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 import '../database/database.dart';
+import '../utils/helpers/web_colors.dart';
 
 /*
 List<Categoria> CategoriasFromJson(String str) =>
@@ -117,14 +120,14 @@ class TarifaXDia {
     return {
       'id': id,
       'code': code,
-      'color': color,
+      'color': colorToHex(color ?? DesktopColors.cerulean),
       'temporadas': temporadas,
       'tarifas': tarifas,
       'numDays': numDays,
       'categoria': categoria,
       'descuentoProvisional': descuentoProvisional,
       'dia': dia,
-      'fecha': fecha,
+      'fecha': fecha != null ? fecha!.toIso8601String() : '',
       'modificado': modificado,
       'nombreTarif': nombreTarif,
       'periodo': periodo,
@@ -138,7 +141,7 @@ class TarifaXDia {
     return TarifaXDia(
       id: json['id'],
       code: json['code'],
-      color: json['color'],
+      color: colorFromHex(json['color']),
       temporadas: json['temporadas'] != null
           ? json['temporadas'] != '[]'
               ? listTemporadaFromJson(json['temporadas'])
@@ -153,7 +156,7 @@ class TarifaXDia {
       categoria: json['categoria'],
       descuentoProvisional: json['descuentoProvisional'],
       dia: json['dia'],
-      fecha: json['fecha'],
+      fecha: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
       modificado: json['modificado'],
       nombreTarif: json['nombreTarif'],
       periodo: json['periodo'] != null

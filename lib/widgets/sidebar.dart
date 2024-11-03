@@ -88,13 +88,13 @@ class SideBar extends StatelessWidget {
                 onTap: () {
                   _controller.selectIndex(0);
                 },
-                child: SizedBox(
+                child: const SizedBox(
                   height: 100,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16.0, left: 10, right: 10),
-                    child: Image.network(
-                        "https://static.wixstatic.com/media/a3b865_2a7c82994df6450ab30ff9232a0295ce~mv2.png"),
+                    padding: EdgeInsets.only(top: 16.0, left: 10, right: 10),
+                    child: Image(
+                      image: AssetImage('assets/image/logo_inicio.png'),
+                    ),
                   ),
                 ),
               ),

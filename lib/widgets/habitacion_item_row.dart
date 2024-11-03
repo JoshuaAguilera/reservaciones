@@ -205,7 +205,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
       color: colorCard,
       elevation: 5,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
         child: Column(
           children: [
             Table(

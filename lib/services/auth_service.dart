@@ -37,6 +37,7 @@ class AuthService extends BaseService {
     Preferences.rol = users.first.rol ?? '';
     Preferences.username = users.first.username ?? '';
     Preferences.password = users.first.password ?? '';
+    Preferences.userId = users.first.id;
 
     Preferences.firstName = users.first.nombre ?? '';
     Preferences.lastName = users.first.apellido ?? '';

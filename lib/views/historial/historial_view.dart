@@ -251,10 +251,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                   index: index,
                                   screenWidth: screenWidth,
                                   seeReceipt: () async {
-                                    ref
-                                        .read(isEmptyProvider.notifier)
-                                        .update((state) => true);
-
+                                    Future.delayed(
+                                        Durations.medium1,
+                                        () => ref
+                                            .read(isEmptyProvider.notifier)
+                                            .update((state) => true));
                                     List<Habitacion> respHabitaciones = [];
 
                                     respHabitaciones = await HabitacionService()

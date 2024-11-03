@@ -115,7 +115,7 @@ class Buttons {
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white),
               ),
-            const SizedBox(width: 10),
+            if (isLoading) const SizedBox(width: 10),
             if (auxwidget != null)
               Expanded(child: auxwidget)
             else

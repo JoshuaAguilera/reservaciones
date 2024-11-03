@@ -19,6 +19,16 @@ class HabitacionService extends BaseService {
           fechaCheckOut: element.fechaCheckOut,
           fecha: element.fecha.toString(),
           folioHabitacion: element.folioHabitacion,
+          adultos: element.adultos,
+          count: element.count ?? 1,
+          descuento: element.descuento,
+          folioCotizacion: element.folioCotizacion,
+          isFree: element.isFree ?? false,
+          menores0a6: element.menores0a6,
+          menores7a12: element.menores7a12,
+          tarifaXDia: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
+          total: element.total,
+          totalReal: element.totalReal,
           id: element.id,
         ));
       }

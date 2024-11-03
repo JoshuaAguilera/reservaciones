@@ -1,4 +1,5 @@
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:pdf/pdf.dart';
@@ -202,7 +203,7 @@ class FilesTemplate {
   }
 
   static pw.Widget getTablesCotIndiv({
-    required List<Habitacion> cotizaciones,
+    required List<Habitacion> habitaciones,
     required String nameTable,
     required pw.TextStyle styleGeneral,
     required pw.TextStyle styleHeader,
@@ -225,7 +226,7 @@ class FilesTemplate {
       ]
     ];
 
-    for (var element in cotizaciones) {
+    for (var element in habitaciones) {
       int index = contenido.length - 1;
       contenido.addAll(generateDaysCotizacion(element, index));
     }
@@ -235,14 +236,18 @@ class FilesTemplate {
           border: pw.TableBorder.all(width: 0.7),
           headerStyle: styleHeader,
           cellPadding: const pw.EdgeInsets.all(4),
-          headerCellDecoration: pw.BoxDecoration(
-              color: PdfColor.fromHex(colorHeader ?? "#009999")),
+          // headerCellDecoration: pw.BoxDecoration(
+          //     color: PdfColor.fromHex(colorHeader ?? "#009999")),
           headers: [nameTable],
           data: []),
       pw.TableHelper.fromTextArray(
         cellStyle: styleGeneral,
         cellAlignment: pw.Alignment.center,
+        headerAlignment: pw.Alignment.center,
         border: pw.TableBorder.all(width: 0.9),
+        headerCellDecoration: pw.BoxDecoration(
+          color: PdfColor.fromHex(colorHeader ?? "#009999"),
+        ),
         headerStyle: styleBold,
         cellPadding:
             const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 0.5),
@@ -255,11 +260,11 @@ class FilesTemplate {
           4: const pw.FixedColumnWidth(30),
           5: const pw.FixedColumnWidth(60),
         },
-        data: contenido,
+        headers: contenido.first,
+        data: contenido.sublist(1),
       ),
       pw.Padding(
-        padding: const pw.EdgeInsets.only(
-            left: 177),
+        padding: const pw.EdgeInsets.only(left: 177),
         child: pw.TableHelper.fromTextArray(
             border: pw.TableBorder.all(width: 0.9),
             headerStyle: styleHeader,
@@ -276,7 +281,7 @@ class FilesTemplate {
             headers: [
               "TOTAL DE ESTANCIA",
               Utility.formatterNumber(
-                  Utility.calculateTarifaTotal(cotizaciones)),
+                  Utility.calculateTotalRooms(habitaciones, onlyTotal: true)),
               // if (cotizaciones.any((element) => element.esPreventa!))
               //   Utility.formatterNumber(Utility.calculateTarifaTotal(
               //       cotizaciones,
@@ -503,22 +508,39 @@ class FilesTemplate {
   }
 
   static List<List<String>> generateDaysCotizacion(
-      Habitacion cotizacion, int index) {
+      Habitacion habitacion, int index) {
     List<List<String>> dias = [];
-    int days = Utility.getDifferenceInDays(cotizaciones: [cotizacion]);
+    int days = Utility.getDifferenceInDays(cotizaciones: [habitacion]);
 
     for (int i = 0; i < days; i++) {
+      double totalAdulto = Utility.calculateTariffAdult(
+        RegistroTarifa(
+            temporadas: habitacion.tarifaXDia![i].temporadas,
+            tarifas: habitacion.tarifaXDia![i].tarifas),
+        habitacion,
+        habitacion.tarifaXDia!.length,
+        descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
+      );
+
+      double totalMenores = Utility.calculateTariffChildren(
+        RegistroTarifa(
+            temporadas: habitacion.tarifaXDia![i].temporadas,
+            tarifas: habitacion.tarifaXDia![i].tarifas),
+        habitacion,
+        habitacion.tarifaXDia!.length,
+        descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
+      );
+
       List<String> diasFila = [];
       diasFila.add("${i + 1 + index}");
-      diasFila.add(DateTime.parse(cotizacion.fechaCheckIn!)
+      diasFila.add(DateTime.parse(habitacion.fechaCheckIn!)
           .add(Duration(days: i))
           .toIso8601String()
           .substring(0, 10));
-      // diasFila.add("${cotizacion.adultos}");
-      // diasFila.add("${cotizacion.menores0a6}");
-      // diasFila.add("${cotizacion.menores7a12}");
-      // diasFila.add(Utility.formatterNumber(
-      //     Utility.calculateTarifaDiaria(cotizacion: cotizacion)));
+      diasFila.add("${habitacion.adultos}");
+      diasFila.add("${habitacion.menores0a6}");
+      diasFila.add("${habitacion.menores7a12}");
+      diasFila.add(Utility.formatterNumber(totalMenores + totalAdulto));
       // if (cotizacion.esPreventa!) {
       //   diasFila.add(Utility.formatterNumber(Utility.calculateTarifaDiaria(
       //       cotizacion: cotizacion, esPreventa: true)));
@@ -529,8 +551,8 @@ class FilesTemplate {
     return dias;
   }
 
-  static String getHTML(Cotizacion receiptQuotePresent,
-      List<Habitacion> quotesPresent) {
+  static String getHTML(
+      Cotizacion receiptQuotePresent, List<Habitacion> quotesPresent) {
     String emailHtmlPart1 = '''
           <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="es"><head><meta charset="UTF-8"><meta content="width=device-width, initial-scale=1" name="viewport"><meta name="x-apple-disable-message-reformatting"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta content="telephone=no" name="format-detection"><title>New Message</title> <!--[if (mso 16)]><style type="text/css">     a {text-decoration: none;}     </style><![endif]--> <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]--> <!--[if gte mso 9]><xml> <o:OfficeDocumentSettings> <o:AllowPNG></o:AllowPNG> <o:PixelsPerInch>96</o:PixelsPerInch> </o:OfficeDocumentSettings> </xml>
           <![endif]--><style type="text/css">#outlook a { padding:0;}.es-button { mso-style-priority:100!important; text-decoration:none!important;}a[x-apple-data-detectors] { color:inherit!important; text-decoration:none!important; font-size:inherit!important; font-family:inherit!important; font-weight:inherit!important; line-height:inherit!important;}.es-desk-hidden { display:none; float:left; overflow:hidden; width:0; max-height:0; line-height:0; mso-hide:all;}@media only screen and (max-width:600px) {p, ul li, ol li, a { line-height:150%!important } h1, h2, h3, h1 a, h2 a, h3 a { line-height:120% } h1 { font-size:36px!important; text-align:left } h2 { font-size:26px!important; text-align:left } h3 { font-size:20px!important; text-align:left } .es-header-body h1 a, .es-content-body h1 a, .es-footer-body h1 a { font-size:36px!important; text-align:left }

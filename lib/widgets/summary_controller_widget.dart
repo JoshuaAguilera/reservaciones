@@ -24,12 +24,18 @@ class SummaryControllerWidget extends ConsumerStatefulWidget {
     this.isLoading = false,
     this.numDays = 0,
     this.onSaveQuote,
+    this.saveRooms,
+    this.finishQuote = false,
+    this.withSaveButton = true,
   });
 
   final bool calculateRoom;
   final bool isLoading;
+  final bool finishQuote;
+  final bool withSaveButton;
   final int numDays;
   final void Function()? onSaveQuote;
+  final List<Habitacion>? saveRooms;
 
   @override
   _SummaryControllerWidgetState createState() =>
@@ -100,7 +106,8 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones: habitacionesProvider
+                                              habitaciones: (widget.saveRooms ??
+                                                      habitacionesProvider)
                                                   .where((element) =>
                                                       !element.isFree)
                                                   .toList(),
@@ -113,7 +120,8 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones: habitacionesProvider
+                                              habitaciones: (widget.saveRooms ??
+                                                      habitacionesProvider)
                                                   .where((element) =>
                                                       !element.isFree)
                                                   .toList(),
@@ -140,7 +148,8 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones: habitacionesProvider
+                                              habitaciones: (widget.saveRooms ??
+                                                      habitacionesProvider)
                                                   .where((element) =>
                                                       !element.isFree)
                                                   .toList(),
@@ -153,7 +162,8 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones: habitacionesProvider
+                                              habitaciones: (widget.saveRooms ??
+                                                      habitacionesProvider)
                                                   .where((element) =>
                                                       !element.isFree)
                                                   .toList(),
@@ -289,8 +299,9 @@ class _SummaryControllerWidgetState
                                   CustomWidgets.itemListCount(
                                     nameItem: "Total:",
                                     count: (!widget.calculateRoom)
-                                        ? calculateTotalRooms(
-                                            habitacionesProvider,
+                                        ? Utility.calculateTotalRooms(
+                                            (widget.saveRooms ??
+                                                habitacionesProvider),
                                             onlyTotalReal: true,
                                           )
                                         : calculateTariffTotals(
@@ -310,8 +321,9 @@ class _SummaryControllerWidgetState
                                     context: context,
                                     messageNotFound: "Sin descuentos",
                                     total: !widget.calculateRoom
-                                        ? -calculateTotalRooms(
-                                            habitacionesProvider,
+                                        ? -Utility.calculateTotalRooms(
+                                            (widget.saveRooms ??
+                                                habitacionesProvider),
                                             onlyDiscount: true,
                                           )
                                         : -(calculateDiscountTotal(
@@ -319,12 +331,13 @@ class _SummaryControllerWidgetState
                                             habitacionProvider)),
                                     children: [
                                       if (!widget.calculateRoom)
-                                        for (var element in habitacionesProvider
+                                        for (var element in (widget.saveRooms ??
+                                                habitacionesProvider)
                                             .where((element) => !element.isFree)
                                             .toList())
                                           CustomWidgets.itemListCount(
                                             nameItem:
-                                                "${element.count}x Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
+                                                "${element.count}x Room ${(widget.saveRooms ?? habitacionesProvider).where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
                                             //     "${element.count}x ${Utility.getStringPeriod(
                                             //   initDate: DateTime.parse(
                                             //       element.fechaCheckIn!),
@@ -336,7 +349,8 @@ class _SummaryControllerWidgetState
                                             sizeText: 11.5,
                                           ),
                                       if (!widget.calculateRoom)
-                                        for (var element in habitacionesProvider
+                                        for (var element in (widget.saveRooms ??
+                                                habitacionesProvider)
                                             .where((element) => element.isFree)
                                             .toList())
                                           CustomWidgets.itemListCount(
@@ -347,111 +361,117 @@ class _SummaryControllerWidgetState
                                                 //   lastDate: DateTime.parse(
                                                 //       element.fechaCheckOut!),
                                                 // )} (Free Room)",
-                                                "Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(habitacionesProvider.where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Free Room)",
+                                                "Room ${(widget.saveRooms ?? habitacionesProvider).where((element) => !element.isFree).toList().indexOf((widget.saveRooms ?? habitacionesProvider).where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Free Room)",
                                             count: -(element.total ?? 0),
                                             context: context,
                                             sizeText: 11.5,
-                                            onChanged:
-                                                (habitacionesProvider
+                                            onChanged: ((widget.saveRooms ??
+                                                            habitacionesProvider)
+                                                        .where((element) =>
+                                                            !element.isFree)
+                                                        .toList()
+                                                        .length <
+                                                    2)
+                                                ? null
+                                                : () {
+                                                    if ((widget.saveRooms ??
+                                                                habitacionesProvider)
                                                             .where((element) =>
                                                                 !element.isFree)
                                                             .toList()
                                                             .length <
-                                                        2)
-                                                    ? null
-                                                    : () {
-                                                        if (habitacionesProvider
-                                                                .where((element) =>
-                                                                    !element
-                                                                        .isFree)
-                                                                .toList()
-                                                                .length <
-                                                            3) {
-                                                          ref
-                                                              .read(
-                                                                  HabitacionProvider
-                                                                      .provider
-                                                                      .notifier)
-                                                              .changedFreeRoom(
-                                                                  element
-                                                                      .folioHabitacion!);
-                                                        } else {
-                                                          String selectRoom =
-                                                              "Room ${habitacionesProvider.where((elementInt) => !elementInt.isFree).toList().indexOf(habitacionesProvider.firstWhere((elementInt) => !elementInt.isFree && elementInt.folioHabitacion == element.folioHabitacion)) + 1}";
-                                                          String changedRoom =
-                                                              selectRoom;
+                                                        3) {
+                                                      ref
+                                                          .read(
+                                                              HabitacionProvider
+                                                                  .provider
+                                                                  .notifier)
+                                                          .changedFreeRoom(element
+                                                              .folioHabitacion!);
+                                                    } else {
+                                                      String selectRoom =
+                                                          "Room ${(widget.saveRooms ?? habitacionesProvider).where((elementInt) => !elementInt.isFree).toList().indexOf((widget.saveRooms ?? habitacionesProvider).firstWhere((elementInt) => !elementInt.isFree && elementInt.folioHabitacion == element.folioHabitacion)) + 1}";
+                                                      String changedRoom =
+                                                          selectRoom;
 
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                Dialogs
-                                                                    .customAlertDialog(
-                                                              context: context,
-                                                              title:
-                                                                  "Cambiar Habitacion de Cortesía",
-                                                              iconData:
-                                                                  Icons.sync,
-                                                              iconColor: Colors
-                                                                  .green[500],
-                                                              nameButtonMain:
-                                                                  "Aceptar",
-                                                              contentCustom: Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child: TextStyles
-                                                                          .standardText(
-                                                                        text:
-                                                                            "Aplicar para la habitación:",
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
-                                                                      ),
-                                                                    ),
-                                                                    CustomDropdown.dropdownMenuCustom(
-                                                                        initialSelection: selectRoom,
-                                                                        onSelected: (p0) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            Dialogs
+                                                                .customAlertDialog(
+                                                          context: context,
+                                                          title:
+                                                              "Cambiar Habitacion de Cortesía",
+                                                          iconData: Icons.sync,
+                                                          iconColor:
+                                                              Colors.green[500],
+                                                          nameButtonMain:
+                                                              "Aceptar",
+                                                          contentCustom: Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: TextStyles
+                                                                      .standardText(
+                                                                    text:
+                                                                        "Aplicar para la habitación:",
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .primaryColor,
+                                                                  ),
+                                                                ),
+                                                                CustomDropdown
+                                                                    .dropdownMenuCustom(
+                                                                        initialSelection:
+                                                                            selectRoom,
+                                                                        onSelected:
+                                                                            (p0) {
                                                                           changedRoom =
                                                                               p0!;
                                                                         },
                                                                         elements: [
-                                                                          for (var element
-                                                                              in habitacionesProvider.where((element) => !element.isFree))
-                                                                            "Room ${habitacionesProvider.where((element) => !element.isFree).toList().indexOf(element) + 1}"
-                                                                        ])
-                                                                  ]),
-                                                              funtionMain: () {
-                                                                if (selectRoom ==
-                                                                    changedRoom) {
-                                                                  return;
-                                                                }
-                                                                String result =
-                                                                    changedRoom
-                                                                        .replaceFirst(
-                                                                            "Room ",
-                                                                            "");
+                                                                      for (var element in (widget.saveRooms ??
+                                                                              habitacionesProvider)
+                                                                          .where((element) =>
+                                                                              !element.isFree))
+                                                                        "Room ${(widget.saveRooms ?? habitacionesProvider).where((element) => !element.isFree).toList().indexOf(element) + 1}"
+                                                                    ])
+                                                              ]),
+                                                          funtionMain: () {
+                                                            if (selectRoom ==
+                                                                changedRoom) {
+                                                              return;
+                                                            }
+                                                            String result =
+                                                                changedRoom
+                                                                    .replaceFirst(
+                                                                        "Room ",
+                                                                        "");
 
-                                                                ref.read(HabitacionProvider.provider.notifier).changedFreeRoom(
-                                                                    habitacionesProvider
-                                                                        .where((element) =>
-                                                                            !element
-                                                                                .isFree)
-                                                                        .toList()[
-                                                                            int.parse(result) -
-                                                                                1]
-                                                                        .folioHabitacion!,
-                                                                    indexRoom: habitacionesProvider
-                                                                        .indexOf(
-                                                                            element));
-                                                              },
-                                                              withButtonCancel:
-                                                                  false,
-                                                              colorTextButton:
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .primaryColor,
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
+                                                            ref.read(HabitacionProvider.provider.notifier).changedFreeRoom(
+                                                                (widget.saveRooms ??
+                                                                        habitacionesProvider)
+                                                                    .where((element) =>
+                                                                        !element
+                                                                            .isFree)
+                                                                    .toList()[
+                                                                        int.parse(result) -
+                                                                            1]
+                                                                    .folioHabitacion!,
+                                                                indexRoom: (widget
+                                                                            .saveRooms ??
+                                                                        habitacionesProvider)
+                                                                    .indexOf(
+                                                                        element));
+                                                          },
+                                                          withButtonCancel:
+                                                              false,
+                                                          colorTextButton:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
                                           ),
                                       if (widget.calculateRoom)
                                         for (var element in tarifasFiltradas)
@@ -476,8 +496,8 @@ class _SummaryControllerWidgetState
                           CustomWidgets.itemListCount(
                             nameItem: "Total cotizado:",
                             count: (!widget.calculateRoom)
-                                ? calculateTotalRooms(
-                                    habitacionesProvider,
+                                ? Utility.calculateTotalRooms(
+                                    (widget.saveRooms ?? habitacionesProvider),
                                     onlyTotal: true,
                                   )
                                 : (calculateTariffTotals(
@@ -515,29 +535,32 @@ class _SummaryControllerWidgetState
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-              child: SizedBox(
-                height: 35,
-                child: Buttons.commonButton(
-                  sizeText: 15,
-                  text: (widget.calculateRoom)
-                      ? "Guardar Habitación"
-                      : "Generar Cotización",
-                  color: DesktopColors.ceruleanOscure,
-                  isLoading: widget.isLoading,
-                  onPressed: () {
-                    if (widget.calculateRoom) {
-                      saveRoom(habitacionProvider);
-                    } else {
-                      if (widget.onSaveQuote != null) {
-                        widget.onSaveQuote!.call();
+            if (widget.withSaveButton)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                child: SizedBox(
+                  height: 35,
+                  child: Buttons.commonButton(
+                    sizeText: 15,
+                    text: (widget.finishQuote)
+                        ? "Nueva Cotización"
+                        : (widget.calculateRoom)
+                            ? "Guardar Habitación"
+                            : "Generar Cotización",
+                    color: DesktopColors.ceruleanOscure,
+                    isLoading: widget.finishQuote ? false : widget.isLoading,
+                    onPressed: () {
+                      if (widget.calculateRoom) {
+                        saveRoom(habitacionProvider);
+                      } else {
+                        if (widget.onSaveQuote != null) {
+                          widget.onSaveQuote!.call();
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -646,54 +669,6 @@ class _SummaryControllerWidgetState
     return isInvalid;
   }
 
-  double calculateTotalRooms(
-    List<Habitacion> habitaciones, {
-    bool onlyTotalReal = false,
-    bool onlyDiscount = false,
-    bool onlyTotal = false,
-    bool onlyFirstCategory = false,
-    bool onlySecoundCategory = false,
-  }) {
-    double total = 0;
-
-    List<Habitacion> realRooms =
-        habitaciones.where((element) => !element.isFree).toList();
-    List<Habitacion> rooms = realRooms;
-
-    if (onlyFirstCategory) {
-      rooms = realRooms
-          .where((element) => element.categoria == tipoHabitacion.first)
-          .toList();
-    }
-
-    if (onlySecoundCategory) {
-      rooms = realRooms
-          .where((element) => element.categoria == tipoHabitacion[1])
-          .toList();
-    }
-
-    for (var element in rooms) {
-      if (onlyTotalReal) total += (element.totalReal ?? 0) * element.count;
-      if (onlyDiscount) {
-        total += (element.descuento ?? 0) * element.count;
-        for (var element in habitaciones.where((element) => element.isFree)) {
-          total += (element.total ?? 0) * element.count;
-        }
-      }
-      if (onlyTotal) {
-        total += (element.total ?? 0) * element.count;
-        double desc = 0;
-        for (var element in habitaciones.where((element) => element.isFree)) {
-          desc += (element.total ?? 0) * element.count;
-        }
-
-        total -= desc;
-      }
-    }
-
-    return total;
-  }
-
   Widget roomExpansionTileList(
       {bool isVR = true,
       required bool showList,
@@ -709,7 +684,7 @@ class _SummaryControllerWidgetState
       onExpansionChanged: onExpansionChanged,
       context: context,
       messageNotFound: "Sin habitaciones",
-      total: calculateTotalRooms(
+      total: Utility.calculateTotalRooms(
         habitaciones,
         onlyFirstCategory: isVR,
         onlySecoundCategory: !isVR,
@@ -746,7 +721,7 @@ class _SummaryControllerWidgetState
         message:
             "Faltan tarifas para algunos días. Por favor, ingrese los precios para calcular el total de la habitación.",
         type: "danger",
-        duration: 6.seconds,
+        duration: 3.seconds,
       );
       return;
     }

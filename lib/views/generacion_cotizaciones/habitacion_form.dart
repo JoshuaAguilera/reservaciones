@@ -775,6 +775,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           TarifaXDia newTarifaLibre = tarifaLibre.copyWith();
           newTarifaLibre.dia = ink;
           newTarifaLibre.fecha = dateNow;
+          newTarifaLibre.categoria = habitacion.categoria!;
           habitacion.tarifaXDia!.add(newTarifaLibre);
           continue;
         }
@@ -809,6 +810,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             fecha: dateNow,
             color: newTariff.color,
             nombreTarif: newTariff.nombre,
+            categoria: habitacion.categoria,
             code: newTariff.code,
             id: newTariff.id,
             periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),

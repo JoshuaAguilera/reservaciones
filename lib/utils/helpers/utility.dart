@@ -78,13 +78,6 @@ class Utility {
     return date;
   }
 
-  static double calculateTarifaDiaria(
-      {required Habitacion cotizacion, bool esPreventa = false}) {
-    double tarifaTotal = 0;
-
-    return tarifaTotal;
-  }
-
   static String getNextDay(String text) {
     return DateTime.parse(text)
         .add(const Duration(days: 1))
@@ -110,21 +103,6 @@ class Utility {
         MediaQuery.of(context).size.width < minWidthWithBar;
     isVisible = (extended) ? isSmallScreenWithSideBar : isSmallScreen;
     return isVisible;
-  }
-
-  static double calculateTarifaTotal(List<Habitacion> cotizaciones,
-      {bool esPreventa = false}) {
-    double tarifaTotal = 0;
-    for (var element in cotizaciones) {
-      int days = DateTime.parse(element.fechaCheckOut!)
-          .difference(DateTime.parse(element.fechaCheckIn!))
-          .inDays;
-      tarifaTotal +=
-          calculateTarifaDiaria(cotizacion: element, esPreventa: esPreventa) *
-              days;
-    }
-
-    return tarifaTotal;
   }
 
   static double? limitHeightList(int length,
@@ -1256,5 +1234,53 @@ class Utility {
     }
 
     return isValidForAdd;
+  }
+
+  static double calculateTotalRooms(
+    List<Habitacion> habitaciones, {
+    bool onlyTotalReal = false,
+    bool onlyDiscount = false,
+    bool onlyTotal = false,
+    bool onlyFirstCategory = false,
+    bool onlySecoundCategory = false,
+  }) {
+    double total = 0;
+
+    List<Habitacion> realRooms =
+        habitaciones.where((element) => !element.isFree).toList();
+    List<Habitacion> rooms = realRooms;
+
+    if (onlyFirstCategory) {
+      rooms = realRooms
+          .where((element) => element.categoria == tipoHabitacion.first)
+          .toList();
+    }
+
+    if (onlySecoundCategory) {
+      rooms = realRooms
+          .where((element) => element.categoria == tipoHabitacion[1])
+          .toList();
+    }
+
+    for (var element in rooms) {
+      if (onlyTotalReal) total += (element.totalReal ?? 0) * element.count;
+      if (onlyDiscount) {
+        total += (element.descuento ?? 0) * element.count;
+        for (var element in habitaciones.where((element) => element.isFree)) {
+          total += (element.total ?? 0) * element.count;
+        }
+      }
+      if (onlyTotal) {
+        total += (element.total ?? 0) * element.count;
+        double desc = 0;
+        for (var element in habitaciones.where((element) => element.isFree)) {
+          desc += (element.total ?? 0) * element.count;
+        }
+
+        total -= desc;
+      }
+    }
+
+    return total;
   }
 }
