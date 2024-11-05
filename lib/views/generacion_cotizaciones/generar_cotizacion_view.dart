@@ -384,7 +384,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           if (isFinish)
                             PdfCotizacionView(
                               comprobantePDF: comprobantePDF,
-                              cotizacion: cotizacion,
+                              cotizacion: receiptQuotePresent,
                             ),
                         ],
                       ),

@@ -26,14 +26,6 @@ class SendQuoteService extends BaseService {
   ) async {
     bool isSent = false;
 
-    // final smtpServer = SmtpServer(
-    //   "mail.coralbluehuatulco.mx",
-    //   username: mailUser,
-    //   password: passwordUser,
-    //   port: 465,
-    //   ssl: true,
-    // );
-
     String username = 'sys2@coralbluehuatulco.mx';
     String password = 'Sys2024CB';
 
@@ -43,6 +35,7 @@ class SendQuoteService extends BaseService {
       password: password,
       port: 465,
       ssl: true,
+      ignoreBadCertificate: true,
     );
 
     // Convertir el PDF a bytes
@@ -90,7 +83,7 @@ class SendQuoteService extends BaseService {
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
     message += "\n\n";
-    message += "Ocupación: ${Utility.getOcupattionMessage(cotizaciones)}";
+    message += "Ocupación: ${Utility.getOcupattionMessage(cotizaciones.first)}";
     message += "\n";
     message += "Estancia: ${Utility.getPeriodReservation(cotizaciones)}";
     message += "\n";

@@ -299,11 +299,11 @@ class Utility {
     return null;
   }
 
-  static String getOcupattionMessage(List<Habitacion> cotizaciones) {
+  static String getOcupattionMessage(Habitacion room) {
     String occupation = "";
-    int adultos = 0;
-    int menores0a6 = 0;
-    int menores7a12 = 0;
+    int adultos = room.adultos ?? 0;
+    int menores0a6 = room.menores0a6 ?? 0;
+    int menores7a12 = room.menores7a12 ?? 0;
 
     if (adultos > 0) occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
 

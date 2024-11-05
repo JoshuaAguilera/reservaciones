@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/send_quote_service.dart';
+import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../widgets/dialogs.dart';
 
@@ -57,11 +64,23 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
           actions: [
             IconButton(
               onPressed: () async {
-                await Printing.sharePdf(
-                  filename:
-                      "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                  bytes: await widget.comprobantePDF.save(),
-                );
+                try {
+                  final output = await getDownloadsDirectory();
+                  final file = File(
+                      '${output!.path}/Comprobante de cotizacion ${widget.cotizacion.folioPrincipal} ${DateTime.now().toString().replaceAll(RegExp(r':'), "_")}.pdf');
+                  await file.writeAsBytes(await widget.comprobantePDF.save());
+
+                  final pdfUrl = Uri.file(file.path);
+                  await launchUrl(pdfUrl);
+                } catch (e) {
+                  print(e);
+                  showSnackBar(
+                    type: "danger",
+                    context: context,
+                    title: "Error al guardar el documento",
+                    message: "Se produjo el siguiente error: $e",
+                  );
+                }
               },
               icon: const Icon(
                 CupertinoIcons.tray_arrow_down_fill,
@@ -77,37 +96,62 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
               )
             else
               IconButton(
-                onPressed: () async {
-                  setState(() => isSendingEmail = true);
-
-                  if (await SendQuoteService().sendQuoteMail(
-                    widget.comprobantePDF,
-                    widget.cotizacion,
-                    widget.cotizacion.habitaciones!,
-                  )) {
-                    if (!mounted) return;
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialogs.customAlertDialog(
-                            context: context,
-                            iconData: Icons.send,
-                            iconColor: DesktopColors.turqueza,
-                            title: "Correo enviado",
-                            contentText: "El correo fue enviado exitosamente",
-                            nameButtonMain: "Aceptar",
-                            funtionMain: () {},
-                            nameButtonCancel: "",
-                            withButtonCancel: false);
-                      },
-                    ).then((value) => setState(() => isSendingEmail = false));
-                  }
-                },
                 icon: const Icon(
                   CupertinoIcons.mail,
                   color: Colors.white,
                   size: 22,
                 ),
+                onPressed: () async {
+                  if (Preferences.mail.isEmpty ||
+                      Preferences.passwordMail.isEmpty) {
+                    showSnackBar(
+                      type: "alert",
+                      context: context,
+                      iconCustom: CupertinoIcons.tray_fill,
+                      duration: 3.seconds,
+                      title: "Correo SMTP o contraseña no registrada",
+                      message:
+                          "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                    );
+                  }
+
+                  setState(() => isSendingEmail = true);
+
+                  try {
+                    if (await SendQuoteService().sendQuoteMail(
+                      widget.comprobantePDF,
+                      widget.cotizacion,
+                      widget.cotizacion.habitaciones!,
+                    )) {
+                      if (!mounted) return;
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialogs.customAlertDialog(
+                              context: context,
+                              iconData: Icons.send,
+                              iconColor: DesktopColors.turqueza,
+                              title: "Correo enviado",
+                              contentText: "El correo fue enviado exitosamente",
+                              nameButtonMain: "Aceptar",
+                              funtionMain: () {},
+                              nameButtonCancel: "",
+                              withButtonCancel: false);
+                        },
+                      ).then((value) => setState(() => isSendingEmail = false));
+                    }
+                  } catch (e) {
+                    print(e);
+                    setState(() => isSendingEmail = false);
+                     showSnackBar(
+                    type: "danger",
+                    context: context,
+                    duration: 5.seconds,
+                    title: "Error al enviar el comprobante por correo",
+                    message: "Se produjo el siguiente error al enviar: $e",
+                  );
+                  }
+                },
               ),
             GestureDetector(
               onTap: () async {
