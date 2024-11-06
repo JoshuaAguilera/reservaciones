@@ -25,6 +25,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
+import '../../utils/helpers/utility.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -417,6 +418,21 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       "Se requiere al menos una habitación para generar esta cotización.");
                               return;
                             }
+
+                            cotizacion.total = Utility.calculateTotalRooms(
+                              habitaciones,
+                              onlyTotal: true,
+                            );
+
+                            cotizacion.totalReal = Utility.calculateTotalRooms(
+                              habitaciones,
+                              onlyTotalReal: true,
+                            );
+
+                            cotizacion.descuento = Utility.calculateTotalRooms(
+                              habitaciones,
+                              onlyDiscount: true,
+                            );
 
                             if (!(await CotizacionService().createCotizacion(
                               cotizacion: cotizacion,

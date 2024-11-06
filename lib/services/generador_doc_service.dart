@@ -18,17 +18,18 @@ class GeneradorDocService extends BaseService {
   pw.TextStyle styleTag =
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
-  Future<pw.Document> generarComprobanteCotizacionIndividual(
-      {required List<Habitacion> habitaciones,
-      required Cotizacion cotizacion,
-      bool themeDefault = false}) async {
+  Future<pw.Document> generarComprobanteCotizacionIndividual({
+    required List<Habitacion> habitaciones,
+    required Cotizacion cotizacion,
+    bool themeDefault = false,
+  }) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
       21.59 * PdfPageFormat.cm,
       27.94 * PdfPageFormat.cm,
       marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
-      marginTop: (3.13 * 0.393) * PdfPageFormat.cm,
+      marginTop: (2.6 * 0.393) * PdfPageFormat.cm,
       marginLeft: 3 * PdfPageFormat.cm,
       marginRight: 3 * PdfPageFormat.cm,
     );
@@ -37,90 +38,90 @@ class GeneradorDocService extends BaseService {
     final imgenLogo = await rootBundle.load('assets/image/logo_documento.png');
     final imageBytes = imgenLogo.buffer.asUint8List();
     pw.MemoryImage logoImage = pw.MemoryImage(imageBytes);
-    pw.Image logoHeaderImage = pw.Image(logoImage, width: 131);
+    pw.Image logoHeaderImage = pw.Image(logoImage, width: 165);
 
     //Footer
     final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
     final imageBytesW = imgWhatsApp.buffer.asUint8List();
-    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 9);
+    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 9.5);
 
     //Styles
-    pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF(size: 8);
-    pw.TextStyle styleLigth = await TextStyles.pwStylePDF(size: 8);
+    pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF(size: 9);
+    pw.TextStyle styleLigth = await TextStyles.pwStylePDF(size: 9);
     pw.TextStyle styleLigthHeaderTable =
-        await TextStyles.pwStylePDF(size: 8, isWhite: true, isBold: true);
-    pw.TextStyle styleBold = await TextStyles.pwStylePDF(size: 8, isBold: true);
+        await TextStyles.pwStylePDF(size: 9, isWhite: true, isBold: true);
+    pw.TextStyle styleBold = await TextStyles.pwStylePDF(size: 9, isBold: true);
     pw.TextStyle styleBoldTable =
-        await TextStyles.pwStylePDF(size: 7, isBold: true, lineSpacing: 1);
+        await TextStyles.pwStylePDF(size: 9, isBold: true, lineSpacing: 1);
     pw.TextStyle styleBoldUnderline =
-        await TextStyles.pwStylePDF(size: 8, isBold: true, withUnderline: true);
+        await TextStyles.pwStylePDF(size: 9, isBold: true, withUnderline: true);
     pw.TextStyle styleItalic =
-        await TextStyles.pwStylePDF(size: 8, isItalic: true, isBold: true);
+        await TextStyles.pwStylePDF(size: 9, isItalic: true, isBold: true);
     pw.TextStyle styleFooter =
-        await TextStyles.pwStylePDF(size: 8, isRegular: true);
+        await TextStyles.pwStylePDF(size: 9, isRegular: true);
     pw.TextStyle styleRegular =
-        await TextStyles.pwStylePDF(size: 8.4, isBold: true);
+        await TextStyles.pwStylePDF(size: 9.4, isBold: true);
 
     // text Asotiative
     pw.RichText cancelPolity1 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(120),
         content: FilesTemplate.StructureDoc(12),
-        size: 8);
+        size: 9);
     pw.RichText cancelPolity2 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(130),
         content: FilesTemplate.StructureDoc(13),
-        size: 8);
+        size: 9);
     pw.RichText cancelPolity3 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(140),
         content: FilesTemplate.StructureDoc(14),
-        size: 8);
+        size: 9);
 
     pw.RichText service1 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(149),
         content: FilesTemplate.StructureDoc(49),
-        size: 8);
+        size: 9);
     pw.RichText service2 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(136),
         content: FilesTemplate.StructureDoc(36),
-        size: 8);
+        size: 9);
     pw.RichText service3 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(137),
         content: FilesTemplate.StructureDoc(37),
-        size: 8);
+        size: 9);
     pw.RichText service4 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(138),
         content: FilesTemplate.StructureDoc(38),
-        size: 8);
+        size: 9);
     pw.RichText service5 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(148),
         content: FilesTemplate.StructureDoc(48),
-        size: 8);
+        size: 9);
 
     //facilities
     pw.RichText ease1 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(150),
         content: FilesTemplate.StructureDoc(50),
-        size: 8);
+        size: 9);
     pw.RichText ease2 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(151),
         content: FilesTemplate.StructureDoc(51),
-        size: 8);
+        size: 9);
     pw.RichText ease3 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(152),
         content: FilesTemplate.StructureDoc(52),
-        size: 8);
+        size: 9);
     pw.RichText ease4 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(153),
         content: FilesTemplate.StructureDoc(53),
-        size: 8);
+        size: 9);
     pw.RichText ease5 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(154),
         content: FilesTemplate.StructureDoc(54),
-        size: 8);
+        size: 9);
     pw.RichText ease6 = await TextStyles.pwTextAsotiation(
         title: FilesTemplate.StructureDoc(155),
         content: FilesTemplate.StructureDoc(55),
-        size: 8);
+        size: 9);
 
     pdf.addPage(
       pw.MultiPage(
@@ -132,14 +133,14 @@ class GeneradorDocService extends BaseService {
               children: [
                 logoHeaderImage,
                 pw.Padding(
-                  padding: const pw.EdgeInsets.only(bottom: 10),
+                  padding: const pw.EdgeInsets.only(top: 40),
                   child: pw.Text(
                       "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
                       style: styleLigthHeader),
                 ),
               ],
             ),
-            pw.SizedBox(height: 18),
+            pw.SizedBox(height: 24),
           ]);
         },
         build: (context) => [
@@ -161,21 +162,20 @@ class GeneradorDocService extends BaseService {
                     styleBoldTable: styleBoldTable,
                     color: "#93dcf8",
                   ),
-                  pw.Text("NOTAS", style: styleBoldUnderline),
-                  pw.SizedBox(height: 10),
-                  pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
-                  pw.SizedBox(height: 10),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.only(left: 27),
-                    child: pw.Text(FilesTemplate.StructureDoc(4),
-                        style: styleItalic),
-                  ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.only(left: 27),
-                    child: pw.Text(FilesTemplate.StructureDoc(5),
-                        style: styleItalic),
-                  ),
-                  pw.SizedBox(height: 20),
+                  // pw.Text("NOTAS", style: styleBoldUnderline),
+                  // pw.SizedBox(height: 10),
+                  // pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
+                  // pw.SizedBox(height: 10),
+                  // pw.Padding(
+                  //   padding: const pw.EdgeInsets.only(left: 27),
+                  //   child: pw.Text(FilesTemplate.StructureDoc(4),
+                  //       style: styleItalic),
+                  // ),
+                  // pw.Padding(
+                  //   padding: const pw.EdgeInsets.only(left: 27),
+                  //   child: pw.Text(FilesTemplate.StructureDoc(5),
+                  //       style: styleItalic),
+                  // ),
                   pw.Text("POLÍTICAS PARA RESERVACIÓN",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 11),
@@ -196,12 +196,14 @@ class GeneradorDocService extends BaseService {
                   pw.SizedBox(height: 10),
                   pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
                       style: styleBoldUnderline),
-                  pw.SizedBox(height: 12),
-                  FilesTemplate.getListDocument(
-                      withRound: true,
-                      styleLight: styleLigth,
+                  pw.SizedBox(height: 11),
+                  for (var element in [15, 16, 17, 18, 19, 20])
+                    FilesTemplate.textIndice(
+                      text: FilesTemplate.StructureDoc(element),
+                      styleText: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [15, 16, 17, 18, 19, 20]),
+                      withRound: true,
+                    ),
                   pw.SizedBox(height: 10),
                   pw.Text("CARACTERÍSTICAS DE LAS HABITACIONES",
                       style: styleBoldUnderline),
@@ -475,12 +477,20 @@ class GeneradorDocService extends BaseService {
                   pw.SizedBox(height: 8),
                   pw.Text("POLÍTICAS Y CONDICIONES GENERALES",
                       style: styleBoldUnderline),
-                  pw.SizedBox(height: 12),
-                  FilesTemplate.getListDocument(
-                      withRound: true,
-                      styleLight: styleLigth,
+                  pw.SizedBox(height: 5),
+                  // FilesTemplate.getListDocument(
+                  //   withRound: true,
+                  //   styleLight: styleLigth,
+                  //   styleIndice: styleBold,
+                  //   idsText: [15, 75, 17, 18, 19, 20],
+                  // ),
+                  for (var element in [15, 75, 17, 18, 19, 20])
+                    FilesTemplate.textIndice(
+                      text: FilesTemplate.StructureDoc(element),
+                      styleText: styleLigth,
                       styleIndice: styleBold,
-                      idsText: [15, 75, 17, 18, 19, 20]),
+                      withRound: true,
+                    ),
                   pw.SizedBox(height: 8),
                   pw.Text("CARACTERÍSTICAS DE LAS HABITACIONES",
                       style: styleBoldUnderline),
@@ -602,7 +612,7 @@ class GeneradorDocService extends BaseService {
           colorHeader: color,
         ),
       );
-      tablas.add(pw.SizedBox(height: 20));
+      tablas.add(pw.SizedBox(height: 10));
     }
 
     if (habitaciones.any((element) => element.categoria == tipoHabitacion[1])) {
@@ -619,7 +629,7 @@ class GeneradorDocService extends BaseService {
           colorHeader: color,
         ),
       );
-      tablas.add(pw.SizedBox(height: 20));
+      tablas.add(pw.SizedBox(height: 10));
     }
 
     return pw.Column(children: tablas);

@@ -78,25 +78,29 @@ class SendQuoteService extends BaseService {
     bool status = false;
     var phone = comprobante.numeroTelefonico;
 
-    var message = "Estimad@ ${comprobante.nombreHuesped}," + "\n";
+    var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
     message += "\n\n";
-    message += "Ocupación: ${Utility.getOcupattionMessage(cotizaciones.first)}";
+    message += "*Plan Todo Incluido*";
     message += "\n";
-    message += "Estancia: ${Utility.getPeriodReservation(cotizaciones)}";
+    message += "*Estancia: ${Utility.getPeriodReservation(cotizaciones)}*";
     message += "\n";
     message +=
-        "Noches: ${Utility.getDifferenceInDays(cotizaciones: cotizaciones)}";
+        "*Noches: ${Utility.getDifferenceInDays(cotizaciones: cotizaciones)}*";
     message += "\n\n";
-    message += "Habitación Deluxe doble, vista a la reserva";
+    message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
     message += "\n\n";
-    message += "Plan todo incluido: Total de estancia \$20,781.00";
+    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
+    message += "\n";
+    message += "Total por noche:\$ Total de estancia \$20,781.00";
     message += "\n\n";
-    message += "Habitación Deluxe doble o King size, vista parcial al océano";
+    message += "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
     message += "\n\n";
-    message += "Plan todo incluido: Total de estancia \$24,432.00";
+    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
+    message += "\n";
+    message += "Total por noche:\$ Total de estancia \$20,781.00";
     message += "\n\n";
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";

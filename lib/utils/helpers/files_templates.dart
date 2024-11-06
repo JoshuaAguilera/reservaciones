@@ -20,7 +20,7 @@ class FilesTemplate {
       case 1:
         return "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
       case 2:
-        return "En Hotel Coral Blue Huatulco contamos con 2 categorías de habitación y 2 planes de tarifas, por favor elija la que más le agrade.";
+        return "En Hotel Coral Blue Huatulco contamos con 2 categorías de habitación, por favor elija la que más le agrade.";
       case 3:
         return "En caso de elegir el plan sin alimentos, puede adquirir estos directamente en los centros de consumo. ";
       case 4:
@@ -233,24 +233,26 @@ class FilesTemplate {
 
     return pw.Column(children: [
       pw.TableHelper.fromTextArray(
-          border: pw.TableBorder.all(width: 0.7),
-          headerStyle: styleHeader,
-          cellPadding: const pw.EdgeInsets.all(4),
-          // headerCellDecoration: pw.BoxDecoration(
-          //     color: PdfColor.fromHex(colorHeader ?? "#009999")),
-          headers: [nameTable],
-          data: []),
+        border: pw.TableBorder.all(width: 1),
+        headerStyle: styleHeader,
+        cellPadding: const pw.EdgeInsets.all(4),
+        // headerCellDecoration: pw.BoxDecoration(
+        //     color: PdfColor.fromHex(colorHeader ?? "#009999")),
+        headers: [nameTable],
+        data: [],
+      ),
       pw.TableHelper.fromTextArray(
         cellStyle: styleGeneral,
         cellAlignment: pw.Alignment.center,
         headerAlignment: pw.Alignment.center,
-        border: pw.TableBorder.all(width: 0.9),
+        // border: pw.TableBorder.all(width: 0.9),
+        border: pw.TableBorder.all(width: 1),
         headerCellDecoration: pw.BoxDecoration(
           color: PdfColor.fromHex(colorHeader ?? "#009999"),
         ),
         headerStyle: styleBold,
-        cellPadding: const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 1),
-        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 2.5, 1.5, 1),
+        cellPadding: const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 3.5, 1.5, 2),
         columnWidths: {
           0: const pw.FixedColumnWidth(10),
           1: const pw.FixedColumnWidth(40),
@@ -265,7 +267,8 @@ class FilesTemplate {
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 177),
         child: pw.TableHelper.fromTextArray(
-            border: pw.TableBorder.all(width: 0.9),
+            // border: pw.TableBorder.all(width: 0.9),
+            border: pw.TableBorder.all(width: 1),
             headerStyle: styleHeader,
             columnWidths: {
               0: const pw.FixedColumnWidth(100),
@@ -567,14 +570,18 @@ class FilesTemplate {
 </td> </tr> <tr> <td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-left:20px;padding-top:40px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">Estimad@ ${receiptQuotePresent.nombreHuesped!}</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">De antemano disculpe la demora de respuesta.<br>Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización:</p>
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">No. de cotización: <strong>${receiptQuotePresent.folioPrincipal!}</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Plan Todo Incluido</strong><br>Estancia: <strong>${Utility.getPeriodReservation(quotesPresent)}</strong><br>Noches: <strong>${quotesPresent.where((element) => !element.isFree).toList().length}</strong></p>
  
+
+ 
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>
  
- <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$${receiptQuotePresent.total!/quotesPresent.where((element) => !element.isFree).toList().length}&nbsp;&nbsp;<br>Total por estancia \$${receiptQuotePresent.total!}</strong></p>
+ <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$${receiptQuotePresent.total! / quotesPresent.where((element) => !element.isFree).toList().length}&nbsp;&nbsp;<br>Total por estancia \$${receiptQuotePresent.total!}</strong></p>
  
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble o King size, vista parcial al océano 🌊</b></p>
  
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$&nbsp;&nbsp;<br>Total por estancia \$</strong></p>
  
+
+
  </td> </tr> <tr> <td align="center" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px;font-size:0px"><img class="adapt-img" src="https://static.wixstatic.com/media/a3b865_0b4cc1234bfd47848941afac73418b13~mv2.jpg" alt="" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="435" height="302"></td> </tr>
  <tr> <td align="center" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><span class="es-button-border" style="border-style:solid;border-color:#fafafb;background:#2fb08e;border-width:2px;display:inline-block;border-radius:5px;width:auto" data-darkreader-inline-border-top data-darkreader-inline-border-right data-darkreader-inline-border-bottom data-darkreader-inline-border-left data-darkreader-inline-bgimage data-darkreader-inline-bgcolor><a href="https://www.coralbluehuatulco.mx/" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:20px;padding:10px 30px 10px 30px;display:inline-block;background:#2fb08e;border-radius:5px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:24px;width:auto;text-align:center;mso-padding-alt:0;mso-border-alt:10px solid #2fb08e;padding-left:30px;padding-right:30px" data-darkreader-inline-bgimage data-darkreader-inline-bgcolor>Visitar Sitio Web</a>
  </span></td> </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> <tr> <td align="left" style="padding:0;Margin:0;padding-top:20px;padding-left:20px;padding-right:20px"> <table cellpadding="0" cellspacing="0" width="100%" role="none" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> <tbody> <tr> <td align="center" valign="top" style="padding:0;Margin:0;width:560px"> <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> <tbody> <tr> <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:26px;Margin-bottom:15px;color:#333333;font-size:26px"><b>Consideraciones:</b></p>

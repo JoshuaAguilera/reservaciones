@@ -302,19 +302,13 @@ class Utility {
   static String getOcupattionMessage(Habitacion room) {
     String occupation = "";
     int adultos = room.adultos ?? 0;
-    int menores0a6 = room.menores0a6 ?? 0;
-    int menores7a12 = room.menores7a12 ?? 0;
+    int menores = (room.menores0a6 ?? 0) + (room.menores7a12 ?? 0);
 
-    if (adultos > 0) occupation += "$adultos adulto${adultos > 1 ? "s" : ""}";
+    if (adultos > 0) occupation += "$adultos ADULTO${adultos > 1 ? "S" : ""}";
 
-    if (menores0a6 > 0) {
+    if (menores > 0) {
       occupation +=
-          "${adultos > 0 ? "\, " : menores7a12 > 0 ? "" : " y "}$menores0a6 menore${menores0a6 > 1 ? "s" : ""} de 0 a 6";
-    }
-
-    if (menores7a12 > 0) {
-      occupation +=
-          "${(menores0a6 > 0 || adultos > 0) ? " y " : ""} $menores7a12 menore${menores7a12 > 1 ? "s" : ""} de 7 a 12";
+          "${adultos > 0 ? " Y " : ""}$menores MENOR${menores > 1 ? "ES" : ""}";
     }
 
     return occupation;

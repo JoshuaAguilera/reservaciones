@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../utils/helpers/utility.dart';
@@ -13,6 +11,7 @@ import '../../utils/helpers/web_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
 import '../../widgets/text_styles.dart';
+import '../generacion_cotizaciones/pdf_cotizacion_view.dart';
 
 class CotizacionDetalleView extends ConsumerStatefulWidget {
   const CotizacionDetalleView({super.key, required this.sideController});
@@ -294,49 +293,11 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                         if (isLoading && !isFinish)
                           ProgressIndicatorCustom(screenHight: screenHight),
                         if (isFinish)
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: SizedBox(
-                              height: screenHight * 0.89,
-                              child: PdfPreview(
-                                build: (format) => comprobantePDF.save(),
-                                actionBarTheme: PdfActionBarTheme(
-                                  backgroundColor: DesktopColors.ceruleanOscure,
-                                  iconColor: Theme.of(context).primaryColor,
-                                ),
-                                canChangeOrientation: false,
-                                canChangePageFormat: false,
-                                canDebug: false,
-                                allowSharing: false,
-                                loadingWidget: Center(
-                                  child:
-                                      LoadingAnimationWidget.fourRotatingDots(
-                                    color: Colors.grey,
-                                    size: 45,
-                                  ),
-                                ),
-                                pdfFileName:
-                                    "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                                actions: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      await Printing.sharePdf(
-                                        filename:
-                                            "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-                                        bytes: await comprobantePDF.save(),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      CupertinoIcons.arrow_down_doc_fill,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
+                          PdfCotizacionView(
+                            comprobantePDF: comprobantePDF,
+                            cotizacion: cotizacion,
+                            isDetail: true,
+                          ),
                       ],
                     ),
                   ),

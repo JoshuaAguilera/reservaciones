@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:drift/drift.dart';
 import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 
 import '../database/database.dart';
-import '../utils/helpers/utility.dart';
 import 'base_service.dart';
 
 class CotizacionService extends BaseService {
@@ -70,24 +67,9 @@ class CotizacionService extends BaseService {
                   numeroTelefonico: Value(cotizacion.numeroTelefonico),
                   usuarioID: Value(userId),
                   esConcretado: const Value(false),
-                  descuento: Value(
-                    Utility.calculateTotalRooms(
-                      habitaciones,
-                      onlyDiscount: true,
-                    ),
-                  ),
-                  total: Value(
-                    Utility.calculateTotalRooms(
-                      habitaciones,
-                      onlyTotal: true,
-                    ),
-                  ),
-                  totalReal: Value(
-                    Utility.calculateTotalRooms(
-                      habitaciones,
-                      onlyTotalReal: true,
-                    ),
-                  ),
+                  descuento: Value(cotizacion.descuento),
+                  total: Value(cotizacion.total),
+                  totalReal: Value(cotizacion.totalReal),
                 ),
               );
         },

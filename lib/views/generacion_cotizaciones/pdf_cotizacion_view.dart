@@ -21,10 +21,12 @@ class PdfCotizacionView extends StatefulWidget {
     super.key,
     required this.comprobantePDF,
     required this.cotizacion,
+    this.isDetail = false,
   });
 
   final pw.Document comprobantePDF;
   final Cotizacion cotizacion;
+  final bool isDetail;
 
   @override
   State<PdfCotizacionView> createState() => _PdfCotizacionViewState();
@@ -88,81 +90,85 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                 size: 22,
               ),
             ),
-            if (isSendingEmail)
-              const SizedBox(
-                height: 22,
-                width: 22,
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-            else
-              IconButton(
-                icon: const Icon(
-                  CupertinoIcons.mail,
-                  color: Colors.white,
-                  size: 22,
-                ),
-                onPressed: () async {
-                  if (Preferences.mail.isEmpty ||
-                      Preferences.passwordMail.isEmpty) {
-                    showSnackBar(
-                      type: "alert",
-                      context: context,
-                      iconCustom: CupertinoIcons.tray_fill,
-                      duration: 3.seconds,
-                      title: "Correo SMTP o contraseña no registrada",
-                      message:
-                          "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
-                    );
-                  }
-
-                  setState(() => isSendingEmail = true);
-
-                  try {
-                    if (await SendQuoteService().sendQuoteMail(
-                      widget.comprobantePDF,
-                      widget.cotizacion,
-                      widget.cotizacion.habitaciones!,
-                    )) {
-                      if (!mounted) return;
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialogs.customAlertDialog(
-                              context: context,
-                              iconData: Icons.send,
-                              iconColor: DesktopColors.turqueza,
-                              title: "Correo enviado",
-                              contentText: "El correo fue enviado exitosamente",
-                              nameButtonMain: "Aceptar",
-                              funtionMain: () {},
-                              nameButtonCancel: "",
-                              withButtonCancel: false);
-                        },
-                      ).then((value) => setState(() => isSendingEmail = false));
-                    }
-                  } catch (e) {
-                    print(e);
-                    setState(() => isSendingEmail = false);
-                     showSnackBar(
-                    type: "danger",
-                    context: context,
-                    duration: 5.seconds,
-                    title: "Error al enviar el comprobante por correo",
-                    message: "Se produjo el siguiente error al enviar: $e",
-                  );
-                  }
-                },
-              ),
-            GestureDetector(
-              onTap: () async {
-                SendQuoteService().sendQuoteWhatsApp(
-                    widget.cotizacion, widget.cotizacion.habitaciones!);
-              },
-              child: const Image(
-                  image: AssetImage("assets/image/whatsApp_icon.png"),
+           // if (!widget.isDetail)
+              if (isSendingEmail)
+                const SizedBox(
+                  height: 22,
                   width: 22,
-                  color: Colors.white),
-            )
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              else
+                IconButton(
+                  icon: const Icon(
+                    CupertinoIcons.mail,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  onPressed: () async {
+                    if (Preferences.mail.isEmpty ||
+                        Preferences.passwordMail.isEmpty) {
+                      showSnackBar(
+                        type: "alert",
+                        context: context,
+                        iconCustom: CupertinoIcons.tray_fill,
+                        duration: 3.seconds,
+                        title: "Correo SMTP o contraseña no registrada",
+                        message:
+                            "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                      );
+                    }
+
+                    setState(() => isSendingEmail = true);
+
+                    try {
+                      if (await SendQuoteService().sendQuoteMail(
+                        widget.comprobantePDF,
+                        widget.cotizacion,
+                        widget.cotizacion.habitaciones!,
+                      )) {
+                        if (!mounted) return;
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialogs.customAlertDialog(
+                                context: context,
+                                iconData: Icons.send,
+                                iconColor: DesktopColors.turqueza,
+                                title: "Correo enviado",
+                                contentText:
+                                    "El correo fue enviado exitosamente",
+                                nameButtonMain: "Aceptar",
+                                funtionMain: () {},
+                                nameButtonCancel: "",
+                                withButtonCancel: false);
+                          },
+                        ).then(
+                            (value) => setState(() => isSendingEmail = false));
+                      }
+                    } catch (e) {
+                      print(e);
+                      setState(() => isSendingEmail = false);
+                      showSnackBar(
+                        type: "danger",
+                        context: context,
+                        duration: 5.seconds,
+                        title: "Error al enviar el comprobante por correo",
+                        message: "Se produjo el siguiente error al enviar: $e",
+                      );
+                    }
+                  },
+                ),
+            // if (!widget.isDetail)
+              GestureDetector(
+                onTap: () async {
+                  SendQuoteService().sendQuoteWhatsApp(
+                      widget.cotizacion, widget.cotizacion.habitaciones!);
+                },
+                child: const Image(
+                    image: AssetImage("assets/image/whatsApp_icon.png"),
+                    width: 22,
+                    color: Colors.white),
+              )
           ],
         ),
       ),

@@ -32,9 +32,13 @@ class _ManagerTariffDayWidgetState
   bool applyAllTariff = false;
   bool applyAllDays = false;
   bool applyAllNoTariff = false;
+  bool applyAllCategory = false;
   bool isUnknow = false;
   bool isFreeTariff = false;
   final _formKeyTariffDay = GlobalKey<FormState>();
+  List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
+  String selectCategory = "VISTA A LA RESERVA";
+  TarifaData? saveTariff;
 
   List<String> promociones = [];
   final TextEditingController _tarifaAdultoController =
@@ -93,6 +97,9 @@ class _ManagerTariffDayWidgetState
   @override
   Widget build(BuildContext context) {
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    double tariffAdult = calculateTariffAdult(habitacionProvider.adultos!);
+    double tariffChildren =
+        calculateTariffMenor(habitacionProvider.menores7a12!);
 
     return AlertDialog(
       elevation: 15,
@@ -118,7 +125,7 @@ class _ManagerTariffDayWidgetState
           Expanded(
             child: TextStyles.titleText(
                 text: widget.isAppling
-                    ? "Aplicar nueva Tarifa libre de ${Utility.getStringPeriod(initDate: DateTime.parse(habitacionProvider.fechaCheckIn!), lastDate: DateTime.parse(habitacionProvider.fechaCheckOut!))}\nen categoria: ${habitacionProvider.categoria}"
+                    ? "Aplicar nueva Tarifa libre de ${Utility.getStringPeriod(initDate: DateTime.parse(habitacionProvider.fechaCheckIn!), lastDate: DateTime.parse(habitacionProvider.fechaCheckOut!))}"
                     : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTarif} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
                 size:
                     (widget.tarifaXDia.subCode != null && !isUnknow) ? 13 : 16,
@@ -127,11 +134,12 @@ class _ManagerTariffDayWidgetState
         ],
       ),
       content: SizedBox(
-        height: 550,
+        height: 620,
         child: Form(
           key: _formKeyTariffDay,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: widget.tarifaXDia.temporadaSelect != null
@@ -141,7 +149,7 @@ class _ManagerTariffDayWidgetState
                     TextStyles.standardText(
                       text: widget.tarifaXDia.temporadaSelect != null
                           ? "Temporada: "
-                          : "Descuento: ",
+                          : "Descuento en todas las tarifas:      ",
                       overClip: true,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -159,215 +167,348 @@ class _ManagerTariffDayWidgetState
                             getPromocionesNoValidas(habitacionProvider),
                       )
                     else
-                      SizedBox(
-                        width: 135,
-                        height: 50,
-                        child: TextFormFieldCustom.textFormFieldwithBorder(
-                          name: "Porcentaje",
-                          controller: _descuentoController,
-                          icon: const Icon(CupertinoIcons.percent, size: 20),
-                          isNumeric: true,
-                          onChanged: (p0) => setState(() {}),
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Porcentaje",
+                            controller: _descuentoController,
+                            icon: const Icon(CupertinoIcons.percent, size: 20),
+                            isNumeric: true,
+                            onChanged: (p0) => setState(() {}),
+                          ),
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa SGL/DBL",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        onChanged: (p0) => setState(() {}),
-                        controller: _tarifaAdultoController,
+                const SizedBox(height: 15),
+                AbsorbPointer(
+                  absorbing: applyAllCategory,
+                  child: Opacity(
+                    opacity: applyAllCategory ? 0.5 : 1,
+                    child: SizedBox(
+                      height: 32,
+                      width: 350,
+                      child: StatefulBuilder(
+                        builder: (context, snapshot) {
+                          return ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: 2,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                child: SelectableButton(
+                                  selected: selectCategory == categorias[index],
+                                  color: Utility.darken(
+                                      selectCategory == categorias.first
+                                          ? DesktopColors.vistaReserva
+                                          : DesktopColors.vistaParcialMar,
+                                      -0.15),
+                                  onPressed: () {
+                                    if (selectCategory == categorias[index])
+                                      return;
+
+                                    TarifaData saveIntTariff = TarifaData(
+                                      categoria: selectCategory,
+                                      code:
+                                          "${widget.tarifaXDia.code} - $selectCategory",
+                                      fecha: DateTime.now(),
+                                      id: categorias.indexOf(selectCategory),
+                                      tarifaAdultoSGLoDBL:
+                                          _tarifaAdultoController.text.isEmpty
+                                              ? null
+                                              : double.parse(
+                                                  _tarifaAdultoController.text),
+                                      tarifaAdultoTPL:
+                                          _tarifaAdultoTPLController
+                                                  .text.isEmpty
+                                              ? null
+                                              : double.parse(
+                                                  _tarifaAdultoTPLController
+                                                      .text),
+                                      tarifaAdultoCPLE:
+                                          _tarifaAdultoCPLController
+                                                  .text.isEmpty
+                                              ? null
+                                              : double.parse(
+                                                  _tarifaAdultoCPLController
+                                                      .text),
+                                      tarifaPaxAdicional:
+                                          _tarifaPaxAdicionalController
+                                                  .text.isEmpty
+                                              ? null
+                                              : double.parse(
+                                                  _tarifaPaxAdicionalController
+                                                      .text),
+                                      tarifaMenores7a12:
+                                          _tarifaMenoresController.text.isEmpty
+                                              ? null
+                                              : double.parse(
+                                                  _tarifaMenoresController
+                                                      .text),
+                                    );
+
+                                    _tarifaAdultoController.text =
+                                        (saveTariff?.tarifaAdultoSGLoDBL ?? '')
+                                            .toString();
+                                    _tarifaAdultoTPLController.text =
+                                        (saveTariff?.tarifaAdultoTPL ?? '')
+                                            .toString();
+                                    _tarifaAdultoCPLController.text =
+                                        (saveTariff?.tarifaAdultoCPLE ?? '')
+                                            .toString();
+                                    _tarifaPaxAdicionalController.text =
+                                        (saveTariff?.tarifaPaxAdicional ?? '')
+                                            .toString();
+                                    _tarifaMenoresController.text =
+                                        (saveTariff?.tarifaMenores7a12 ?? '')
+                                            .toString();
+
+                                    saveTariff = saveIntTariff.copyWith();
+
+                                    setState(() =>
+                                        selectCategory = categorias[index]);
+                                  },
+                                  child: Text(
+                                    categorias[index],
+                                    style: TextStyle(
+                                      color: Utility.darken(
+                                        selectCategory == categorias.first
+                                            ? DesktopColors.vistaReserva
+                                            : DesktopColors.vistaParcialMar,
+                                        0.15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa TPL",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        onChanged: (p0) => setState(() {}),
-                        controller: _tarifaAdultoTPLController,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa CPLE",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        onChanged: (p0) => setState(() {}),
-                        controller: _tarifaAdultoCPLController,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa Pax Adic",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        controller: _tarifaPaxAdicionalController,
-                        onChanged: (p0) => setState(() {}),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa Menores 7 a 12 años",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        controller: _tarifaMenoresController,
-                        onChanged: (p0) => setState(() {}),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormFieldCustom.textFormFieldwithBorder(
-                        name: "Tarifa Menores 0 a 6 años",
-                        isMoneda: true,
-                        isNumeric: true,
-                        isDecimal: true,
-                        blocked: true,
-                        enabled: false,
-                        initialValue: "GRATIS",
-                      ),
-                    ),
-                  ],
-                ),
-                Divider(color: Theme.of(context).primaryColor),
-                const SizedBox(height: 5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (isValidForApplyNotTariff(habitacionProvider) &&
-                              !widget.isAppling &&
-                              !isFreeTariff)
-                            CustomWidgets.checkBoxWithDescription(
-                              context,
-                              activeColor: widget.tarifaXDia.color,
-                              title: "Aplicar en dias sin tarifa",
-                              description:
-                                  "(Esta opción aplicara los siguientes cambios en todos los dias que no esten en el margen de las tarifas definidas).",
-                              value: applyAllNoTariff,
-                              onChanged: (value) => setState(() {
-                                applyAllNoTariff = value!;
-                                applyAllTariff = false;
-                                applyAllDays = false;
-                              }),
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa SGL/DBL",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              onChanged: (p0) => setState(() {}),
+                              controller: _tarifaAdultoController,
                             ),
-                          if (!isUnknow && !widget.isAppling && !isFreeTariff)
-                            CustomWidgets.checkBoxWithDescription(
-                              context,
-                              activeColor: widget.tarifaXDia.color,
-                              title: "Aplicar en toda la tarifa",
-                              description:
-                                  "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTarif}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
-                              value: applyAllTariff,
-                              onChanged: (value) => setState(() {
-                                applyAllTariff = value!;
-                                applyAllNoTariff = false;
-                                applyAllDays = false;
-                              }),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa TPL",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              onChanged: (p0) => setState(() {}),
+                              controller: _tarifaAdultoTPLController,
                             ),
-                          if (!widget.isAppling)
-                            CustomWidgets.checkBoxWithDescription(
-                              context,
-                              activeColor: widget.tarifaXDia.color,
-                              title: "Aplicar en todos los dias",
-                              description: "",
-                              value: applyAllDays,
-                              onChanged: (value) => setState(() {
-                                applyAllDays = value!;
-                                applyAllTariff = false;
-                                applyAllNoTariff = false;
-                              }),
-                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 15),
-                    StatefulBuilder(builder: (context, snapshot) {
-                      double tariffAdult =
-                          calculateTariffAdult(habitacionProvider.adultos!);
-                      double tariffChildren =
-                          calculateTariffMenor(habitacionProvider.menores7a12!);
-                      double discount =
-                          calculateDiscount(tariffAdult + tariffChildren);
-
-                      return SizedBox(
-                        width: 225,
-                        child: Column(
-                          children: [
-                            CustomWidgets.itemListCount(
-                                nameItem:
-                                    "Adultos x${habitacionProvider.adultos}:",
-                                count: tariffAdult,
-                                context: context,
-                                height: 40),
-                            CustomWidgets.itemListCount(
-                                nameItem:
-                                    "Menores de 7 a 12 x${habitacionProvider.menores7a12}:",
-                                count: tariffChildren,
-                                context: context,
-                                height: 40),
-                            CustomWidgets.itemListCount(
-                                nameItem:
-                                    "Menores de 0 a 6 x${habitacionProvider.menores0a6}:",
-                                count: 0,
-                                context: context,
-                                height: 40),
-                            Divider(color: Theme.of(context).primaryColor),
-                            const SizedBox(height: 5),
-                            CustomWidgets.itemListCount(
-                                nameItem: "Total:",
-                                count: tariffAdult + tariffChildren,
-                                context: context,
-                                height: 40),
-                            CustomWidgets.itemListCount(
-                                nameItem:
-                                    "Descuento (${(getSeasonSelect() != null) ? getSeasonSelect()?.porcentajePromocion ?? 0 : _descuentoController.text}%):",
-                                count: -discount.round() + 0.0,
-                                context: context,
-                                height: 40),
-                            Divider(color: Theme.of(context).primaryColor),
-                            const SizedBox(height: 5),
-                            CustomWidgets.itemListCount(
-                                nameItem: "Total del dia(s):",
-                                count:
-                                    ((tariffChildren + tariffAdult) - discount)
-                                            .round() +
-                                        0.0,
-                                context: context,
-                                height: 40),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa CPLE",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              onChanged: (p0) => setState(() {}),
+                              controller: _tarifaAdultoCPLController,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa Pax Adic",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              controller: _tarifaPaxAdicionalController,
+                              onChanged: (p0) => setState(() {}),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa Menores 7 a 12 años",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              controller: _tarifaMenoresController,
+                              onChanged: (p0) => setState(() {}),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Tarifa Menores 0 a 6 años",
+                              isMoneda: true,
+                              isNumeric: true,
+                              isDecimal: true,
+                              blocked: true,
+                              enabled: false,
+                              initialValue: "GRATIS",
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).primaryColor),
+                      const SizedBox(height: 5),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 210,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                if (isValidForApplyNotTariff(
+                                        habitacionProvider) &&
+                                    !widget.isAppling &&
+                                    !isFreeTariff)
+                                  CustomWidgets.checkBoxWithDescription(
+                                    context,
+                                    activeColor: widget.tarifaXDia.color,
+                                    title: "Aplicar en dias sin tarifa",
+                                    description:
+                                        "(Esta opción aplicara los siguientes cambios en todos los dias que no esten en el margen de las tarifas definidas).",
+                                    value: applyAllNoTariff,
+                                    onChanged: (value) => setState(() {
+                                      applyAllNoTariff = value!;
+                                      applyAllTariff = false;
+                                      applyAllDays = false;
+                                    }),
+                                  ),
+                                if (!isUnknow &&
+                                    !widget.isAppling &&
+                                    !isFreeTariff)
+                                  CustomWidgets.checkBoxWithDescription(
+                                    context,
+                                    activeColor: widget.tarifaXDia.color,
+                                    title: "Aplicar en toda la tarifa",
+                                    description:
+                                        "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTarif}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
+                                    value: applyAllTariff,
+                                    onChanged: (value) => setState(() {
+                                      applyAllTariff = value!;
+                                      applyAllNoTariff = false;
+                                      applyAllDays = false;
+                                    }),
+                                  ),
+                                if (!widget.isAppling)
+                                  CustomWidgets.checkBoxWithDescription(
+                                    context,
+                                    activeColor: widget.tarifaXDia.color,
+                                    title: "Aplicar en todos los dias",
+                                    description: "",
+                                    value: applyAllDays,
+                                    onChanged: (value) => setState(() {
+                                      applyAllDays = value!;
+                                      applyAllTariff = false;
+                                      applyAllNoTariff = false;
+                                    }),
+                                  ),
+                                if (widget.isAppling)
+                                  CustomWidgets.checkBoxWithDescription(
+                                    context,
+                                    activeColor: widget.tarifaXDia.color,
+                                    title: "Aplicar en ambas categorias",
+                                    description:
+                                        "(Vista Reserva, Vista Parcial al mar)",
+                                    value: applyAllCategory,
+                                    onChanged: (value) => setState(() {
+                                      applyAllCategory = value!;
+                                    }),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          StatefulBuilder(builder: (context, snapshot) {
+                            return SizedBox(
+                              width: 225,
+                              child: Column(
+                                children: [
+                                  CustomWidgets.itemListCount(
+                                      nameItem:
+                                          "Adultos x${habitacionProvider.adultos}:",
+                                      count: tariffAdult,
+                                      context: context,
+                                      height: 40),
+                                  CustomWidgets.itemListCount(
+                                      nameItem:
+                                          "Menores de 7 a 12 x${habitacionProvider.menores7a12}:",
+                                      count: tariffChildren,
+                                      context: context,
+                                      height: 40),
+                                  CustomWidgets.itemListCount(
+                                      nameItem:
+                                          "Menores de 0 a 6 x${habitacionProvider.menores0a6}:",
+                                      count: 0,
+                                      context: context,
+                                      height: 40),
+                                  Divider(
+                                      color: Theme.of(context).primaryColor),
+                                  const SizedBox(height: 5),
+                                  CustomWidgets.itemListCount(
+                                      nameItem: "Total:",
+                                      count: tariffAdult + tariffChildren,
+                                      context: context,
+                                      height: 40),
+                                  CustomWidgets.itemListCount(
+                                      nameItem:
+                                          "Descuento (${(getSeasonSelect() != null) ? getSeasonSelect()?.porcentajePromocion ?? 0 : _descuentoController.text}%):",
+                                      count: -(calculateDiscount(
+                                                  tariffAdult + tariffChildren))
+                                              .round() +
+                                          0.0,
+                                      context: context,
+                                      height: 40),
+                                  Divider(
+                                      color: Theme.of(context).primaryColor),
+                                  const SizedBox(height: 5),
+                                  CustomWidgets.itemListCount(
+                                      nameItem: "Total del dia(s):",
+                                      count: ((tariffChildren + tariffAdult) -
+                                                  (calculateDiscount(
+                                                      tariffAdult +
+                                                          tariffChildren)))
+                                              .round() +
+                                          0.0,
+                                      context: context,
+                                      height: 40),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -571,7 +712,7 @@ class _ManagerTariffDayWidgetState
     if (getSeasonSelect() != null) {
       discount = (total * 0.01) * getSeasonSelect()!.porcentajePromocion!;
     } else {
-      if (isUnknow) {
+      if (isUnknow || isFreeTariff) {
         discount = (total * 0.01) *
             double.parse(_descuentoController.text.isEmpty
                 ? '0'
@@ -612,10 +753,6 @@ class _ManagerTariffDayWidgetState
       if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
           double.parse(_tarifaPaxAdicionalController.text)) return true;
     }
-
-    // if (applyAllDays) return true;
-    // if (applyAllNoTariff) return true;
-    // if (applyAllTariff) return true;
 
     return withChanges;
   }
