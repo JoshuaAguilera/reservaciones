@@ -27,11 +27,12 @@ class TextStyles {
       Color? color,
       TextOverflow overflow = TextOverflow.ellipsis}) {
     return TextStyle(
-        fontFamily: "poppins_regular",
-        color: color ?? DesktopColors.prussianBlue,
-        fontSize: size,
-        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        overflow: overClip ? TextOverflow.clip : overflow, );
+      fontFamily: "poppins_regular",
+      color: color ?? DesktopColors.prussianBlue,
+      fontSize: size,
+      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+      overflow: overClip ? TextOverflow.clip : overflow,
+    );
   }
 
   static Text buttonText(
@@ -69,8 +70,12 @@ class TextStyles {
     );
   }
 
-  static Text errorText(
-      {String text = "", TextAlign aling = TextAlign.left, double size = 10}) {
+  static Text errorText({
+    String text = "",
+    TextAlign aling = TextAlign.left,
+    double size = 10,
+    TextOverflow? overflow,
+  }) {
     return Text(
       text,
       textAlign: aling,
@@ -78,6 +83,7 @@ class TextStyles {
         fontFamily: "poppins_regular",
         color: Colors.red[800],
         fontSize: size,
+        overflow: overflow,
       ),
     );
   }

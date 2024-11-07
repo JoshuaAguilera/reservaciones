@@ -1104,7 +1104,7 @@ class Utility {
     for (var element in nowRegister.temporadas!) {
       if (totalDays == element.estanciaMinima ||
           totalDays > element.estanciaMinima!) {
-        nowSeason = element;
+        nowSeason = element.copyWith();
       }
     }
 

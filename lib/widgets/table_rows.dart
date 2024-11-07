@@ -45,7 +45,12 @@ class TableRows {
     void showDialogManagerTariff() {
       showDialog(
         context: context,
-        builder: (context) => ManagerTariffDayWidget(tarifaXDia: tarifaXDia),
+        builder: (context) => ManagerTariffDayWidget(
+          tarifaXDia: tarifaXDia,
+          numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
+              .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
+              .inDays,
+        ),
       ).then(
         (value) {
           if (value != null) {

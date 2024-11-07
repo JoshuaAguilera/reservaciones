@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 
 import '../providers/habitacion_provider.dart';
 import '../ui/custom_widgets.dart';
@@ -17,10 +19,14 @@ import 'textformfield_custom.dart';
 
 class ManagerTariffDayWidget extends ConsumerStatefulWidget {
   const ManagerTariffDayWidget(
-      {super.key, required this.tarifaXDia, this.isAppling = false});
+      {super.key,
+      required this.tarifaXDia,
+      this.isAppling = false,
+      required this.numDays});
 
   final TarifaXDia tarifaXDia;
   final bool isAppling;
+  final int numDays;
 
   @override
   _ManagerTariffDayWidgetState createState() => _ManagerTariffDayWidgetState();
@@ -28,13 +34,14 @@ class ManagerTariffDayWidget extends ConsumerStatefulWidget {
 
 class _ManagerTariffDayWidgetState
     extends ConsumerState<ManagerTariffDayWidget> {
-  String tarifaSelect = "Mayo - Abril";
+  String temporadaSelect = "Mayo - Abril";
   bool applyAllTariff = false;
   bool applyAllDays = false;
   bool applyAllNoTariff = false;
   bool applyAllCategory = false;
   bool isUnknow = false;
   bool isFreeTariff = false;
+  bool showErrorTariff = false;
   final _formKeyTariffDay = GlobalKey<FormState>();
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   String selectCategory = "VISTA A LA RESERVA";
@@ -59,7 +66,7 @@ class _ManagerTariffDayWidgetState
         (widget.tarifaXDia.descuentoProvisional ?? 0).toString();
     isUnknow = widget.tarifaXDia.code!.contains("Unknow");
     isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
-    tarifaSelect = widget.tarifaXDia.temporadaSelect?.nombre ?? 'No aplicar';
+    temporadaSelect = widget.tarifaXDia.temporadaSelect?.nombre ?? 'No aplicar';
     promociones.add("No aplicar");
 
     if (widget.tarifaXDia.tarifa != null) {
@@ -73,6 +80,15 @@ class _ManagerTariffDayWidgetState
           widget.tarifaXDia.tarifa!.tarifaMenores7a12!.toString();
       _tarifaPaxAdicionalController.text =
           widget.tarifaXDia.tarifa!.tarifaPaxAdicional.toString();
+    }
+
+    if (!isUnknow & !isFreeTariff) {
+      TarifaData? detectTarifa = widget.tarifaXDia.tarifas!
+          .where((element) =>
+              element.categoria != widget.tarifaXDia.tarifa!.categoria)
+          .toList()
+          .firstOrNull;
+      if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
     }
 
     if (widget.tarifaXDia.temporadas != null) {
@@ -103,6 +119,7 @@ class _ManagerTariffDayWidgetState
 
     return AlertDialog(
       elevation: 15,
+      actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -134,7 +151,7 @@ class _ManagerTariffDayWidgetState
         ],
       ),
       content: SizedBox(
-        height: 620,
+        height: 625,
         child: Form(
           key: _formKeyTariffDay,
           child: SingleChildScrollView(
@@ -157,9 +174,9 @@ class _ManagerTariffDayWidgetState
                     if (widget.tarifaXDia.temporadas != null &&
                         widget.tarifaXDia.temporadas!.isNotEmpty)
                       CustomDropdown.dropdownMenuCustom(
-                        initialSelection: tarifaSelect,
+                        initialSelection: temporadaSelect,
                         onSelected: (String? value) =>
-                            setState(() => tarifaSelect = value!),
+                            setState(() => temporadaSelect = value!),
                         elements: promociones,
                         screenWidth: 500,
                         excepcionItem: "No aplicar",
@@ -210,41 +227,57 @@ class _ManagerTariffDayWidgetState
                                     if (selectCategory == categorias[index])
                                       return;
 
+                                    TarifaData? selectTariff = (isFreeTariff &&
+                                            isUnknow)
+                                        ? null
+                                        : widget.tarifaXDia.tarifas
+                                            ?.firstWhere(
+                                              (element) =>
+                                                  element.categoria ==
+                                                  tipoHabitacion[categorias
+                                                      .indexOf(selectCategory)],
+                                            )
+                                            .copyWith();
+
                                     TarifaData saveIntTariff = TarifaData(
-                                      categoria: selectCategory,
-                                      code:
+                                      categoria: tipoHabitacion[
+                                          categorias.indexOf(selectCategory)],
+                                      code: selectTariff?.code ??
                                           "${widget.tarifaXDia.code} - $selectCategory",
-                                      fecha: DateTime.now(),
-                                      id: categorias.indexOf(selectCategory),
+                                      fecha:
+                                          selectTariff?.fecha ?? DateTime.now(),
+                                      id: selectTariff?.id ??
+                                          categorias.indexOf(selectCategory),
                                       tarifaAdultoSGLoDBL:
                                           _tarifaAdultoController.text.isEmpty
-                                              ? null
+                                              ? selectTariff
+                                                  ?.tarifaAdultoSGLoDBL
                                               : double.parse(
                                                   _tarifaAdultoController.text),
                                       tarifaAdultoTPL:
                                           _tarifaAdultoTPLController
                                                   .text.isEmpty
-                                              ? null
+                                              ? selectTariff?.tarifaAdultoTPL
                                               : double.parse(
                                                   _tarifaAdultoTPLController
                                                       .text),
                                       tarifaAdultoCPLE:
                                           _tarifaAdultoCPLController
                                                   .text.isEmpty
-                                              ? null
+                                              ? selectTariff?.tarifaAdultoCPLE
                                               : double.parse(
                                                   _tarifaAdultoCPLController
                                                       .text),
                                       tarifaPaxAdicional:
                                           _tarifaPaxAdicionalController
                                                   .text.isEmpty
-                                              ? null
+                                              ? selectTariff?.tarifaPaxAdicional
                                               : double.parse(
                                                   _tarifaPaxAdicionalController
                                                       .text),
                                       tarifaMenores7a12:
                                           _tarifaMenoresController.text.isEmpty
-                                              ? null
+                                              ? selectTariff?.tarifaMenores7a12
                                               : double.parse(
                                                   _tarifaMenoresController
                                                       .text),
@@ -267,6 +300,7 @@ class _ManagerTariffDayWidgetState
                                             .toString();
 
                                     saveTariff = saveIntTariff.copyWith();
+                                    showErrorTariff = false;
 
                                     setState(() =>
                                         selectCategory = categorias[index]);
@@ -389,7 +423,8 @@ class _ManagerTariffDayWidgetState
                                 if (isValidForApplyNotTariff(
                                         habitacionProvider) &&
                                     !widget.isAppling &&
-                                    !isFreeTariff)
+                                    !isFreeTariff &&
+                                    widget.numDays > 1)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
                                     activeColor: widget.tarifaXDia.color,
@@ -405,7 +440,8 @@ class _ManagerTariffDayWidgetState
                                   ),
                                 if (!isUnknow &&
                                     !widget.isAppling &&
-                                    !isFreeTariff)
+                                    !isFreeTariff &&
+                                    widget.numDays > 1)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
                                     activeColor: widget.tarifaXDia.color,
@@ -419,7 +455,7 @@ class _ManagerTariffDayWidgetState
                                       applyAllDays = false;
                                     }),
                                   ),
-                                if (!widget.isAppling)
+                                if (!widget.isAppling && widget.numDays > 1)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
                                     activeColor: widget.tarifaXDia.color,
@@ -432,7 +468,7 @@ class _ManagerTariffDayWidgetState
                                       applyAllNoTariff = false;
                                     }),
                                   ),
-                                if (widget.isAppling)
+                                if (widget.isAppling || isUnknow)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
                                     activeColor: widget.tarifaXDia.color,
@@ -442,6 +478,7 @@ class _ManagerTariffDayWidgetState
                                     value: applyAllCategory,
                                     onChanged: (value) => setState(() {
                                       applyAllCategory = value!;
+                                      showErrorTariff = false;
                                     }),
                                   ),
                               ],
@@ -510,6 +547,22 @@ class _ManagerTariffDayWidgetState
                     ],
                   ),
                 ),
+                if (showErrorTariff)
+                  Center(
+                    child: Card(
+                      color: Colors.red[900],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextStyles.standardText(
+                          text:
+                              "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*",
+                          size: 10,
+                          color: Colors.white,
+                          aling: TextAlign.center,
+                        ),
+                      ),
+                    ).animate().flip(delay: 100.ms),
+                  ),
               ],
             ),
           ),
@@ -542,20 +595,91 @@ class _ManagerTariffDayWidgetState
                 return;
               }
 
+              if (revisedPropiertiesSaveTariff() && !applyAllCategory) {
+                setState(() => showErrorTariff = true);
+                return;
+              } else {
+                setState(() => showErrorTariff = false);
+              }
+
               TarifaData? newTarifa = widget.tarifaXDia.tarifa;
 
-              widget.tarifaXDia.tarifa = TarifaData(
-                id: newTarifa?.id ?? 0,
-                code: newTarifa?.code ?? widget.tarifaXDia.code ?? '',
-                categoria: newTarifa?.categoria ?? widget.tarifaXDia.categoria,
-                fecha: newTarifa?.fecha ?? DateTime.now(),
-                tarifaAdultoSGLoDBL: double.parse(_tarifaAdultoController.text),
-                tarifaAdultoTPL: double.parse(_tarifaAdultoTPLController.text),
-                tarifaAdultoCPLE: double.parse(_tarifaAdultoCPLController.text),
-                tarifaMenores7a12: double.parse(_tarifaMenoresController.text),
-                tarifaPaxAdicional:
-                    double.parse(_tarifaPaxAdicionalController.text),
-              );
+              if (widget.tarifaXDia.tarifa != null &&
+                  saveTariff!.categoria ==
+                      widget.tarifaXDia.tarifa!.categoria) {
+                widget.tarifaXDia.tarifa = saveTariff;
+
+                TarifaData? secondTariff = TarifaData(
+                  id: newTarifa?.id ?? 0,
+                  code: newTarifa?.code ?? '',
+                  categoria: newTarifa?.categoria,
+                  fecha: newTarifa?.fecha ?? DateTime.now(),
+                  tarifaAdultoSGLoDBL:
+                      double.parse(_tarifaAdultoController.text),
+                  tarifaAdultoTPL:
+                      double.parse(_tarifaAdultoTPLController.text),
+                  tarifaAdultoCPLE:
+                      double.parse(_tarifaAdultoCPLController.text),
+                  tarifaMenores7a12:
+                      double.parse(_tarifaMenoresController.text),
+                  tarifaPaxAdicional:
+                      double.parse(_tarifaPaxAdicionalController.text),
+                );
+
+                int indexSecondTariff = widget.tarifaXDia.tarifas!.indexWhere(
+                    (element) => element.categoria == secondTariff.categoria);
+
+                if (indexSecondTariff != -1) {
+                  widget.tarifaXDia.tarifas![indexSecondTariff] = secondTariff;
+                }
+              } else if (widget.tarifaXDia.tarifa != null) {
+                widget.tarifaXDia.tarifa = TarifaData(
+                  id: newTarifa?.id ?? 0,
+                  code: newTarifa?.code ?? widget.tarifaXDia.code ?? '',
+                  categoria:
+                      newTarifa?.categoria ?? widget.tarifaXDia.categoria,
+                  fecha: newTarifa?.fecha ?? DateTime.now(),
+                  tarifaAdultoSGLoDBL:
+                      double.parse(_tarifaAdultoController.text),
+                  tarifaAdultoTPL:
+                      double.parse(_tarifaAdultoTPLController.text),
+                  tarifaAdultoCPLE:
+                      double.parse(_tarifaAdultoCPLController.text),
+                  tarifaMenores7a12:
+                      double.parse(_tarifaMenoresController.text),
+                  tarifaPaxAdicional:
+                      double.parse(_tarifaPaxAdicionalController.text),
+                );
+
+                int indexSecondTariff = widget.tarifaXDia.tarifas!.indexWhere(
+                    (element) => element.categoria == saveTariff?.categoria);
+
+                if (indexSecondTariff != -1) {
+                  widget.tarifaXDia.tarifas![indexSecondTariff] = saveTariff!;
+                }
+              }
+
+              //Pendiente Dar soporte para la modalidad dual a los unknow y freeTariffs
+
+              if (widget.tarifaXDia.tarifa == null) {
+                TarifaData newTariff = TarifaData(
+                  id: newTarifa?.id ?? 0,
+                  code: newTarifa?.code ?? '',
+                  categoria: newTarifa?.categoria ??
+                      tipoHabitacion[categorias.indexOf(selectCategory)],
+                  fecha: newTarifa?.fecha ?? DateTime.now(),
+                  tarifaAdultoSGLoDBL:
+                      double.parse(_tarifaAdultoController.text),
+                  tarifaAdultoTPL:
+                      double.parse(_tarifaAdultoTPLController.text),
+                  tarifaAdultoCPLE:
+                      double.parse(_tarifaAdultoCPLController.text),
+                  tarifaMenores7a12:
+                      double.parse(_tarifaMenoresController.text),
+                  tarifaPaxAdicional:
+                      double.parse(_tarifaPaxAdicionalController.text),
+                );
+              }
 
               widget.tarifaXDia.temporadaSelect = getSeasonSelect();
 
@@ -570,6 +694,7 @@ class _ManagerTariffDayWidgetState
                     element.tarifa = widget.tarifaXDia.tarifa;
                     element.subCode = null;
                     element.temporadaSelect = getSeasonSelect();
+                    element.tarifas = widget.tarifaXDia.tarifas;
                   }
                 }
               }
@@ -699,7 +824,7 @@ class _ManagerTariffDayWidgetState
   TemporadaData? getSeasonSelect() {
     if (widget.tarifaXDia.temporadas != null) {
       return widget.tarifaXDia.temporadas!
-          .where((element) => element.nombre == tarifaSelect)
+          .where((element) => element.nombre == temporadaSelect)
           .firstOrNull;
     } else {
       return null;
@@ -726,7 +851,7 @@ class _ManagerTariffDayWidgetState
   bool isSameSeason() {
     bool isSame = false;
     if (widget.tarifaXDia.temporadaSelect != null) {
-      isSame = widget.tarifaXDia.temporadaSelect!.nombre == tarifaSelect;
+      isSame = widget.tarifaXDia.temporadaSelect!.nombre == temporadaSelect;
     }
 
     if (isUnknow) {
@@ -741,7 +866,9 @@ class _ManagerTariffDayWidgetState
     bool withChanges = false;
 
     if (!isSameSeason()) return true;
-    if (widget.tarifaXDia.tarifa != null) {
+    if (widget.tarifaXDia.tarifa != null &&
+        widget.tarifaXDia.tarifa!.categoria ==
+            tipoHabitacion[categorias.indexOf(selectCategory)]) {
       if (widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL !=
           double.parse(_tarifaAdultoController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaAdultoTPL !=
@@ -751,6 +878,59 @@ class _ManagerTariffDayWidgetState
       if (widget.tarifaXDia.tarifa!.tarifaMenores7a12 !=
           double.parse(_tarifaMenoresController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
+          double.parse(_tarifaPaxAdicionalController.text)) return true;
+
+      if (widget.tarifaXDia.tarifas == null) return false;
+      TarifaData? secondTariff = widget.tarifaXDia.tarifas
+          ?.firstWhere((element) => element.categoria == saveTariff!.categoria);
+      if (secondTariff == null) return false;
+
+      if (secondTariff.tarifaAdultoSGLoDBL != saveTariff!.tarifaAdultoSGLoDBL) {
+        return true;
+      }
+      if (secondTariff.tarifaAdultoTPL != saveTariff!.tarifaAdultoTPL) {
+        return true;
+      }
+      if (secondTariff.tarifaAdultoCPLE != saveTariff!.tarifaAdultoCPLE) {
+        return true;
+      }
+      if (secondTariff.tarifaMenores7a12 != saveTariff!.tarifaMenores7a12) {
+        return true;
+      }
+      if (secondTariff.tarifaPaxAdicional != saveTariff!.tarifaPaxAdicional) {
+        return true;
+      }
+    } else if (saveTariff != null &&
+        widget.tarifaXDia.tarifa != null &&
+        widget.tarifaXDia.tarifa!.categoria !=
+            tipoHabitacion[categorias.indexOf(selectCategory)]) {
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL !=
+          saveTariff!.tarifaAdultoSGLoDBL) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoTPL !=
+          saveTariff!.tarifaAdultoTPL) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaAdultoCPLE !=
+          saveTariff!.tarifaAdultoCPLE) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaMenores7a12 !=
+          saveTariff!.tarifaMenores7a12) return true;
+      if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
+          saveTariff!.tarifaPaxAdicional) return true;
+
+      if (widget.tarifaXDia.tarifas == null) return false;
+      TarifaData? secondTariff = widget.tarifaXDia.tarifas?.firstWhere(
+          (element) =>
+              element.categoria ==
+              tipoHabitacion[categorias.indexOf(selectCategory)]);
+      if (secondTariff == null) return false;
+
+      if (secondTariff.tarifaAdultoSGLoDBL !=
+          double.parse(_tarifaAdultoController.text)) return true;
+      if (secondTariff.tarifaAdultoTPL !=
+          double.parse(_tarifaAdultoTPLController.text)) return true;
+      if (secondTariff.tarifaAdultoCPLE !=
+          double.parse(_tarifaAdultoCPLController.text)) return true;
+      if (secondTariff.tarifaMenores7a12 !=
+          double.parse(_tarifaMenoresController.text)) return true;
+      if (secondTariff.tarifaPaxAdicional !=
           double.parse(_tarifaPaxAdicionalController.text)) return true;
     }
 
@@ -776,6 +956,16 @@ class _ManagerTariffDayWidgetState
     if (promocionesNoValidas.isEmpty) return null;
 
     return promocionesNoValidas;
+  }
+
+  bool revisedPropiertiesSaveTariff() {
+    if (saveTariff?.tarifaAdultoSGLoDBL == null) return true;
+    if (saveTariff?.tarifaAdultoTPL == null) return true;
+    if (saveTariff?.tarifaAdultoCPLE == null) return true;
+    if (saveTariff?.tarifaPaxAdicional == null) return true;
+    if (saveTariff?.tarifaMenores7a12 == null) return true;
+
+    return false;
   }
 
   bool isValidForApplyNotTariff(Habitacion habitacion) {

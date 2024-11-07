@@ -515,6 +515,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                 ManagerTariffDayWidget(
                                               tarifaXDia: tarifaLibre,
                                               isAppling: true,
+                                              numDays: DateTime.parse(
+                                                      habitacionProvider
+                                                              .fechaCheckOut ??
+                                                          '')
+                                                  .difference(DateTime.parse(
+                                                      habitacionProvider
+                                                              .fechaCheckIn ??
+                                                          ''))
+                                                  .inDays,
                                             ),
                                           ).then(
                                             (value) {
@@ -808,17 +817,30 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           TarifaXDia(
             dia: ink,
             fecha: dateNow,
-            color: newTariff.color,
-            nombreTarif: newTariff.nombre,
+            color: newTariff.copyWith().color,
+            nombreTarif: newTariff.copyWith().nombre,
             categoria: habitacion.categoria,
-            code: newTariff.code,
-            id: newTariff.id,
-            periodo: Utility.getPeriodNow(dateNow, newTariff.periodos),
-            tarifa: newTariff.tarifas!.firstWhere(
-                (element) => element.categoria == habitacion.categoria),
-            temporadaSelect: Utility.getSeasonNow(newTariff, days),
-            temporadas: newTariff.temporadas,
-            tarifas: newTariff.tarifas,
+            code: newTariff.copyWith().code,
+            id: newTariff.copyWith().id,
+            periodo:
+                Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
+            tarifa: newTariff
+                .copyWith()
+                .tarifas!
+                .firstWhere(
+                    (element) => element.categoria == habitacion.categoria)
+                .copyWith(),
+            temporadaSelect: Utility.getSeasonNow(newTariff.copyWith(), days),
+            temporadas: newTariff
+                .copyWith()
+                .temporadas
+                ?.map((element) => element.copyWith())
+                .toList(),
+            tarifas: newTariff
+                .copyWith()
+                .tarifas
+                ?.map((element) => element.copyWith())
+                .toList(),
           ),
         );
       }

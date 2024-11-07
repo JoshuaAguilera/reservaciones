@@ -33,8 +33,12 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
   void showDialogEditQuote() {
     showDialog(
       context: context,
-      builder: (context) =>
-          ManagerTariffDayWidget(tarifaXDia: widget.tarifaXDia),
+      builder: (context) => ManagerTariffDayWidget(
+        tarifaXDia: widget.tarifaXDia,
+        numDays: DateTime.parse(widget.habitacion.fechaCheckOut ?? '')
+            .difference(DateTime.parse(widget.habitacion.fechaCheckIn ?? ''))
+            .inDays,
+      ),
     ).then(
       (value) {
         if (value != null) {
@@ -66,6 +70,11 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
+    Color colorTariff = widget.tarifaXDia.subCode == null
+        ? widget.tarifaXDia.color ?? DesktopColors.cerulean
+        : Utility.darken(
+            widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2);
+
     return Card(
       elevation: 5,
       color: Theme.of(context).primaryColorDark,
@@ -78,7 +87,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
             subtitle: "DIA",
             sizeTitle: 22,
             colorsubTitle: Theme.of(context).dividerColor,
-            colorTitle: widget.tarifaXDia.color ?? DesktopColors.cerulean,
+            colorTitle: colorTariff,
           ),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 5),
@@ -173,9 +182,8 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   child: Buttons.commonButton(
                     onPressed: () => showDialogEditQuote(),
                     text: "Editar",
-                    color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
-                    colorText: useWhiteForeground(
-                            widget.tarifaXDia.color ?? DesktopColors.cerulean)
+                    color: colorTariff,
+                    colorText: useWhiteForeground(colorTariff)
                         ? Colors.white
                         : const Color.fromARGB(255, 43, 43, 43),
                   ),
@@ -186,7 +194,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   icon: Icon(
                     CupertinoIcons.pencil,
                     size: 30,
-                    color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
+                    color: colorTariff,
                   ),
                 ),
         ),

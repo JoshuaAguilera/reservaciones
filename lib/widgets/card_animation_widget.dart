@@ -389,7 +389,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
                   child: Buttons.commonButton(
-                    onPressed: () => showDialogEditQuote(),
+                    onPressed: () => showDialogEditQuote(habitacion),
                     text: "Cambiar",
                     sizeText: 11.5,
                     isBold: true,
@@ -421,7 +421,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 Tooltip(
                   message: "Cambiar",
                   child: IconButton(
-                    onPressed: () => showDialogEditQuote(),
+                    onPressed: () => showDialogEditQuote(habitacion),
                     icon: Icon(
                       Icons.mode_edit_outline_outlined,
                       color: useWhiteForeground(
@@ -438,15 +438,19 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  void showDialogEditQuote() {
+  void showDialogEditQuote(Habitacion habitacion) {
     setState(() {
       flipCard.cancel;
       _isEditing = true;
     });
     showDialog(
       context: context,
-      builder: (context) =>
-          ManagerTariffDayWidget(tarifaXDia: widget.tarifaXDia),
+      builder: (context) => ManagerTariffDayWidget(
+        tarifaXDia: widget.tarifaXDia,
+        numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
+            .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
+            .inDays,
+      ),
     ).then(
       (value) {
         if (mounted) {
