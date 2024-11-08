@@ -477,7 +477,7 @@ class _SummaryControllerWidgetState
                                         for (var element in tarifasFiltradas)
                                           CustomWidgets.itemListCount(
                                             nameItem:
-                                                "${element.numDays}x ${element.temporadaSelect?.nombre ?? 'No definida'} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
+                                                "${element.numDays}x ${element.temporadaSelect?.nombre ?? 'No definido'} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
                                             subTitle: element.subCode != null
                                                 ? '(Mod)'
                                                 : '',

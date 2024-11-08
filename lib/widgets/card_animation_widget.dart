@@ -50,7 +50,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     nowRegister = widget.tarifaXDia.tarifa == null
         ? null
         : RegistroTarifa(
-            tarifas: [widget.tarifaXDia.tarifa!],
+            tarifas: (widget.tarifaXDia.tarifas != null ||
+                    widget.tarifaXDia.tarifas!.isNotEmpty)
+                ? widget.tarifaXDia.tarifas
+                : [widget.tarifaXDia.tarifa!],
             temporadas: (widget.tarifaXDia.temporadaSelect != null
                 ? [widget.tarifaXDia.temporadaSelect!]
                 : []),
@@ -469,7 +472,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         nowRegister = widget.tarifaXDia.tarifa == null
             ? null
             : RegistroTarifa(
-                tarifas: [widget.tarifaXDia.tarifa!],
+                tarifas: (widget.tarifaXDia.tarifas != null ||
+                        widget.tarifaXDia.tarifas!.isNotEmpty)
+                    ? widget.tarifaXDia.tarifas
+                    : [widget.tarifaXDia.tarifa!],
                 temporadas: widget.tarifaXDia.temporadaSelect != null
                     ? [widget.tarifaXDia.temporadaSelect!]
                     : []);

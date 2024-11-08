@@ -225,6 +225,10 @@ class TarifasProvisionalesProvider extends StateNotifier<List<TarifaData>> {
       state = [...state.where((element) => element.categoria != categoria)];
 
   void clear() => state = [];
+
+  void addAll(List<TarifaData> items) {
+    state = items;
+  }
 }
 
 final descuentoProvisionalProvider = StateProvider<double>((ref) => 0);
