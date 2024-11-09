@@ -86,8 +86,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
               // TextStyles.TextAsociative("Tarifa: ",
               //     Utility.formatterNumber(widget.cotizacion.rateDay),
               //     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
-              TextStyles.TextAsociative(
-                  "Total: ", Utility.formatterNumber(widget.cotizacion.total ?? 0),
+              TextStyles.TextAsociative("Total: ", Utility.formatterNumber(0),
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),

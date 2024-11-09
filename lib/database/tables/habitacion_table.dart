@@ -4,7 +4,6 @@ class Habitacion extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get folioHabitacion => text().nullable()();
   TextColumn get folioCotizacion => text().nullable()();
-  TextColumn get categoria => text().nullable()();
   TextColumn get fechaCheckIn => text().nullable()();
   TextColumn get fechaCheckOut => text().nullable()();
   DateTimeColumn get fecha => dateTime()();
@@ -12,9 +11,6 @@ class Habitacion extends Table {
   IntColumn get menores0a6 => integer().nullable()();
   IntColumn get menores7a12 => integer().nullable()();
   IntColumn get paxAdic => integer().nullable()();
-  RealColumn get total => real().nullable()();
-  RealColumn get totalReal => real().nullable()();
-  RealColumn get descuento => real().nullable()();
   IntColumn get count => integer().nullable()();
   BoolColumn get isFree => boolean().nullable()();
   TextColumn get tarifaXDia => text().nullable()();

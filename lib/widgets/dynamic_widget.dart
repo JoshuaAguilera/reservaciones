@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/widgets/day_info_item_row.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 
 import '../database/database.dart';
 import '../ui/progress_indicator.dart';
@@ -67,8 +66,6 @@ class dynamicWidget {
     List<Widget> cards = [];
     bool isRepeat = false;
     PeriodoData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
-
-    
 
     for (var element in weekNowSegment) {
       if (Utility.defineApplyDays(nowPeriod, element)) {

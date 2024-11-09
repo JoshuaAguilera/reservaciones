@@ -14,21 +14,21 @@ class HabitacionService extends BaseService {
 
       for (var element in resp) {
         habitaciones.add(Habitacion(
-          categoria: element.categoria,
+          // categoria: element.categoria,
           fechaCheckIn: element.fechaCheckIn,
           fechaCheckOut: element.fechaCheckOut,
           fecha: element.fecha.toString(),
           folioHabitacion: element.folioHabitacion,
           adultos: element.adultos,
           count: element.count ?? 1,
-          descuento: element.descuento,
+          // descuento: element.descuento,
           folioCotizacion: element.folioCotizacion,
           isFree: element.isFree ?? false,
           menores0a6: element.menores0a6,
           menores7a12: element.menores7a12,
           tarifaXDia: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
-          total: element.total,
-          totalReal: element.totalReal,
+          // total: element.total,
+          // totalReal: element.totalReal,
           id: element.id,
         ));
       }

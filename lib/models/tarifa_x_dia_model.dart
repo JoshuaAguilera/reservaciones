@@ -50,7 +50,7 @@ class TarifaXDia {
   bool? modificado;
   int? dia;
   DateTime? fecha;
-  String? nombreTarif;
+  String? nombreTariff;
   Color? color;
   TarifaData? tarifa;
   TemporadaData? temporadaSelect;
@@ -68,7 +68,7 @@ class TarifaXDia {
     this.code,
     this.subCode,
     this.descuentoProvisional,
-    this.nombreTarif,
+    this.nombreTariff,
     this.periodo,
     this.tarifa,
     this.temporadaSelect,
@@ -109,7 +109,7 @@ class TarifaXDia {
         dia: dia ?? this.dia,
         fecha: fecha ?? this.fecha,
         modificado: modificado ?? this.modificado,
-        nombreTarif: nombreTarif ?? this.nombreTarif,
+        nombreTariff: nombreTarif ?? this.nombreTariff,
         periodo: periodo ?? this.periodo,
         subCode: subCode ?? this.subCode,
         tarifa: tarifa ?? this.tarifa,
@@ -129,7 +129,7 @@ class TarifaXDia {
       'dia': dia,
       'fecha': fecha != null ? fecha!.toIso8601String() : '',
       'modificado': modificado,
-      'nombreTarif': nombreTarif,
+      'nombreTarif': nombreTariff,
       'periodo': periodo,
       'subCode': subCode,
       'tarifa': tarifa,
@@ -158,7 +158,7 @@ class TarifaXDia {
       dia: json['dia'],
       fecha: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
       modificado: json['modificado'],
-      nombreTarif: json['nombreTarif'],
+      nombreTariff: json['nombreTarif'],
       periodo: json['periodo'] != null
           ? PeriodoData.fromJson(json['periodo'])
           : null,

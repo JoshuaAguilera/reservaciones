@@ -274,8 +274,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       fecha: list[index].fecha.toString(),
                                       folioPrincipal:
                                           list[index].folioPrincipal,
-                                      descuento: list[index].descuento,
-                                      total: list[index].total,
+                                      // descuento: list[index].descuento,
+                                      // total: list[index].total,
                                       habitaciones: respHabitaciones,
                                     );
 

@@ -1001,10 +1001,15 @@ class Utility {
   }
 
   static double calculateTariffAdult(
-      RegistroTarifa? nowRegister, Habitacion habitacion, int totalDays,
-      {bool withDiscount = true,
-      bool onlyDiscount = false,
-      double? descuentoProvisional}) {
+    RegistroTarifa? nowRegister,
+    Habitacion habitacion,
+    int totalDays, {
+    bool withDiscount = true,
+    bool onlyDiscount = false,
+    double? descuentoProvisional,
+    bool onlyTariffVR = false,
+    bool onlyTariffVPM = false,
+  }) {
     double tariffAdult = 0;
 
     if (nowRegister == null) {
@@ -1014,6 +1019,18 @@ class Utility {
     TarifaData? nowTarifa = nowRegister.tarifas!
         .where((element) => element.categoria == habitacion.categoria)
         .firstOrNull;
+
+    if (onlyTariffVR) {
+      nowTarifa = nowRegister.tarifas!
+          .where((element) => element.categoria == tipoHabitacion.first)
+          .firstOrNull;
+    }
+
+    if (onlyTariffVPM) {
+      nowTarifa = nowRegister.tarifas!
+          .where((element) => element.categoria == tipoHabitacion.last)
+          .firstOrNull;
+    }
 
     double descuento = 0;
 
@@ -1057,6 +1074,8 @@ class Utility {
     bool withDiscount = true,
     bool onlyDiscount = false,
     double? descuentoProvisional,
+    bool onlyTariffVR = false,
+    bool onlyTariffVPM = false,
   }) {
     double tariffChildren = 0;
 
@@ -1067,6 +1086,18 @@ class Utility {
     TarifaData? nowTarifa = nowRegister.tarifas!
         .where((element) => element.categoria == habitacion.categoria)
         .firstOrNull;
+
+    if (onlyTariffVR) {
+      nowTarifa = nowRegister.tarifas!
+          .where((element) => element.categoria == tipoHabitacion.first)
+          .firstOrNull;
+    }
+
+    if (onlyTariffVPM) {
+      nowTarifa = nowRegister.tarifas!
+          .where((element) => element.categoria == tipoHabitacion.last)
+          .firstOrNull;
+    }
 
     tariffChildren =
         (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
@@ -1244,37 +1275,218 @@ class Utility {
         habitaciones.where((element) => !element.isFree).toList();
     List<Habitacion> rooms = realRooms;
 
-    if (onlyFirstCategory) {
-      rooms = realRooms
-          .where((element) => element.categoria == tipoHabitacion.first)
-          .toList();
-    }
-
-    if (onlySecoundCategory) {
-      rooms = realRooms
-          .where((element) => element.categoria == tipoHabitacion[1])
-          .toList();
-    }
-
     for (var element in rooms) {
-      if (onlyTotalReal) total += (element.totalReal ?? 0) * element.count;
-      if (onlyDiscount) {
-        total += (element.descuento ?? 0) * element.count;
-        for (var element in habitaciones.where((element) => element.isFree)) {
-          total += (element.total ?? 0) * element.count;
+      if (onlyTotalReal) {
+        double subtotal =
+            ((element.totalRealVR ?? 0) + (element.totalRealVPM ?? 0)) *
+                element.count;
+
+        if (onlyFirstCategory) {
+          subtotal = (element.totalRealVR ?? 0) * element.count;
         }
+
+        if (onlySecoundCategory) {
+          subtotal = (element.totalRealVPM ?? 0) * element.count;
+        }
+
+        total += subtotal;
+      }
+      if (onlyDiscount) {
+        double subtotal =
+            ((element.descuentoVR ?? 0) + (element.descuentoVPM ?? 0)) *
+                element.count;
+
+        if (onlyFirstCategory) {
+          subtotal = (element.descuentoVR ?? 0) * element.count;
+        }
+
+        if (onlySecoundCategory) {
+          subtotal = (element.descuentoVPM ?? 0) * element.count;
+        }
+
+        total += subtotal;
       }
       if (onlyTotal) {
-        total += (element.total ?? 0) * element.count;
-        double desc = 0;
-        for (var element in habitaciones.where((element) => element.isFree)) {
-          desc += (element.total ?? 0) * element.count;
+        double subtotal =
+            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+
+        if (onlyFirstCategory) {
+          subtotal = (element.totalVR ?? 0) * element.count;
         }
 
-        total -= desc;
+        if (onlySecoundCategory) {
+          subtotal = (element.totalVPM ?? 0) * element.count;
+        }
+
+        total += subtotal;
+      }
+    }
+
+    if (onlyDiscount) {
+      for (var element in habitaciones.where((element) => element.isFree)) {
+        double subtotal =
+            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+
+        if (onlyFirstCategory) {
+          subtotal = (element.totalVR ?? 0) * element.count;
+        }
+
+        if (onlySecoundCategory) {
+          subtotal = (element.totalVPM ?? 0) * element.count;
+        }
+
+        total += subtotal;
+      }
+    }
+
+    if (onlyTotal) {
+      double desc = 0;
+      for (var element in habitaciones.where((element) => element.isFree)) {
+        double subtotal =
+            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+
+        if (onlyFirstCategory) {
+          subtotal = (element.totalVR ?? 0) * element.count;
+        }
+
+        if (onlySecoundCategory) {
+          subtotal = (element.totalVPM ?? 0) * element.count;
+        }
+
+        desc += subtotal;
+      }
+
+      total -= desc;
+    }
+
+    return total;
+  }
+
+  static double calculateTariffTotals(
+    List<TarifaXDia> tarifasFiltradas,
+    Habitacion habitacion, {
+    bool onlyAdults = false,
+    bool onlyChildren = false,
+    bool onlyTariffVR = false,
+    bool onlyTariffVPM = false,
+  }) {
+    double total = 0;
+
+    for (var element in tarifasFiltradas) {
+      TarifaData? selectTarifa = element.tarifa;
+
+      if (onlyTariffVR) {
+        selectTarifa = element.tarifas!
+            .firstWhere((element) => element.categoria == tipoHabitacion.first);
+      }
+
+      if (onlyTariffVPM) {
+        selectTarifa = element.tarifas!
+            .firstWhere((element) => element.categoria == tipoHabitacion.last);
+      }
+
+      if (onlyAdults) {
+        switch (habitacion.adultos) {
+          case 1 || 2:
+            total += (selectTarifa?.tarifaAdultoSGLoDBL ?? 0) * element.numDays;
+            break;
+          case 3:
+            total += (selectTarifa?.tarifaAdultoTPL ?? 0) * element.numDays;
+            break;
+          case 4:
+            total += (selectTarifa?.tarifaAdultoCPLE ?? 0) * element.numDays;
+            break;
+          default:
+            total += 0;
+        }
+      }
+
+      if (onlyChildren) {
+        total += ((selectTarifa?.tarifaMenores7a12 ?? 0) * element.numDays) *
+            (habitacion.menores7a12 ?? 0);
       }
     }
 
     return total;
+  }
+
+  static double calculateDiscountTotal(
+    List<TarifaXDia> tarifasFiltradas,
+    Habitacion habitacion,
+    int totalDays, {
+    bool onlyTariffVR = false,
+    bool onlyTariffVPM = false,
+  }) {
+    double discountTotal = 0;
+
+    for (var element in tarifasFiltradas) {
+      discountTotal += calculateDiscountXTariff(
+        element,
+        habitacion,
+        totalDays,
+        onlyTariffVPM: onlyTariffVPM,
+        onlyTariffVR: onlyTariffVR,
+      );
+    }
+
+    return discountTotal;
+  }
+
+  static double calculateDiscountXTariff(
+    TarifaXDia element,
+    Habitacion habitacion,
+    int totalDays, {
+    bool onlyTariffVR = false,
+    bool onlyTariffVPM = false,
+  }) {
+    double discount = 0;
+
+    double totalAdults = Utility.calculateTariffAdult(
+      element.tarifa == null
+          ? null
+          : RegistroTarifa(
+              tarifas: (onlyTariffVR || onlyTariffVPM)
+                  ? element.tarifas
+                  : [element.tarifa!],
+              temporadas: element.temporadas ??
+                  (element.temporadaSelect != null
+                      ? [element.temporadaSelect!]
+                      : []),
+            ),
+      habitacion,
+      totalDays,
+      withDiscount: false,
+      onlyTariffVPM: onlyTariffVPM,
+      onlyTariffVR: onlyTariffVR,
+    );
+    double totalChildren = Utility.calculateTariffChildren(
+      element.tarifa == null
+          ? null
+          : RegistroTarifa(
+              tarifas: (onlyTariffVR || onlyTariffVPM)
+                  ? element.tarifas
+                  : [element.tarifa!],
+              temporadas: element.temporadas ??
+                  (element.temporadaSelect != null
+                      ? [element.temporadaSelect!]
+                      : []),
+            ),
+      habitacion,
+      totalDays,
+      withDiscount: false,
+      onlyTariffVPM: onlyTariffVPM,
+      onlyTariffVR: onlyTariffVR,
+    );
+
+    double total = totalChildren + totalAdults;
+
+    if (element.temporadaSelect != null) {
+      discount =
+          (total * 0.01) * (element.temporadaSelect?.porcentajePromocion ?? 0);
+    } else {
+      discount = (total * 0.01) * (element.descuentoProvisional ?? 0);
+    }
+
+    return (discount.round() * element.numDays) + 0.0;
   }
 }

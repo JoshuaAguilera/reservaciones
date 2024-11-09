@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
@@ -152,16 +153,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
 
-    Color? colorCard = widget.habitacion.isFree
-        ? Colors.green[200]
-        : widget.habitacion.categoria == tipoHabitacion.first
-            ? DesktopColors.vistaReserva
-            : DesktopColors.vistaParcialMar;
-    Color? colorText = widget.habitacion.isFree
-        ? Colors.black87
-        : widget.habitacion.categoria == tipoHabitacion.first
-            ? Colors.white
-            : Colors.white;
+    Color? colorCard = DesktopColors.grisSemiPalido;
+    Color? colorText = Colors.white;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
@@ -272,19 +265,19 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       ),
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            widget.habitacion.totalReal ?? 0),
+                        text:
+                            "VR: ${Utility.formatterNumber(widget.habitacion.totalRealVR ?? 0)}\nVPM: ${Utility.formatterNumber(widget.habitacion.totalRealVPM ?? 0)}",
                         aling: TextAlign.center,
                         color: colorText,
-                        size: 12,
+                        size: 11,
                       ),
                     if (screenWidthWithSideBar > 1550)
                       TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            widget.habitacion.total ?? 0),
+                        text:
+                            "VR: ${Utility.formatterNumber(widget.habitacion.totalVR ?? 0)}\nVPM: ${Utility.formatterNumber(widget.habitacion.totalVPM ?? 0)}",
                         aling: TextAlign.center,
                         color: colorText,
-                        size: 12,
+                        size: 11,
                       ),
                     if (!widget.esDetalle && !widget.habitacion.isFree)
                       Wrap(
@@ -378,10 +371,8 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
 
-    Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.vistaReserva
-        : DesktopColors.vistaParcialMar;
-    Color colorText = Colors.white;
+    Color? colorCard = DesktopColors.grisSemiPalido;
+    Color? colorText = Colors.white;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
@@ -452,21 +443,26 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               //"${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
               color: colorText,
             ),
+            // TextStyles.TextAsociative(
+            //   "Tarifa real: ",
+            //   Utility.formatterNumber(widget.habitacion.totalRealVR ?? 0),
+            //   color: colorText,
+            // ),
+            // TextStyles.TextAsociative(
+            //   (screenWidthWithSideBar < 1100)
+            //       ? "Tarifa desc: "
+            //       : "Tarifa descontada: ",
+            //   Utility.formatterNumber(-(widget.habitacion.descuentoVR ?? 0)),
+            //   color: colorText,
+            // ),
             TextStyles.TextAsociative(
-              "Tarifa real: ",
-              Utility.formatterNumber(widget.habitacion.totalReal ?? 0),
+              "Tarifa Vista Reserva: ",
+              Utility.formatterNumber(widget.habitacion.totalVR ?? 0),
               color: colorText,
             ),
             TextStyles.TextAsociative(
-              (screenWidthWithSideBar < 1100)
-                  ? "Tarifa desc: "
-                  : "Tarifa descontada: ",
-              Utility.formatterNumber(-(widget.habitacion.descuento ?? 0)),
-              color: colorText,
-            ),
-            TextStyles.TextAsociative(
-              "Tarifa total: ",
-              Utility.formatterNumber(widget.habitacion.total ?? 0),
+              "Tarifa Vista Parcial Mar: ",
+              Utility.formatterNumber(widget.habitacion.totalVPM ?? 0),
               color: colorText,
             ),
             Wrap(

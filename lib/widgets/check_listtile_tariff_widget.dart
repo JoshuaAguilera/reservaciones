@@ -104,7 +104,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                 if (screenWidth > 925)
                   TextStyles.TextAsociative(
                     "Tarifa aplicada:  ",
-                    widget.tarifaXDia.nombreTarif ?? '',
+                    widget.tarifaXDia.nombreTariff ?? '',
                     color: Theme.of(context).primaryColor,
                     size: 12,
                   ),

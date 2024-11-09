@@ -9,9 +9,6 @@ class Cotizacion extends Table {
   // TextColumn get tipo => text().nullable()();
   DateTimeColumn get fecha => dateTime()();
   IntColumn get usuarioID => integer().nullable()();
-  RealColumn get total => real().nullable()();
-  RealColumn get totalReal => real().nullable()();
-  RealColumn get descuento => real().nullable()();
   BoolColumn get esGrupo => boolean().nullable()();
   BoolColumn get esConcretado => boolean().nullable()();
   TextColumn get habitaciones => text().nullable()();

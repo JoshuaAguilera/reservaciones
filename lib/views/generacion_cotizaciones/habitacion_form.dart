@@ -55,7 +55,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     color: DesktopColors.turquezaOscure,
     descuentoProvisional: 0,
     code: "tariffFree",
-    nombreTarif: "Tarifa Libre",
+    nombreTariff: "Tarifa Libre",
   );
 
   final List<bool> _selectedModeRange = <bool>[
@@ -174,7 +174,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                               WrapCrossAlignment.center,
                                           children: [
                                             TextStyles.standardText(
-                                              text: "Categoría:",
+                                              text: "Ver categoría:",
                                               overClip: true,
                                               color: Theme.of(context)
                                                   .primaryColor,
@@ -781,7 +781,23 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
 
         if (applyFreeTariff) {
-          TarifaXDia newTarifaLibre = tarifaLibre.copyWith();
+          TarifaXDia newTarifaLibre = TarifaXDia(
+            code: tarifaLibre.code,
+            color: tarifaLibre.color,
+            descuentoProvisional: tarifaLibre.descuentoProvisional,
+            modificado: tarifaLibre.modificado,
+            nombreTariff: tarifaLibre.nombreTariff,
+            numDays: tarifaLibre.numDays,
+            periodo: tarifaLibre.periodo?.copyWith(),
+            subCode: tarifaLibre.subCode,
+            tarifa: tarifaLibre.tarifa?.copyWith(),
+            tarifas: tarifaLibre.tarifas
+                ?.map((element) => element.copyWith())
+                .toList(),
+            temporadaSelect: tarifaLibre.temporadaSelect?.copyWith(),
+            temporadas: tarifaLibre.temporadas
+              ?..map((element) => element.copyWith()).toList(),
+          );
           newTarifaLibre.dia = ink;
           newTarifaLibre.fecha = dateNow;
           newTarifaLibre.categoria = habitacion.categoria!;
@@ -794,7 +810,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           tarifaNoDefinida = TarifaXDia(
             dia: ink,
             fecha: dateNow,
-            nombreTarif: "No definido",
+            nombreTariff: "No definido",
             code: "Unknow",
             categoria: habitacion.categoria,
             descuentoProvisional:
@@ -818,7 +834,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             dia: ink,
             fecha: dateNow,
             color: newTariff.copyWith().color,
-            nombreTarif: newTariff.copyWith().nombre,
+            nombreTariff: newTariff.copyWith().nombre,
             categoria: habitacion.categoria,
             code: newTariff.copyWith().code,
             id: newTariff.copyWith().id,

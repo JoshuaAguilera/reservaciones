@@ -43,6 +43,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
       _current = item;
       state = [...state, item];
     }
+
+    ref.notifyListeners();
   }
 
   void revisedFreeRooms() {

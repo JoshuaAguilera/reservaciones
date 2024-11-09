@@ -23,9 +23,12 @@ class Habitacion {
   int? menores0a6;
   int? menores7a12;
   List<TarifaXDia>? tarifaXDia;
-  double? totalReal;
-  double? descuento;
-  double? total;
+  double? totalRealVR;
+  double? descuentoVR;
+  double? totalVR;
+  double? totalRealVPM;
+  double? descuentoVPM;
+  double? totalVPM;
   int count;
   bool isFree;
 
@@ -41,9 +44,12 @@ class Habitacion {
     this.adultos,
     this.menores0a6,
     this.menores7a12,
-    this.totalReal,
-    this.descuento,
-    this.total,
+    this.totalRealVR,
+    this.descuentoVR,
+    this.totalVR,
+    this.totalRealVPM,
+    this.totalVPM,
+    this.descuentoVPM,
     this.count = 1,
     this.isFree = false,
   });
@@ -60,9 +66,12 @@ class Habitacion {
     int? menores0a6,
     int? menores7a12,
     List<TarifaXDia>? tarifaXDia,
-    double? totalReal,
-    double? descuento,
-    double? total,
+    double? totalRealVR,
+    double? descuentoVR,
+    double? totalVR,
+    double? totalRealVPM,
+    double? descuentoVPM,
+    double? totalVPM,
     int? count,
     bool? isFree,
   }) =>
@@ -78,9 +87,12 @@ class Habitacion {
         menores0a6: menores0a6 ?? this.menores0a6,
         menores7a12: menores7a12 ?? this.menores7a12,
         tarifaXDia: tarifaXDia ?? this.tarifaXDia,
-        totalReal: totalReal ?? this.totalReal,
-        descuento: descuento ?? this.descuento,
-        total: total ?? this.total,
+        totalRealVR: totalRealVR ?? this.totalRealVR,
+        descuentoVR: descuentoVR ?? this.descuentoVR,
+        totalVR: totalVR ?? this.totalVR,
+        totalRealVPM: totalRealVR ?? this.totalRealVPM,
+        descuentoVPM: descuentoVR ?? this.descuentoVPM,
+        totalVPM: totalVR ?? this.totalVPM,
         count: count ?? this.count,
         isFree: isFree ?? this.isFree,
       );
@@ -98,9 +110,12 @@ class Habitacion {
       'menores0a6': menores0a6,
       'menores7a12': menores7a12,
       'tarifaXDia': tarifaXDia,
-      'totalReal': totalReal,
-      'descuento': descuento,
-      'total': total,
+      'totalRealVR': totalRealVR,
+      'descuentoVR': descuentoVR,
+      'totalVR': totalVR,
+      'totalRealVPM': totalRealVPM,
+      'descuentoVPM': descuentoVPM,
+      'totalVPM': totalVPM,
       'count': count,
       'isFree': isFree,
     };
@@ -123,9 +138,12 @@ class Habitacion {
               ? listTarifasXDiaFromJson(json['tarifaXDia'])
               : List<TarifaXDia>.empty()
           : List<TarifaXDia>.empty(),
-      totalReal: json['totalReal'],
-      descuento: json['descuento'],
-      total: json['total'],
+      totalRealVR: json['totalRealVR'],
+      descuentoVR: json['descuentoVR'],
+      totalVR: json['totalVR'],
+      totalRealVPM: json['totalRealVPM'],
+      descuentoVPM: json['descuentoVPM'],
+      totalVPM: json['totalVPM'],
       count: json['count'],
       isFree: json['isFree'],
     );

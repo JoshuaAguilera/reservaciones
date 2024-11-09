@@ -588,10 +588,24 @@ class CustomWidgets {
     Color? collapsedBackgroundColor,
     bool overClipText = false,
     Color? colorText,
+    double padding = 4,
+    bool showTrailing = true,
   }) {
     return ExpansionTile(
-      tilePadding: const EdgeInsets.all(4),
-      shape: Border(top: BorderSide(color: Theme.of(context).primaryColor)),
+      tilePadding: EdgeInsets.all(padding),
+      shape: collapsedBackgroundColor != null
+          ? OutlineInputBorder(
+              borderSide: BorderSide(
+                color: collapsedBackgroundColor,
+                width: 1.8,
+              ),
+            )
+          : Border(
+              top: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 2,
+              ),
+            ),
       collapsedShape: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.transparent)),
       initiallyExpanded: showList,
@@ -607,20 +621,23 @@ class CustomWidgets {
               overClip: overClipText,
             ),
           ),
-          Icon(
-            showList
-                ? Icons.keyboard_arrow_up_rounded
-                : Icons.keyboard_arrow_down_rounded,
-            size: 20,
-            color: colorText ?? Theme.of(context).primaryColor,
-          ),
+          if (showTrailing)
+            Icon(
+              showList
+                  ? Icons.keyboard_arrow_up_rounded
+                  : Icons.keyboard_arrow_down_rounded,
+              size: 20,
+              color: colorText ?? Theme.of(context).primaryColor,
+            ),
         ],
       ),
-      trailing: TextStyles.standardText(
-        text: Utility.formatterNumber(total),
-        color: colorText ?? Theme.of(context).primaryColor,
-        size: 13,
-      ),
+      trailing: !showTrailing
+          ? null
+          : TextStyles.standardText(
+              text: Utility.formatterNumber(total),
+              color: colorText ?? Theme.of(context).primaryColor,
+              size: 13,
+            ),
       children: children.isNotEmpty
           ? children
           : [

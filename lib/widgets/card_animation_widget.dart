@@ -180,7 +180,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       if (MediaQuery.of(context).size.width <
                           (1210 - (widget.sideController.extended ? 0 : 100)))
                         TextStyles.standardText(
-                          text: widget.tarifaXDia.nombreTarif ?? '',
+                          text: widget.tarifaXDia.nombreTariff ?? '',
                           size: 11,
                           color: Theme.of(context).primaryColorDark,
                         ),
@@ -240,7 +240,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   if (MediaQuery.of(context).size.width >
                       (1210 - (widget.sideController.extended ? 0 : 100)))
                     TextStyles.standardText(
-                      text: widget.tarifaXDia.nombreTarif ?? '',
+                      text: widget.tarifaXDia.nombreTariff ?? '',
                       size: 11,
                       color: Theme.of(context).primaryColor,
                     ),
