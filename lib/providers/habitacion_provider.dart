@@ -176,7 +176,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void clear() => state = [];
 
-  Future<pw.Document> generarComprobante(Cotizacion cotizacion) async =>
+  Future<pw.Document> generarComprobante(Cotizacion cotizacion, bool typeQuote) async =>
       pdfPrinc = await GeneradorDocService()
           .generarComprobanteCotizacionIndividual(
               habitaciones: state, cotizacion: cotizacion);

@@ -1,5 +1,6 @@
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:pdf/pdf.dart';
@@ -210,6 +211,7 @@ class FilesTemplate {
     required pw.TextStyle styleBold,
     bool requiredPreventa = false,
     String? colorHeader,
+    required String typeRoom,
   }) {
     List<List<String>> contenido = [];
 
@@ -228,7 +230,7 @@ class FilesTemplate {
 
     for (var element in habitaciones) {
       int index = contenido.length - 1;
-      contenido.addAll(generateDaysCotizacion(element, index));
+      contenido.addAll(generateDaysCotizacion(element, index, typeRoom));
     }
 
     return pw.Column(children: [
@@ -270,6 +272,7 @@ class FilesTemplate {
             // border: pw.TableBorder.all(width: 0.9),
             border: pw.TableBorder.all(width: 1),
             headerStyle: styleHeader,
+            cellStyle: styleHeader,
             columnWidths: {
               0: const pw.FixedColumnWidth(100),
               1: const pw.FixedColumnWidth(100),
@@ -280,16 +283,31 @@ class FilesTemplate {
                 const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
             headerCellDecoration: pw.BoxDecoration(
                 color: PdfColor.fromHex(colorHeader ?? "#009999")),
+            cellDecoration: (index, data, rowNum) => pw.BoxDecoration(
+                color: PdfColor.fromHex(colorHeader ?? "#009999")),
+            cellAlignment: pw.Alignment.center,
             headers: [
-              "TOTAL DE ESTANCIA",
+              "TOTAL DE HABITACION",
               Utility.formatterNumber(
-                  Utility.calculateTotalRooms(habitaciones, onlyTotal: true)),
-              // if (cotizaciones.any((element) => element.esPreventa!))
-              //   Utility.formatterNumber(Utility.calculateTarifaTotal(
-              //       cotizaciones,
-              //       esPreventa: true)),
+                (typeRoom == tipoHabitacion.first
+                        ? habitaciones.first.totalVR
+                        : habitaciones.first.totalVPM) ??
+                    0,
+              ),
             ],
-            data: []),
+            data: [
+              [
+                "TOTAL DE ESTANCIA (X${habitaciones.first.count} HAB.)",
+                Utility.formatterNumber(
+                  Utility.calculateTotalRooms(
+                    habitaciones,
+                    onlyTotal: true,
+                    onlyFirstCategory: typeRoom == tipoHabitacion.first,
+                    onlySecoundCategory: typeRoom == tipoHabitacion.last,
+                  ),
+                ),
+              ]
+            ]),
       )
     ]);
   }
@@ -510,9 +528,9 @@ class FilesTemplate {
   }
 
   static List<List<String>> generateDaysCotizacion(
-      Habitacion habitacion, int index) {
+      Habitacion habitacion, int index, String typeRoom) {
     List<List<String>> dias = [];
-    int days = Utility.getDifferenceInDays(cotizaciones: [habitacion]);
+    int days = Utility.getDifferenceInDays(habitaciones: [habitacion]);
 
     for (int i = 0; i < days; i++) {
       double totalAdulto = Utility.calculateTariffAdult(
@@ -522,6 +540,8 @@ class FilesTemplate {
         habitacion,
         habitacion.tarifaXDia!.length,
         descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
+        onlyTariffVR: typeRoom == tipoHabitacion.first,
+        onlyTariffVPM: typeRoom == tipoHabitacion.last,
       );
 
       double totalMenores = Utility.calculateTariffChildren(
@@ -531,14 +551,15 @@ class FilesTemplate {
         habitacion,
         habitacion.tarifaXDia!.length,
         descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
+        onlyTariffVR: typeRoom == tipoHabitacion.first,
+        onlyTariffVPM: typeRoom == tipoHabitacion.last,
       );
+
+      DateTime now = DateTime.parse(habitacion.fechaCheckIn!);
 
       List<String> diasFila = [];
       diasFila.add("${i + 1 + index}");
-      diasFila.add(DateTime.parse(habitacion.fechaCheckIn!)
-          .add(Duration(days: i))
-          .toIso8601String()
-          .substring(0, 10));
+      diasFila.add("${now.day + i}/${now.month}/${now.year}");
       diasFila.add("${habitacion.adultos}");
       diasFila.add("${habitacion.menores0a6}");
       diasFila.add("${habitacion.menores7a12}");
@@ -568,17 +589,17 @@ class FilesTemplate {
  </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </table></td> </tr> </tbody> </table>
  <table cellpadding="0" cellspacing="0" class="es-content" align="center" role="none" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%"> <tbody> <tr> <td align="center" bgcolor="#cac9c9" style="padding:0;Margin:0;background-color:#cac9c9"> <table bgcolor="#ffffff" class="es-content-body" align="center" cellpadding="0" cellspacing="0" data-darkreader-inline-bgcolor style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px" role="none"> <tbody> <tr> <td align="left" style="padding:20px;Margin:0"> <table cellpadding="0" cellspacing="0" width="100%" role="none" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> <tbody> <tr> <td align="center" valign="top" style="padding:0;Margin:0;width:560px"> <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"> <tbody> <tr> <td align="left" class="es-m-txt-l" style="padding:0;Margin:0;padding-bottom:10px;padding-left:20px;padding-right:20px"><h1 style="Margin:0;line-height:46px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:46px;font-style:normal;font-weight:bold;color:#333333">Cotización de reservación</h1>
 </td> </tr> <tr> <td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-left:20px;padding-top:40px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">Estimad@ ${receiptQuotePresent.nombreHuesped!}</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">De antemano disculpe la demora de respuesta.<br>Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización:</p>
- <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">No. de cotización: <strong>${receiptQuotePresent.folioPrincipal!}</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Plan Todo Incluido</strong><br>Estancia: <strong>${Utility.getPeriodReservation(quotesPresent)}</strong><br>Noches: <strong>${quotesPresent.where((element) => !element.isFree).toList().length}</strong></p>
+ <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">No. de cotización: <strong>${receiptQuotePresent.folioPrincipal!}</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Plan Todo Incluido</strong><br>Estancia: <strong>${Utility.getPeriodReservation(quotesPresent)}</strong><br>Noches: <strong>${quotesPresent.first.tarifaXDia!.length}</strong></p>
  
 
  
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>
  
- <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$${receiptQuotePresent.total! / quotesPresent.where((element) => !element.isFree).toList().length}&nbsp;&nbsp;<br>Total por estancia \$${receiptQuotePresent.total!}</strong></p>
+ <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$${(quotesPresent.first.totalVR ?? 1) / (quotesPresent.first.tarifaXDia?.length ?? 1)}&nbsp;&nbsp;<br>Total por estancia \$${quotesPresent.first.totalVR}</strong></p>
  
  <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble o King size, vista parcial al océano 🌊</b></p>
  
- <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$&nbsp;&nbsp;<br>Total por estancia \$</strong></p>
+ <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><u>${Utility.getOcupattionMessage(quotesPresent.first)}</u><br><strong>Total por noche \$${(quotesPresent.first.totalVPM ?? 1) / (quotesPresent.first.tarifaXDia?.length ?? 1)}&nbsp;&nbsp;<br>Total por estancia \$${quotesPresent.first.totalVPM}</strong></p>
  
 
 

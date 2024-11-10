@@ -590,6 +590,7 @@ class CustomWidgets {
     Color? colorText,
     double padding = 4,
     bool showTrailing = true,
+    bool withTopBorder = false,
   }) {
     return ExpansionTile(
       tilePadding: EdgeInsets.all(padding),
@@ -603,11 +604,18 @@ class CustomWidgets {
           : Border(
               top: BorderSide(
                 color: Theme.of(context).primaryColor,
-                width: 2,
+                width: 1.3,
               ),
             ),
-      collapsedShape: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent)),
+      collapsedShape: withTopBorder
+          ? Border(
+              top: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 1.3,
+              ),
+            )
+          : const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent)),
       initiallyExpanded: showList,
       onExpansionChanged: onExpansionChanged,
       collapsedBackgroundColor: collapsedBackgroundColor,

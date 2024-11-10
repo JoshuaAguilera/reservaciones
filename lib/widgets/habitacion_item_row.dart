@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -152,9 +153,12 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
   Widget build(BuildContext context) {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
-    Color? colorCard = DesktopColors.grisSemiPalido;
-    Color? colorText = Colors.white;
+    Color? colorCard = brightness == Brightness.light
+        ? Color.fromARGB(255, 243, 243, 243)
+        : DesktopColors.grisSemiPalido;
+    Color? colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
@@ -196,7 +200,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
 
     return Card(
       color: colorCard,
-      elevation: 5,
+      elevation: 6,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
         child: Column(
@@ -456,12 +460,16 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
             //   color: colorText,
             // ),
             TextStyles.TextAsociative(
-              "Tarifa Vista Reserva: ",
+              (screenWidthWithSideBar < 1100)
+                  ? "Tarifa VR:"
+                  : "Tarifa Vista Reserva: ",
               Utility.formatterNumber(widget.habitacion.totalVR ?? 0),
               color: colorText,
             ),
             TextStyles.TextAsociative(
-              "Tarifa Vista Parcial Mar: ",
+              (screenWidthWithSideBar < 1100)
+                  ? "Tarifa VPM:"
+                  : "Tarifa Vista Parcial Mar: ",
               Utility.formatterNumber(widget.habitacion.totalVPM ?? 0),
               color: colorText,
             ),

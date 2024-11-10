@@ -182,72 +182,36 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                     ),
                                   ),
                                 ),
-                              if (!cotizacion.esGrupo!)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: SizedBox(
-                                    height: Utility.limitHeightList(
-                                        cotizacion.habitaciones!.length),
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount:
-                                          cotizacion.habitaciones!.length,
-                                      itemBuilder: (context, index) {
-                                        if (index <
-                                            cotizacion.habitaciones!.length) {
-                                          return HabitacionItemRow(
-                                            key: ObjectKey(cotizacion
-                                                .habitaciones![index].hashCode),
-                                            index: index,
-                                            habitacion:
-                                                cotizacion.habitaciones![index],
-                                            isTable: !Utility.isResizable(
-                                                extended: widget
-                                                    .sideController.extended,
-                                                context: context),
-                                            esDetalle: true,
-                                            sideController:
-                                                widget.sideController,
-                                          );
-                                        }
-                                      },
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: SizedBox(
+                                  height: Utility.limitHeightList(
+                                      cotizacion.habitaciones!.length),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: cotizacion.habitaciones!.length,
+                                    itemBuilder: (context, index) {
+                                      if (index <
+                                          cotizacion.habitaciones!.length) {
+                                        return HabitacionItemRow(
+                                          key: ObjectKey(cotizacion
+                                              .habitaciones![index].hashCode),
+                                          index: index,
+                                          habitacion:
+                                              cotizacion.habitaciones![index],
+                                          isTable: !Utility.isResizable(
+                                              extended: widget
+                                                  .sideController.extended,
+                                              context: context),
+                                          esDetalle: true,
+                                          sideController: widget.sideController,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
-                              if (cotizacion.esGrupo!)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: SizedBox(
-                                    height: Utility.limitHeightList(
-                                        cotizacion.habitaciones!.length),
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount:
-                                          cotizacion.habitaciones!.length,
-                                      itemBuilder: (context, index) {
-                                        if (index <
-                                            cotizacion.habitaciones!.length) {
-                                          return HabitacionItemRow(
-                                            key: ObjectKey(cotizacion
-                                                .habitaciones![index].hashCode),
-                                            index: index,
-                                            habitacion:
-                                                cotizacion.habitaciones![index],
-                                            isTable: !Utility.isResizable(
-                                                extended: widget
-                                                    .sideController.extended,
-                                                context: context),
-                                            esDetalle: true,
-                                            sideController:
-                                                widget.sideController,
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
+                              ),
                               const Padding(
                                 padding: EdgeInsets.only(bottom: 12, top: 8),
                                 child: Divider(),
@@ -304,6 +268,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                   SummaryControllerWidget(
                     withSaveButton: false,
                     saveRooms: cotizacion.habitaciones,
+                    finishQuote: true,
                   ),
                 ],
               ),

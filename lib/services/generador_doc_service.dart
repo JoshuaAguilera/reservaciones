@@ -162,20 +162,6 @@ class GeneradorDocService extends BaseService {
                     styleBoldTable: styleBoldTable,
                     color: "#93dcf8",
                   ),
-                  // pw.Text("NOTAS", style: styleBoldUnderline),
-                  // pw.SizedBox(height: 10),
-                  // pw.Text(FilesTemplate.StructureDoc(3), style: styleRegular),
-                  // pw.SizedBox(height: 10),
-                  // pw.Padding(
-                  //   padding: const pw.EdgeInsets.only(left: 27),
-                  //   child: pw.Text(FilesTemplate.StructureDoc(4),
-                  //       style: styleItalic),
-                  // ),
-                  // pw.Padding(
-                  //   padding: const pw.EdgeInsets.only(left: 27),
-                  //   child: pw.Text(FilesTemplate.StructureDoc(5),
-                  //       style: styleItalic),
-                  // ),
                   pw.Text("POLÍTICAS PARA RESERVACIÓN",
                       style: styleBoldUnderline),
                   pw.SizedBox(height: 11),
@@ -598,39 +584,33 @@ class GeneradorDocService extends BaseService {
 
     if (habitaciones == null) return pw.Column(children: tablas);
 
-    if (habitaciones.any((element) => element.categoria == tipoHabitacion[0])) {
-      tablas.add(
-        FilesTemplate.getTablesCotIndiv(
-          nameTable:
-              "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-          habitaciones: habitaciones
-              .where((element) => element.categoria == tipoHabitacion[0])
-              .toList(),
-          styleGeneral: styleLigth,
-          styleHeader: styleLigthHeaderTable,
-          styleBold: styleBoldTable,
-          colorHeader: color,
-        ),
-      );
-      tablas.add(pw.SizedBox(height: 10));
-    }
+    tablas.add(
+      FilesTemplate.getTablesCotIndiv(
+        nameTable:
+            "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
+        habitaciones: habitaciones,
+        styleGeneral: styleLigth,
+        styleHeader: styleLigthHeaderTable,
+        styleBold: styleBoldTable,
+        colorHeader: color,
+        typeRoom: tipoHabitacion.first,
+      ),
+    );
+    tablas.add(pw.SizedBox(height: 10));
 
-    if (habitaciones.any((element) => element.categoria == tipoHabitacion[1])) {
-      tablas.add(
-        FilesTemplate.getTablesCotIndiv(
-          nameTable:
-              "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-          habitaciones: habitaciones
-              .where((element) => element.categoria == tipoHabitacion[1])
-              .toList(),
-          styleGeneral: styleLigth,
-          styleHeader: styleLigthHeaderTable,
-          styleBold: styleBoldTable,
-          colorHeader: color,
-        ),
-      );
-      tablas.add(pw.SizedBox(height: 10));
-    }
+    tablas.add(
+      FilesTemplate.getTablesCotIndiv(
+        nameTable:
+            "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
+        habitaciones: habitaciones,
+        styleGeneral: styleLigth,
+        styleHeader: styleLigthHeaderTable,
+        styleBold: styleBoldTable,
+        colorHeader: color,
+        typeRoom: tipoHabitacion.last,
+      ),
+    );
+    tablas.add(pw.SizedBox(height: 10));
 
     return pw.Column(children: tablas);
   }

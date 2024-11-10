@@ -419,21 +419,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               return;
                             }
 
-                            cotizacion.total = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyTotal: true,
-                            );
-
-                            cotizacion.totalReal = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyTotalReal: true,
-                            );
-
-                            cotizacion.descuento = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyDiscount: true,
-                            );
-
                             if (!(await CotizacionService().createCotizacion(
                               cotizacion: cotizacion,
                               habitaciones: habitaciones,
@@ -464,7 +449,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                             comprobantePDF = await ref
                                 .watch(HabitacionProvider.provider.notifier)
-                                .generarComprobante(cotizacion);
+                                .generarComprobante(cotizacion, typeQuote);
 
                             ref
                                 .read(cotizacionProvider.notifier)
@@ -487,6 +472,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             ref
                                 .read(changeHistoryProvider.notifier)
                                 .update((state) => UniqueKey().hashCode);
+
+                            ref
+                                .read(typeQuoteProvider.notifier)
+                                .update((state) => false);
 
                             if (!context.mounted) return;
                             Future.delayed(Durations.long2,

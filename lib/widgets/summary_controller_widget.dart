@@ -106,8 +106,9 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: widget.finishQuote
+                                                  ? widget.saveRooms!
+                                                  : habitacionesProvider,
                                               isVR: true,
                                               changeColor: true,
                                               onExpansionChanged: (p0) =>
@@ -117,8 +118,9 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: widget.finishQuote
+                                                  ? widget.saveRooms!
+                                                  : habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
                                                   setState(
@@ -139,8 +141,9 @@ class _SummaryControllerWidgetState
                                           children: [
                                             roomExpansionTileList(
                                               showList: showListVR,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: widget.finishQuote
+                                                  ? widget.saveRooms!
+                                                  : habitacionesProvider,
                                               isVR: true,
                                               changeColor: true,
                                               onExpansionChanged: (p0) =>
@@ -150,8 +153,9 @@ class _SummaryControllerWidgetState
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
                                               showList: showListVPM,
-                                              habitaciones:
-                                                  habitacionesProvider,
+                                              habitaciones: widget.finishQuote
+                                                  ? widget.saveRooms!
+                                                  : habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
                                                   setState(
@@ -433,71 +437,68 @@ class _SummaryControllerWidgetState
     List<Habitacion> rooms =
         habitaciones.where((element) => !element.isFree).toList();
 
-    return CustomWidgets.expansionTileList(
-      title: isVR ? "Hab. Vista Reserva:" : "Hab. Vista Parcial al Mar:",
-      colorText: (showList) ? null : Colors.white,
-      showList: showList,
-      showTrailing: !showList,
-      collapsedBackgroundColor:
-          !isVR ? DesktopColors.vistaParcialMar : DesktopColors.vistaReserva,
-      onExpansionChanged: onExpansionChanged,
-      context: context,
-      messageNotFound: "Sin habitaciones",
-      total: Utility.calculateTotalRooms(
-        rooms,
-        onlyFirstCategory: isVR,
-        onlySecoundCategory: !isVR,
-        onlyTotalReal: true,
-      ),
-      children: [
-        if (rooms.isNotEmpty)
-          for (var element in rooms)
-            CustomWidgets.itemListCount(
-              nameItem: "${element.count}x Room ${rooms.indexOf(element) + 1}",
-              count: (isVR
-                      ? (element.totalRealVR ?? 0)
-                      : (element.totalRealVPM ?? 0)) *
-                  element.count,
-              context: context,
-              sizeText: 11.5,
-            )
-        else
-          SizedBox(
-            height: 35,
-            child: Center(
-              child: TextStyles.standardText(
-                text: "Sin habitaciones",
-                color: Theme.of(context).primaryColor,
-                size: 11,
-              ),
-            ),
-          ),
-        if (habitaciones.isNotEmpty)
+    bool showListDescuentosRoom = false;
+    bool showListSubtotalRoom = true;
+
+    return StatefulBuilder(builder: (context, snapshot) {
+      return CustomWidgets.expansionTileList(
+        title: isVR ? "Hab. Vista Reserva:" : "Hab. Vista Parcial al Mar:",
+        colorText: (showList) ? null : Colors.white,
+        showList: showList,
+        showTrailing: !showList,
+        collapsedBackgroundColor:
+            !isVR ? DesktopColors.vistaParcialMar : DesktopColors.vistaReserva,
+        onExpansionChanged: onExpansionChanged,
+        context: context,
+        messageNotFound: "Sin habitaciones",
+        total: Utility.calculateTotalRooms(
+          rooms,
+          onlyFirstCategory: isVR,
+          onlySecoundCategory: !isVR,
+          onlyTotalReal: true,
+        ),
+        children: [
           Column(
             children: [
               const SizedBox(height: 10),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                child: Divider(color: Theme.of(context).primaryColor),
-              ),
-              CustomWidgets.itemListCount(
-                nameItem: "Subtotal:",
-                count: Utility.calculateTotalRooms(
-                  (widget.saveRooms ?? rooms),
-                  onlyTotalReal: true,
-                  onlyFirstCategory: isVR,
-                  onlySecoundCategory: !isVR,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: CustomWidgets.expansionTileList(
+                  title: "Subtotal:",
+                  withTopBorder: true,
+                  total: Utility.calculateTotalRooms(
+                    (widget.saveRooms ?? rooms),
+                    onlyTotalReal: true,
+                    onlyFirstCategory: isVR,
+                    onlySecoundCategory: !isVR,
+                  ),
+                  showList: showListSubtotalRoom,
+                  onExpansionChanged: (value) =>
+                      snapshot(() => showListSubtotalRoom = value),
+                  messageNotFound: "Sin habitaciones",
+                  context: context,
+                  children: [
+                    for (var element in rooms)
+                      CustomWidgets.itemListCount(
+                        nameItem:
+                            "${element.count}x Room ${rooms.indexOf(element) + 1}",
+                        count: (isVR
+                            ? (element.totalRealVR ?? 0)
+                            : (element.totalRealVPM ?? 0)),
+                        context: context,
+                        sizeText: 11.5,
+                      )
+                  ],
                 ),
-                height: 40,
-                context: context,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: CustomWidgets.expansionTileList(
                   title: "Descuento(s):",
                   padding: 0,
-                  showList: showListDescuentos,
-                  onExpansionChanged: (value) => showListDescuentos = value,
+                  showList: showListDescuentosRoom,
+                  onExpansionChanged: (value) =>
+                      snapshot(() => showListDescuentosRoom = value),
                   context: context,
                   messageNotFound: "Sin descuentos",
                   total: -Utility.calculateTotalRooms(
@@ -635,8 +636,9 @@ class _SummaryControllerWidgetState
               ),
             ],
           ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   void saveRoom(Habitacion habitacionProvider) {

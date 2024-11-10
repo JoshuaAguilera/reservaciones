@@ -332,9 +332,9 @@ class Utility {
     return period;
   }
 
-  static int getDifferenceInDays({List<Habitacion>? cotizaciones}) {
-    int days = DateTime.parse(cotizaciones!.first.fechaCheckOut!)
-        .difference(DateTime.parse(cotizaciones.last.fechaCheckIn!))
+  static int getDifferenceInDays({List<Habitacion>? habitaciones}) {
+    int days = DateTime.parse(habitaciones!.first.fechaCheckOut!)
+        .difference(DateTime.parse(habitaciones.last.fechaCheckIn!))
         .inDays;
 
     return days;

@@ -19,12 +19,12 @@ class SendQuoteService extends BaseService {
   var phoneUser = Preferences.phone;
   var username = Preferences.username;
 
-  Future<bool> sendQuoteMail(
+  Future<String> sendQuoteMail(
     Document comprobantePDF,
     Cotizacion receiptQuotePresent,
     List<Habitacion> quotesPresent,
   ) async {
-    bool isSent = false;
+    String messageSent = "";
 
     String username = 'sys2@coralbluehuatulco.mx';
     String password = 'Sys2024CB';
@@ -60,21 +60,21 @@ class SendQuoteService extends BaseService {
     try {
       final sendReport = await send(message, smtpServer);
       print('Message sent: ' + sendReport.toString());
-      isSent = true;
     } on MailerException catch (e) {
       print('Message not sent.');
       for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
+        messageSent += 'Problem: ${p.code}: ${p.msg}\n';
+        print(messageSent);
       }
     }
 
     var connection = PersistentConnection(smtpServer);
     await connection.close();
-    return isSent;
+    return messageSent;
   }
 
   Future<bool> sendQuoteWhatsApp(
-      Cotizacion comprobante, List<Habitacion> cotizaciones) async {
+      Cotizacion comprobante, List<Habitacion> habitaciones) async {
     bool status = false;
     var phone = comprobante.numeroTelefonico;
 
@@ -85,22 +85,25 @@ class SendQuoteService extends BaseService {
     message += "\n\n";
     message += "*Plan Todo Incluido*";
     message += "\n";
-    message += "*Estancia: ${Utility.getPeriodReservation(cotizaciones)}*";
+    message += "*Estancia: ${Utility.getPeriodReservation(habitaciones)}*";
     message += "\n";
     message +=
-        "*Noches: ${Utility.getDifferenceInDays(cotizaciones: cotizaciones)}*";
+        "*Noches: ${Utility.getDifferenceInDays(habitaciones: habitaciones)}*";
     message += "\n\n";
     message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
     message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
+    message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
-    message += "Total por noche:\$ Total de estancia \$20,781.00";
+    message +=
+        "Total por noche:\$${(habitaciones.first.totalVR ?? 1) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVR ?? 0) + 0.00}";
     message += "\n\n";
-    message += "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
+    message +=
+        "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
     message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
+    message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
-    message += "Total por noche:\$ Total de estancia \$20,781.00";
+    message +=
+        "Total por noche:\$${(habitaciones.first.totalVPM ?? 1) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVPM ?? 0) + 0.00}";
     message += "\n\n";
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";
