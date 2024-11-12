@@ -17,7 +17,6 @@ import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:tuple/tuple.dart';
 
 import '../widgets/cotizacion_item_row.dart';
 import '../widgets/custom_dropdown.dart';
@@ -166,10 +165,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 ),
                                               ),
                                               palette: [
-                                                DesktopColors.cotGroupColor,
+                                                DesktopColors.cotGrupal,
                                                 DesktopColors.cotIndiv,
                                                 // DesktopColors.cotGroupPreColor,
-                                                DesktopColors.cotGrupal
+                                                // DesktopColors.cotGrupal
                                               ],
                                               legend: Legend(
                                                   isVisible: true,
@@ -189,8 +188,28 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       LegendItemOverflowMode
                                                           .wrap),
                                               series: [
-                                                StackedColumnSeries<
-                                                    ReporteCotizacion, String>(
+                                                // StackedColumnSeries<
+                                                //     ReporteCotizacion, String>(
+                                                //   dataSource: list,
+                                                //   xValueMapper: (datum, _) =>
+                                                //       datum.dia,
+                                                //   yValueMapper: (datum, _) => datum
+                                                //       .numCotizacionesGrupales,
+                                                //   name: "Cotizaciones grupales",
+                                                // ),
+                                                // StackedColumnSeries<
+                                                //     ReporteCotizacion, String>(
+                                                //   dataSource: list,
+                                                //   xValueMapper:
+                                                //       (datum, index) =>
+                                                //           datum.dia,
+                                                //   yValueMapper:
+                                                //       (datum, index) => datum
+                                                //           .numCotizacionesIndividual,
+                                                //   name:
+                                                //       "Cotizaciones Individuales",
+                                                // ),
+                                                ColumnSeries(
                                                   dataSource: list,
                                                   xValueMapper: (datum, _) =>
                                                       datum.dia,
@@ -198,8 +217,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       .numCotizacionesGrupales,
                                                   name: "Cotizaciones grupales",
                                                 ),
-                                                StackedColumnSeries<
-                                                    ReporteCotizacion, String>(
+                                                ColumnSeries(
                                                   dataSource: list,
                                                   xValueMapper:
                                                       (datum, index) =>
@@ -210,6 +228,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   name:
                                                       "Cotizaciones Individuales",
                                                 ),
+
                                                 // SplineSeries<ReporteCotizacion,
                                                 //     String>(
                                                 //   splineType:
@@ -224,20 +243,20 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 //   name:
                                                 //       "Cotizaciones grupales oferta",
                                                 // ),
-                                                SplineSeries<ReporteCotizacion,
-                                                    String>(
-                                                  splineType:
-                                                      SplineType.monotonic,
-                                                  dataSource: list,
-                                                  xValueMapper:
-                                                      (datum, index) =>
-                                                          datum.dia,
-                                                  yValueMapper:
-                                                      (datum, index) => datum
-                                                          .numCotizacionesIndividualPreventa,
-                                                  name:
-                                                      "Cotizaciones individuales oferta",
-                                                ),
+                                                // SplineSeries<ReporteCotizacion,
+                                                //     String>(
+                                                //   splineType:
+                                                //       SplineType.monotonic,
+                                                //   dataSource: list,
+                                                //   xValueMapper:
+                                                //       (datum, index) =>
+                                                //           datum.dia,
+                                                //   yValueMapper:
+                                                //       (datum, index) => datum
+                                                //           .numCotizacionesIndividualPreventa,
+                                                //   name:
+                                                //       "Cotizaciones individuales oferta",
+                                                // ),
                                               ],
                                               primaryXAxis: CategoryAxis(
                                                 labelRotation: 45, //Opcional
@@ -359,10 +378,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                     ),
                                                   ),
                                             palette: [
-                                              DesktopColors.cotGroupColor,
+                                              DesktopColors.cotGrupal,
                                               DesktopColors.cotIndiv,
                                               // DesktopColors.cotGroupPreColor,
-                                              DesktopColors.cotGrupal
+                                              DesktopColors.cotGroupColor
                                             ],
                                             legend: Legend(
                                               isVisible:

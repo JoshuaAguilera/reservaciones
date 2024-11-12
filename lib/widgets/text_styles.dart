@@ -181,6 +181,7 @@ class TextStyles {
     double? letterSpacing,
     double lineSpacing = 2,
     bool isRegular = false,
+    PdfColor? color,
   }) async {
     return pw.TextStyle(
       fontSize: size,
@@ -206,8 +207,8 @@ class TextStyles {
           : isItalic
               ? pw.FontStyle.italic
               : pw.FontStyle.normal,
-      color:
-          isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000"),
+      color: color ??
+          (isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000")),
       decoration:
           withUnderline ? pw.TextDecoration.underline : pw.TextDecoration.none,
     );

@@ -156,7 +156,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     Color? colorCard = brightness == Brightness.light
-        ? Color.fromARGB(255, 243, 243, 243)
+        ? const Color.fromARGB(255, 243, 243, 243)
         : DesktopColors.grisSemiPalido;
     Color? colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;

@@ -176,10 +176,20 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void clear() => state = [];
 
-  Future<pw.Document> generarComprobante(Cotizacion cotizacion, bool typeQuote) async =>
-      pdfPrinc = await GeneradorDocService()
+  Future<pw.Document> generarComprobante(
+      Cotizacion cotizacion, bool typeQuote) async {
+    if (!typeQuote) {
+      return pdfPrinc = await GeneradorDocService()
           .generarComprobanteCotizacionIndividual(
               habitaciones: state, cotizacion: cotizacion);
+    } else {
+      return pdfPrinc = await GeneradorDocService()
+          .generarComprobanteCotizacionGrupal(
+              habitaciones: state, cotizacion: cotizacion);
+    }
+
+    return pdfPrinc;
+  }
 
   //Definición del provider
   static final provider =

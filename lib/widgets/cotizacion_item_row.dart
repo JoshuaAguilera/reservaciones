@@ -44,8 +44,9 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
     colorText = !widget.cotizacion.esGrupo!
         ? DesktopColors.azulUltClaro
         : DesktopColors.prussianBlue;
-    colorTextIndice =
-        !widget.cotizacion.esGrupo! ? DesktopColors.azulUltClaro : null;
+    colorTextIndice = !widget.cotizacion.esGrupo!
+        ? DesktopColors.azulUltClaro
+        : DesktopColors.prussianBlue;
     colorIconDelete = !widget.cotizacion.esGrupo!
         ? DesktopColors.azulCielo
         : DesktopColors.ceruleanOscure;
@@ -62,7 +63,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
         margin: const EdgeInsets.all(0),
         elevation: 3,
         color: widget.cotizacion.esGrupo!
-            ? DesktopColors.cotGroupColor
+            ? DesktopColors.cotGrupal
             : DesktopColors.cotIndiv,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,

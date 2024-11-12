@@ -207,7 +207,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                   children: [
                                     Icon(
                                       Icons.circle,
-                                      color: DesktopColors.cotGroupColor,
+                                      color: DesktopColors.cotGrupal,
                                       size: 26,
                                     ),
                                     Container(

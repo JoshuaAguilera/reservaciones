@@ -101,11 +101,11 @@ class FilesTemplate {
       case 40:
         return "Lunes: Mar y Tierra";
       case 41:
-        return "Martes: Italiano";
+        return "Martes: Oaxaqueño";
       case 42:
-        return "Miércoles: Mexicano";
+        return "Miércoles: Italiano";
       case 43:
-        return "Jueves: Internacional";
+        return "Jueves: Tour por Mexico";
       case 44:
         return "Viernes: Italiano";
       case 45:
@@ -151,7 +151,7 @@ class FilesTemplate {
       case 66:
         return "Favor de evitar realizar cualquier pago antes de realizar su reservación.";
       case 67:
-        return "Por cada 15 habitaciones se otorga una en cortesía. ";
+        return "Por cada 15 habitaciones se otorga 1 en cortesía. ";
       case 68:
         return "cotización vigente 15 días";
       case 69:
@@ -323,24 +323,24 @@ class FilesTemplate {
   }) {
     List<pw.Widget> headers = [
       pw.Text(
-        'TIPO DE HABITACION',
-        style: styleGeneral,
+        'CATEGORIA DE HABITACION',
+        style: styleBold,
       ),
       pw.Text(
         '1 O 2 ADULTOS',
-        style: styleGeneral,
+        style: styleBold,
       ),
       pw.Text(
         '3 ADULTOS',
-        style: styleGeneral,
+        style: styleBold,
       ),
       pw.Text(
         '4 ADULTOS',
-        style: styleGeneral,
+        style: styleBold,
       ),
       pw.Text(
         'MENORES\n7 A 12 AÑOS',
-        style: styleGeneral,
+        style: styleBold,
         textAlign: pw.TextAlign.center,
       ),
     ];
@@ -348,50 +348,60 @@ class FilesTemplate {
     List<List<pw.Widget>> contenido = [];
 
     contenido = [
-      for (var cotizacion in habitaciones)
-        <pw.Widget>[
-          pw.Align(
-            alignment: pw.Alignment.centerLeft,
-            child: pw.Text(cotizacion.categoria ?? '', style: styleGeneral),
-          ),
-          // pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto1_2 ?? 0),
-          //     style: styleBold),
-          // pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto3 ?? 0),
-          //     style: styleBold),
-          // pw.Text(Utility.formatterNumber(cotizacion.tarifaAdulto4 ?? 0),
-          //     style: styleBold),
-          // pw.Text(Utility.formatterNumber(cotizacion.tarifaMenor ?? 0),
-          //     style: styleBold),
-        ],
+      // for (var cotizacion in habitaciones)
+      <pw.Widget>[
+        pw.Align(
+          alignment: pw.Alignment.centerLeft,
+          child: pw.Text(tipoHabitacion.first, style: styleGeneral),
+        ),
+        pw.Text(Utility.formatterNumber(3960), style: styleBold),
+        pw.Text(Utility.formatterNumber(5010), style: styleBold),
+        pw.Text(Utility.formatterNumber(6660), style: styleBold),
+        pw.Text(Utility.formatterNumber(720), style: styleBold),
+      ],
+      <pw.Widget>[
+        pw.Align(
+          alignment: pw.Alignment.centerLeft,
+          child: pw.Text(tipoHabitacion.last, style: styleGeneral),
+        ),
+        pw.Text(Utility.formatterNumber(3810), style: styleBold),
+        pw.Text(Utility.formatterNumber(5820), style: styleBold),
+        pw.Text(Utility.formatterNumber(7830), style: styleBold),
+        pw.Text(Utility.formatterNumber(990), style: styleBold),
+      ],
     ];
 
     return pw.Column(children: [
       pw.TableHelper.fromTextArray(
-          border: pw.TableBorder.all(width: 1.5),
-          headerStyle: styleBold,
-          cellPadding: const pw.EdgeInsets.all(4),
-          headers: [nameTable],
-          data: []),
+        border: pw.TableBorder.all(width: 1.5),
+        headerStyle: styleBold,
+        cellPadding: const pw.EdgeInsets.all(4),
+        headers: [nameTable],
+        data: [],
+      ),
       pw.TableHelper.fromTextArray(
         border: pw.TableBorder.all(width: 1.5),
         headerAlignment: pw.Alignment.center,
-        headerHeight: 39,
+        headerHeight: 25,
         headers: headers,
+        headerStyle: styleBold,
+        cellStyle: styleGeneral,
         headerCellDecoration:
             pw.BoxDecoration(color: PdfColor.fromHex(colorHeader ?? "#33CCCC")),
         cellPadding: const pw.EdgeInsets.symmetric(horizontal: 1, vertical: 1),
-        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 2.5, 1.5, 1),
+        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 0.5, 1.5, 0.5),
         cellHeight: 23.5,
         cellAlignment: pw.Alignment.center,
         columnWidths: {
-          0: const pw.FixedColumnWidth(40),
-          1: const pw.FixedColumnWidth(30),
-          2: const pw.FixedColumnWidth(30),
-          3: const pw.FixedColumnWidth(30),
+          0: const pw.FixedColumnWidth(55),
+          1: const pw.FixedColumnWidth(25),
+          2: const pw.FixedColumnWidth(25),
+          3: const pw.FixedColumnWidth(25),
           4: const pw.FixedColumnWidth(25),
         },
         data: contenido,
       ),
+      pw.SizedBox(height: 10),
     ]);
   }
 

@@ -35,11 +35,11 @@ class ItemRows {
           Positioned(
             bottom: 0,
             right: 0,
-            child: Icon(
-              Utility.getIconCardDashboard(register.tipoCotizacion),
-              size: 55,
-              color: Utility.getColorRegisterQuote(register.tipoCotizacion!),
-            ),
+            child: Icon(Utility.getIconCardDashboard(register.tipoCotizacion),
+                size: 55,
+                color: Utility.darken(
+                  Utility.getColorRegisterQuote(register.tipoCotizacion!),
+                )),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

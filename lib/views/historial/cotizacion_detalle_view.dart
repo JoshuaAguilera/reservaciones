@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
@@ -228,8 +229,10 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                       if (cotizacion.esGrupo!) {
                                         comprobantePDF = await GeneradorDocService()
                                             .generarComprobanteCotizacionGrupal(
-                                                cotizacion.habitaciones!,
-                                                cotizacion);
+                                                habitaciones: cotizacion
+                                                        .habitaciones ??
+                                                    List<Habitacion>.empty(),
+                                                cotizacion: cotizacion);
                                       } else {
                                         comprobantePDF = await GeneradorDocService()
                                             .generarComprobanteCotizacionIndividual(

@@ -343,11 +343,11 @@ class Utility {
   static IconData? getIconCardDashboard(String? tipoCotizacion) {
     switch (tipoCotizacion) {
       case "Cotizaciones grupales":
-        return CupertinoIcons.person_2;
+        return CupertinoIcons.person_2_fill;
       case "Cotizaciones grupales en Preventa":
         return CupertinoIcons.person_2_fill;
       case "Cotizaciones individuales":
-        return CupertinoIcons.person;
+        return CupertinoIcons.person_fill;
       case "Cotizaciones individuales en Preventa":
         return CupertinoIcons.person_fill;
       default:
@@ -359,8 +359,8 @@ class Utility {
     switch (tipoCotizacion) {
       case "Cotizaciones grupales":
         return [
-          DesktopColors.cotGroupColor,
-          const Color.fromARGB(255, 140, 207, 240)
+          DesktopColors.cotGrupal,
+          const Color.fromARGB(255, 255, 205, 124)
         ];
       case "Cotizaciones grupales en Preventa":
         return [
@@ -374,8 +374,8 @@ class Utility {
         ];
       case "Cotizaciones individuales en Preventa":
         return [
-          DesktopColors.cotGrupal,
-          const Color.fromARGB(255, 255, 205, 124)
+          DesktopColors.cotGroupColor,
+          const Color.fromARGB(255, 140, 207, 240)
         ];
       default:
         return [];
@@ -423,9 +423,18 @@ class Utility {
 
   static String getDatesStay(List<Habitacion> habitaciones) {
     String dates = '';
+    DateTime firstDate = DateTime.parse(habitaciones.first.fechaCheckIn!);
+    DateTime lastDate = DateTime.parse(habitaciones.last.fechaCheckOut!);
 
-    for (var element in habitaciones) {
-      dates += "${element.fechaCheckIn!} - ${element.fechaCheckOut!}, ";
+    if (firstDate.month == lastDate.month) {
+      dates =
+          "${firstDate.day} al ${lastDate.day} ${monthNames[firstDate.month - 1]} ${firstDate.year}";
+    } else if (firstDate.year == lastDate.year) {
+      dates =
+          "${firstDate.day} ${monthNames[firstDate.month - 1]} al ${lastDate.day} ${monthNames[lastDate.month - 1]} ${firstDate.year}";
+    } else {
+      dates =
+          "${firstDate.day} ${monthNames[firstDate.month - 1]} ${firstDate.year} al ${lastDate.day} ${monthNames[lastDate.month - 1]} ${firstDate.year}";
     }
 
     return dates;
@@ -434,13 +443,13 @@ class Utility {
   static Color getColorRegisterQuote(String type) {
     switch (type) {
       case "Cotizaciones grupales":
-        return DesktopColors.cotGroupColor;
+        return DesktopColors.cotGrupal;
       case "Cotizaciones grupales en Preventa":
         return DesktopColors.cotGroupPreColor;
       case "Cotizaciones individuales":
         return DesktopColors.cotIndiv;
       case "Cotizaciones individuales en Preventa":
-        return DesktopColors.cotGrupal;
+        return DesktopColors.cotGroupColor;
       default:
         return Colors.white;
     }
