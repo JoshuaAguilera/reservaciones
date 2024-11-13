@@ -104,6 +104,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       TextStyles.standardText(
                                           isBold: true,
@@ -126,7 +127,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 7),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Divider(
+                                      color: Theme.of(context).primaryColor),
+                                ),
+                                const SizedBox(height: 10),
                                 reportesSync.when(
                                   data: (list) {
                                     return Row(
@@ -148,7 +154,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         ),
                                         Expanded(
                                           child: SizedBox(
-                                            height: 450,
+                                            height: 435,
                                             child: SfCartesianChart(
                                               plotAreaBorderWidth: 0,
                                               tooltipBehavior: TooltipBehavior(
@@ -303,10 +309,30 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         child: Card(
                           elevation: 5,
                           child: Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(18.0),
                             child: allQuotesSync.when(
                               data: (list) {
-                                List<Widget> cards = [];
+                                List<Widget> cards = [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TextStyles.standardText(
+                                          isBold: true,
+                                          text: "Tu contador actual",
+                                          overClip: true,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 16,
+                                        ),
+                                        Divider(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                      ],
+                                    ),
+                                  ),
+                                ];
                                 for (var element in list) {
                                   cards.add(ItemRows.statusQuoteRow(element));
                                 }

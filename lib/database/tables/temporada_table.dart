@@ -8,4 +8,5 @@ class Temporada extends Table {
   IntColumn get estanciaMinima => integer().nullable()();
   RealColumn get porcentajePromocion => real().nullable()();
   TextColumn get codeTarifa => text().nullable()();
+  BoolColumn get forGroup => boolean().nullable()();
 }

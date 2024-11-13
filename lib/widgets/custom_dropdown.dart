@@ -24,37 +24,83 @@ class CustomDropdown {
       items.removeWhere((element) => element == removeItem);
     }
 
-    return StatefulBuilder(
-      builder: (context, setState) {
-        return DropdownMenu<String>(
-          menuHeight: 200,
-          width:
-              screenWidth == null ? null : calculateWidth ? Utility.getWidthDynamic(screenWidth) :screenWidth,
-          requestFocusOnTap: false,
-          initialSelection: initialSelection,
-          onSelected: onSelected,
-          label: Text(label),
-          textStyle:
-              TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
-          dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
-            (String value) {
-              return DropdownMenuEntry<String>(
-                value: value,
-                label: value,
-                enabled: (excepcionItem.isNotEmpty && value == excepcionItem)
-                    ? true
-                    : (notElements != null)
-                        ? notElements.any((element) => element == value)
-                        : true,
+    /**
+     Container(
+          height: 30.0,
+          decoration: BoxDecoration(color: Colors.white),
+          child: DropdownMenu<String>(
+            textStyle: TextStyle(fontSize: 10),
+            inputDecorationTheme: InputDecorationTheme(isCollapsed: true),
+            // Here update this
+            menuHeight: 50, 
+            dropdownMenuEntries: [
+              DropdownMenuEntry(
+                value: "Name - First",
+                label: "Name - First",
                 style: ButtonStyle(
-                  textStyle: WidgetStatePropertyAll(
-                    TextStyle(
-                        fontFamily: "poppins_regular", fontSize: fontSize),
+                  textStyle: MaterialStateTextStyle.resolveWith(
+                    (states) => TextStyle(fontSize: 10),
                   ),
                 ),
-              );
-            },
-          ).toList(),
+              ),
+              DropdownMenuEntry(
+                value: "Name - Second",
+                label: "Name - Second",
+                style: ButtonStyle(
+                  textStyle: MaterialStateTextStyle.resolveWith(
+                    (states) => TextStyle(fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+     */
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          height: 30,
+          width: 100,
+          child: DropdownMenu<String>(
+            menuHeight: 200,
+            width: screenWidth == null
+                ? null
+                : calculateWidth
+                    ? Utility.getWidthDynamic(screenWidth)
+                    : screenWidth,
+            requestFocusOnTap: false,
+            initialSelection: initialSelection,
+            onSelected: onSelected,
+            label: Text(label),
+            expandedInsets: EdgeInsets.all(1),
+            
+            trailingIcon: Transform.translate(
+              offset: Offset(3, -5),
+              child: Icon(Icons.arrow_drop_down),
+            ),
+            textStyle:
+                TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
+            dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
+              (String value) {
+                return DropdownMenuEntry<String>(
+                  value: value,
+                  label: value,
+                  enabled: (excepcionItem.isNotEmpty && value == excepcionItem)
+                      ? true
+                      : (notElements != null)
+                          ? notElements.any((element) => element == value)
+                          : true,
+                  style: ButtonStyle(
+                    textStyle: WidgetStatePropertyAll(
+                      TextStyle(
+                          fontFamily: "poppins_regular", fontSize: fontSize),
+                    ),
+                  ),
+                );
+              },
+            ).toList(),
+          ),
         );
       },
     );

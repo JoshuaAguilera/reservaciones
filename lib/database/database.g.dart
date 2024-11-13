@@ -3014,6 +3014,15 @@ class $TemporadaTable extends Temporada
   late final GeneratedColumn<String> codeTarifa = GeneratedColumn<String>(
       'code_tarifa', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _forGroupMeta =
+      const VerificationMeta('forGroup');
+  @override
+  late final GeneratedColumn<bool> forGroup = GeneratedColumn<bool>(
+      'for_group', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("for_group" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3022,7 +3031,8 @@ class $TemporadaTable extends Temporada
         fecha,
         estanciaMinima,
         porcentajePromocion,
-        codeTarifa
+        codeTarifa,
+        forGroup
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3071,6 +3081,10 @@ class $TemporadaTable extends Temporada
           codeTarifa.isAcceptableOrUnknown(
               data['code_tarifa']!, _codeTarifaMeta));
     }
+    if (data.containsKey('for_group')) {
+      context.handle(_forGroupMeta,
+          forGroup.isAcceptableOrUnknown(data['for_group']!, _forGroupMeta));
+    }
     return context;
   }
 
@@ -3094,6 +3108,8 @@ class $TemporadaTable extends Temporada
           DriftSqlType.double, data['${effectivePrefix}porcentaje_promocion']),
       codeTarifa: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}code_tarifa']),
+      forGroup: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}for_group']),
     );
   }
 
@@ -3111,6 +3127,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final int? estanciaMinima;
   final double? porcentajePromocion;
   final String? codeTarifa;
+  final bool? forGroup;
   const TemporadaData(
       {required this.id,
       required this.code,
@@ -3118,7 +3135,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       this.fecha,
       this.estanciaMinima,
       this.porcentajePromocion,
-      this.codeTarifa});
+      this.codeTarifa,
+      this.forGroup});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3136,6 +3154,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     }
     if (!nullToAbsent || codeTarifa != null) {
       map['code_tarifa'] = Variable<String>(codeTarifa);
+    }
+    if (!nullToAbsent || forGroup != null) {
+      map['for_group'] = Variable<bool>(forGroup);
     }
     return map;
   }
@@ -3156,6 +3177,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       codeTarifa: codeTarifa == null && nullToAbsent
           ? const Value.absent()
           : Value(codeTarifa),
+      forGroup: forGroup == null && nullToAbsent
+          ? const Value.absent()
+          : Value(forGroup),
     );
   }
 
@@ -3171,6 +3195,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       porcentajePromocion:
           serializer.fromJson<double?>(json['porcentajePromocion']),
       codeTarifa: serializer.fromJson<String?>(json['codeTarifa']),
+      forGroup: serializer.fromJson<bool?>(json['forGroup']),
     );
   }
   @override
@@ -3184,6 +3209,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       'estanciaMinima': serializer.toJson<int?>(estanciaMinima),
       'porcentajePromocion': serializer.toJson<double?>(porcentajePromocion),
       'codeTarifa': serializer.toJson<String?>(codeTarifa),
+      'forGroup': serializer.toJson<bool?>(forGroup),
     };
   }
 
@@ -3194,7 +3220,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           Value<DateTime?> fecha = const Value.absent(),
           Value<int?> estanciaMinima = const Value.absent(),
           Value<double?> porcentajePromocion = const Value.absent(),
-          Value<String?> codeTarifa = const Value.absent()}) =>
+          Value<String?> codeTarifa = const Value.absent(),
+          Value<bool?> forGroup = const Value.absent()}) =>
       TemporadaData(
         id: id ?? this.id,
         code: code ?? this.code,
@@ -3206,6 +3233,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
             ? porcentajePromocion.value
             : this.porcentajePromocion,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
+        forGroup: forGroup.present ? forGroup.value : this.forGroup,
       );
   @override
   String toString() {
@@ -3216,14 +3244,15 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
-          ..write('codeTarifa: $codeTarifa')
+          ..write('codeTarifa: $codeTarifa, ')
+          ..write('forGroup: $forGroup')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, code, nombre, fecha, estanciaMinima, porcentajePromocion, codeTarifa);
+  int get hashCode => Object.hash(id, code, nombre, fecha, estanciaMinima,
+      porcentajePromocion, codeTarifa, forGroup);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3234,7 +3263,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           other.fecha == this.fecha &&
           other.estanciaMinima == this.estanciaMinima &&
           other.porcentajePromocion == this.porcentajePromocion &&
-          other.codeTarifa == this.codeTarifa);
+          other.codeTarifa == this.codeTarifa &&
+          other.forGroup == this.forGroup);
 }
 
 class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
@@ -3245,6 +3275,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<int?> estanciaMinima;
   final Value<double?> porcentajePromocion;
   final Value<String?> codeTarifa;
+  final Value<bool?> forGroup;
   const TemporadaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -3253,6 +3284,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
+    this.forGroup = const Value.absent(),
   });
   TemporadaCompanion.insert({
     this.id = const Value.absent(),
@@ -3262,6 +3294,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
+    this.forGroup = const Value.absent(),
   })  : code = Value(code),
         nombre = Value(nombre);
   static Insertable<TemporadaData> custom({
@@ -3272,6 +3305,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     Expression<int>? estanciaMinima,
     Expression<double>? porcentajePromocion,
     Expression<String>? codeTarifa,
+    Expression<bool>? forGroup,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3282,6 +3316,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       if (porcentajePromocion != null)
         'porcentaje_promocion': porcentajePromocion,
       if (codeTarifa != null) 'code_tarifa': codeTarifa,
+      if (forGroup != null) 'for_group': forGroup,
     });
   }
 
@@ -3292,7 +3327,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       Value<DateTime?>? fecha,
       Value<int?>? estanciaMinima,
       Value<double?>? porcentajePromocion,
-      Value<String?>? codeTarifa}) {
+      Value<String?>? codeTarifa,
+      Value<bool?>? forGroup}) {
     return TemporadaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -3301,6 +3337,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       estanciaMinima: estanciaMinima ?? this.estanciaMinima,
       porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
       codeTarifa: codeTarifa ?? this.codeTarifa,
+      forGroup: forGroup ?? this.forGroup,
     );
   }
 
@@ -3328,6 +3365,9 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     if (codeTarifa.present) {
       map['code_tarifa'] = Variable<String>(codeTarifa.value);
     }
+    if (forGroup.present) {
+      map['for_group'] = Variable<bool>(forGroup.value);
+    }
     return map;
   }
 
@@ -3340,7 +3380,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
-          ..write('codeTarifa: $codeTarifa')
+          ..write('codeTarifa: $codeTarifa, ')
+          ..write('forGroup: $forGroup')
           ..write(')'))
         .toString();
   }
@@ -6128,6 +6169,7 @@ typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
+  Value<bool?> forGroup,
 });
 typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
@@ -6137,6 +6179,7 @@ typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
+  Value<bool?> forGroup,
 });
 
 class $$TemporadaTableTableManager extends RootTableManager<
@@ -6166,6 +6209,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
+            Value<bool?> forGroup = const Value.absent(),
           }) =>
               TemporadaCompanion(
             id: id,
@@ -6175,6 +6219,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
+            forGroup: forGroup,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -6184,6 +6229,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
+            Value<bool?> forGroup = const Value.absent(),
           }) =>
               TemporadaCompanion.insert(
             id: id,
@@ -6193,6 +6239,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
+            forGroup: forGroup,
           ),
         ));
 }
@@ -6246,6 +6293,11 @@ class $$TemporadaTableFilterComposer
       column: $state.table.codeTarifa,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get forGroup => $state.composableBuilder(
+      column: $state.table.forGroup,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$TemporadaTableOrderingComposer
@@ -6283,6 +6335,11 @@ class $$TemporadaTableOrderingComposer
 
   ColumnOrderings<String> get codeTarifa => $state.composableBuilder(
       column: $state.table.codeTarifa,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get forGroup => $state.composableBuilder(
+      column: $state.table.forGroup,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
