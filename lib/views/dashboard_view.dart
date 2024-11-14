@@ -100,7 +100,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 20.0),
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0, right: 10),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -113,22 +114,23 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           color: Theme.of(context).primaryColor,
                                           size: 16),
                                       CustomDropdown.dropdownMenuCustom(
-                                          fontSize: 12,
-                                          initialSelection: typePeriod,
-                                          onSelected: (String? value) {
-                                            setState(() {
-                                              ref
-                                                  .read(filterReport.notifier)
-                                                  .update((state) => value!);
-                                            });
-                                          },
-                                          elements: filtrosRegistro,
-                                          screenWidth: null),
+                                        fontSize: 12,
+                                        initialSelection: typePeriod,
+                                        onSelected: (String? value) => setState(
+                                          () => ref
+                                              .read(filterReport.notifier)
+                                              .update((state) => value!),
+                                        ),
+                                        elements: filtrosRegistro,
+                                        screenWidth: null,
+                                        compact: true,
+                                      ),
                                     ],
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 20),
+                                  padding: const EdgeInsets.only(
+                                      left: 20, right: 10),
                                   child: Divider(
                                       color: Theme.of(context).primaryColor),
                                 ),
@@ -154,7 +156,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         ),
                                         Expanded(
                                           child: SizedBox(
-                                            height: 435,
+                                            height: 450,
                                             child: SfCartesianChart(
                                               plotAreaBorderWidth: 0,
                                               tooltipBehavior: TooltipBehavior(
@@ -173,8 +175,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               palette: [
                                                 DesktopColors.cotGrupal,
                                                 DesktopColors.cotIndiv,
-                                                // DesktopColors.cotGroupPreColor,
-                                                // DesktopColors.cotGrupal
+                                                DesktopColors.resGrupal,
+                                                DesktopColors.resIndiv,
                                               ],
                                               legend: Legend(
                                                   isVisible: true,
@@ -194,27 +196,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       LegendItemOverflowMode
                                                           .wrap),
                                               series: [
-                                                // StackedColumnSeries<
-                                                //     ReporteCotizacion, String>(
-                                                //   dataSource: list,
-                                                //   xValueMapper: (datum, _) =>
-                                                //       datum.dia,
-                                                //   yValueMapper: (datum, _) => datum
-                                                //       .numCotizacionesGrupales,
-                                                //   name: "Cotizaciones grupales",
-                                                // ),
-                                                // StackedColumnSeries<
-                                                //     ReporteCotizacion, String>(
-                                                //   dataSource: list,
-                                                //   xValueMapper:
-                                                //       (datum, index) =>
-                                                //           datum.dia,
-                                                //   yValueMapper:
-                                                //       (datum, index) => datum
-                                                //           .numCotizacionesIndividual,
-                                                //   name:
-                                                //       "Cotizaciones Individuales",
-                                                // ),
                                                 ColumnSeries(
                                                   dataSource: list,
                                                   xValueMapper: (datum, _) =>
@@ -234,35 +215,34 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   name:
                                                       "Cotizaciones Individuales",
                                                 ),
-
-                                                // SplineSeries<ReporteCotizacion,
-                                                //     String>(
-                                                //   splineType:
-                                                //       SplineType.monotonic,
-                                                //   dataSource: list,
-                                                //   xValueMapper:
-                                                //       (datum, index) =>
-                                                //           datum.dia,
-                                                //   yValueMapper:
-                                                //       (datum, index) => datum
-                                                //           .numCotizacionesGrupalesPreventa,
-                                                //   name:
-                                                //       "Cotizaciones grupales oferta",
-                                                // ),
-                                                // SplineSeries<ReporteCotizacion,
-                                                //     String>(
-                                                //   splineType:
-                                                //       SplineType.monotonic,
-                                                //   dataSource: list,
-                                                //   xValueMapper:
-                                                //       (datum, index) =>
-                                                //           datum.dia,
-                                                //   yValueMapper:
-                                                //       (datum, index) => datum
-                                                //           .numCotizacionesIndividualPreventa,
-                                                //   name:
-                                                //       "Cotizaciones individuales oferta",
-                                                // ),
+                                                SplineSeries<ReporteCotizacion,
+                                                    String>(
+                                                  splineType:
+                                                      SplineType.monotonic,
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.dia,
+                                                  yValueMapper:
+                                                      (datum, index) => datum
+                                                          .numCotizacionesGrupalesPreventa,
+                                                  name:
+                                                      "Reservaciones grupales",
+                                                ),
+                                                SplineSeries<ReporteCotizacion,
+                                                    String>(
+                                                  splineType:
+                                                      SplineType.monotonic,
+                                                  dataSource: list,
+                                                  xValueMapper:
+                                                      (datum, index) =>
+                                                          datum.dia,
+                                                  yValueMapper:
+                                                      (datum, index) => datum
+                                                          .numCotizacionesIndividualPreventa,
+                                                  name:
+                                                      "Reservaciones individuales",
+                                                ),
                                               ],
                                               primaryXAxis: CategoryAxis(
                                                 labelRotation: 45, //Opcional
@@ -310,41 +290,44 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           elevation: 5,
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
-                            child: allQuotesSync.when(
-                              data: (list) {
-                                List<Widget> cards = [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        TextStyles.standardText(
-                                          isBold: true,
-                                          text: "Tu contador actual",
-                                          overClip: true,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 16,
-                                        ),
-                                        Divider(
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      ],
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    TextStyles.standardText(
+                                      isBold: true,
+                                      text: "Tu contador actual",
+                                      overClip: true,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 16,
                                     ),
-                                  ),
-                                ];
-                                for (var element in list) {
-                                  cards.add(ItemRows.statusQuoteRow(element));
-                                }
+                                    Divider(
+                                        color:
+                                            Theme.of(context).primaryColor),
+                                  ],
+                                ),
+                                allQuotesSync.when(
+                                  data: (list) {
+                                    List<Widget> cards = [];
+                                    for (var element in list) {
+                                      cards.add(
+                                          ItemRows.statusQuoteRow(element));
+                                    }
 
-                                return Wrap(children: cards);
-                              },
-                              error: (error, stackTrace) {
-                                return const SizedBox();
-                              },
-                              loading: () {
-                                return ProgressIndicatorCustom(screenHight: 80);
-                              },
+                                    return Wrap(children: cards);
+                                  },
+                                  error: (error, stackTrace) {
+                                    return const SizedBox();
+                                  },
+                                  loading: () {
+                                    return ProgressIndicatorCustom(
+                                        screenHight: 80);
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         )
@@ -375,13 +358,23 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 12.0, left: 20),
-                                        child: TextStyles.standardText(
-                                          isBold: true,
-                                          text: "Reporte de hoy",
-                                          size: 16,
-                                          color: Theme.of(context).primaryColor,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 12, 20, 0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            TextStyles.standardText(
+                                              isBold: true,
+                                              text: "Reporte de hoy",
+                                              size: 16,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                            Divider(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                          ],
                                         ),
                                       ),
                                       cotizacionesDiariasSync.when(
@@ -404,10 +397,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                     ),
                                                   ),
                                             palette: [
-                                              DesktopColors.cotGrupal,
+                                              (Utility.foundQuotes(list))
+                                                  ? DesktopColors.cotGrupal
+                                                  : DesktopColors.azulClaro,
                                               DesktopColors.cotIndiv,
                                               // DesktopColors.cotGroupPreColor,
-                                              DesktopColors.cotGroupColor
+                                              DesktopColors.resIndiv
                                             ],
                                             legend: Legend(
                                               isVisible:
@@ -477,14 +472,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 cotizacionesDiariasSync.when(
                                   data: (list) {
                                     if (!Utility.foundQuotes(list)) {
-                                      return Center(
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 28.0),
+                                        child: Center(
                                           child: TextStyles.standardText(
-                                        text: "Sin resultados",
-                                        size: 11,
-                                        color: Theme.of(context).primaryColor,
-                                      )).animate().fadeIn(
-                                          delay: const Duration(
-                                              milliseconds: 850));
+                                            text: "Sin nuevas\nCotizaciones",
+                                            size: 11,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            aling: TextAlign.center,
+                                          ),
+                                        ).animate().fadeIn(
+                                              delay: const Duration(
+                                                  milliseconds: 850),
+                                            ),
+                                      );
                                     } else {
                                       return const SizedBox();
                                     }
@@ -493,7 +496,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     return Container();
                                   },
                                   loading: () {
-                                    return SizedBox();
+                                    return const SizedBox();
                                   },
                                 )
                               ],
@@ -508,7 +511,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 elevation: 4,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      right: 12, top: 12, bottom: 10, left: 12),
+                                      right: 12, top: 9, bottom: 10, left: 12),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -516,25 +519,34 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 8, bottom: 5),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        child: Column(
                                           children: [
-                                            TextStyles.standardText(
-                                                isBold: true,
-                                                text: "Ultimas cotizaciones",
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                size: 16),
-                                            TextButton(
-                                              onPressed: () {
-                                                widget.sideController
-                                                    .selectIndex(2);
-                                              },
-                                              child: TextStyles.buttonText(
-                                                  text: "Mostrar todos",
-                                                  size: 12),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextStyles.standardText(
+                                                    isBold: true,
+                                                    text:
+                                                        "Ultimas cotizaciones",
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    size: 16),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    widget.sideController
+                                                        .selectIndex(2);
+                                                  },
+                                                  child: TextStyles.buttonText(
+                                                      text: "Mostrar todos",
+                                                      size: 12),
+                                                ),
+                                              ],
                                             ),
+                                            Divider(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ],
                                         ),
                                       ),

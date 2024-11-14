@@ -14,6 +14,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../providers/cotizacion_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
@@ -60,9 +61,14 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
 
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
-      ref
-          .read(temporadasProvider.notifier)
-          .update((state) => Utility.getTemporadas(register.temporadas));
+      ref.read(temporadasIndividualesProvider.notifier).update((state) =>
+          Utility.getTemporadas(register.temporadas
+              ?.where((element) => (element.forGroup ?? false) == false)
+              .toList()));
+      ref.read(temporadasGrupalesProvider.notifier).update((state) =>
+          Utility.getTemporadas(register.temporadas
+              ?.where((element) => element.forGroup ?? false)
+              .toList()));
       onCreate.call();
     }
 
@@ -122,7 +128,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           data == null ? 1 : data.intervaloHabitacionGratuita ?? 0;
       int limiteCotizacionGrupal =
           data == null ? 1 : data.limiteHabitacionCotizacion ?? 0;
-      bool loadingProccess = false;
 
       showDialog(
         context: context,
@@ -152,7 +157,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   widthInput: 70,
                   sizeText: 13.3,
                   nameField:
-                      "Intervalo de Aplicación de Habitaciones\nGratuitas",
+                      "Intervalo de Aplicación de Habitaciones\nde Cortesía",
                   initialValue: intervaloHabitacion.toString(),
                   onChanged: (p0) =>
                       intervaloHabitacion = p0.isEmpty ? 1 : int.parse(p0),
@@ -188,33 +193,17 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
             ),
           ),
           funtionMain: () async {
-            bool responseSavePolicy = await TarifaService().saveTariffPolicy(
-              Politica(
-                id: policy.id,
-                intervaloHabitacionGratuita: intervaloHabitacion,
-                fechaActualizacion: DateTime.now(),
-                limiteHabitacionCotizacion: limiteCotizacionGrupal,
-              ),
+            Politica savePolicy = Politica(
+              id: policy.id,
+              intervaloHabitacionGratuita: intervaloHabitacion,
+              fechaActualizacion: DateTime.now(),
+              limiteHabitacionCotizacion: limiteCotizacionGrupal,
             );
-            if (!context.mounted) return;
-            if (responseSavePolicy) {
-              showSnackBar(
-                context: context,
-                title:
-                    "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
-                message:
-                    "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
-                type: "success",
-                iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
-              );
 
-              Future.delayed(
-                500.ms,
-                () => ref
-                    .read(changeTariffPolicyProvider.notifier)
-                    .update((state) => UniqueKey().hashCode),
-              );
-            } else {
+            bool responseSavePolicy =
+                await TarifaService().saveTariffPolicy(savePolicy);
+            if (!context.mounted) return;
+            if (!responseSavePolicy) {
               if (mounted) return;
               showSnackBar(
                   context: context,
@@ -224,6 +213,29 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   type: "danger");
               return;
             }
+
+            showSnackBar(
+              context: context,
+              title:
+                  "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
+              message:
+                  "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
+              type: "success",
+              iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
+            );
+
+            Future.delayed(
+              500.ms,
+              () {
+                ref
+                    .read(saveTariffPolityProvider.notifier)
+                    .update((state) => savePolicy);
+
+                return ref
+                    .read(changeTariffPolicyProvider.notifier)
+                    .update((state) => UniqueKey().hashCode);
+              },
+            );
 
             Navigator.pop(context);
           },
@@ -279,7 +291,10 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                 ref
                                     .read(editTarifaProvider.notifier)
                                     .update((state) => RegistroTarifa());
-                                ref.read(temporadasProvider.notifier).update(
+                                ref
+                                    .read(
+                                        temporadasIndividualesProvider.notifier)
+                                    .update(
                                       (state) => [
                                         Temporada(
                                             nombre: "Promoción",
@@ -288,6 +303,17 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                             nombre: "BAR I", editable: false),
                                         Temporada(
                                             nombre: "BAR II", editable: false),
+                                      ],
+                                    );
+                                ref
+                                    .read(temporadasGrupalesProvider.notifier)
+                                    .update(
+                                      (state) => [
+                                        Temporada(
+                                          nombre: "Grupos",
+                                          editable: false,
+                                          forGroup: true,
+                                        ),
                                       ],
                                     );
                                 onCreate.call();

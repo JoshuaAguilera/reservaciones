@@ -8,17 +8,18 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/widgets/form_tariff_widget.dart';
 
-import '../providers/habitacion_provider.dart';
-import '../ui/custom_widgets.dart';
-import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
-import 'custom_dropdown.dart';
-import 'text_styles.dart';
-import 'textformfield_custom.dart';
+import '../../providers/habitacion_provider.dart';
+import '../../ui/custom_widgets.dart';
+import '../../utils/helpers/utility.dart';
+import '../../utils/helpers/web_colors.dart';
+import '../../widgets/custom_dropdown.dart';
+import '../../widgets/text_styles.dart';
+import '../../widgets/textformfield_custom.dart';
 
-class ManagerTariffDayWidget extends ConsumerStatefulWidget {
-  const ManagerTariffDayWidget(
+class ManagerTariffDayDialog extends ConsumerStatefulWidget {
+  const ManagerTariffDayDialog(
       {super.key,
       required this.tarifaXDia,
       this.isAppling = false,
@@ -33,7 +34,7 @@ class ManagerTariffDayWidget extends ConsumerStatefulWidget {
 }
 
 class _ManagerTariffDayWidgetState
-    extends ConsumerState<ManagerTariffDayWidget> {
+    extends ConsumerState<ManagerTariffDayDialog> {
   String temporadaSelect = "Mayo - Abril";
   bool applyAllTariff = false;
   bool applyAllDays = false;
@@ -96,11 +97,7 @@ class _ManagerTariffDayWidgetState
       if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
     }
 
-    if (widget.tarifaXDia.temporadas != null) {
-      for (var element in widget.tarifaXDia.temporadas!) {
-        promociones.add(element.nombre);
-      }
-    }
+    // promociones += Utility.getSeasonstoString(widget.tarifaXDia.temporadas);
     super.initState();
   }
 
@@ -121,6 +118,7 @@ class _ManagerTariffDayWidgetState
     double tariffAdult = calculateTariffAdult(habitacionProvider.adultos!);
     double tariffChildren =
         calculateTariffMenor(habitacionProvider.menores7a12!);
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     if (!startFlow && widget.tarifaXDia.tarifa == null) {
       selectCategory =
@@ -170,9 +168,11 @@ class _ManagerTariffDayWidgetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: widget.tarifaXDia.temporadaSelect != null
-                      ? MainAxisAlignment.spaceBetween
-                      : MainAxisAlignment.end,
+                  mainAxisAlignment:
+                      (widget.tarifaXDia.temporadaSelect != null ||
+                              widget.tarifaXDia.temporadas != null)
+                          ? MainAxisAlignment.spaceBetween
+                          : MainAxisAlignment.end,
                   children: [
                     TextStyles.standardText(
                       text: widget.tarifaXDia.temporadaSelect != null
@@ -188,11 +188,15 @@ class _ManagerTariffDayWidgetState
                         initialSelection: temporadaSelect,
                         onSelected: (String? value) =>
                             setState(() => temporadaSelect = value!),
-                        elements: promociones,
-                        screenWidth: 500,
+                        elements: promociones +
+                            Utility.getSeasonstoString(
+                                widget.tarifaXDia.temporadas,
+                                onlyGroups: typeQuote),
                         excepcionItem: "No aplicar",
-                        notElements:
-                            getPromocionesNoValidas(habitacionProvider),
+                        notElements: Utility.getPromocionesNoValidas(
+                          habitacionProvider,
+                          temporadas: widget.tarifaXDia.temporadas,
+                        ),
                       )
                     else
                       Expanded(
@@ -340,85 +344,13 @@ class _ManagerTariffDayWidgetState
                   padding: const EdgeInsets.only(top: 10),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa SGL/DBL",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              onChanged: (p0) => setState(() {}),
-                              controller: _tarifaAdultoController,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa TPL",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              onChanged: (p0) => setState(() {}),
-                              controller: _tarifaAdultoTPLController,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa CPLE",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              onChanged: (p0) => setState(() {}),
-                              controller: _tarifaAdultoCPLController,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa Pax Adic",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              controller: _tarifaPaxAdicionalController,
-                              onChanged: (p0) => setState(() {}),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa Menores 7 a 12 años",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              controller: _tarifaMenoresController,
-                              onChanged: (p0) => setState(() {}),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormFieldCustom.textFormFieldwithBorder(
-                              name: "Tarifa Menores 0 a 6 años",
-                              isMoneda: true,
-                              isNumeric: true,
-                              isDecimal: true,
-                              blocked: true,
-                              enabled: false,
-                              initialValue: "GRATIS",
-                            ),
-                          ),
-                        ],
+                      FormTariffWidget(
+                        tarifaAdultoController: _tarifaAdultoController,
+                        tarifaAdultoTPLController: _tarifaAdultoTPLController,
+                        tarifaAdultoCPLController: _tarifaAdultoCPLController,
+                        tarifaPaxAdicionalController:
+                            _tarifaPaxAdicionalController,
+                        tarifaMenoresController: _tarifaMenoresController,
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -841,12 +773,6 @@ class _ManagerTariffDayWidgetState
                   ref.read(descuentoProvisionalProvider.notifier).update(
                       (state) => double.parse(_descuentoController.text));
 
-                  // ref
-                  //     .read(tarifasProvider.notifier)
-                  //     .remove(widget.tarifaXDia.categoria!);
-                  // ref
-                  //     .read(tarifasProvider.notifier)
-                  //     .addItem(widget.tarifaXDia.tarifa!);
                   ref
                       .read(TarifasProvisionalesProvider.provider.notifier)
                       .addAll(widget.tarifaXDia.tarifas ?? []);
@@ -1017,27 +943,6 @@ class _ManagerTariffDayWidgetState
     }
 
     return withChanges;
-  }
-
-  List<String>? getPromocionesNoValidas(Habitacion habitacion) {
-    if (widget.tarifaXDia.temporadas == null) return null;
-    if (widget.tarifaXDia.temporadas!.isEmpty) return null;
-
-    int totalEstancia = DateTime.parse(habitacion.fechaCheckOut!)
-        .difference(DateTime.parse(habitacion.fechaCheckIn!))
-        .inDays;
-
-    List<String> promocionesNoValidas = [];
-
-    for (var element in widget.tarifaXDia.temporadas!) {
-      if (element.estanciaMinima! <= totalEstancia) {
-        promocionesNoValidas.add(element.nombre);
-      }
-    }
-
-    if (promocionesNoValidas.isEmpty) return null;
-
-    return promocionesNoValidas;
   }
 
   bool revisedPropiertiesSaveTariff() {

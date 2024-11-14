@@ -176,54 +176,35 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             ),
                           ),
                           SizedBox(
-                            width: screenWidth * 0.3,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      color: DesktopColors.cotIndiv,
-                                      size: 26,
-                                    ),
-                                    Container(
-                                      width: screenWidth > 400
-                                          ? screenWidth * 0.07
-                                          : 15,
-                                      child: TextStyles.standardText(
-                                        text: screenWidth > 650
-                                            ? "  Cot. Individual"
-                                            : screenWidth > 400
-                                                ? "  C. I."
-                                                : " I",
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    )
-                                  ],
+                                CustomWidgets.itemColorIndicator(
+                                  context,
+                                  screenWidth: screenWidth,
+                                  nameItem: "Cot. Grupal",
+                                  colorItem: DesktopColors.cotGrupal,
                                 ),
                                 const SizedBox(width: 5),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      color: DesktopColors.cotGrupal,
-                                      size: 26,
-                                    ),
-                                    Container(
-                                      width: screenWidth > 400
-                                          ? screenWidth * 0.07
-                                          : 15,
-                                      child: TextStyles.standardText(
-                                        text: screenWidth > 650
-                                            ? "  Cot. Grupal"
-                                            : screenWidth > 400
-                                                ? "  C. G."
-                                                : " G",
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ],
+                                CustomWidgets.itemColorIndicator(
+                                  context,
+                                  nameItem: "Cot. Individual",
+                                  screenWidth: screenWidth,
+                                  colorItem: DesktopColors.cotIndiv,
+                                ),
+                                const SizedBox(width: 5),
+                                CustomWidgets.itemColorIndicator(
+                                  context,
+                                  screenWidth: screenWidth,
+                                  nameItem: "Res. Grupal",
+                                  colorItem: DesktopColors.resGrupal,
+                                ),
+                                const SizedBox(width: 5),
+                                CustomWidgets.itemColorIndicator(
+                                  context,
+                                  screenWidth: screenWidth,
+                                  nameItem: "Res. Individual",
+                                  colorItem: DesktopColors.resIndiv,
                                 ),
                               ],
                             ),

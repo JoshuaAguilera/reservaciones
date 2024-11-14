@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/widgets/table_rows.dart';
 
 import '../utils/helpers/web_colors.dart';
 import '../widgets/form_widgets.dart';
@@ -368,98 +369,15 @@ class CustomWidgets {
                   ],
                 ),
                 for (var element in temporadas)
-                  TableRow(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: Center(
-                            child: TextStyles.mediumText(
-                          text: element.nombre ?? '',
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        )),
-                      ),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: (adults1a2.text.isEmpty &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                adults1a2,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: ((adults3.text.isEmpty || adults3.text == '0') &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                adults3,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text:
-                              ((adults4.text.isEmpty || adults4.text == '0') &&
-                                      element.porcentajePromocion == null)
-                                  ? "—"
-                                  : Utility.calculatePromotion(
-                                      adults4,
-                                      TextEditingController(
-                                          text: element.porcentajePromocion
-                                              ?.toString()),
-                                      0),
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: (paxAdic.text.isEmpty &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                paxAdic,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text: (minor7a12.text.isEmpty &&
-                                  element.porcentajePromocion == null)
-                              ? "—"
-                              : Utility.calculatePromotion(
-                                  minor7a12,
-                                  TextEditingController(
-                                      text: element.porcentajePromocion
-                                          ?.toString()),
-                                  0),
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text: "GRATIS",
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                  TableRows.tarifasTemporadaTableRow(
+                    context,
+                    element: element,
+                    adults1a2: adults1a2,
+                    adults3: adults3,
+                    adults4: adults4,
+                    paxAdic: paxAdic,
+                    minor7a12: minor7a12,
+                    isGroup: element.forGroup ?? false,
                   ),
               ],
             ),
@@ -781,6 +699,34 @@ class CustomWidgets {
           ),
         ),
       ],
+    );
+  }
+
+  static Widget itemColorIndicator(
+    BuildContext context, {
+    required double screenWidth,
+    required String nameItem,
+    required Color? colorItem,
+  }) {
+    return Tooltip(
+      message: screenWidth > 1000 ? '' : nameItem,
+      child: Row(
+        children: [
+          Icon(
+            Icons.circle,
+            color: colorItem,
+            size: 26,
+          ),
+          if (screenWidth > 1000)
+            Container(
+              width: screenWidth * 0.07,
+              child: TextStyles.standardText(
+                text: "  $nameItem",
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+        ],
+      ),
     );
   }
 }

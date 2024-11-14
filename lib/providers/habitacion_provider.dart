@@ -187,8 +187,6 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
           .generarComprobanteCotizacionGrupal(
               habitaciones: state, cotizacion: cotizacion);
     }
-
-    return pdfPrinc;
   }
 
   //Definición del provider
@@ -196,6 +194,20 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
       NotifierProvider<HabitacionProvider, List<Habitacion>>(
           HabitacionProvider.new);
 }
+
+final totalRoomsProvider = Provider<int>((ref) {
+  int total = 0;
+  List<Habitacion> rooms = ref
+      .watch(HabitacionProvider.provider)
+      .where((todo) => !todo.isFree)
+      .toList();
+
+  for (var element in rooms) {
+    total += element.count;
+  }
+
+  return total;
+});
 
 final habitacionSelectProvider =
     StateProvider<Habitacion>((ref) => Habitacion());
@@ -209,6 +221,7 @@ final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
 });
 
 final typeQuoteProvider = StateProvider<bool>((ref) => false);
+final showManagerTariffGroupProvider = StateProvider<bool>((ref) => false);
 
 final detectChangeRoomProvider = StateProvider<int>((ref) => 0);
 

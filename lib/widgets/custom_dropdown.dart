@@ -17,6 +17,7 @@ class CustomDropdown {
     String label = '',
     String excepcionItem = '',
     bool calculateWidth = true,
+    bool compact = false,
   }) {
     List<String> items = elements.toList();
 
@@ -24,44 +25,11 @@ class CustomDropdown {
       items.removeWhere((element) => element == removeItem);
     }
 
-    /**
-     Container(
-          height: 30.0,
-          decoration: BoxDecoration(color: Colors.white),
-          child: DropdownMenu<String>(
-            textStyle: TextStyle(fontSize: 10),
-            inputDecorationTheme: InputDecorationTheme(isCollapsed: true),
-            // Here update this
-            menuHeight: 50, 
-            dropdownMenuEntries: [
-              DropdownMenuEntry(
-                value: "Name - First",
-                label: "Name - First",
-                style: ButtonStyle(
-                  textStyle: MaterialStateTextStyle.resolveWith(
-                    (states) => TextStyle(fontSize: 10),
-                  ),
-                ),
-              ),
-              DropdownMenuEntry(
-                value: "Name - Second",
-                label: "Name - Second",
-                style: ButtonStyle(
-                  textStyle: MaterialStateTextStyle.resolveWith(
-                    (states) => TextStyle(fontSize: 10),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-     */
-
     return StatefulBuilder(
       builder: (context, setState) {
         return Container(
-          height: 30,
-          width: 100,
+          height: compact ? 30 : null,
+          width: compact ? 120 : null,
           child: DropdownMenu<String>(
             menuHeight: 200,
             width: screenWidth == null
@@ -73,12 +41,19 @@ class CustomDropdown {
             initialSelection: initialSelection,
             onSelected: onSelected,
             label: Text(label),
-            expandedInsets: EdgeInsets.all(1),
-            
-            trailingIcon: Transform.translate(
-              offset: Offset(3, -5),
-              child: Icon(Icons.arrow_drop_down),
-            ),
+            expandedInsets: !compact ? null : const EdgeInsets.all(1),
+            trailingIcon: !compact
+                ? null
+                : Transform.translate(
+                    offset: const Offset(2, -8),
+                    child: const Icon(Icons.arrow_drop_down),
+                  ),
+            inputDecorationTheme: !compact
+                ? null
+                : const InputDecorationTheme(
+                    contentPadding: EdgeInsets.only(top: -5, left: 15),
+                    border: OutlineInputBorder(),
+                  ),
             textStyle:
                 TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
             dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(

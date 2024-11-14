@@ -116,7 +116,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final actualTarifa = ref.watch(editTarifaProvider);
-    final temporadaListProvider = ref.read(temporadasProvider);
+    final temporadaIndListProvider = ref.read(temporadasIndividualesProvider);
+    final temporadaGrupListProvider = ref.read(temporadasGrupalesProvider);
 
     if (!starflow && actualTarifa.code != null) {
       nombreTarifaController.text = actualTarifa.nombre!;
@@ -196,7 +197,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         500.ms, () => widget.sideController.selectIndex(5));
                   },
                   onPressedSaveButton: () async {
-                    await savedTariff(temporadaListProvider);
+                    await savedTariff(
+                        temporadaIndListProvider + temporadaGrupListProvider);
                   },
                 ),
                 const SizedBox(height: 10),
@@ -211,10 +213,16 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: TextStyles.titleText(
-                              text: "Datos generales",
-                              size: 18,
-                              color: Theme.of(context).dividerColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextStyles.titleText(
+                                  text: "Datos generales",
+                                  size: 18,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                Divider(color: Theme.of(context).primaryColor),
+                              ],
                             ),
                           ),
                           Wrap(
@@ -304,10 +312,16 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12, top: 10),
-                            child: TextStyles.titleText(
-                              text: "Periodos",
-                              size: 18,
-                              color: Theme.of(context).dividerColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextStyles.titleText(
+                                  text: "Periodos",
+                                  size: 18,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                Divider(color: Theme.of(context).primaryColor),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -441,11 +455,11 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           child: Row(
                             children: [
                               TextStyles.titleText(
-                                text: "Temporadas ",
+                                text: "Temporadas Individuales  ",
                                 size: 18,
                                 color: Theme.of(context).dividerColor,
                               ),
-                               TextStyles.titleText(
+                              TextStyles.titleText(
                                 text: "(Solo para cotizaciones individuales)",
                                 size: 13,
                                 color: Theme.of(context).primaryColor,
@@ -453,6 +467,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             ],
                           ),
                         ),
+                        Divider(color: Theme.of(context).primaryColor),
                         Center(
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -460,7 +475,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             spacing: 2,
                             runSpacing: 4,
                             children: [
-                              for (var element in temporadaListProvider)
+                              for (var element in temporadaIndListProvider)
                                 SizedBox(
                                   width:
                                       getWidthResizableTemporada(screenWidth) -
@@ -469,7 +484,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                     context: context,
                                     temporada: element,
                                     onRemove: () => setState(() =>
-                                        temporadaListProvider.remove(element)),
+                                        temporadaIndListProvider
+                                            .remove(element)),
                                     onChangedDescuento: (p0) => setState(() =>
                                         element.porcentajePromocion = p0.isEmpty
                                             ? null
@@ -485,9 +501,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                 padding: const EdgeInsets.only(top: 23),
                                 child: InkWell(
                                   onTap: () => setState(() {
-                                    temporadaListProvider.add(Temporada(
+                                    temporadaIndListProvider.add(Temporada(
                                         nombre:
-                                            "New Season(${temporadaListProvider.length + 1})"));
+                                            "BAR ${Utility.intToRoman(temporadaIndListProvider.length)}"));
                                   }),
                                   child: Container(
                                     width: 95,
@@ -523,14 +539,112 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 25),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 1, top: 5),
+                          child: Row(
+                            children: [
+                              TextStyles.titleText(
+                                text: "Temporadas Grupales  ",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              TextStyles.titleText(
+                                text: "(Solo para cotizaciones grupales)",
+                                size: 13,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(color: Theme.of(context).primaryColor),
+                        Center(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            alignment: WrapAlignment.center,
+                            spacing: 2,
+                            runSpacing: 4,
+                            children: [
+                              for (var element in temporadaGrupListProvider)
+                                SizedBox(
+                                  width:
+                                      getWidthResizableTemporada(screenWidth) -
+                                          35,
+                                  child: CustomWidgets.sectionConfigSeason(
+                                    context: context,
+                                    temporada: element,
+                                    onRemove: () => setState(() =>
+                                        temporadaGrupListProvider
+                                            .remove(element)),
+                                    onChangedDescuento: (p0) => setState(() =>
+                                        element.porcentajePromocion = p0.isEmpty
+                                            ? null
+                                            : double.parse(p0)),
+                                    onChangedName: (p0) =>
+                                        setState(() => element.nombre = p0),
+                                    onChangedEstancia: (p0) =>
+                                        element.estanciaMinima =
+                                            p0.isEmpty ? null : int.parse(p0),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 23),
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    temporadaGrupListProvider.add(Temporada(
+                                      nombre:
+                                          "Grupos (${temporadaGrupListProvider.length + 1})",
+                                      forGroup: true,
+                                    ));
+                                  }),
+                                  child: Container(
+                                    width: 95,
+                                    height: 109,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.add,
+                                          size: 35,
+                                          color: Theme.of(context).dividerColor,
+                                        ),
+                                        TextStyles.standardText(
+                                          text: "Agregar\nTemporada",
+                                          aling: TextAlign.center,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 11,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 25),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 1),
-                          child: TextStyles.titleText(
-                            text: "Tarífas",
-                            size: 18,
-                            color: Theme.of(context).dividerColor,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextStyles.titleText(
+                                text: "Tarífas",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              Divider(color: Theme.of(context).primaryColor),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 5),
@@ -878,17 +992,24 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 1),
-                          child: TextStyles.titleText(
-                            text: "Tarífas de temporada",
-                            size: 18,
-                            color: Theme.of(context).dividerColor,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextStyles.titleText(
+                                text: "Tarífas de temporada",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              Divider(color: Theme.of(context).primaryColor),
+                            ],
                           ),
                         ),
                         CustomWidgets.tableTarifasTemporadas(
                           context: context,
                           tipoHabitacion: tipoHabitacion[0],
                           colorTipo: DesktopColors.vistaReserva,
-                          temporadas: temporadaListProvider,
+                          temporadas: temporadaIndListProvider +
+                              temporadaGrupListProvider,
                           adults1a2: adults1_2VRController,
                           adults3: adults3VRController,
                           adults4: adults4VRController,
@@ -900,7 +1021,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           context: context,
                           tipoHabitacion: tipoHabitacion[1],
                           colorTipo: DesktopColors.vistaParcialMar,
-                          temporadas: temporadaListProvider,
+                          temporadas: temporadaIndListProvider +
+                              temporadaGrupListProvider,
                           adults1a2: adults1_2VPMController,
                           adults3: adults3VPMController,
                           adults4: adults4VPMController,
@@ -915,7 +1037,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             width: 130,
                             child: Buttons.commonButton(
                               onPressed: () async {
-                                await savedTariff(temporadaListProvider);
+                                await savedTariff(temporadaIndListProvider +
+                                    temporadaGrupListProvider);
                               },
                               sizeText: 15,
                               text: "Guardar",

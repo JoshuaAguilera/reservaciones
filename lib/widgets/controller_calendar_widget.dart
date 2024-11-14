@@ -239,7 +239,9 @@ class _ControllerCalendarWidgetState
                             ref
                                 .read(editTarifaProvider.notifier)
                                 .update((state) => RegistroTarifa());
-                            ref.read(temporadasProvider.notifier).update(
+                            ref
+                                .read(temporadasIndividualesProvider.notifier)
+                                .update(
                                   (state) => [
                                     Temporada(
                                         nombre: "Promoción", editable: false),
@@ -248,9 +250,19 @@ class _ControllerCalendarWidgetState
                                         nombre: "BAR II", editable: false),
                                   ],
                                 );
+                            ref
+                                .read(temporadasGrupalesProvider.notifier)
+                                .update(
+                                  (state) => [
+                                    Temporada(
+                                      nombre: "Grupos",
+                                      editable: false,
+                                      forGroup: true,
+                                    ),
+                                  ],
+                                );
                             widget.onCreated!.call();
                           },
-                          
                         ),
                         leading: SizedBox(
                           width: 175,
@@ -288,12 +300,29 @@ class _ControllerCalendarWidgetState
                                             registroTarifa: list[index],
                                             onEdit: () {
                                               ref
-                                                  .read(temporadasProvider
-                                                      .notifier)
-                                                  .update((state) =>
-                                                      Utility.getTemporadas(
-                                                          list[index]
-                                                              .temporadas));
+                                                  .read(
+                                                      temporadasIndividualesProvider
+                                                          .notifier)
+                                                  .update((state) => Utility
+                                                      .getTemporadas(list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              (element.forGroup ??
+                                                                  false) ==
+                                                              false)
+                                                          .toList()));
+                                              ref
+                                                  .read(
+                                                      temporadasGrupalesProvider
+                                                          .notifier)
+                                                  .update((state) => Utility
+                                                      .getTemporadas(list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              element
+                                                                  .forGroup ??
+                                                              false)
+                                                          .toList()));
                                               ref
                                                   .read(editTarifaProvider
                                                       .notifier)

@@ -10,7 +10,9 @@ import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -25,7 +27,6 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -68,6 +69,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final showManagerTariffGroup = ref.watch(showManagerTariffGroupProvider);
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -99,6 +101,33 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       );
 
       Future.delayed(1000.ms, () => widget.sideController.selectIndex(16));
+    }
+
+    void _showConfigurationTariffGroup() {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const ManagerTariffGroupDialog();
+        },
+      );
+    }
+
+    if (typeQuote) {
+      Future.delayed(Durations.short4, () {
+        if (!showManagerTariffGroup) _showConfigurationTariffGroup();
+      });
+
+      Future.delayed(
+          Durations.short1,
+          () => ref
+              .read(showManagerTariffGroupProvider.notifier)
+              .update((state) => true));
+    } else {
+      Future.delayed(
+          Durations.short1,
+          () => ref
+              .read(showManagerTariffGroupProvider.notifier)
+              .update((state) => false));
     }
 
     return Scaffold(

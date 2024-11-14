@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 
 import '../models/habitacion_model.dart';
 import '../models/registro_tarifa_model.dart';
@@ -9,7 +10,7 @@ import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
 import '../utils/helpers/web_colors.dart';
 import 'item_rows.dart';
-import 'manager_tariff_day_widget.dart';
+import '../views/generacion_cotizaciones/manager_tariff_day_dialog.dart';
 import 'text_styles.dart';
 
 class TableRows {
@@ -45,7 +46,7 @@ class TableRows {
     void showDialogManagerTariff() {
       showDialog(
         context: context,
-        builder: (context) => ManagerTariffDayWidget(
+        builder: (context) => ManagerTariffDayDialog(
           tarifaXDia: tarifaXDia,
           numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
               .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
@@ -193,19 +194,23 @@ class TableRows {
           ),
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: SizedBox(
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  for (var elementInt in element.periodos ?? [])
-                    ItemRows.filterItemRow(
-                      withDeleteButton: false,
-                      colorCard: element.color!,
-                      initDate: elementInt.fechaInicial!,
-                      lastDate: elementInt.fechaFinal!,
-                    ),
-                ],
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Container(
+              height: 35,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
+              child: ListView.builder(
+                itemCount: element.periodos?.length,
+                physics: const AlwaysScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) => ItemRows.filterItemRow(
+                  withDeleteButton: false,
+                  colorCard: element.color!,
+                  initDate: element.periodos![index].fechaInicial!,
+                  lastDate: element.periodos![index].fechaFinal!,
+                ),
               ),
             ),
           ),
@@ -251,7 +256,108 @@ class TableRows {
                     color: DesktopColors.ceruleanOscure,
                   ),
                 ),
+              const SizedBox(width: 10),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static TableRow tarifasTemporadaTableRow(
+    BuildContext context, {
+    required Temporada element,
+    required TextEditingController adults1a2,
+    required TextEditingController adults3,
+    required TextEditingController adults4,
+    required TextEditingController paxAdic,
+    required TextEditingController minor7a12,
+    bool isGroup = false,
+  }) {
+    Color colorText =
+        isGroup ? DesktopColors.cotGrupal : DesktopColors.cotIndiv;
+
+    return TableRow(
+      children: [
+        SizedBox(
+          height: 50,
+          child: Center(
+              child: TextStyles.mediumText(
+            text: element.nombre ?? '',
+            color: colorText,
+            aling: TextAlign.center,
+          )),
+        ),
+        Center(
+            child: TextStyles.mediumText(
+          text: (adults1a2.text.isEmpty && element.porcentajePromocion == null)
+              ? "—"
+              : Utility.calculatePromotion(
+                  adults1a2,
+                  TextEditingController(
+                      text: element.porcentajePromocion?.toString()),
+                  0),
+          color: Theme.of(context).primaryColor,
+          aling: TextAlign.center,
+        )),
+        Center(
+            child: TextStyles.mediumText(
+          text: ((adults3.text.isEmpty || adults3.text == '0') &&
+                  element.porcentajePromocion == null)
+              ? "—"
+              : Utility.calculatePromotion(
+                  adults3,
+                  TextEditingController(
+                      text: element.porcentajePromocion?.toString()),
+                  0),
+          color: Theme.of(context).primaryColor,
+          aling: TextAlign.center,
+        )),
+        Center(
+          child: TextStyles.mediumText(
+            text: ((adults4.text.isEmpty || adults4.text == '0') &&
+                    element.porcentajePromocion == null)
+                ? "—"
+                : Utility.calculatePromotion(
+                    adults4,
+                    TextEditingController(
+                        text: element.porcentajePromocion?.toString()),
+                    0),
+            color: Theme.of(context).primaryColor,
+            aling: TextAlign.center,
+          ),
+        ),
+        Center(
+            child: TextStyles.mediumText(
+          text: (paxAdic.text.isEmpty && element.porcentajePromocion == null)
+              ? "—"
+              : Utility.calculatePromotion(
+                  paxAdic,
+                  TextEditingController(
+                      text: element.porcentajePromocion?.toString()),
+                  0),
+          color: Theme.of(context).primaryColor,
+          aling: TextAlign.center,
+        )),
+        Center(
+          child: TextStyles.mediumText(
+            text:
+                (minor7a12.text.isEmpty && element.porcentajePromocion == null)
+                    ? "—"
+                    : Utility.calculatePromotion(
+                        minor7a12,
+                        TextEditingController(
+                            text: element.porcentajePromocion?.toString()),
+                        0),
+            color: Theme.of(context).primaryColor,
+            aling: TextAlign.center,
+          ),
+        ),
+        Center(
+          child: TextStyles.mediumText(
+            text: "GRATIS",
+            color: Theme.of(context).primaryColor,
+            aling: TextAlign.center,
           ),
         ),
       ],

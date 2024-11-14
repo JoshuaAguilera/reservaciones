@@ -1,12 +1,10 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -155,10 +153,10 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
-    Color? colorCard = brightness == Brightness.light
+    Color colorCard = brightness == Brightness.light
         ? const Color.fromARGB(255, 243, 243, 243)
         : DesktopColors.grisSemiPalido;
-    Color? colorText = Theme.of(context).primaryColor;
+    Color colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);

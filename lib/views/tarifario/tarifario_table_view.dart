@@ -4,16 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
-import 'package:path/path.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/item_rows.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
@@ -70,7 +65,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Center(
                       child: TextStyles.standardText(
-                          text: "#",
+                          text: "ID",
                           isBold: true,
                           color: Theme.of(context).primaryColor,
                           size: 14),
@@ -110,10 +105,11 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                   ),
                   Center(
                     child: TextStyles.standardText(
-                        text: "Opciones",
-                        isBold: true,
-                        color: Theme.of(context).primaryColor,
-                        size: 14),
+                      text: "Opciones",
+                      isBold: true,
+                      color: Theme.of(context).primaryColor,
+                      size: 14,
+                    ),
                   ),
                 ],
               ),
@@ -126,36 +122,40 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                 return listTarifasProvider.when(
                   data: (list) {
                     if (list.isNotEmpty) {
-                      return Table(
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        border: TableBorder(
-                          horizontalInside: BorderSide(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 2,
-                          ),
-                        ),
-                        columnWidths: {
-                          0: const FractionColumnWidth(0.05),
-                          1: const FractionColumnWidth(0.1),
-                          2: const FractionColumnWidth(.18),
-                          3: (screenWidth > 1525)
-                              ? const FractionColumnWidth(0.1)
-                              : const FractionColumnWidth(.47),
-                          4: (screenWidth > 1525)
-                              ? const FractionColumnWidth(.41)
-                              : const FractionColumnWidth(.2),
-                          if (screenWidth > 1525)
-                            5: const FractionColumnWidth(0.15),
-                        },
+                      return Column(
                         children: [
                           for (var element in list)
-                            TableRows.tableRowTarifario(
-                              element: element,
-                              context: context,
-                              screenWidth: screenWidth,
-                              onEdit: (p0) => widget.onEdit!.call(element),
-                              onDelete: (p0) => widget.onDelete!.call(element),
+                            Card(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              elevation: 3,
+                              child: Table(
+                                defaultVerticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                columnWidths: {
+                                  0: const FractionColumnWidth(0.05),
+                                  1: const FractionColumnWidth(0.1),
+                                  2: const FractionColumnWidth(.18),
+                                  3: (screenWidth > 1525)
+                                      ? const FractionColumnWidth(0.1)
+                                      : const FractionColumnWidth(.47),
+                                  4: (screenWidth > 1525)
+                                      ? const FractionColumnWidth(.41)
+                                      : const FractionColumnWidth(.2),
+                                  if (screenWidth > 1525)
+                                    5: const FractionColumnWidth(0.16),
+                                },
+                                children: [
+                                  TableRows.tableRowTarifario(
+                                    element: element,
+                                    context: context,
+                                    screenWidth: screenWidth,
+                                    onEdit: (p0) =>
+                                        widget.onEdit!.call(element),
+                                    onDelete: (p0) =>
+                                        widget.onDelete!.call(element),
+                                  ),
+                                ],
+                              ),
                             ),
                         ],
                       );

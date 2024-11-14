@@ -39,6 +39,7 @@ class ItemRows {
                 size: 55,
                 color: Utility.darken(
                   Utility.getColorRegisterQuote(register.tipoCotizacion!),
+                  0.12,
                 )),
           ),
           Column(
@@ -458,46 +459,65 @@ class ItemRows {
 
   static Widget filterItemRow({
     required Color colorCard,
-    required DateTime initDate,
-    required DateTime lastDate,
+    DateTime? initDate,
+    DateTime? lastDate,
     void Function()? onRemove,
     bool withDeleteButton = true,
+    String title = "",
+    bool withOutWidth = false,
+    bool isSelect = true,
+    Color? backgroundColor,
   }) {
     return SizedBox(
-      width: 170,
+      width: withOutWidth ? null : 170,
       height: withDeleteButton ? null : 38,
       child: Card(
-        color: colorCard,
-        child: Row(
-          mainAxisAlignment: withDeleteButton
-              ? MainAxisAlignment.spaceBetween
-              : MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 7),
-            TextStyles.standardText(
-                text: Utility.getStringPeriod(
-                    initDate: initDate, lastDate: lastDate),
-                color: useWhiteForeground(colorCard)
-                    ? Colors.white
-                    : Colors.black),
-            if (withDeleteButton)
-              SizedBox(
-                width: 35,
-                height: 40,
-                child: IconButton(
-                  onPressed: () {
-                    onRemove!.call();
-                  },
-                  icon: Icon(
-                    Icons.close,
-                    size: 25,
-                    color: useWhiteForeground(colorCard)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
+        color: isSelect ? colorCard : Colors.transparent,
+        child: Container(
+          decoration: isSelect
+              ? null
+              : BoxDecoration(
+                  border: Border.all(color: colorCard),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                 ),
-              ),
-          ],
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: !withDeleteButton ? 6 : 0),
+            child: Row(
+              mainAxisAlignment: withDeleteButton
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.center,
+              children: [
+                if (withDeleteButton) const SizedBox(width: 7),
+                TextStyles.standardText(
+                    text: (initDate == null && lastDate == null)
+                        ? title
+                        : Utility.getStringPeriod(
+                            initDate: initDate!, lastDate: lastDate!),
+                    color: useWhiteForeground(
+                            isSelect ? colorCard : backgroundColor ?? colorCard)
+                        ? Colors.white
+                        : Colors.black),
+                if (withDeleteButton)
+                  SizedBox(
+                    width: 35,
+                    height: 40,
+                    child: IconButton(
+                      onPressed: () {
+                        onRemove!.call();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        size: 25,
+                        color: useWhiteForeground(colorCard)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

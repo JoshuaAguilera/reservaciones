@@ -11,7 +11,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_day_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../providers/habitacion_provider.dart';
@@ -448,7 +448,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     });
     showDialog(
       context: context,
-      builder: (context) => ManagerTariffDayWidget(
+      builder: (context) => ManagerTariffDayDialog(
         tarifaXDia: widget.tarifaXDia,
         numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
             .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))

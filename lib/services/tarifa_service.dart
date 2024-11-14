@@ -83,6 +83,9 @@ class TarifaService extends BaseService {
                     estanciaMinima: Value(element.estanciaMinima),
                     fecha: Value(now),
                     porcentajePromocion: Value(element.porcentajePromocion),
+                    forGroup: Value(
+                      element.forGroup,
+                    ),
                   ),
                 );
           }
@@ -188,6 +191,9 @@ class TarifaService extends BaseService {
                 tempUpdate: TemporadaCompanion(
                   estanciaMinima: Value(element.estanciaMinima),
                   porcentajePromocion: Value(element.porcentajePromocion),
+                  forGroup: Value(
+                    element.forGroup,
+                  ),
                 ),
                 codeUniv: codeUniversal,
                 id: element.id!,

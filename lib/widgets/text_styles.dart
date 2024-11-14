@@ -28,7 +28,7 @@ class TextStyles {
       TextOverflow overflow = TextOverflow.ellipsis}) {
     return TextStyle(
       fontFamily: "poppins_regular",
-      color: color ?? DesktopColors.prussianBlue,
+      color: color,
       fontSize: size,
       fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
       overflow: overClip ? TextOverflow.clip : overflow,

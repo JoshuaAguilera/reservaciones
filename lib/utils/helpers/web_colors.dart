@@ -27,8 +27,8 @@ class DesktopColors {
   //Colors Graphics
   static Color cotGrupal = Color.fromARGB(255, 233, 170, 69);
   static Color cotIndiv = Color.fromARGB(255, 26, 112, 166);
-  static Color cotGroupPreColor = Color.fromARGB(255, 36, 142, 18);
-  static Color cotGroupColor = Color.fromARGB(255, 76, 162, 205);
+  static Color resGrupal = Color.fromARGB(255, 220, 108, 64);
+  static Color resIndiv = Color.fromARGB(255, 76, 162, 205);
   static Color notFound = const Color.fromARGB(255, 204, 202, 202);
 
   //Colors Settings Default

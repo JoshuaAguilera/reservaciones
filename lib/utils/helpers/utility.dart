@@ -237,21 +237,33 @@ class Utility {
     NumeroCotizacion cotizacionesIndividuales =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones individuales");
 
-    NumeroCotizacion cotizacionesIndividualesPreventa = NumeroCotizacion(
-        tipoCotizacion: "Cotizaciones individuales en Preventa");
+    NumeroCotizacion reservacionesIndividuales =
+        NumeroCotizacion(tipoCotizacion: "Reservaciones individuales");
 
-    for (var element in respIndToday!) {
-      if (element.esGrupo!) {
-        cotizacionesGrupales.numCotizaciones++;
+    NumeroCotizacion reservacionesGrupales =
+        NumeroCotizacion(tipoCotizacion: "Reservaciones grupales");
+
+    for (var element in respIndToday ?? List<CotizacionData>.empty()) {
+      if (element.esGrupo ?? false) {
+        if (element.esConcretado ?? false) {
+          reservacionesGrupales.numCotizaciones++;
+        } else {
+          cotizacionesGrupales.numCotizaciones++;
+        }
       } else {
-        cotizacionesIndividuales.numCotizaciones++;
+        if (element.esConcretado ?? false) {
+          reservacionesIndividuales.numCotizaciones++;
+        } else {
+          cotizacionesIndividuales.numCotizaciones++;
+        }
       }
     }
 
     cot.addAll([
       cotizacionesGrupales,
       cotizacionesIndividuales,
-      cotizacionesIndividualesPreventa,
+      reservacionesGrupales,
+      reservacionesIndividuales,
     ]);
 
     return cot;
@@ -344,11 +356,11 @@ class Utility {
     switch (tipoCotizacion) {
       case "Cotizaciones grupales":
         return CupertinoIcons.person_2_fill;
-      case "Cotizaciones grupales en Preventa":
+      case "Reservaciones grupales":
         return CupertinoIcons.person_2_fill;
       case "Cotizaciones individuales":
         return CupertinoIcons.person_fill;
-      case "Cotizaciones individuales en Preventa":
+      case "Reservaciones individuales":
         return CupertinoIcons.person_fill;
       default:
         return Icons.error_outline;
@@ -362,19 +374,19 @@ class Utility {
           DesktopColors.cotGrupal,
           const Color.fromARGB(255, 255, 205, 124)
         ];
-      case "Cotizaciones grupales en Preventa":
+      case "Reservaciones grupales":
         return [
-          DesktopColors.cotGroupPreColor,
-          const Color.fromARGB(255, 102, 232, 79)
+          DesktopColors.resGrupal,
+          const Color.fromARGB(255, 226, 109, 31)
         ];
       case "Cotizaciones individuales":
         return [
           DesktopColors.cotIndiv,
           const Color.fromARGB(255, 73, 185, 255)
         ];
-      case "Cotizaciones individuales en Preventa":
+      case "Reservaciones individuales":
         return [
-          DesktopColors.cotGroupColor,
+          DesktopColors.resIndiv,
           const Color.fromARGB(255, 140, 207, 240)
         ];
       default:
@@ -444,12 +456,12 @@ class Utility {
     switch (type) {
       case "Cotizaciones grupales":
         return DesktopColors.cotGrupal;
-      case "Cotizaciones grupales en Preventa":
-        return DesktopColors.cotGroupPreColor;
+      case "Reservaciones grupales":
+        return DesktopColors.resGrupal;
       case "Cotizaciones individuales":
         return DesktopColors.cotIndiv;
-      case "Cotizaciones individuales en Preventa":
-        return DesktopColors.cotGroupColor;
+      case "Reservaciones individuales":
+        return DesktopColors.resIndiv;
       default:
         return Colors.white;
     }
@@ -1133,15 +1145,37 @@ class Utility {
     return tariffChildren;
   }
 
-  static TemporadaData? getSeasonNow(
-      RegistroTarifa? nowRegister, int totalDays) {
+  static TemporadaData? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
+      {bool isGroup = false}) {
     if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
 
     TemporadaData? nowSeason;
 
-    for (var element in nowRegister.temporadas!) {
+    List<TemporadaData> validSeasons = [];
+
+    validSeasons = nowRegister
+            .copyWith()
+            .temporadas
+            ?.where((element) => (element.forGroup ?? false) == false)
+            .toList()
+            .map((element) => element.copyWith())
+            .toList() ??
+        [];
+
+    if (isGroup) {
+      validSeasons = nowRegister
+              .copyWith()
+              .temporadas
+              ?.where((element) => (element.forGroup ?? false))
+              .toList()
+              .map((element) => element.copyWith())
+              .toList() ??
+          [];
+    }
+
+    for (var element in validSeasons) {
       if (totalDays == element.estanciaMinima ||
           totalDays > element.estanciaMinima!) {
         nowSeason = element.copyWith();
@@ -1165,6 +1199,7 @@ class Utility {
           nombre: element.nombre,
           porcentajePromocion: element.porcentajePromocion,
           editable: !(count < 3),
+          forGroup: element.forGroup ?? false,
         ),
       );
       count++;
@@ -1277,6 +1312,7 @@ class Utility {
     bool onlyTotal = false,
     bool onlyFirstCategory = false,
     bool onlySecoundCategory = false,
+    bool groupQuote = false,
   }) {
     double total = 0;
 
@@ -1497,5 +1533,107 @@ class Utility {
     }
 
     return (discount.round() * element.numDays) + 0.0;
+  }
+
+  static String intToRoman(int num) {
+    final Map<int, String> romanMap = {
+      1000: 'M',
+      900: 'CM',
+      500: 'D',
+      400: 'CD',
+      100: 'C',
+      90: 'XC',
+      50: 'L',
+      40: 'XL',
+      10: 'X',
+      9: 'IX',
+      5: 'V',
+      4: 'IV',
+      1: 'I',
+    };
+
+    StringBuffer result = StringBuffer();
+
+    romanMap.forEach((value, symbol) {
+      while (num >= value) {
+        result.write(symbol);
+        num -= value;
+      }
+    });
+
+    return result.toString();
+  }
+
+  static List<TemporadaData> getSeasonsForPolitics(
+    List<TemporadaData>? temporadasTarifa, {
+    Politica? politicas,
+    int rooms = 0,
+  }) {
+    List<TemporadaData> temporadas = [];
+
+    if (politicas != null) {
+      if (rooms >= politicas.limiteHabitacionCotizacion!) {
+        temporadas = temporadasTarifa
+                ?.where((element) => (element.forGroup ?? false))
+                .toList()
+                .map((element) => element.copyWith())
+                .toList() ??
+            [];
+      } else {
+        temporadas = temporadasTarifa
+                ?.where((element) => (element.forGroup ?? false) == false)
+                .toList()
+                .map((element) => element.copyWith())
+                .toList() ??
+            [];
+      }
+    } else {
+      temporadas = temporadasTarifa
+              ?.where((element) => (element.forGroup ?? false) == false)
+              .toList()
+              .map((element) => element.copyWith())
+              .toList() ??
+          [];
+    }
+
+    return temporadas;
+  }
+
+  static List<String>? getPromocionesNoValidas(
+    Habitacion habitacion, {
+    required List<TemporadaData>? temporadas,
+  }) {
+    if (temporadas == null) return null;
+    if (temporadas.isEmpty) return null;
+
+    int totalEstancia = DateTime.parse(habitacion.fechaCheckOut!)
+        .difference(DateTime.parse(habitacion.fechaCheckIn!))
+        .inDays;
+
+    List<String> promocionesNoValidas = [];
+
+    for (var element in temporadas) {
+      if (element.estanciaMinima! <= totalEstancia) {
+        promocionesNoValidas.add(element.nombre);
+      }
+    }
+
+    return promocionesNoValidas;
+  }
+
+  static List<String> getSeasonstoString(List<TemporadaData>? temporadas,
+      {bool onlyGroups = false}) {
+    List<String> seasons = [];
+    if (temporadas != null) {
+      for (var element in temporadas) {
+        if (!onlyGroups && !(element.forGroup ?? false)) {
+          seasons.add(element.nombre);
+        } else if (onlyGroups && (element.forGroup ?? false)) {
+          seasons.add(element.nombre);
+        }
+      }
+    }
+
+    return seasons;
   }
 }

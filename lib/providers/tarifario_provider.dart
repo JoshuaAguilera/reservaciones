@@ -40,8 +40,16 @@ final changeTariffPolicyProvider = StateProvider<int>((ref) => 0);
 final selectedModeViewProvider =
     StateProvider<List<bool>>((ref) => <bool>[true, false, false]);
 
-final temporadasProvider = StateProvider<List<Temporada>>((ref) => [
+final temporadasIndividualesProvider = StateProvider<List<Temporada>>((ref) => [
       Temporada(nombre: "Promoción", editable: false),
       Temporada(nombre: "BAR I", editable: false),
       Temporada(nombre: "BAR II", editable: false),
+    ]);
+
+final temporadasGrupalesProvider = StateProvider<List<Temporada>>((ref) => [
+      Temporada(
+        nombre: "Grupos",
+        editable: false,
+        forGroup: true,
+      ),
     ]);

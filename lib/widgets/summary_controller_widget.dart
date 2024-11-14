@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -62,6 +61,7 @@ class _SummaryControllerWidgetState
     final listRoomProviderView = ref.watch(listRoomProvider);
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     return SizedBox(
       width: screenWidth < 800 ? 260 : 310,
@@ -114,6 +114,7 @@ class _SummaryControllerWidgetState
                                               onExpansionChanged: (p0) =>
                                                   setState(
                                                       () => showListVR = p0),
+                                              typeQuote: typeQuote,
                                             ),
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
@@ -125,6 +126,7 @@ class _SummaryControllerWidgetState
                                               onExpansionChanged: (p0) =>
                                                   setState(
                                                       () => showListVPM = p0),
+                                              typeQuote: typeQuote,
                                             ),
                                             const SizedBox(height: 5),
                                           ],
@@ -149,6 +151,7 @@ class _SummaryControllerWidgetState
                                               onExpansionChanged: (p0) =>
                                                   setState(
                                                       () => showListVR = p0),
+                                              typeQuote: typeQuote,
                                             ),
                                             const SizedBox(height: 5),
                                             roomExpansionTileList(
@@ -160,6 +163,7 @@ class _SummaryControllerWidgetState
                                               onExpansionChanged: (p0) =>
                                                   setState(
                                                       () => showListVPM = p0),
+                                              typeQuote: typeQuote,
                                             ),
                                             const SizedBox(height: 5),
                                           ],
@@ -433,12 +437,13 @@ class _SummaryControllerWidgetState
     required List<Habitacion> habitaciones,
     bool changeColor = false,
     required void Function(bool) onExpansionChanged,
+    bool typeQuote = false,
   }) {
     List<Habitacion> rooms =
         habitaciones.where((element) => !element.isFree).toList();
 
     bool showListDescuentosRoom = false;
-    bool showListSubtotalRoom = true;
+    bool showListSubtotalRoom = false;
 
     return StatefulBuilder(builder: (context, snapshot) {
       return CustomWidgets.expansionTileList(
@@ -456,6 +461,7 @@ class _SummaryControllerWidgetState
           onlyFirstCategory: isVR,
           onlySecoundCategory: !isVR,
           onlyTotalReal: true,
+          groupQuote: typeQuote,
         ),
         children: [
           Column(

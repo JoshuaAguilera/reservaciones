@@ -34,15 +34,12 @@ class TarifarioCalendaryYearView extends ConsumerStatefulWidget {
 
 class _TarifarioCalendaryYearViewState
     extends ConsumerState<TarifarioCalendaryYearView> {
-  final List<Widget> _monthsCache = [];
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
-    final listMonthsCacheProvider = ref.watch(monthsCacheYearProvider);
 
     return SizedBox(
       height: screenHeight - 160,

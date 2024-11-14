@@ -8,6 +8,7 @@ class Temporada {
   double? porcentajePromocion;
   List<TarifaTemporada>? tarifa;
   bool? editable;
+  bool? forGroup;
 
   Temporada({
     this.id,
@@ -17,5 +18,6 @@ class Temporada {
     this.porcentajePromocion,
     this.tarifa,
     this.editable = true,
+    this.forGroup = false,
   });
 }
