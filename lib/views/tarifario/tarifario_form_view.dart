@@ -333,7 +333,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   flex: 2,
                                   child: TextFormFieldCustom
                                       .textFormFieldwithBorderCalendar(
-                                    name: "Fecha de entrada",
+                                    name: "Fecha de apertura",
                                     msgError: "Campo requerido*",
                                     fechaLimite:
                                         DateTime(DateTime.now().year, 1, 1)
@@ -359,7 +359,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   flex: 2,
                                   child: TextFormFieldCustom
                                       .textFormFieldwithBorderCalendar(
-                                    name: "Fecha de salida",
+                                    name: "Fecha de clausura",
                                     msgError: "Campo requerido*",
                                     dateController: _fechaSalida,
                                     fechaLimite:
@@ -558,7 +558,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           ),
                         ),
                         Divider(color: Theme.of(context).primaryColor),
-                        Center(
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: temporadaGrupListProvider.isEmpty ? 18 : 0),
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             alignment: WrapAlignment.center,
@@ -684,8 +686,13 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                               context: context,
                                               value: autoCalculationVR,
                                               activeColor: Colors.white,
-                                              onChanged: (p0) => setState(
-                                                  () => autoCalculationVR = p0),
+                                              onChanged: (p0) => setState(() {
+                                                autoCalculationVR = p0;
+                                                if (!autoCalculationVR) {
+                                                  adults3VRController.text = '';
+                                                  adults4VRController.text = '';
+                                                }
+                                              }),
                                             )
                                           ],
                                         ),
@@ -851,8 +858,15 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                               context: context,
                                               value: autoCalculationVPM,
                                               activeColor: Colors.white,
-                                              onChanged: (p0) => setState(() =>
-                                                  autoCalculationVPM = p0),
+                                              onChanged: (p0) => setState(() {
+                                                autoCalculationVPM = p0;
+                                                if (!autoCalculationVPM) {
+                                                  adults3VPMController.text =
+                                                      '';
+                                                  adults4VPMController.text =
+                                                      '';
+                                                }
+                                              }),
                                             )
                                           ],
                                         ),

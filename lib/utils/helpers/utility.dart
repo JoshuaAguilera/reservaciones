@@ -986,7 +986,7 @@ class Utility {
       RegistroTarifa? nowRegister = revisedTariffDay(
           DateTime.parse(initDay).add(Duration(days: ink)), regitros);
 
-      double tariffAdult = calculateTariffAdult(
+      double tariffAdult = calculateTotalTariffRoom(
         nowRegister,
         habitacion,
         DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays,
@@ -994,12 +994,13 @@ class Utility {
         onlyDiscount: onlyDiscount,
       );
 
-      double tariffChildren = calculateTariffChildren(
+      double tariffChildren = calculateTotalTariffRoom(
         nowRegister,
         habitacion,
         DateTime.parse(lastDay).difference(DateTime.parse(initDay)).inDays,
         withDiscount: withDiscount,
         onlyDiscount: onlyDiscount,
+        isCalculateChildren: true,
       );
 
       if (onlyAdults) {
@@ -1021,19 +1022,27 @@ class Utility {
     }
   }
 
-  static double calculateTariffAdult(
+  static double calculateTotalTariffRoom(
     RegistroTarifa? nowRegister,
     Habitacion habitacion,
     int totalDays, {
+    bool isCalculateChildren = false,
     bool withDiscount = true,
     bool onlyDiscount = false,
     double? descuentoProvisional,
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
+    bool isGroupTariff = false,
+    bool getTotalRoom = false,
   }) {
     double tariffAdult = 0;
+    double tariffChildren = 0;
 
     if (nowRegister == null) {
+      return 0;
+    }
+
+    if (nowRegister.tarifas == null) {
       return 0;
     }
 
@@ -1056,11 +1065,15 @@ class Utility {
     double descuento = 0;
 
     if (nowRegister.temporadas != null && nowRegister.temporadas!.isNotEmpty) {
-      descuento =
-          getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+      descuento = getSeasonNow(nowRegister, totalDays, isGroup: isGroupTariff)
+              ?.porcentajePromocion ??
+          0;
     } else {
       descuento = descuentoProvisional ?? 0;
     }
+
+    tariffChildren =
+        (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     switch (habitacion.adultos) {
       case 1 || 2:
@@ -1077,72 +1090,28 @@ class Utility {
     }
 
     if (withDiscount) {
+      tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
+          .round()
+          .toDouble();
+
       tariffAdult =
           (tariffAdult - ((descuento / 100) * tariffAdult)).round().toDouble();
     }
 
     if (onlyDiscount) {
+      tariffChildren = ((descuento / 100) * tariffChildren).round().toDouble();
       tariffAdult = ((descuento / 100) * tariffAdult).round().toDouble();
     }
 
-    return tariffAdult;
-  }
-
-  static double calculateTariffChildren(
-    RegistroTarifa? nowRegister,
-    Habitacion habitacion,
-    int totalDays, {
-    bool withDiscount = true,
-    bool onlyDiscount = false,
-    double? descuentoProvisional,
-    bool onlyTariffVR = false,
-    bool onlyTariffVPM = false,
-  }) {
-    double tariffChildren = 0;
-
-    if (nowRegister == null) {
-      return 0;
+    if (getTotalRoom) {
+      return (tariffChildren + tariffAdult);
     }
 
-    TarifaData? nowTarifa = nowRegister.tarifas!
-        .where((element) => element.categoria == habitacion.categoria)
-        .firstOrNull;
-
-    if (onlyTariffVR) {
-      nowTarifa = nowRegister.tarifas!
-          .where((element) => element.categoria == tipoHabitacion.first)
-          .firstOrNull;
-    }
-
-    if (onlyTariffVPM) {
-      nowTarifa = nowRegister.tarifas!
-          .where((element) => element.categoria == tipoHabitacion.last)
-          .firstOrNull;
-    }
-
-    tariffChildren =
-        (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
-
-    double descuento = 0;
-
-    if (nowRegister.temporadas!.isNotEmpty) {
-      descuento =
-          getSeasonNow(nowRegister, totalDays)?.porcentajePromocion ?? 0;
+    if (isCalculateChildren) {
+      return tariffChildren;
     } else {
-      descuento = descuentoProvisional ?? 0;
+      return tariffAdult;
     }
-
-    if (withDiscount) {
-      tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
-          .round()
-          .toDouble();
-    }
-
-    if (onlyDiscount) {
-      tariffChildren = ((descuento / 100) * tariffChildren).round().toDouble();
-    }
-
-    return tariffChildren;
   }
 
   static TemporadaData? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
@@ -1322,45 +1291,178 @@ class Utility {
 
     for (var element in rooms) {
       if (onlyTotalReal) {
-        double subtotal =
-            ((element.totalRealVR ?? 0) + (element.totalRealVPM ?? 0)) *
-                element.count;
+        double subtotal = 0;
 
-        if (onlyFirstCategory) {
-          subtotal = (element.totalRealVR ?? 0) * element.count;
-        }
+        if (groupQuote && element.tarifaGrupal != null) {
+          if (onlyFirstCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVR: true,
+              isGroupTariff: true,
+              withDiscount: false,
+            );
 
-        if (onlySecoundCategory) {
-          subtotal = (element.totalRealVPM ?? 0) * element.count;
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVPM: true,
+              isGroupTariff: true,
+              withDiscount: false,
+            );
+
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
+        } else {
+          if (!onlyFirstCategory && !onlySecoundCategory) {
+            subtotal =
+                ((element.totalRealVR ?? 0) + (element.totalRealVPM ?? 0)) *
+                    element.count;
+          }
+
+          if (onlyFirstCategory) {
+            subtotal = (element.totalRealVR ?? 0) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            subtotal = (element.totalRealVPM ?? 0) * element.count;
+          }
         }
 
         total += subtotal;
       }
       if (onlyDiscount) {
-        double subtotal =
-            ((element.descuentoVR ?? 0) + (element.descuentoVPM ?? 0)) *
-                element.count;
+        double subtotal = 0;
+        if (groupQuote && element.tarifaGrupal != null) {
+          if (onlyFirstCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVR: true,
+              onlyDiscount: true,
+              isGroupTariff: true,
+              withDiscount: false,
+            );
 
-        if (onlyFirstCategory) {
-          subtotal = (element.descuentoVR ?? 0) * element.count;
-        }
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
 
-        if (onlySecoundCategory) {
-          subtotal = (element.descuentoVPM ?? 0) * element.count;
+          if (onlySecoundCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVPM: true,
+              onlyDiscount: true,
+              isGroupTariff: true,
+              withDiscount: false,
+            );
+
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
+        } else {
+          if (!onlyFirstCategory && !onlySecoundCategory) {
+            subtotal =
+                ((element.descuentoVR ?? 0) + (element.descuentoVPM ?? 0)) *
+                    element.count;
+          }
+
+          if (onlyFirstCategory) {
+            subtotal = (element.descuentoVR ?? 0) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            subtotal = (element.descuentoVPM ?? 0) * element.count;
+          }
         }
 
         total += subtotal;
       }
       if (onlyTotal) {
-        double subtotal =
-            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+        double subtotal = 0;
 
-        if (onlyFirstCategory) {
-          subtotal = (element.totalVR ?? 0) * element.count;
-        }
+        if (groupQuote && element.tarifaGrupal != null) {
+          if (onlyFirstCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVR: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
 
-        if (onlySecoundCategory) {
-          subtotal = (element.totalVPM ?? 0) * element.count;
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVPM: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
+
+            subtotal +=
+                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+          }
+        } else {
+          if (!onlyFirstCategory && !onlySecoundCategory) {
+            subtotal = ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) *
+                element.count;
+          }
+
+          if (onlyFirstCategory) {
+            subtotal = (element.totalVR ?? 0) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            subtotal = (element.totalVPM ?? 0) * element.count;
+          }
         }
 
         total += subtotal;
@@ -1369,15 +1471,57 @@ class Utility {
 
     if (onlyDiscount) {
       for (var element in habitaciones.where((element) => element.isFree)) {
-        double subtotal =
-            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+        double subtotal = 0;
 
-        if (onlyFirstCategory) {
-          subtotal = (element.totalVR ?? 0) * element.count;
-        }
+        if (groupQuote && element.tarifaGrupal != null) {
+          if (onlyFirstCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVR: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
 
-        if (onlySecoundCategory) {
-          subtotal = (element.totalVPM ?? 0) * element.count;
+            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+          }
+
+          if (onlySecoundCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVPM: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
+
+            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+          }
+        } else {
+          if (!onlyFirstCategory && !onlySecoundCategory) {
+            subtotal = ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) *
+                element.count;
+          }
+
+          if (onlyFirstCategory) {
+            subtotal = (element.totalVR ?? 0) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            subtotal = (element.totalVPM ?? 0) * element.count;
+          }
         }
 
         total += subtotal;
@@ -1387,15 +1531,55 @@ class Utility {
     if (onlyTotal) {
       double desc = 0;
       for (var element in habitaciones.where((element) => element.isFree)) {
-        double subtotal =
-            ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) * element.count;
+        double subtotal = 0;
 
-        if (onlyFirstCategory) {
-          subtotal = (element.totalVR ?? 0) * element.count;
-        }
+        if (groupQuote && element.tarifaGrupal != null) {
+          if (onlyFirstCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVR: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
 
-        if (onlySecoundCategory) {
-          subtotal = (element.totalVPM ?? 0) * element.count;
+            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+          }
+
+          if (onlySecoundCategory) {
+            double subtotalCategory = calculateTotalTariffRoom(
+              RegistroTarifa(
+                temporadas: element.tarifaGrupal?.temporadas,
+                tarifas: element.tarifaGrupal?.tarifas,
+              ),
+              element,
+              element.tarifaXDia!.length,
+              getTotalRoom: true,
+              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              onlyTariffVPM: true,
+              withDiscount: true,
+              isGroupTariff: true,
+            );
+
+            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+          }
+        } else {
+          subtotal = ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) *
+              element.count;
+
+          if (onlyFirstCategory) {
+            subtotal = (element.totalVR ?? 0) * element.count;
+          }
+
+          if (onlySecoundCategory) {
+            subtotal = (element.totalVPM ?? 0) * element.count;
+          }
         }
 
         desc += subtotal;
@@ -1486,7 +1670,7 @@ class Utility {
   }) {
     double discount = 0;
 
-    double totalAdults = Utility.calculateTariffAdult(
+    double totalAdults = Utility.calculateTotalTariffRoom(
       element.tarifa == null
           ? null
           : RegistroTarifa(
@@ -1504,7 +1688,7 @@ class Utility {
       onlyTariffVPM: onlyTariffVPM,
       onlyTariffVR: onlyTariffVR,
     );
-    double totalChildren = Utility.calculateTariffChildren(
+    double totalChildren = Utility.calculateTotalTariffRoom(
       element.tarifa == null
           ? null
           : RegistroTarifa(
@@ -1521,6 +1705,7 @@ class Utility {
       withDiscount: false,
       onlyTariffVPM: onlyTariffVPM,
       onlyTariffVR: onlyTariffVR,
+      isCalculateChildren: true,
     );
 
     double total = totalChildren + totalAdults;
@@ -1635,5 +1820,15 @@ class Utility {
     }
 
     return seasons;
+  }
+
+  static double applyDiscount(double priceTariff, double discountTariff) {
+    double price = 0;
+    double discount = 0;
+
+    discount = (priceTariff * 0.01) * (discountTariff);
+    price = priceTariff - discount;
+
+    return price.round() + 0.0;
   }
 }

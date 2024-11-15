@@ -543,7 +543,7 @@ class FilesTemplate {
     int days = Utility.getDifferenceInDays(habitaciones: [habitacion]);
 
     for (int i = 0; i < days; i++) {
-      double totalAdulto = Utility.calculateTariffAdult(
+      double totalAdulto = Utility.calculateTotalTariffRoom(
         RegistroTarifa(
             temporadas: habitacion.tarifaXDia![i].temporadas,
             tarifas: habitacion.tarifaXDia![i].tarifas),
@@ -554,7 +554,7 @@ class FilesTemplate {
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
       );
 
-      double totalMenores = Utility.calculateTariffChildren(
+      double totalMenores = Utility.calculateTotalTariffRoom(
         RegistroTarifa(
             temporadas: habitacion.tarifaXDia![i].temporadas,
             tarifas: habitacion.tarifaXDia![i].tarifas),
@@ -563,6 +563,7 @@ class FilesTemplate {
         descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
+        isCalculateChildren: true,
       );
 
       DateTime now = DateTime.parse(habitacion.fechaCheckIn!);

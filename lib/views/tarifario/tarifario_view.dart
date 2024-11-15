@@ -309,11 +309,11 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                     .read(temporadasGrupalesProvider.notifier)
                                     .update(
                                       (state) => [
-                                        Temporada(
-                                          nombre: "Grupos",
-                                          editable: false,
-                                          forGroup: true,
-                                        ),
+                                        // Temporada(
+                                        //   nombre: "Grupos",
+                                        //   editable: false,
+                                        //   forGroup: true,
+                                        // ),
                                       ],
                                     );
                                 onCreate.call();

@@ -196,7 +196,7 @@ class _SummaryControllerWidgetState
                                                         ? '(Mod)'
                                                         : '',
                                                 count: Utility
-                                                        .calculateTariffAdult(
+                                                        .calculateTotalTariffRoom(
                                                       element.tarifa == null
                                                           ? null
                                                           : RegistroTarifa(
@@ -247,7 +247,7 @@ class _SummaryControllerWidgetState
                                                         ? '(Mod)'
                                                         : '',
                                                 count: Utility
-                                                        .calculateTariffChildren(
+                                                        .calculateTotalTariffRoom(
                                                       element.tarifa == null
                                                           ? null
                                                           : RegistroTarifa(
@@ -267,6 +267,7 @@ class _SummaryControllerWidgetState
                                                       habitacionProvider,
                                                       widget.numDays,
                                                       withDiscount: false,
+                                                      isCalculateChildren: true,
                                                     ) *
                                                     element.numDays,
                                                 context: context,
@@ -308,17 +309,11 @@ class _SummaryControllerWidgetState
                                           showListDescuentos = value,
                                       context: context,
                                       messageNotFound: "Sin descuentos",
-                                      total: !widget.calculateRoom
-                                          ? -Utility.calculateTotalRooms(
-                                              (widget.saveRooms ??
-                                                  habitacionesProvider),
-                                              onlyDiscount: true,
-                                            )
-                                          : -(Utility.calculateDiscountTotal(
-                                              tarifasFiltradas,
-                                              habitacionProvider,
-                                              widget.numDays,
-                                            )),
+                                      total: -(Utility.calculateDiscountTotal(
+                                        tarifasFiltradas,
+                                        habitacionProvider,
+                                        widget.numDays,
+                                      )),
                                       children: [
                                         if (widget.calculateRoom)
                                           for (var element in tarifasFiltradas)
@@ -457,10 +452,10 @@ class _SummaryControllerWidgetState
         context: context,
         messageNotFound: "Sin habitaciones",
         total: Utility.calculateTotalRooms(
-          rooms,
+          (widget.saveRooms ?? rooms),
           onlyFirstCategory: isVR,
           onlySecoundCategory: !isVR,
-          onlyTotalReal: true,
+          onlyTotal: true,
           groupQuote: typeQuote,
         ),
         children: [
@@ -477,6 +472,7 @@ class _SummaryControllerWidgetState
                     onlyTotalReal: true,
                     onlyFirstCategory: isVR,
                     onlySecoundCategory: !isVR,
+                    groupQuote: typeQuote,
                   ),
                   showList: showListSubtotalRoom,
                   onExpansionChanged: (value) =>
@@ -488,9 +484,27 @@ class _SummaryControllerWidgetState
                       CustomWidgets.itemListCount(
                         nameItem:
                             "${element.count}x Room ${rooms.indexOf(element) + 1}",
-                        count: (isVR
-                            ? (element.totalRealVR ?? 0)
-                            : (element.totalRealVPM ?? 0)),
+                        count: typeQuote
+                            ? (Utility.calculateTotalTariffRoom(
+                                  RegistroTarifa(
+                                    temporadas:
+                                        element.tarifaGrupal?.temporadas,
+                                    tarifas: element.tarifaGrupal?.tarifas,
+                                  ),
+                                  element,
+                                  element.tarifaXDia!.length,
+                                  getTotalRoom: true,
+                                  descuentoProvisional: element
+                                      .tarifaGrupal?.descuentoProvisional,
+                                  onlyTariffVR: isVR,
+                                  onlyTariffVPM: !isVR,
+                                  isGroupTariff: true,
+                                  withDiscount: false,
+                                ) *
+                                element.tarifaXDia!.length)
+                            : (isVR
+                                ? (element.totalRealVR ?? 0)
+                                : (element.totalRealVPM ?? 0)),
                         context: context,
                         sizeText: 11.5,
                       )
@@ -512,6 +526,7 @@ class _SummaryControllerWidgetState
                     onlyDiscount: true,
                     onlyFirstCategory: isVR,
                     onlySecoundCategory: !isVR,
+                    groupQuote: typeQuote,
                   ),
                   children: [
                     for (var element in (widget.saveRooms ?? habitaciones)
@@ -520,10 +535,29 @@ class _SummaryControllerWidgetState
                       CustomWidgets.itemListCount(
                         nameItem:
                             "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
-                        count: -((isVR
-                                ? element.descuentoVR
-                                : element.descuentoVPM) ??
-                            0),
+                        count: typeQuote
+                            ? -(Utility.calculateTotalTariffRoom(
+                                  RegistroTarifa(
+                                    temporadas:
+                                        element.tarifaGrupal?.temporadas,
+                                    tarifas: element.tarifaGrupal?.tarifas,
+                                  ),
+                                  element,
+                                  element.tarifaXDia!.length,
+                                  getTotalRoom: true,
+                                  descuentoProvisional: element
+                                      .tarifaGrupal?.descuentoProvisional,
+                                  onlyTariffVR: isVR,
+                                  onlyTariffVPM: !isVR,
+                                  onlyDiscount: true,
+                                  isGroupTariff: true,
+                                  withDiscount: false,
+                                ) *
+                                element.tarifaXDia!.length)
+                            : -((isVR
+                                    ? element.descuentoVR
+                                    : element.descuentoVPM) ??
+                                0),
                         context: context,
                         sizeText: 11.5,
                       ),
@@ -533,8 +567,25 @@ class _SummaryControllerWidgetState
                       CustomWidgets.itemListCount(
                         nameItem:
                             "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Free Room)",
-                        count:
-                            -((isVR ? element.totalVR : element.totalVPM) ?? 0),
+                        count: typeQuote
+                            ? -(Utility.calculateTotalTariffRoom(
+                                  RegistroTarifa(
+                                    temporadas:
+                                        element.tarifaGrupal?.temporadas,
+                                    tarifas: element.tarifaGrupal?.tarifas,
+                                  ),
+                                  element,
+                                  element.tarifaXDia!.length,
+                                  getTotalRoom: true,
+                                  descuentoProvisional: element
+                                      .tarifaGrupal?.descuentoProvisional,
+                                  onlyTariffVR: isVR,
+                                  onlyTariffVPM: !isVR,
+                                  isGroupTariff: true,
+                                ) *
+                                element.tarifaXDia!.length)
+                            : -((isVR ? element.totalVR : element.totalVPM) ??
+                                0),
                         context: context,
                         sizeText: 11.5,
                         onChanged: ((widget.saveRooms ?? habitaciones)
@@ -634,6 +685,7 @@ class _SummaryControllerWidgetState
                   onlyTotal: true,
                   onlyFirstCategory: isVR,
                   onlySecoundCategory: !isVR,
+                  groupQuote: typeQuote,
                 ),
                 context: context,
                 isBold: true,

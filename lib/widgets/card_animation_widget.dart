@@ -148,18 +148,19 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildFront(Habitacion habitacion) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
-    double totalAdulto = Utility.calculateTariffAdult(
+    double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
     );
 
-    double totalMenores = Utility.calculateTariffChildren(
+    double totalMenores = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      isCalculateChildren: true,
     );
 
     bool showToolTip = (MediaQuery.of(context).size.width >

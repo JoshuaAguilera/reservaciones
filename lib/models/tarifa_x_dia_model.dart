@@ -58,7 +58,6 @@ class TarifaXDia {
   List<TemporadaData>? temporadas;
   List<TarifaData>? tarifas;
   int numDays;
-  // int numDays;
 
   TarifaXDia({
     this.id,

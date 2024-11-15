@@ -6,6 +6,8 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../models/registro_tarifa_model.dart';
+import '../utils/helpers/utility.dart';
 import 'tarifario_provider.dart';
 
 class HabitacionProvider extends Notifier<List<Habitacion>> {
@@ -16,10 +18,12 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   Habitacion get current => _current;
   late pw.Document pdfPrinc;
 
-  void addItem(Habitacion item) {
+  void addItem(Habitacion item, bool groupQuote) {
     _current = item;
     state = [...state, item];
     if (state.length > 1) revisedFreeRooms();
+
+    if (groupQuote) implementGroupTariff();
   }
 
   void addFreeItem(Habitacion habitacion, int interval) {
@@ -175,6 +179,29 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   }
 
   void clear() => state = [];
+
+  void implementGroupTariff() {
+    for (var item in state) {
+      if (item.tarifaGrupal == null) {
+        List<TarifaXDia> selectTariffs =
+            Utility.getUniqueTariffs(item.tarifaXDia!);
+        TarifaXDia? tarifaGrupo =
+            selectTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
+
+        tarifaGrupo.temporadaSelect = Utility.getSeasonNow(
+          RegistroTarifa(temporadas: tarifaGrupo.temporadas),
+          DateTime.parse(item.fechaCheckOut!)
+              .difference(DateTime.parse(item.fechaCheckIn!))
+              .inDays,
+          isGroup: true,
+        );
+
+        item.tarifaGrupal = tarifaGrupo;
+      }
+    }
+
+    ref.notifyListeners();
+  }
 
   Future<pw.Document> generarComprobante(
       Cotizacion cotizacion, bool typeQuote) async {

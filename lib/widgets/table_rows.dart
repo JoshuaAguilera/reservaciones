@@ -29,17 +29,18 @@ class TableRows {
                 ? [tarifaXDia.temporadaSelect!]
                 : []);
 
-    double tarifaAdulto = Utility.calculateTariffAdult(
+    double tarifaAdulto = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
     );
 
-    double tarifaMenores = Utility.calculateTariffChildren(
+    double tarifaMenores = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
       habitacion.tarifaXDia!.length,
+      isCalculateChildren: true,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
     );
 

@@ -4,15 +4,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
+import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
-import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -103,19 +105,32 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       Future.delayed(1000.ms, () => widget.sideController.selectIndex(16));
     }
 
-    void _showConfigurationTariffGroup() {
+    void _showConfigurationTariffGroup({bool firstView = false}) {
       showDialog(
         context: context,
         builder: (context) {
           return const ManagerTariffGroupDialog();
         },
+      ).then(
+        (value) {
+          if (value == null && firstView) {
+            ref
+                .watch(HabitacionProvider.provider.notifier)
+                .implementGroupTariff();
+          }
+        },
       );
     }
 
     if (typeQuote) {
-      Future.delayed(Durations.short4, () {
-        if (!showManagerTariffGroup) _showConfigurationTariffGroup();
-      });
+      Future.delayed(
+        Durations.short4,
+        () {
+          if (!showManagerTariffGroup) {
+            _showConfigurationTariffGroup(firstView: true);
+          }
+        },
+      );
 
       Future.delayed(
           Durations.short1,
@@ -168,6 +183,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           type: "Cotización Grupal",
                                           color: DesktopColors.cotGrupal,
                                           withTarget: !typeQuote,
+                                          withButton: true,
+                                          onPressedButton: () {
+                                            _showConfigurationTariffGroup();
+                                          },
                                         ),
                                 )
                                     .animate(target: targetHabitaciones)
@@ -301,10 +320,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       ref
                                           .read(HabitacionProvider
                                               .provider.notifier)
-                                          .addItem(roomDuplicate);
+                                          .addItem(roomDuplicate, typeQuote);
 
-                                      final typeQuote =
-                                          ref.watch(typeQuoteProvider);
                                       final politicaTarifaProvider =
                                           ref.watch(tariffPolicyProvider(""));
                                       final habitaciones = ref
@@ -526,6 +543,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     required String type,
     required Color? color,
     bool withTarget = false,
+    bool withButton = false,
+    void Function()? onPressedButton,
   }) {
     return Card(
       color: color,
@@ -541,6 +560,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                 text: type,
                 color: Colors.white,
               ),
+              if (withButton)
+                Buttons.commonButton(
+                  onPressed: () {
+                    if (onPressedButton == null) return;
+                    onPressedButton.call();
+                  },
+                  color: Utility.darken(color!, 0.15),
+                  text: "Gestionar temporadas",
+                )
             ],
           ),
         ),

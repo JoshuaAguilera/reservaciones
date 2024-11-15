@@ -31,6 +31,7 @@ class Habitacion {
   double? totalVPM;
   int count;
   bool isFree;
+  TarifaXDia? tarifaGrupal;
 
   Habitacion({
     this.id,
@@ -52,6 +53,7 @@ class Habitacion {
     this.descuentoVPM,
     this.count = 1,
     this.isFree = false,
+    this.tarifaGrupal,
   });
 
   Habitacion CopyWith({
@@ -74,6 +76,7 @@ class Habitacion {
     double? totalVPM,
     int? count,
     bool? isFree,
+    TarifaXDia? tarifaGrupal,
   }) =>
       Habitacion(
         id: id ?? this.id,
@@ -95,6 +98,7 @@ class Habitacion {
         totalVPM: totalVR ?? this.totalVPM,
         count: count ?? this.count,
         isFree: isFree ?? this.isFree,
+        tarifaGrupal: tarifaGrupal ?? this.tarifaGrupal,
       );
 
   Map<String, dynamic> toJson() {
@@ -118,6 +122,7 @@ class Habitacion {
       'totalVPM': totalVPM,
       'count': count,
       'isFree': isFree,
+      'tarifaGrupal': tarifaGrupal,
     };
   }
 
@@ -146,6 +151,9 @@ class Habitacion {
       totalVPM: json['totalVPM'],
       count: json['count'],
       isFree: json['isFree'],
+      tarifaGrupal: json['tarifaGrupal'] == null
+          ? null
+          : TarifaXDia.fromJson(json['tarifaGrupal']),
     );
   }
 }

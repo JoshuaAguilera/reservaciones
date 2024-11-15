@@ -18,6 +18,7 @@ class CustomDropdown {
     String excepcionItem = '',
     bool calculateWidth = true,
     bool compact = false,
+    double compactWidth = 120,
   }) {
     List<String> items = elements.toList();
 
@@ -29,7 +30,7 @@ class CustomDropdown {
       builder: (context, setState) {
         return Container(
           height: compact ? 30 : null,
-          width: compact ? 120 : null,
+          width: compact ? compactWidth : null,
           child: DropdownMenu<String>(
             menuHeight: 200,
             width: screenWidth == null
@@ -45,7 +46,7 @@ class CustomDropdown {
             trailingIcon: !compact
                 ? null
                 : Transform.translate(
-                    offset: const Offset(2, -8),
+                    offset: const Offset(0, -8),
                     child: const Icon(Icons.arrow_drop_down),
                   ),
             inputDecorationTheme: !compact

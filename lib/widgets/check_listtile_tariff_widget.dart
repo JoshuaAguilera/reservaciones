@@ -118,7 +118,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               TextStyles.TextAsociative(
                 "${(screenWidth > 925) ? "Tarifa de adulto" : "Adul."}:  ",
                 Utility.formatterNumber(
-                  Utility.calculateTariffAdult(
+                  Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
                     widget.habitacion.tarifaXDia!.length,
@@ -131,11 +131,12 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               ),
               TextStyles.TextAsociative(
                 "${(screenWidth > 1000) ? "Tarifa de Menores de 7 a 12" : "Men. 7 a 12"}:  ",
-                Utility.formatterNumber(Utility.calculateTariffChildren(
+                Utility.formatterNumber(Utility.calculateTotalTariffRoom(
                   tarifa,
                   widget.habitacion,
                   widget.habitacion.tarifaXDia!.length,
                   descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+                  isCalculateChildren: true,
                 )),
                 color: Theme.of(context).primaryColor,
                 size: 12,

@@ -58,11 +58,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     code: "tariffFree",
     nombreTariff: "Tarifa Libre",
   );
+  List<TarifaXDia> recoveryTariffs = [];
+  bool alreadySaveTariff = false;
 
   final List<bool> _selectedModeRange = <bool>[
     true,
     false,
   ];
+
   final List<bool> selectedMode = <bool>[
     true,
     false,
@@ -775,15 +778,17 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     }
 
                     if (isEditing) {
+                      if (typeQuote) {
+                        habitacionProvider.tarifaXDia = recoveryTariffs;
+                      }
                       ref.read(habitacionesProvider.notifier).editItem(
                           habitacionProvider.folioHabitacion,
                           habitacionProvider);
                     } else {
                       ref
                           .read(habitacionesProvider.notifier)
-                          .addItem(habitacionProvider);
+                          .addItem(habitacionProvider, typeQuote);
 
-                      final typeQuote = ref.watch(typeQuoteProvider);
                       final politicaTarifaProvider =
                           ref.watch(tariffPolicyProvider(""));
                       final habitaciones = ref.watch(habitacionesProvider);
@@ -887,7 +892,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         }
       }
     } else {
-      if (isEditing && !refreshTariff) return;
+      if (isEditing && !refreshTariff && !isGroup) return;
+
+      if (isGroup) {
+        if (!alreadySaveTariff) {
+          recoveryTariffs = habitacion.tarifaXDia ?? [];
+          alreadySaveTariff = true;
+        }
+      }
 
       habitacion.tarifaXDia!.clear();
 
@@ -895,6 +907,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           .difference(DateTime.parse(_fechaEntrada.text))
           .inDays;
       for (var ink = 0; ink < days; ink++) {
+        if (isGroup) {
+          habitacion.tarifaXDia!.add(habitacion.tarifaGrupal!);
+          continue;
+        }
+
         DateTime dateNow =
             DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
 

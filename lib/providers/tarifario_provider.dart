@@ -47,9 +47,9 @@ final temporadasIndividualesProvider = StateProvider<List<Temporada>>((ref) => [
     ]);
 
 final temporadasGrupalesProvider = StateProvider<List<Temporada>>((ref) => [
-      Temporada(
-        nombre: "Grupos",
-        editable: false,
-        forGroup: true,
-      ),
+      // Temporada(
+      //   nombre: "Grupos",
+      //   editable: false,
+      //   forGroup: true,
+      // ),
     ]);

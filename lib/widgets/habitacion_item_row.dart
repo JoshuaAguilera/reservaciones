@@ -8,6 +8,7 @@ import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../models/registro_tarifa_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
 import '../utils/helpers/web_colors.dart';
@@ -152,6 +153,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     Color colorCard = brightness == Brightness.light
         ? const Color.fromARGB(255, 243, 243, 243)
@@ -267,16 +269,74 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       ),
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(
-                        text:
-                            "VR: ${Utility.formatterNumber(widget.habitacion.totalRealVR ?? 0)}\nVPM: ${Utility.formatterNumber(widget.habitacion.totalRealVPM ?? 0)}",
+                        text: "VR: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVR: true,
+                              isGroupTariff: true,
+                              withDiscount: false,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalRealVR ?? 0))}\nVPM: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVPM: true,
+                              isGroupTariff: true,
+                              withDiscount: false,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalRealVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
                         size: 11,
                       ),
                     if (screenWidthWithSideBar > 1550)
                       TextStyles.standardText(
-                        text:
-                            "VR: ${Utility.formatterNumber(widget.habitacion.totalVR ?? 0)}\nVPM: ${Utility.formatterNumber(widget.habitacion.totalVPM ?? 0)}",
+                        text: "VR: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVR: true,
+                              isGroupTariff: true,
+                              withDiscount: true,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalVR ?? 0))}\nVPM: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVPM: true,
+                              isGroupTariff: true,
+                              withDiscount: true,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
                         size: 11,
