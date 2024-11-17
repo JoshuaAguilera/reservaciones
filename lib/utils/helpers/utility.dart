@@ -1831,4 +1831,19 @@ class Utility {
 
     return price.round() + 0.0;
   }
+
+  static bool revisedIntegrityRoom(
+      Habitacion editRoom, List<Habitacion> habitaciones) {
+    bool withoutChanges = false;
+
+    Habitacion originalRoom = habitaciones.firstWhere(
+        (element) => element.folioHabitacion == editRoom.folioHabitacion);
+
+    if (originalRoom.fechaCheckIn != editRoom.fechaCheckIn ||
+        originalRoom.fechaCheckOut != editRoom.fechaCheckOut) {
+      withoutChanges = true;
+    }
+
+    return withoutChanges;
+  }
 }

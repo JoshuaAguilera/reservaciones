@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
@@ -184,6 +185,12 @@ class _SummaryControllerWidgetState
                                             tarifasFiltradas,
                                             habitacionProvider,
                                             onlyAdults: true,
+                                            onlyTariffVR:
+                                                habitacionProvider.categoria ==
+                                                    tipoHabitacion.first,
+                                            onlyTariffVPM:
+                                                habitacionProvider.categoria ==
+                                                    tipoHabitacion.last,
                                           ),
                                           children: [
                                             for (var element
@@ -323,7 +330,7 @@ class _SummaryControllerWidgetState
                                               subTitle: element.subCode != null
                                                   ? '(Mod)'
                                                   : '',
-                                              count: (Utility
+                                              count: -(Utility
                                                   .calculateDiscountXTariff(
                                                 element,
                                                 habitacionProvider,

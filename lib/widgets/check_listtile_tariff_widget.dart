@@ -12,15 +12,18 @@ import '../views/generacion_cotizaciones/manager_tariff_day_dialog.dart';
 import 'text_styles.dart';
 
 class CheckListtileTariffWidget extends StatefulWidget {
-  const CheckListtileTariffWidget(
-      {super.key,
-      required this.tarifaXDia,
-      required this.habitacion,
-      this.viewTableRow = false});
+  const CheckListtileTariffWidget({
+    super.key,
+    required this.tarifaXDia,
+    required this.habitacion,
+    this.viewTableRow = false,
+    this.isGroupTariff = false,
+  });
 
   final TarifaXDia tarifaXDia;
   final Habitacion habitacion;
   final bool viewTableRow;
+  final bool isGroupTariff;
 
   @override
   State<CheckListtileTariffWidget> createState() =>
@@ -124,6 +127,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     widget.habitacion.tarifaXDia!.length,
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
+                    isGroupTariff: widget.isGroupTariff,
                   ),
                 ),
                 color: Theme.of(context).primaryColor,
@@ -137,6 +141,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   widget.habitacion.tarifaXDia!.length,
                   descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
                   isCalculateChildren: true,
+                  isGroupTariff: widget.isGroupTariff,
                 )),
                 color: Theme.of(context).primaryColor,
                 size: 12,
@@ -144,6 +149,22 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               TextStyles.TextAsociative(
                 "${(screenWidth > 1000) ? "Tarifa de Menores de 0 a 6" : "Men. 0 a 6"}:  ",
                 Utility.formatterNumber(0),
+                color: Theme.of(context).primaryColor,
+                size: 12,
+              ),
+              TextStyles.TextAsociative(
+                "${(screenWidth > 925) ? "Total Tarifa" : "Total tar."}:  ",
+                Utility.formatterNumber(
+                  Utility.calculateTotalTariffRoom(
+                    tarifa,
+                    widget.habitacion,
+                    widget.habitacion.tarifaXDia!.length,
+                    descuentoProvisional:
+                        widget.tarifaXDia.descuentoProvisional,
+                    isGroupTariff: widget.isGroupTariff,
+                    getTotalRoom: true,
+                  ),
+                ),
                 color: Theme.of(context).primaryColor,
                 size: 12,
               ),
@@ -174,14 +195,19 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   "${widget.tarifaXDia.descuentoProvisional ?? 0}%",
                   color: Theme.of(context).primaryColor,
                   size: 12,
-                )
+                ),
             ],
           ),
           trailing: (MediaQuery.of(context).size.width > 1400)
               ? SizedBox(
                   width: 115,
                   child: Buttons.commonButton(
-                    onPressed: () => showDialogEditQuote(),
+                    tooltipText: !widget.isGroupTariff
+                        ? null
+                        : "No aplica en cot. Grupales",
+                    onPressed: widget.isGroupTariff
+                        ? null
+                        : () => showDialogEditQuote(),
                     text: "Editar",
                     color: colorTariff,
                     colorText: useWhiteForeground(colorTariff)
@@ -190,12 +216,15 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   ),
                 )
               : IconButton(
-                  onPressed: () => showDialogEditQuote(),
-                  tooltip: "Editar",
+                  onPressed:
+                      widget.isGroupTariff ? null : () => showDialogEditQuote(),
+                  tooltip: widget.isGroupTariff
+                      ? "No aplica en cot. Grupales"
+                      : "Editar",
                   icon: Icon(
                     CupertinoIcons.pencil,
                     size: 30,
-                    color: colorTariff,
+                    color: widget.isGroupTariff ? DesktopColors.grisPalido : colorTariff,
                   ),
                 ),
         ),

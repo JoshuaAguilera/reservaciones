@@ -64,11 +64,12 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   @override
   Widget build(BuildContext context) {
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     return Center(
       child: Container(
         constraints: BoxConstraints.tight(const Size.square(200.0)),
-        child: _buildFlipAnimation(habitacionProvider),
+        child: _buildFlipAnimation(habitacionProvider, typeQuote),
       ),
     );
   }
@@ -109,7 +110,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     }
   }
 
-  Widget _buildFlipAnimation(Habitacion habitacion) {
+  Widget _buildFlipAnimation(Habitacion habitacion, bool typeQuote) {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
@@ -118,8 +119,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
         switchInCurve: Curves.easeInBack,
         switchOutCurve: Curves.easeInBack.flipped,
-        child:
-            _showFrontSide ? _buildFront(habitacion) : _buildRear(habitacion),
+        child: _showFrontSide
+            ? _buildFront(habitacion, typeQuote)
+            : _buildRear(habitacion, typeQuote),
       ),
     );
   }
@@ -146,13 +148,14 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildFront(Habitacion habitacion) {
+  Widget _buildFront(Habitacion habitacion, bool typeQuote) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      isGroupTariff: typeQuote,
     );
 
     double totalMenores = Utility.calculateTotalTariffRoom(
@@ -161,6 +164,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
       isCalculateChildren: true,
+      isGroupTariff: typeQuote,
     );
 
     bool showToolTip = (MediaQuery.of(context).size.width >
@@ -293,7 +297,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildRear(Habitacion habitacion) {
+  Widget _buildRear(Habitacion habitacion, bool typeQuote) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
     bool isUnknow = widget.tarifaXDia.code!.contains("Unknow") ||
         widget.tarifaXDia.code!.contains("tariffFree");
@@ -314,8 +318,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.center,
             children: [
-              if (MediaQuery.of(context).size.width >
-                  (1100 + (widget.sideController.extended ? 120 : 0)))
+              if (typeQuote
+                  ? true
+                  : MediaQuery.of(context).size.width >
+                      (1100 + (widget.sideController.extended ? 120 : 0)))
                 TextStyles.TextTitleList(
                   index: widget.tarifaXDia.fecha!.day,
                   color: widget.tarifaXDia.color == null
@@ -329,7 +335,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                                   0.2))
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
-                  size: (MediaQuery.of(context).size.width > 1390) ? 28 : 20,
+                  size: (MediaQuery.of(context).size.width > 1390)
+                      ? 28
+                      : !typeQuote
+                          ? 20
+                          : 26,
                 ),
               if (MediaQuery.of(context).size.width > 1590)
                 const SizedBox(height: 8),
@@ -358,7 +368,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                             : const Color.fromARGB(255, 43, 43, 43),
                     overflow: (MediaQuery.of(context).size.width > 1590)
                         ? TextOverflow.clip
-                        : TextOverflow.ellipsis,
+                        : typeQuote
+                            ? TextOverflow.clip
+                            : TextOverflow.ellipsis,
                   ),
                 ),
               if (MediaQuery.of(context).size.width >
@@ -388,7 +400,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                 ),
-              if (MediaQuery.of(context).size.width > 1490)
+              if (MediaQuery.of(context).size.width > 1490 && !typeQuote)
                 SizedBox(
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
@@ -421,7 +433,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                             : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 ),
-              if (MediaQuery.of(context).size.width <= 1490)
+              if (MediaQuery.of(context).size.width <= 1490 && !typeQuote)
                 Tooltip(
                   message: "Cambiar",
                   child: IconButton(

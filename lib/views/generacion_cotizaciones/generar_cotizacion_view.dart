@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -567,7 +566,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                     onPressedButton.call();
                   },
                   color: Utility.darken(color!, 0.15),
-                  text: "Gestionar temporadas",
+                  text: "Gestionar tarifas",
                 )
             ],
           ),

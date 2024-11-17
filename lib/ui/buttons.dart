@@ -89,9 +89,10 @@ class Buttons {
     bool withRoundedBorder = false,
     Color colorText = Colors.white,
     Widget? auxwidget,
+    String? tooltipText,
   }) {
     return Tooltip(
-      message: auxwidget != null ? text : "",
+      message: tooltipText ?? (auxwidget != null ? text : ""),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(

@@ -20,6 +20,7 @@ class TableRows {
     required double screenWidth,
     required TarifaXDia tarifaXDia,
     void Function()? setState,
+    required bool isGroupTariff,
   }) {
     RegistroTarifa? tarifa = tarifaXDia.tarifa == null
         ? null
@@ -34,6 +35,7 @@ class TableRows {
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
+      isGroupTariff: isGroupTariff,
     );
 
     double tarifaMenores = Utility.calculateTotalTariffRoom(
@@ -42,6 +44,7 @@ class TableRows {
       habitacion.tarifaXDia!.length,
       isCalculateChildren: true,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
+      isGroupTariff: isGroupTariff,
     );
 
     void showDialogManagerTariff() {
@@ -121,7 +124,12 @@ class TableRows {
                       child: SizedBox(
                         width: 95,
                         child: Buttons.commonButton(
-                          onPressed: () => showDialogManagerTariff(),
+                          tooltipText: !isGroupTariff
+                              ? null
+                              : "No aplica en cot. Grupales",
+                          onPressed: isGroupTariff
+                              ? null
+                              : () => showDialogManagerTariff(),
                           text: "Editar",
                           color: colorTariff,
                           colorText: tarifaXDia.color == null
@@ -135,12 +143,16 @@ class TableRows {
                   )
                 else
                   IconButton(
-                    onPressed: () => showDialogManagerTariff(),
-                    tooltip: "Editar",
+                    onPressed:
+                        isGroupTariff ? null : () => showDialogManagerTariff(),
+                    tooltip:
+                        isGroupTariff ? "No aplica en cot. Grupales" : "Editar",
                     icon: Icon(
                       CupertinoIcons.pencil,
                       size: 25,
-                      color: colorTariff,
+                      color: isGroupTariff
+                          ? DesktopColors.grisPalido
+                          : colorTariff,
                     ),
                   ),
               ],

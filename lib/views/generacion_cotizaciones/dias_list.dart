@@ -55,6 +55,7 @@ class _DiasListState extends ConsumerState<DiasList> {
     double screenWidth = MediaQuery.of(context).size.width;
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final listTariffProvider = ref.watch(listTariffDayProvider);
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     return SingleChildScrollView(
       child: listTariffProvider.when(
@@ -260,6 +261,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                             screenWidth: screenWidth,
                             tarifaXDia: list[ink],
                             setState: () => setState(() {}),
+                            isGroupTariff: typeQuote,
                           );
                         },
                       ),
@@ -280,6 +282,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                       return CheckListtileTariffWidget(
                         habitacion: habitacionProvider,
                         tarifaXDia: list[ink],
+                        isGroupTariff: typeQuote,
                       );
                     },
                   ),
