@@ -320,22 +320,27 @@ class _SummaryControllerWidgetState
                                         tarifasFiltradas,
                                         habitacionProvider,
                                         widget.numDays,
+                                        typeQuote: typeQuote,
                                       )),
                                       children: [
                                         if (widget.calculateRoom)
                                           for (var element in tarifasFiltradas)
                                             CustomWidgets.itemListCount(
                                               nameItem:
-                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? 'No definido'} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
+                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.code == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
                                               subTitle: element.subCode != null
                                                   ? '(Mod)'
                                                   : '',
                                               count: -(Utility
-                                                  .calculateDiscountXTariff(
-                                                element,
-                                                habitacionProvider,
-                                                widget.numDays,
-                                              )),
+                                                      .calculateDiscountXTariff(
+                                                          element,
+                                                          habitacionProvider,
+                                                          widget.numDays,
+                                                          onlyDiscountUnitary:
+                                                              true,
+                                                          typeQuote:
+                                                              typeQuote)) *
+                                                  element.numDays,
                                               context: context,
                                               sizeText: 11.5,
                                             ),
@@ -360,6 +365,7 @@ class _SummaryControllerWidgetState
                                     tarifasFiltradas,
                                     habitacionProvider,
                                     widget.numDays,
+                                    typeQuote: typeQuote,
                                   )),
                               context: context,
                               isBold: true,
@@ -404,7 +410,7 @@ class _SummaryControllerWidgetState
                     isLoading: widget.finishQuote ? false : widget.isLoading,
                     onPressed: () {
                       if (widget.calculateRoom) {
-                        saveRoom(habitacionProvider);
+                        saveRoom(habitacionProvider, typeQuote);
                       } else {
                         if (widget.onSaveQuote != null) {
                           widget.onSaveQuote!.call();
@@ -706,7 +712,7 @@ class _SummaryControllerWidgetState
     });
   }
 
-  void saveRoom(Habitacion habitacionProvider) {
+  void saveRoom(Habitacion habitacionProvider, bool typeQuote) {
     if (revisedValidTariff(habitacionProvider)) {
       showSnackBar(
         context: context,
@@ -732,6 +738,7 @@ class _SummaryControllerWidgetState
       habitacionProvider,
       widget.numDays,
       onlyTariffVR: true,
+      typeQuote: typeQuote,
     );
 
     habitacionProvider.totalVR =
@@ -750,6 +757,7 @@ class _SummaryControllerWidgetState
       habitacionProvider,
       widget.numDays,
       onlyTariffVPM: true,
+      typeQuote: typeQuote,
     );
 
     habitacionProvider.totalVPM =

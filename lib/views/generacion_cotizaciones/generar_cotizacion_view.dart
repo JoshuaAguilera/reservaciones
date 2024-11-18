@@ -70,7 +70,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
-    final showManagerTariffGroup = ref.watch(showManagerTariffGroupProvider);
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -121,28 +120,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       );
     }
 
-    if (typeQuote) {
-      Future.delayed(
-        Durations.short4,
-        () {
-          if (!showManagerTariffGroup) {
-            _showConfigurationTariffGroup(firstView: true);
-          }
-        },
-      );
-
-      Future.delayed(
-          Durations.short1,
-          () => ref
-              .read(showManagerTariffGroupProvider.notifier)
-              .update((state) => true));
-    } else {
-      Future.delayed(
-          Durations.short1,
-          () => ref
-              .read(showManagerTariffGroupProvider.notifier)
-              .update((state) => false));
-    }
+    ref.listen<bool>(typeQuoteProvider, (previous, next) {
+      if (next) _showConfigurationTariffGroup(firstView: true);
+    });
 
     return Scaffold(
       body: Padding(

@@ -8,7 +8,7 @@ import '../models/registro_tarifa_model.dart';
 import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
 import '../utils/helpers/web_colors.dart';
-import '../views/generacion_cotizaciones/manager_tariff_day_dialog.dart';
+import '../views/generacion_cotizaciones/manager_tariff_single_dialog.dart';
 import 'text_styles.dart';
 
 class CheckListtileTariffWidget extends StatefulWidget {
@@ -36,7 +36,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
   void showDialogEditQuote() {
     showDialog(
       context: context,
-      builder: (context) => ManagerTariffDayDialog(
+      builder: (context) => ManagerTariffSingleDialog(
         tarifaXDia: widget.tarifaXDia,
         numDays: DateTime.parse(widget.habitacion.fechaCheckOut ?? '')
             .difference(DateTime.parse(widget.habitacion.fechaCheckIn ?? ''))

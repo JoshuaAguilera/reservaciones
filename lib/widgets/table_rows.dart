@@ -10,7 +10,7 @@ import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
 import '../utils/helpers/web_colors.dart';
 import 'item_rows.dart';
-import '../views/generacion_cotizaciones/manager_tariff_day_dialog.dart';
+import '../views/generacion_cotizaciones/manager_tariff_single_dialog.dart';
 import 'text_styles.dart';
 
 class TableRows {
@@ -50,7 +50,7 @@ class TableRows {
     void showDialogManagerTariff() {
       showDialog(
         context: context,
-        builder: (context) => ManagerTariffDayDialog(
+        builder: (context) => ManagerTariffSingleDialog(
           tarifaXDia: tarifaXDia,
           numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
               .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
@@ -306,10 +306,9 @@ class TableRows {
           text: (adults1a2.text.isEmpty && element.porcentajePromocion == null)
               ? "—"
               : Utility.calculatePromotion(
-                  adults1a2,
-                  TextEditingController(
-                      text: element.porcentajePromocion?.toString()),
-                  0),
+                  adults1a2.text,
+                  element.porcentajePromocion,
+                ),
           color: Theme.of(context).primaryColor,
           aling: TextAlign.center,
         )),
@@ -319,10 +318,9 @@ class TableRows {
                   element.porcentajePromocion == null)
               ? "—"
               : Utility.calculatePromotion(
-                  adults3,
-                  TextEditingController(
-                      text: element.porcentajePromocion?.toString()),
-                  0),
+                  adults3.text,
+                  element.porcentajePromocion,
+                ),
           color: Theme.of(context).primaryColor,
           aling: TextAlign.center,
         )),
@@ -332,10 +330,9 @@ class TableRows {
                     element.porcentajePromocion == null)
                 ? "—"
                 : Utility.calculatePromotion(
-                    adults4,
-                    TextEditingController(
-                        text: element.porcentajePromocion?.toString()),
-                    0),
+                    adults4.text,
+                    element.porcentajePromocion,
+                  ),
             color: Theme.of(context).primaryColor,
             aling: TextAlign.center,
           ),
@@ -345,10 +342,9 @@ class TableRows {
           text: (paxAdic.text.isEmpty && element.porcentajePromocion == null)
               ? "—"
               : Utility.calculatePromotion(
-                  paxAdic,
-                  TextEditingController(
-                      text: element.porcentajePromocion?.toString()),
-                  0),
+                  paxAdic.text,
+                  element.porcentajePromocion,
+                ),
           color: Theme.of(context).primaryColor,
           aling: TextAlign.center,
         )),
@@ -358,10 +354,9 @@ class TableRows {
                 (minor7a12.text.isEmpty && element.porcentajePromocion == null)
                     ? "—"
                     : Utility.calculatePromotion(
-                        minor7a12,
-                        TextEditingController(
-                            text: element.porcentajePromocion?.toString()),
-                        0),
+                        minor7a12.text,
+                        element.porcentajePromocion,
+                      ),
             color: Theme.of(context).primaryColor,
             aling: TextAlign.center,
           ),

@@ -1084,8 +1084,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           (element.fechaInicial!.isSameDate(DateTime.parse(fechaSal))) ||
           (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) > 0 &&
               element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
-          // (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
-          //     element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
           (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
               element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) >= 0),
     );

@@ -22,7 +22,7 @@ import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/dynamic_widget.dart';
-import 'manager_tariff_day_dialog.dart';
+import 'manager_tariff_single_dialog.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
@@ -64,7 +64,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   bool alreadySaveTariff = false;
   bool alreadyApply = false;
   List<TarifaXDia> alternativeTariffInd = [];
-   TarifaXDia? alternativeGrupTariff;
+  TarifaXDia? alternativeGrupTariff;
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -564,18 +564,32 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                             const EdgeInsets.only(right: 15),
                                         child: Buttons.commonButton(
                                           onPressed: () {
-                                            getTarifasSelect(
-                                              list,
+                                            List<TarifaXDia> tarifasFiltradas =
+                                                Utility.getUniqueTariffs(
+                                              applyFreeTariff
+                                                  ? habitacionProvider
+                                                      .tarifaXDia!
+                                                  : alternativeTariffInd.isEmpty
+                                                      ? recoveryTariffs
+                                                      : alternativeTariffInd,
+                                            );
+
+                                            int days = DateTime.parse(
+                                                    _fechaSalida.text)
+                                                .difference(DateTime.parse(
+                                                    _fechaEntrada.text))
+                                                .inDays;
+
+                                            showDialogRateManager(
+                                              tarifasFiltradas,
                                               habitacionProvider,
-                                              tarifasProvisionalesProvider,
-                                              descuentoProvider,
-                                              onlyCategory: false,
-                                              isGroup: typeQuote,
+                                              days,
+                                              withoutAction: true,
                                             );
                                           },
                                           color: Utility.darken(
                                               DesktopColors.cotGrupal, 0.15),
-                                          text: "Gestionar tarifas",
+                                          text: "Gestionar tarifa",
                                         ),
                                       ),
                                     Padding(
@@ -606,7 +620,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                               showDialog(
                                                 context: context,
                                                 builder: (context) =>
-                                                    ManagerTariffDayDialog(
+                                                    ManagerTariffSingleDialog(
                                                   tarifaXDia: tarifaLibre,
                                                   isAppling: true,
                                                   numDays: DateTime.parse(
@@ -803,11 +817,46 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           int days = DateTime.parse(_fechaSalida.text)
                               .difference(DateTime.parse(_fechaEntrada.text))
                               .inDays;
+
+                          if (alternativeTariffInd.any(
+                                  (element) => element.code == "tariffFree") &&
+                              !applyFreeTariff) {
+                            List<TarifaXDia> tarifasEncontradas = getTariffXDia(
+                              list,
+                              days,
+                              habitacionProvider.categoria ??
+                                  tipoHabitacion.first,
+                              tarifasProvisionalesProvider,
+                              descuentoProvider,
+                              typeQuote,
+                            );
+
+                            alternativeTariffInd.clear();
+
+                            for (var tarifaDiaria in tarifasEncontradas) {
+                              alternativeTariffInd.add(tarifaDiaria.copyWith());
+                            }
+                          }
+                          for (var element in alternativeTariffInd) {
+                            element.temporadaSelect = Utility.getSeasonNow(
+                              RegistroTarifa(temporadas: element.temporadas),
+                              days,
+                            );
+                          }
+
                           habitacionProvider.tarifaXDia = alternativeTariffInd;
                         } else {
                           habitacionProvider.tarifaXDia = recoveryTariffs;
                         }
-                        habitacionProvider.tarifaGrupal = alternativeGrupTariff;
+                        if (alternativeGrupTariff != null) {
+                          habitacionProvider.tarifaGrupal =
+                              alternativeGrupTariff;
+                        } else if (applyFreeTariff) {
+                          habitacionProvider.tarifaGrupal =
+                              Utility.getUniqueTariffs(
+                                      habitacionProvider.tarifaXDia!)
+                                  .first;
+                        }
                       }
                       ref.read(habitacionesProvider.notifier).editItem(
                           habitacionProvider.folioHabitacion,
@@ -949,6 +998,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
               newTariff.copyWith(),
             );
           }
+          if (habitacion.tarifaGrupal?.code == "tariffFree") {
+            tarifaLibre = habitacion.tarifaGrupal!;
+            applyFreeTariff = true;
+          } else {
+            alternativeGrupTariff = habitacion.tarifaGrupal;
+          }
           alreadyApply = true;
         } else {
           List<TarifaXDia> tarifasEncontradas = getTariffXDia(
@@ -960,7 +1015,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             isGroup,
           );
 
-          alternativeTariffInd = tarifasEncontradas;
+          alternativeTariffInd.clear();
+
+          for (var tarifaDiaria in tarifasEncontradas) {
+            alternativeTariffInd.add(tarifaDiaria.copyWith());
+          }
 
           List<TarifaXDia> tarifasFiltradas =
               Utility.getUniqueTariffs(tarifasEncontradas);
@@ -997,65 +1056,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
           Future.delayed(
             Durations.medium1,
-            () => showDialog(
-              context: context,
-              builder: (context) {
-                return ManagerTariffGroupDialog(
-                    tarifasHabitacion: tarifasFiltradas);
-              },
-            ).then(
-              (value) {
-                if (value == null) {
-                  TarifaXDia? tarifaGrupal = tarifasFiltradas
-                      .reduce(((a, b) => a.numDays > b.numDays ? a : b));
-
-                  tarifaGrupal.numDays = 1;
-
-                  tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
-                    RegistroTarifa(temporadas: tarifaGrupal.temporadas),
-                    DateTime.parse(habitacion.fechaCheckOut!)
-                        .difference(DateTime.parse(habitacion.fechaCheckIn!))
-                        .inDays,
-                    isGroup: true,
-                  );
-                  //habitacion.tarifaGrupal = tarifaGrupal;
-
-                  Future.delayed(
-                    Durations.short2,
-                    () {
-                      TarifaXDia subTariff = tarifaGrupal.copyWith();
-                      for (var ink = 0; ink < days; ink++) {
-                        
-                        subTariff.dia = ink;
-                        DateTime dateNow = DateTime.parse(_fechaEntrada.text)
-                            .add(Duration(days: ink));
-                        subTariff.fecha = dateNow;
-                        habitacion.tarifaXDia!.add(subTariff.copyWith());
-                      }
-                      setState(() {});
-                    },
-                  );
-                } else {
-                  Future.delayed(
-                    Durations.short2,
-                    () {
-                        TarifaXDia subTariff = value.copyWith();
-                         subTariff.numDays = 1;
-                      for (var ink = 0; ink < days; ink++) {
-                      
-                        subTariff.dia = ink;
-                       
-                        DateTime dateNow = DateTime.parse(_fechaEntrada.text)
-                            .add(Duration(days: ink));
-                        subTariff.fecha = dateNow;
-                        habitacion.tarifaXDia!.add(subTariff.copyWith());
-                      }
-                      setState(() {});
-                    },
-                  );
-                }
-              },
-            ),
+            () => showDialogRateManager(tarifasFiltradas, habitacion, days),
           );
         }
 
@@ -1073,6 +1074,80 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         ),
       );
     }
+  }
+
+  void showDialogRateManager(
+      List<TarifaXDia> tarifasFiltradas, Habitacion habitacion, int days,
+      {bool withoutAction = false}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return ManagerTariffGroupDialog(tarifasHabitacion: tarifasFiltradas);
+      },
+    ).then(
+      (value) {
+        if (value == null) return;
+        List<TarifaXDia?> list = value;
+        if (list.isEmpty) {
+          TarifaXDia? tarifaGrupal = tarifasFiltradas
+              .reduce(((a, b) => a.numDays > b.numDays ? a : b));
+
+          if (withoutAction && tarifaGrupal.code == alternativeGrupTariff!.code)
+            return;
+
+          if (withoutAction) habitacion.tarifaXDia!.clear();
+
+          tarifaGrupal.numDays = 1;
+
+          tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
+            RegistroTarifa(temporadas: tarifaGrupal.temporadas),
+            DateTime.parse(habitacion.fechaCheckOut!)
+                .difference(DateTime.parse(habitacion.fechaCheckIn!))
+                .inDays,
+            isGroup: true,
+          );
+
+          Future.delayed(
+            Durations.short2,
+            () {
+              TarifaXDia subTariff = tarifaGrupal.copyWith();
+              alternativeGrupTariff = subTariff;
+              for (var ink = 0; ink < days; ink++) {
+                subTariff.dia = ink;
+                DateTime dateNow =
+                    DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+                subTariff.fecha = dateNow;
+                habitacion.tarifaXDia!.add(subTariff.copyWith());
+              }
+              setState(() {});
+            },
+          );
+        } else {
+          if (!applyFreeTariff) {
+            if (withoutAction &&
+                list.first!.code == alternativeGrupTariff?.code) {
+              return;
+            }
+          }
+
+          if (withoutAction) habitacion.tarifaXDia!.clear();
+
+          TarifaXDia subTariff = list.first!.copyWith();
+          subTariff.numDays = 1;
+          alternativeGrupTariff = subTariff;
+
+          for (var ink = 0; ink < days; ink++) {
+            subTariff.dia = ink;
+
+            DateTime dateNow =
+                DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+            subTariff.fecha = dateNow;
+            habitacion.tarifaXDia!.add(subTariff.copyWith());
+          }
+          setState(() {});
+        }
+      },
+    );
   }
 
   List<TarifaXDia> getTariffXDia(

@@ -29,7 +29,7 @@ class ManagerTariffGroupDialog extends ConsumerStatefulWidget {
 
 class _ManagerTariffGroupDialogState
     extends ConsumerState<ManagerTariffGroupDialog> {
-  final _tarifaAdultoController = TextEditingController();
+  final _tarifaAdultoSingleController = TextEditingController();
   final _tarifaAdultoTPLController = TextEditingController();
   final _tarifaAdultoCPLController = TextEditingController();
   final _tarifaPaxAdicionalController = TextEditingController();
@@ -48,7 +48,7 @@ class _ManagerTariffGroupDialogState
 
   @override
   void dispose() {
-    _tarifaAdultoController.dispose();
+    _tarifaAdultoSingleController.dispose();
     _tarifaAdultoTPLController.dispose();
     _tarifaAdultoCPLController.dispose();
     _tarifaPaxAdicionalController.dispose();
@@ -256,7 +256,10 @@ class _ManagerTariffGroupDialogState
                                         icon: const Icon(CupertinoIcons.percent,
                                             size: 20),
                                         isNumeric: true,
-                                        onChanged: (p0) => setState(() {}),
+                                        onChanged: (p0) => setState(
+                                          () => _applyDiscountTariff(null,
+                                              descuentoText: p0),
+                                        ),
                                       ),
                                     ),
                                 ],
@@ -303,7 +306,10 @@ class _ManagerTariffGroupDialogState
                                               setState(() => selectCategory =
                                                   categorias[index]);
                                               _applyDiscountTariff(
-                                                  temporadaDataSelect);
+                                                temporadaDataSelect,
+                                                descuentoText:
+                                                    _descuentoController.text,
+                                              );
                                               setState(() {});
                                             },
                                             child: Text(
@@ -329,7 +335,8 @@ class _ManagerTariffGroupDialogState
                               ),
                               const SizedBox(height: 22),
                               FormTariffWidget(
-                                tarifaAdultoController: _tarifaAdultoController,
+                                tarifaAdultoController:
+                                    _tarifaAdultoSingleController,
                                 tarifaAdultoTPLController:
                                     _tarifaAdultoTPLController,
                                 tarifaAdultoCPLController:
@@ -338,6 +345,7 @@ class _ManagerTariffGroupDialogState
                                     _tarifaPaxAdicionalController,
                                 tarifaMenoresController:
                                     _tarifaMenoresController,
+                                onUpdate: () {},
                               ),
                             ],
                           ),
@@ -346,16 +354,20 @@ class _ManagerTariffGroupDialogState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: TextStyles.standardText(
-                              text: "AutoGestionar",
-                              isBold: true,
-                              size: 12.5,
+                          if (selectTariff!.code != "tariffFree")
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(
+                                    widget.tarifasHabitacion != null
+                                        ? List<TarifaXDia>.empty()
+                                        : null);
+                              },
+                              child: TextStyles.standardText(
+                                text: "AutoGestionar",
+                                isBold: true,
+                                size: 12.5,
+                              ),
                             ),
-                          ),
                           const SizedBox(width: 8),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -369,7 +381,15 @@ class _ManagerTariffGroupDialogState
                                   widget.tarifasHabitacion != null) {
                                 selectTariff!.temporadaSelect =
                                     temporadaDataSelect;
-                                Navigator.of(context).pop(selectTariff);
+                                if (selectTariff?.temporadas == null ||
+                                    selectTariff!.temporadas!.isEmpty) {
+                                  selectTariff!.descuentoProvisional =
+                                      double.parse(
+                                          _descuentoController.text.isEmpty
+                                              ? "0"
+                                              : _descuentoController.text);
+                                }
+                                Navigator.of(context).pop([selectTariff]);
                                 return;
                               }
                             },
@@ -454,55 +474,67 @@ class _ManagerTariffGroupDialogState
             curve: Curves.easeIn, duration: Durations.medium1),
       );
     }
-    _applyDiscountTariff(temporadaDataSelect);
+    _applyDiscountTariff(
+      temporadaDataSelect,
+      descuentoProvisional: tarifa?.descuentoProvisional,
+    );
   }
 
-  void _applyDiscountTariff(TemporadaData? seasonSelect) {
+  void _applyDiscountTariff(
+    TemporadaData? seasonSelect, {
+    String descuentoText = '',
+    double? descuentoProvisional,
+  }) {
     temporadaSelect = seasonSelect?.nombre ?? 'No aplicar';
-
-    TarifaData? tarifaSelect = selectTariff?.tarifas
+    TarifaData? selectCategoryTariff = selectTariff?.tarifas
         ?.where((element) =>
             element.categoria ==
             tipoHabitacion[categorias.indexOf(selectCategory)])
         .toList()
         .firstOrNull;
 
-    _tarifaAdultoController.text = Utility.applyDiscount(
-      tarifaSelect?.tarifaAdultoSGLoDBL ?? 0,
-      seasonSelect?.porcentajePromocion ??
-          double.parse(
-            _descuentoController.text.isEmpty ? "0" : _descuentoController.text,
-          ),
-    ).toString();
-    _tarifaAdultoTPLController.text = Utility.applyDiscount(
-      tarifaSelect?.tarifaAdultoTPL ?? 0,
-      seasonSelect?.porcentajePromocion ??
-          double.parse(
-            _descuentoController.text.isEmpty ? "0" : _descuentoController.text,
-          ),
-    ).toString();
-    _tarifaAdultoCPLController.text = Utility.applyDiscount(
-            tarifaSelect?.tarifaAdultoCPLE ?? 0,
-            seasonSelect?.porcentajePromocion ??
-                double.parse(
-                  _descuentoController.text.isEmpty
-                      ? "0"
-                      : _descuentoController.text,
-                ))
+    double descuento = seasonSelect?.porcentajePromocion ??
+        descuentoProvisional ??
+        (descuentoText.isEmpty ? 0 : double.parse(descuentoText));
+
+    _tarifaAdultoSingleController.text = Utility.calculatePromotion(
+            descuento > 100
+                ? "0"
+                : (selectCategoryTariff?.tarifaAdultoSGLoDBL ?? 0).toString(),
+            descuento,
+            returnDouble: true)
         .toString();
-    _tarifaPaxAdicionalController.text = Utility.applyDiscount(
-      tarifaSelect?.tarifaPaxAdicional ?? 0,
-      seasonSelect?.porcentajePromocion ??
-          double.parse(
-            _descuentoController.text.isEmpty ? "0" : _descuentoController.text,
-          ),
-    ).toString();
-    _tarifaMenoresController.text = Utility.applyDiscount(
-      tarifaSelect?.tarifaMenores7a12 ?? 0,
-      seasonSelect?.porcentajePromocion ??
-          double.parse(
-            _descuentoController.text.isEmpty ? "0" : _descuentoController.text,
-          ),
-    ).toString();
+
+    _tarifaAdultoTPLController.text = Utility.calculatePromotion(
+            descuento > 100
+                ? "0"
+                : (selectCategoryTariff?.tarifaAdultoTPL ?? 0).toString(),
+            descuento,
+            returnDouble: true)
+        .toString();
+
+    _tarifaAdultoCPLController.text = Utility.calculatePromotion(
+            descuento > 100
+                ? "0"
+                : (selectCategoryTariff?.tarifaAdultoCPLE ?? 0).toString(),
+            descuento,
+            returnDouble: true)
+        .toString();
+
+    _tarifaPaxAdicionalController.text = Utility.calculatePromotion(
+            descuento > 100
+                ? "0"
+                : (selectCategoryTariff?.tarifaPaxAdicional ?? 0).toString(),
+            descuento,
+            returnDouble: true)
+        .toString();
+
+    _tarifaMenoresController.text = Utility.calculatePromotion(
+            descuento > 100
+                ? "0"
+                : (selectCategoryTariff?.tarifaMenores7a12 ?? 0).toString(),
+            descuento,
+            returnDouble: true)
+        .toString();
   }
 }

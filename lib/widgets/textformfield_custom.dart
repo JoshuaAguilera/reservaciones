@@ -29,7 +29,6 @@ class TextFormFieldCustom {
     String? Function(String?)? validator,
     TextInputAction? textInputAction,
   }) {
-    bool withContent = false;
     return StatefulBuilder(
       builder: (context, snapshot) {
         return Container(
@@ -54,15 +53,7 @@ class TextFormFieldCustom {
                   enabled: enabled,
                   controller: controller,
                   onChanged: (value) {
-                    snapshot(
-                      () {
-                        if (value.isEmpty) {
-                          withContent = false;
-                        } else {
-                          withContent = true;
-                        }
-                      },
-                    );
+                    snapshot(() {});
                     if (onChanged != null) onChanged.call(value);
                   },
                   obscureText: passwordVisible,
@@ -91,7 +82,7 @@ class TextFormFieldCustom {
                             RegExp(r'^[0-9]+[.]?[0-9]*'))
                         : isNumeric
                             ? FilteringTextInputFormatter.digitsOnly
-                            : FilteringTextInputFormatter.singleLineFormatter
+                            : FilteringTextInputFormatter.singleLineFormatter,
                   ],
                   textAlignVertical: TextAlignVertical.top,
                   textAlign: isMoneda ? TextAlign.right : TextAlign.left,

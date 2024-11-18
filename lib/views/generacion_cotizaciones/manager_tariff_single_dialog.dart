@@ -18,8 +18,8 @@ import '../../widgets/custom_dropdown.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 
-class ManagerTariffDayDialog extends ConsumerStatefulWidget {
-  const ManagerTariffDayDialog(
+class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
+  const ManagerTariffSingleDialog(
       {super.key,
       required this.tarifaXDia,
       this.isAppling = false,
@@ -34,7 +34,7 @@ class ManagerTariffDayDialog extends ConsumerStatefulWidget {
 }
 
 class _ManagerTariffDayWidgetState
-    extends ConsumerState<ManagerTariffDayDialog> {
+    extends ConsumerState<ManagerTariffSingleDialog> {
   String temporadaSelect = "Mayo - Abril";
   bool applyAllTariff = false;
   bool applyAllDays = false;
@@ -151,7 +151,9 @@ class _ManagerTariffDayWidgetState
           Expanded(
             child: TextStyles.titleText(
                 text: widget.isAppling
-                    ? "Aplicar nueva Tarifa libre de ${Utility.getStringPeriod(initDate: DateTime.parse(habitacionProvider.fechaCheckIn!), lastDate: DateTime.parse(habitacionProvider.fechaCheckOut!))}"
+                    ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre \n${Utility.getPeriodReservation([
+                            habitacionProvider
+                          ])}"
                     : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTariff} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
                 size:
                     (widget.tarifaXDia.subCode != null && !isUnknow) ? 13 : 16,
@@ -177,7 +179,7 @@ class _ManagerTariffDayWidgetState
                     TextStyles.standardText(
                       text: widget.tarifaXDia.temporadaSelect != null
                           ? "Temporada: "
-                          : "Descuento en todas las tarifas:      ",
+                          : "Descuento en toda la tarifa:         ",
                       overClip: true,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -351,6 +353,8 @@ class _ManagerTariffDayWidgetState
                         tarifaPaxAdicionalController:
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
+                        onUpdate: () => setState(() {}),
+                        isEditing: true,
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -531,11 +535,19 @@ class _ManagerTariffDayWidgetState
             onPressed: () {
               if (!_formKeyTariffDay.currentState!.validate()) return;
 
-              if (!detectFixInChanges() &&
+              bool withChanges = detectFixInChanges();
+
+              if (!withChanges &&
                   widget.tarifaXDia.tarifa != null &&
                   !applyAllDays &&
                   !applyAllNoTariff &&
-                  !applyAllDays) {
+                  !applyAllDays &&
+                  !applyAllTariff) {
+                Navigator.pop(context);
+                return;
+              }
+
+              if (applyAllTariff && widget.tarifaXDia.subCode == null) {
                 Navigator.pop(context);
                 return;
               }
@@ -645,6 +657,8 @@ class _ManagerTariffDayWidgetState
 
                 widget.tarifaXDia.tarifa = newTariff;
 
+                if (applyAllCategory) saveTariff = newTarifa;
+
                 TarifaData secondTariff = TarifaData(
                   id: categorias.indexOf(categorias
                       .firstWhere((element) => element != selectCategory)),
@@ -664,7 +678,7 @@ class _ManagerTariffDayWidgetState
                   widget.tarifaXDia.tarifas = [newTariff, secondTariff];
                 } else {
                   int indexSecondTariff = widget.tarifaXDia.tarifas!.indexWhere(
-                      (element) => element.categoria == saveTariff?.categoria);
+                      (element) => element.categoria == secondTariff.categoria);
 
                   if (indexSecondTariff != -1) {
                     widget.tarifaXDia.tarifas![indexSecondTariff] =
@@ -856,6 +870,7 @@ class _ManagerTariffDayWidgetState
 
   bool isSameSeason() {
     bool isSame = false;
+
     if (widget.tarifaXDia.temporadaSelect != null) {
       isSame = widget.tarifaXDia.temporadaSelect!.nombre == temporadaSelect;
     }

@@ -539,18 +539,31 @@ class Utility {
     return children;
   }
 
-  static String calculatePromotion(
-      TextEditingController tarifa, TextEditingController promocion, int desc) {
+  static dynamic calculatePromotion(String tarifa, double? promocion,
+      {bool returnDouble = false,
+      bool rounded = true,
+      bool onlyDiscount = false}) {
     double subtotal = 0;
-    double tarifaNum = double.parse(tarifa.text.isEmpty ? '0' : tarifa.text);
-    double promocionNUM =
-        double.parse(promocion.text.isEmpty ? '0' : promocion.text);
+    double tarifaNum = double.parse(tarifa.isEmpty ? '0' : tarifa);
+    double promocionNUM = promocion ?? 0;
 
-    double descuento = (tarifaNum / 100) * (promocionNUM + desc);
+    double descuento = (tarifaNum / 100) * (promocionNUM);
 
     subtotal = tarifaNum - descuento;
 
-    return formatterNumber(subtotal.round().toDouble());
+    if (!returnDouble) {
+      if (rounded) {
+        return formatterNumber(subtotal.round().toDouble());
+      } else {
+        return formatterNumber(subtotal);
+      }
+    } else {
+      if (rounded) {
+        return (onlyDiscount ? descuento : subtotal).round().toDouble();
+      } else {
+        return onlyDiscount ? descuento : subtotal;
+      }
+    }
   }
 
   static bool showTariffByWeek(
@@ -1090,17 +1103,32 @@ class Utility {
     }
 
     if (withDiscount) {
-      tariffChildren = (tariffChildren - ((descuento / 100) * tariffChildren))
-          .round()
-          .toDouble();
+      tariffChildren = (calculatePromotion(
+        tariffChildren.toString(),
+        descuento,
+        returnDouble: true,
+      ));
 
-      tariffAdult =
-          (tariffAdult - ((descuento / 100) * tariffAdult)).round().toDouble();
+      tariffAdult = (calculatePromotion(
+        tariffAdult.toString(),
+        descuento,
+        returnDouble: true,
+      ));
     }
 
     if (onlyDiscount) {
-      tariffChildren = ((descuento / 100) * tariffChildren).round().toDouble();
-      tariffAdult = ((descuento / 100) * tariffAdult).round().toDouble();
+      tariffChildren = calculatePromotion(
+        tariffChildren.toString(),
+        descuento,
+        returnDouble: true,
+        onlyDiscount: true,
+      );
+      tariffAdult = calculatePromotion(
+        tariffAdult.toString(),
+        descuento,
+        returnDouble: true,
+        onlyDiscount: true,
+      );
     }
 
     if (getTotalRoom) {
@@ -1645,6 +1673,7 @@ class Utility {
     int totalDays, {
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
+    bool typeQuote = false,
   }) {
     double discountTotal = 0;
 
@@ -1655,6 +1684,7 @@ class Utility {
         totalDays,
         onlyTariffVPM: onlyTariffVPM,
         onlyTariffVR: onlyTariffVR,
+        typeQuote: typeQuote,
       );
     }
 
@@ -1667,6 +1697,8 @@ class Utility {
     int totalDays, {
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
+    bool onlyDiscountUnitary = false,
+    bool typeQuote = false,
   }) {
     double discount = 0;
 
@@ -1687,6 +1719,7 @@ class Utility {
       withDiscount: false,
       onlyTariffVPM: onlyTariffVPM,
       onlyTariffVR: onlyTariffVR,
+      isGroupTariff: typeQuote,
     );
     double totalChildren = Utility.calculateTotalTariffRoom(
       element.tarifa == null
@@ -1706,18 +1739,31 @@ class Utility {
       onlyTariffVPM: onlyTariffVPM,
       onlyTariffVR: onlyTariffVR,
       isCalculateChildren: true,
+      isGroupTariff: typeQuote,
     );
 
     double total = totalChildren + totalAdults;
 
     if (element.temporadaSelect != null) {
-      discount =
-          (total * 0.01) * (element.temporadaSelect?.porcentajePromocion ?? 0);
+      discount = total -
+          calculatePromotion(
+            total.toString(),
+            (element.temporadaSelect?.porcentajePromocion ?? 0),
+            returnDouble: true,
+          );
     } else {
-      discount = (total * 0.01) * (element.descuentoProvisional ?? 0);
+      discount = total -
+          calculatePromotion(
+            total.toString(),
+            (element.descuentoProvisional ?? 0),
+            returnDouble: true,
+          );
     }
 
-    return (discount.round() * element.numDays) + 0.0;
+    if (onlyDiscountUnitary) {
+      return (discount) + 0.0;
+    }
+    return (discount * element.numDays) + 0.0;
   }
 
   static String intToRoman(int num) {
@@ -1820,16 +1866,6 @@ class Utility {
     }
 
     return seasons;
-  }
-
-  static double applyDiscount(double priceTariff, double discountTariff) {
-    double price = 0;
-    double discount = 0;
-
-    discount = (priceTariff * 0.01) * (discountTariff);
-    price = priceTariff - discount;
-
-    return price.round() + 0.0;
   }
 
   static bool revisedIntegrityRoom(

@@ -10,6 +10,8 @@ class FormTariffWidget extends StatefulWidget {
     required this.tarifaAdultoCPLController,
     required this.tarifaPaxAdicionalController,
     required this.tarifaMenoresController,
+    required this.onUpdate,
+    this.isEditing = false,
   });
 
   final TextEditingController tarifaAdultoController;
@@ -17,6 +19,8 @@ class FormTariffWidget extends StatefulWidget {
   final TextEditingController tarifaAdultoCPLController;
   final TextEditingController tarifaPaxAdicionalController;
   final TextEditingController tarifaMenoresController;
+  final void Function() onUpdate;
+  final bool isEditing;
 
   @override
   State<FormTariffWidget> createState() => _FormTariffWidgetState();
@@ -25,89 +29,92 @@ class FormTariffWidget extends StatefulWidget {
 class _FormTariffWidgetState extends State<FormTariffWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa SGL/DBL",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                onChanged: (p0) => setState(() {}),
-                controller: widget.tarifaAdultoController,
+    return AbsorbPointer(
+      absorbing: !widget.isEditing,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa SGL/DBL",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  onChanged: (p0) => widget.onUpdate.call(),
+                  controller: widget.tarifaAdultoController,
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa TPL",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                onChanged: (p0) => setState(() {}),
-                controller: widget.tarifaAdultoTPLController,
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa TPL",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  onChanged: (p0) => widget.onUpdate.call(),
+                  controller: widget.tarifaAdultoTPLController,
+                ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa CPLE",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                onChanged: (p0) => setState(() {}),
-                controller: widget.tarifaAdultoCPLController,
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa CPLE",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  onChanged: (p0) => widget.onUpdate.call(),
+                  controller: widget.tarifaAdultoCPLController,
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa Pax Adic",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                controller: widget.tarifaPaxAdicionalController,
-                onChanged: (p0) => setState(() {}),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa Pax Adic",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  controller: widget.tarifaPaxAdicionalController,
+                  onChanged: (p0) => widget.onUpdate.call(),
+                ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa Menores 7 a 12 años",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                controller: widget.tarifaMenoresController,
-                onChanged: (p0) => setState(() {}),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa Menores 7 a 12 años",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  controller: widget.tarifaMenoresController,
+                  onChanged: (p0) => widget.onUpdate.call(),
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextFormFieldCustom.textFormFieldwithBorder(
-                name: "Tarifa Menores 0 a 6 años",
-                isMoneda: true,
-                isNumeric: true,
-                isDecimal: true,
-                blocked: true,
-                enabled: false,
-                initialValue: "GRATIS",
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormFieldCustom.textFormFieldwithBorder(
+                  name: "Tarifa Menores 0 a 6 años",
+                  isMoneda: true,
+                  isNumeric: true,
+                  isDecimal: true,
+                  blocked: true,
+                  enabled: false,
+                  initialValue: "GRATIS",
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
