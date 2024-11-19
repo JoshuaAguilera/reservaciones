@@ -367,6 +367,19 @@ class _ManagerTariffDayWidgetState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                if (widget.isAppling || isUnknow)
+                                  CustomWidgets.checkBoxWithDescription(
+                                    context,
+                                    activeColor: widget.tarifaXDia.color,
+                                    title: "Aplicar en ambas categorias",
+                                    description:
+                                        "(Vista Reserva, Vista Parcial al mar)",
+                                    value: applyAllCategory,
+                                    onChanged: (value) => setState(() {
+                                      applyAllCategory = value!;
+                                      showErrorTariff = false;
+                                    }),
+                                  ),
                                 if (isValidForApplyNotTariff(
                                         habitacionProvider) &&
                                     !widget.isAppling &&
@@ -417,19 +430,6 @@ class _ManagerTariffDayWidgetState
                                         applyAllNoTariff = false;
                                       }),
                                     ),
-                                if (widget.isAppling || isUnknow)
-                                  CustomWidgets.checkBoxWithDescription(
-                                    context,
-                                    activeColor: widget.tarifaXDia.color,
-                                    title: "Aplicar en ambas categorias",
-                                    description:
-                                        "(Vista Reserva, Vista Parcial al mar)",
-                                    value: applyAllCategory,
-                                    onChanged: (value) => setState(() {
-                                      applyAllCategory = value!;
-                                      showErrorTariff = false;
-                                    }),
-                                  ),
                               ],
                             ),
                           ),
@@ -655,9 +655,10 @@ class _ManagerTariffDayWidgetState
                       double.parse(_tarifaPaxAdicionalController.text),
                 );
 
-                widget.tarifaXDia.tarifa = newTariff;
+                widget.tarifaXDia.tarifa = newTariff.copyWith();
 
-                if (applyAllCategory) saveTariff = newTarifa;
+                if (applyAllCategory)
+                  saveTariff = widget.tarifaXDia.tarifa!.copyWith();
 
                 TarifaData secondTariff = TarifaData(
                   id: categorias.indexOf(categorias

@@ -121,6 +121,7 @@ class TextFormFieldCustom {
                       fontFamily: "poppins_regular",
                       color: Colors.red[800],
                       fontSize: 10,
+                      height: msgError.isEmpty ? 0 : 1,
                     ),
                   ),
                   initialValue: initialValue,

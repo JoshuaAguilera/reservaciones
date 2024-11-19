@@ -23,7 +23,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     state = [...state, item];
     if (state.length > 1) revisedFreeRooms();
 
-    if (groupQuote) implementGroupTariff();
+    if (groupQuote) implementGroupTariff([]);
   }
 
   void addFreeItem(Habitacion habitacion, int interval) {
@@ -180,13 +180,21 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void clear() => state = [];
 
-  void implementGroupTariff() {
+  void implementGroupTariff(List<TarifaXDia?> selectTariffs) {
     for (var item in state) {
+      if (selectTariffs.isNotEmpty) {
+        item.tarifaGrupal = selectTariffs.firstWhere(
+          (element) => element?.folioRoom == item.folioHabitacion,
+          orElse: () => null,
+        );
+        continue;
+      }
+
       if (item.tarifaGrupal == null) {
-        List<TarifaXDia> selectTariffs =
+        List<TarifaXDia> filterTariffs =
             Utility.getUniqueTariffs(item.tarifaXDia!);
         TarifaXDia? tarifaGrupo =
-            selectTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
+            filterTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
         tarifaGrupo.temporadaSelect = Utility.getSeasonNow(
           RegistroTarifa(temporadas: tarifaGrupo.temporadas),
@@ -200,6 +208,13 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
       }
     }
 
+    ref.notifyListeners();
+  }
+
+  void removeGroupTariff() {
+    for (var item in state) {
+      item.tarifaGrupal = null;
+    }
     ref.notifyListeners();
   }
 

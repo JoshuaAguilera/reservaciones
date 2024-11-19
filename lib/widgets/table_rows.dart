@@ -25,10 +25,14 @@ class TableRows {
     RegistroTarifa? tarifa = tarifaXDia.tarifa == null
         ? null
         : RegistroTarifa(
-            tarifas: [tarifaXDia.tarifa!],
+            tarifas:
+                (tarifaXDia.tarifas != null || tarifaXDia.tarifas!.isNotEmpty)
+                    ? tarifaXDia.tarifas
+                    : [tarifaXDia.tarifa!],
             temporadas: tarifaXDia.temporadaSelect != null
                 ? [tarifaXDia.temporadaSelect!]
-                : []);
+                : [],
+          );
 
     double tarifaAdulto = Utility.calculateTotalTariffRoom(
       tarifa,
@@ -62,7 +66,10 @@ class TableRows {
             tarifa = tarifaXDia.tarifa == null
                 ? null
                 : RegistroTarifa(
-                    tarifas: [tarifaXDia.tarifa!],
+                    tarifas: (tarifaXDia.tarifas != null ||
+                            tarifaXDia.tarifas!.isNotEmpty)
+                        ? tarifaXDia.tarifas
+                        : [tarifaXDia.tarifa!],
                     temporadas: tarifaXDia.temporadaSelect != null
                         ? [tarifaXDia.temporadaSelect!]
                         : []);

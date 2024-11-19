@@ -6,7 +6,6 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
-import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -389,7 +388,7 @@ class GeneradorDocService extends BaseService {
     pw.Image sixImage = await getImagePDF("alberca.jpeg");
 
     int numRooms =
-        cotizacion.habitaciones!.where((element) => !element.isFree).length;
+        cotizacion.habitaciones?.where((element) => !element.isFree).length ?? 0;
 
     pdf.addPage(
       pw.MultiPage(

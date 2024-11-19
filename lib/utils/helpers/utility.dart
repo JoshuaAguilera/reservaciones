@@ -1633,13 +1633,14 @@ class Utility {
       TarifaData? selectTarifa = element.tarifa;
 
       if (onlyTariffVR) {
-        selectTarifa = element.tarifas!
-            .firstWhere((element) => element.categoria == tipoHabitacion.first);
+        selectTarifa = element.tarifas
+            ?.where((element) => element.categoria == tipoHabitacion.first)
+            .firstOrNull;
       }
 
       if (onlyTariffVPM) {
-        selectTarifa = element.tarifas!
-            .firstWhere((element) => element.categoria == tipoHabitacion.last);
+        selectTarifa = element.tarifas
+            ?.firstWhere((element) => element.categoria == tipoHabitacion.last);
       }
 
       if (onlyAdults) {

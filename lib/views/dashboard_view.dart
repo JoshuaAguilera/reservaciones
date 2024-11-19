@@ -562,7 +562,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           } else {
                                             return SizedBox(
                                               width: screenWidth,
-                                              height: 330,
+                                              height: 324,
                                               child: ListView.builder(
                                                 itemCount: list.length,
                                                 shrinkWrap: false,

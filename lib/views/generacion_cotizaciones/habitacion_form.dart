@@ -175,6 +175,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                           .toString()
                                           .substring(0, 10));
 
+                              if (habitacionProvider.tarifaXDia!.any(
+                                  (element) => element.code == "tariffFree")) {
+                                applyFreeTariff = true;
+                              }
+
                               getTarifasSelect(
                                 list,
                                 habitacionProvider,
@@ -566,7 +571,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                           onPressed: () {
                                             List<TarifaXDia> tarifasFiltradas =
                                                 Utility.getUniqueTariffs(
-                                              applyFreeTariff
+                                              (applyFreeTariff ||
+                                                      habitacionProvider
+                                                          .tarifaXDia!
+                                                          .any((element) =>
+                                                              element.code!
+                                                                  .contains(
+                                                                      "Unknow")))
                                                   ? habitacionProvider
                                                       .tarifaXDia!
                                                   : alternativeTariffInd.isEmpty
@@ -1126,7 +1137,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           if (!applyFreeTariff) {
             if (withoutAction &&
                 list.first!.code == alternativeGrupTariff?.code) {
-              return;
+              if (list.first?.temporadas != null) {
+                if (list.first?.temporadaSelect ==
+                    alternativeGrupTariff?.temporadaSelect) {}
+              } else {
+                if (list.first?.descuentoProvisional ==
+                    alternativeGrupTariff?.temporadaSelect) {
+                  return;
+                }
+              }
             }
           }
 

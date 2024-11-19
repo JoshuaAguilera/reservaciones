@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -106,22 +107,31 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     void _showConfigurationTariffGroup({bool firstView = false}) {
       showDialog(
         context: context,
-        builder: (context) {
-          return const ManagerTariffGroupDialog();
-        },
+        builder: (context) => const ManagerTariffGroupDialog(),
       ).then(
         (value) {
           if (value == null && firstView) {
             ref
                 .watch(HabitacionProvider.provider.notifier)
-                .implementGroupTariff();
+                .implementGroupTariff([]);
+          } else {
+            if (value == null) return;
+
+            List<TarifaXDia?> selectTariffs = value;
+            ref
+                .watch(HabitacionProvider.provider.notifier)
+                .implementGroupTariff(selectTariffs);
           }
         },
       );
     }
 
     ref.listen<bool>(typeQuoteProvider, (previous, next) {
-      if (next) _showConfigurationTariffGroup(firstView: true);
+      if (next) {
+        _showConfigurationTariffGroup(firstView: true);
+      } else {
+        ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
+      }
     });
 
     return Scaffold(
@@ -466,6 +476,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                             receiptQuotePresent = cotizacion.CopyWith();
                             receiptQuotePresent.folioPrincipal = folio;
+                            receiptQuotePresent.esGrupo = typeQuote;
+                            receiptQuotePresent.numeroTelefonico = prefijoInit.prefijo + (cotizacion.numeroTelefonico ?? '');
                             receiptQuotePresent.habitaciones = [];
                             for (var element in habitaciones) {
                               receiptQuotePresent.habitaciones!
@@ -474,7 +486,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                             comprobantePDF = await ref
                                 .watch(HabitacionProvider.provider.notifier)
-                                .generarComprobante(cotizacion, typeQuote);
+                                .generarComprobante(receiptQuotePresent, typeQuote);
 
                             ref
                                 .read(cotizacionProvider.notifier)

@@ -4,6 +4,7 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 
 import '../database/database.dart';
+import '../models/tarifa_x_dia_model.dart';
 import 'base_service.dart';
 
 class CotizacionService extends BaseService {
@@ -34,6 +35,25 @@ class CotizacionService extends BaseService {
       database.transaction(
         () async {
           for (var element in habitaciones!) {
+            if (isQuoteGroup) {
+              element.tarifaXDia!.clear();
+              int days = DateTime.parse(element.fechaCheckOut!)
+                  .difference(DateTime.parse(element.fechaCheckIn!))
+                  .inDays;
+
+              for (var ink = 0; ink < days; ink++) {
+                DateTime dateNow = DateTime.parse(element.fechaCheckOut!)
+                    .add(Duration(days: ink));
+                TarifaXDia newTariff = element.tarifaGrupal!.copyWith();
+                newTariff.fecha = dateNow;
+                newTariff.dia = ink;
+                newTariff.numDays = 1;
+                element.tarifaXDia!.add(
+                  newTariff.copyWith(),
+                );
+              }
+            }
+
             await database.into(database.habitacion).insert(
                   HabitacionCompanion.insert(
                     // categoria: Value(element.categoria),

@@ -38,13 +38,14 @@ class _ManagerTariffGroupDialogState
   final _scrollController = ScrollController(initialScrollOffset: 0);
   Habitacion? selectRoom;
   bool startFlow = false;
-  List<TarifaXDia> selectTariffs = [];
+  List<TarifaXDia> roomTariffs = [];
   TarifaXDia? selectTariff;
   String temporadaSelect = '';
   TemporadaData? temporadaDataSelect;
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   String selectCategory = "VISTA A LA RESERVA";
   final _formKeyManager = GlobalKey<FormState>();
+  List<TarifaXDia?> selectTariffs = [];
 
   @override
   void dispose() {
@@ -102,17 +103,20 @@ class _ManagerTariffGroupDialogState
                     size: 17,
                   ),
                   const SizedBox(height: 15),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        for (var element in habitaciones)
-                          _buildStepItem(
-                            widget.tarifasHabitacion != null
-                                ? "Habitación actual"
-                                : "Room ${habitaciones.indexOf(element) + 1}",
-                            element,
-                          ),
-                      ],
+                  AbsorbPointer(
+                    absorbing: true,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (var element in habitaciones)
+                            _buildStepItem(
+                              widget.tarifasHabitacion != null
+                                  ? "Habitación actual"
+                                  : "Room ${habitaciones.indexOf(element) + 1}",
+                              element,
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -123,286 +127,332 @@ class _ManagerTariffGroupDialogState
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
                 child: SizedBox(
                   height: 550,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SingleChildScrollView(
-                        child: Form(
-                          key: _formKeyManager,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Form(
+                    key: _formKeyManager,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextStyles.titleText(
+                            text:
+                                "Gestión de tarifas ${widget.tarifasHabitacion != null ? "en la habitación actual" : "para cotizaciones grupales"}",
+                            color: Theme.of(context).primaryColor,
+                            size: 17,
+                          ),
+                          const SizedBox(height: 8),
+                          TextStyles.standardText(
+                            text:
+                                "Revisa, selecciona o ajusta ${widget.tarifasHabitacion != null ? "la tarifa seleccionada en la habitación actual" : "las tarifas aplicadas para las habitaciones"} en esta cotización grupal."
+                                " Asegúrate de que las tarifas y temporadas grupales sean correctas y coherentes con los términos de esta operación.",
+                            overClip: true,
+                            size: 12.6,
+                          ),
+                          const SizedBox(height: 16),
+                          TextStyles.standardText(
+                            text: "Tarifa seleccionada (La tarifa inicial es la más frecuente):",
+                            size: 12.6,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Container(
+                              height: 35,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                              ),
+                              child: ListView.builder(
+                                itemCount: roomTariffs.length,
+                                controller: _scrollController,
+                                shrinkWrap: true,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) =>
+                                    GestureDetector(
+                                  onTap: () {
+                                    if (selectTariff != roomTariffs[index]) {
+                                      setState(() =>
+                                          _selectTariff(roomTariffs[index]));
+                                    }
+                                  },
+                                  child: ItemRows.filterItemRow(
+                                    withDeleteButton: false,
+                                    colorCard: roomTariffs[index].color ??
+                                        DesktopColors.cerulean,
+                                    title:
+                                        roomTariffs[index].nombreTariff ?? '',
+                                    withOutWidth: true,
+                                    backgroundColor: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    isSelect: selectTariff!.code ==
+                                        roomTariffs[index].code,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                              height: (selectTariff?.temporadas != null &&
+                                      selectTariff!.temporadas!.isNotEmpty)
+                                  ? 20
+                                  : 10),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              TextStyles.titleText(
-                                text:
-                                    "Gestión de tarifas ${widget.tarifasHabitacion != null ? "en la habitación actual" : "para cotizaciones grupales"}",
-                                color: Theme.of(context).primaryColor,
-                                size: 17,
-                              ),
-                              const SizedBox(height: 8),
                               TextStyles.standardText(
-                                text:
-                                    "Revisa, selecciona o ajusta ${widget.tarifasHabitacion != null ? "la tarifa seleccionada en la habitación actual" : "las tarifas aplicadas para las habitaciones"} en esta cotización grupal."
-                                    " Asegúrate de que las tarifas y temporadas grupales sean correctas y coherentes con los términos de esta operación.",
+                                text: selectTariff?.temporadas != null
+                                    ? "Temporada: "
+                                    : "Descuento de tarifa:",
                                 overClip: true,
+                                color: Theme.of(context).primaryColor,
                                 size: 12.6,
                               ),
-                              const SizedBox(height: 16),
-                              TextStyles.standardText(
-                                text: "Tarifa seleccionada:",
-                                size: 12.6,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5),
-                                child: Container(
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                  ),
-                                  child: ListView.builder(
-                                    itemCount: selectTariffs.length,
-                                    controller: _scrollController,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const AlwaysScrollableScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) =>
-                                        GestureDetector(
-                                      onTap: () {
-                                        if (selectTariff !=
-                                            selectTariffs[index]) {
-                                          setState(() => _selectTariff(
-                                              selectTariffs[index]));
-                                        }
-                                      },
-                                      child: ItemRows.filterItemRow(
-                                        withDeleteButton: false,
-                                        colorCard: selectTariffs[index].color ??
-                                            DesktopColors.cerulean,
-                                        title:
-                                            selectTariffs[index].nombreTariff ??
-                                                '',
-                                        withOutWidth: true,
-                                        backgroundColor: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        isSelect: selectTariff ==
-                                            selectTariffs[index],
+                              const SizedBox(width: 10),
+                              if (selectTariff?.temporadas != null &&
+                                  selectTariff!.temporadas!.isNotEmpty)
+                                CustomDropdown.dropdownMenuCustom(
+                                  compactWidth: 180,
+                                  initialSelection: temporadaSelect,
+                                  onSelected: (String? value) {
+                                    temporadaDataSelect = selectTariff
+                                        ?.temporadas
+                                        ?.where((element) =>
+                                            element.nombre == value)
+                                        .toList()
+                                        .firstOrNull;
+                                    _applyDiscountTariff(temporadaDataSelect);
+                                    setState(() {});
+                                  },
+                                  elements: ['No aplicar'] +
+                                      Utility.getSeasonstoString(
+                                        selectTariff?.temporadas,
+                                        onlyGroups: true,
                                       ),
-                                    ),
+                                  excepcionItem: "No aplicar",
+                                  compact: true,
+                                  // notElements: Utility.getPromocionesNoValidas(
+                                  //   selectRoom!,
+                                  //   temporadas: selectTariff?.temporadas!
+                                  //       .where((element) =>
+                                  //           element.forGroup ?? false)
+                                  //       .toList(),
+                                  // ),
+                                )
+                              else
+                                SizedBox(
+                                  width: 145,
+                                  height: 40,
+                                  child: TextFormFieldCustom
+                                      .textFormFieldwithBorder(
+                                    name: "Porcentaje",
+                                    controller: _descuentoController,
+                                    msgError: "",
+                                    icon: const Icon(CupertinoIcons.percent,
+                                        size: 20),
+                                    isNumeric: true,
+                                    onChanged: (p0) => setState(() =>
+                                        _applyDiscountTariff(null,
+                                            descuentoText: p0)),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                  height: (selectTariff?.temporadas != null &&
-                                          selectTariff!.temporadas!.isNotEmpty)
-                                      ? 20
-                                      : 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  TextStyles.standardText(
-                                    text: selectTariff?.temporadas != null
-                                        ? "Temporada: "
-                                        : "Descuento de tarifa:",
-                                    overClip: true,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 12.6,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  if (selectTariff?.temporadas != null &&
-                                      selectTariff!.temporadas!.isNotEmpty)
-                                    CustomDropdown.dropdownMenuCustom(
-                                      compactWidth: 180,
-                                      initialSelection: temporadaSelect,
-                                      onSelected: (String? value) {
-                                        temporadaDataSelect = selectTariff
-                                            ?.temporadas
-                                            ?.where((element) =>
-                                                element.nombre == value)
-                                            .toList()
-                                            .firstOrNull;
-                                        _applyDiscountTariff(
-                                            temporadaDataSelect);
-                                        setState(() {});
-                                      },
-                                      elements: ['No aplicar'] +
-                                          Utility.getSeasonstoString(
-                                            selectTariff?.temporadas,
-                                            onlyGroups: true,
-                                          ),
-                                      excepcionItem: "No aplicar",
-                                      compact: true,
-                                      // notElements: Utility.getPromocionesNoValidas(
-                                      //   selectRoom!,
-                                      //   temporadas: selectTariff?.temporadas!
-                                      //       .where((element) =>
-                                      //           element.forGroup ?? false)
-                                      //       .toList(),
-                                      // ),
-                                    )
-                                  else
-                                    SizedBox(
-                                      width: 145,
-                                      height: 40,
-                                      child: TextFormFieldCustom
-                                          .textFormFieldwithBorder(
-                                        name: "Porcentaje",
-                                        controller: _descuentoController,
-                                        icon: const Icon(CupertinoIcons.percent,
-                                            size: 20),
-                                        isNumeric: true,
-                                        onChanged: (p0) => setState(
-                                          () => _applyDiscountTariff(null,
-                                              descuentoText: p0),
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Container(
-                                height: 35,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(8)),
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                ),
-                                child: StatefulBuilder(
-                                  builder: (context, snapshot) {
-                                    return ListView.builder(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      itemCount: 2,
-                                      scrollDirection: Axis.horizontal,
-                                      shrinkWrap: true,
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            height: 35,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                            child: StatefulBuilder(
+                              builder: (context, snapshot) {
+                                return ListView.builder(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  itemCount: 2,
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, index) {
+                                    return Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 2),
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 2, vertical: 3),
-                                          child: SelectableButton(
-                                            selected: selectCategory ==
-                                                categorias[index],
-                                            roundActive: 6,
-                                            round: 6,
-                                            color: Utility.darken(
-                                                selectCategory ==
-                                                        categorias.first
-                                                    ? DesktopColors.vistaReserva
-                                                    : DesktopColors
-                                                        .vistaParcialMar,
-                                                -0.15),
-                                            onPressed: () {
-                                              if (selectCategory ==
-                                                  categorias[index]) return;
+                                          horizontal: 2, vertical: 3),
+                                      child: SelectableButton(
+                                        selected:
+                                            selectCategory == categorias[index],
+                                        roundActive: 6,
+                                        round: 6,
+                                        color: Utility.darken(
+                                            selectCategory == categorias.first
+                                                ? DesktopColors.vistaReserva
+                                                : DesktopColors.vistaParcialMar,
+                                            -0.15),
+                                        onPressed: () {
+                                          if (selectCategory ==
+                                              categorias[index]) return;
 
-                                              setState(() => selectCategory =
-                                                  categorias[index]);
-                                              _applyDiscountTariff(
-                                                temporadaDataSelect,
-                                                descuentoText:
-                                                    _descuentoController.text,
-                                              );
-                                              setState(() {});
-                                            },
-                                            child: Text(
-                                              categorias[index],
-                                              style: TextStyle(
-                                                color: Utility.darken(
-                                                  selectCategory ==
-                                                          categorias.first
-                                                      ? DesktopColors
-                                                          .vistaReserva
-                                                      : DesktopColors
-                                                          .vistaParcialMar,
-                                                  0.15,
-                                                ),
-                                              ),
+                                          setState(() => selectCategory =
+                                              categorias[index]);
+                                          _applyDiscountTariff(
+                                            temporadaDataSelect,
+                                            descuentoText:
+                                                _descuentoController.text,
+                                          );
+                                          setState(() {});
+                                        },
+                                        child: Text(
+                                          categorias[index],
+                                          style: TextStyle(
+                                            color: Utility.darken(
+                                              selectCategory == categorias.first
+                                                  ? DesktopColors.vistaReserva
+                                                  : DesktopColors
+                                                      .vistaParcialMar,
+                                              0.15,
                                             ),
                                           ),
-                                        );
-                                      },
+                                        ),
+                                      ),
                                     );
                                   },
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          FormTariffWidget(
+                            tarifaAdultoController:
+                                _tarifaAdultoSingleController,
+                            tarifaAdultoTPLController:
+                                _tarifaAdultoTPLController,
+                            tarifaAdultoCPLController:
+                                _tarifaAdultoCPLController,
+                            tarifaPaxAdicionalController:
+                                _tarifaPaxAdicionalController,
+                            tarifaMenoresController: _tarifaMenoresController,
+                            onUpdate: () {},
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (selectTariff!.code != "tariffFree")
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        widget.tarifasHabitacion != null
+                                            ? List<TarifaXDia>.empty()
+                                            : null);
+                                  },
+                                  child: TextStyles.standardText(
+                                    text: "AutoGestionar",
+                                    isBold: true,
+                                    size: 12.5,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 22),
-                              FormTariffWidget(
-                                tarifaAdultoController:
-                                    _tarifaAdultoSingleController,
-                                tarifaAdultoTPLController:
-                                    _tarifaAdultoTPLController,
-                                tarifaAdultoCPLController:
-                                    _tarifaAdultoCPLController,
-                                tarifaPaxAdicionalController:
-                                    _tarifaPaxAdicionalController,
-                                tarifaMenoresController:
-                                    _tarifaMenoresController,
-                                onUpdate: () {},
+                              if (widget.tarifasHabitacion == null)
+                                const SizedBox(width: 8),
+                              if (widget.tarifasHabitacion == null)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          DesktopColors.ceruleanOscure),
+                                  onPressed: (habitaciones
+                                              .first.folioHabitacion ==
+                                          selectRoom?.folioHabitacion)
+                                      ? null
+                                      : () {
+                                          int index =
+                                              habitaciones.indexOf(selectRoom!);
+                                          if (index != -1) {
+                                            _selectNewRoom(selectRoom =
+                                                habitaciones[(index - 1)]);
+                                            setState(() {});
+                                          }
+                                        },
+                                  child: TextStyles.standardText(
+                                    text: "Anterior",
+                                    size: 12.5,
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: DesktopColors.cerulean),
+                                onPressed: () {
+                                  if (!_formKeyManager.currentState!
+                                      .validate()) {
+                                    return;
+                                  }
+
+                                  selectTariff!.temporadaSelect =
+                                      temporadaDataSelect;
+                                  if (selectTariff?.temporadas?.isEmpty ??
+                                      true) {
+                                    selectTariff!.descuentoProvisional =
+                                        double.parse(
+                                            _descuentoController.text.trim());
+                                  }
+
+                                  if (habitaciones.length == 1 &&
+                                      widget.tarifasHabitacion != null) {
+                                    Navigator.of(context).pop([selectTariff]);
+                                    return;
+                                  }
+
+                                  TarifaXDia? foundTariff =
+                                      selectTariffs.firstWhere(
+                                          (element) =>
+                                              element?.folioRoom ==
+                                              selectRoom?.folioHabitacion,
+                                          orElse: () => null);
+
+                                  if (foundTariff != null) {
+                                    if (foundTariff.code !=
+                                        selectTariff?.code) {
+                                      int indexFound = selectTariffs.indexWhere(
+                                          (element) =>
+                                              element?.folioRoom ==
+                                              selectRoom?.folioHabitacion);
+                                      if (indexFound != -1) {
+                                        selectTariffs[indexFound] =
+                                            selectTariff!;
+                                      }
+                                    }
+                                  } else {
+                                    selectTariff?.folioRoom =
+                                        selectRoom?.folioHabitacion;
+                                    selectTariffs.add(selectTariff!);
+                                  }
+
+                                  if (selectRoom == habitaciones.last) {
+                                    Navigator.of(context).pop(selectTariffs);
+                                    return;
+                                  }
+
+                                  int index = habitaciones.indexOf(selectRoom!);
+                                  if (index != -1 &&
+                                      index < habitaciones.length - 1) {
+                                    _selectNewRoom(
+                                        selectRoom = habitaciones[(index + 1)]);
+                                    setState(() {});
+                                  }
+                                },
+                                child: TextStyles.standardText(
+                                  text: selectRoom == habitaciones.last
+                                      ? "Aplicar"
+                                      : "Siguiente",
+                                  size: 12.5,
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (selectTariff!.code != "tariffFree")
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(
-                                    widget.tarifasHabitacion != null
-                                        ? List<TarifaXDia>.empty()
-                                        : null);
-                              },
-                              child: TextStyles.standardText(
-                                text: "AutoGestionar",
-                                isBold: true,
-                                size: 12.5,
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: DesktopColors.cerulean),
-                            onPressed: () {
-                              if (!_formKeyManager.currentState!.validate()) {
-                                return;
-                              }
-
-                              if (habitaciones.length == 1 &&
-                                  widget.tarifasHabitacion != null) {
-                                selectTariff!.temporadaSelect =
-                                    temporadaDataSelect;
-                                if (selectTariff?.temporadas == null ||
-                                    selectTariff!.temporadas!.isEmpty) {
-                                  selectTariff!.descuentoProvisional =
-                                      double.parse(
-                                          _descuentoController.text.isEmpty
-                                              ? "0"
-                                              : _descuentoController.text);
-                                }
-                                Navigator.of(context).pop([selectTariff]);
-                                return;
-                              }
-                            },
-                            child: TextStyles.standardText(
-                              text: selectRoom == habitaciones.last
-                                  ? "Aplicar"
-                                  : "Siguiente",
-                              size: 12.5,
-                            ),
-                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -442,15 +492,14 @@ class _ManagerTariffGroupDialogState
 
   void _selectNewRoom(Habitacion? room) {
     selectRoom = room;
-    selectTariffs = widget.tarifasHabitacion ??
+    roomTariffs = widget.tarifasHabitacion ??
         Utility.getUniqueTariffs(selectRoom!.tarifaXDia!);
-    setState(
-      () => _selectTariff(
-        selectTariffs.reduce(
-          ((a, b) => a.numDays > b.numDays ? a : b),
-        ),
+    _selectTariff(
+      roomTariffs.reduce(
+        ((a, b) => a.numDays > b.numDays ? a : b),
       ),
     );
+    setState(() {});
   }
 
   void _selectTariff(TarifaXDia? tarifa) {
@@ -465,7 +514,7 @@ class _ManagerTariffGroupDialogState
       isGroup: true,
     );
 
-    int indexSeason = selectTariffs.indexOf(tarifa ?? TarifaXDia());
+    int indexSeason = roomTariffs.indexOf(tarifa ?? TarifaXDia());
 
     if (indexSeason != -1) {
       Future.delayed(

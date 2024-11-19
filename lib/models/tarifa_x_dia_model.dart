@@ -44,6 +44,7 @@ List<TarifaData> listTarifasFromJson(List<dynamic> list) =>
 class TarifaXDia {
   int? id;
   String? code;
+  String? folioRoom;
   String? categoria;
   String? subCode;
   double? descuentoProvisional;
@@ -62,6 +63,7 @@ class TarifaXDia {
   TarifaXDia({
     this.id,
     this.color,
+    this.folioRoom,
     this.fecha,
     this.dia,
     this.code,
@@ -81,6 +83,7 @@ class TarifaXDia {
   TarifaXDia copyWith({
     int? id,
     Color? color,
+    String? folioRoom,
     DateTime? fecha,
     int? dia,
     String? code,
@@ -99,6 +102,7 @@ class TarifaXDia {
       TarifaXDia(
         id: id ?? this.id,
         code: code ?? this.code,
+        folioRoom: folioRoom ?? this.folioRoom,
         color: color ?? this.color,
         temporadas: temporadas ?? this.temporadas,
         tarifas: tarifas ?? this.tarifas,
