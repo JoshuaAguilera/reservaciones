@@ -26,6 +26,8 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
+  Color? colorText;
+  bool startFlow = false;
 
   @override
   void initState() {
@@ -35,6 +37,12 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   @override
   Widget build(BuildContext context) {
     final cotizacion = ref.watch(cotizacionDetalleProvider);
+    if (!startFlow) {
+      colorText = !cotizacion.esGrupo!
+          ? DesktopColors.azulUltClaro
+          : DesktopColors.prussianBlue;
+      startFlow = true;
+    }
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
@@ -93,7 +101,13 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               TextStyles.titleText(text: "Datos del huesped"),
                               Card(
                                 elevation: 7,
-                                color: Colors.blue[100],
+                                color: cotizacion.esGrupo!
+                                    ? (cotizacion.esConcretado ?? false)
+                                        ? DesktopColors.resGrupal
+                                        : DesktopColors.cotGrupal
+                                    : (cotizacion.esConcretado ?? false)
+                                        ? DesktopColors.resIndiv
+                                        : DesktopColors.cotIndiv,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
@@ -101,15 +115,23 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       TextStyles.TextAsociative(
-                                          "Nombre: ", cotizacion.nombreHuesped!,
-                                          size: 13),
+                                        "Nombre: ",
+                                        cotizacion.nombreHuesped!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
                                       TextStyles.TextAsociative(
-                                          "Correo electronico: ",
-                                          cotizacion.correoElectronico!,
-                                          size: 13),
-                                      TextStyles.TextAsociative("Telefono: ",
-                                          cotizacion.numeroTelefonico!,
-                                          size: 13),
+                                        "Correo electronico: ",
+                                        cotizacion.correoElectronico!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
+                                      TextStyles.TextAsociative(
+                                        "Telefono: ",
+                                        cotizacion.numeroTelefonico!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
                                     ],
                                   ),
                                 ),

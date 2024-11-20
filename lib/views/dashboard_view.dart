@@ -68,16 +68,20 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   Row(
                     children: [
                       NotificationWidget.notificationsWidget(
-                          key: messageKey,
-                          screenWidth: screenWidth,
-                          notifications: notificaciones),
+                        key: messageKey,
+                        screenWidth: screenWidth,
+                        notifications: notificaciones,
+                        brightness: brightness,
+                      ),
                       IconButton(
                         onPressed: () {
                           widget.sideController.selectIndex(3);
                         },
                         icon: Icon(
                           Icons.settings,
-                          color: DesktopColors.cerulean,
+                          color: brightness == Brightness.light
+                              ? DesktopColors.cerulean
+                              : DesktopColors.azulUltClaro,
                           size: 26,
                         ),
                       ),
@@ -294,8 +298,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     TextStyles.standardText(
                                       isBold: true,
@@ -305,8 +308,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       size: 16,
                                     ),
                                     Divider(
-                                        color:
-                                            Theme.of(context).primaryColor),
+                                        color: Theme.of(context).primaryColor),
                                   ],
                                 ),
                                 allQuotesSync.when(
@@ -401,8 +403,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   ? DesktopColors.cotGrupal
                                                   : DesktopColors.azulClaro,
                                               DesktopColors.cotIndiv,
-                                              // DesktopColors.cotGroupPreColor,
-                                              DesktopColors.resIndiv
+                                              DesktopColors.resGrupal,
+                                              DesktopColors.resIndiv,
                                             ],
                                             legend: Legend(
                                               isVisible:
@@ -539,8 +541,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         .selectIndex(2);
                                                   },
                                                   child: TextStyles.buttonText(
-                                                      text: "Mostrar todos",
-                                                      size: 12),
+                                                    text: "Mostrar todos",
+                                                    size: 12,
+                                                    color: brightness ==
+                                                            Brightness.light
+                                                        ? DesktopColors.cerulean
+                                                        : DesktopColors
+                                                            .azulUltClaro,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -577,7 +585,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   );
                                                 },
                                               ),
-                                            );
+                                            ).animate().fadeIn(
+                                                  delay: const Duration(
+                                                    milliseconds: 1250,
+                                                  ),
+                                                );
                                           }
                                         },
                                         error: (error, stackTrace) {

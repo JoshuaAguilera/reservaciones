@@ -28,6 +28,7 @@ class TextFormFieldCustom {
     bool readOnly = false,
     String? Function(String?)? validator,
     TextInputAction? textInputAction,
+    String? hintText,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -92,6 +93,10 @@ class TextFormFieldCustom {
                       fontFamily: "poppins_regular",
                       fontSize: 13,
                     ),
+                    hintStyle: const TextStyle(
+                      fontFamily: "poppins_regular",
+                      fontSize: 13,
+                    ),
                     alignLabelWithHint: true,
                     prefixIcon: isMoneda
                         ? const Icon(
@@ -116,7 +121,8 @@ class TextFormFieldCustom {
                             },
                           )
                         : icon,
-                    labelText: name,
+                    labelText: hintText != null ? null : name,
+                    hintText: hintText,
                     errorStyle: TextStyle(
                       fontFamily: "poppins_regular",
                       color: Colors.red[800],

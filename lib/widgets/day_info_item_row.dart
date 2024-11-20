@@ -52,7 +52,6 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   @override
   Widget build(BuildContext context) {
     double heigth = MediaQuery.of(context).size.height;
-    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return PopScope(
       onPopInvoked: (didPop) => _willPopCallback,
@@ -62,8 +61,6 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
           final RenderBox renderBox = await _containerKey.currentContext!
               .findRenderObject() as RenderBox;
           final Offset offset = await renderBox.localToGlobal(Offset.zero);
-
-          print(brightness == Brightness.light);
 
           setState(() {
             if (heigth > 500) {

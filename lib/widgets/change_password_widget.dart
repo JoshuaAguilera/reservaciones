@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/services/auth_service.dart';
@@ -43,6 +44,8 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
     return Column(children: [
       SizedBox(
         width: double.infinity,
@@ -69,7 +72,12 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     () => setState(() => cancelChangedKeyMail = true));
               },
               child: TextStyles.buttonText(
-                  text: "Cambiar contraseña  de correo", size: 12),
+                text: "Cambiar contraseña  de correo",
+                size: 12,
+                color: brightness == Brightness.light
+                    ? DesktopColors.cerulean
+                    : DesktopColors.azulUltClaro,
+              ),
             ),
           ).animate(target: canChangedKeyMail ? 0 : 1).fadeIn(delay: 300.ms),
         ),

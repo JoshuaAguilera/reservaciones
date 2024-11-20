@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 
@@ -127,7 +126,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   ],
                 ),
         ),
-      ).animate().fadeIn(delay: Duration(milliseconds: 100 * widget.delay)),
+      ),
     );
   }
 }

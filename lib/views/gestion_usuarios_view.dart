@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../ui/custom_widgets.dart';
@@ -37,6 +39,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final usuariosProvider = ref.watch(allUsersProvider(""));
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Scaffold(
       body: Padding(
@@ -61,7 +64,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                         ),
                         TextStyles.standardText(
                           text:
-                              "Crea, edita, supervisa y elimina los usuarios activos del sistema.",
+                              "Crea, edita, supervisa y declina los usuarios activos del sistema.",
                           color: Theme.of(context).primaryColor,
                         ),
                       ],
@@ -73,6 +76,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                         context: context,
                         builder: (contextBL) {
                           return Dialogs().userFormDialog(
+                            brightness: brightness,
                             buildContext: contextBL,
                             onInsert: (p0) async {
                               if (!await AuthService().saveUsers(p0)) {
@@ -99,12 +103,14 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       );
                     },
                     text: "Agregar usuario",
-                    color: DesktopColors.turquezaOscure,
+                    color: DesktopColors.cerulean,
                   )
                 ],
               ),
               Divider(
-                color: Theme.of(context).primaryColor,
+                color: brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
               ),
               CustomWidgets.sectionButton(
                 listModes: _selectedMode,
@@ -118,19 +124,13 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                   child: Table(
                     columnWidths: {
                       0: const FractionColumnWidth(.05),
-                      1: const FractionColumnWidth(0.16),
-                      2: (screenWidth > 1000)
-                          ? const FractionColumnWidth(0.15)
-                          : const FractionColumnWidth(0.3),
-                      3: (screenWidth > 1000)
-                          ? const FractionColumnWidth(0.25)
-                          : const FractionColumnWidth(0.25),
-                      4: (screenWidth > 1200)
-                          ? const FractionColumnWidth(.15)
-                          : const FractionColumnWidth(0.25),
-                      if (screenWidth > 1000)
-                        5: const FractionColumnWidth(0.12),
-                      if (screenWidth > 1200) 6: const FractionColumnWidth(.14),
+                      1: (screenWidth < 1200)
+                          ? const FractionColumnWidth(0.2)
+                          : const FractionColumnWidth(0.15),
+                      if (screenWidth < 1100) 4: const FractionColumnWidth(.15),
+                      if (screenWidth > 1100 && screenWidth < 1300)
+                        5: const FractionColumnWidth(.12),
+                      if (screenWidth > 1300) 6: const FractionColumnWidth(.12),
                     },
                     children: [
                       TableRow(
@@ -153,14 +153,14 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                               color: Theme.of(context).primaryColor,
                               isBold: true,
                               overClip: true),
-                          if (screenWidth > 1000)
+                          if (screenWidth > 1100)
                             TextStyles.standardText(
                                 text: "Correo",
                                 aling: TextAlign.center,
                                 color: Theme.of(context).primaryColor,
                                 isBold: true,
                                 overClip: true),
-                          if (screenWidth > 1200)
+                          if (screenWidth > 1300)
                             TextStyles.standardText(
                                 text: "Teléfono",
                                 aling: TextAlign.center,
@@ -192,173 +192,179 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                 ),
               Divider(color: Theme.of(context).primaryColorLight),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                padding: const EdgeInsets.fromLTRB(2, 10, 2, 5),
                 child: usuariosProvider.when(
                   data: (list) {
                     return Column(
                       children: [
-                        Table(
-                          columnWidths: {
-                            0: const FractionColumnWidth(.05),
-                            1: const FractionColumnWidth(0.16),
-                            2: (screenWidth > 1000)
-                                ? const FractionColumnWidth(0.15)
-                                : const FractionColumnWidth(0.3),
-                            3: (screenWidth > 1000)
-                                ? const FractionColumnWidth(0.25)
-                                : const FractionColumnWidth(0.25),
-                            4: (screenWidth > 1200)
-                                ? const FractionColumnWidth(.15)
-                                : const FractionColumnWidth(0.25),
-                            if (screenWidth > 1000)
-                              5: const FractionColumnWidth(0.12),
-                            if (screenWidth > 1200)
-                              6: const FractionColumnWidth(.14),
-                          },
-                          children: [
-                            for (var data in list)
-                              TableRow(
-                                children: [
-                                  TextStyles.standardText(
+                        for (var data in list)
+                          Card(
+                            elevation: 4,
+                            child: Table(
+                              columnWidths: {
+                                0: const FractionColumnWidth(.05),
+                                1: (screenWidth < 1200)
+                                    ? const FractionColumnWidth(0.2)
+                                    : const FractionColumnWidth(0.15),
+                                if (screenWidth < 1100)
+                                  4: const FractionColumnWidth(.15),
+                                if (screenWidth > 1100 && screenWidth < 1300)
+                                  5: const FractionColumnWidth(.12),
+                                if (screenWidth > 1300)
+                                  6: const FractionColumnWidth(.12),
+                              },
+                              children: [
+                                TableRow(
+                                  children: [
+                                    TextStyles.standardText(
                                       text: data.id.toString(),
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
-                                      overClip: true),
-                                  TextStyles.standardText(
-                                      text: data.rol!,
-                                      aling: TextAlign.center,
-                                      color:
-                                          Utility.getColorTypeUser(data.rol!),
-                                      overClip: true),
-                                  // Tooltip(
-                                  //     textStyle: TextStyles.styleStandar(
-                                  //         color: Theme.of(context)
-                                  //             .primaryColorDark),
-                                  //     message: "Sin foto",
-                                  //     decoration: BoxDecoration(
-                                  //       color:
-                                  //           Theme.of(context).primaryColorLight,
-                                  //       border: Border.all(
-                                  //         color: Theme.of(context).primaryColor,
-                                  //       ),
-                                  //       borderRadius: const BorderRadius.all(
-                                  //         Radius.circular(7),
-                                  //       ),
-                                  //     ),
-                                  //     child: const Icon(
-                                  //         CupertinoIcons.person_circle)),
-                                  TextStyles.standardText(
+                                      overClip: true,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Utility.getColorTypeUser(
+                                              data.rol!),
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(8),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: TextStyles.standardText(
+                                            text: data.rol!,
+                                            aling: TextAlign.center,
+                                            color: Theme.of(context).cardColor,
+                                            overClip: true,
+                                            isBold: true,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextStyles.standardText(
                                       text: data.username ?? '',
                                       aling: TextAlign.center,
                                       color: Theme.of(context).primaryColor,
-                                      overClip: true),
-                                  if (screenWidth > 1000)
-                                    TextStyles.standardText(
+                                      overClip: true,
+                                    ),
+                                    if (screenWidth > 1100)
+                                      TextStyles.standardText(
                                         text: data.correoElectronico ?? '-',
                                         aling: TextAlign.center,
                                         color: Theme.of(context).primaryColor,
-                                        overClip: true),
-                                  if (screenWidth > 1200)
-                                    TextStyles.standardText(
+                                        overClip: true,
+                                      ),
+                                    if (screenWidth > 1300)
+                                      TextStyles.standardText(
                                         text: data.telefono ?? '-',
                                         aling: TextAlign.center,
                                         color: Theme.of(context).primaryColor,
-                                        overClip: true),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      height: 55,
-                                      child: TextFormFieldCustom
-                                          .textFormFieldwithBorder(
-                                        isPassword: true,
-                                        passwordVisible: true,
-                                        name: "",
-                                        initialValue: EncrypterTool.decryptData(
-                                            data.password ?? '', null),
-                                        readOnly: true,
+                                        overClip: true,
+                                      ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 7, 8, 0),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        height: 47,
+                                        child: TextFormFieldCustom
+                                            .textFormFieldwithBorder(
+                                          msgError: "",
+                                          isPassword: true,
+                                          passwordVisible: true,
+                                          name: "",
+                                          initialValue:
+                                              EncrypterTool.decryptData(
+                                                  data.password ?? '', null),
+                                          readOnly: true,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          padding: const EdgeInsets.all(0),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (contextBL) {
-                                                return Dialogs().userFormDialog(
-                                                  buildContext: contextBL,
-                                                  usuario: data,
-                                                  onUpdate: (p0) async {
-                                                    if (await AuthService()
-                                                        .updateUser(p0!)) {
+                                    SizedBox(
+                                      height: 30,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                            padding: const EdgeInsets.all(0),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (contextBL) {
+                                                  return Dialogs()
+                                                      .userFormDialog(
+                                                    buildContext: contextBL,
+                                                    brightness: brightness,
+                                                    usuario: data,
+                                                    onUpdate: (p0) async {
+                                                      if (await AuthService()
+                                                          .updateUser(p0!)) {
+                                                        showSnackBar(
+                                                            context: context,
+                                                            title:
+                                                                "Error al actualizar la informacion del usuario",
+                                                            message:
+                                                                "Se presento un problema al intentar actualizar los datos del usuario.",
+                                                            type: "danger");
+                                                        return;
+                                                      }
                                                       showSnackBar(
                                                           context: context,
                                                           title:
-                                                              "Error al actualizar la informacion del usuario",
+                                                              "Usuario actualizado correctamente",
                                                           message:
-                                                              "Se presento un problema al intentar actualizar los datos del usuario.",
-                                                          type: "danger");
-                                                      return;
-                                                    }
-                                                    showSnackBar(
-                                                        context: context,
-                                                        title:
-                                                            "Usuario actualizado correctamente",
-                                                        message:
-                                                            "Se actualizo el usuario: ${p0!.username}",
-                                                        type: "success");
-                                                    ref
-                                                        .read(
-                                                            changeUsersProvider
-                                                                .notifier)
-                                                        .update((state) =>
-                                                            UniqueKey()
-                                                                .hashCode);
-                                                  },
-                                                );
-                                              },
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            CupertinoIcons.pencil,
-                                            opticalSize: 28,
-                                            size: 28,
+                                                              "Se actualizo el usuario: ${p0!.username}",
+                                                          type: "success");
+                                                      ref
+                                                          .read(
+                                                              changeUsersProvider
+                                                                  .notifier)
+                                                          .update((state) =>
+                                                              UniqueKey()
+                                                                  .hashCode);
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            icon: const Icon(
+                                              Iconsax.edit_outline,
+                                              opticalSize: 28,
+                                              size: 28,
+                                            ),
                                           ),
-                                        ),
-                                        IconButton(
-                                          padding: const EdgeInsets.all(0),
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            CupertinoIcons.delete,
-                                            opticalSize: 26,
-                                            size: 26,
+                                          IconButton(
+                                            padding: const EdgeInsets.all(0),
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                              CupertinoIcons.delete,
+                                              opticalSize: 26,
+                                              size: 26,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                          ],
-                          defaultVerticalAlignment:
-                              TableCellVerticalAlignment.middle,
-                          // border: TableBorder(
-                          //   verticalInside: BorderSide(
-                          //     color: Theme.of(context).primaryColorLight,
-                          //     width: 2,
-                          //   ),
-                          // ),
-                        ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              // border: TableBorder(
+                              //   verticalInside: BorderSide(
+                              //     color: Theme.of(context).primaryColorLight,
+                              //     width: 2,
+                              //   ),
+                              // ),
+                            ),
+                          ),
                       ],
                     );
                   },

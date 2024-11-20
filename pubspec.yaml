@@ -65,6 +65,7 @@ dependencies:
   loading_animation_widget: ^1.2.1
   animated_theme_switcher: ^2.0.10
   super_tooltip: ^2.0.8
+  icons_plus: ^5.0.0
 
 dev_dependencies:
   flutter_test:

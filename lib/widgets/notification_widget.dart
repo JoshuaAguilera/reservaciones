@@ -6,10 +6,12 @@ import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
 
 class NotificationWidget {
-  static Widget notificationsWidget(
-      {required GlobalKey<TooltipState> key,
-      required double screenWidth,
-      required List<Notificacion> notifications}) {
+  static Widget notificationsWidget({
+    required GlobalKey<TooltipState> key,
+    required double screenWidth,
+    required List<Notificacion> notifications,
+    required Brightness brightness,
+  }) {
     return Tooltip(
       key: key,
       triggerMode: TooltipTriggerMode.manual,
@@ -76,7 +78,9 @@ class NotificationWidget {
         },
         icon: Icon(
           CupertinoIcons.bell_solid,
-          color: DesktopColors.cerulean,
+          color: brightness == Brightness.light
+              ? DesktopColors.cerulean
+              : DesktopColors.azulUltClaro,
           size: 26,
         ),
       ),

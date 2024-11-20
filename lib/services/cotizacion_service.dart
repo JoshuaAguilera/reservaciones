@@ -162,6 +162,7 @@ class CotizacionService extends BaseService {
       return true;
     } catch (e) {
       print(e);
+      await database.close();
       return false;
     }
   }
@@ -174,6 +175,7 @@ class CotizacionService extends BaseService {
       await dataBase.close();
       return resp;
     } catch (e) {
+      await dataBase.close();
       return List.empty();
     }
   }
@@ -186,6 +188,7 @@ class CotizacionService extends BaseService {
       await dataBase.close();
       return resp;
     } catch (e) {
+      await dataBase.close();
       return List.empty();
     }
   }
@@ -198,6 +201,7 @@ class CotizacionService extends BaseService {
       await dataBase.close();
       return resp;
     } catch (e) {
+      await dataBase.close();
       return List.empty();
     }
   }

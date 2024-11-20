@@ -10,20 +10,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
 class SendQuoteService extends BaseService {
-  var mailUser = Preferences.mail;
-  var passwordUser = Preferences.passwordMail;
-  var phoneUser = Preferences.phone;
-  var username = Preferences.username;
-
-  Future<String> sendQuoteMail(
-    Document comprobantePDF,
-    Cotizacion receiptQuotePresent,
-    List<Habitacion> quotesPresent,
-  ) async {
+  Future<String> sendQuoteMail(Document comprobantePDF,
+      Cotizacion receiptQuotePresent, List<Habitacion> quotesPresent,
+      {String? newMail}) async {
     String messageSent = "";
 
     String username = 'sys2@coralbluehuatulco.mx';
@@ -35,29 +27,29 @@ class SendQuoteService extends BaseService {
       password: password,
       port: 465,
       ssl: true,
-      ignoreBadCertificate: true,
+      //ignoreBadCertificate: true,
     );
 
-    // Convertir el PDF a bytes
-    final Uint8List pdfBytes = await comprobantePDF.save();
-
-    final tempDir = await getTemporaryDirectory();
-
-    File file = await File('${tempDir.path}/example.pdf').create();
-
-    file.writeAsBytesSync(pdfBytes);
-
-    final message = Message()
-      ..from = Address(username, username)
-      ..recipients.add(receiptQuotePresent.correoElectronico)
-      ..subject =
-          'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
-      ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
-      ..attachments = [
-        FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
-      ];
-
     try {
+      // Convertir el PDF a bytes
+      final Uint8List pdfBytes = await comprobantePDF.save();
+
+      final tempDir = await getTemporaryDirectory();
+
+      File file = await File('${tempDir.path}/example.pdf').create();
+
+      file.writeAsBytesSync(pdfBytes);
+
+      final message = Message()
+        ..from = Address(username, "$firstName $lastName")
+        ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
+        ..subject =
+            'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
+        ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
+        ..attachments = [
+          FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
+        ];
+
       final sendReport = await send(message, smtpServer);
       print('Message sent: ' + sendReport.toString());
     } on MailerException catch (e) {
@@ -95,7 +87,7 @@ class SendQuoteService extends BaseService {
     message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
     message +=
-        "Total por noche:\$${(habitaciones.first.totalVR ?? 1) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVR ?? 0) + 0.00}";
+        "Total por noche:\$ ${(habitaciones.first.totalVR ?? 0) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVR ?? 0) + 0.00}";
     message += "\n\n";
     message +=
         "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
@@ -103,7 +95,7 @@ class SendQuoteService extends BaseService {
     message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
     message +=
-        "Total por noche:\$${(habitaciones.first.totalVPM ?? 1) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVPM ?? 0) + 0.00}";
+        "Total por noche:\$ ${(habitaciones.first.totalVPM ?? 0) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVPM ?? 0) + 0.00}";
     message += "\n\n";
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";

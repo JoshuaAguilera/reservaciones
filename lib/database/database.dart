@@ -264,8 +264,9 @@ class AppDatabase extends _$AppDatabase {
             id: userId, username: username, passwordCorreo: newPassword));
   }
 
-  Future<List<UsuarioData>> getListUser() {
-    return (select(usuario)).get();
+  Future<List<UsuarioData>> getListUser(int idAdmin) async {
+    return await (select(usuario)..where((u) => u.id.equals(idAdmin).not()))
+        .get();
   }
 
   //tarifa dao

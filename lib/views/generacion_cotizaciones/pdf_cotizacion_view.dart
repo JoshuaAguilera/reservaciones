@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -16,6 +17,7 @@ import '../../services/send_quote_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../widgets/dialogs.dart';
+import '../../widgets/textformfield_custom.dart';
 
 class PdfCotizacionView extends StatefulWidget {
   const PdfCotizacionView({
@@ -35,6 +37,13 @@ class PdfCotizacionView extends StatefulWidget {
 
 class _PdfCotizacionViewState extends State<PdfCotizacionView> {
   bool isSendingEmail = false;
+  String selectMail = "";
+
+  @override
+  void initState() {
+    selectMail = widget.cotizacion.correoElectronico ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +78,21 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
           canChangePageFormat: false,
           canDebug: false,
           allowSharing: false,
+          allowPrinting: false,
           pdfFileName:
               "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
           actions: [
             IconButton(
+              onPressed: () async => await Printing.layoutPdf(
+                  onLayout: (_) async => widget.comprobantePDF.save()),
+              icon: const Icon(
+                CupertinoIcons.printer,
+                color: Colors.white,
+              ),
+              tooltip: "Imprimir",
+            ),
+            IconButton(
+              tooltip: "Descargar",
               onPressed: () async {
                 try {
                   final output = await getDownloadsDirectory();
@@ -83,7 +103,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                   final pdfUrl = Uri.file(file.path);
                   await launchUrl(pdfUrl);
                 } catch (e) {
-                  print(e);
+                  if (!mounted) return;
                   showSnackBar(
                     type: "danger",
                     context: context,
@@ -93,9 +113,10 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                 }
               },
               icon: const Icon(
-                CupertinoIcons.tray_arrow_down_fill,
+                // CupertinoIcons.tray_arrow_down_fill,
+                Icons.download_rounded,
                 color: Colors.white,
-                size: 22,
+                size: 25,
               ),
             ),
             // if (!widget.isDetail)
@@ -107,6 +128,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
               )
             else
               IconButton(
+                tooltip: "Enviar por correo",
                 icon: const Icon(
                   CupertinoIcons.mail,
                   color: Colors.white,
@@ -126,70 +148,135 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                     );
                   }
 
-                  setState(() => isSendingEmail = true);
-
-                  String messageError = "";
-
-                  try {
-                    String messageRequest =
-                        await SendQuoteService().sendQuoteMail(
-                      widget.comprobantePDF,
-                      widget.cotizacion,
-                      widget.cotizacion.habitaciones!,
-                    );
-                    if (messageRequest.isEmpty) {
-                      if (!mounted) return;
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialogs.customAlertDialog(
-                              context: context,
-                              iconData: Icons.send,
-                              iconColor: DesktopColors.turqueza,
-                              title: "Correo enviado",
-                              contentText: "El correo fue enviado exitosamente",
-                              nameButtonMain: "Aceptar",
-                              funtionMain: () {},
-                              nameButtonCancel: "",
-                              withButtonCancel: false);
-                        },
-                      ).then((value) => setState(() => isSendingEmail = false));
-                    } else {
-                      messageError = messageRequest;
-                      setState(() => isSendingEmail = false);
-                    }
-                  } catch (e) {
-                    print(e);
-                    messageError = e.toString();
-                    setState(() => isSendingEmail = false);
-                  }
-
-                  if (messageError.isNotEmpty) {
-                    showSnackBar(
-                      type: "danger",
-                      context: context,
-                      duration: 5.seconds,
-                      title: "Error al enviar el comprobante por correo",
-                      message:
-                          "Se produjo el siguiente error al enviar: $messageError",
-                    );
-                  }
+                  await _SendMailSMTP();
                 },
               ),
             // if (!widget.isDetail)
-            GestureDetector(
-              onTap: () async {
-                SendQuoteService().sendQuoteWhatsApp(
-                    widget.cotizacion, widget.cotizacion.habitaciones!);
-              },
-              child: const Image(
-                  image: AssetImage("assets/image/whatsApp_icon.png"),
-                  width: 22,
-                  color: Colors.white),
-            )
+            IconButton(
+              onPressed: () => SendQuoteService().sendQuoteWhatsApp(
+                  widget.cotizacion, widget.cotizacion.habitaciones!),
+              icon: const Image(
+                image: AssetImage("assets/image/whatsApp_icon.png"),
+                width: 22,
+                color: Colors.white,
+              ),
+              tooltip: "Enviar por WhatsApp",
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _SendMailSMTP({String? newMail}) async {
+    setState(() => isSendingEmail = true);
+
+    String messageError = "";
+
+    try {
+      String messageRequest = await SendQuoteService().sendQuoteMail(
+        widget.comprobantePDF,
+        widget.cotizacion,
+        widget.cotizacion.habitaciones!,
+      );
+      if (messageRequest.isEmpty) {
+        if (!mounted) return;
+        setState(() => isSendingEmail = false);
+        showSnackBar(
+          type: "success",
+          context: context,
+          duration: 5.seconds,
+          title: "Correo enviado",
+          message: "El correo fue enviado exitosamente",
+          iconCustom: CupertinoIcons.envelope_open_fill,
+        );
+      } else {
+        if (!mounted) return;
+        setState(() => isSendingEmail = false);
+      }
+    } catch (e) {
+      print(e);
+      messageError = e.toString();
+      setState(() => isSendingEmail = false);
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController _mailController =
+            TextEditingController(text: selectMail);
+        final GlobalKey<FormState> _formDialogKey = GlobalKey<FormState>();
+
+        return Dialogs.customAlertDialog(
+          context: context,
+          iconData: Icons.cancel_schedule_send_rounded,
+          iconColor: DesktopColors.turqueza,
+          title: "Error al enviar el comprobante\nde cotización por correo",
+          contentCustom: SizedBox(
+            height: 200,
+            child: Form(
+              key: _formDialogKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextStyles.standardText(
+                    text: "Se produjo el siguiente error al enviar:",
+                    size: 12,
+                  ),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: 70,
+                    width: 350,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Theme.of(context).primaryColor, width: 0.8),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        color:
+                            Utility.darken(Theme.of(context).cardColor, -0.2)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                          child: Column(
+                        children: [
+                          TextStyles.errorText(
+                            text: messageError,
+                            size: 11.5,
+                          ),
+                        ],
+                      )),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextStyles.standardText(
+                    text:
+                        "Utilice otro correo electronico para realizar el envió:",
+                    size: 12,
+                  ),
+                  const SizedBox(height: 5),
+                  TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "",
+                    hintText: "example@mail.com",
+                    msgError: "Campo requerido*",
+                    isRequired: true,
+                    controller: _mailController,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          nameButtonMain: "Aceptar",
+          funtionMain: () {
+            if (!_formDialogKey.currentState!.validate()) {
+              return;
+            }
+
+            _SendMailSMTP(newMail: _mailController.text);
+          },
+          nameButtonCancel: "",
+          withButtonCancel: false,
+        );
+      },
     );
   }
 }

@@ -88,9 +88,13 @@ class AuthService extends BaseService {
   Future<List<UsuarioData>> getUsers() async {
     List<UsuarioData> users = [];
 
-    final db = AppDatabase();
-    users = await db.getListUser();
-    db.close();
+    try {
+      final db = AppDatabase();
+      users = await db.getListUser(userId);
+      db.close();
+    } catch (e) {
+      print(e);
+    }
 
     return users;
   }
