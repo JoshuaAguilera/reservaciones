@@ -10,7 +10,9 @@ import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
+import 'package:generador_formato/widgets/gestor_imagenes_widget.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../ui/show_snackbar.dart';
@@ -39,6 +41,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   bool canChangedKey = false;
   bool canChangedKeyMail = false;
   bool isSaving = false;
+  bool isImplementImages = false;
 
   @override
   void initState() {
@@ -151,9 +154,16 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                         width: 35,
                                         child: FloatingActionButton(
                                           backgroundColor: Colors.white,
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            setState(() {
+                                              isImplementImages =
+                                                  !isImplementImages;
+                                            });
+                                          },
                                           child: Icon(
-                                            Icons.edit,
+                                            isImplementImages
+                                                ? Iconsax.close_circle_outline
+                                                : Icons.edit,
                                             color: DesktopColors.cerulean,
                                             size: 26,
                                           ),
@@ -174,7 +184,11 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              if (isImplementImages)
+                                GestorImagenes(
+                                  imagenes: [],
+                                  isDialog: true,
+                                ),
                               TextFormFieldCustom.textFormFieldwithBorder(
                                 name: "Nombre de usuario",
                                 controller: usernameController,

@@ -90,6 +90,7 @@ class Buttons {
     Color colorText = Colors.white,
     Widget? auxwidget,
     String? tooltipText,
+    IconData? icons,
   }) {
     return Tooltip(
       message: tooltipText ?? (auxwidget != null ? text : ""),
@@ -109,6 +110,11 @@ class Buttons {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (icons != null && !isLoading)
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: Icon(icons),
+              ),
             if (isLoading)
               const SizedBox(
                 height: 20,
