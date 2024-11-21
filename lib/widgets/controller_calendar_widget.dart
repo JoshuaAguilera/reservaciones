@@ -357,11 +357,7 @@ class _ControllerCalendarWidgetState
                                                         .update((state) =>
                                                             UniqueKey()
                                                                 .hashCode);
-                                                    ref
-                                                        .read(
-                                                            monthsCacheYearProvider
-                                                                .notifier)
-                                                        .update((state) => []);
+                                                   
                                                   },
                                                 );
                                               } else {

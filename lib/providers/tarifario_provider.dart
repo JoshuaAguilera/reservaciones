@@ -22,8 +22,6 @@ final listTarifaProvider =
   return todos!.value;
 });
 
-final monthsCacheYearProvider = StateProvider<List<Widget>>((ref) => []);
-
 final tariffPolicyProvider =
     FutureProvider.family<Politica?, String>((ref, arg) async {
   final detectChanged = ref.watch(changeTariffPolicyProvider);

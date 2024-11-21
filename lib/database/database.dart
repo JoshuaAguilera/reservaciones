@@ -227,9 +227,19 @@ class AppDatabase extends _$AppDatabase {
 
   //usuario dao
 
-  Future<List<UsuarioData>> getUsuariosByUsername(String userName) async {
-    return await (select(usuario)..where((t) => t.username.equals(userName)))
-        .get();
+  Future<List<UsuarioData>> getUsuariosByUsername(
+      String userName, int? userId) async {
+    if (userId != null) {
+      return await (select(usuario)
+            ..where(
+              (tbl) => tbl.id.equals(userId).not(),
+            )
+            ..where((t) => t.username.equals(userName)))
+          .get();
+    } else {
+      return await (select(usuario)..where((t) => t.username.equals(userName)))
+          .get();
+    }
   }
 
   Future<List<UsuarioData>> getUsuarioByUsernameAndID(
@@ -251,6 +261,25 @@ class AppDatabase extends _$AppDatabase {
     return (update(usuario)..where((t) => t.id.equals(user.id))).write(user);
   }
 
+  Future<int> deleteUsuario(UsuarioData user) {
+    UsuarioData selectUser = UsuarioData(
+      id: user.id,
+      username: user.username,
+      apellido: user.apellido,
+      correoElectronico: user.correoElectronico,
+      fechaNacimiento: user.fechaNacimiento,
+      nombre: user.nombre,
+      numCotizaciones: user.numCotizaciones,
+      password: user.password,
+      passwordCorreo: user.passwordCorreo,
+      rol: user.rol,
+      telefono: user.telefono,
+      status: "INACTIVO",
+    );
+    return (update(usuario)..where((t) => t.id.equals(user.id)))
+        .write(selectUser);
+  }
+
   Future<int> updatePasswordUser(
       int userId, String username, String newPassword) {
     return (update(usuario)..where((t) => t.id.equals(userId))).write(
@@ -265,7 +294,17 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<UsuarioData>> getListUser(int idAdmin) async {
-    return await (select(usuario)..where((u) => u.id.equals(idAdmin).not()))
+    return await (select(usuario)
+          ..where((u) => u.status.equals("INACTIVO").not())
+          ..where((u) => u.id.equals(idAdmin).not()))
+        .get();
+  }
+
+  Future<List<UsuarioData>> getUsersSearch(String search, int idAdmin) {
+    return (select(usuario)
+          ..where((u) => u.status.equals("INACTIVO").not())
+          ..where((u) => u.id.equals(idAdmin).not())
+          ..where((t) => t.username.contains(search)))
         .get();
   }
 

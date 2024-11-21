@@ -7,6 +7,7 @@ import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/ui/inside_snackbar.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 
@@ -375,10 +376,12 @@ class _ManagerTariffDayWidgetState
                                     description:
                                         "(Vista Reserva, Vista Parcial al mar)",
                                     value: applyAllCategory,
-                                    onChanged: (value) => setState(() {
-                                      applyAllCategory = value!;
-                                      showErrorTariff = false;
-                                    }),
+                                    onChanged: (value) => setState(
+                                      () {
+                                        applyAllCategory = value!;
+                                        showErrorTariff = false;
+                                      },
+                                    ),
                                   ),
                                 if (isValidForApplyNotTariff(
                                         habitacionProvider) &&
@@ -392,11 +395,13 @@ class _ManagerTariffDayWidgetState
                                     description:
                                         "(Esta opción aplicara los siguientes cambios en todos los dias que no esten en el margen de las tarifas definidas).",
                                     value: applyAllNoTariff,
-                                    onChanged: (value) => setState(() {
-                                      applyAllNoTariff = value!;
-                                      applyAllTariff = false;
-                                      applyAllDays = false;
-                                    }),
+                                    onChanged: (value) => setState(
+                                      () {
+                                        applyAllNoTariff = value!;
+                                        applyAllTariff = false;
+                                        applyAllDays = false;
+                                      },
+                                    ),
                                   ),
                                 if (!isUnknow &&
                                     !widget.isAppling &&
@@ -409,11 +414,13 @@ class _ManagerTariffDayWidgetState
                                     description:
                                         "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTariff}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
                                     value: applyAllTariff,
-                                    onChanged: (value) => setState(() {
-                                      applyAllTariff = value!;
-                                      applyAllNoTariff = false;
-                                      applyAllDays = false;
-                                    }),
+                                    onChanged: (value) => setState(
+                                      () {
+                                        applyAllTariff = value!;
+                                        applyAllNoTariff = false;
+                                        applyAllDays = false;
+                                      },
+                                    ),
                                   ),
                                 if (habitacionProvider.tarifaXDia!
                                     .any((element) => element.code != 'Unknow'))
@@ -424,11 +431,13 @@ class _ManagerTariffDayWidgetState
                                       title: "Aplicar en todos los dias",
                                       description: "",
                                       value: applyAllDays,
-                                      onChanged: (value) => setState(() {
-                                        applyAllDays = value!;
-                                        applyAllTariff = false;
-                                        applyAllNoTariff = false;
-                                      }),
+                                      onChanged: (value) => setState(
+                                        () {
+                                          applyAllDays = value!;
+                                          applyAllTariff = false;
+                                          applyAllNoTariff = false;
+                                        },
+                                      ),
                                     ),
                               ],
                             ),
@@ -478,15 +487,15 @@ class _ManagerTariffDayWidgetState
                                       color: Theme.of(context).primaryColor),
                                   const SizedBox(height: 5),
                                   CustomWidgets.itemListCount(
-                                      nameItem: "Total del dia(s):",
-                                      count: ((tariffChildren + tariffAdult) -
-                                                  (calculateDiscount(
-                                                      tariffAdult +
-                                                          tariffChildren)))
-                                              .round() +
-                                          0.0,
-                                      context: context,
-                                      height: 40),
+                                    nameItem: "Total del dia(s):",
+                                    count: ((tariffChildren + tariffAdult) -
+                                                (calculateDiscount(tariffAdult +
+                                                    tariffChildren)))
+                                            .round() +
+                                        0.0,
+                                    context: context,
+                                    height: 40,
+                                  ),
                                 ],
                               ),
                             );
@@ -497,20 +506,10 @@ class _ManagerTariffDayWidgetState
                   ),
                 ),
                 if (showErrorTariff)
-                  Center(
-                    child: Card(
-                      color: Colors.red[900],
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextStyles.standardText(
-                          text:
-                              "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*",
-                          size: 10,
-                          color: Colors.white,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                    ).animate().flip(delay: 100.ms),
+                  insideSnackBar(
+                    message:
+                        "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*",
+                    type: 'danger',
                   ),
               ],
             ),

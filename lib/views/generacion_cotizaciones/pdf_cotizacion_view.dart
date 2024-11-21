@@ -200,83 +200,86 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
       setState(() => isSendingEmail = false);
     }
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController _mailController =
-            TextEditingController(text: selectMail);
-        final GlobalKey<FormState> _formDialogKey = GlobalKey<FormState>();
+    if (messageError.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          TextEditingController _mailController =
+              TextEditingController(text: selectMail);
+          final GlobalKey<FormState> _formDialogKey = GlobalKey<FormState>();
 
-        return Dialogs.customAlertDialog(
-          context: context,
-          iconData: Icons.cancel_schedule_send_rounded,
-          iconColor: DesktopColors.turqueza,
-          title: "Error al enviar el comprobante\nde cotización por correo",
-          contentCustom: SizedBox(
-            height: 200,
-            child: Form(
-              key: _formDialogKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextStyles.standardText(
-                    text: "Se produjo el siguiente error al enviar:",
-                    size: 12,
-                  ),
-                  const SizedBox(height: 5),
-                  Container(
-                    height: 70,
-                    width: 350,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Theme.of(context).primaryColor, width: 0.8),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                        color:
-                            Utility.darken(Theme.of(context).cardColor, -0.2)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                          child: Column(
-                        children: [
-                          TextStyles.errorText(
-                            text: messageError,
-                            size: 11.5,
-                          ),
-                        ],
-                      )),
+          return Dialogs.customAlertDialog(
+            context: context,
+            iconData: Icons.cancel_schedule_send_rounded,
+            iconColor: DesktopColors.turqueza,
+            title: "Error al enviar el comprobante\nde cotización por correo",
+            contentCustom: SizedBox(
+              height: 200,
+              child: Form(
+                key: _formDialogKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextStyles.standardText(
+                      text: "Se produjo el siguiente error al enviar:",
+                      size: 12,
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  TextStyles.standardText(
-                    text:
-                        "Utilice otro correo electronico para realizar el envió:",
-                    size: 12,
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormFieldCustom.textFormFieldwithBorder(
-                    name: "",
-                    hintText: "example@mail.com",
-                    msgError: "Campo requerido*",
-                    isRequired: true,
-                    controller: _mailController,
-                  ),
-                ],
+                    const SizedBox(height: 5),
+                    Container(
+                      height: 70,
+                      width: 350,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.8),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
+                          color: Utility.darken(
+                              Theme.of(context).cardColor, -0.2)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SingleChildScrollView(
+                            child: Column(
+                          children: [
+                            TextStyles.errorText(
+                              text: messageError,
+                              size: 11.5,
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    TextStyles.standardText(
+                      text:
+                          "Utilice otro correo electronico para realizar el envió:",
+                      size: 12,
+                    ),
+                    const SizedBox(height: 5),
+                    TextFormFieldCustom.textFormFieldwithBorder(
+                      name: "",
+                      hintText: "example@mail.com",
+                      msgError: "Campo requerido*",
+                      isRequired: true,
+                      controller: _mailController,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          nameButtonMain: "Aceptar",
-          funtionMain: () {
-            if (!_formDialogKey.currentState!.validate()) {
-              return;
-            }
+            nameButtonMain: "Aceptar",
+            funtionMain: () {
+              if (!_formDialogKey.currentState!.validate()) {
+                return;
+              }
 
-            _SendMailSMTP(newMail: _mailController.text);
-          },
-          nameButtonCancel: "",
-          withButtonCancel: false,
-        );
-      },
-    );
+              _SendMailSMTP(newMail: _mailController.text);
+            },
+            nameButtonCancel: "",
+            withButtonCancel: false,
+          );
+        },
+      );
+    }
   }
 }

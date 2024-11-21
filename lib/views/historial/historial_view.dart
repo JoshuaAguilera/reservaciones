@@ -35,6 +35,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
   DateTime lastDate = DateTime.now().add(const Duration(days: 1));
   final TextEditingController _searchController =
       TextEditingController(text: "");
+  bool startFlow = false;
 
   @override
   void initState() {
@@ -58,6 +59,12 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
           .read(searchProvider.notifier)
           .update((state) => text ?? _searchController.text);
       ref.read(isEmptyProvider.notifier).update((state) => false);
+    }
+
+    if (!startFlow) {
+      Future.delayed(100.ms,
+          () => ref.read(isEmptyProvider.notifier).update((state) => true));
+      startFlow = true;
     }
 
     return PopScope(
@@ -219,6 +226,9 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             child: CustomWidgets.messageNotResult(
                                 sizeMessage: 15, context: context),
                           )
+                            .animate()
+                            .slide(begin: const Offset(0, 0.05))
+                            .fadeIn()
                         : SizedBox(
                             width: screenWidth,
                             height:

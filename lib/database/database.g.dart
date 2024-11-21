@@ -36,6 +36,11 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
       'rol', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _correoElectronicoMeta =
       const VerificationMeta('correoElectronico');
   @override
@@ -85,6 +90,7 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
         username,
         password,
         rol,
+        status,
         correoElectronico,
         passwordCorreo,
         telefono,
@@ -119,6 +125,10 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
     if (data.containsKey('rol')) {
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
     }
     if (data.containsKey('correo_electronico')) {
       context.handle(
@@ -173,6 +183,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
           .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rol']),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status']),
       correoElectronico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}correo_electronico']),
       passwordCorreo: attachedDatabase.typeMapping
@@ -201,6 +213,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final String username;
   final String? password;
   final String? rol;
+  final String? status;
   final String? correoElectronico;
   final String? passwordCorreo;
   final String? telefono;
@@ -213,6 +226,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       required this.username,
       this.password,
       this.rol,
+      this.status,
       this.correoElectronico,
       this.passwordCorreo,
       this.telefono,
@@ -230,6 +244,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     }
     if (!nullToAbsent || rol != null) {
       map['rol'] = Variable<String>(rol);
+    }
+    if (!nullToAbsent || status != null) {
+      map['status'] = Variable<String>(status);
     }
     if (!nullToAbsent || correoElectronico != null) {
       map['correo_electronico'] = Variable<String>(correoElectronico);
@@ -263,6 +280,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           ? const Value.absent()
           : Value(password),
       rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
+      status:
+          status == null && nullToAbsent ? const Value.absent() : Value(status),
       correoElectronico: correoElectronico == null && nullToAbsent
           ? const Value.absent()
           : Value(correoElectronico),
@@ -294,6 +313,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       username: serializer.fromJson<String>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
       rol: serializer.fromJson<String?>(json['rol']),
+      status: serializer.fromJson<String?>(json['status']),
       correoElectronico:
           serializer.fromJson<String?>(json['correoElectronico']),
       passwordCorreo: serializer.fromJson<String?>(json['passwordCorreo']),
@@ -312,6 +332,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       'username': serializer.toJson<String>(username),
       'password': serializer.toJson<String?>(password),
       'rol': serializer.toJson<String?>(rol),
+      'status': serializer.toJson<String?>(status),
       'correoElectronico': serializer.toJson<String?>(correoElectronico),
       'passwordCorreo': serializer.toJson<String?>(passwordCorreo),
       'telefono': serializer.toJson<String?>(telefono),
@@ -327,6 +348,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           String? username,
           Value<String?> password = const Value.absent(),
           Value<String?> rol = const Value.absent(),
+          Value<String?> status = const Value.absent(),
           Value<String?> correoElectronico = const Value.absent(),
           Value<String?> passwordCorreo = const Value.absent(),
           Value<String?> telefono = const Value.absent(),
@@ -339,6 +361,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
         username: username ?? this.username,
         password: password.present ? password.value : this.password,
         rol: rol.present ? rol.value : this.rol,
+        status: status.present ? status.value : this.status,
         correoElectronico: correoElectronico.present
             ? correoElectronico.value
             : this.correoElectronico,
@@ -361,6 +384,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
+          ..write('status: $status, ')
           ..write('correoElectronico: $correoElectronico, ')
           ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
@@ -378,6 +402,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       username,
       password,
       rol,
+      status,
       correoElectronico,
       passwordCorreo,
       telefono,
@@ -393,6 +418,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           other.username == this.username &&
           other.password == this.password &&
           other.rol == this.rol &&
+          other.status == this.status &&
           other.correoElectronico == this.correoElectronico &&
           other.passwordCorreo == this.passwordCorreo &&
           other.telefono == this.telefono &&
@@ -407,6 +433,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<String> username;
   final Value<String?> password;
   final Value<String?> rol;
+  final Value<String?> status;
   final Value<String?> correoElectronico;
   final Value<String?> passwordCorreo;
   final Value<String?> telefono;
@@ -419,6 +446,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
+    this.status = const Value.absent(),
     this.correoElectronico = const Value.absent(),
     this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
@@ -432,6 +460,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     required String username,
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
+    this.status = const Value.absent(),
     this.correoElectronico = const Value.absent(),
     this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
@@ -445,6 +474,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     Expression<String>? username,
     Expression<String>? password,
     Expression<String>? rol,
+    Expression<String>? status,
     Expression<String>? correoElectronico,
     Expression<String>? passwordCorreo,
     Expression<String>? telefono,
@@ -458,6 +488,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       if (username != null) 'username': username,
       if (password != null) 'password': password,
       if (rol != null) 'rol': rol,
+      if (status != null) 'status': status,
       if (correoElectronico != null) 'correo_electronico': correoElectronico,
       if (passwordCorreo != null) 'password_correo': passwordCorreo,
       if (telefono != null) 'telefono': telefono,
@@ -473,6 +504,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       Value<String>? username,
       Value<String?>? password,
       Value<String?>? rol,
+      Value<String?>? status,
       Value<String?>? correoElectronico,
       Value<String?>? passwordCorreo,
       Value<String?>? telefono,
@@ -485,6 +517,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       username: username ?? this.username,
       password: password ?? this.password,
       rol: rol ?? this.rol,
+      status: status ?? this.status,
       correoElectronico: correoElectronico ?? this.correoElectronico,
       passwordCorreo: passwordCorreo ?? this.passwordCorreo,
       telefono: telefono ?? this.telefono,
@@ -509,6 +542,9 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     }
     if (rol.present) {
       map['rol'] = Variable<String>(rol.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
     }
     if (correoElectronico.present) {
       map['correo_electronico'] = Variable<String>(correoElectronico.value);
@@ -541,6 +577,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
+          ..write('status: $status, ')
           ..write('correoElectronico: $correoElectronico, ')
           ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
@@ -4944,6 +4981,7 @@ typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
   required String username,
   Value<String?> password,
   Value<String?> rol,
+  Value<String?> status,
   Value<String?> correoElectronico,
   Value<String?> passwordCorreo,
   Value<String?> telefono,
@@ -4957,6 +4995,7 @@ typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<String> username,
   Value<String?> password,
   Value<String?> rol,
+  Value<String?> status,
   Value<String?> correoElectronico,
   Value<String?> passwordCorreo,
   Value<String?> telefono,
@@ -4989,6 +5028,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<String> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
+            Value<String?> status = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
             Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
@@ -5002,6 +5042,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             username: username,
             password: password,
             rol: rol,
+            status: status,
             correoElectronico: correoElectronico,
             passwordCorreo: passwordCorreo,
             telefono: telefono,
@@ -5015,6 +5056,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             required String username,
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
+            Value<String?> status = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
             Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
@@ -5028,6 +5070,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             username: username,
             password: password,
             rol: rol,
+            status: status,
             correoElectronico: correoElectronico,
             passwordCorreo: passwordCorreo,
             telefono: telefono,
@@ -5071,6 +5114,11 @@ class $$UsuarioTableFilterComposer
 
   ColumnFilters<String> get rol => $state.composableBuilder(
       column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5130,6 +5178,11 @@ class $$UsuarioTableOrderingComposer
 
   ColumnOrderings<String> get rol => $state.composableBuilder(
       column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

@@ -433,8 +433,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
 
-    Color? colorCard = DesktopColors.grisSemiPalido;
-    Color? colorText = Colors.white;
+    Color? colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
@@ -475,7 +474,6 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     }
 
     return Card(
-      color: colorCard,
       elevation: 5,
       child: ListTile(
         leading: TextStyles.TextSpecial(
@@ -622,13 +620,5 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         ),
       ],
     );
-  }
-
-  Widget statisticsCustomers(Habitacion cotizacion) {
-    return const Column(children: [
-      Row(
-        children: [],
-      )
-    ]);
   }
 }

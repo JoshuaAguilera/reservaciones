@@ -136,6 +136,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                         Future.delayed(
                           Durations.extralong1,
                           () {
+                            if (!mounted) return;
                             if (saveTariff == null) {
                               ref
                                   .read(saveTariffPolityProvider.notifier)

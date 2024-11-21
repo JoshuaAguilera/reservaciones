@@ -99,9 +99,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   ref
                       .read(changeTarifasProvider.notifier)
                       .update((state) => UniqueKey().hashCode);
-                  ref
-                      .read(monthsCacheYearProvider.notifier)
-                      .update((state) => []);
+               
                 },
               );
             } else {
@@ -110,7 +108,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 title: "Error al eliminar tarifa",
                 message:
                     "La tarifa no fue eliminada debido a un error inesperado.",
-                type: "success",
+                type: "danger",
                 iconCustom: Icons.delete,
               );
             }

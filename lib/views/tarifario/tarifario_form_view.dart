@@ -1050,10 +1050,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             height: 35,
                             width: 130,
                             child: Buttons.commonButton(
-                              onPressed: () async {
-                                await savedTariff(temporadaIndListProvider +
-                                    temporadaGrupListProvider);
-                              },
+                              onPressed: () async => await savedTariff(
+                                  temporadaIndListProvider +
+                                      temporadaGrupListProvider),
                               sizeText: 15,
                               text: "Guardar",
                             ),
@@ -1185,7 +1184,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           ref
               .read(changeTarifasProvider.notifier)
               .update((state) => UniqueKey().hashCode);
-          ref.read(monthsCacheYearProvider.notifier).update((state) => []);
+          ref
+              .read(changeTarifasListProvider.notifier)
+              .update((state) => UniqueKey().hashCode);
         },
       );
 

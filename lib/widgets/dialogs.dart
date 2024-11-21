@@ -1,9 +1,10 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/services/auth_service.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
@@ -13,6 +14,7 @@ import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 
 import '../ui/buttons.dart';
+import '../ui/inside_snackbar.dart';
 import '../utils/helpers/constants.dart';
 
 class Dialogs {
@@ -21,13 +23,17 @@ class Dialogs {
     UsuarioData? usuario,
     void Function(UsuarioData?)? onInsert,
     void Function(UsuarioData?)? onUpdate,
+    void Function()? onUpdateList,
     required Brightness brightness,
   }) {
-    String rol = roles.first;
+    String rol = usuario?.rol ?? roles.first;
     bool inProcess = false;
+    bool showError = false;
+    bool showConfigPassword = false;
+    String messageError = '';
 
     final _formKeyUsuario = GlobalKey<FormState>();
-    final TextEditingController nameController =
+    TextEditingController nameController =
         TextEditingController(text: usuario != null ? usuario.username : '');
     final TextEditingController mailController = TextEditingController(
         text: usuario != null ? usuario.correoElectronico : '');
@@ -40,23 +46,111 @@ class Dialogs {
             ? EncrypterTool.decryptData(usuario.password!, null)
             : '');
 
-    final TextEditingController passwordMailEditController =
-        TextEditingController(
-            text: usuario != null
-                ? (usuario.passwordCorreo != null &&
-                        usuario.passwordCorreo!.isNotEmpty)
-                    ? EncrypterTool.decryptData(usuario.passwordCorreo!, null)
-                    : ''
-                : '');
+    // final TextEditingController passwordMailEditController =
+    //     TextEditingController(
+    //         text: usuario != null
+    //             ? (usuario.passwordCorreo != null &&
+    //                     usuario.passwordCorreo!.isNotEmpty)
+    //                 ? EncrypterTool.decryptData(usuario.passwordCorreo!, null)
+    //                 : ''
+    //             : '');
+
+    bool detectChanges() {
+      bool isDetect = false;
+
+      if (usuario?.username != nameController.text) isDetect = true;
+      if (usuario?.rol != rol) isDetect = true;
+      if ((usuario?.correoElectronico ?? '') != mailController.text) {
+        isDetect = true;
+      }
+      if ((usuario != null
+              ? EncrypterTool.decryptData(usuario.password!, null)
+              : '') !=
+          passwordEditController.text) {
+        isDetect = true;
+      }
+
+      return isDetect;
+    }
+
+    Future<void> saveFunction(BuildContext context, dynamic setState,
+        [bool forceUpdate = false]) async {
+      if (!_formKeyUsuario.currentState!.validate()) {
+        return;
+      }
+
+      if (!detectChanges()) {
+        if (forceUpdate) {
+          if (onUpdateList != null) onUpdateList.call();
+        }
+        Navigator.of(buildContext).pop();
+        return;
+      }
+
+      setState(() => inProcess = true);
+
+      if (await AuthService().foundUserName(nameController.text, usuario?.id)) {
+        messageError =
+            "Nombre no valido. Este usuario ya existe, cambie el nombre de usuario";
+        nameController = TextEditingController(
+            text: usuario != null ? usuario.username : '');
+        setState(() {
+          showError = true;
+          inProcess = false;
+        });
+
+        Future.delayed(4.seconds, () {
+          if (!context.mounted) return;
+          setState(() => showError = false);
+        });
+        return;
+      }
+
+      UsuarioData user = usuario != null
+          ? UsuarioData(
+              id: usuario.id,
+              username: nameController.text,
+              correoElectronico: mailController.text,
+              // passwordCorreo: passwordMailEditController
+              //         .text.isEmpty
+              //     ? null
+              //     : EncrypterTool.encryptData(
+              //         passwordMailEditController.text, null),
+              rol: rol,
+            )
+          : UsuarioData(
+              id: 0,
+              username: nameController.text,
+              password:
+                  EncrypterTool.encryptData(passwordNewController.text, null),
+              rol: rol,
+            );
+
+      if (onInsert != null) {
+        onInsert.call(user);
+      }
+
+      if (onUpdate != null) {
+        onUpdate.call(user);
+      }
+      setState(() => inProcess = false);
+
+      Navigator.of(buildContext).pop();
+    }
+
     return StatefulBuilder(builder: (context, setState) {
       return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
         child: SizedBox(
-          height: usuario != null ? 470 : 380,
+          height: usuario != null
+              ? showConfigPassword
+                  ? 565
+                  : 470
+              : 390,
           width: 450,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 children: [
@@ -115,7 +209,7 @@ class Dialogs {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: SizedBox(
                       width: 450,
-                      height: usuario != null ? 320 : 232,
+                      height: usuario != null ? null : 232,
                       child: SingleChildScrollView(
                         child: Form(
                           key: _formKeyUsuario,
@@ -132,115 +226,6 @@ class Dialogs {
                                   return null;
                                 },
                               ),
-                              if (usuario != null)
-                                TextFormFieldCustom.textFormFieldwithBorder(
-                                  name: "Correo electrónico",
-                                  isRequired: false,
-                                  controller: mailController,
-                                ),
-                              if (usuario != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 15),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: ChangePasswordWidget(
-                                            passwordController:
-                                                passwordEditController,
-                                            isChanged: (value) {},
-                                            userId: usuario.id,
-                                            username: usuario.username,
-                                            isPasswordMail: false,
-                                            notAskChange: passwordEditController
-                                                .text.isEmpty,
-                                          ),
-                                        ),
-                                        // const SizedBox(width: 10),
-                                        // if (usuario != null &&
-                                        //     passwordMailEditController
-                                        //         .text.isEmpty)
-                                        //   Expanded(
-                                        //     child: TextFormFieldCustom
-                                        //         .textFormFieldwithBorder(
-                                        //       name: "Contraseña de correo",
-                                        //       passwordVisible: true,
-                                        //       isPassword: true,
-                                        //       controller:
-                                        //           passwordMailEditController,
-                                        //       validator: (p0) {
-                                        //         if (p0 == null ||
-                                        //             p0.isEmpty ||
-                                        //             p0.length < 4) {
-                                        //           return "La contraseña debe de tener al menos 4 caracteres*";
-                                        //         }
-                                        //         return null;
-                                        //       },
-                                        //     ),
-                                        //   )
-                                        // else
-                                        //   Expanded(
-                                        //     child: ChangePasswordWidget(
-                                        //       passwordController:
-                                        //           passwordMailEditController,
-                                        //       isChanged: (value) {},
-                                        //       userId: usuario.id,
-                                        //       username: usuario.username,
-                                        //       isPasswordMail: true,
-                                        //       notAskChange:
-                                        //           passwordMailEditController
-                                        //               .text.isEmpty,
-                                        //     ),
-                                        //   ),
-                                      ]),
-                                ),
-                              if (usuario == null)
-                                Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Contraseña",
-                                          passwordVisible: true,
-                                          isPassword: true,
-                                          controller: passwordNewController,
-                                          validator: (p0) {
-                                            if (p0 == null ||
-                                                p0.isEmpty ||
-                                                p0.length < 4) {
-                                              return "La contraseña debe de tener al menos 4 caracteres*";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Confirmar contraseña",
-                                          isPassword: true,
-                                          passwordVisible: true,
-                                          controller: passwordConfirmController,
-                                          validator: (p0) {
-                                            if (passwordNewController
-                                                .text.isNotEmpty) {
-                                              if (p0 == null ||
-                                                  p0.isEmpty ||
-                                                  p0 !=
-                                                      passwordNewController
-                                                          .text) {
-                                                return "La contraseña debe ser la misma*";
-                                              }
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ]),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -261,91 +246,163 @@ class Dialogs {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 8),
+                              if (usuario != null)
+                                TextFormFieldCustom.textFormFieldwithBorder(
+                                  name: "Correo electrónico",
+                                  isRequired: false,
+                                  controller: mailController,
+                                ),
+                              if (usuario != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: ChangePasswordWidget(
+                                          passwordController:
+                                              passwordEditController,
+                                          isChanged: (value) => setState(
+                                              () => showConfigPassword = value),
+                                          userId: usuario.id,
+                                          username: usuario.username,
+                                          isPasswordMail: false,
+                                          notAskChange: passwordEditController
+                                              .text.isEmpty,
+                                          onSummitUser: () => saveFunction(
+                                              context, setState, true),
+                                        ),
+                                      ),
+                                      // const SizedBox(width: 10),
+                                      // if (usuario != null &&
+                                      //     passwordMailEditController
+                                      //         .text.isEmpty)
+                                      //   Expanded(
+                                      //     child: TextFormFieldCustom
+                                      //         .textFormFieldwithBorder(
+                                      //       name: "Contraseña de correo",
+                                      //       passwordVisible: true,
+                                      //       isPassword: true,
+                                      //       controller:
+                                      //           passwordMailEditController,
+                                      //       validator: (p0) {
+                                      //         if (p0 == null ||
+                                      //             p0.isEmpty ||
+                                      //             p0.length < 4) {
+                                      //           return "La contraseña debe de tener al menos 4 caracteres*";
+                                      //         }
+                                      //         return null;
+                                      //       },
+                                      //     ),
+                                      //   )
+                                      // else
+                                      //   Expanded(
+                                      //     child: ChangePasswordWidget(
+                                      //       passwordController:
+                                      //           passwordMailEditController,
+                                      //       isChanged: (value) {},
+                                      //       userId: usuario.id,
+                                      //       username: usuario.username,
+                                      //       isPasswordMail: true,
+                                      //       notAskChange:
+                                      //           passwordMailEditController
+                                      //               .text.isEmpty,
+                                      //     ),
+                                      //   ),
+                                    ],
+                                  ),
+                                ),
+                              if (usuario == null)
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormFieldCustom
+                                          .textFormFieldwithBorder(
+                                        name: "Contraseña",
+                                        passwordVisible: true,
+                                        isPassword: true,
+                                        controller: passwordNewController,
+                                        validator: (p0) {
+                                          if (p0 == null ||
+                                              p0.isEmpty ||
+                                              p0.length < 4) {
+                                            return "La contraseña debe de tener al menos 4 caracteres*";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: TextFormFieldCustom
+                                          .textFormFieldwithBorder(
+                                        name: "Confirmar contraseña",
+                                        isPassword: true,
+                                        passwordVisible: true,
+                                        controller: passwordConfirmController,
+                                        validator: (p0) {
+                                          if (passwordNewController
+                                              .text.isNotEmpty) {
+                                            if (p0 == null ||
+                                                p0.isEmpty ||
+                                                p0 !=
+                                                    passwordNewController
+                                                        .text) {
+                                              return "La contraseña debe ser la misma*";
+                                            }
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (showError)
+                                insideSnackBar(
+                                  message: messageError,
+                                  type: 'danger',
+                                  duration: 3.seconds,
+                                ),
                             ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(buildContext);
-                          },
-                          child: TextStyles.standardText(
-                            text: "Cancelar",
-                            isBold: true,
-                            size: 12.5,
-                            color: brightness == Brightness.light
-                                ? DesktopColors.cerulean
-                                : DesktopColors.azulUltClaro,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: DesktopColors.cerulean),
-                          onPressed: () async {
-                            if (!_formKeyUsuario.currentState!.validate()) {
-                              return;
-                            }
-
-                            setState(() => inProcess = true);
-
-                            if (await AuthService()
-                                .foundUserName(nameController.text)) {
-                              showSnackBar(
-                                  context: buildContext,
-                                  title: "Nombre no valido",
-                                  message:
-                                      "Este usuario ya existe, cambie el nombre de usuario",
-                                  type: "alert");
-                              setState(() => inProcess = false);
-                              return;
-                            }
-
-                            UsuarioData user = usuario != null
-                                ? UsuarioData(
-                                    id: usuario.id,
-                                    username: nameController.text,
-                                    correoElectronico: mailController.text,
-                                    passwordCorreo: passwordMailEditController.text.isEmpty ? null : EncrypterTool.encryptData(
-                                        passwordMailEditController.text, null),
-                                    rol: rol,
-                                  )
-                                : UsuarioData(
-                                    id: 0,
-                                    username: nameController.text,
-                                    password: EncrypterTool.encryptData(
-                                        passwordNewController.text, null),
-                                    rol: rol,
-                                  );
-
-                            if (onInsert != null) {
-                              onInsert.call(user);
-                            }
-
-                            if (onUpdate != null) {
-                              onUpdate.call(user);
-                            }
-                            setState(() => inProcess = false);
-
-                            Navigator.of(buildContext).pop();
-                          },
-                          child: TextStyles.standardText(
-                            text: "Guardar",
-                            size: 12.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
+              if (!showConfigPassword)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(buildContext);
+                        },
+                        child: TextStyles.standardText(
+                          text: "Cancelar",
+                          isBold: true,
+                          size: 12.5,
+                          color: brightness == Brightness.light
+                              ? DesktopColors.cerulean
+                              : DesktopColors.azulUltClaro,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Buttons.commonButton(
+                        text: "Guardar",
+                        isLoading: inProcess,
+                        sizeText: 12.5,
+                        onPressed: () => saveFunction(context, setState),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -366,13 +423,14 @@ class Dialogs {
     bool notCloseInstant = false,
     bool withLoadingProcess = false,
     required String nameButtonMain,
-    required VoidCallback funtionMain,
+    required void Function() funtionMain,
     String nameButtonCancel = "",
     required bool withButtonCancel,
   }) {
     bool loadingProcess = false;
 
     return StatefulBuilder(builder: (context, snapshot) {
+      var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
       return AlertDialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         title: Row(children: [
@@ -380,7 +438,10 @@ class Dialogs {
             Icon(
               iconData,
               size: 33,
-              color: iconColor ?? DesktopColors.ceruleanOscure,
+              color: iconColor ??
+                  (brightness == Brightness.light
+                      ? DesktopColors.cerulean
+                      : DesktopColors.azulUltClaro),
             ),
           const SizedBox(width: 10),
           Expanded(
@@ -403,7 +464,10 @@ class Dialogs {
                       },
                 child: TextStyles.buttonText(
                   text: nameButtonCancel,
-                  color: colorTextButton,
+                  color: colorTextButton ??
+                      (brightness == Brightness.light
+                          ? DesktopColors.cerulean
+                          : DesktopColors.azulUltClaro),
                 ),
               ),
             ),

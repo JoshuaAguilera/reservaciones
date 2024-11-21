@@ -70,7 +70,9 @@ class CustomDropdown {
                   style: ButtonStyle(
                     textStyle: WidgetStatePropertyAll(
                       TextStyle(
-                          fontFamily: "poppins_regular", fontSize: fontSize),
+                        fontFamily: "poppins_regular",
+                        fontSize: fontSize,
+                      ),
                     ),
                   ),
                 );

@@ -83,20 +83,28 @@ class SendQuoteService extends BaseService {
         "*Noches: ${Utility.getDifferenceInDays(habitaciones: habitaciones)}*";
     message += "\n\n";
     message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
-    message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
-    message +=
-        "Total por noche:\$ ${(habitaciones.first.totalVR ?? 0) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVR ?? 0) + 0.00}";
-    message += "\n\n";
+    for (var element in habitaciones) {
+      message += "\n";
+      message += "*${Utility.getOcupattionMessage(element)}*";
+      message += "\n";
+      message +=
+          "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+      message += "\n";
+    }
+    message += "\n";
     message +=
         "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
-    message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(habitaciones.first)}*";
     message += "\n";
-    message +=
-        "Total por noche:\$ ${(habitaciones.first.totalVPM ?? 0) / (habitaciones.first.tarifaXDia?.length ?? 1)} Total de estancia \$${(habitaciones.first.totalVPM ?? 0) + 0.00}";
-    message += "\n\n";
+    for (var element in habitaciones) {
+      message += "\n";
+      message += "*${Utility.getOcupattionMessage(element)}*";
+      message += "\n";
+      message +=
+          "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+      message += "\n";
+    }
+    message += "\n";
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";
     message += "\n\n";

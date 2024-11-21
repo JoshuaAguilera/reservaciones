@@ -29,7 +29,7 @@ class TarifaService extends BaseService {
     final database = AppDatabase();
 
     try {
-      database.transaction(
+      await database.transaction(
         () async {
           for (var element in periodos) {
             await database.into(database.periodo).insert(
@@ -129,7 +129,7 @@ class TarifaService extends BaseService {
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     try {
-      database.transaction(
+      await database.transaction(
         () async {
           //Update periods
           for (var element in oldRegister.periodos!) {
@@ -235,7 +235,7 @@ class TarifaService extends BaseService {
     final database = AppDatabase();
 
     try {
-      database.transaction(
+      await database.transaction(
         () async {
           //Update periods
           for (var element in tarifa.periodos!) {

@@ -35,6 +35,7 @@ const List<String> roles = <String>[
   'SUPERADMIN',
   'ADMIN',
   'VENTAS',
+  'RECEPCION',
 ];
 
 const List<String> filtros = <String>[

@@ -5,6 +5,7 @@ class Usuario extends Table {
   TextColumn get username => text().unique()();
   TextColumn get password => text().nullable()();
   TextColumn get rol => text().nullable()();
+  TextColumn get status => text().nullable()();
   TextColumn get correoElectronico => text().nullable()();
   TextColumn get passwordCorreo => text().nullable()();
   TextColumn get telefono => text().nullable()();

@@ -123,6 +123,7 @@ class TextFormFieldCustom {
                         : icon,
                     labelText: hintText != null ? null : name,
                     hintText: hintText,
+                    errorMaxLines: 2,
                     errorStyle: TextStyle(
                       fontFamily: "poppins_regular",
                       color: Colors.red[800],

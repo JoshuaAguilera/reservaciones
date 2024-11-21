@@ -32,7 +32,7 @@ class CotizacionService extends BaseService {
     final database = AppDatabase();
 
     try {
-      database.transaction(
+      await database.transaction(
         () async {
           for (var element in habitaciones!) {
             if (isQuoteGroup) {

@@ -120,12 +120,11 @@ class Buttons {
             if (auxwidget != null)
               Expanded(child: auxwidget)
             else
-              isBold
+              !isBold
                   ? TextStyles.standardText(
                       text: !isLoading ? text : "Espere",
                       aling: TextAlign.center,
                       size: sizeText,
-                      isBold: true,
                       color: colorText,
                     )
                   : TextStyles.buttonTextStyle(

@@ -467,14 +467,16 @@ class Utility {
     }
   }
 
-  static Color? getColorTypeUser(String rol) {
+  static Color? getColorTypeUser(String rol, {int alpha = 255}) {
     switch (rol) {
       case "SUPERADMIN":
-        return const Color.fromARGB(255, 255, 192, 1);
+        return Color.fromARGB(alpha, 255, 192, 1);
       case "ADMIN":
-        return const Color.fromARGB(255, 202, 202, 202);
+        return Color.fromARGB(alpha, 202, 202, 202);
       case "VENTAS":
-        return const Color.fromARGB(255, 10, 166, 180);
+        return Color.fromARGB(alpha, 10, 166, 180);
+      case "RECEPCION":
+        return Color.fromARGB(alpha, 230, 92, 0);
       default:
     }
     return null;

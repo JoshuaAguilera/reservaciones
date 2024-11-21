@@ -20,10 +20,12 @@ class ChangePasswordWidget extends StatefulWidget {
     required this.username,
     required this.isPasswordMail,
     this.notAskChange = false,
+    this.onSummitUser,
   });
 
   final TextEditingController passwordController;
   final void Function(bool value) isChanged;
+  final void Function()? onSummitUser;
   final int userId;
   final String username;
   final bool isPasswordMail;
@@ -36,6 +38,7 @@ class ChangePasswordWidget extends StatefulWidget {
 class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
   bool canChangedKeyMail = false;
   bool cancelChangedKeyMail = false;
+  bool isLoading = false;
   final TextEditingController passwordMailNewController =
       TextEditingController();
   final TextEditingController passwordMailConfirmController =
@@ -140,64 +143,82 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     color: DesktopColors.mentaOscure,
                     text: "Cancelar"),
                 Buttons.commonButton(
-                    onPressed: () async {
-                      if (!_formKeyPassword.currentState!.validate()) {
+                  text: "Guardar",
+                  isLoading: isLoading,
+                  onPressed: () async {
+                    if (!_formKeyPassword.currentState!.validate()) {
+                      return;
+                    }
+
+                    setState(() => isLoading = true);
+
+                    if (widget.isPasswordMail) {
+                      if (await AuthService().updatePasswordMail(
+                          widget.userId,
+                          widget.username,
+                          EncrypterTool.encryptData(
+                              passwordMailConfirmController.text, null))) {
+                        showSnackBar(
+                          context: context,
+                          title: "Error de actualización",
+                          message:
+                              "No se proceso el cambio de contraseña de correo correctamente",
+                          type: 'danger',
+                        );
                         return;
                       }
 
-                      if (widget.isPasswordMail) {
-                        if (await AuthService().updatePasswordMail(
-                            widget.userId,
-                            widget.username,
-                            EncrypterTool.encryptData(
-                                passwordMailConfirmController.text, null))) {
-                          showSnackBar(
-                              context: context,
-                              title: "Error de actualización",
-                              message:
-                                  "No se proceso el cambio de contraseña de correo correctamente",
-                              type: 'danger');
-                          return;
-                        }
+                      Preferences.passwordMail = EncrypterTool.encryptData(
+                          passwordMailConfirmController.text, null);
+                    } else {
+                      if (await AuthService().updatePasswordUser(
+                          widget.userId,
+                          widget.username,
+                          EncrypterTool.encryptData(
+                              passwordMailConfirmController.text, null))) {
+                        showSnackBar(
+                            context: context,
+                            title: "Error de actualización",
+                            message:
+                                "No se proceso el cambio de contraseña correctamente",
+                            type: 'danger');
+                        return;
+                      }
 
-                        Preferences.passwordMail = EncrypterTool.encryptData(
-                            passwordMailConfirmController.text, null);
+                      if (widget.onSummitUser != null) {
+                        widget.onSummitUser!.call();
                       } else {
-                        if (await AuthService().updatePasswordUser(
-                            widget.userId,
-                            widget.username,
-                            EncrypterTool.encryptData(
-                                passwordMailConfirmController.text, null))) {
-                          showSnackBar(
-                              context: context,
-                              title: "Error de actualización",
-                              message:
-                                  "No se proceso el cambio de contraseña correctamente",
-                              type: 'danger');
-                          return;
-                        }
-
                         Preferences.password = EncrypterTool.encryptData(
                             passwordMailConfirmController.text, null);
                       }
+                    }
 
-                      showSnackBar(
-                          context: context,
-                          title: "Contraseña actualizada",
-                          message: "Se actualizó la contraseña correctamente.",
-                          type: 'success');
+                    setState(() => isLoading = false);
 
-                      widget.passwordController.text =
-                          passwordMailConfirmController.text;
-                      passwordMailConfirmController.text = "";
-                      passwordMailNewController.text = "";
+                    showSnackBar(
+                      context: context,
+                      title: "Contraseña actualizada",
+                      message: "Se actualizó la contraseña correctamente.",
+                      type: 'success',
+                    );
 
-                      widget.isChanged.call(false);
-                      setState(() => cancelChangedKeyMail = false);
-                      Future.delayed(Durations.long1,
-                          () => setState(() => canChangedKeyMail = false));
-                    },
-                    text: "Guardar"),
+                    widget.passwordController.text =
+                        passwordMailConfirmController.text;
+                    passwordMailConfirmController.text = "";
+                    passwordMailNewController.text = "";
+
+                    widget.isChanged.call(false);
+                    setState(() => cancelChangedKeyMail = false);
+
+                    Future.delayed(
+                      Durations.long1,
+                      () {
+                        if (!mounted) return;
+                        setState(() => canChangedKeyMail = false);
+                      },
+                    );
+                  },
+                ),
               ],
             )
           ],

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../utils/helpers/web_colors.dart';
 import '../widgets/form_widgets.dart';
@@ -204,6 +205,7 @@ class CustomWidgets {
               text: message,
               size: sizeMessage,
               color: Theme.of(context).primaryColor,
+              aling: TextAlign.center,
             ),
           ],
         ),
@@ -652,52 +654,55 @@ class CustomWidgets {
       tooltip: "Opciones",
       itemBuilder: (BuildContext context) =>
           <PopupMenuEntry<ListTileTitleAlignment>>[
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.threeLine,
-          onTap: onPreseedEdit,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(Icons.edit, color: DesktopColors.turqueza),
-              TextStyles.standardText(
-                text: "Editar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPreseedEdit != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.threeLine,
+            onTap: onPreseedEdit,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Iconsax.edit_outline, color: DesktopColors.turqueza),
+                TextStyles.standardText(
+                  text: "Editar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.titleHeight,
-          onTap: onPressedDuplicate,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(CupertinoIcons.doc_on_doc_fill,
-                  color: DesktopColors.cerulean, size: 21),
-              TextStyles.standardText(
-                text: "Duplicar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPressedDuplicate != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.titleHeight,
+            onTap: onPressedDuplicate,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Iconsax.copy_outline,
+                    color: DesktopColors.cerulean, size: 21),
+                TextStyles.standardText(
+                  text: "Duplicar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.titleHeight,
-          onTap: onPreseedDelete,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(Icons.delete, color: Colors.red[800]),
-              TextStyles.standardText(
-                text: "Eliminar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPreseedDelete != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.titleHeight,
+            onTap: onPreseedDelete,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(CupertinoIcons.delete, color: Colors.red[800]),
+                TextStyles.standardText(
+                  text: "Eliminar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

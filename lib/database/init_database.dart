@@ -19,6 +19,7 @@ class InitDatabase {
                   Value(EncrypterTool.encryptData("Sys2024CB", null)),
               telefono: const Value("\+529581875040"),
               numCotizaciones: const Value(0),
+              status: const Value("ACTIVO"),
             ),
           );
     }
