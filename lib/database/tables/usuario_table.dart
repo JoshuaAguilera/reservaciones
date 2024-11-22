@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:generador_formato/database/tables/images_table.dart';
 
 class Usuario extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -13,4 +14,5 @@ class Usuario extends Table {
   TextColumn get nombre => text().nullable()();
   TextColumn get apellido => text().nullable()();
   IntColumn get numCotizaciones => integer().withDefault(const Constant(0)).nullable()();
+  IntColumn get imageId => integer().nullable().references(ImagesTable, #id)();
 }

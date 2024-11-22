@@ -14,26 +14,14 @@ String ImagenToJson(Imagen data) => json.encode(data.toJson());
 
 class Imagen {
   int? id;
-  int? articuloId;
-  int? articuloVarianteId;
-  int? empresaId;
-  int? sucursalId;
-  String? claveArticulo;
-  String? claveVariante;
-  String? claveImagen;
+  int? usuarioId;
   String? urlImagen;
   File? newImage;
   int? code;
 
   Imagen({
     this.id,
-    this.articuloId,
-    this.articuloVarianteId,
-    this.empresaId,
-    this.sucursalId,
-    this.claveArticulo,
-    this.claveVariante,
-    this.claveImagen,
+    this.usuarioId,
     this.urlImagen,
     this.newImage,
     this.code,
@@ -41,26 +29,13 @@ class Imagen {
 
   factory Imagen.fromJson(Map<String, dynamic> json) => Imagen(
         id: json['id'],
-        articuloId: json['articulo_Id'],
-        articuloVarianteId: json['articulo_Variante_Id'],
-        empresaId: json['empresa_Id'],
-        sucursalId: json['sucursal_Id'],
-        claveArticulo: json['clave_Articulo'] ?? "",
-        claveVariante: json['clave_Variante'] ?? "",
-        claveImagen: json['clave_Imagen'] ?? "",
+        usuarioId: json['usuarioId'],
         urlImagen: json['urlImagen'] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         if (id != null) "id": id,
-        if (articuloId != null) "articulo_Id": articuloId,
-        if (articuloVarianteId != null)
-          "articulo_Variante_Id": articuloVarianteId,
-        // "empresa_Id": empresaId,
-        if (sucursalId != null) "sucursal_Id": sucursalId,
-        if (claveArticulo != null) "clave_Articulo": claveArticulo,
-        if (claveVariante != null) "clave_Variante": claveVariante,
-        if (claveImagen != null) "clave_Imagen": claveImagen,
+        if (usuarioId != null) "usuarioId": usuarioId,
         if (urlImagen != null) "urlImagen": urlImagen,
       };
 }

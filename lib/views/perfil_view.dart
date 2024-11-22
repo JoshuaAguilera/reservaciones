@@ -2,17 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
 import 'package:generador_formato/widgets/gestor_imagenes_widget.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../ui/show_snackbar.dart';
@@ -42,6 +41,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   bool canChangedKeyMail = false;
   bool isSaving = false;
   bool isImplementImages = false;
+  Imagen photoPeril = Imagen();
 
   @override
   void initState() {
@@ -79,7 +79,6 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final usuario = ref.watch(userProvider);
 
@@ -140,40 +139,6 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   size: 16),
                               const SizedBox(height: 20),
                               Center(
-                                child: Stack(
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          "assets/image/usuario.png"),
-                                    ),
-                                    Positioned(
-                                      bottom: 10,
-                                      right: 10,
-                                      child: SizedBox(
-                                        height: 35,
-                                        width: 35,
-                                        child: FloatingActionButton(
-                                          backgroundColor: Colors.white,
-                                          onPressed: () {
-                                            setState(() {
-                                              isImplementImages =
-                                                  !isImplementImages;
-                                            });
-                                          },
-                                          child: Icon(
-                                            isImplementImages
-                                                ? Iconsax.close_circle_outline
-                                                : Icons.edit,
-                                            color: DesktopColors.cerulean,
-                                            size: 26,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Center(
                                 child: TextButton(
                                   onPressed: () {},
                                   child: TextStyles.buttonText(
@@ -184,11 +149,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   ),
                                 ),
                               ),
-                              if (isImplementImages)
-                                GestorImagenes(
-                                  imagenes: [],
-                                  isDialog: true,
-                                ),
+                              GestorImagenes(
+                                imagenes: [photoPeril],
+                                isDialog: true,
+                                implementDirecty: true,
+                              ),
+                              const SizedBox(height: 10),
                               TextFormFieldCustom.textFormFieldwithBorder(
                                 name: "Nombre de usuario",
                                 controller: usernameController,

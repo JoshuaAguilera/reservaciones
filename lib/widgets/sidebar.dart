@@ -134,7 +134,7 @@ class SideBar extends StatelessWidget {
                               height: 45,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white,
+                                color: Colors.white60,
                                 image: DecorationImage(
                                   image: AssetImage('assets/image/usuario.png'),
                                 ),
@@ -216,7 +216,7 @@ class SideBar extends StatelessWidget {
                       height: 30,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: Colors.white60,
                         image: DecorationImage(
                           image: AssetImage('assets/image/usuario.png'),
                         ),

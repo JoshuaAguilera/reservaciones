@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:drift/native.dart';
+import 'package:generador_formato/database/tables/images_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,18 +19,21 @@ import 'tables/user_activity_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
-// @DriftDatabase(tables: [
-//  Usuario,
-//   Cotizacion,
-//   Habitacion,
-//   TarifaXDiaTable,
-//   Periodo,
-//   Temporada,
-//   Tarifa,
-//   UserActivity,
-//   TarifaRack,
-//   Politicas,
-// ])
+// @DriftDatabase(
+//   tables: [
+//     Usuario,
+//     Cotizacion,
+//     Habitacion,
+//     TarifaXDiaTable,
+//     Periodo,
+//     Temporada,
+//     Tarifa,
+//     UserActivity,
+//     TarifaRack,
+//     Politicas,
+//     ImagesTable,
+//   ],
+// )
 // class AppDatabase extends _$AppDatabase {}
 
 @DriftDatabase(tables: [
@@ -286,7 +290,7 @@ class AppDatabase extends _$AppDatabase {
         UsuarioData(id: userId, username: username, password: newPassword));
   }
 
-  Future<int> updatePasswordMailUser(
+  Future<int> updatePasswordMail(
       int userId, String username, String newPassword) {
     return (update(usuario)..where((t) => t.id.equals(userId))).write(
         UsuarioData(
@@ -306,6 +310,24 @@ class AppDatabase extends _$AppDatabase {
           ..where((u) => u.id.equals(idAdmin).not())
           ..where((t) => t.username.contains(search)))
         .get();
+  }
+
+  Future<int> updateImageUser(
+      int userId, String username, int imageId) {
+    return (update(usuario)..where((t) => t.id.equals(userId))).write(
+        UsuarioData(
+            id: userId, username: username, imageId: imageId));
+  }
+
+  // Image dao
+
+  Future<int> updateURLImage(int id, String code, String newUrl) {
+    return (update(imagesTable)..where((t) => t.id.equals(id)))
+        .write(ImagesTableData(id: id, code: code, urlImage: newUrl));
+  }
+
+  Future<List<ImagesTableData>> getImageById(int id) async {
+    return await (select(imagesTable)..where((tbl) => tbl.id.equals(id))).get();
   }
 
   //tarifa dao

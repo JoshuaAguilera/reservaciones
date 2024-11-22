@@ -94,52 +94,55 @@ class Buttons {
   }) {
     return Tooltip(
       message: tooltipText ?? (auxwidget != null ? text : ""),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          elevation: 4,
-          backgroundColor: color ?? DesktopColors.ceruleanOscure,
-          shape: !withRoundedBorder
-              ? null
-              : const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icons != null && !isLoading)
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: Icon(icons),
-              ),
-            if (isLoading)
-              const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
-              ),
-            if (isLoading) const SizedBox(width: 10),
-            if (auxwidget != null)
-              Expanded(child: auxwidget)
-            else
-              !isBold
-                  ? TextStyles.standardText(
-                      text: !isLoading ? text : "Espere",
-                      aling: TextAlign.center,
-                      size: sizeText,
-                      color: colorText,
-                    )
-                  : TextStyles.buttonTextStyle(
-                      text: !isLoading ? text : "Espere",
-                      aling: TextAlign.center,
-                      size: sizeText,
-                      color: colorText,
+      child: AbsorbPointer(
+        absorbing: isLoading,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            elevation: 4,
+            backgroundColor: color ?? DesktopColors.ceruleanOscure,
+            shape: !withRoundedBorder
+                ? null
+                : const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
                     ),
-          ],
+                  ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icons != null && !isLoading)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Icon(icons),
+                ),
+              if (isLoading)
+                const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
+                ),
+              if (isLoading) const SizedBox(width: 10),
+              if (auxwidget != null)
+                Expanded(child: auxwidget)
+              else
+                !isBold
+                    ? TextStyles.standardText(
+                        text: !isLoading ? text : "Espere",
+                        aling: TextAlign.center,
+                        size: sizeText,
+                        color: colorText,
+                      )
+                    : TextStyles.buttonTextStyle(
+                        text: !isLoading ? text : "Espere",
+                        aling: TextAlign.center,
+                        size: sizeText,
+                        color: colorText,
+                      ),
+            ],
+          ),
         ),
       ),
     );

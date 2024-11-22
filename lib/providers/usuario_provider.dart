@@ -1,5 +1,7 @@
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:riverpod/riverpod.dart';
 
 final userProvider = StateProvider<UsuarioData>((ref) {
@@ -12,6 +14,9 @@ final userProvider = StateProvider<UsuarioData>((ref) {
     passwordCorreo: "",
   );
 });
+
+final imagePerfilProvider =
+    StateProvider<Imagen>((ref) => Imagen(usuarioId: Preferences.userId));
 
 final changeUsersProvider = StateProvider<int>((ref) {
   return 0;

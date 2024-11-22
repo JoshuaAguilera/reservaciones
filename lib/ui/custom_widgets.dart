@@ -91,6 +91,7 @@ class CustomWidgets {
                         height: 40,
                         child: FormWidgets.textFormFieldResizable(
                           name: "",
+                          autofocus: true,
                           controller: _controller,
                           onEditingComplete: () {
                             snapshot(

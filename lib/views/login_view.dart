@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
+import 'package:generador_formato/services/image_service.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 import '../database/database.dart';
+import '../models/imagen_model.dart';
 import '../ui/show_snackbar.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -276,6 +278,24 @@ class _LoginViewState extends ConsumerState<LoginView> {
       if (!context.mounted) return;
       UsuarioData usuario = await AuthService()
           .savePerfil(userNameController.text, passwordController.text);
+
+      if (usuario.imageId != null) {
+        ImagesTableData? imageUser =
+            await ImageService().getImageById(usuario.imageId!);
+
+        if (imageUser != null) {
+          ref.watch(imagePerfilProvider.notifier).update(
+                (ref) => Imagen(
+                  code: int.parse(imageUser.code ?? '0'),
+                  urlImagen: imageUser.urlImage,
+                  usuarioId: usuario.id,
+                  id: imageUser.id,
+                ),
+              );
+        } else {
+          print("Imagen no encontrada");
+        }
+      }
 
       ref.read(userProvider.notifier).update((state) => usuario);
 

@@ -248,6 +248,7 @@ class FormWidgets {
     Color? colorText,
     Color? colorBorder,
     Color? colorIcon,
+    bool autofocus = false,
   }) {
     validator ??= (value) {
       if ((value == null || value.isEmpty)) {
@@ -258,6 +259,7 @@ class FormWidgets {
     return AbsorbPointer(
       absorbing: blocked,
       child: TextFormField(
+        autofocus: autofocus,
         enabled: enabled,
         controller: controller,
         readOnly: blocked,

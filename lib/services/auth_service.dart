@@ -102,8 +102,22 @@ class AuthService extends BaseService {
 
     try {
       final db = AppDatabase();
-      int response =
-          await db.updatePasswordMailUser(userId, username, newPassword);
+      int response = await db.updatePasswordMail(userId, username, newPassword);
+      success = response != 1;
+      db.close();
+    } catch (e) {
+      print(e);
+    }
+
+    return success;
+  }
+
+  Future<bool> updateImagePerfil(int userId, String username, int intId) async {
+    bool success = false;
+
+    try {
+      final db = AppDatabase();
+      int response = await db.updateImageUser(userId, username, intId);
       success = response != 1;
       db.close();
     } catch (e) {

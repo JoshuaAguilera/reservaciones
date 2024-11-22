@@ -3,6 +3,217 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class $ImagesTableTable extends ImagesTable
+    with TableInfo<$ImagesTableTable, ImagesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImagesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+      'code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _urlImageMeta =
+      const VerificationMeta('urlImage');
+  @override
+  late final GeneratedColumn<String> urlImage = GeneratedColumn<String>(
+      'url_image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [id, code, urlImage];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'images_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<ImagesTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+          _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
+    }
+    if (data.containsKey('url_image')) {
+      context.handle(_urlImageMeta,
+          urlImage.isAcceptableOrUnknown(data['url_image']!, _urlImageMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ImagesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ImagesTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      code: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}code']),
+      urlImage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url_image']),
+    );
+  }
+
+  @override
+  $ImagesTableTable createAlias(String alias) {
+    return $ImagesTableTable(attachedDatabase, alias);
+  }
+}
+
+class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
+  final int id;
+  final String? code;
+  final String? urlImage;
+  const ImagesTableData({required this.id, this.code, this.urlImage});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    if (!nullToAbsent || urlImage != null) {
+      map['url_image'] = Variable<String>(urlImage);
+    }
+    return map;
+  }
+
+  ImagesTableCompanion toCompanion(bool nullToAbsent) {
+    return ImagesTableCompanion(
+      id: Value(id),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      urlImage: urlImage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(urlImage),
+    );
+  }
+
+  factory ImagesTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ImagesTableData(
+      id: serializer.fromJson<int>(json['id']),
+      code: serializer.fromJson<String?>(json['code']),
+      urlImage: serializer.fromJson<String?>(json['urlImage']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'code': serializer.toJson<String?>(code),
+      'urlImage': serializer.toJson<String?>(urlImage),
+    };
+  }
+
+  ImagesTableData copyWith(
+          {int? id,
+          Value<String?> code = const Value.absent(),
+          Value<String?> urlImage = const Value.absent()}) =>
+      ImagesTableData(
+        id: id ?? this.id,
+        code: code.present ? code.value : this.code,
+        urlImage: urlImage.present ? urlImage.value : this.urlImage,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('ImagesTableData(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('urlImage: $urlImage')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, code, urlImage);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ImagesTableData &&
+          other.id == this.id &&
+          other.code == this.code &&
+          other.urlImage == this.urlImage);
+}
+
+class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
+  final Value<int> id;
+  final Value<String?> code;
+  final Value<String?> urlImage;
+  const ImagesTableCompanion({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.urlImage = const Value.absent(),
+  });
+  ImagesTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.urlImage = const Value.absent(),
+  });
+  static Insertable<ImagesTableData> custom({
+    Expression<int>? id,
+    Expression<String>? code,
+    Expression<String>? urlImage,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (code != null) 'code': code,
+      if (urlImage != null) 'url_image': urlImage,
+    });
+  }
+
+  ImagesTableCompanion copyWith(
+      {Value<int>? id, Value<String?>? code, Value<String?>? urlImage}) {
+    return ImagesTableCompanion(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      urlImage: urlImage ?? this.urlImage,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (urlImage.present) {
+      map['url_image'] = Variable<String>(urlImage.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImagesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('urlImage: $urlImage')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -84,6 +295,15 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _imageIdMeta =
+      const VerificationMeta('imageId');
+  @override
+  late final GeneratedColumn<int> imageId = GeneratedColumn<int>(
+      'image_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES images_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -97,7 +317,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
         fechaNacimiento,
         nombre,
         apellido,
-        numCotizaciones
+        numCotizaciones,
+        imageId
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -166,6 +387,10 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
           numCotizaciones.isAcceptableOrUnknown(
               data['num_cotizaciones']!, _numCotizacionesMeta));
     }
+    if (data.containsKey('image_id')) {
+      context.handle(_imageIdMeta,
+          imageId.isAcceptableOrUnknown(data['image_id']!, _imageIdMeta));
+    }
     return context;
   }
 
@@ -199,6 +424,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
           .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
       numCotizaciones: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}num_cotizaciones']),
+      imageId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}image_id']),
     );
   }
 
@@ -221,6 +448,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final String? nombre;
   final String? apellido;
   final int? numCotizaciones;
+  final int? imageId;
   const UsuarioData(
       {required this.id,
       required this.username,
@@ -233,7 +461,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       this.fechaNacimiento,
       this.nombre,
       this.apellido,
-      this.numCotizaciones});
+      this.numCotizaciones,
+      this.imageId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -269,6 +498,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     if (!nullToAbsent || numCotizaciones != null) {
       map['num_cotizaciones'] = Variable<int>(numCotizaciones);
     }
+    if (!nullToAbsent || imageId != null) {
+      map['image_id'] = Variable<int>(imageId);
+    }
     return map;
   }
 
@@ -302,6 +534,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       numCotizaciones: numCotizaciones == null && nullToAbsent
           ? const Value.absent()
           : Value(numCotizaciones),
+      imageId: imageId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageId),
     );
   }
 
@@ -322,6 +557,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       nombre: serializer.fromJson<String?>(json['nombre']),
       apellido: serializer.fromJson<String?>(json['apellido']),
       numCotizaciones: serializer.fromJson<int?>(json['numCotizaciones']),
+      imageId: serializer.fromJson<int?>(json['imageId']),
     );
   }
   @override
@@ -340,6 +576,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       'nombre': serializer.toJson<String?>(nombre),
       'apellido': serializer.toJson<String?>(apellido),
       'numCotizaciones': serializer.toJson<int?>(numCotizaciones),
+      'imageId': serializer.toJson<int?>(imageId),
     };
   }
 
@@ -355,7 +592,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           Value<String?> fechaNacimiento = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
           Value<String?> apellido = const Value.absent(),
-          Value<int?> numCotizaciones = const Value.absent()}) =>
+          Value<int?> numCotizaciones = const Value.absent(),
+          Value<int?> imageId = const Value.absent()}) =>
       UsuarioData(
         id: id ?? this.id,
         username: username ?? this.username,
@@ -376,6 +614,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
         numCotizaciones: numCotizaciones.present
             ? numCotizaciones.value
             : this.numCotizaciones,
+        imageId: imageId.present ? imageId.value : this.imageId,
       );
   @override
   String toString() {
@@ -391,7 +630,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones')
+          ..write('numCotizaciones: $numCotizaciones, ')
+          ..write('imageId: $imageId')
           ..write(')'))
         .toString();
   }
@@ -409,7 +649,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       fechaNacimiento,
       nombre,
       apellido,
-      numCotizaciones);
+      numCotizaciones,
+      imageId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -425,7 +666,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           other.fechaNacimiento == this.fechaNacimiento &&
           other.nombre == this.nombre &&
           other.apellido == this.apellido &&
-          other.numCotizaciones == this.numCotizaciones);
+          other.numCotizaciones == this.numCotizaciones &&
+          other.imageId == this.imageId);
 }
 
 class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
@@ -441,6 +683,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<String?> nombre;
   final Value<String?> apellido;
   final Value<int?> numCotizaciones;
+  final Value<int?> imageId;
   const UsuarioCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
@@ -454,6 +697,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numCotizaciones = const Value.absent(),
+    this.imageId = const Value.absent(),
   });
   UsuarioCompanion.insert({
     this.id = const Value.absent(),
@@ -468,6 +712,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numCotizaciones = const Value.absent(),
+    this.imageId = const Value.absent(),
   }) : username = Value(username);
   static Insertable<UsuarioData> custom({
     Expression<int>? id,
@@ -482,6 +727,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     Expression<String>? nombre,
     Expression<String>? apellido,
     Expression<int>? numCotizaciones,
+    Expression<int>? imageId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -496,6 +742,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       if (nombre != null) 'nombre': nombre,
       if (apellido != null) 'apellido': apellido,
       if (numCotizaciones != null) 'num_cotizaciones': numCotizaciones,
+      if (imageId != null) 'image_id': imageId,
     });
   }
 
@@ -511,7 +758,8 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       Value<String?>? fechaNacimiento,
       Value<String?>? nombre,
       Value<String?>? apellido,
-      Value<int?>? numCotizaciones}) {
+      Value<int?>? numCotizaciones,
+      Value<int?>? imageId}) {
     return UsuarioCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
@@ -525,6 +773,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       nombre: nombre ?? this.nombre,
       apellido: apellido ?? this.apellido,
       numCotizaciones: numCotizaciones ?? this.numCotizaciones,
+      imageId: imageId ?? this.imageId,
     );
   }
 
@@ -567,6 +816,9 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     if (numCotizaciones.present) {
       map['num_cotizaciones'] = Variable<int>(numCotizaciones.value);
     }
+    if (imageId.present) {
+      map['image_id'] = Variable<int>(imageId.value);
+    }
     return map;
   }
 
@@ -584,7 +836,8 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones')
+          ..write('numCotizaciones: $numCotizaciones, ')
+          ..write('imageId: $imageId')
           ..write(')'))
         .toString();
   }
@@ -3945,7 +4198,10 @@ class $UserActivityTable extends UserActivity
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
   @override
   List<GeneratedColumn> get $columns =>
       [id, fecha, name, category, status, userId];
@@ -4947,6 +5203,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
+  late final $ImagesTableTable imagesTable = $ImagesTableTable(this);
   late final $UsuarioTable usuario = $UsuarioTable(this);
   late final $CotizacionTable cotizacion = $CotizacionTable(this);
   late final $HabitacionTable habitacion = $HabitacionTable(this);
@@ -4963,6 +5220,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+        imagesTable,
         usuario,
         cotizacion,
         habitacion,
@@ -4974,6 +5232,124 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         tarifaRack,
         politicas
       ];
+}
+
+typedef $$ImagesTableTableInsertCompanionBuilder = ImagesTableCompanion
+    Function({
+  Value<int> id,
+  Value<String?> code,
+  Value<String?> urlImage,
+});
+typedef $$ImagesTableTableUpdateCompanionBuilder = ImagesTableCompanion
+    Function({
+  Value<int> id,
+  Value<String?> code,
+  Value<String?> urlImage,
+});
+
+class $$ImagesTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ImagesTableTable,
+    ImagesTableData,
+    $$ImagesTableTableFilterComposer,
+    $$ImagesTableTableOrderingComposer,
+    $$ImagesTableTableProcessedTableManager,
+    $$ImagesTableTableInsertCompanionBuilder,
+    $$ImagesTableTableUpdateCompanionBuilder> {
+  $$ImagesTableTableTableManager(_$AppDatabase db, $ImagesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ImagesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ImagesTableTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$ImagesTableTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> urlImage = const Value.absent(),
+          }) =>
+              ImagesTableCompanion(
+            id: id,
+            code: code,
+            urlImage: urlImage,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> urlImage = const Value.absent(),
+          }) =>
+              ImagesTableCompanion.insert(
+            id: id,
+            code: code,
+            urlImage: urlImage,
+          ),
+        ));
+}
+
+class $$ImagesTableTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $ImagesTableTable,
+    ImagesTableData,
+    $$ImagesTableTableFilterComposer,
+    $$ImagesTableTableOrderingComposer,
+    $$ImagesTableTableProcessedTableManager,
+    $$ImagesTableTableInsertCompanionBuilder,
+    $$ImagesTableTableUpdateCompanionBuilder> {
+  $$ImagesTableTableProcessedTableManager(super.$state);
+}
+
+class $$ImagesTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ImagesTableTable> {
+  $$ImagesTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get urlImage => $state.composableBuilder(
+      column: $state.table.urlImage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter usuarioRefs(
+      ComposableFilter Function($$UsuarioTableFilterComposer f) f) {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.imageId,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ImagesTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ImagesTableTable> {
+  $$ImagesTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get urlImage => $state.composableBuilder(
+      column: $state.table.urlImage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
@@ -4989,6 +5365,7 @@ typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
   Value<String?> nombre,
   Value<String?> apellido,
   Value<int?> numCotizaciones,
+  Value<int?> imageId,
 });
 typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
@@ -5003,6 +5380,7 @@ typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<String?> nombre,
   Value<String?> apellido,
   Value<int?> numCotizaciones,
+  Value<int?> imageId,
 });
 
 class $$UsuarioTableTableManager extends RootTableManager<
@@ -5036,6 +5414,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<int?> numCotizaciones = const Value.absent(),
+            Value<int?> imageId = const Value.absent(),
           }) =>
               UsuarioCompanion(
             id: id,
@@ -5050,6 +5429,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             nombre: nombre,
             apellido: apellido,
             numCotizaciones: numCotizaciones,
+            imageId: imageId,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -5064,6 +5444,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<int?> numCotizaciones = const Value.absent(),
+            Value<int?> imageId = const Value.absent(),
           }) =>
               UsuarioCompanion.insert(
             id: id,
@@ -5078,6 +5459,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             nombre: nombre,
             apellido: apellido,
             numCotizaciones: numCotizaciones,
+            imageId: imageId,
           ),
         ));
 }
@@ -5156,6 +5538,31 @@ class $$UsuarioTableFilterComposer
       column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ImagesTableTableFilterComposer get imageId {
+    final $$ImagesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.imageId,
+        referencedTable: $state.db.imagesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ImagesTableTableFilterComposer(ComposerState($state.db,
+                $state.db.imagesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter userActivityRefs(
+      ComposableFilter Function($$UserActivityTableFilterComposer f) f) {
+    final $$UserActivityTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.userActivity,
+        getReferencedColumn: (t) => t.userId,
+        builder: (joinBuilder, parentComposers) =>
+            $$UserActivityTableFilterComposer(ComposerState($state.db,
+                $state.db.userActivity, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$UsuarioTableOrderingComposer
@@ -5220,6 +5627,18 @@ class $$UsuarioTableOrderingComposer
       column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ImagesTableTableOrderingComposer get imageId {
+    final $$ImagesTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.imageId,
+        referencedTable: $state.db.imagesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ImagesTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.imagesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
@@ -6708,10 +7127,17 @@ class $$UserActivityTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  $$UsuarioTableFilterComposer get userId {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.userId,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 class $$UserActivityTableOrderingComposer
@@ -6742,10 +7168,17 @@ class $$UserActivityTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  $$UsuarioTableOrderingComposer get userId {
+    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.userId,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableOrderingComposer(ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 typedef $$TarifaRackTableInsertCompanionBuilder = TarifaRackCompanion Function({
@@ -7056,6 +7489,8 @@ class $$PoliticasTableOrderingComposer
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
+  $$ImagesTableTableTableManager get imagesTable =>
+      $$ImagesTableTableTableManager(_db, _db.imagesTable);
   $$UsuarioTableTableManager get usuario =>
       $$UsuarioTableTableManager(_db, _db.usuario);
   $$CotizacionTableTableManager get cotizacion =>
