@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:sidebarx/sidebarx.dart';
 
 import '../utils/helpers/web_colors.dart';
+import '../utils/shared_preferences/preferences.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/text_styles.dart';
 import '../widgets/textformfield_custom.dart';
@@ -733,6 +738,44 @@ class CustomWidgets {
             )
         ],
       ),
+    );
+  }
+
+  static Widget roleMedal(String rol, Brightness brightness) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Utility.getColorTypeUser(rol, alpha: 100),
+        border: Border.all(
+          color: Utility.getColorTypeUser(rol)!,
+          width: 1.5,
+        ),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: TextStyles.standardText(
+          text: rol,
+          aling: TextAlign.center,
+          color: Utility.darken(
+            Utility.getColorTypeUser(rol)!,
+            brightness == Brightness.light ? 0.1 : -0.1,
+          ),
+          overClip: true,
+          isBold: true,
+        ),
+      ),
+    ).animate(
+      onPlay: (controller) => controller.repeat(),
+      effects: [
+        if (rol == "SUPERADMIN" || rol == "ADMIN")
+          ShimmerEffect(
+            delay: 2.5.seconds,
+            duration: 750.ms,
+            color: Colors.white,
+          ),
+      ],
     );
   }
 }

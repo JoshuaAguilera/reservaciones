@@ -1,5 +1,7 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/imagen_model.dart';
@@ -14,7 +16,9 @@ import 'package:generador_formato/widgets/gestor_imagenes_widget.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
+import '../ui/title_page.dart';
 import '../widgets/text_styles.dart';
 
 class PerfilView extends ConsumerStatefulWidget {
@@ -81,6 +85,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final usuario = ref.watch(userProvider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Scaffold(
       floatingActionButton: screenWidth < 800
@@ -98,7 +103,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                           setState(() => isSaving = false);
                         },
                   text: "Guardar"),
-            ),
+            ).animate().fadeIn(delay: 150.ms),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: SingleChildScrollView(
@@ -106,15 +111,10 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextStyles.titlePagText(
-                  text: "Perfil", color: Theme.of(context).primaryColor),
-              TextStyles.standardText(
-                text: "Gestiona y personaliza la información de tu cuenta.",
-                color: Theme.of(context).primaryColor,
-              ),
-              Divider(
-                color: Theme.of(context).primaryColor,
-              ),
+              const TitlePage(
+                title: "Perfil",
+                subtitle: "Gestiona y personaliza la información de tu cuenta",
+              ).animate().fadeIn(),
               const SizedBox(height: 5),
               Form(
                 key: _formKey,
@@ -139,15 +139,8 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   size: 16),
                               const SizedBox(height: 20),
                               Center(
-                                child: TextButton(
-                                  onPressed: () {},
-                                  child: TextStyles.buttonText(
-                                    text: Preferences.rol,
-                                    size: 14,
-                                    color: Utility.getColorTypeUser(
-                                        Preferences.rol),
-                                  ),
-                                ),
+                                child: CustomWidgets.roleMedal(
+                                    usuario.rol!, brightness),
                               ),
                               GestorImagenes(
                                 imagenes: [photoPeril],
@@ -213,7 +206,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                             ],
                           ),
                         ),
-                      ),
+                      ).animate().fadeIn(delay: 350.ms),
                     ),
                     SizedBox(
                       width: screenWidth < 800
@@ -309,7 +302,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                             ],
                           ),
                         ),
-                      ),
+                      ).animate().fadeIn(delay: 550.ms),
                     ),
                   ],
                 ),

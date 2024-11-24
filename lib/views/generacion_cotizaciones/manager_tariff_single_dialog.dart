@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
@@ -12,6 +11,7 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 
 import '../../providers/habitacion_provider.dart';
+import '../../providers/usuario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/web_colors.dart';
@@ -120,6 +120,7 @@ class _ManagerTariffDayWidgetState
     double tariffChildren =
         calculateTariffMenor(habitacionProvider.menores7a12!);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final usuario = ref.watch(userProvider);
 
     if (!startFlow && widget.tarifaXDia.tarifa == null) {
       selectCategory =
@@ -188,6 +189,7 @@ class _ManagerTariffDayWidgetState
                     if (widget.tarifaXDia.temporadas != null &&
                         widget.tarifaXDia.temporadas!.isNotEmpty)
                       CustomDropdown.dropdownMenuCustom(
+                        withPermisse: (usuario.rol != 'RECEPCION'),
                         initialSelection: temporadaSelect,
                         onSelected: (String? value) =>
                             setState(() => temporadaSelect = value!),
@@ -355,7 +357,8 @@ class _ManagerTariffDayWidgetState
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
                         onUpdate: () => setState(() {}),
-                        isEditing: true,
+                        isEditing: (usuario.rol != 'RECEPCION') ||
+                            (isUnknow || isFreeTariff),
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -403,27 +406,30 @@ class _ManagerTariffDayWidgetState
                                       },
                                     ),
                                   ),
-                                if (!isUnknow &&
-                                    !widget.isAppling &&
-                                    !isFreeTariff &&
-                                    widget.numDays > 1)
-                                  CustomWidgets.checkBoxWithDescription(
-                                    context,
-                                    activeColor: widget.tarifaXDia.color,
-                                    title: "Aplicar en toda la tarifa",
-                                    description:
-                                        "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTariff}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
-                                    value: applyAllTariff,
-                                    onChanged: (value) => setState(
-                                      () {
-                                        applyAllTariff = value!;
-                                        applyAllNoTariff = false;
-                                        applyAllDays = false;
-                                      },
+                                if ((usuario.rol != 'RECEPCION'))
+                                  if (!isUnknow &&
+                                      !widget.isAppling &&
+                                      !isFreeTariff &&
+                                      widget.numDays > 1)
+                                    CustomWidgets.checkBoxWithDescription(
+                                      context,
+                                      activeColor: widget.tarifaXDia.color,
+                                      title: "Aplicar en toda la tarifa",
+                                      description:
+                                          "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTariff}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
+                                      value: applyAllTariff,
+                                      onChanged: (value) => setState(
+                                        () {
+                                          applyAllTariff = value!;
+                                          applyAllNoTariff = false;
+                                          applyAllDays = false;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                if (habitacionProvider.tarifaXDia!
-                                    .any((element) => element.code != 'Unknow'))
+                                if (habitacionProvider.tarifaXDia!.any(
+                                        (element) =>
+                                            element.code != 'Unknow') &&
+                                    (usuario.rol != 'RECEPCION'))
                                   if (!widget.isAppling && widget.numDays > 1)
                                     CustomWidgets.checkBoxWithDescription(
                                       context,
@@ -546,7 +552,8 @@ class _ManagerTariffDayWidgetState
                 return;
               }
 
-              if (applyAllTariff && widget.tarifaXDia.subCode == null) {
+              if (applyAllTariff &&
+                  (widget.tarifaXDia.subCode == null && !withChanges)) {
                 Navigator.pop(context);
                 return;
               }

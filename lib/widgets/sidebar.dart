@@ -1,11 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/ui/my_sidebar_x_item.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../providers/usuario_provider.dart';
 import '../utils/helpers/web_colors.dart';
 
-class SideBar extends StatelessWidget {
+class SideBar extends ConsumerStatefulWidget {
   final bool isExpanded;
   const SideBar({
     Key? key,
@@ -17,10 +23,18 @@ class SideBar extends StatelessWidget {
   final SidebarXController _controller;
 
   @override
+  _SideBarState createState() => _SideBarState();
+}
+
+class _SideBarState extends ConsumerState<SideBar> {
+  @override
   Widget build(BuildContext context) {
+    final imageUser = ref.watch(imagePerfilProvider);
+    final usuario = ref.watch(userProvider);
+
     return SidebarX(
-      controller: _controller,
-      showToggleButton: !isExpanded,
+      controller: widget._controller,
+      showToggleButton: !widget.isExpanded,
       theme: SidebarXTheme(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -48,9 +62,8 @@ class SideBar extends StatelessWidget {
         ),
         selectedItemDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: DesktopColors.actionColor.withOpacity(0.37),
-          ),
+          border:
+              Border.all(color: DesktopColors.actionColor.withOpacity(0.37)),
           gradient: LinearGradient(
             colors: [
               DesktopColors.accentCanvasColor,
@@ -82,54 +95,49 @@ class SideBar extends StatelessWidget {
       footerDivider: DesktopColors.divider,
       headerBuilder: (context, extended) {
         if (extended) {
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  _controller.selectIndex(0);
-                },
-                child: const SizedBox(
-                  height: 100,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 16.0, left: 10, right: 10),
-                    child: Image(
-                      image: AssetImage('assets/image/logo_inicio.png'),
+          return SizedBox(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    widget._controller.selectIndex(0);
+                  },
+                  child: const SizedBox(
+                    height: 100,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 16.0, left: 10, right: 10),
+                      child: Image(
+                        image: AssetImage('assets/image/logo_inicio.png'),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () => _controller.selectIndex(99),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 12),
-                  child: Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: _controller.selectedIndex == 99
-                          ? BoxDecoration(
-                              border: Border.all(
-                                color:
-                                    DesktopColors.actionColor.withOpacity(0.37),
+                MySidebarXItem(
+                  onTap: () => widget._controller.selectIndex(99),
+                  controller: widget._controller,
+                  selectIndex: 99,
+                  children: [
+                    Expanded(
+                      child: (imageUser.urlImagen?.isNotEmpty ?? false)
+                          ? Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white60,
+                                ),
+                                image: DecorationImage(
+                                  image: FileImage(
+                                    File(
+                                      imageUser.urlImagen!,
+                                    ),
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              gradient: LinearGradient(
-                                colors: [
-                                  DesktopColors.accentCanvasColor,
-                                  DesktopColors.canvasColor
-                                ],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.28),
-                                  blurRadius: 30,
-                                )
-                              ],
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)))
-                          : null,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
+                            )
+                          : Container(
                               width: 45,
                               height: 45,
                               decoration: const BoxDecoration(
@@ -140,42 +148,42 @@ class SideBar extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Preferences.username,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontFamily: "poppins_regular",
-                                      fontSize: 14,
-                                      color: Colors.white),
-                                ),
-                                Text(
-                                  Preferences.rol,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontFamily: "poppins_regular",
-                                      color: Colors.white,
-                                      fontSize: 11),
-                                )
-                              ],
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Preferences.username,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: "poppins_regular",
+                              fontSize: 14,
+                              color: Colors.white,
                             ),
+                          ),
+                          Text(
+                            usuario.rol ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontFamily: "poppins_regular",
+                                color: Colors.white,
+                                fontSize: 11),
                           )
                         ],
-                      )),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         } else {
           return Column(
             children: [
               GestureDetector(
-                onTap: () => _controller.selectIndex(0),
+                onTap: () => widget._controller.selectIndex(0),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Image.network(
@@ -184,113 +192,92 @@ class SideBar extends StatelessWidget {
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: () => _controller.selectIndex(99),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: _controller.selectedIndex == 99
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color:
-                                  DesktopColors.actionColor.withOpacity(0.37),
+              MySidebarXItem(
+                onTap: () => widget._controller.selectIndex(99),
+                controller: widget._controller,
+                selectIndex: 99,
+                children: [
+                  Preferences.userImageUrl.isNotEmpty
+                      ? Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white60,
+                            image: DecorationImage(
+                              image: FileImage(
+                                File(
+                                  Preferences.userImageUrl,
+                                ),
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            gradient: LinearGradient(
-                              colors: [
-                                DesktopColors.accentCanvasColor,
-                                DesktopColors.canvasColor
-                              ],
+                          ),
+                        )
+                      : Container(
+                          width: 30,
+                          height: 30,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white60,
+                            image: DecorationImage(
+                              image: AssetImage('assets/image/usuario.png'),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.28),
-                                blurRadius: 30,
-                              )
-                            ],
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)))
-                        : null,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white60,
-                        image: DecorationImage(
-                          image: AssetImage('assets/image/usuario.png'),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
+                ],
               ),
             ],
           );
         }
       },
-      items: const [
-        SidebarXItem(
+      items: [
+        const SidebarXItem(
           icon: CupertinoIcons.home,
           label: 'Inicio',
         ),
-        SidebarXItem(
+        const SidebarXItem(
           icon: CupertinoIcons.money_dollar_circle,
           label: 'Generar Cotización',
         ),
-        SidebarXItem(
+        const SidebarXItem(
           icon: Icons.history,
           label: 'Historial',
         ),
-        SidebarXItem(
+        const SidebarXItem(
           icon: Icons.settings,
           label: 'Configuracion',
         ),
-        SidebarXItem(
-          icon: CupertinoIcons.rectangle_stack_person_crop,
-          label: 'Gestión de usuarios',
-        ),
-        SidebarXItem(
-          icon: CupertinoIcons.book_fill,
-          label: 'Tarifario',
-        ),
+        if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
+          const SidebarXItem(
+            icon: CupertinoIcons.book_fill,
+            label: 'Tarifario',
+          ),
+        if (usuario.rol == 'SUPERADMIN')
+          const SidebarXItem(
+            icon: CupertinoIcons.rectangle_stack_person_crop,
+            label: 'Gestión de usuarios',
+          ),
       ],
-      footerItems: const [
-        SidebarXItem(
-          icon: Icons.output_rounded,
-          label: 'Cerrar sesión',
-        ),
-      ],
-      // footerBuilder: (context, extended) {
-      //   if (!extended) {
-      //     return RotatedBox(
-      //       quarterTurns: 1,
-      //       child: Switch(
-      //         value: true,
-      //         onChanged: (value) {},
-      //       ),
-      //     );
-      //   } else {
-      //     return Padding(
-      //       padding: const EdgeInsets.only(top: 8.0),
-      //       child: Wrap(
-      //         children: [
-      //           Text(
-      //             "Modo oscuro",
-      //             style: TextStyle(
-      //                 color: Colors.white,
-      //                 fontFamily: "poppins_regular",
-      //                 fontSize: 12),
-      //           ),
-      //           Switch(
-      //             value: false,
-      //             onChanged: (value) {},
-      //           )
-      //         ],
-      //       ),
-      //     );
-      //   }
-      // },
+      headerDivider: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: DesktopColors.divider,
+      ),
+      footerBuilder: (context, extended) {
+        return SizedBox(
+          height: 70, // Ajusta la altura según tus necesidades
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: MySidebarXItem(
+              onTap: () => Navigator.pop(context),
+              controller: widget._controller,
+              selectIndex: 45,
+              icon: HeroIcons.arrow_right_on_rectangle,
+              label: "Cerrar sesión",
+            ),
+          ),
+        );
+      },
     );
   }
 }

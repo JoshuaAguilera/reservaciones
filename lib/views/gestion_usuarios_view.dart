@@ -232,7 +232,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                               message:
                                   "No se encontraron usuarios\n registrados",
                             )
-                                .animate()
+                                .animate(delay: 450.ms)
                                 .slide(begin: const Offset(0, 0.1))
                                 .fadeIn(),
                           ),

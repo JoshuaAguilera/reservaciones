@@ -10,7 +10,7 @@ import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/image_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -92,32 +92,9 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
       //   isUpdatingImage = true;
       imagenSelect = widget.imagenes![0];
       codeImage = imagenSelect!.code ?? 0;
-      print(codeImage);
       imagen = imagenSelect!.newImage;
       // height = 350;
       setState(() {});
-    }
-  }
-
-  Future<String> handleImageSelection() async {
-    try {
-      final folderPath = '/images';
-
-      //agregar code para no sobrescribir imagenes
-      final fileName = 'image_user_${Preferences.userId}_perfil.png';
-      final filePath = '$folderPath/$fileName';
-
-      final folder = Directory(folderPath);
-      if (!folder.existsSync()) {
-        folder.createSync(recursive: true);
-      }
-
-      final savedImage = await pathImage!.copy(filePath);
-
-      return savedImage.path;
-    } catch (e) {
-      print(e);
-      return '';
     }
   }
 
@@ -261,7 +238,6 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                   widget.imagenes![itemIndex];
                                               codeImage =
                                                   imagenSelect!.code ?? 0;
-                                              print(codeImage);
                                               imagen = imagenSelect!.newImage;
                                               setState(() {});
                                             },
@@ -442,46 +418,56 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                         text: (imagen != null &&
                                                 imagenSelect?.newImage != null)
                                             ? "Quitar"
-                                            : "Aceptar",
+                                            : "Guardar",
                                         onPressed: () async {
-                                          if (imageUser.id != null) {
-                                            String urlImage =
-                                                await handleImageSelection();
+                                          bool showError = false;
+                                          String urlImage = await ImageService()
+                                              .handleImageSelection(pathImage);
 
+                                          if (imageUser.id != null) {
                                             if (urlImage.isEmpty) {
-                                              showSnackBar(
-                                                  context: context,
-                                                  title:
-                                                      "Error al guardar la imagen",
-                                                  message:
-                                                      "Se presento un problema al intentar actualizar la imagen de perfil.",
-                                                  type: "danger");
+                                              showError = true;
                                             } else {
-                                              showSnackBar(
-                                                context: context,
-                                                title:
-                                                    "Imagen de Perfil actualizado correctamente",
-                                                message:
-                                                    "Se ha guardado correctamente la imagen de perfil, se alojo en la ruta: ${imageUser.urlImagen}",
-                                                type: "success",
+                                              bool updateImage =
+                                                  await ImageService()
+                                                      .updateUrlImage(
+                                                imageUser.id!,
+                                                (imageUser.code ?? 0)
+                                                    .toString(),
+                                                urlImage,
+                                                imageUser.urlImagen!,
                                               );
+
+                                              if (updateImage) {
+                                                showError = true;
+                                              } else {
+                                                Imagen newImage = Imagen(
+                                                  id: imageUser.id ?? 0,
+                                                  code: imageUser.code,
+                                                  urlImagen: urlImage,
+                                                  usuarioId: usuario.id,
+                                                );
+
+                                                ref
+                                                    .watch(imagePerfilProvider
+                                                        .notifier)
+                                                    .update(
+                                                      (ref) => newImage,
+                                                    );
+                                              }
                                             }
                                           } else {
-                                            bool showError = false;
-                                            String urlImage =
-                                                await handleImageSelection();
                                             if (urlImage.isEmpty) {
                                               showError = true;
                                             } else {
                                               int uniqueCode =
-                                                  UniqueKey().hashCode;
+                                                  Utility.getUniqueCode();
 
                                               Imagen newImage = Imagen(
-                                                id: imageUser.id ?? 0,
-                                                code: imageUser.code ??
-                                                    uniqueCode,
+                                                id: 0,
+                                                code: uniqueCode,
                                                 urlImagen: urlImage,
-                                                usuarioId: Preferences.userId,
+                                                usuarioId: usuario.id,
                                               );
 
                                               ImagesTableData? response =
@@ -491,40 +477,44 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                               if (response == null) {
                                                 showError = true;
                                               } else {
-                                                if (await AuthService()
-                                                    .updateImagePerfil(
-                                                        usuario.id,
-                                                        usuario.username,
-                                                        response.id)) {
+                                                bool updateSuccess =
+                                                    await AuthService()
+                                                        .updateImagePerfil(
+                                                  usuario.id,
+                                                  usuario.username,
+                                                  response.id,
+                                                );
+
+                                                if (updateSuccess) {
                                                   showError = true;
                                                 } else {
-                                                  showSnackBar(
-                                                    context: context,
-                                                    title:
-                                                        "Imagen de Perfil actualizado correctamente",
-                                                    message:
-                                                        "Se ha guardado correctamente la imagen de perfil, se alojo en la ruta: $urlImage",
-                                                    type: "success",
-                                                  );
                                                   ref
                                                       .watch(imagePerfilProvider
                                                           .notifier)
                                                       .update(
-                                                        (ref) => newImage,
-                                                      );
+                                                          (ref) => newImage);
                                                 }
                                               }
                                             }
+                                          }
 
-                                            if (showError) {
-                                              showSnackBar(
-                                                  context: context,
-                                                  title:
-                                                      "Error al guardar la imagen",
-                                                  message:
-                                                      "Se presento un problema al intentar actualizar la imagen de perfil.",
-                                                  type: "danger");
-                                            }
+                                          if (showError) {
+                                            showSnackBar(
+                                                context: context,
+                                                title:
+                                                    "Error al guardar la imagen",
+                                                message:
+                                                    "Se presento un problema al intentar actualizar la imagen de perfil.",
+                                                type: "danger");
+                                          } else {
+                                            showSnackBar(
+                                              context: context,
+                                              title:
+                                                  "Imagen de Perfil actualizado correctamente",
+                                              message:
+                                                  "Se ha guardado correctamente la imagen de perfil, se alojo en la ruta: $urlImage",
+                                              type: "success",
+                                            );
                                           }
 
                                           isUpdatingImage = false;

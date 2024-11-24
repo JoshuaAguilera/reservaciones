@@ -16,6 +16,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
+import '../../providers/usuario_provider.dart';
 import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
@@ -102,6 +103,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     final saveTariff = ref.watch(saveTariffPolityProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    final usuario = ref.watch(userProvider);
 
     return Scaffold(
       body: Padding(
@@ -604,79 +606,83 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                           text: "Gestionar tarifa",
                                         ),
                                       ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 5),
-                                      child: SizedBox(
-                                        height: 35,
-                                        child: FormWidgets.inputSwitch(
-                                          name: "Tarifa Libre",
-                                          value: applyFreeTariff,
-                                          activeColor: DesktopColors.cerulean,
-                                          context: context,
-                                          compact: (screenWidth < 950 &&
-                                                  widget.sideController
-                                                      .extended) ||
-                                              (screenWidth < 850 &&
-                                                  !widget
-                                                      .sideController.extended),
-                                          onChanged: (p0) {
-                                            setState(
-                                                () => applyFreeTariff = p0);
-                                            if (applyFreeTariff) {
-                                              tarifaLibre.categoria =
-                                                  habitacionProvider.categoria;
-                                              tarifaLibre.tarifa = null;
-                                              tarifaLibre.descuentoProvisional =
-                                                  0;
+                                    if ((usuario.rol != 'RECEPCION'))
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5),
+                                        child: SizedBox(
+                                          height: 35,
+                                          child: FormWidgets.inputSwitch(
+                                            name: "Tarifa Libre",
+                                            value: applyFreeTariff,
+                                            activeColor: DesktopColors.cerulean,
+                                            context: context,
+                                            compact: (screenWidth < 950 &&
+                                                    widget.sideController
+                                                        .extended) ||
+                                                (screenWidth < 850 &&
+                                                    !widget.sideController
+                                                        .extended),
+                                            onChanged: (p0) {
+                                              setState(
+                                                  () => applyFreeTariff = p0);
+                                              if (applyFreeTariff) {
+                                                tarifaLibre.categoria =
+                                                    habitacionProvider
+                                                        .categoria;
+                                                tarifaLibre.tarifa = null;
+                                                tarifaLibre
+                                                    .descuentoProvisional = 0;
 
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    ManagerTariffSingleDialog(
-                                                  tarifaXDia: tarifaLibre,
-                                                  isAppling: true,
-                                                  numDays: DateTime.parse(
-                                                          habitacionProvider
-                                                                  .fechaCheckOut ??
-                                                              '')
-                                                      .difference(DateTime.parse(
-                                                          habitacionProvider
-                                                                  .fechaCheckIn ??
-                                                              ''))
-                                                      .inDays,
-                                                ),
-                                              ).then(
-                                                (value) {
-                                                  if (value != null) {
-                                                    getTarifasSelect(
-                                                      list,
-                                                      habitacionProvider,
-                                                      tarifasProvisionalesProvider,
-                                                      descuentoProvider,
-                                                      refreshTariff: isEditing,
-                                                      isGroup: typeQuote,
-                                                    );
-                                                  } else {
-                                                    setState(() =>
-                                                        applyFreeTariff =
-                                                            false);
-                                                  }
-                                                },
-                                              );
-                                            } else {
-                                              getTarifasSelect(
-                                                list,
-                                                habitacionProvider,
-                                                tarifasProvisionalesProvider,
-                                                descuentoProvider,
-                                                refreshTariff: isEditing,
-                                                isGroup: typeQuote,
-                                              );
-                                            }
-                                          },
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      ManagerTariffSingleDialog(
+                                                    tarifaXDia: tarifaLibre,
+                                                    isAppling: true,
+                                                    numDays: DateTime.parse(
+                                                            habitacionProvider
+                                                                    .fechaCheckOut ??
+                                                                '')
+                                                        .difference(DateTime.parse(
+                                                            habitacionProvider
+                                                                    .fechaCheckIn ??
+                                                                ''))
+                                                        .inDays,
+                                                  ),
+                                                ).then(
+                                                  (value) {
+                                                    if (value != null) {
+                                                      getTarifasSelect(
+                                                        list,
+                                                        habitacionProvider,
+                                                        tarifasProvisionalesProvider,
+                                                        descuentoProvider,
+                                                        refreshTariff:
+                                                            isEditing,
+                                                        isGroup: typeQuote,
+                                                      );
+                                                    } else {
+                                                      setState(() =>
+                                                          applyFreeTariff =
+                                                              false);
+                                                    }
+                                                  },
+                                                );
+                                              } else {
+                                                getTarifasSelect(
+                                                  list,
+                                                  habitacionProvider,
+                                                  tarifasProvisionalesProvider,
+                                                  descuentoProvider,
+                                                  refreshTariff: isEditing,
+                                                  isGroup: typeQuote,
+                                                );
+                                              }
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
                                     SizedBox(
                                       height: 35,
                                       child: CustomWidgets.sectionButton(

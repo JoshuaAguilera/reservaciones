@@ -18,6 +18,7 @@ import 'package:generador_formato/widgets/notification_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../providers/usuario_provider.dart';
 import '../widgets/cotizacion_item_row.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/text_styles.dart';
@@ -51,6 +52,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
     final ultimasCotizacionesSync = ref.watch(ultimaCotizacionesProvider(''));
     final allQuotesSync = ref.watch(allQuotesProvider(''));
+    final usuario = ref.watch(userProvider);
 
     return Scaffold(
       body: Padding(
@@ -88,7 +90,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     ],
                   )
                 ],
-              ),
+              ).animate().fadeIn(),
               const SizedBox(height: 5),
               if (!isLoading)
                 Center(
@@ -113,7 +115,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     children: [
                                       TextStyles.standardText(
                                           isBold: true,
-                                          text: "Reporte de cotizaciones",
+                                          text: !(usuario.rol != "SUPERADMIN" &&
+                                                  usuario.rol != "ADMIN")
+                                              ? "Reporte de cotizaciones del equipo"
+                                              : "Reporte de cotizaciones",
                                           overClip: true,
                                           color: Theme.of(context).primaryColor,
                                           size: 16),
@@ -285,7 +290,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               ],
                             ),
                           ),
-                        ).animate().fadeIn(),
+                        ).animate().fadeIn(delay: 100.ms),
                       ),
                       SizedBox(
                         height: 524,
@@ -302,7 +307,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   children: [
                                     TextStyles.standardText(
                                       isBold: true,
-                                      text: "Tu contador actual",
+                                      text: !(usuario.rol != "SUPERADMIN" &&
+                                              usuario.rol != "ADMIN")
+                                          ? "Contador actual del equipo"
+                                          : "Tu contador actual",
                                       overClip: true,
                                       color: Theme.of(context).primaryColor,
                                       size: 16,
@@ -368,7 +376,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           children: [
                                             TextStyles.standardText(
                                               isBold: true,
-                                              text: "Reporte de hoy",
+                                              text: "Cotizaciones de hoy",
                                               size: 16,
                                               color: Theme.of(context)
                                                   .primaryColor,
@@ -530,8 +538,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               children: [
                                                 TextStyles.standardText(
                                                     isBold: true,
-                                                    text:
-                                                        "Ultimas cotizaciones",
+                                                    text: !(usuario.rol !=
+                                                                "SUPERADMIN" &&
+                                                            usuario.rol !=
+                                                                "ADMIN")
+                                                        ? "Ultimas cotizaciones del equipo"
+                                                        : "Ultimas cotizaciones",
                                                     color: Theme.of(context)
                                                         .primaryColor,
                                                     size: 16),

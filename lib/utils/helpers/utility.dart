@@ -1642,7 +1642,8 @@ class Utility {
 
       if (onlyTariffVPM) {
         selectTarifa = element.tarifas
-            ?.firstWhere((element) => element.categoria == tipoHabitacion.last);
+            ?.where((element) => element.categoria == tipoHabitacion.last)
+            .firstOrNull;
       }
 
       if (onlyAdults) {
@@ -1884,5 +1885,17 @@ class Utility {
     }
 
     return withoutChanges;
+  }
+
+  static int getUniqueCode() {
+    String code = "";
+    DateTime nowDate = DateTime.now();
+
+    code = nowDate.toString().substring(2, 18).replaceAll(RegExp(r'-'), '');
+    code = code.toString().replaceAll(RegExp(r'[.]'), '');
+    code = code.toString().replaceAll(RegExp(r':'), '');
+    code = code.toString().replaceAll(RegExp(r' '), '');
+
+    return int.parse(code);
   }
 }

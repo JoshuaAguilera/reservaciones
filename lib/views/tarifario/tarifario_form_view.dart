@@ -194,7 +194,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                     setState(() => target = 0);
 
                     Future.delayed(
-                        500.ms, () => widget.sideController.selectIndex(5));
+                        500.ms, () => widget.sideController.selectIndex(4));
                   },
                   onPressedSaveButton: () async {
                     await savedTariff(
@@ -1190,7 +1190,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
         },
       );
 
-      Future.delayed(650.ms, () => widget.sideController.selectIndex(5));
+      Future.delayed(650.ms, () => widget.sideController.selectIndex(4));
     } else {
       if (mounted) return;
       showSnackBar(

@@ -15,6 +15,7 @@ import 'package:sidebarx/sidebarx.dart';
 
 import '../../providers/cotizacion_provider.dart';
 import '../../providers/dahsboard_provider.dart';
+import '../../providers/usuario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
@@ -53,6 +54,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     double screenWidth = MediaQuery.of(context).size.width;
     final receiptQuoteQuery = ref.watch(receiptQuoteQueryProvider(""));
     var filter = ref.watch(filtroProvider);
+    final usuario = ref.watch(userProvider);
 
     void _searchQuote({String? text}) {
       ref
@@ -80,7 +82,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TitlePage(
-                  title: "Historial",
+                  title:
+                      !(usuario.rol != "SUPERADMIN" && usuario.rol != "ADMIN")
+                          ? "Historial de Cotizaciones del Equipo"
+                          : "Historial de Cotizaciones",
                   subtitle: "",
                   childOptional: SizedBox(
                     width: screenWidth * 0.3,
@@ -224,9 +229,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         ? SizedBox(
                             height: screenHight * 0.5,
                             child: CustomWidgets.messageNotResult(
-                                sizeMessage: 15, context: context),
+                              sizeMessage: 12,
+                              context: context,
+                            ),
                           )
-                            .animate()
+                            .animate(delay: 250.ms)
                             .slide(begin: const Offset(0, 0.05))
                             .fadeIn()
                         : SizedBox(

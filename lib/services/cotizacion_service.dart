@@ -12,8 +12,8 @@ class CotizacionService extends BaseService {
       DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp =
-          await dataBase.getCotizacionByPeriod(initTime, lastTime);
+      List<CotizacionData> resp = await dataBase.getCotizacionByPeriod(initTime,
+          lastTime, (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
@@ -109,33 +109,46 @@ class CotizacionService extends BaseService {
     try {
       List<CotizacionData> comprobantes = [];
       if (empty) {
-        comprobantes = await database.select(database.cotizacion).get();
+        comprobantes = await database.getHistorialCotizaciones(
+            (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
       } else {
         if (periodo.isNotEmpty) {
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
           DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
-          comprobantes = await database
-              .getCotizacionesPeriodo(initTime, lastTime, search: search);
+          comprobantes = await database.getCotizacionesPeriodo(
+            initTime,
+            lastTime,
+            search: search,
+            userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+          );
         } else {
           switch (filtro) {
             case "Todos":
               if (search.isNotEmpty) {
-                comprobantes = await database.getCotizacionesSearch(search);
+                comprobantes = await database.getCotizacionesSearch(search,
+                    (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
               } else {
-                comprobantes = await database.select(database.cotizacion).get();
+                comprobantes = await database.getHistorialCotizaciones(
+                    (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
               }
               break;
             case 'Hace un dia':
-              comprobantes =
-                  await database.getCotizacionesUltimoDia(search: search);
+              comprobantes = await database.getCotizacionesUltimoDia(
+                search: search,
+                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+              );
               break;
             case 'Hace una semana':
-              comprobantes =
-                  await database.getCotizacionesUltimaSemana(search: search);
+              comprobantes = await database.getCotizacionesUltimaSemana(
+                search: search,
+                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+              );
               break;
             case 'Hace un mes':
-              comprobantes =
-                  await database.getCotizacionesUltimoMes(search: search);
+              comprobantes = await database.getCotizacionesUltimoMes(
+                search: search,
+                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+              );
               break;
             default:
           }
@@ -170,7 +183,8 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesRecientes() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesRecientes();
+      List<CotizacionData> resp = await dataBase.getCotizacionesRecientes(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
@@ -183,7 +197,8 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesActuales() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesHoy();
+      List<CotizacionData> resp = await dataBase.getCotizacionesHoy(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
@@ -196,7 +211,8 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getAllCotizaciones() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getHistorialCotizaciones();
+      List<CotizacionData> resp = await dataBase.getHistorialCotizaciones(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;

@@ -20,10 +20,16 @@ class AuthService extends BaseService {
   }
 
   Future<bool> loginUser(String userName, String password) async {
-    final db = AppDatabase();
-    List<UsuarioData> users =
-        await db.loginUser(userName, EncrypterTool.encryptData(password, null));
-    db.close();
+    List<UsuarioData> users = [];
+
+    try {
+      final db = AppDatabase();
+      users = await db.loginUser(
+          userName, EncrypterTool.encryptData(password, null));
+      db.close();
+    } catch (e) {
+      print(e);
+    }
     return users.isNotEmpty;
   }
 

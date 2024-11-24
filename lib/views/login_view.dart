@@ -6,6 +6,7 @@ import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/image_service.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
@@ -24,12 +25,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKeyLogin = GlobalKey<FormState>();
-  bool _passwordVisible = false;
+  bool passwordVisible = false;
   bool isLoading = false;
 
   @override
   void initState() {
-    _passwordVisible = true;
+    passwordVisible = true;
     super.initState();
   }
 
@@ -158,7 +159,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     await submitData.call();
                                   },
                                   controller: passwordController,
-                                  obscureText: _passwordVisible,
+                                  obscureText: passwordVisible,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Ingrese contraseña';
@@ -173,15 +174,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       border: const OutlineInputBorder(),
                                       suffixIcon: IconButton(
                                         icon: Icon(
-                                          _passwordVisible
+                                          passwordVisible
                                               ? CupertinoIcons.eye_solid
                                               : CupertinoIcons.eye_slash_fill,
                                           color: Theme.of(context).primaryColor,
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            _passwordVisible =
-                                                !_passwordVisible;
+                                            passwordVisible = !passwordVisible;
                                           });
                                         },
                                       ),
@@ -248,7 +248,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     );
   }
 
-  submitData() async {
+  Future<void> submitData() async {
     setState(() => isLoading = true);
     if (_formKeyLogin.currentState!.validate()) {
       if (!await AuthService().foundUserName(userNameController.text)) {
@@ -265,6 +265,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
       if (!await AuthService()
           .loginUser(userNameController.text, passwordController.text)) {
+        passwordController.text = "";
         setState(() => isLoading = false);
         showSnackBar(
           type: "danger",
@@ -284,6 +285,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
             await ImageService().getImageById(usuario.imageId!);
 
         if (imageUser != null) {
+          Preferences.userImageUrl = imageUser.urlImage ?? '';
           ref.watch(imagePerfilProvider.notifier).update(
                 (ref) => Imagen(
                   code: int.parse(imageUser.code ?? '0'),
@@ -293,8 +295,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 ),
               );
         } else {
-          print("Imagen no encontrada");
+          Preferences.userImageUrl = "";
+          ref.watch(imagePerfilProvider.notifier).update((ref) => Imagen());
         }
+
+        setState(() {});
+      } else {
+        Preferences.userImageUrl = "";
+        ref.watch(imagePerfilProvider.notifier).update((ref) => Imagen());
       }
 
       ref.read(userProvider.notifier).update((state) => usuario);
@@ -303,7 +311,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
         context,
         MaterialPageRoute(builder: (context) => HomeView()),
       );
-      _passwordVisible = false;
+      passwordVisible = true;
       isLoading = false;
       userNameController.text = '';
       passwordController.text = '';

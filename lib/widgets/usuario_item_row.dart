@@ -206,43 +206,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Utility.getColorTypeUser(widget.usuario.rol!,
-                        alpha: 100),
-                    border: Border.all(
-                      color: Utility.getColorTypeUser(widget.usuario.rol!)!,
-                      width: 1.5,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextStyles.standardText(
-                      text: widget.usuario.rol!,
-                      aling: TextAlign.center,
-                      color: Utility.darken(
-                        Utility.getColorTypeUser(widget.usuario.rol!)!,
-                        brightness == Brightness.light ? 0.1 : -0.1,
-                      ),
-                      overClip: true,
-                      isBold: true,
-                    ),
-                  ),
-                ).animate(
-                  onPlay: (controller) => controller.repeat(),
-                  effects: [
-                    if (widget.usuario.rol == "SUPERADMIN" ||
-                        widget.usuario.rol == "ADMIN")
-                      ShimmerEffect(
-                        delay: 2.5.seconds,
-                        duration: 750.ms,
-                        color: Colors.white,
-                      ),
-                  ],
-                ),
+                child: CustomWidgets.roleMedal(widget.usuario.rol!, brightness),
               ),
               TextStyles.standardText(
                 text: widget.usuario.username,

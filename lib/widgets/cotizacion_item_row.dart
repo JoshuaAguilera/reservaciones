@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
 import '../utils/helpers/web_colors.dart';
 import 'text_styles.dart';
@@ -116,13 +117,14 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                           color: DesktopColors.ceruleanOscure,
                         ),
                       ),
-                    IconButton(
-                      onPressed: widget.deleteReceipt,
-                      icon: Icon(
-                        color: colorIconDelete,
-                        CupertinoIcons.delete_solid,
+                    if (Preferences.rol != 'RECEPCION')
+                      IconButton(
+                        onPressed: widget.deleteReceipt,
+                        icon: Icon(
+                          color: colorIconDelete,
+                          CupertinoIcons.delete_solid,
+                        ),
                       ),
-                    ),
                   ],
                 ),
         ),
