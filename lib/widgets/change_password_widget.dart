@@ -132,14 +132,18 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Buttons.commonButton(
-                    onPressed: () {
-                      widget.isChanged.call(false);
-                      setState(() => cancelChangedKeyMail = false);
-                      Future.delayed(Durations.long1,
-                          () => setState(() => canChangedKeyMail = false));
-                      passwordMailConfirmController.text = "";
-                      passwordMailNewController.text = "";
-                    },
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            widget.isChanged.call(false);
+                            setState(() => cancelChangedKeyMail = false);
+                            Future.delayed(
+                                Durations.long1,
+                                () =>
+                                    setState(() => canChangedKeyMail = false));
+                            passwordMailConfirmController.text = "";
+                            passwordMailNewController.text = "";
+                          },
                     color: DesktopColors.mentaOscure,
                     text: "Cancelar"),
                 Buttons.commonButton(

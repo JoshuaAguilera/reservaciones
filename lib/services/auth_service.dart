@@ -157,7 +157,7 @@ class AuthService extends BaseService {
     try {
       await database.into(database.usuario).insert(
             UsuarioCompanion.insert(
-              username: user?.username ?? '',
+              username: Value(user?.username ?? ''),
               password: Value(user?.password ?? ''),
               rol: Value(user?.rol ?? ''),
               status: const Value("ACTIVO"),

@@ -815,8 +815,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
               data: (list) {
                 return SummaryControllerWidget(
                   calculateRoom: true,
-                  numDays: DateTime.parse(_fechaSalida.text)
-                      .difference(DateTime.parse(_fechaEntrada.text))
+                  numDays: DateTime.parse(_fechaSalida.text.isNotEmpty
+                          ? _fechaSalida.text
+                          : DateTime.now().toIso8601String())
+                      .difference(DateTime.parse(_fechaEntrada.text.isNotEmpty
+                          ? _fechaEntrada.text
+                          : DateTime.now().add(1.days).toIso8601String()))
                       .inDays,
                   onSaveQuote: () {
                     final habitacionesProvider = HabitacionProvider.provider;
@@ -1227,10 +1231,16 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           categoria: categoria,
           descuentoProvisional:
               (tarifasProvisionales.isEmpty) ? 0 : descuentoProvisional,
-          tarifas: (tarifasProvisionales.isEmpty) ? null : tarifasProvisionales,
+          tarifas: (tarifasProvisionales.isEmpty)
+              ? null
+              : tarifasProvisionales
+                  .map((element) => element.copyWith())
+                  .toList(),
           tarifa: (tarifasProvisionales.isEmpty)
               ? null
               : (tarifasProvisionales
+                  .map((element) => element.copyWith())
+                  .toList()
                   .where((element) => element.categoria == categoria)
                   .firstOrNull),
         );

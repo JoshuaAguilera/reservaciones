@@ -18,13 +18,13 @@ class SendQuoteService extends BaseService {
       {String? newMail}) async {
     String messageSent = "";
 
-    String username = 'sys2@coralbluehuatulco.mx';
-    String password = 'Sys2024CB';
+    // String username = 'sys2@coralbluehuatulco.mx';
+    // String password = 'Sys2024CB';
 
     final smtpServer = SmtpServer(
       "mail.coralbluehuatulco.mx",
       username: username,
-      password: password,
+      password: passwordMail,
       port: 465,
       ssl: true,
       //ignoreBadCertificate: true,
@@ -68,7 +68,6 @@ class SendQuoteService extends BaseService {
   Future<bool> sendQuoteWhatsApp(
       Cotizacion comprobante, List<Habitacion> habitaciones) async {
     bool status = false;
-    var phone = comprobante.numeroTelefonico;
 
     var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";

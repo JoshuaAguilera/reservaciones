@@ -27,6 +27,8 @@ class SideBar extends ConsumerStatefulWidget {
 }
 
 class _SideBarState extends ConsumerState<SideBar> {
+  Image? _imageWidget;
+  bool startflow = false;
   @override
   Widget build(BuildContext context) {
     final imageUser = ref.watch(imagePerfilProvider);
@@ -119,21 +121,23 @@ class _SideBarState extends ConsumerState<SideBar> {
                   children: [
                     Expanded(
                       child: (imageUser.urlImagen?.isNotEmpty ?? false)
-                          ? Container(
-                              width: 45,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white60,
-                                ),
-                                image: DecorationImage(
-                                  image: FileImage(
-                                    File(
-                                      imageUser.urlImagen!,
-                                    ),
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white60,
                                   ),
-                                  fit: BoxFit.cover,
+                                ),
+                                child: ClipOval(
+                                  child: Image.file(
+                                    File(imageUser.urlImagen!),
+                                    fit: BoxFit.cover,
+                                    width: 45,
+                                    height: 45,
+                                  ),
                                 ),
                               ),
                             )
@@ -199,18 +203,18 @@ class _SideBarState extends ConsumerState<SideBar> {
                 children: [
                   Preferences.userImageUrl.isNotEmpty
                       ? Container(
-                          width: 30,
-                          height: 30,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white60,
-                            image: DecorationImage(
-                              image: FileImage(
-                                File(
-                                  Preferences.userImageUrl,
-                                ),
-                              ),
+                            border: Border.all(
+                              color: Colors.white60,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Image.file(
+                              File(imageUser.urlImagen!),
                               fit: BoxFit.cover,
+                              width: 30,
+                              height: 30,
                             ),
                           ),
                         )

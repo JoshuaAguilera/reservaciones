@@ -2,6 +2,9 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/dahsboard_provider.dart';
+import 'package:generador_formato/providers/habitacion_provider.dart';
+import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/image_service.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -12,6 +15,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 
 import '../database/database.dart';
 import '../models/imagen_model.dart';
+import '../providers/cotizacion_provider.dart';
 import '../ui/show_snackbar.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -306,6 +310,28 @@ class _LoginViewState extends ConsumerState<LoginView> {
       }
 
       ref.read(userProvider.notifier).update((state) => usuario);
+      ref
+          .read(changeHistoryProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref.read(changeProvider.notifier).update((state) => UniqueKey().hashCode);
+      ref
+          .read(detectChangeRoomProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(detectChangeProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTarifasProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTarifasListProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTariffPolicyProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeUsersProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
 
       Navigator.push(
         context,

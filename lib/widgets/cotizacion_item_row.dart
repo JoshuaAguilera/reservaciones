@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
@@ -92,41 +93,49 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),
-          trailing: widget.isQuery
-              ? null
-              : Wrap(
-                  children: [
-                    if (!isLoading)
-                      IconButton(
-                        onPressed: () {
-                          widget.seeReceipt!.call();
-                          setState(() {
-                            isLoading = true;
-                          });
-                        },
-                        icon: Icon(
-                          color: colorIconDetail,
-                          CupertinoIcons.eye,
-                        ),
-                      )
-                    else
-                      SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: CircularProgressIndicator(
-                          color: DesktopColors.ceruleanOscure,
-                        ),
-                      ),
-                    if (Preferences.rol != 'RECEPCION')
-                      IconButton(
-                        onPressed: widget.deleteReceipt,
-                        icon: Icon(
-                          color: colorIconDelete,
-                          CupertinoIcons.delete_solid,
-                        ),
-                      ),
-                  ],
+          trailing: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (!(Preferences.rol != "SUPERADMIN" &&
+                  Preferences.rol != "ADMIN"))
+                CustomWidgets.buildItemGraphics(
+                  icon: CupertinoIcons.person_alt_circle,
+                  color: colorText!,
+                  label: widget.cotizacion.username ?? 'Not found',
+                  fontSize: 11.5,
+                  iconSize: 16,
                 ),
+              if (!isLoading && !widget.isQuery)
+                IconButton(
+                  onPressed: () {
+                    widget.seeReceipt!.call();
+                    setState(() {
+                      isLoading = true;
+                    });
+                  },
+                  icon: Icon(
+                    color: colorIconDetail,
+                    CupertinoIcons.eye,
+                  ),
+                )
+              else if (!widget.isQuery)
+                SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(
+                    color: DesktopColors.ceruleanOscure,
+                  ),
+                ),
+              if (Preferences.rol != 'RECEPCION' && !widget.isQuery)
+                IconButton(
+                  onPressed: widget.deleteReceipt,
+                  icon: Icon(
+                    color: colorIconDelete,
+                    CupertinoIcons.delete_solid,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

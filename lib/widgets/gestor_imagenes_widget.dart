@@ -253,13 +253,6 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                               } else {
                                 return Stack(
                                   children: [
-                                    // Center(
-                                    //   child: Image(
-                                    //       image: AssetImage(widget.isPlaca
-                                    //           ? 'assets/images/placa.png'
-                                    //           : 'assets/images/box_article_icon.png'),
-                                    //       width: 120),
-                                    // ),
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 28.0),
@@ -419,10 +412,14 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                 imagenSelect?.newImage != null)
                                             ? "Quitar"
                                             : "Guardar",
+                                        isLoading: isUploadingImage,
                                         onPressed: () async {
                                           bool showError = false;
                                           String urlImage = await ImageService()
                                               .handleImageSelection(pathImage);
+
+                                          isUploadingImage = true;
+                                          setState(() {});
 
                                           if (imageUser.id != null) {
                                             if (urlImage.isEmpty) {
@@ -481,7 +478,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                     await AuthService()
                                                         .updateImagePerfil(
                                                   usuario.id,
-                                                  usuario.username,
+                                                  usuario.username!,
                                                   response.id,
                                                 );
 
@@ -510,13 +507,14 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                             showSnackBar(
                                               context: context,
                                               title:
-                                                  "Imagen de Perfil actualizado correctamente",
+                                                  "Imagen de perfil actualizada",
                                               message:
-                                                  "Se ha guardado correctamente la imagen de perfil, se alojo en la ruta: $urlImage",
+                                                  "Se ha guardado correctamente la imagen de perfil",
                                               type: "success",
                                             );
                                           }
 
+                                          isUploadingImage = false;
                                           isUpdatingImage = false;
                                           imagen = null;
                                           imagenSelect = Imagen();
@@ -529,7 +527,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                       child: Buttons.commonButton(
                                         text: "Cancelar",
                                         color: DesktopColors.prussianBlue,
-                                        onPressed: () {
+                                        onPressed: isUploadingImage ? null : () {
                                           imagen = null;
                                           isUpdatingImage = false;
                                           imagenSelect?.newImage = null;

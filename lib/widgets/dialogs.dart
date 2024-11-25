@@ -26,7 +26,7 @@ class Dialogs {
     void Function()? onUpdateList,
     required Brightness brightness,
   }) {
-    String rol = usuario?.rol ?? roles.first;
+    String rol = usuario?.rol ?? roles[2];
     bool inProcess = false;
     bool showError = false;
     bool showConfigPassword = false;
@@ -267,7 +267,7 @@ class Dialogs {
                                           isChanged: (value) => setState(
                                               () => showConfigPassword = value),
                                           userId: usuario.id,
-                                          username: usuario.username,
+                                          username: usuario.username ?? '',
                                           isPasswordMail: false,
                                           notAskChange: passwordEditController
                                               .text.isEmpty,
@@ -275,42 +275,6 @@ class Dialogs {
                                               context, setState, true),
                                         ),
                                       ),
-                                      // const SizedBox(width: 10),
-                                      // if (usuario != null &&
-                                      //     passwordMailEditController
-                                      //         .text.isEmpty)
-                                      //   Expanded(
-                                      //     child: TextFormFieldCustom
-                                      //         .textFormFieldwithBorder(
-                                      //       name: "Contraseña de correo",
-                                      //       passwordVisible: true,
-                                      //       isPassword: true,
-                                      //       controller:
-                                      //           passwordMailEditController,
-                                      //       validator: (p0) {
-                                      //         if (p0 == null ||
-                                      //             p0.isEmpty ||
-                                      //             p0.length < 4) {
-                                      //           return "La contraseña debe de tener al menos 4 caracteres*";
-                                      //         }
-                                      //         return null;
-                                      //       },
-                                      //     ),
-                                      //   )
-                                      // else
-                                      //   Expanded(
-                                      //     child: ChangePasswordWidget(
-                                      //       passwordController:
-                                      //           passwordMailEditController,
-                                      //       isChanged: (value) {},
-                                      //       userId: usuario.id,
-                                      //       username: usuario.username,
-                                      //       isPasswordMail: true,
-                                      //       notAskChange:
-                                      //           passwordMailEditController
-                                      //               .text.isEmpty,
-                                      //     ),
-                                      //   ),
                                     ],
                                   ),
                                 ),

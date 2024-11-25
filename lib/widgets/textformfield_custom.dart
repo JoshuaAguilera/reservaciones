@@ -153,6 +153,7 @@ class TextFormFieldCustom {
     bool nowLastYear = false,
     bool changed = false,
     bool compact = false,
+    bool readOnly = false,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -172,6 +173,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: true,
                 child: TextFormField(
+                  readOnly: readOnly,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return msgError;

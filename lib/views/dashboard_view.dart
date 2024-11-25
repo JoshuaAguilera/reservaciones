@@ -578,7 +578,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               child: CustomWidgets
                                                   .messageNotResult(
                                                       context: context),
-                                            );
+                                            )
+                                                .animate(delay: 1250.ms)
+                                                .slide(
+                                                    begin:
+                                                        const Offset(0, 0.05))
+                                                .fadeIn();
                                           } else {
                                             return SizedBox(
                                               width: screenWidth,

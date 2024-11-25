@@ -43,7 +43,7 @@ class CustomDropdown {
                   skipTraversal: !withPermisse,
                   canRequestFocus: withPermisse,
                   child: DropdownMenu<String>(
-                    menuHeight: 200,
+                    menuHeight: 220,
                     width: screenWidth == null
                         ? null
                         : calculateWidth
@@ -72,6 +72,50 @@ class CustomDropdown {
                         fontFamily: "poppins_regular", fontSize: fontSize),
                     dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
                       (String value) {
+                        Color? textColor;
+                        Color? backgroundColor;
+
+                        switch (value) {
+                          case "ADMIN":
+                            textColor = Utility.darken(
+                                Utility.getColorTypeUser("ADMIN")!);
+                            break;
+                          case "SUPERADMIN":
+                            textColor = Utility.getColorTypeUser("SUPERADMIN");
+                            break;
+                          case "VENTAS":
+                            textColor = Utility.getColorTypeUser("VENTAS");
+                            break;
+                          case "RECEPCION":
+                            textColor = Utility.getColorTypeUser("RECEPCION");
+                            break;
+                          default:
+                            textColor = Theme.of(context).primaryColor;
+                        }
+
+                        switch (value) {
+                          case "ADMIN":
+                            backgroundColor =
+                                Utility.getColorTypeUser("ADMIN", alpha: 100);
+                            break;
+                          case "SUPERADMIN":
+                            backgroundColor = Utility.getColorTypeUser(
+                                "SUPERADMIN",
+                                alpha: 100);
+                            break;
+                          case "VENTAS":
+                            backgroundColor =
+                                Utility.getColorTypeUser("VENTAS", alpha: 100);
+                            break;
+                          case "RECEPCION":
+                            backgroundColor = Utility.getColorTypeUser(
+                                "RECEPCION",
+                                alpha: 100);
+                            break;
+                          default:
+                            backgroundColor = null;
+                        }
+
                         return DropdownMenuEntry<String>(
                           value: value,
                           label: value,
@@ -83,6 +127,9 @@ class CustomDropdown {
                                       .any((element) => element == value)
                                   : true,
                           style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(backgroundColor),
+                            foregroundColor: WidgetStatePropertyAll(textColor),
                             textStyle: WidgetStatePropertyAll(
                               TextStyle(
                                 fontFamily: "poppins_regular",

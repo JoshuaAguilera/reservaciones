@@ -137,11 +137,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                   overClip: true,
                                   color: Theme.of(context).primaryColor,
                                   size: 16),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
                               Center(
                                 child: CustomWidgets.roleMedal(
                                     usuario.rol!, brightness),
                               ),
+                              const SizedBox(height: 7),
                               GestorImagenes(
                                 imagenes: [photoPeril],
                                 isDialog: true,
@@ -180,11 +181,13 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 width: double.infinity,
                                 child: TextFormFieldCustom
                                     .textFormFieldwithBorderCalendar(
+                                  readOnly: true,
                                   name: "Fecha de nacimiento",
                                   msgError: "Campo requerido*",
                                   dateController: dateController,
                                   nowLastYear: true,
                                   fechaLimite: "1900-01-01",
+
                                   // changed: !changeDate,
                                   onChanged: () {
                                     setState(() {
@@ -199,7 +202,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 isChanged: (value) =>
                                     setState(() => canChangedKey = value),
                                 userId: usuario.id,
-                                username: usuario.username,
+                                username: usuario.username ?? '',
                                 isPasswordMail: false,
                               ),
                               const SizedBox(height: 7),
@@ -274,7 +277,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 isChanged: (value) =>
                                     setState(() => canChangedKeyMail = value),
                                 userId: usuario.id,
-                                username: usuario.username,
+                                username: usuario.username ?? '',
                                 isPasswordMail: true,
                               ),
                               const SizedBox(height: 7),

@@ -232,10 +232,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       const VerificationMeta('username');
   @override
   late final GeneratedColumn<String> username = GeneratedColumn<String>(
-      'username', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      'username', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _passwordMeta =
       const VerificationMeta('password');
   @override
@@ -336,8 +334,6 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
     if (data.containsKey('username')) {
       context.handle(_usernameMeta,
           username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
-    } else if (isInserting) {
-      context.missing(_usernameMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
@@ -403,7 +399,7 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       username: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
@@ -437,7 +433,7 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
 
 class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final int id;
-  final String username;
+  final String? username;
   final String? password;
   final String? rol;
   final String? status;
@@ -451,7 +447,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final int? imageId;
   const UsuarioData(
       {required this.id,
-      required this.username,
+      this.username,
       this.password,
       this.rol,
       this.status,
@@ -467,7 +463,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['username'] = Variable<String>(username);
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
     if (!nullToAbsent || password != null) {
       map['password'] = Variable<String>(password);
     }
@@ -507,7 +505,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   UsuarioCompanion toCompanion(bool nullToAbsent) {
     return UsuarioCompanion(
       id: Value(id),
-      username: Value(username),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
       password: password == null && nullToAbsent
           ? const Value.absent()
           : Value(password),
@@ -545,7 +545,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuarioData(
       id: serializer.fromJson<int>(json['id']),
-      username: serializer.fromJson<String>(json['username']),
+      username: serializer.fromJson<String?>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
       rol: serializer.fromJson<String?>(json['rol']),
       status: serializer.fromJson<String?>(json['status']),
@@ -565,7 +565,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'username': serializer.toJson<String>(username),
+      'username': serializer.toJson<String?>(username),
       'password': serializer.toJson<String?>(password),
       'rol': serializer.toJson<String?>(rol),
       'status': serializer.toJson<String?>(status),
@@ -582,7 +582,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
 
   UsuarioData copyWith(
           {int? id,
-          String? username,
+          Value<String?> username = const Value.absent(),
           Value<String?> password = const Value.absent(),
           Value<String?> rol = const Value.absent(),
           Value<String?> status = const Value.absent(),
@@ -596,7 +596,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           Value<int?> imageId = const Value.absent()}) =>
       UsuarioData(
         id: id ?? this.id,
-        username: username ?? this.username,
+        username: username.present ? username.value : this.username,
         password: password.present ? password.value : this.password,
         rol: rol.present ? rol.value : this.rol,
         status: status.present ? status.value : this.status,
@@ -672,7 +672,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
 
 class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<int> id;
-  final Value<String> username;
+  final Value<String?> username;
   final Value<String?> password;
   final Value<String?> rol;
   final Value<String?> status;
@@ -701,7 +701,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   });
   UsuarioCompanion.insert({
     this.id = const Value.absent(),
-    required String username,
+    this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
     this.status = const Value.absent(),
@@ -713,7 +713,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.apellido = const Value.absent(),
     this.numCotizaciones = const Value.absent(),
     this.imageId = const Value.absent(),
-  }) : username = Value(username);
+  });
   static Insertable<UsuarioData> custom({
     Expression<int>? id,
     Expression<String>? username,
@@ -748,7 +748,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
 
   UsuarioCompanion copyWith(
       {Value<int>? id,
-      Value<String>? username,
+      Value<String?>? username,
       Value<String?>? password,
       Value<String?>? rol,
       Value<String?>? status,
@@ -887,12 +887,6 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
       'fecha', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _usuarioIDMeta =
-      const VerificationMeta('usuarioID');
-  @override
-  late final GeneratedColumn<int> usuarioID = GeneratedColumn<int>(
-      'usuario_i_d', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _esGrupoMeta =
       const VerificationMeta('esGrupo');
   @override
@@ -917,6 +911,21 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<String> habitaciones = GeneratedColumn<String>(
       'habitaciones', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _usuarioIDMeta =
+      const VerificationMeta('usuarioID');
+  @override
+  late final GeneratedColumn<int> usuarioID = GeneratedColumn<int>(
+      'usuario_i_d', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -925,10 +934,11 @@ class $CotizacionTable extends Cotizacion
         numeroTelefonico,
         correoElectrico,
         fecha,
-        usuarioID,
         esGrupo,
         esConcretado,
-        habitaciones
+        habitaciones,
+        usuarioID,
+        username
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -973,12 +983,6 @@ class $CotizacionTable extends Cotizacion
     } else if (isInserting) {
       context.missing(_fechaMeta);
     }
-    if (data.containsKey('usuario_i_d')) {
-      context.handle(
-          _usuarioIDMeta,
-          usuarioID.isAcceptableOrUnknown(
-              data['usuario_i_d']!, _usuarioIDMeta));
-    }
     if (data.containsKey('es_grupo')) {
       context.handle(_esGrupoMeta,
           esGrupo.isAcceptableOrUnknown(data['es_grupo']!, _esGrupoMeta));
@@ -994,6 +998,16 @@ class $CotizacionTable extends Cotizacion
           _habitacionesMeta,
           habitaciones.isAcceptableOrUnknown(
               data['habitaciones']!, _habitacionesMeta));
+    }
+    if (data.containsKey('usuario_i_d')) {
+      context.handle(
+          _usuarioIDMeta,
+          usuarioID.isAcceptableOrUnknown(
+              data['usuario_i_d']!, _usuarioIDMeta));
+    }
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
     }
     return context;
   }
@@ -1016,14 +1030,16 @@ class $CotizacionTable extends Cotizacion
           DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
-      usuarioID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
       esGrupo: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
       esConcretado: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_concretado']),
       habitaciones: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}habitaciones']),
+      usuarioID: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
     );
   }
 
@@ -1040,10 +1056,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final String? numeroTelefonico;
   final String? correoElectrico;
   final DateTime fecha;
-  final int? usuarioID;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
+  final int? usuarioID;
+  final String? username;
   const CotizacionData(
       {required this.id,
       this.folioPrincipal,
@@ -1051,10 +1068,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       this.numeroTelefonico,
       this.correoElectrico,
       required this.fecha,
-      this.usuarioID,
       this.esGrupo,
       this.esConcretado,
-      this.habitaciones});
+      this.habitaciones,
+      this.usuarioID,
+      this.username});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1072,9 +1090,6 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       map['correo_electrico'] = Variable<String>(correoElectrico);
     }
     map['fecha'] = Variable<DateTime>(fecha);
-    if (!nullToAbsent || usuarioID != null) {
-      map['usuario_i_d'] = Variable<int>(usuarioID);
-    }
     if (!nullToAbsent || esGrupo != null) {
       map['es_grupo'] = Variable<bool>(esGrupo);
     }
@@ -1083,6 +1098,12 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     }
     if (!nullToAbsent || habitaciones != null) {
       map['habitaciones'] = Variable<String>(habitaciones);
+    }
+    if (!nullToAbsent || usuarioID != null) {
+      map['usuario_i_d'] = Variable<int>(usuarioID);
+    }
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
     }
     return map;
   }
@@ -1103,9 +1124,6 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ? const Value.absent()
           : Value(correoElectrico),
       fecha: Value(fecha),
-      usuarioID: usuarioID == null && nullToAbsent
-          ? const Value.absent()
-          : Value(usuarioID),
       esGrupo: esGrupo == null && nullToAbsent
           ? const Value.absent()
           : Value(esGrupo),
@@ -1115,6 +1133,12 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       habitaciones: habitaciones == null && nullToAbsent
           ? const Value.absent()
           : Value(habitaciones),
+      usuarioID: usuarioID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioID),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
     );
   }
 
@@ -1128,10 +1152,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
       correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
-      usuarioID: serializer.fromJson<int?>(json['usuarioID']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
+      usuarioID: serializer.fromJson<int?>(json['usuarioID']),
+      username: serializer.fromJson<String?>(json['username']),
     );
   }
   @override
@@ -1144,10 +1169,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
       'correoElectrico': serializer.toJson<String?>(correoElectrico),
       'fecha': serializer.toJson<DateTime>(fecha),
-      'usuarioID': serializer.toJson<int?>(usuarioID),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
+      'usuarioID': serializer.toJson<int?>(usuarioID),
+      'username': serializer.toJson<String?>(username),
     };
   }
 
@@ -1158,10 +1184,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<String?> numeroTelefonico = const Value.absent(),
           Value<String?> correoElectrico = const Value.absent(),
           DateTime? fecha,
-          Value<int?> usuarioID = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
-          Value<String?> habitaciones = const Value.absent()}) =>
+          Value<String?> habitaciones = const Value.absent(),
+          Value<int?> usuarioID = const Value.absent(),
+          Value<String?> username = const Value.absent()}) =>
       CotizacionData(
         id: id ?? this.id,
         folioPrincipal:
@@ -1175,12 +1202,13 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
             ? correoElectrico.value
             : this.correoElectrico,
         fecha: fecha ?? this.fecha,
-        usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
             esConcretado.present ? esConcretado.value : this.esConcretado,
         habitaciones:
             habitaciones.present ? habitaciones.value : this.habitaciones,
+        usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
+        username: username.present ? username.value : this.username,
       );
   @override
   String toString() {
@@ -1191,10 +1219,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
-          ..write('usuarioID: $usuarioID, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
-          ..write('habitaciones: $habitaciones')
+          ..write('habitaciones: $habitaciones, ')
+          ..write('usuarioID: $usuarioID, ')
+          ..write('username: $username')
           ..write(')'))
         .toString();
   }
@@ -1207,10 +1236,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico,
       correoElectrico,
       fecha,
-      usuarioID,
       esGrupo,
       esConcretado,
-      habitaciones);
+      habitaciones,
+      usuarioID,
+      username);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1221,10 +1251,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           other.numeroTelefonico == this.numeroTelefonico &&
           other.correoElectrico == this.correoElectrico &&
           other.fecha == this.fecha &&
-          other.usuarioID == this.usuarioID &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
-          other.habitaciones == this.habitaciones);
+          other.habitaciones == this.habitaciones &&
+          other.usuarioID == this.usuarioID &&
+          other.username == this.username);
 }
 
 class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
@@ -1234,10 +1265,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<String?> numeroTelefonico;
   final Value<String?> correoElectrico;
   final Value<DateTime> fecha;
-  final Value<int?> usuarioID;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
+  final Value<int?> usuarioID;
+  final Value<String?> username;
   const CotizacionCompanion({
     this.id = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
@@ -1245,10 +1277,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
-    this.usuarioID = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
+    this.usuarioID = const Value.absent(),
+    this.username = const Value.absent(),
   });
   CotizacionCompanion.insert({
     this.id = const Value.absent(),
@@ -1257,10 +1290,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     required DateTime fecha,
-    this.usuarioID = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
+    this.usuarioID = const Value.absent(),
+    this.username = const Value.absent(),
   }) : fecha = Value(fecha);
   static Insertable<CotizacionData> custom({
     Expression<int>? id,
@@ -1269,10 +1303,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     Expression<String>? numeroTelefonico,
     Expression<String>? correoElectrico,
     Expression<DateTime>? fecha,
-    Expression<int>? usuarioID,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
     Expression<String>? habitaciones,
+    Expression<int>? usuarioID,
+    Expression<String>? username,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1281,10 +1316,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
       if (correoElectrico != null) 'correo_electrico': correoElectrico,
       if (fecha != null) 'fecha': fecha,
-      if (usuarioID != null) 'usuario_i_d': usuarioID,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
       if (habitaciones != null) 'habitaciones': habitaciones,
+      if (usuarioID != null) 'usuario_i_d': usuarioID,
+      if (username != null) 'username': username,
     });
   }
 
@@ -1295,10 +1331,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<String?>? numeroTelefonico,
       Value<String?>? correoElectrico,
       Value<DateTime>? fecha,
-      Value<int?>? usuarioID,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
-      Value<String?>? habitaciones}) {
+      Value<String?>? habitaciones,
+      Value<int?>? usuarioID,
+      Value<String?>? username}) {
     return CotizacionCompanion(
       id: id ?? this.id,
       folioPrincipal: folioPrincipal ?? this.folioPrincipal,
@@ -1306,10 +1343,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
       correoElectrico: correoElectrico ?? this.correoElectrico,
       fecha: fecha ?? this.fecha,
-      usuarioID: usuarioID ?? this.usuarioID,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
       habitaciones: habitaciones ?? this.habitaciones,
+      usuarioID: usuarioID ?? this.usuarioID,
+      username: username ?? this.username,
     );
   }
 
@@ -1334,9 +1372,6 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
     }
-    if (usuarioID.present) {
-      map['usuario_i_d'] = Variable<int>(usuarioID.value);
-    }
     if (esGrupo.present) {
       map['es_grupo'] = Variable<bool>(esGrupo.value);
     }
@@ -1345,6 +1380,12 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     }
     if (habitaciones.present) {
       map['habitaciones'] = Variable<String>(habitaciones.value);
+    }
+    if (usuarioID.present) {
+      map['usuario_i_d'] = Variable<int>(usuarioID.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
     }
     return map;
   }
@@ -1358,10 +1399,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
-          ..write('usuarioID: $usuarioID, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
-          ..write('habitaciones: $habitaciones')
+          ..write('habitaciones: $habitaciones, ')
+          ..write('usuarioID: $usuarioID, ')
+          ..write('username: $username')
           ..write(')'))
         .toString();
   }
@@ -5354,7 +5396,7 @@ class $$ImagesTableTableOrderingComposer
 
 typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
-  required String username,
+  Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
   Value<String?> status,
@@ -5369,7 +5411,7 @@ typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
 });
 typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
-  Value<String> username,
+  Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
   Value<String?> status,
@@ -5403,7 +5445,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$UsuarioTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> username = const Value.absent(),
+            Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
             Value<String?> status = const Value.absent(),
@@ -5433,7 +5475,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String username,
+            Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
             Value<String?> status = const Value.absent(),
@@ -5551,6 +5593,19 @@ class $$UsuarioTableFilterComposer
     return composer;
   }
 
+  ComposableFilter cotizacionRefs(
+      ComposableFilter Function($$CotizacionTableFilterComposer f) f) {
+    final $$CotizacionTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.cotizacion,
+        getReferencedColumn: (t) => t.usuarioID,
+        builder: (joinBuilder, parentComposers) =>
+            $$CotizacionTableFilterComposer(ComposerState($state.db,
+                $state.db.cotizacion, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
   ComposableFilter userActivityRefs(
       ComposableFilter Function($$UserActivityTableFilterComposer f) f) {
     final $$UserActivityTableFilterComposer composer = $state.composerBuilder(
@@ -5648,10 +5703,11 @@ typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   required DateTime fecha,
-  Value<int?> usuarioID,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<String?> username,
 });
 typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
@@ -5660,10 +5716,11 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   Value<DateTime> fecha,
-  Value<int?> usuarioID,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<String?> username,
 });
 
 class $$CotizacionTableTableManager extends RootTableManager<
@@ -5692,10 +5749,11 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             Value<DateTime> fecha = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
           }) =>
               CotizacionCompanion(
             id: id,
@@ -5704,10 +5762,11 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
-            usuarioID: usuarioID,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            username: username,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -5716,10 +5775,11 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             required DateTime fecha,
-            Value<int?> usuarioID = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
           }) =>
               CotizacionCompanion.insert(
             id: id,
@@ -5728,10 +5788,11 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
-            usuarioID: usuarioID,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            username: username,
           ),
         ));
 }
@@ -5781,11 +5842,6 @@ class $$CotizacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get usuarioID => $state.composableBuilder(
-      column: $state.table.usuarioID,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<bool> get esGrupo => $state.composableBuilder(
       column: $state.table.esGrupo,
       builder: (column, joinBuilders) =>
@@ -5800,6 +5856,23 @@ class $$CotizacionTableFilterComposer
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get username => $state.composableBuilder(
+      column: $state.table.username,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableFilterComposer get usuarioID {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.usuarioID,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 class $$CotizacionTableOrderingComposer
@@ -5835,11 +5908,6 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get usuarioID => $state.composableBuilder(
-      column: $state.table.usuarioID,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<bool> get esGrupo => $state.composableBuilder(
       column: $state.table.esGrupo,
       builder: (column, joinBuilders) =>
@@ -5854,6 +5922,23 @@ class $$CotizacionTableOrderingComposer
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get username => $state.composableBuilder(
+      column: $state.table.username,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableOrderingComposer get usuarioID {
+    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.usuarioID,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableOrderingComposer(ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({

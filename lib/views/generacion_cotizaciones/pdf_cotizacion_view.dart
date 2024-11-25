@@ -61,11 +61,12 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
             ),
           ),
           scrollViewDecoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              color: Utility.darken(Theme.of(context).scaffoldBackgroundColor)),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+            color: Theme.of(context).cardColor,
+          ),
           build: (format) => widget.comprobantePDF.save(),
           actionBarTheme: PdfActionBarTheme(
             backgroundColor: DesktopColors.ceruleanOscure,
@@ -141,11 +142,12 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                       type: "alert",
                       context: context,
                       iconCustom: CupertinoIcons.tray_fill,
-                      duration: 3.seconds,
+                      duration: 4.seconds,
                       title: "Correo SMTP o contraseña no registrada",
                       message:
                           "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
                     );
+                    return;
                   }
 
                   await _SendMailSMTP();
@@ -153,8 +155,23 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
               ),
             // if (!widget.isDetail)
             IconButton(
-              onPressed: () => SendQuoteService().sendQuoteWhatsApp(
-                  widget.cotizacion, widget.cotizacion.habitaciones!),
+              onPressed: () {
+                if (Preferences.phone.isEmpty) {
+                  showSnackBar(
+                    type: "alert",
+                    context: context,
+                    iconCustom: CupertinoIcons.tray_fill,
+                    duration: 4.seconds,
+                    title: "Número no registrada",
+                    message:
+                        "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
+                  );
+                  return;
+                }
+
+                SendQuoteService().sendQuoteWhatsApp(
+                    widget.cotizacion, widget.cotizacion.habitaciones!);
+              },
               icon: const Image(
                 image: AssetImage("assets/image/whatsApp_icon.png"),
                 width: 22,

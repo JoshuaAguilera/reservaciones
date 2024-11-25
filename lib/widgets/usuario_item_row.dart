@@ -209,7 +209,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
                 child: CustomWidgets.roleMedal(widget.usuario.rol!, brightness),
               ),
               TextStyles.standardText(
-                text: widget.usuario.username,
+                text: widget.usuario.username ?? '',
                 aling: TextAlign.center,
                 color: Theme.of(context).primaryColor,
                 overClip: true,
@@ -325,7 +325,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
         ),
         visualDensity: VisualDensity.standard,
         title: TextStyles.titleText(
-          text: widget.usuario.username,
+          text: widget.usuario.username ?? '',
           color: colorText,
           size: 14,
         ),

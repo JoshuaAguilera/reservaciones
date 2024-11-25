@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,10 +6,8 @@ import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:sidebarx/sidebarx.dart';
 
 import '../utils/helpers/web_colors.dart';
-import '../utils/shared_preferences/preferences.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/text_styles.dart';
 import '../widgets/textformfield_custom.dart';
@@ -776,6 +772,45 @@ class CustomWidgets {
             color: Colors.white,
           ),
       ],
+    );
+  }
+
+  static Widget buildItemGraphics({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required double fontSize,
+    required double iconSize,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: color),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: iconSize, // Tamaño del ícono escalable
+              ),
+              const SizedBox(width: 8), // Espaciado fijo entre ícono y texto
+              TextStyles.standardText(
+                text: label,
+                color: color,
+                size: fontSize,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

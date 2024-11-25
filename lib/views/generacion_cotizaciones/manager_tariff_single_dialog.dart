@@ -606,6 +606,10 @@ class _ManagerTariffDayWidgetState
                 if (indexSecondTariff != -1) {
                   widget.tarifaXDia.tarifas![indexSecondTariff] = secondTariff;
                 }
+
+                if (applyAllNoTariff || applyAllDays || widget.numDays == 1) {
+                  _saveTariffNoDefined(widget.tarifaXDia.tarifa, secondTariff);
+                }
               } else if (widget.tarifaXDia.tarifa != null) {
                 widget.tarifaXDia.tarifa = TarifaData(
                   id: newTarifa?.id ?? 0,
@@ -694,6 +698,10 @@ class _ManagerTariffDayWidgetState
                     widget.tarifaXDia.tarifas!.add(secondTariff);
                   }
                 }
+
+                if (applyAllNoTariff || applyAllDays || widget.numDays == 1) {
+                  _saveTariffNoDefined(widget.tarifaXDia.tarifa, secondTariff);
+                }
               }
 
               widget.tarifaXDia.temporadaSelect = getSeasonSelect();
@@ -743,19 +751,6 @@ class _ManagerTariffDayWidgetState
                   element.descuentoProvisional =
                       double.parse(_descuentoController.text);
                 }
-
-                ref
-                    .read(descuentoProvisionalProvider.notifier)
-                    .update((state) => double.parse(_descuentoController.text));
-
-                final tarifasProvider = TarifasProvisionalesProvider.provider;
-
-                ref
-                    .read(tarifasProvider.notifier)
-                    .remove(widget.tarifaXDia.categoria!);
-                ref
-                    .read(tarifasProvider.notifier)
-                    .addItem(widget.tarifaXDia.tarifa!);
               }
 
               if (!applyAllTariff && !applyAllNoTariff && !widget.isAppling) {
@@ -984,5 +979,18 @@ class _ManagerTariffDayWidgetState
         .any((element) => element.code!.contains("Unknow"))) isValid = true;
 
     return isValid;
+  }
+
+  void _saveTariffNoDefined(TarifaData? firstTariff, TarifaData? secondTariff) {
+    ref
+        .read(descuentoProvisionalProvider.notifier)
+        .update((state) => double.parse(_descuentoController.text));
+
+    final tarifasProvider = TarifasProvisionalesProvider.provider;
+
+    ref.read(tarifasProvider.notifier).clear();
+    // ref.read(tarifasProvider.notifier).remove(widget.tarifaXDia.categoria!);
+    ref.read(tarifasProvider.notifier).addItem(firstTariff!);
+    ref.read(tarifasProvider.notifier).addItem(secondTariff!);
   }
 }

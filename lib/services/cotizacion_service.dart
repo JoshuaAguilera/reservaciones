@@ -109,15 +109,15 @@ class CotizacionService extends BaseService {
     try {
       List<CotizacionData> comprobantes = [];
       if (empty) {
-        comprobantes = await database.getHistorialCotizaciones(
-            (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
+        comprobantes = await database.getQuotesFiltered(
+            userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
       } else {
         if (periodo.isNotEmpty) {
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
           DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
-          comprobantes = await database.getCotizacionesPeriodo(
-            initTime,
-            lastTime,
+          comprobantes = await database.getQuotesFiltered(
+            initTime: initTime,
+            lastTime: lastTime,
             search: search,
             userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
           );
@@ -125,11 +125,16 @@ class CotizacionService extends BaseService {
           switch (filtro) {
             case "Todos":
               if (search.isNotEmpty) {
-                comprobantes = await database.getCotizacionesSearch(search,
-                    (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
+                comprobantes = await database.getQuotesFiltered(
+                  search: search,
+                  userId:
+                      (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+                );
               } else {
-                comprobantes = await database.getHistorialCotizaciones(
-                    (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
+                comprobantes = await database.getQuotesFiltered(
+                    userId: (rol != "SUPERADMIN" && rol != "ADMIN")
+                        ? userId
+                        : null);
               }
               break;
             case 'Hace un dia':
@@ -183,12 +188,33 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesRecientes() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesRecientes(
+      List<QuoteWithUser> resp = await dataBase.getCotizacionesRecientes(
           (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
+      List<CotizacionData> quotes = [];
+
+      for (var element in resp) {
+        CotizacionData data = CotizacionData(
+          id: element.quote.id,
+          fecha: element.quote.fecha,
+          correoElectrico: element.quote.correoElectrico,
+          esConcretado: element.quote.esConcretado,
+          esGrupo: element.quote.esGrupo,
+          folioPrincipal: element.quote.folioPrincipal,
+          habitaciones: element.quote.habitaciones,
+          nombreHuesped: element.quote.nombreHuesped,
+          numeroTelefonico: element.quote.numeroTelefonico,
+          usuarioID: element.quote.usuarioID,
+          username: element.user!.username,
+        );
+
+        quotes.add(data);
+      }
+
       await dataBase.close();
-      return resp;
+      return quotes;
     } catch (e) {
+      print(e);
       await dataBase.close();
       return List.empty();
     }
