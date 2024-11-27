@@ -2,6 +2,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
@@ -50,12 +51,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
           height: screenHeight,
           width: screenWidth,
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Theme.of(context).primaryColorDark,
-              brightness == Brightness.light
-                  ? DesktopColors.cerulean
-                  : DesktopColors.grisPalido
-            ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).primaryColorDark,
+                brightness == Brightness.light
+                    ? DesktopColors.cerulean
+                    : DesktopColors.grisPalido
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
         ),
         Scaffold(
@@ -81,11 +86,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidth > 500 ? 36.0 : 12,
-                            vertical: screenHeight > 500 ? 60 : 25),
+                            vertical: screenHeight > 500 ? 25 : 25),
                         child: Form(
                           key: _formKeyLogin,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: (screenWidth > 700)
                                 ? CrossAxisAlignment.start
                                 : CrossAxisAlignment.center,
@@ -94,14 +98,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Image(
-                                    image: const AssetImage(
-                                        "assets/image/logo_lobby.png"),
-                                    width: screenWidth > 350 ? 220 : 170,
+                                  SvgPicture.asset(
+                                    'assets/image/logo_side_svg.svg',
+                                    semanticsLabel: 'My SVG Image',
+                                    width: screenWidth > 350 ? 230 : 170,
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   TextStyles.standardText(
-                                    text: "B 7.5.2",
+                                    text: "V 1.0.0",
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ],

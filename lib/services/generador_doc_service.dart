@@ -9,6 +9,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../database/database.dart';
 import 'base_service.dart';
 
 class GeneradorDocService extends BaseService {
@@ -262,9 +263,10 @@ class GeneradorDocService extends BaseService {
     return pdf;
   }
 
-  Future<pw.Document> generarComprobanteCotizacionGrupal(
-      {required List<Habitacion> habitaciones,
-      required Cotizacion cotizacion}) async {
+  Future<pw.Document> generarComprobanteCotizacionGrupal({
+    required List<Habitacion> habitaciones,
+    required Cotizacion cotizacion,
+  }) async {
     //PDF generation
     final pdf = pw.Document();
     PdfPageFormat pageFormatDefault = const PdfPageFormat(
@@ -381,8 +383,14 @@ class GeneradorDocService extends BaseService {
 
     int numRooms = 0;
 
+    int freeRooms = 0;
+
     for (var element in habitaciones) {
-      if (!element.isFree) numRooms += element.count;
+      if (!element.isFree) {
+        numRooms += element.count;
+      } else {
+        freeRooms += element.count;
+      }
     }
 
     List<pw.Widget> tables = generateTables(
@@ -434,7 +442,8 @@ class GeneradorDocService extends BaseService {
           pw.Text("FECHAS DE ESTANCIA: ${Utility.getDatesStay(habitaciones)}",
               style: styleBold),
           pw.SizedBox(height: 3),
-          pw.Text("HABITACIONES: $numRooms habitaciones mínimo",
+          pw.Text(
+              "HABITACIONES: $numRooms habitaciones mínimo ${freeRooms > 0 ? "($freeRooms habitacion${freeRooms > 1 ? "es" : ""} de cortesía)" : ""}",
               style: styleBold),
           pw.SizedBox(height: 22),
           pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),

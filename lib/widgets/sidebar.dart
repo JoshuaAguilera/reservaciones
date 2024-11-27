@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:generador_formato/ui/my_sidebar_x_item.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -104,14 +105,11 @@ class _SideBarState extends ConsumerState<SideBar> {
                   onTap: () {
                     widget._controller.selectIndex(0);
                   },
-                  child: const SizedBox(
+                  child: SvgPicture.asset(
+                    'assets/image/logo_side_svg.svg',
+                    semanticsLabel: 'My SVG Image',
                     height: 100,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16.0, left: 10, right: 10),
-                      child: Image(
-                        image: AssetImage('assets/image/logo_inicio.png'),
-                      ),
-                    ),
+                    width: 70,
                   ),
                 ),
                 MySidebarXItem(

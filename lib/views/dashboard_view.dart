@@ -54,6 +54,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final allQuotesSync = ref.watch(allQuotesProvider(''));
     final usuario = ref.watch(userProvider);
 
+    double sizeTitles = screenWidth > 1050
+        ? 16
+        : screenWidth > 750
+            ? 14
+            : 12;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -113,15 +119,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      TextStyles.standardText(
+                                      Expanded(
+                                        child: TextStyles.standardText(
                                           isBold: true,
                                           text: !(usuario.rol != "SUPERADMIN" &&
                                                   usuario.rol != "ADMIN")
                                               ? "Reporte de cotizaciones del equipo"
                                               : "Reporte de cotizaciones",
-                                          overClip: true,
+                                      
                                           color: Theme.of(context).primaryColor,
-                                          size: 16),
+                                          size: sizeTitles,
+                                        ),
+                                      ),
                                       CustomDropdown.dropdownMenuCustom(
                                         fontSize: 12,
                                         initialSelection: typePeriod,
@@ -299,45 +308,49 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           elevation: 5,
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextStyles.standardText(
-                                      isBold: true,
-                                      text: !(usuario.rol != "SUPERADMIN" &&
-                                              usuario.rol != "ADMIN")
-                                          ? "Contador actual del equipo"
-                                          : "Tu contador actual",
-                                      overClip: true,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 16,
-                                    ),
-                                    Divider(
-                                        color: Theme.of(context).primaryColor),
-                                  ],
-                                ),
-                                allQuotesSync.when(
-                                  data: (list) {
-                                    List<Widget> cards = [];
-                                    for (var element in list) {
-                                      cards.add(
-                                          ItemRows.statusQuoteRow(element));
-                                    }
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextStyles.standardText(
+                                        isBold: true,
+                                        text: !(usuario.rol != "SUPERADMIN" &&
+                                                usuario.rol != "ADMIN")
+                                            ? "Contador actual del equipo"
+                                            : "Tu contador actual",
+                                        overClip: true,
+                                        color: Theme.of(context).primaryColor,
+                                        size: sizeTitles,
+                                      ),
+                                      Divider(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ],
+                                  ),
+                                  allQuotesSync.when(
+                                    data: (list) {
+                                      List<Widget> cards = [];
+                                      for (var element in list) {
+                                        cards.add(
+                                            ItemRows.statusQuoteRow(element));
+                                      }
 
-                                    return Wrap(children: cards);
-                                  },
-                                  error: (error, stackTrace) {
-                                    return const SizedBox();
-                                  },
-                                  loading: () {
-                                    return ProgressIndicatorCustom(
-                                        screenHight: 80);
-                                  },
-                                ),
-                              ],
+                                      return Wrap(children: cards);
+                                    },
+                                    error: (error, stackTrace) {
+                                      return const SizedBox();
+                                    },
+                                    loading: () {
+                                      return ProgressIndicatorCustom(
+                                          screenHight: 80);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -377,7 +390,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             TextStyles.standardText(
                                               isBold: true,
                                               text: "Cotizaciones de hoy",
-                                              size: 16,
+                                              size: sizeTitles,
                                               color: Theme.of(context)
                                                   .primaryColor,
                                             ),
@@ -536,7 +549,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                TextStyles.standardText(
+                                                Expanded(
+                                                  child: TextStyles.standardText(
                                                     isBold: true,
                                                     text: !(usuario.rol !=
                                                                 "SUPERADMIN" &&
@@ -546,7 +560,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         : "Ultimas cotizaciones",
                                                     color: Theme.of(context)
                                                         .primaryColor,
-                                                    size: 16),
+                                                    size: sizeTitles,
+                                                  ),
+                                                ),
                                                 TextButton(
                                                   onPressed: () {
                                                     widget.sideController

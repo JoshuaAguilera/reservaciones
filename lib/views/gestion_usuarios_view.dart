@@ -41,6 +41,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final usuariosProvider = ref.watch(userQueryProvider(""));
+    final isEmptyUser = ref.watch(isEmptyUserProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     void _searchQuote({String? text}) {
@@ -51,8 +52,12 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
     }
 
     if (!startFlow) {
-      Future.delayed(100.ms,
-          () => ref.read(isEmptyUserProvider.notifier).update((state) => true));
+      if (isEmptyUser) {
+        Future.delayed(
+            100.ms,
+            () =>
+                ref.read(isEmptyUserProvider.notifier).update((state) => true));
+      }
       startFlow = true;
     }
 

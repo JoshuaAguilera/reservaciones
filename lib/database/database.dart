@@ -78,7 +78,7 @@ class AppDatabase extends _$AppDatabase {
   Future<List<CotizacionData>> getCotizacionesSearch(
       String search, int? userId) async {
     final query = select(cotizacion)
-        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.id))]);
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
     if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
 
@@ -239,15 +239,19 @@ class AppDatabase extends _$AppDatabase {
     DateTime? lastTime,
   }) async {
     final query = select(cotizacion)
-        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.id))]);
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
-    if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
 
-    if (search.isNotEmpty) query.where(cotizacion.nombreHuesped.equals(search));
+    if (search.isNotEmpty)
+      query.where(cotizacion.nombreHuesped.lower().like('%$search%'));
 
     if (initTime != null && lastTime != null) {
       query.where(cotizacion.fecha.isBetweenValues(initTime, lastTime));
     }
+
+    final sql = query.toString();
+    print('Generated SQL: $sql');
 
     final result = await query.get();
 
@@ -307,7 +311,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<QuoteWithUser>> getCotizacionesRecientes(int? userId) async {
     final query = select(cotizacion)
-        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.id))]);
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
     if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
 
@@ -327,7 +331,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<CotizacionData>> getHistorialCotizaciones(int? userId) async {
     final query = select(cotizacion)
-        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.id))]);
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
     if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
 

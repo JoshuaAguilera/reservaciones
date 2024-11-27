@@ -12,6 +12,7 @@ class SelectableButton extends StatefulWidget {
     this.color = const Color.fromRGBO(144, 202, 249, 1),
     this.round = 12,
     this.roundActive = 10,
+    this.elevation = 0,
   });
 
   final bool selected;
@@ -20,6 +21,7 @@ class SelectableButton extends StatefulWidget {
   final Color? color;
   final double? roundActive;
   final double? round;
+  final double elevation;
 
   @override
   State<SelectableButton> createState() => _SelectableButtonState();
@@ -58,9 +60,13 @@ class _SelectableButtonState extends State<SelectableButton> {
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(isBold: true),
               ),
-              foregroundColor: WidgetStatePropertyAll(widget.selected
-                  ? DesktopColors.ceruleanOscure
-                  : Colors.grey[700]))
+              foregroundColor: WidgetStatePropertyAll(
+                widget.selected
+                    ? DesktopColors.ceruleanOscure
+                    : Colors.grey[700],
+              ),
+              elevation: WidgetStatePropertyAll(widget.elevation),
+            )
           : ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
               shape: MaterialStatePropertyAll(
@@ -71,7 +77,9 @@ class _SelectableButtonState extends State<SelectableButton> {
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(),
               ),
-              foregroundColor: WidgetStatePropertyAll(Colors.grey[700])),
+              foregroundColor: WidgetStatePropertyAll(Colors.grey[700]),
+              elevation: WidgetStatePropertyAll(widget.elevation),
+            ),
       onPressed: widget.onPressed,
       child: widget.child,
     );

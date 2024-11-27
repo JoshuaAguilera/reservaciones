@@ -44,7 +44,7 @@ class SendQuoteService extends BaseService {
         ..from = Address(username, "$firstName $lastName")
         ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
         ..subject =
-            'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
+            'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'
         ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
         ..attachments = [
           FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")

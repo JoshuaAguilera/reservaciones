@@ -53,6 +53,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final receiptQuoteQuery = ref.watch(receiptQuoteQueryProvider(""));
+    final isEmpty = ref.watch(isEmptyProvider);
     var filter = ref.watch(filtroProvider);
     final usuario = ref.watch(userProvider);
 
@@ -64,8 +65,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     }
 
     if (!startFlow) {
-      Future.delayed(100.ms,
-          () => ref.read(isEmptyProvider.notifier).update((state) => true));
+      if (!isEmpty) {
+        Future.delayed(100.ms,
+            () => ref.read(isEmptyProvider.notifier).update((state) => true));
+      }
       startFlow = true;
     }
 

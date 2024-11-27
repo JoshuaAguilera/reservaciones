@@ -232,13 +232,6 @@ class _ManagerTariffGroupDialogState
                                       ),
                                   excepcionItem: "No aplicar",
                                   compact: true,
-                                  // notElements: Utility.getPromocionesNoValidas(
-                                  //   selectRoom!,
-                                  //   temporadas: selectTariff?.temporadas!
-                                  //       .where((element) =>
-                                  //           element.forGroup ?? false)
-                                  //       .toList(),
-                                  // ),
                                 )
                               else
                                 SizedBox(
