@@ -357,7 +357,6 @@ class _ControllerCalendarWidgetState
                                                         .update((state) =>
                                                             UniqueKey()
                                                                 .hashCode);
-                                                   
                                                   },
                                                 );
                                               } else {
@@ -425,15 +424,15 @@ class _ControllerCalendarWidgetState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      flex: 2,
                       child: TextStyles.standardText(
                           text: "Ultima modificación:",
                           color: Theme.of(context).primaryColor),
                     ),
                     Expanded(
-                      flex: 3,
                       child: TextStyles.standardText(
-                        text: Utility.getCompleteDate(data: DateTime.now()),
+                        text: Utility.getCompleteDate(
+                                data: DateTime.now(), onlyNameDate: true)
+                            .replaceAll(r' ', ''),
                         color: Theme.of(context).dividerColor,
                         aling: TextAlign.end,
                       ),

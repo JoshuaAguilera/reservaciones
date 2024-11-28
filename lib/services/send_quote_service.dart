@@ -76,34 +76,41 @@ class SendQuoteService extends BaseService {
     message += "\n\n";
     message += "*Plan Todo Incluido*";
     message += "\n";
-    message += "*Estancia: ${Utility.getPeriodReservation(habitaciones)}*";
-    message += "\n";
-    message +=
-        "*Noches: ${Utility.getDifferenceInDays(habitaciones: habitaciones)}*";
+    if (!(comprobante.esGrupo ?? false)) {
+      message += "*Estancia: ${Utility.getPeriodReservation(habitaciones)}*";
+      message += "\n";
+      message +=
+          "*Noches: ${Utility.getDifferenceInDays(habitaciones: habitaciones)}*";
+    } else {
+      message +=
+          "Fechas de estancia: ${Utility.getDatesStay(comprobante.habitaciones!)}";
+    }
     message += "\n\n";
-    message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
-    message += "\n";
-    for (var element in habitaciones) {
+    if (!(comprobante.esGrupo ?? false)) {
+      message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
       message += "\n";
-      message += "*${Utility.getOcupattionMessage(element)}*";
-      message += "\n";
-      message +=
-          "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
-      message += "\n";
-    }
-    message += "\n";
-    message +=
-        "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
-    message += "\n";
-    for (var element in habitaciones) {
-      message += "\n";
-      message += "*${Utility.getOcupattionMessage(element)}*";
+      for (var element in habitaciones) {
+        message += "\n";
+        message += "*${Utility.getOcupattionMessage(element)}*";
+        message += "\n";
+        message +=
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+        message += "\n";
+      }
       message += "\n";
       message +=
-          "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+          "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
+      message += "\n";
+      for (var element in habitaciones) {
+        message += "\n";
+        message += "*${Utility.getOcupattionMessage(element)}*";
+        message += "\n";
+        message +=
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+        message += "\n";
+      }
       message += "\n";
     }
-    message += "\n";
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";
     message += "\n\n";

@@ -98,11 +98,15 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  SvgPicture.asset(
-                                    'assets/image/logo_side_svg.svg',
-                                    semanticsLabel: 'My SVG Image',
-                                    width: screenWidth > 350 ? 230 : 170,
-                                    color: Theme.of(context).primaryColor,
+                                  SizedBox(
+                                    width: 230,
+                                    child: SvgPicture.asset(
+                                      'assets/image/logo_side_svg.svg',
+                                      semanticsLabel: 'My SVG Image',
+                                      width: screenWidth > 350 ? 250 : 200,
+                                      color: Theme.of(context).primaryColor,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                   TextStyles.standardText(
                                     text: "V 1.0.0",
@@ -110,11 +114,13 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 10),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
                                 color: Theme.of(context).primaryColor,
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
+                              const SizedBox(height: 10),
                               Container(
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
@@ -196,6 +202,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       labelText: "Contraseña"),
                                 ),
                               ),
+                              const SizedBox(height: 5),
                               SizedBox(
                                 width: 120,
                                 height: screenWidth > 350 ? 40 : 35,

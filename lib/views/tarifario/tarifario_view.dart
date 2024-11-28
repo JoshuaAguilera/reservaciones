@@ -11,6 +11,7 @@ import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart'
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
@@ -99,7 +100,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   ref
                       .read(changeTarifasProvider.notifier)
                       .update((state) => UniqueKey().hashCode);
-               
                 },
               );
             } else {
@@ -133,7 +133,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           context: context,
           notCloseInstant: true,
           withLoadingProcess: true,
-          iconData: CupertinoIcons.slider_horizontal_3,
+          iconData: HeroIcons.adjustments_horizontal,
           title: "Políticas y criterios de Aplicación",
           nameButtonMain: "Guardar",
           contentCustom: SingleChildScrollView(
@@ -262,9 +262,16 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // Buttons.iconButtonCard(
+                          //   icon: HeroIcons.square_3_stack_3d,
+                          //   tooltip: "Tarifas Base",
+                          //   onPressed: () {},
+                          // ),
+                          // const SizedBox(width: 5),
                           politicaTarifaProvider.when(
                             data: (data) => Buttons.iconButtonCard(
-                              icon: CupertinoIcons.slider_horizontal_3,
+                              icon: HeroIcons.adjustments_horizontal,
+                              tooltip: "Politicas de aplicación",
                               onPressed: () {
                                 _dialogConfigTariffs(data);
                               },

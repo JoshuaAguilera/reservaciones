@@ -12,6 +12,7 @@ import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
@@ -126,13 +127,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       );
     }
 
-    ref.listen<bool>(typeQuoteProvider, (previous, next) {
-      if (next) {
-        _showConfigurationTariffGroup(firstView: true);
-      } else {
-        ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
-      }
-    });
+    if (!(Preferences.rol == 'RECEPCION')) {
+      ref.listen<bool>(typeQuoteProvider, (previous, next) {
+        if (next) {
+          _showConfigurationTariffGroup(firstView: true);
+        } else {
+          ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
+        }
+      });
+    }
 
     return Scaffold(
       body: Padding(
@@ -160,26 +163,28 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 8),
-                                SizedBox(
-                                  child: (!typeQuote)
-                                      ? cardTypeQuote(
-                                          type: "Cotización Individual",
-                                          color: DesktopColors.cotIndiv,
-                                          withTarget: typeQuote,
-                                        )
-                                      : cardTypeQuote(
-                                          type: "Cotización Grupal",
-                                          color: DesktopColors.cotGrupal,
-                                          withTarget: !typeQuote,
-                                          withButton: true,
-                                          onPressedButton: () {
-                                            _showConfigurationTariffGroup();
-                                          },
-                                        ),
-                                )
-                                    .animate(target: targetHabitaciones)
-                                    .fadeIn(duration: 350.ms),
+                                if (!(Preferences.rol == 'RECEPCION'))
+                                  const SizedBox(height: 8),
+                                if (!(Preferences.rol == 'RECEPCION'))
+                                  SizedBox(
+                                    child: (!typeQuote)
+                                        ? cardTypeQuote(
+                                            type: "Cotización Individual",
+                                            color: DesktopColors.cotIndiv,
+                                            withTarget: typeQuote,
+                                          )
+                                        : cardTypeQuote(
+                                            type: "Cotización Grupal",
+                                            color: DesktopColors.cotGrupal,
+                                            withTarget: !typeQuote,
+                                            withButton: true,
+                                            onPressedButton: () {
+                                              _showConfigurationTariffGroup();
+                                            },
+                                          ),
+                                  )
+                                      .animate(target: targetHabitaciones)
+                                      .fadeIn(duration: 350.ms),
                                 const SizedBox(height: 8),
                                 Card(
                                   elevation: 6,
@@ -477,7 +482,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             receiptQuotePresent = cotizacion.CopyWith();
                             receiptQuotePresent.folioPrincipal = folio;
                             receiptQuotePresent.esGrupo = typeQuote;
-                            receiptQuotePresent.numeroTelefonico = prefijoInit.prefijo + (cotizacion.numeroTelefonico ?? '');
+                            receiptQuotePresent.numeroTelefonico =
+                                prefijoInit.prefijo +
+                                    (cotizacion.numeroTelefonico ?? '');
                             receiptQuotePresent.habitaciones = [];
                             for (var element in habitaciones) {
                               receiptQuotePresent.habitaciones!
@@ -486,7 +493,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                             comprobantePDF = await ref
                                 .watch(HabitacionProvider.provider.notifier)
-                                .generarComprobante(receiptQuotePresent, typeQuote);
+                                .generarComprobante(
+                                    receiptQuotePresent, typeQuote);
 
                             ref
                                 .read(cotizacionProvider.notifier)

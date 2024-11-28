@@ -12,6 +12,7 @@ import '../models/registro_tarifa_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
 import '../utils/helpers/web_colors.dart';
+import '../utils/shared_preferences/preferences.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
@@ -178,10 +179,13 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
           if (!element.isFree) rooms += element.count;
         }
 
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        if (!(Preferences.rol == 'RECEPCION')) {
+          if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => true);
+          } else if (typeQuote &&
+              rooms < politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => false);
+          }
         }
 
         if (Utility.verifAddRoomFree(
@@ -453,10 +457,13 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
           if (!element.isFree) rooms += element.count;
         }
 
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        if (!(Preferences.rol == 'RECEPCION')) {
+          if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => true);
+          } else if (typeQuote &&
+              rooms < politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => false);
+          }
         }
 
         if (Utility.verifAddRoomFree(

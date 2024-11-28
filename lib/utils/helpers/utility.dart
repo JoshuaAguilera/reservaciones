@@ -59,7 +59,8 @@ class Utility {
         .format(number);
   }
 
-  static String getCompleteDate({DateTime? data, bool compact = false}) {
+  static String getCompleteDate(
+      {DateTime? data, bool compact = false, bool onlyNameDate = false}) {
     String date = "";
 
     if (!compact) {
@@ -67,7 +68,11 @@ class Utility {
       DateTime nowDate = data ?? DateTime.now();
       DateFormat formatter = DateFormat('dd - MMMM - yyyy');
       date = formatter.format(nowDate);
-      date = date.replaceAll(r'-', "de");
+      if (!onlyNameDate) {
+        date = date.replaceAll(r'-', "de");
+      } else {
+        date = date.replaceAll(r'-', "/");
+      }
     } else {
       DateTime nowDate = data ?? DateTime.now();
       DateFormat formatter = DateFormat('dd - MM - yy');
@@ -400,7 +405,7 @@ class Utility {
     switch (filter) {
       case "Semanal":
         int numDay = initPeriod.weekday;
-        initPeriod = initPeriod.subtract(Duration(days: numDay));
+        initPeriod = initPeriod.subtract(Duration(days: numDay - 1));
         break;
       case "Mensual":
         initPeriod = initPeriod.subtract(Duration(days: initPeriod.day));
@@ -435,8 +440,17 @@ class Utility {
 
   static String getDatesStay(List<Habitacion> habitaciones) {
     String dates = '';
-    DateTime firstDate = DateTime.parse(habitaciones.first.fechaCheckIn!);
-    DateTime lastDate = DateTime.parse(habitaciones.last.fechaCheckOut!);
+    List<DateTime> datesList = [];
+
+    for (var element in habitaciones) {
+      datesList.add(DateTime.parse(element.fechaCheckIn!));
+      datesList.add(DateTime.parse(element.fechaCheckOut!));
+    }
+
+    datesList.sort((a, b) => a.compareTo(b));
+
+    DateTime firstDate = datesList.first;
+    DateTime lastDate = datesList.last;
 
     if (firstDate.month == lastDate.month) {
       dates =

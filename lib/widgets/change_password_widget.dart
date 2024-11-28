@@ -131,23 +131,29 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Buttons.commonButton(
-                    onPressed: isLoading
-                        ? null
-                        : () {
-                            widget.isChanged.call(false);
-                            setState(() => cancelChangedKeyMail = false);
-                            Future.delayed(
-                                Durations.long1,
-                                () =>
-                                    setState(() => canChangedKeyMail = false));
-                            passwordMailConfirmController.text = "";
-                            passwordMailNewController.text = "";
-                          },
-                    color: DesktopColors.mentaOscure,
-                    text: "Cancelar"),
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          widget.isChanged.call(false);
+                          setState(() => cancelChangedKeyMail = false);
+                          Future.delayed(Durations.long1,
+                              () => setState(() => canChangedKeyMail = false));
+                          passwordMailConfirmController.text = "";
+                          passwordMailNewController.text = "";
+                        },
+                  child: TextStyles.standardText(
+                    text: "Cancelar",
+                    isBold: true,
+                    size: 12.5,
+                    color: brightness == Brightness.light
+                        ? DesktopColors.cerulean
+                        : DesktopColors.azulUltClaro,
+                  ),
+                ),
                 Buttons.commonButton(
                   text: "Guardar",
+                  sizeText: 12.5,
                   isLoading: isLoading,
                   onPressed: () async {
                     if (!_formKeyPassword.currentState!.validate()) {

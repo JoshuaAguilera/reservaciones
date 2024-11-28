@@ -161,6 +161,7 @@ class Buttons {
     required void Function()? onPressed,
     Color? backgroundColor,
     Color? colorIcon,
+    String tooltip = "",
   }) {
     return Card(
       color: backgroundColor ?? DesktopColors.ceruleanOscure,
@@ -168,6 +169,7 @@ class Buttons {
         height: 40,
         width: 40,
         child: IconButton(
+          tooltip: tooltip,
           onPressed: onPressed,
           icon: Icon(
             icon,
