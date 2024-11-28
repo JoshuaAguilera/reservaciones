@@ -3355,6 +3355,12 @@ class $TemporadaTable extends Temporada
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("for_group" IN (0, 1))'));
+  static const VerificationMeta _tarifaJSONMeta =
+      const VerificationMeta('tarifaJSON');
+  @override
+  late final GeneratedColumn<String> tarifaJSON = GeneratedColumn<String>(
+      'tarifa_j_s_o_n', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3364,7 +3370,8 @@ class $TemporadaTable extends Temporada
         estanciaMinima,
         porcentajePromocion,
         codeTarifa,
-        forGroup
+        forGroup,
+        tarifaJSON
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3417,6 +3424,12 @@ class $TemporadaTable extends Temporada
       context.handle(_forGroupMeta,
           forGroup.isAcceptableOrUnknown(data['for_group']!, _forGroupMeta));
     }
+    if (data.containsKey('tarifa_j_s_o_n')) {
+      context.handle(
+          _tarifaJSONMeta,
+          tarifaJSON.isAcceptableOrUnknown(
+              data['tarifa_j_s_o_n']!, _tarifaJSONMeta));
+    }
     return context;
   }
 
@@ -3442,6 +3455,8 @@ class $TemporadaTable extends Temporada
           .read(DriftSqlType.string, data['${effectivePrefix}code_tarifa']),
       forGroup: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}for_group']),
+      tarifaJSON: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tarifa_j_s_o_n']),
     );
   }
 
@@ -3460,6 +3475,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final double? porcentajePromocion;
   final String? codeTarifa;
   final bool? forGroup;
+  final String? tarifaJSON;
   const TemporadaData(
       {required this.id,
       required this.code,
@@ -3468,7 +3484,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       this.estanciaMinima,
       this.porcentajePromocion,
       this.codeTarifa,
-      this.forGroup});
+      this.forGroup,
+      this.tarifaJSON});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3489,6 +3506,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     }
     if (!nullToAbsent || forGroup != null) {
       map['for_group'] = Variable<bool>(forGroup);
+    }
+    if (!nullToAbsent || tarifaJSON != null) {
+      map['tarifa_j_s_o_n'] = Variable<String>(tarifaJSON);
     }
     return map;
   }
@@ -3512,6 +3532,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       forGroup: forGroup == null && nullToAbsent
           ? const Value.absent()
           : Value(forGroup),
+      tarifaJSON: tarifaJSON == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaJSON),
     );
   }
 
@@ -3528,6 +3551,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           serializer.fromJson<double?>(json['porcentajePromocion']),
       codeTarifa: serializer.fromJson<String?>(json['codeTarifa']),
       forGroup: serializer.fromJson<bool?>(json['forGroup']),
+      tarifaJSON: serializer.fromJson<String?>(json['tarifaJSON']),
     );
   }
   @override
@@ -3542,6 +3566,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       'porcentajePromocion': serializer.toJson<double?>(porcentajePromocion),
       'codeTarifa': serializer.toJson<String?>(codeTarifa),
       'forGroup': serializer.toJson<bool?>(forGroup),
+      'tarifaJSON': serializer.toJson<String?>(tarifaJSON),
     };
   }
 
@@ -3553,7 +3578,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           Value<int?> estanciaMinima = const Value.absent(),
           Value<double?> porcentajePromocion = const Value.absent(),
           Value<String?> codeTarifa = const Value.absent(),
-          Value<bool?> forGroup = const Value.absent()}) =>
+          Value<bool?> forGroup = const Value.absent(),
+          Value<String?> tarifaJSON = const Value.absent()}) =>
       TemporadaData(
         id: id ?? this.id,
         code: code ?? this.code,
@@ -3566,6 +3592,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
             : this.porcentajePromocion,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
         forGroup: forGroup.present ? forGroup.value : this.forGroup,
+        tarifaJSON: tarifaJSON.present ? tarifaJSON.value : this.tarifaJSON,
       );
   @override
   String toString() {
@@ -3577,14 +3604,15 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
           ..write('codeTarifa: $codeTarifa, ')
-          ..write('forGroup: $forGroup')
+          ..write('forGroup: $forGroup, ')
+          ..write('tarifaJSON: $tarifaJSON')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, code, nombre, fecha, estanciaMinima,
-      porcentajePromocion, codeTarifa, forGroup);
+      porcentajePromocion, codeTarifa, forGroup, tarifaJSON);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3596,7 +3624,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           other.estanciaMinima == this.estanciaMinima &&
           other.porcentajePromocion == this.porcentajePromocion &&
           other.codeTarifa == this.codeTarifa &&
-          other.forGroup == this.forGroup);
+          other.forGroup == this.forGroup &&
+          other.tarifaJSON == this.tarifaJSON);
 }
 
 class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
@@ -3608,6 +3637,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<double?> porcentajePromocion;
   final Value<String?> codeTarifa;
   final Value<bool?> forGroup;
+  final Value<String?> tarifaJSON;
   const TemporadaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -3617,6 +3647,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
     this.forGroup = const Value.absent(),
+    this.tarifaJSON = const Value.absent(),
   });
   TemporadaCompanion.insert({
     this.id = const Value.absent(),
@@ -3627,6 +3658,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
     this.forGroup = const Value.absent(),
+    this.tarifaJSON = const Value.absent(),
   })  : code = Value(code),
         nombre = Value(nombre);
   static Insertable<TemporadaData> custom({
@@ -3638,6 +3670,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     Expression<double>? porcentajePromocion,
     Expression<String>? codeTarifa,
     Expression<bool>? forGroup,
+    Expression<String>? tarifaJSON,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3649,6 +3682,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
         'porcentaje_promocion': porcentajePromocion,
       if (codeTarifa != null) 'code_tarifa': codeTarifa,
       if (forGroup != null) 'for_group': forGroup,
+      if (tarifaJSON != null) 'tarifa_j_s_o_n': tarifaJSON,
     });
   }
 
@@ -3660,7 +3694,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       Value<int?>? estanciaMinima,
       Value<double?>? porcentajePromocion,
       Value<String?>? codeTarifa,
-      Value<bool?>? forGroup}) {
+      Value<bool?>? forGroup,
+      Value<String?>? tarifaJSON}) {
     return TemporadaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -3670,6 +3705,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
       codeTarifa: codeTarifa ?? this.codeTarifa,
       forGroup: forGroup ?? this.forGroup,
+      tarifaJSON: tarifaJSON ?? this.tarifaJSON,
     );
   }
 
@@ -3700,6 +3736,9 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     if (forGroup.present) {
       map['for_group'] = Variable<bool>(forGroup.value);
     }
+    if (tarifaJSON.present) {
+      map['tarifa_j_s_o_n'] = Variable<String>(tarifaJSON.value);
+    }
     return map;
   }
 
@@ -3713,7 +3752,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
           ..write('codeTarifa: $codeTarifa, ')
-          ..write('forGroup: $forGroup')
+          ..write('forGroup: $forGroup, ')
+          ..write('tarifaJSON: $tarifaJSON')
           ..write(')'))
         .toString();
   }
@@ -3733,11 +3773,23 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _tarifaPadreIdMeta =
+      const VerificationMeta('tarifaPadreId');
+  @override
+  late final GeneratedColumn<int> tarifaPadreId = GeneratedColumn<int>(
+      'tarifa_padre_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _descIntegradoMeta =
+      const VerificationMeta('descIntegrado');
+  @override
+  late final GeneratedColumn<double> descIntegrado = GeneratedColumn<double>(
+      'desc_integrado', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
-      'code', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
@@ -3782,6 +3834,8 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        tarifaPadreId,
+        descIntegrado,
         code,
         fecha,
         categoria,
@@ -3804,11 +3858,21 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
+    if (data.containsKey('tarifa_padre_id')) {
+      context.handle(
+          _tarifaPadreIdMeta,
+          tarifaPadreId.isAcceptableOrUnknown(
+              data['tarifa_padre_id']!, _tarifaPadreIdMeta));
+    }
+    if (data.containsKey('desc_integrado')) {
+      context.handle(
+          _descIntegradoMeta,
+          descIntegrado.isAcceptableOrUnknown(
+              data['desc_integrado']!, _descIntegradoMeta));
+    }
     if (data.containsKey('code')) {
       context.handle(
           _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
-    } else if (isInserting) {
-      context.missing(_codeMeta);
     }
     if (data.containsKey('fecha')) {
       context.handle(
@@ -3859,8 +3923,12 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
     return TarifaData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      tarifaPadreId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_padre_id']),
+      descIntegrado: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}desc_integrado']),
       code: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}code'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}code']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       categoria: attachedDatabase.typeMapping
@@ -3887,7 +3955,9 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
 
 class TarifaData extends DataClass implements Insertable<TarifaData> {
   final int id;
-  final String code;
+  final int? tarifaPadreId;
+  final double? descIntegrado;
+  final String? code;
   final DateTime? fecha;
   final String? categoria;
   final double? tarifaAdultoSGLoDBL;
@@ -3897,7 +3967,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   final double? tarifaPaxAdicional;
   const TarifaData(
       {required this.id,
-      required this.code,
+      this.tarifaPadreId,
+      this.descIntegrado,
+      this.code,
       this.fecha,
       this.categoria,
       this.tarifaAdultoSGLoDBL,
@@ -3909,7 +3981,15 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['code'] = Variable<String>(code);
+    if (!nullToAbsent || tarifaPadreId != null) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId);
+    }
+    if (!nullToAbsent || descIntegrado != null) {
+      map['desc_integrado'] = Variable<double>(descIntegrado);
+    }
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
     if (!nullToAbsent || fecha != null) {
       map['fecha'] = Variable<DateTime>(fecha);
     }
@@ -3937,7 +4017,13 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   TarifaCompanion toCompanion(bool nullToAbsent) {
     return TarifaCompanion(
       id: Value(id),
-      code: Value(code),
+      tarifaPadreId: tarifaPadreId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPadreId),
+      descIntegrado: descIntegrado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descIntegrado),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       categoria: categoria == null && nullToAbsent
@@ -3966,7 +4052,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TarifaData(
       id: serializer.fromJson<int>(json['id']),
-      code: serializer.fromJson<String>(json['code']),
+      tarifaPadreId: serializer.fromJson<int?>(json['tarifaPadreId']),
+      descIntegrado: serializer.fromJson<double?>(json['descIntegrado']),
+      code: serializer.fromJson<String?>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       categoria: serializer.fromJson<String?>(json['categoria']),
       tarifaAdultoSGLoDBL:
@@ -3984,7 +4072,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'code': serializer.toJson<String>(code),
+      'tarifaPadreId': serializer.toJson<int?>(tarifaPadreId),
+      'descIntegrado': serializer.toJson<double?>(descIntegrado),
+      'code': serializer.toJson<String?>(code),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'categoria': serializer.toJson<String?>(categoria),
       'tarifaAdultoSGLoDBL': serializer.toJson<double?>(tarifaAdultoSGLoDBL),
@@ -3997,7 +4087,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
 
   TarifaData copyWith(
           {int? id,
-          String? code,
+          Value<int?> tarifaPadreId = const Value.absent(),
+          Value<double?> descIntegrado = const Value.absent(),
+          Value<String?> code = const Value.absent(),
           Value<DateTime?> fecha = const Value.absent(),
           Value<String?> categoria = const Value.absent(),
           Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
@@ -4007,7 +4099,11 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           Value<double?> tarifaPaxAdicional = const Value.absent()}) =>
       TarifaData(
         id: id ?? this.id,
-        code: code ?? this.code,
+        tarifaPadreId:
+            tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
+        descIntegrado:
+            descIntegrado.present ? descIntegrado.value : this.descIntegrado,
+        code: code.present ? code.value : this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
         categoria: categoria.present ? categoria.value : this.categoria,
         tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL.present
@@ -4030,6 +4126,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   String toString() {
     return (StringBuffer('TarifaData(')
           ..write('id: $id, ')
+          ..write('tarifaPadreId: $tarifaPadreId, ')
+          ..write('descIntegrado: $descIntegrado, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
           ..write('categoria: $categoria, ')
@@ -4045,6 +4143,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   @override
   int get hashCode => Object.hash(
       id,
+      tarifaPadreId,
+      descIntegrado,
       code,
       fecha,
       categoria,
@@ -4058,6 +4158,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       identical(this, other) ||
       (other is TarifaData &&
           other.id == this.id &&
+          other.tarifaPadreId == this.tarifaPadreId &&
+          other.descIntegrado == this.descIntegrado &&
           other.code == this.code &&
           other.fecha == this.fecha &&
           other.categoria == this.categoria &&
@@ -4070,7 +4172,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
 
 class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<int> id;
-  final Value<String> code;
+  final Value<int?> tarifaPadreId;
+  final Value<double?> descIntegrado;
+  final Value<String?> code;
   final Value<DateTime?> fecha;
   final Value<String?> categoria;
   final Value<double?> tarifaAdultoSGLoDBL;
@@ -4080,6 +4184,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<double?> tarifaPaxAdicional;
   const TarifaCompanion({
     this.id = const Value.absent(),
+    this.tarifaPadreId = const Value.absent(),
+    this.descIntegrado = const Value.absent(),
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
     this.categoria = const Value.absent(),
@@ -4091,7 +4197,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   });
   TarifaCompanion.insert({
     this.id = const Value.absent(),
-    required String code,
+    this.tarifaPadreId = const Value.absent(),
+    this.descIntegrado = const Value.absent(),
+    this.code = const Value.absent(),
     this.fecha = const Value.absent(),
     this.categoria = const Value.absent(),
     this.tarifaAdultoSGLoDBL = const Value.absent(),
@@ -4099,9 +4207,11 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.tarifaAdultoCPLE = const Value.absent(),
     this.tarifaMenores7a12 = const Value.absent(),
     this.tarifaPaxAdicional = const Value.absent(),
-  }) : code = Value(code);
+  });
   static Insertable<TarifaData> custom({
     Expression<int>? id,
+    Expression<int>? tarifaPadreId,
+    Expression<double>? descIntegrado,
     Expression<String>? code,
     Expression<DateTime>? fecha,
     Expression<String>? categoria,
@@ -4113,6 +4223,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (tarifaPadreId != null) 'tarifa_padre_id': tarifaPadreId,
+      if (descIntegrado != null) 'desc_integrado': descIntegrado,
       if (code != null) 'code': code,
       if (fecha != null) 'fecha': fecha,
       if (categoria != null) 'categoria': categoria,
@@ -4128,7 +4240,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
 
   TarifaCompanion copyWith(
       {Value<int>? id,
-      Value<String>? code,
+      Value<int?>? tarifaPadreId,
+      Value<double?>? descIntegrado,
+      Value<String?>? code,
       Value<DateTime?>? fecha,
       Value<String?>? categoria,
       Value<double?>? tarifaAdultoSGLoDBL,
@@ -4138,6 +4252,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       Value<double?>? tarifaPaxAdicional}) {
     return TarifaCompanion(
       id: id ?? this.id,
+      tarifaPadreId: tarifaPadreId ?? this.tarifaPadreId,
+      descIntegrado: descIntegrado ?? this.descIntegrado,
       code: code ?? this.code,
       fecha: fecha ?? this.fecha,
       categoria: categoria ?? this.categoria,
@@ -4154,6 +4270,12 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (tarifaPadreId.present) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId.value);
+    }
+    if (descIntegrado.present) {
+      map['desc_integrado'] = Variable<double>(descIntegrado.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
@@ -4187,6 +4309,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   String toString() {
     return (StringBuffer('TarifaCompanion(')
           ..write('id: $id, ')
+          ..write('tarifaPadreId: $tarifaPadreId, ')
+          ..write('descIntegrado: $descIntegrado, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
           ..write('categoria: $categoria, ')
@@ -5242,6 +5366,231 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
   }
 }
 
+class $TemporadaTarifaTable extends TemporadaTarifa
+    with TableInfo<$TemporadaTarifaTable, TemporadaTarifaData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemporadaTarifaTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _temporadaIdMeta =
+      const VerificationMeta('temporadaId');
+  @override
+  late final GeneratedColumn<int> temporadaId = GeneratedColumn<int>(
+      'temporada_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES temporada (id)'));
+  static const VerificationMeta _TarifaIdMeta =
+      const VerificationMeta('TarifaId');
+  @override
+  late final GeneratedColumn<int> TarifaId = GeneratedColumn<int>(
+      'tarifa_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, temporadaId, TarifaId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'temporada_tarifa';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<TemporadaTarifaData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('temporada_id')) {
+      context.handle(
+          _temporadaIdMeta,
+          temporadaId.isAcceptableOrUnknown(
+              data['temporada_id']!, _temporadaIdMeta));
+    }
+    if (data.containsKey('tarifa_id')) {
+      context.handle(_TarifaIdMeta,
+          TarifaId.isAcceptableOrUnknown(data['tarifa_id']!, _TarifaIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TemporadaTarifaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemporadaTarifaData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      temporadaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}temporada_id']),
+      TarifaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_id']),
+    );
+  }
+
+  @override
+  $TemporadaTarifaTable createAlias(String alias) {
+    return $TemporadaTarifaTable(attachedDatabase, alias);
+  }
+}
+
+class TemporadaTarifaData extends DataClass
+    implements Insertable<TemporadaTarifaData> {
+  final int id;
+  final int? temporadaId;
+  final int? TarifaId;
+  const TemporadaTarifaData(
+      {required this.id, this.temporadaId, this.TarifaId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || temporadaId != null) {
+      map['temporada_id'] = Variable<int>(temporadaId);
+    }
+    if (!nullToAbsent || TarifaId != null) {
+      map['tarifa_id'] = Variable<int>(TarifaId);
+    }
+    return map;
+  }
+
+  TemporadaTarifaCompanion toCompanion(bool nullToAbsent) {
+    return TemporadaTarifaCompanion(
+      id: Value(id),
+      temporadaId: temporadaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(temporadaId),
+      TarifaId: TarifaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TarifaId),
+    );
+  }
+
+  factory TemporadaTarifaData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemporadaTarifaData(
+      id: serializer.fromJson<int>(json['id']),
+      temporadaId: serializer.fromJson<int?>(json['temporadaId']),
+      TarifaId: serializer.fromJson<int?>(json['TarifaId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'temporadaId': serializer.toJson<int?>(temporadaId),
+      'TarifaId': serializer.toJson<int?>(TarifaId),
+    };
+  }
+
+  TemporadaTarifaData copyWith(
+          {int? id,
+          Value<int?> temporadaId = const Value.absent(),
+          Value<int?> TarifaId = const Value.absent()}) =>
+      TemporadaTarifaData(
+        id: id ?? this.id,
+        temporadaId: temporadaId.present ? temporadaId.value : this.temporadaId,
+        TarifaId: TarifaId.present ? TarifaId.value : this.TarifaId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TemporadaTarifaData(')
+          ..write('id: $id, ')
+          ..write('temporadaId: $temporadaId, ')
+          ..write('TarifaId: $TarifaId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, temporadaId, TarifaId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemporadaTarifaData &&
+          other.id == this.id &&
+          other.temporadaId == this.temporadaId &&
+          other.TarifaId == this.TarifaId);
+}
+
+class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
+  final Value<int> id;
+  final Value<int?> temporadaId;
+  final Value<int?> TarifaId;
+  const TemporadaTarifaCompanion({
+    this.id = const Value.absent(),
+    this.temporadaId = const Value.absent(),
+    this.TarifaId = const Value.absent(),
+  });
+  TemporadaTarifaCompanion.insert({
+    this.id = const Value.absent(),
+    this.temporadaId = const Value.absent(),
+    this.TarifaId = const Value.absent(),
+  });
+  static Insertable<TemporadaTarifaData> custom({
+    Expression<int>? id,
+    Expression<int>? temporadaId,
+    Expression<int>? TarifaId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (temporadaId != null) 'temporada_id': temporadaId,
+      if (TarifaId != null) 'tarifa_id': TarifaId,
+    });
+  }
+
+  TemporadaTarifaCompanion copyWith(
+      {Value<int>? id, Value<int?>? temporadaId, Value<int?>? TarifaId}) {
+    return TemporadaTarifaCompanion(
+      id: id ?? this.id,
+      temporadaId: temporadaId ?? this.temporadaId,
+      TarifaId: TarifaId ?? this.TarifaId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (temporadaId.present) {
+      map['temporada_id'] = Variable<int>(temporadaId.value);
+    }
+    if (TarifaId.present) {
+      map['tarifa_id'] = Variable<int>(TarifaId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemporadaTarifaCompanion(')
+          ..write('id: $id, ')
+          ..write('temporadaId: $temporadaId, ')
+          ..write('TarifaId: $TarifaId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
@@ -5257,6 +5606,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserActivityTable userActivity = $UserActivityTable(this);
   late final $TarifaRackTable tarifaRack = $TarifaRackTable(this);
   late final $PoliticasTable politicas = $PoliticasTable(this);
+  late final $TemporadaTarifaTable temporadaTarifa =
+      $TemporadaTarifaTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5272,7 +5623,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         tarifa,
         userActivity,
         tarifaRack,
-        politicas
+        politicas,
+        temporadaTarifa
       ];
 }
 
@@ -6727,6 +7079,7 @@ typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
   Value<bool?> forGroup,
+  Value<String?> tarifaJSON,
 });
 typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
@@ -6737,6 +7090,7 @@ typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
   Value<bool?> forGroup,
+  Value<String?> tarifaJSON,
 });
 
 class $$TemporadaTableTableManager extends RootTableManager<
@@ -6767,6 +7121,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
             Value<bool?> forGroup = const Value.absent(),
+            Value<String?> tarifaJSON = const Value.absent(),
           }) =>
               TemporadaCompanion(
             id: id,
@@ -6777,6 +7132,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
             forGroup: forGroup,
+            tarifaJSON: tarifaJSON,
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
@@ -6787,6 +7143,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
             Value<bool?> forGroup = const Value.absent(),
+            Value<String?> tarifaJSON = const Value.absent(),
           }) =>
               TemporadaCompanion.insert(
             id: id,
@@ -6797,6 +7154,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
             forGroup: forGroup,
+            tarifaJSON: tarifaJSON,
           ),
         ));
 }
@@ -6855,6 +7213,25 @@ class $$TemporadaTableFilterComposer
       column: $state.table.forGroup,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tarifaJSON => $state.composableBuilder(
+      column: $state.table.tarifaJSON,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter temporadaTarifaRefs(
+      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
+    final $$TemporadaTarifaTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.temporadaTarifa,
+            getReferencedColumn: (t) => t.temporadaId,
+            builder: (joinBuilder, parentComposers) =>
+                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
+                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TemporadaTableOrderingComposer
@@ -6899,11 +7276,18 @@ class $$TemporadaTableOrderingComposer
       column: $state.table.forGroup,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tarifaJSON => $state.composableBuilder(
+      column: $state.table.tarifaJSON,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
   Value<int> id,
-  required String code,
+  Value<int?> tarifaPadreId,
+  Value<double?> descIntegrado,
+  Value<String?> code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
   Value<double?> tarifaAdultoSGLoDBL,
@@ -6914,7 +7298,9 @@ typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
 });
 typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
   Value<int> id,
-  Value<String> code,
+  Value<int?> tarifaPadreId,
+  Value<double?> descIntegrado,
+  Value<String?> code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
   Value<double?> tarifaAdultoSGLoDBL,
@@ -6944,7 +7330,9 @@ class $$TarifaTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$TarifaTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            Value<String> code = const Value.absent(),
+            Value<int?> tarifaPadreId = const Value.absent(),
+            Value<double?> descIntegrado = const Value.absent(),
+            Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
             Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
@@ -6955,6 +7343,8 @@ class $$TarifaTableTableManager extends RootTableManager<
           }) =>
               TarifaCompanion(
             id: id,
+            tarifaPadreId: tarifaPadreId,
+            descIntegrado: descIntegrado,
             code: code,
             fecha: fecha,
             categoria: categoria,
@@ -6966,7 +7356,9 @@ class $$TarifaTableTableManager extends RootTableManager<
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String code,
+            Value<int?> tarifaPadreId = const Value.absent(),
+            Value<double?> descIntegrado = const Value.absent(),
+            Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
             Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
@@ -6977,6 +7369,8 @@ class $$TarifaTableTableManager extends RootTableManager<
           }) =>
               TarifaCompanion.insert(
             id: id,
+            tarifaPadreId: tarifaPadreId,
+            descIntegrado: descIntegrado,
             code: code,
             fecha: fecha,
             categoria: categoria,
@@ -7006,6 +7400,16 @@ class $$TarifaTableFilterComposer
   $$TarifaTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get tarifaPadreId => $state.composableBuilder(
+      column: $state.table.tarifaPadreId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get descIntegrado => $state.composableBuilder(
+      column: $state.table.descIntegrado,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7048,6 +7452,20 @@ class $$TarifaTableFilterComposer
       column: $state.table.tarifaPaxAdicional,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter temporadaTarifaRefs(
+      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
+    final $$TemporadaTarifaTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.temporadaTarifa,
+            getReferencedColumn: (t) => t.TarifaId,
+            builder: (joinBuilder, parentComposers) =>
+                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
+                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TarifaTableOrderingComposer
@@ -7055,6 +7473,16 @@ class $$TarifaTableOrderingComposer
   $$TarifaTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get tarifaPadreId => $state.composableBuilder(
+      column: $state.table.tarifaPadreId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get descIntegrado => $state.composableBuilder(
+      column: $state.table.descIntegrado,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7571,6 +7999,140 @@ class $$PoliticasTableOrderingComposer
               ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+typedef $$TemporadaTarifaTableInsertCompanionBuilder = TemporadaTarifaCompanion
+    Function({
+  Value<int> id,
+  Value<int?> temporadaId,
+  Value<int?> TarifaId,
+});
+typedef $$TemporadaTarifaTableUpdateCompanionBuilder = TemporadaTarifaCompanion
+    Function({
+  Value<int> id,
+  Value<int?> temporadaId,
+  Value<int?> TarifaId,
+});
+
+class $$TemporadaTarifaTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TemporadaTarifaTable,
+    TemporadaTarifaData,
+    $$TemporadaTarifaTableFilterComposer,
+    $$TemporadaTarifaTableOrderingComposer,
+    $$TemporadaTarifaTableProcessedTableManager,
+    $$TemporadaTarifaTableInsertCompanionBuilder,
+    $$TemporadaTarifaTableUpdateCompanionBuilder> {
+  $$TemporadaTarifaTableTableManager(
+      _$AppDatabase db, $TemporadaTarifaTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TemporadaTarifaTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TemporadaTarifaTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$TemporadaTarifaTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> temporadaId = const Value.absent(),
+            Value<int?> TarifaId = const Value.absent(),
+          }) =>
+              TemporadaTarifaCompanion(
+            id: id,
+            temporadaId: temporadaId,
+            TarifaId: TarifaId,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> temporadaId = const Value.absent(),
+            Value<int?> TarifaId = const Value.absent(),
+          }) =>
+              TemporadaTarifaCompanion.insert(
+            id: id,
+            temporadaId: temporadaId,
+            TarifaId: TarifaId,
+          ),
+        ));
+}
+
+class $$TemporadaTarifaTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TemporadaTarifaTable,
+    TemporadaTarifaData,
+    $$TemporadaTarifaTableFilterComposer,
+    $$TemporadaTarifaTableOrderingComposer,
+    $$TemporadaTarifaTableProcessedTableManager,
+    $$TemporadaTarifaTableInsertCompanionBuilder,
+    $$TemporadaTarifaTableUpdateCompanionBuilder> {
+  $$TemporadaTarifaTableProcessedTableManager(super.$state);
+}
+
+class $$TemporadaTarifaTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TemporadaTarifaTable> {
+  $$TemporadaTarifaTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TemporadaTableFilterComposer get temporadaId {
+    final $$TemporadaTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.temporadaId,
+        referencedTable: $state.db.temporada,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TemporadaTableFilterComposer(ComposerState(
+                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaTableFilterComposer get TarifaId {
+    final $$TarifaTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.TarifaId,
+        referencedTable: $state.db.tarifa,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$TarifaTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TemporadaTarifaTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TemporadaTarifaTable> {
+  $$TemporadaTarifaTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TemporadaTableOrderingComposer get temporadaId {
+    final $$TemporadaTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.temporadaId,
+        referencedTable: $state.db.temporada,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TemporadaTableOrderingComposer(ComposerState(
+                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaTableOrderingComposer get TarifaId {
+    final $$TarifaTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.TarifaId,
+        referencedTable: $state.db.tarifa,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableOrderingComposer(ComposerState(
+                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
@@ -7596,4 +8158,6 @@ class _$AppDatabaseManager {
       $$TarifaRackTableTableManager(_db, _db.tarifaRack);
   $$PoliticasTableTableManager get politicas =>
       $$PoliticasTableTableManager(_db, _db.politicas);
+  $$TemporadaTarifaTableTableManager get temporadaTarifa =>
+      $$TemporadaTarifaTableTableManager(_db, _db.temporadaTarifa);
 }

@@ -7,6 +7,7 @@ import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/views/tarifario/manager_base_tariff_dialog.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
@@ -262,12 +263,19 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Buttons.iconButtonCard(
-                          //   icon: HeroIcons.square_3_stack_3d,
-                          //   tooltip: "Tarifas Base",
-                          //   onPressed: () {},
-                          // ),
-                          // const SizedBox(width: 5),
+                          Buttons.iconButtonCard(
+                            icon: HeroIcons.square_3_stack_3d,
+                            tooltip: "Tarifas Base",
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return const ManagerBaseTariffDialog();
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 5),
                           politicaTarifaProvider.when(
                             data: (data) => Buttons.iconButtonCard(
                               icon: HeroIcons.adjustments_horizontal,

@@ -2,7 +2,9 @@ import 'package:drift/drift.dart';
 
 class Tarifa extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text()();
+  IntColumn get tarifaPadreId => integer().nullable()();
+  RealColumn get descIntegrado => real().nullable()();
+  TextColumn get code => text().nullable()();
   DateTimeColumn get fecha => dateTime().nullable()();
   TextColumn get categoria => text().nullable()();
   RealColumn get tarifaAdultoSGLoDBL => real().nullable()();

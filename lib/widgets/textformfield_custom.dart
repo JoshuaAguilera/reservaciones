@@ -29,11 +29,12 @@ class TextFormFieldCustom {
     String? Function(String?)? validator,
     TextInputAction? textInputAction,
     String? hintText,
+    double marginBottom = 8,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 8),
+          margin: EdgeInsets.only(bottom: marginBottom),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(2),

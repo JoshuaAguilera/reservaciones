@@ -15,6 +15,7 @@ import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -59,6 +60,37 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         : screenWidth > 750
             ? 14
             : 12;
+
+    DateTime _getStartOfWeek() {
+      final now = DateTime.now();
+      return now.subtract(Duration(days: now.weekday - 1));
+    }
+
+    DateTime _getEndOfWeek() {
+      return _getStartOfWeek().add(const Duration(days: 6));
+    }
+
+    String _getPeriodReportSelect() {
+      String period = '';
+
+      switch (typePeriod) {
+        case "Semanal":
+          period = Utility.getRangeDate(
+            _getStartOfWeek(),
+            _getEndOfWeek(),
+          );
+          break;
+        case "Mensual":
+          period = monthNames[DateTime.now().month - 1];
+          break;
+        case "Anual":
+          period = DateTime.now().year.toString();
+        default:
+          period = "Unknow";
+      }
+
+      return period;
+    }
 
     return Scaffold(
       body: Padding(
@@ -126,22 +158,36 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   usuario.rol != "ADMIN")
                                               ? "Reporte de cotizaciones del equipo"
                                               : "Reporte de cotizaciones",
-                                      
                                           color: Theme.of(context).primaryColor,
                                           size: sizeTitles,
                                         ),
                                       ),
-                                      CustomDropdown.dropdownMenuCustom(
-                                        fontSize: 12,
-                                        initialSelection: typePeriod,
-                                        onSelected: (String? value) => setState(
-                                          () => ref
-                                              .read(filterReport.notifier)
-                                              .update((state) => value!),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Expanded(
+                                              child: TextStyles.standardText(
+                                                text: _getPeriodReportSelect(),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            CustomDropdown.dropdownMenuCustom(
+                                              fontSize: 12,
+                                              initialSelection: typePeriod,
+                                              onSelected: (String? value) =>
+                                                  setState(
+                                                () => ref
+                                                    .read(filterReport.notifier)
+                                                    .update((state) => value!),
+                                              ),
+                                              elements: filtrosRegistro,
+                                              screenWidth: null,
+                                              compact: true,
+                                            ),
+                                          ],
                                         ),
-                                        elements: filtrosRegistro,
-                                        screenWidth: null,
-                                        compact: true,
                                       ),
                                     ],
                                   ),
@@ -550,7 +596,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: TextStyles.standardText(
+                                                  child:
+                                                      TextStyles.standardText(
                                                     isBold: true,
                                                     text: !(usuario.rol !=
                                                                 "SUPERADMIN" &&

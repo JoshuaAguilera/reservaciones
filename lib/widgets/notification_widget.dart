@@ -18,7 +18,9 @@ class NotificationWidget {
       margin: const EdgeInsets.only(right: 50),
       showDuration: const Duration(seconds: 1),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: brightness == Brightness.light
+            ? Colors.white
+            : DesktopColors.grisSemiPalido,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
         boxShadow: [
           BoxShadow(
@@ -40,9 +42,12 @@ class NotificationWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextStyles.titleText(
-                      size: 13,
-                      text: "Notificaciones",
-                      color: DesktopColors.ceruleanOscure),
+                    size: 14,
+                    text: "Notificaciones",
+                    color: brightness == Brightness.light
+                        ? DesktopColors.ceruleanOscure
+                        : DesktopColors.azulClaro,
+                  ),
                   const Divider(
                     height: 10,
                     color: Colors.grey,

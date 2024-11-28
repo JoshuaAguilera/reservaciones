@@ -8,7 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 class TextStyles {
   static Text standardText(
-      {String text = "",
+      {required String text,
       TextAlign aling = TextAlign.left,
       bool overClip = false,
       double size = 13,

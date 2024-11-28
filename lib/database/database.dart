@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:generador_formato/database/tables/images_table.dart';
+import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,6 +33,7 @@ part 'database.g.dart';
 //     TarifaRack,
 //     Politicas,
 //     ImagesTable,
+//      TemporadaTarifa,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -50,6 +52,13 @@ class UserWithImage {
   final ImagesTableData? image;
 }
 
+class SeasonTariff {
+  SeasonTariff(this.season, this.tariff);
+
+  final TemporadaData season;
+  final Tarifa? tariff;
+}
+
 @DriftDatabase(tables: [
   Usuario,
   Cotizacion,
@@ -61,6 +70,8 @@ class UserWithImage {
   UserActivity,
   TarifaRack,
   Politicas,
+  ImagesTable,
+  TemporadaTarifa,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -251,7 +262,6 @@ class AppDatabase extends _$AppDatabase {
     }
 
     final sql = query.toString();
-    print('Generated SQL: $sql');
 
     final result = await query.get();
 
@@ -604,9 +614,7 @@ class AppDatabase extends _$AppDatabase {
   }) {
     return (update(tarifaRack)
           ..where((t) => t.code.equals(codeUniv))
-          ..where(
-            (tbl) => tbl.id.equals(id),
-          ))
+          ..where((tbl) => tbl.id.equals(id)))
         .write(tarifaUpdate);
   }
 
@@ -667,8 +675,8 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
 
-    //final dbFolder = "/";//DesCommit when release
-    //final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+    // final dbFolder = "/"; //DesCommit when release Windows
+    // final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
 
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));

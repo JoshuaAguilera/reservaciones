@@ -51,7 +51,7 @@ class TarifaService extends BaseService {
 
           await database.into(database.tarifa).insert(
                 TarifaCompanion.insert(
-                  code: codeUniversal,
+                  code: Value(codeUniversal),
                   categoria: Value(tarifaVR.categoria),
                   fecha: Value(now),
                   tarifaAdultoSGLoDBL: Value(tarifaVR.tarifaAdulto1a2),
@@ -63,7 +63,7 @@ class TarifaService extends BaseService {
               );
           await database.into(database.tarifa).insert(
                 TarifaCompanion.insert(
-                  code: codeUniversal,
+                  code: Value(codeUniversal),
                   categoria: Value(tarifaVPM.categoria),
                   fecha: Value(now),
                   tarifaAdultoSGLoDBL: Value(tarifaVPM.tarifaAdulto1a2),

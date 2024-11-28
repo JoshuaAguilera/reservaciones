@@ -452,18 +452,24 @@ class Utility {
     DateTime firstDate = datesList.first;
     DateTime lastDate = datesList.last;
 
+    return dates;
+  }
+
+  static String getRangeDate(DateTime firstDate, DateTime lastDate) {
+    String range = "";
+
     if (firstDate.month == lastDate.month) {
-      dates =
+      range =
           "${firstDate.day} al ${lastDate.day} ${monthNames[firstDate.month - 1]} ${firstDate.year}";
     } else if (firstDate.year == lastDate.year) {
-      dates =
+      range =
           "${firstDate.day} ${monthNames[firstDate.month - 1]} al ${lastDate.day} ${monthNames[lastDate.month - 1]} ${firstDate.year}";
     } else {
-      dates =
+      range =
           "${firstDate.day} ${monthNames[firstDate.month - 1]} ${firstDate.year} al ${lastDate.day} ${monthNames[lastDate.month - 1]} ${firstDate.year}";
     }
 
-    return dates;
+    return range;
   }
 
   static Color getColorRegisterQuote(String type) {
