@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/tarifa_base_model.dart';
+import 'package:generador_formato/models/tarifa_model.dart';
+import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../ui/buttons.dart';
+import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/web_colors.dart';
 import '../../widgets/custom_dropdown.dart';
@@ -13,7 +17,9 @@ import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 
 class ManagerBaseTariffDialog extends StatefulWidget {
-  const ManagerBaseTariffDialog({super.key});
+  const ManagerBaseTariffDialog({super.key, required this.tarifasBase});
+
+  final List<TarifaBaseInt> tarifasBase;
 
   @override
   State<ManagerBaseTariffDialog> createState() =>
@@ -23,6 +29,7 @@ class ManagerBaseTariffDialog extends StatefulWidget {
 class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   String selectCategory = "VISTA A LA RESERVA";
+  final _nombreTarifaController = TextEditingController();
   final _tarifaAdultoSingleController = TextEditingController();
   final _tarifaAdultoTPLController = TextEditingController();
   final _tarifaAdultoCPLController = TextEditingController();
@@ -32,12 +39,21 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   final _formKeyManagerBase = GlobalKey<FormState>();
   bool applyUpgrades = false;
   String selectTarifaPadre = "Ninguna";
-  TarifaData? firstTariff = TarifaData(
-    id: 0,
+  Tarifa? firstTariff = Tarifa(
     categoria: tipoHabitacion.first,
-    code: "new_tariff",
   );
-  TarifaData? saveTariff;
+  Tarifa? saveTariff;
+  double? upGradeCateg;
+  double? upGradeMenor;
+  double? upGradePaxAdic;
+  TarifaBaseInt? tarifaPadre;
+  TarifaBaseInt? selectTariff;
+
+  @override
+  void initState() {
+    selectTariff = widget.tarifasBase.firstOrNull;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +63,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
       ),
       child: SizedBox(
         width: 700,
-        height: 550,
+        height: 570,
         child: Row(
           children: [
             Container(
@@ -73,7 +89,18 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                     absorbing: true,
                     child: SingleChildScrollView(
                       child: Column(
-                        children: [],
+                        children: [
+                          for (var element in widget.tarifasBase)
+                            _buildStepItem(
+                              element.nombre ?? '',
+                              element,
+                            ),
+                          _buildStepItem(
+                            "Nueva Tarifa",
+                            null,
+                            isNew: true,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -83,15 +110,13 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
-                child: SizedBox(
-                  height: 550,
+                child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Form(
                         key: _formKeyManagerBase,
                         child: SizedBox(
-                          height: 460,
                           child: SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,11 +131,27 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                 const SizedBox(height: 8),
                                 TextStyles.standardText(
                                   text:
-                                      "Revisa, edita, elimina o actualiza las tarifas base principales para optimizar el tarifario. Esto permitirá generar de forma ágil y precisa las tarifas definitivas adaptadas para las cotizaciones.",
+                                      "Revisa, edita, elimina o actualiza las tarifas base para optimizar el tarifario. Esto permitirá generar de forma ágil y precisa las tarifas para cotizaciones.",
                                   overClip: true,
-                                  size: 12.6,
+                                  size: 12,
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  height: 35,
+                                  child: TextFormFieldCustom
+                                      .textFormFieldwithBorder(
+                                    name: "Nombre Tarifa Base",
+                                    msgError: "",
+                                    controller: _nombreTarifaController,
+                                    icon: const Icon(
+                                      HeroIcons.square_3_stack_3d,
+                                      size: 20,
+                                    ),
+                                    onChanged: (p0) {},
+                                    marginBottom: 0,
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -130,7 +171,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                           initialSelection: selectTarifaPadre,
                                           onSelected: (String? value) {},
                                           elements: ['Ninguna'],
-                                          excepcionItem: "Ninguna",
+                                          // excepcionItem: "Ninguna",
                                           compact: true,
                                         ),
                                       ],
@@ -180,14 +221,13 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                       if (saveTariff?.categoria ==
                                           tipoHabitacion.first) {
                                         _tarifaAdultoSingleController.text =
-                                            (saveTariff?.tarifaAdultoSGLoDBL ??
-                                                    '')
+                                            (saveTariff?.tarifaAdulto1a2 ?? '')
                                                 .toString();
                                         _tarifaAdultoTPLController.text =
-                                            (saveTariff?.tarifaAdultoTPL ?? '')
+                                            (saveTariff?.tarifaAdulto3 ?? '')
                                                 .toString();
                                         _tarifaAdultoCPLController.text =
-                                            (saveTariff?.tarifaAdultoCPLE ?? '')
+                                            (saveTariff?.tarifaAdulto4 ?? '')
                                                 .toString();
                                         _tarifaPaxAdicionalController.text =
                                             (saveTariff?.tarifaPaxAdicional ??
@@ -248,42 +288,39 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                   if (selectCategory ==
                                                       categorias[index]) return;
 
-                                                  TarifaData? selectTariff =
+                                                  Tarifa? selectTariff =
                                                       firstTariff!.copyWith();
 
-                                                  TarifaData saveIntTariff =
-                                                      TarifaData(
+                                                  Tarifa saveIntTariff = Tarifa(
                                                     categoria: tipoHabitacion[
                                                         categorias.indexOf(
                                                             selectCategory)],
                                                     code: selectTariff.code ??
                                                         "${firstTariff?.code} - $selectCategory",
-                                                    fecha: selectTariff.fecha ??
-                                                        DateTime.now(),
-                                                    id: selectTariff?.id ??
+                                                    id: selectTariff.id ??
                                                         categorias.indexOf(
                                                             selectCategory),
-                                                    tarifaAdultoSGLoDBL:
+                                                    tarifaAdulto1a2:
                                                         _tarifaAdultoSingleController
                                                                 .text.isEmpty
                                                             ? selectTariff
-                                                                .tarifaAdultoSGLoDBL
+                                                                .tarifaAdulto1a2
                                                             : double.parse(
                                                                 _tarifaAdultoSingleController
                                                                     .text),
-                                                    tarifaAdultoTPL:
+                                                    tarifaAdulto3:
                                                         _tarifaAdultoTPLController
                                                                 .text.isEmpty
                                                             ? selectTariff
-                                                                .tarifaAdultoTPL
+                                                                .tarifaAdulto3
                                                             : double.parse(
                                                                 _tarifaAdultoTPLController
                                                                     .text),
-                                                    tarifaAdultoCPLE:
+                                                    tarifaAdulto4:
                                                         _tarifaAdultoCPLController
                                                                 .text.isEmpty
                                                             ? selectTariff
-                                                                .tarifaAdultoCPLE
+                                                                .tarifaAdulto4
                                                             : double.parse(
                                                                 _tarifaAdultoCPLController
                                                                     .text),
@@ -307,17 +344,17 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
                                                   _tarifaAdultoSingleController
                                                       .text = (saveTariff
-                                                              ?.tarifaAdultoSGLoDBL ??
+                                                              ?.tarifaAdulto1a2 ??
                                                           '')
                                                       .toString();
                                                   _tarifaAdultoTPLController
                                                       .text = (saveTariff
-                                                              ?.tarifaAdultoTPL ??
+                                                              ?.tarifaAdulto3 ??
                                                           '')
                                                       .toString();
                                                   _tarifaAdultoCPLController
                                                       .text = (saveTariff
-                                                              ?.tarifaAdultoCPLE ??
+                                                              ?.tarifaAdulto4 ??
                                                           '')
                                                       .toString();
                                                   _tarifaPaxAdicionalController
@@ -377,6 +414,10 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                 msgError: "",
                                                 marginBottom: 0,
                                                 isNumeric: true,
+                                                onChanged: (p0) {
+                                                  upGradeCateg = double.parse(
+                                                      p0.isEmpty ? "0" : p0);
+                                                },
                                               ),
                                             ),
                                           ),
@@ -390,6 +431,10 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                 msgError: "",
                                                 marginBottom: 0,
                                                 isNumeric: true,
+                                                onChanged: (p0) {
+                                                  upGradeMenor = double.parse(
+                                                      p0.isEmpty ? "0" : p0);
+                                                },
                                               ),
                                             ),
                                           ),
@@ -403,6 +448,10 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                 msgError: "",
                                                 marginBottom: 0,
                                                 isNumeric: true,
+                                                onChanged: (p0) {
+                                                  upGradePaxAdic = double.parse(
+                                                      p0.isEmpty ? "0" : p0);
+                                                },
                                               ),
                                             ),
                                           ),
@@ -430,35 +479,100 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: TextStyles.standardText(
-                              text: "Cancelar",
-                              isBold: true,
-                              size: 12.5,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 38),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: TextStyles.standardText(
+                                text: "Cancelar",
+                                isBold: true,
+                                size: 12.5,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: DesktopColors.cerulean),
-                            onPressed: () {
-                              if (!_formKeyManagerBase.currentState!.validate())
-                                return;
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: DesktopColors.cerulean),
+                              onPressed: () async {
+                                if (!_formKeyManagerBase.currentState!
+                                    .validate()) {
+                                  return;
+                                }
 
-                              
-                            },
-                            child: TextStyles.standardText(
-                              text: "Guardar",
-                              size: 12.5,
+                                if (!applyUpgrades) {
+                                  upGradeCateg = null;
+                                  upGradeMenor = null;
+                                  upGradePaxAdic = null;
+                                }
+
+                                Tarifa nowTariff = Tarifa();
+                                nowTariff.categoria = tipoHabitacion[
+                                    categorias.indexOf(selectCategory)];
+                                nowTariff.tarifaAdulto1a2 = double.parse(
+                                    _tarifaAdultoSingleController.text);
+                                nowTariff.tarifaAdulto3 = double.parse(
+                                    _tarifaAdultoTPLController.text);
+                                nowTariff.tarifaAdulto4 = double.parse(
+                                    _tarifaAdultoCPLController.text);
+                                nowTariff.tarifaPaxAdicional = double.parse(
+                                    _tarifaPaxAdicionalController.text);
+                                nowTariff.tarifaMenores7a12 =
+                                    double.parse(_tarifaMenoresController.text);
+
+                                if (applyUpgrades) {
+                                  saveTariff!.categoria = tipoHabitacion.last;
+                                }
+
+                                TarifaBaseInt tarifaBase = TarifaBaseInt();
+                                tarifaBase.nombre =
+                                    _nombreTarifaController.text;
+                                tarifaBase.descIntegrado =
+                                    double.tryParse(_descuentoController.text);
+                                tarifaBase.upgradeCategoria = upGradeCateg;
+                                tarifaBase.upgradeMenor = upGradeMenor;
+                                tarifaBase.upgradePaxAdic = upGradePaxAdic;
+                                tarifaBase.tarifaPadre = tarifaPadre;
+                                tarifaBase.tarifas = [
+                                  nowTariff,
+                                  if (!applyUpgrades) saveTariff!
+                                ];
+
+                                String messageResponse = await TarifaService()
+                                    .saveBaseTariff(tarifaBase);
+
+                                if (messageResponse.isNotEmpty) {
+                                  showSnackBar(
+                                    context: context,
+                                    title: "Error de registro",
+                                    message:
+                                        "Se presento un problema al registrar una nueva tarifa base: $messageResponse.",
+                                    type: "danger",
+                                  );
+                                  return;
+                                }
+
+                                showSnackBar(
+                                  context: context,
+                                  title: "Tarifa Base creada",
+                                  message:
+                                      "Se creo la nueva tarifa base: ${tarifaBase.nombre}",
+                                  type: "success",
+                                );
+
+                                Navigator.of(context).pop(true);
+                              },
+                              child: TextStyles.standardText(
+                                text: "Guardar",
+                                size: 12.5,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -471,28 +585,40 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     );
   }
 
-  Widget _buildStepItem(String title, TemporadaData season) {
+  Widget _buildStepItem(
+    String title,
+    TarifaBaseInt? tariff, {
+    bool isNew = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          // SizedBox(
-          //   height: 20,
-          //   width: 20,
-          //   child: Radio<Habitacion>(
-          //     value: season,
-          //     groupValue: selectRoom,
-          //     onChanged: (value) => setState(() => _selectNewRoom(season)),
-          //   ),
-          // ),
-          // const SizedBox(width: 8),
-          // Expanded(
-          //   child: TextStyles.standardText(
-          //     text: title,
-          //     isBold: selectRoom == season,
-          //     overClip: true,
-          //   ),
-          // ),
+          SizedBox(
+            height: 20,
+            width: 20,
+            child: isNew
+                ? InkWell(
+                    onTap: () {
+                      print("");
+                      setState(() => selectTariff = null);
+                    },
+                    child: const Icon(HeroIcons.plus, size: 20),
+                  )
+                : Radio<TarifaBaseInt>(
+                    value: tariff!,
+                    groupValue: selectTariff,
+                    onChanged: (value) => setState(() => selectTariff = tariff),
+                  ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextStyles.standardText(
+              text: title,
+              isBold: selectTariff == null || selectTariff == tariff,
+              overClip: true,
+            ),
+          ),
         ],
       ),
     );

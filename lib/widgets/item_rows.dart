@@ -9,7 +9,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../utils/helpers/web_colors.dart';

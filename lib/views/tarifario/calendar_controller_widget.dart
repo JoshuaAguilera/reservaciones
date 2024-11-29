@@ -8,13 +8,13 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:intl/intl.dart';
 
-import '../models/temporada_model.dart';
-import '../ui/custom_widgets.dart';
-import '../ui/progress_indicator.dart';
-import '../ui/show_snackbar.dart';
-import '../utils/helpers/utility.dart';
-import 'item_rows.dart';
-import 'text_styles.dart';
+import '../../models/temporada_model.dart';
+import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
+import '../../ui/show_snackbar.dart';
+import '../../utils/helpers/utility.dart';
+import '../../widgets/item_rows.dart';
+import '../../widgets/text_styles.dart';
 
 class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool target;
@@ -244,7 +244,7 @@ class _ControllerCalendarWidgetState
                                 .update(
                                   (state) => [
                                     Temporada(
-                                        nombre: "Promoción", editable: false),
+                                        nombre: "DIRECTO", editable: false),
                                     Temporada(nombre: "BAR I", editable: false),
                                     Temporada(
                                         nombre: "BAR II", editable: false),

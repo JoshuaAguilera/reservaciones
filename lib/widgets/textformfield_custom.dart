@@ -36,7 +36,6 @@ class TextFormFieldCustom {
         return Container(
           margin: EdgeInsets.only(bottom: marginBottom),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(2),
           ),
           constraints: BoxConstraints(
@@ -89,6 +88,8 @@ class TextFormFieldCustom {
                   textAlignVertical: TextAlignVertical.top,
                   textAlign: isMoneda ? TextAlign.right : TextAlign.left,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
                     border: const OutlineInputBorder(),
                     labelStyle: const TextStyle(
                       fontFamily: "poppins_regular",

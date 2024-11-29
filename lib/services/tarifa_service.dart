@@ -3,23 +3,105 @@ import 'dart:ui';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/services/base_service.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../database/database.dart';
 
 class TarifaService extends BaseService {
+  Future<String> saveBaseTariff(TarifaBaseInt tarifaBase) async {
+    String error = "";
+    String codeBase = "${Utility.getUniqueCode()}-tarifaBase-$userId-$userName";
+    DateTime now = DateTime.now();
+
+    try {
+      final database = AppDatabase();
+
+      await database.transaction(
+        () async {
+          TarifaBaseData response =
+              await database.into(database.tarifaBase).insertReturning(
+                    TarifaBaseCompanion.insert(
+                      code: Value(codeBase),
+                      descIntegrado: Value(tarifaBase.descIntegrado),
+                      nombre: Value(tarifaBase.nombre),
+                      tarifaPadreId: Value(tarifaBase.tarifaPadre?.id),
+                      upgradeCategoria: Value(tarifaBase.upgradeCategoria),
+                      upgradeMenor: Value(tarifaBase.upgradeMenor),
+                      upgradePaxAdic: Value(tarifaBase.upgradePaxAdic),
+                    ),
+                  );
+
+          for (var element in tarifaBase.tarifas!) {
+            await database.into(database.tarifa).insert(
+                  TarifaCompanion.insert(
+                    code: Value(codeBase),
+                    categoria: Value(element.categoria),
+                    fecha: Value(now),
+                    tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
+                    tarifaMenores7a12: Value(element.tarifaMenores7a12),
+                    tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
+                    tarifaAdultoCPLE: Value(element.tarifaAdulto4),
+                    tarifaAdultoTPL: Value(element.tarifaAdulto3),
+                    tarifaPadreId: Value(response.id),
+                  ),
+                );
+          }
+
+          if (tarifaBase.upgradeCategoria != null) {
+            await database.into(database.tarifa).insert(
+                  TarifaCompanion.insert(
+                    code: Value(codeBase),
+                    categoria: Value(tipoHabitacion
+                        .where((element) =>
+                            element != tarifaBase.tarifas?.first.categoria)
+                        .first),
+                    fecha: Value(now),
+                    tarifaAdultoSGLoDBL: Value(
+                        tarifaBase.tarifas!.first.tarifaAdulto1a2! +
+                            tarifaBase.upgradeCategoria!),
+                    tarifaMenores7a12: Value(
+                        tarifaBase.tarifas!.first.tarifaMenores7a12! +
+                            tarifaBase.upgradeMenor!),
+                    tarifaPaxAdicional: Value(
+                        tarifaBase.tarifas!.first.tarifaPaxAdicional! +
+                            tarifaBase.upgradePaxAdic!),
+                    tarifaAdultoCPLE: Value(
+                        tarifaBase.tarifas!.first.tarifaAdulto4! +
+                            tarifaBase.upgradeCategoria!),
+                    tarifaAdultoTPL: Value(
+                        tarifaBase.tarifas!.first.tarifaAdulto3! +
+                            tarifaBase.upgradeCategoria!),
+                    tarifaPadreId: Value(response.id),
+                  ),
+                );
+          }
+        },
+      );
+
+      await database.close();
+    } catch (e) {
+      error = e.toString();
+    }
+
+    return error;
+  }
+
   Future<bool> saveTarifaBD({
     required String name,
     required List<Periodo> periodos,
     required Color colorIdentificativo,
     required List<bool> diasAplicacion,
     required List<Temporada> temporadas,
-    required TarifaTemporada tarifaVR,
-    required TarifaTemporada tarifaVPM,
+    required Tarifa tarifaVR,
+    required Tarifa tarifaVPM,
   }) async {
     String codeUniversal =
         "${UniqueKey().hashCode.toString()}-$userId-$userName-${DateTime.now().toString()}";
@@ -121,8 +203,8 @@ class TarifaService extends BaseService {
     required Color colorIdentificativo,
     required List<bool> diasAplicacion,
     required List<Temporada> temporadas,
-    required TarifaTemporada tarifaVR,
-    required TarifaTemporada tarifaVPM,
+    required Tarifa tarifaVR,
+    required Tarifa tarifaVPM,
   }) async {
     final database = AppDatabase();
     DateTime now =
@@ -309,6 +391,22 @@ class TarifaService extends BaseService {
     }
 
     return tarifasRegistradas;
+  }
+
+  Future<List<TarifaBaseInt>> getBaseTariff() async {
+    List<TarifaBaseInt> tarifasBase = [];
+
+    try {
+      final db = AppDatabase();
+      final tarifaBaseDao = TarifaBaseDao(db);
+      tarifasBase = await tarifaBaseDao.getBaseTariffComplement();
+      await db.close();
+      await tarifaBaseDao.close();
+    } catch (e) {
+      print(e);
+    }
+
+    return tarifasBase;
   }
 
   Future<Politica?> getTariffPolicy() async {

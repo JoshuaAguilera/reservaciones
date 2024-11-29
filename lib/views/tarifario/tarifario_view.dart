@@ -60,6 +60,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     double screenWidth = MediaQuery.of(context).size.width;
     final modeViewProvider = ref.watch(selectedModeViewProvider);
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
@@ -263,17 +264,48 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Buttons.iconButtonCard(
-                            icon: HeroIcons.square_3_stack_3d,
-                            tooltip: "Tarifas Base",
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return const ManagerBaseTariffDialog();
-                                },
-                              );
-                            },
+                          tarifasBase.when(
+                            data: (data) => Buttons.iconButtonCard(
+                              icon: HeroIcons.square_3_stack_3d,
+                              tooltip: "Tarifas Base",
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ManagerBaseTariffDialog(
+                                        tarifasBase: data);
+                                  },
+                                ).then((value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(changeTarifasProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                    ref
+                                        .read(
+                                            changeTarifasListProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                    ref
+                                        .read(
+                                            changeTarifasBaseProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                  }
+                                });
+                              },
+                            ),
+                            error: (error, stackTrace) => const Tooltip(
+                                message: "Error de consulta",
+                                child: Icon(Icons.warning_amber_rounded,
+                                    color: Colors.amber)),
+                            loading: () => Center(
+                              child: SizedBox(
+                                width: 40,
+                                child: ProgressIndicatorEstandar(
+                                    sizeProgressIndicator: 30),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 5),
                           politicaTarifaProvider.when(
@@ -310,8 +342,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                     .update(
                                       (state) => [
                                         Temporada(
-                                            nombre: "Promoción",
-                                            editable: false),
+                                            nombre: "DIRECTO", editable: false),
                                         Temporada(
                                             nombre: "BAR I", editable: false),
                                         Temporada(

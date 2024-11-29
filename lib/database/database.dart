@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:drift/native.dart';
+import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
 import 'package:generador_formato/database/tables/images_table.dart';
+import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
@@ -33,7 +35,11 @@ part 'database.g.dart';
 //     TarifaRack,
 //     Politicas,
 //     ImagesTable,
-//      TemporadaTarifa,
+//     TemporadaTarifa,
+//     TarifaBase,
+//   ],
+//   daos: [
+//     TarifaBaseDao,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -59,20 +65,26 @@ class SeasonTariff {
   final Tarifa? tariff;
 }
 
-@DriftDatabase(tables: [
-  Usuario,
-  Cotizacion,
-  Habitacion,
-  TarifaXDiaTable,
-  Periodo,
-  Temporada,
-  Tarifa,
-  UserActivity,
-  TarifaRack,
-  Politicas,
-  ImagesTable,
-  TemporadaTarifa,
-])
+@DriftDatabase(
+  tables: [
+    Usuario,
+    Cotizacion,
+    Habitacion,
+    TarifaXDiaTable,
+    Periodo,
+    Temporada,
+    Tarifa,
+    UserActivity,
+    TarifaRack,
+    Politicas,
+    ImagesTable,
+    TemporadaTarifa,
+    TarifaBase,
+  ],
+  daos: [
+    TarifaBaseDao,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -91,7 +103,7 @@ class AppDatabase extends _$AppDatabase {
     final query = select(cotizacion)
         .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
-    if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
 
     query.where(cotizacion.nombreHuesped.equals(search));
 
@@ -261,8 +273,6 @@ class AppDatabase extends _$AppDatabase {
       query.where(cotizacion.fecha.isBetweenValues(initTime, lastTime));
     }
 
-    final sql = query.toString();
-
     final result = await query.get();
 
     final list = result.map((row) {
@@ -323,7 +333,7 @@ class AppDatabase extends _$AppDatabase {
     final query = select(cotizacion)
         .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
-    if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
 
     query.orderBy(
         [OrderingTerm(expression: cotizacion.fecha, mode: OrderingMode.desc)]);
@@ -343,7 +353,7 @@ class AppDatabase extends _$AppDatabase {
     final query = select(cotizacion)
         .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
-    if (userId != null) query.where(cotizacion.usuarioID.equals(userId!));
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
 
     final result = await query.get();
 
@@ -666,6 +676,26 @@ class AppDatabase extends _$AppDatabase {
       {required Politica politica, required int id}) {
     return (update(politicas)..where((tbl) => tbl.id.equals(id)))
         .write(politica);
+  }
+
+  // -- // Tarifa Base Dao
+
+  Future<List<TarifaBaseData>> getBaseTariff() async {
+    return (select(tarifaBase)).get();
+  }
+
+  Future<int> updateBaseTariff(
+      {required TarifaBaseData baseTariff,
+      required int id,
+      required String code}) {
+    return (update(tarifaBase)
+          ..where((tbl) => tbl.code.equals(code))
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(baseTariff);
+  }
+
+  Future deleteBaseTariff(int id) {
+    return (delete(tarifaBase)..where((t) => t.id.equals(id))).go();
   }
 }
 

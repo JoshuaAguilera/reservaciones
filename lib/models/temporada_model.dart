@@ -6,7 +6,7 @@ class Temporada {
   String? nombre;
   int? estanciaMinima;
   double? porcentajePromocion;
-  List<TarifaTemporada>? tarifa;
+  List<Tarifa>? tarifa;
   bool? editable;
   bool? forGroup;
 

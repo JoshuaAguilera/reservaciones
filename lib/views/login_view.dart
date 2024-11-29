@@ -124,7 +124,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                               Container(
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                                 constraints: BoxConstraints(
@@ -145,9 +144,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Usuario"),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.white.withOpacity(0.1),
+                                    border: const OutlineInputBorder(),
+                                    labelText: "Usuario",
+                                  ),
                                   style: const TextStyle(
                                     fontFamily: "poppins_regular",
                                     fontSize: 13,
@@ -158,7 +160,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 height: 45,
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                                 constraints: BoxConstraints(
@@ -185,21 +186,24 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     fontSize: 13,
                                   ),
                                   decoration: InputDecoration(
-                                      border: const OutlineInputBorder(),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          passwordVisible
-                                              ? CupertinoIcons.eye_solid
-                                              : CupertinoIcons.eye_slash_fill,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            passwordVisible = !passwordVisible;
-                                          });
-                                        },
+                                    filled: true,
+                                    fillColor: Colors.white.withOpacity(0.1),
+                                    border: const OutlineInputBorder(),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        passwordVisible
+                                            ? CupertinoIcons.eye_solid
+                                            : CupertinoIcons.eye_slash_fill,
+                                        color: Theme.of(context).primaryColor,
                                       ),
-                                      labelText: "Contraseña"),
+                                      onPressed: () {
+                                        setState(() {
+                                          passwordVisible = !passwordVisible;
+                                        });
+                                      },
+                                    ),
+                                    labelText: "Contraseña",
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 5),

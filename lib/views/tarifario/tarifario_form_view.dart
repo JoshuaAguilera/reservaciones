@@ -14,7 +14,7 @@ import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -1130,14 +1130,14 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       return;
     }
 
-    TarifaTemporada tarifaVR = TarifaTemporada(
+    Tarifa tarifaVR = Tarifa(
         categoria: tipoHabitacion[0],
         tarifaAdulto1a2: double.parse(adults1_2VRController.text),
         tarifaAdulto3: double.parse(adults3VRController.text),
         tarifaAdulto4: double.parse(adults4VRController.text),
         tarifaMenores7a12: double.parse(minors7_12VRController.text),
         tarifaPaxAdicional: double.parse(paxAdicVRController.text));
-    TarifaTemporada tarifaVPM = TarifaTemporada(
+    Tarifa tarifaVPM = Tarifa(
         categoria: tipoHabitacion[1],
         tarifaAdulto1a2: double.parse(adults1_2VPMController.text),
         tarifaAdulto3: double.parse(adults3VPMController.text),
