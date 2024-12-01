@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
+import 'package:generador_formato/database/dao/tarifa_dao.dart';
 import 'package:generador_formato/database/tables/images_table.dart';
 import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
@@ -40,6 +41,7 @@ part 'database.g.dart';
 //   ],
 //   daos: [
 //     TarifaBaseDao,
+//     TarifaDao,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -83,6 +85,7 @@ class SeasonTariff {
   ],
   daos: [
     TarifaBaseDao,
+ TarifaDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -680,23 +683,7 @@ class AppDatabase extends _$AppDatabase {
 
   // -- // Tarifa Base Dao
 
-  Future<List<TarifaBaseData>> getBaseTariff() async {
-    return (select(tarifaBase)).get();
-  }
 
-  Future<int> updateBaseTariff(
-      {required TarifaBaseData baseTariff,
-      required int id,
-      required String code}) {
-    return (update(tarifaBase)
-          ..where((tbl) => tbl.code.equals(code))
-          ..where((tbl) => tbl.id.equals(id)))
-        .write(baseTariff);
-  }
-
-  Future deleteBaseTariff(int id) {
-    return (delete(tarifaBase)..where((t) => t.id.equals(id))).go();
-  }
 }
 
 LazyDatabase _openConnection() {

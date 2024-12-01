@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
+import 'package:generador_formato/database/dao/tarifa_dao.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
@@ -56,6 +57,10 @@ class TarifaService extends BaseService {
           }
 
           if (tarifaBase.upgradeCategoria != null) {
+            Tarifa? secondTariff = tarifaBase.tarifas
+                ?.where((element) => element.categoria == tipoHabitacion.first)
+                .firstOrNull;
+
             await database.into(database.tarifa).insert(
                   TarifaCompanion.insert(
                     code: Value(codeBase),
@@ -65,20 +70,18 @@ class TarifaService extends BaseService {
                         .first),
                     fecha: Value(now),
                     tarifaAdultoSGLoDBL: Value(
-                        tarifaBase.tarifas!.first.tarifaAdulto1a2! +
+                        (secondTariff?.tarifaAdulto1a2 ?? 0) +
                             tarifaBase.upgradeCategoria!),
                     tarifaMenores7a12: Value(
-                        tarifaBase.tarifas!.first.tarifaMenores7a12! +
+                        (secondTariff?.tarifaMenores7a12 ?? 0) +
                             tarifaBase.upgradeMenor!),
                     tarifaPaxAdicional: Value(
-                        tarifaBase.tarifas!.first.tarifaPaxAdicional! +
+                        (secondTariff?.tarifaPaxAdicional ?? 0) +
                             tarifaBase.upgradePaxAdic!),
-                    tarifaAdultoCPLE: Value(
-                        tarifaBase.tarifas!.first.tarifaAdulto4! +
-                            tarifaBase.upgradeCategoria!),
-                    tarifaAdultoTPL: Value(
-                        tarifaBase.tarifas!.first.tarifaAdulto3! +
-                            tarifaBase.upgradeCategoria!),
+                    tarifaAdultoCPLE: Value((secondTariff?.tarifaAdulto4 ?? 0) +
+                        tarifaBase.upgradeCategoria!),
+                    tarifaAdultoTPL: Value((secondTariff?.tarifaAdulto3 ?? 0) +
+                        tarifaBase.upgradeCategoria!),
                     tarifaPadreId: Value(response.id),
                   ),
                 );
@@ -313,6 +316,87 @@ class TarifaService extends BaseService {
     }
   }
 
+  Future<String> updateBaseTariff(TarifaBaseInt tarifaBase) async {
+    String response = '';
+
+    try {
+      final database = AppDatabase();
+      final tarifaBaseDao = TarifaBaseDao(database);
+      final tarifaDao = TarifaDao(database);
+
+      List<Tarifa> tarifasRegister =
+          tarifaBase.tarifas?.map((element) => element.copyWith()).toList() ??
+              [];
+      await database.transaction(
+        () async {
+          await tarifaBaseDao.updateBaseTariff(
+            baseTariff: TarifaBaseData(
+              id: tarifaBase.id!,
+              descIntegrado: tarifaBase.descIntegrado,
+              nombre: tarifaBase.nombre,
+              tarifaPadreId: tarifaBase.tarifaPadre?.id,
+              upgradeCategoria: tarifaBase.upgradeCategoria,
+              upgradeMenor: tarifaBase.upgradeMenor,
+              upgradePaxAdic: tarifaBase.upgradePaxAdic,
+            ),
+            code: tarifaBase.code!,
+            id: tarifaBase.id!,
+          );
+          if (tarifaBase.upgradeCategoria != null) {
+            Tarifa? secondTariff = tarifasRegister
+                .where((element) => element.categoria == tipoHabitacion.first)
+                .firstOrNull;
+
+            await tarifaDao.updateForBaseTariff(
+              tarifaData: TarifaCompanion(
+                tarifaAdultoCPLE: Value((secondTariff?.tarifaAdulto4 ?? 0) +
+                    tarifaBase.upgradeCategoria!),
+                tarifaAdultoSGLoDBL: Value(
+                    (secondTariff?.tarifaAdulto1a2 ?? 0) +
+                        tarifaBase.upgradeCategoria!),
+                tarifaAdultoTPL: Value((secondTariff?.tarifaAdulto3 ?? 0) +
+                    tarifaBase.upgradeCategoria!),
+                tarifaMenores7a12: Value(
+                    (secondTariff?.tarifaMenores7a12 ?? 0) +
+                        tarifaBase.upgradeMenor!),
+                tarifaPaxAdicional: Value(
+                    (secondTariff?.tarifaPaxAdicional ?? 0) +
+                        tarifaBase.upgradePaxAdic!),
+              ),
+              baseTariffId: tarifaBase.id!,
+              id: tarifasRegister
+                  .firstWhere(
+                      (element) => element.categoria == tipoHabitacion.last)
+                  .id!,
+            );
+
+            tarifasRegister.removeWhere(
+                (element) => element.categoria != tipoHabitacion.first);
+          }
+          for (var element in tarifasRegister) {
+            await tarifaDao.updateForBaseTariff(
+              tarifaData: TarifaCompanion(
+                tarifaAdultoCPLE: Value(element.tarifaAdulto4),
+                tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
+                tarifaAdultoTPL: Value(element.tarifaAdulto3),
+                tarifaMenores7a12: Value(element.tarifaMenores7a12),
+                tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
+              ),
+              baseTariffId: tarifaBase.id!,
+              id: element.id!,
+            );
+          }
+        },
+      );
+      await database.close();
+    } catch (e) {
+      print(e);
+      response = (e.toString());
+    }
+
+    return response;
+  }
+
   Future<bool> deleteTarifaRack(RegistroTarifa tarifa) async {
     final database = AppDatabase();
 
@@ -407,6 +491,26 @@ class TarifaService extends BaseService {
     }
 
     return tarifasBase;
+  }
+
+  Future<String> deleteBaseTariff(TarifaBaseInt tarifaBase) async {
+    String response = "";
+    try {
+      final database = AppDatabase();
+      final tarifaBaseDao = TarifaBaseDao(database);
+      final tarifaDao = TarifaDao(database);
+      await database.transaction(
+        () async {
+          await tarifaDao.removeBaseTariff(tarifaBase.id!);
+          await tarifaBaseDao.deleteBaseTariff(tarifaBase);
+        },
+      );
+      await database.close();
+    } catch (e) {
+      response = (e.toString());
+    }
+
+    return response;
   }
 
   Future<Politica?> getTariffPolicy() async {

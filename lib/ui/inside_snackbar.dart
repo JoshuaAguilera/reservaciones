@@ -8,6 +8,7 @@ Widget insideSnackBar({
   required String message,
   required String type,
   Duration? duration,
+  bool showAnimation = false,
 }) {
   return Center(
     child: Card(

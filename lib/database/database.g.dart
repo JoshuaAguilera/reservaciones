@@ -132,6 +132,14 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
         code: code.present ? code.value : this.code,
         urlImage: urlImage.present ? urlImage.value : this.urlImage,
       );
+  ImagesTableData copyWithCompanion(ImagesTableCompanion data) {
+    return ImagesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      urlImage: data.urlImage.present ? data.urlImage.value : this.urlImage,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('ImagesTableData(')
@@ -616,6 +624,32 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
             : this.numCotizaciones,
         imageId: imageId.present ? imageId.value : this.imageId,
       );
+  UsuarioData copyWithCompanion(UsuarioCompanion data) {
+    return UsuarioData(
+      id: data.id.present ? data.id.value : this.id,
+      username: data.username.present ? data.username.value : this.username,
+      password: data.password.present ? data.password.value : this.password,
+      rol: data.rol.present ? data.rol.value : this.rol,
+      status: data.status.present ? data.status.value : this.status,
+      correoElectronico: data.correoElectronico.present
+          ? data.correoElectronico.value
+          : this.correoElectronico,
+      passwordCorreo: data.passwordCorreo.present
+          ? data.passwordCorreo.value
+          : this.passwordCorreo,
+      telefono: data.telefono.present ? data.telefono.value : this.telefono,
+      fechaNacimiento: data.fechaNacimiento.present
+          ? data.fechaNacimiento.value
+          : this.fechaNacimiento,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      apellido: data.apellido.present ? data.apellido.value : this.apellido,
+      numCotizaciones: data.numCotizaciones.present
+          ? data.numCotizaciones.value
+          : this.numCotizaciones,
+      imageId: data.imageId.present ? data.imageId.value : this.imageId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('UsuarioData(')
@@ -1210,6 +1244,34 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
         usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
         username: username.present ? username.value : this.username,
       );
+  CotizacionData copyWithCompanion(CotizacionCompanion data) {
+    return CotizacionData(
+      id: data.id.present ? data.id.value : this.id,
+      folioPrincipal: data.folioPrincipal.present
+          ? data.folioPrincipal.value
+          : this.folioPrincipal,
+      nombreHuesped: data.nombreHuesped.present
+          ? data.nombreHuesped.value
+          : this.nombreHuesped,
+      numeroTelefonico: data.numeroTelefonico.present
+          ? data.numeroTelefonico.value
+          : this.numeroTelefonico,
+      correoElectrico: data.correoElectrico.present
+          ? data.correoElectrico.value
+          : this.correoElectrico,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      esGrupo: data.esGrupo.present ? data.esGrupo.value : this.esGrupo,
+      esConcretado: data.esConcretado.present
+          ? data.esConcretado.value
+          : this.esConcretado,
+      habitaciones: data.habitaciones.present
+          ? data.habitaciones.value
+          : this.habitaciones,
+      usuarioID: data.usuarioID.present ? data.usuarioID.value : this.usuarioID,
+      username: data.username.present ? data.username.value : this.username,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('CotizacionData(')
@@ -1814,6 +1876,35 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         isFree: isFree.present ? isFree.value : this.isFree,
         tarifaXDia: tarifaXDia.present ? tarifaXDia.value : this.tarifaXDia,
       );
+  HabitacionData copyWithCompanion(HabitacionCompanion data) {
+    return HabitacionData(
+      id: data.id.present ? data.id.value : this.id,
+      folioHabitacion: data.folioHabitacion.present
+          ? data.folioHabitacion.value
+          : this.folioHabitacion,
+      folioCotizacion: data.folioCotizacion.present
+          ? data.folioCotizacion.value
+          : this.folioCotizacion,
+      fechaCheckIn: data.fechaCheckIn.present
+          ? data.fechaCheckIn.value
+          : this.fechaCheckIn,
+      fechaCheckOut: data.fechaCheckOut.present
+          ? data.fechaCheckOut.value
+          : this.fechaCheckOut,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      adultos: data.adultos.present ? data.adultos.value : this.adultos,
+      menores0a6:
+          data.menores0a6.present ? data.menores0a6.value : this.menores0a6,
+      menores7a12:
+          data.menores7a12.present ? data.menores7a12.value : this.menores7a12,
+      paxAdic: data.paxAdic.present ? data.paxAdic.value : this.paxAdic,
+      count: data.count.present ? data.count.value : this.count,
+      isFree: data.isFree.present ? data.isFree.value : this.isFree,
+      tarifaXDia:
+          data.tarifaXDia.present ? data.tarifaXDia.value : this.tarifaXDia,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('HabitacionData(')
@@ -2472,6 +2563,40 @@ class TarifaXDiaTableData extends DataClass
             codeTemporada.present ? codeTemporada.value : this.codeTemporada,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
       );
+  TarifaXDiaTableData copyWithCompanion(TarifaXDiaTableCompanion data) {
+    return TarifaXDiaTableData(
+      id: data.id.present ? data.id.value : this.id,
+      subfolio: data.subfolio.present ? data.subfolio.value : this.subfolio,
+      dia: data.dia.present ? data.dia.value : this.dia,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      tarifaRealPaxAdic: data.tarifaRealPaxAdic.present
+          ? data.tarifaRealPaxAdic.value
+          : this.tarifaRealPaxAdic,
+      tarifaPreventaPaxAdic: data.tarifaPreventaPaxAdic.present
+          ? data.tarifaPreventaPaxAdic.value
+          : this.tarifaPreventaPaxAdic,
+      tarifaRealAdulto: data.tarifaRealAdulto.present
+          ? data.tarifaRealAdulto.value
+          : this.tarifaRealAdulto,
+      tarifaPreventaAdulto: data.tarifaPreventaAdulto.present
+          ? data.tarifaPreventaAdulto.value
+          : this.tarifaPreventaAdulto,
+      tarifaRealMenores7a12: data.tarifaRealMenores7a12.present
+          ? data.tarifaRealMenores7a12.value
+          : this.tarifaRealMenores7a12,
+      tarifaPreventaMenores7a12: data.tarifaPreventaMenores7a12.present
+          ? data.tarifaPreventaMenores7a12.value
+          : this.tarifaPreventaMenores7a12,
+      codePeriodo:
+          data.codePeriodo.present ? data.codePeriodo.value : this.codePeriodo,
+      codeTemporada: data.codeTemporada.present
+          ? data.codeTemporada.value
+          : this.codeTemporada,
+      codeTarifa:
+          data.codeTarifa.present ? data.codeTarifa.value : this.codeTarifa,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaXDiaTableData(')
@@ -3096,6 +3221,27 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
         enSabado: enSabado.present ? enSabado.value : this.enSabado,
         enDomingo: enDomingo.present ? enDomingo.value : this.enDomingo,
       );
+  PeriodoData copyWithCompanion(PeriodoCompanion data) {
+    return PeriodoData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      fechaInicial: data.fechaInicial.present
+          ? data.fechaInicial.value
+          : this.fechaInicial,
+      fechaFinal:
+          data.fechaFinal.present ? data.fechaFinal.value : this.fechaFinal,
+      enLunes: data.enLunes.present ? data.enLunes.value : this.enLunes,
+      enMartes: data.enMartes.present ? data.enMartes.value : this.enMartes,
+      enMiercoles:
+          data.enMiercoles.present ? data.enMiercoles.value : this.enMiercoles,
+      enJueves: data.enJueves.present ? data.enJueves.value : this.enJueves,
+      enViernes: data.enViernes.present ? data.enViernes.value : this.enViernes,
+      enSabado: data.enSabado.present ? data.enSabado.value : this.enSabado,
+      enDomingo: data.enDomingo.present ? data.enDomingo.value : this.enDomingo,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('PeriodoData(')
@@ -3594,6 +3740,26 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
         forGroup: forGroup.present ? forGroup.value : this.forGroup,
         tarifaJSON: tarifaJSON.present ? tarifaJSON.value : this.tarifaJSON,
       );
+  TemporadaData copyWithCompanion(TemporadaCompanion data) {
+    return TemporadaData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      estanciaMinima: data.estanciaMinima.present
+          ? data.estanciaMinima.value
+          : this.estanciaMinima,
+      porcentajePromocion: data.porcentajePromocion.present
+          ? data.porcentajePromocion.value
+          : this.porcentajePromocion,
+      codeTarifa:
+          data.codeTarifa.present ? data.codeTarifa.value : this.codeTarifa,
+      forGroup: data.forGroup.present ? data.forGroup.value : this.forGroup,
+      tarifaJSON:
+          data.tarifaJSON.present ? data.tarifaJSON.value : this.tarifaJSON,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TemporadaData(')
@@ -4037,6 +4203,29 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
         tarifaPadreId:
             tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
       );
+  TarifaBaseData copyWithCompanion(TarifaBaseCompanion data) {
+    return TarifaBaseData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      descIntegrado: data.descIntegrado.present
+          ? data.descIntegrado.value
+          : this.descIntegrado,
+      upgradeCategoria: data.upgradeCategoria.present
+          ? data.upgradeCategoria.value
+          : this.upgradeCategoria,
+      upgradeMenor: data.upgradeMenor.present
+          ? data.upgradeMenor.value
+          : this.upgradeMenor,
+      upgradePaxAdic: data.upgradePaxAdic.present
+          ? data.upgradePaxAdic.value
+          : this.upgradePaxAdic,
+      tarifaPadreId: data.tarifaPadreId.present
+          ? data.tarifaPadreId.value
+          : this.tarifaPadreId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaBaseData(')
@@ -4525,6 +4714,33 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
         tarifaPadreId:
             tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
       );
+  TarifaData copyWithCompanion(TarifaCompanion data) {
+    return TarifaData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      categoria: data.categoria.present ? data.categoria.value : this.categoria,
+      tarifaAdultoSGLoDBL: data.tarifaAdultoSGLoDBL.present
+          ? data.tarifaAdultoSGLoDBL.value
+          : this.tarifaAdultoSGLoDBL,
+      tarifaAdultoTPL: data.tarifaAdultoTPL.present
+          ? data.tarifaAdultoTPL.value
+          : this.tarifaAdultoTPL,
+      tarifaAdultoCPLE: data.tarifaAdultoCPLE.present
+          ? data.tarifaAdultoCPLE.value
+          : this.tarifaAdultoCPLE,
+      tarifaMenores7a12: data.tarifaMenores7a12.present
+          ? data.tarifaMenores7a12.value
+          : this.tarifaMenores7a12,
+      tarifaPaxAdicional: data.tarifaPaxAdicional.present
+          ? data.tarifaPaxAdicional.value
+          : this.tarifaPaxAdicional,
+      tarifaPadreId: data.tarifaPadreId.present
+          ? data.tarifaPadreId.value
+          : this.tarifaPadreId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaData(')
@@ -4916,6 +5132,17 @@ class UserActivityData extends DataClass
         status: status.present ? status.value : this.status,
         userId: userId.present ? userId.value : this.userId,
       );
+  UserActivityData copyWithCompanion(UserActivityCompanion data) {
+    return UserActivityData(
+      id: data.id.present ? data.id.value : this.id,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      name: data.name.present ? data.name.value : this.name,
+      category: data.category.present ? data.category.value : this.category,
+      status: data.status.present ? data.status.value : this.status,
+      userId: data.userId.present ? data.userId.value : this.userId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('UserActivityData(')
@@ -5310,6 +5537,25 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
         codePeriodo: codePeriodo.present ? codePeriodo.value : this.codePeriodo,
         usuarioId: usuarioId.present ? usuarioId.value : this.usuarioId,
       );
+  TarifaRackData copyWithCompanion(TarifaRackCompanion data) {
+    return TarifaRackData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      nombreRack:
+          data.nombreRack.present ? data.nombreRack.value : this.nombreRack,
+      colorIdentificacion: data.colorIdentificacion.present
+          ? data.colorIdentificacion.value
+          : this.colorIdentificacion,
+      codeTemporada: data.codeTemporada.present
+          ? data.codeTemporada.value
+          : this.codeTemporada,
+      codePeriodo:
+          data.codePeriodo.present ? data.codePeriodo.value : this.codePeriodo,
+      usuarioId: data.usuarioId.present ? data.usuarioId.value : this.usuarioId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaRackData(')
@@ -5650,6 +5896,21 @@ class Politica extends DataClass implements Insertable<Politica> {
             ? limiteHabitacionCotizacion.value
             : this.limiteHabitacionCotizacion,
       );
+  Politica copyWithCompanion(PoliticasCompanion data) {
+    return Politica(
+      id: data.id.present ? data.id.value : this.id,
+      fechaActualizacion: data.fechaActualizacion.present
+          ? data.fechaActualizacion.value
+          : this.fechaActualizacion,
+      intervaloHabitacionGratuita: data.intervaloHabitacionGratuita.present
+          ? data.intervaloHabitacionGratuita.value
+          : this.intervaloHabitacionGratuita,
+      limiteHabitacionCotizacion: data.limiteHabitacionCotizacion.present
+          ? data.limiteHabitacionCotizacion.value
+          : this.limiteHabitacionCotizacion,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Politica(')
@@ -5898,6 +6159,15 @@ class TemporadaTarifaData extends DataClass
         temporadaId: temporadaId.present ? temporadaId.value : this.temporadaId,
         TarifaId: TarifaId.present ? TarifaId.value : this.TarifaId,
       );
+  TemporadaTarifaData copyWithCompanion(TemporadaTarifaCompanion data) {
+    return TemporadaTarifaData(
+      id: data.id.present ? data.id.value : this.id,
+      temporadaId:
+          data.temporadaId.present ? data.temporadaId.value : this.temporadaId,
+      TarifaId: data.TarifaId.present ? data.TarifaId.value : this.TarifaId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TemporadaTarifaData(')
@@ -5982,7 +6252,7 @@ class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
+  $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ImagesTableTable imagesTable = $ImagesTableTable(this);
   late final $UsuarioTable usuario = $UsuarioTable(this);
   late final $CotizacionTable cotizacion = $CotizacionTable(this);
@@ -5998,7 +6268,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PoliticasTable politicas = $PoliticasTable(this);
   late final $TemporadaTarifaTable temporadaTarifa =
       $TemporadaTarifaTable(this);
-  late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -6020,7 +6289,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ];
 }
 
-typedef $$ImagesTableTableInsertCompanionBuilder = ImagesTableCompanion
+typedef $$ImagesTableTableCreateCompanionBuilder = ImagesTableCompanion
     Function({
   Value<int> id,
   Value<String?> code,
@@ -6039,8 +6308,7 @@ class $$ImagesTableTableTableManager extends RootTableManager<
     ImagesTableData,
     $$ImagesTableTableFilterComposer,
     $$ImagesTableTableOrderingComposer,
-    $$ImagesTableTableProcessedTableManager,
-    $$ImagesTableTableInsertCompanionBuilder,
+    $$ImagesTableTableCreateCompanionBuilder,
     $$ImagesTableTableUpdateCompanionBuilder> {
   $$ImagesTableTableTableManager(_$AppDatabase db, $ImagesTableTable table)
       : super(TableManagerState(
@@ -6050,9 +6318,7 @@ class $$ImagesTableTableTableManager extends RootTableManager<
               $$ImagesTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$ImagesTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$ImagesTableTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> urlImage = const Value.absent(),
@@ -6062,7 +6328,7 @@ class $$ImagesTableTableTableManager extends RootTableManager<
             code: code,
             urlImage: urlImage,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> urlImage = const Value.absent(),
@@ -6073,18 +6339,6 @@ class $$ImagesTableTableTableManager extends RootTableManager<
             urlImage: urlImage,
           ),
         ));
-}
-
-class $$ImagesTableTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $ImagesTableTable,
-    ImagesTableData,
-    $$ImagesTableTableFilterComposer,
-    $$ImagesTableTableOrderingComposer,
-    $$ImagesTableTableProcessedTableManager,
-    $$ImagesTableTableInsertCompanionBuilder,
-    $$ImagesTableTableUpdateCompanionBuilder> {
-  $$ImagesTableTableProcessedTableManager(super.$state);
 }
 
 class $$ImagesTableTableFilterComposer
@@ -6138,7 +6392,7 @@ class $$ImagesTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
+typedef $$UsuarioTableCreateCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
   Value<String?> username,
   Value<String?> password,
@@ -6175,8 +6429,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
     UsuarioData,
     $$UsuarioTableFilterComposer,
     $$UsuarioTableOrderingComposer,
-    $$UsuarioTableProcessedTableManager,
-    $$UsuarioTableInsertCompanionBuilder,
+    $$UsuarioTableCreateCompanionBuilder,
     $$UsuarioTableUpdateCompanionBuilder> {
   $$UsuarioTableTableManager(_$AppDatabase db, $UsuarioTable table)
       : super(TableManagerState(
@@ -6186,8 +6439,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
               $$UsuarioTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$UsuarioTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$UsuarioTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
@@ -6217,7 +6469,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             numCotizaciones: numCotizaciones,
             imageId: imageId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
@@ -6248,18 +6500,6 @@ class $$UsuarioTableTableManager extends RootTableManager<
             imageId: imageId,
           ),
         ));
-}
-
-class $$UsuarioTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $UsuarioTable,
-    UsuarioData,
-    $$UsuarioTableFilterComposer,
-    $$UsuarioTableOrderingComposer,
-    $$UsuarioTableProcessedTableManager,
-    $$UsuarioTableInsertCompanionBuilder,
-    $$UsuarioTableUpdateCompanionBuilder> {
-  $$UsuarioTableProcessedTableManager(super.$state);
 }
 
 class $$UsuarioTableFilterComposer
@@ -6440,7 +6680,7 @@ class $$UsuarioTableOrderingComposer
   }
 }
 
-typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
+typedef $$CotizacionTableCreateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
   Value<String?> folioPrincipal,
   Value<String?> nombreHuesped,
@@ -6473,8 +6713,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
     CotizacionData,
     $$CotizacionTableFilterComposer,
     $$CotizacionTableOrderingComposer,
-    $$CotizacionTableProcessedTableManager,
-    $$CotizacionTableInsertCompanionBuilder,
+    $$CotizacionTableCreateCompanionBuilder,
     $$CotizacionTableUpdateCompanionBuilder> {
   $$CotizacionTableTableManager(_$AppDatabase db, $CotizacionTable table)
       : super(TableManagerState(
@@ -6484,9 +6723,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
               $$CotizacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$CotizacionTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$CotizacionTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
             Value<String?> nombreHuesped = const Value.absent(),
@@ -6512,7 +6749,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             usuarioID: usuarioID,
             username: username,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
             Value<String?> nombreHuesped = const Value.absent(),
@@ -6539,18 +6776,6 @@ class $$CotizacionTableTableManager extends RootTableManager<
             username: username,
           ),
         ));
-}
-
-class $$CotizacionTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $CotizacionTable,
-    CotizacionData,
-    $$CotizacionTableFilterComposer,
-    $$CotizacionTableOrderingComposer,
-    $$CotizacionTableProcessedTableManager,
-    $$CotizacionTableInsertCompanionBuilder,
-    $$CotizacionTableUpdateCompanionBuilder> {
-  $$CotizacionTableProcessedTableManager(super.$state);
 }
 
 class $$CotizacionTableFilterComposer
@@ -6685,7 +6910,7 @@ class $$CotizacionTableOrderingComposer
   }
 }
 
-typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
+typedef $$HabitacionTableCreateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
   Value<String?> folioHabitacion,
   Value<String?> folioCotizacion,
@@ -6722,8 +6947,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
     HabitacionData,
     $$HabitacionTableFilterComposer,
     $$HabitacionTableOrderingComposer,
-    $$HabitacionTableProcessedTableManager,
-    $$HabitacionTableInsertCompanionBuilder,
+    $$HabitacionTableCreateCompanionBuilder,
     $$HabitacionTableUpdateCompanionBuilder> {
   $$HabitacionTableTableManager(_$AppDatabase db, $HabitacionTable table)
       : super(TableManagerState(
@@ -6733,9 +6957,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
               $$HabitacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$HabitacionTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$HabitacionTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioHabitacion = const Value.absent(),
             Value<String?> folioCotizacion = const Value.absent(),
@@ -6765,7 +6987,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             isFree: isFree,
             tarifaXDia: tarifaXDia,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioHabitacion = const Value.absent(),
             Value<String?> folioCotizacion = const Value.absent(),
@@ -6796,18 +7018,6 @@ class $$HabitacionTableTableManager extends RootTableManager<
             tarifaXDia: tarifaXDia,
           ),
         ));
-}
-
-class $$HabitacionTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $HabitacionTable,
-    HabitacionData,
-    $$HabitacionTableFilterComposer,
-    $$HabitacionTableOrderingComposer,
-    $$HabitacionTableProcessedTableManager,
-    $$HabitacionTableInsertCompanionBuilder,
-    $$HabitacionTableUpdateCompanionBuilder> {
-  $$HabitacionTableProcessedTableManager(super.$state);
 }
 
 class $$HabitacionTableFilterComposer
@@ -6948,7 +7158,7 @@ class $$HabitacionTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaXDiaTableTableInsertCompanionBuilder = TarifaXDiaTableCompanion
+typedef $$TarifaXDiaTableTableCreateCompanionBuilder = TarifaXDiaTableCompanion
     Function({
   Value<int> id,
   Value<String?> subfolio,
@@ -6987,8 +7197,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
     TarifaXDiaTableData,
     $$TarifaXDiaTableTableFilterComposer,
     $$TarifaXDiaTableTableOrderingComposer,
-    $$TarifaXDiaTableTableProcessedTableManager,
-    $$TarifaXDiaTableTableInsertCompanionBuilder,
+    $$TarifaXDiaTableTableCreateCompanionBuilder,
     $$TarifaXDiaTableTableUpdateCompanionBuilder> {
   $$TarifaXDiaTableTableTableManager(
       _$AppDatabase db, $TarifaXDiaTableTable table)
@@ -6999,9 +7208,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
               $$TarifaXDiaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaXDiaTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TarifaXDiaTableTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> subfolio = const Value.absent(),
             Value<int?> dia = const Value.absent(),
@@ -7031,7 +7238,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             codeTemporada: codeTemporada,
             codeTarifa: codeTarifa,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> subfolio = const Value.absent(),
             Value<int?> dia = const Value.absent(),
@@ -7062,18 +7269,6 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             codeTarifa: codeTarifa,
           ),
         ));
-}
-
-class $$TarifaXDiaTableTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaXDiaTableTable,
-    TarifaXDiaTableData,
-    $$TarifaXDiaTableTableFilterComposer,
-    $$TarifaXDiaTableTableOrderingComposer,
-    $$TarifaXDiaTableTableProcessedTableManager,
-    $$TarifaXDiaTableTableInsertCompanionBuilder,
-    $$TarifaXDiaTableTableUpdateCompanionBuilder> {
-  $$TarifaXDiaTableTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaXDiaTableTableFilterComposer
@@ -7216,7 +7411,7 @@ class $$TarifaXDiaTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PeriodoTableInsertCompanionBuilder = PeriodoCompanion Function({
+typedef $$PeriodoTableCreateCompanionBuilder = PeriodoCompanion Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -7251,8 +7446,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
     PeriodoData,
     $$PeriodoTableFilterComposer,
     $$PeriodoTableOrderingComposer,
-    $$PeriodoTableProcessedTableManager,
-    $$PeriodoTableInsertCompanionBuilder,
+    $$PeriodoTableCreateCompanionBuilder,
     $$PeriodoTableUpdateCompanionBuilder> {
   $$PeriodoTableTableManager(_$AppDatabase db, $PeriodoTable table)
       : super(TableManagerState(
@@ -7262,8 +7456,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
               $$PeriodoTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$PeriodoTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$PeriodoTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -7291,7 +7484,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
             enSabado: enSabado,
             enDomingo: enDomingo,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             Value<DateTime?> fecha = const Value.absent(),
@@ -7320,18 +7513,6 @@ class $$PeriodoTableTableManager extends RootTableManager<
             enDomingo: enDomingo,
           ),
         ));
-}
-
-class $$PeriodoTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $PeriodoTable,
-    PeriodoData,
-    $$PeriodoTableFilterComposer,
-    $$PeriodoTableOrderingComposer,
-    $$PeriodoTableProcessedTableManager,
-    $$PeriodoTableInsertCompanionBuilder,
-    $$PeriodoTableUpdateCompanionBuilder> {
-  $$PeriodoTableProcessedTableManager(super.$state);
 }
 
 class $$PeriodoTableFilterComposer
@@ -7462,7 +7643,7 @@ class $$PeriodoTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
+typedef $$TemporadaTableCreateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
   required String code,
   required String nombre,
@@ -7491,8 +7672,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
     TemporadaData,
     $$TemporadaTableFilterComposer,
     $$TemporadaTableOrderingComposer,
-    $$TemporadaTableProcessedTableManager,
-    $$TemporadaTableInsertCompanionBuilder,
+    $$TemporadaTableCreateCompanionBuilder,
     $$TemporadaTableUpdateCompanionBuilder> {
   $$TemporadaTableTableManager(_$AppDatabase db, $TemporadaTable table)
       : super(TableManagerState(
@@ -7502,9 +7682,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
               $$TemporadaTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TemporadaTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TemporadaTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<String> nombre = const Value.absent(),
@@ -7526,7 +7704,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             forGroup: forGroup,
             tarifaJSON: tarifaJSON,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             required String nombre,
@@ -7549,18 +7727,6 @@ class $$TemporadaTableTableManager extends RootTableManager<
             tarifaJSON: tarifaJSON,
           ),
         ));
-}
-
-class $$TemporadaTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TemporadaTable,
-    TemporadaData,
-    $$TemporadaTableFilterComposer,
-    $$TemporadaTableOrderingComposer,
-    $$TemporadaTableProcessedTableManager,
-    $$TemporadaTableInsertCompanionBuilder,
-    $$TemporadaTableUpdateCompanionBuilder> {
-  $$TemporadaTableProcessedTableManager(super.$state);
 }
 
 class $$TemporadaTableFilterComposer
@@ -7675,7 +7841,7 @@ class $$TemporadaTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaBaseTableInsertCompanionBuilder = TarifaBaseCompanion Function({
+typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> nombre,
@@ -7702,8 +7868,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
     TarifaBaseData,
     $$TarifaBaseTableFilterComposer,
     $$TarifaBaseTableOrderingComposer,
-    $$TarifaBaseTableProcessedTableManager,
-    $$TarifaBaseTableInsertCompanionBuilder,
+    $$TarifaBaseTableCreateCompanionBuilder,
     $$TarifaBaseTableUpdateCompanionBuilder> {
   $$TarifaBaseTableTableManager(_$AppDatabase db, $TarifaBaseTable table)
       : super(TableManagerState(
@@ -7713,9 +7878,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
               $$TarifaBaseTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaBaseTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TarifaBaseTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
@@ -7735,7 +7898,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             upgradePaxAdic: upgradePaxAdic,
             tarifaPadreId: tarifaPadreId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
@@ -7756,18 +7919,6 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             tarifaPadreId: tarifaPadreId,
           ),
         ));
-}
-
-class $$TarifaBaseTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaBaseTable,
-    TarifaBaseData,
-    $$TarifaBaseTableFilterComposer,
-    $$TarifaBaseTableOrderingComposer,
-    $$TarifaBaseTableProcessedTableManager,
-    $$TarifaBaseTableInsertCompanionBuilder,
-    $$TarifaBaseTableUpdateCompanionBuilder> {
-  $$TarifaBaseTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaBaseTableFilterComposer
@@ -7885,7 +8036,7 @@ class $$TarifaBaseTableOrderingComposer
   }
 }
 
-typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
+typedef $$TarifaTableCreateCompanionBuilder = TarifaCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<DateTime?> fecha,
@@ -7916,8 +8067,7 @@ class $$TarifaTableTableManager extends RootTableManager<
     TarifaData,
     $$TarifaTableFilterComposer,
     $$TarifaTableOrderingComposer,
-    $$TarifaTableProcessedTableManager,
-    $$TarifaTableInsertCompanionBuilder,
+    $$TarifaTableCreateCompanionBuilder,
     $$TarifaTableUpdateCompanionBuilder> {
   $$TarifaTableTableManager(_$AppDatabase db, $TarifaTable table)
       : super(TableManagerState(
@@ -7927,8 +8077,7 @@ class $$TarifaTableTableManager extends RootTableManager<
               $$TarifaTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$TarifaTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -7952,7 +8101,7 @@ class $$TarifaTableTableManager extends RootTableManager<
             tarifaPaxAdicional: tarifaPaxAdicional,
             tarifaPadreId: tarifaPadreId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -7977,18 +8126,6 @@ class $$TarifaTableTableManager extends RootTableManager<
             tarifaPadreId: tarifaPadreId,
           ),
         ));
-}
-
-class $$TarifaTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaTable,
-    TarifaData,
-    $$TarifaTableFilterComposer,
-    $$TarifaTableOrderingComposer,
-    $$TarifaTableProcessedTableManager,
-    $$TarifaTableInsertCompanionBuilder,
-    $$TarifaTableUpdateCompanionBuilder> {
-  $$TarifaTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaTableFilterComposer
@@ -8127,7 +8264,7 @@ class $$TarifaTableOrderingComposer
   }
 }
 
-typedef $$UserActivityTableInsertCompanionBuilder = UserActivityCompanion
+typedef $$UserActivityTableCreateCompanionBuilder = UserActivityCompanion
     Function({
   Value<int> id,
   Value<DateTime?> fecha,
@@ -8152,8 +8289,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
     UserActivityData,
     $$UserActivityTableFilterComposer,
     $$UserActivityTableOrderingComposer,
-    $$UserActivityTableProcessedTableManager,
-    $$UserActivityTableInsertCompanionBuilder,
+    $$UserActivityTableCreateCompanionBuilder,
     $$UserActivityTableUpdateCompanionBuilder> {
   $$UserActivityTableTableManager(_$AppDatabase db, $UserActivityTable table)
       : super(TableManagerState(
@@ -8163,9 +8299,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
               $$UserActivityTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$UserActivityTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$UserActivityTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
@@ -8181,7 +8315,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
             status: status,
             userId: userId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
@@ -8198,18 +8332,6 @@ class $$UserActivityTableTableManager extends RootTableManager<
             userId: userId,
           ),
         ));
-}
-
-class $$UserActivityTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $UserActivityTable,
-    UserActivityData,
-    $$UserActivityTableFilterComposer,
-    $$UserActivityTableOrderingComposer,
-    $$UserActivityTableProcessedTableManager,
-    $$UserActivityTableInsertCompanionBuilder,
-    $$UserActivityTableUpdateCompanionBuilder> {
-  $$UserActivityTableProcessedTableManager(super.$state);
 }
 
 class $$UserActivityTableFilterComposer
@@ -8294,7 +8416,7 @@ class $$UserActivityTableOrderingComposer
   }
 }
 
-typedef $$TarifaRackTableInsertCompanionBuilder = TarifaRackCompanion Function({
+typedef $$TarifaRackTableCreateCompanionBuilder = TarifaRackCompanion Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -8321,8 +8443,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
     TarifaRackData,
     $$TarifaRackTableFilterComposer,
     $$TarifaRackTableOrderingComposer,
-    $$TarifaRackTableProcessedTableManager,
-    $$TarifaRackTableInsertCompanionBuilder,
+    $$TarifaRackTableCreateCompanionBuilder,
     $$TarifaRackTableUpdateCompanionBuilder> {
   $$TarifaRackTableTableManager(_$AppDatabase db, $TarifaRackTable table)
       : super(TableManagerState(
@@ -8332,9 +8453,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
               $$TarifaRackTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaRackTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TarifaRackTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -8354,7 +8473,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             codePeriodo: codePeriodo,
             usuarioId: usuarioId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             Value<DateTime?> fecha = const Value.absent(),
@@ -8375,18 +8494,6 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             usuarioId: usuarioId,
           ),
         ));
-}
-
-class $$TarifaRackTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaRackTable,
-    TarifaRackData,
-    $$TarifaRackTableFilterComposer,
-    $$TarifaRackTableOrderingComposer,
-    $$TarifaRackTableProcessedTableManager,
-    $$TarifaRackTableInsertCompanionBuilder,
-    $$TarifaRackTableUpdateCompanionBuilder> {
-  $$TarifaRackTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaRackTableFilterComposer
@@ -8477,7 +8584,7 @@ class $$TarifaRackTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PoliticasTableInsertCompanionBuilder = PoliticasCompanion Function({
+typedef $$PoliticasTableCreateCompanionBuilder = PoliticasCompanion Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
@@ -8496,8 +8603,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
     Politica,
     $$PoliticasTableFilterComposer,
     $$PoliticasTableOrderingComposer,
-    $$PoliticasTableProcessedTableManager,
-    $$PoliticasTableInsertCompanionBuilder,
+    $$PoliticasTableCreateCompanionBuilder,
     $$PoliticasTableUpdateCompanionBuilder> {
   $$PoliticasTableTableManager(_$AppDatabase db, $PoliticasTable table)
       : super(TableManagerState(
@@ -8507,9 +8613,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
               $$PoliticasTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$PoliticasTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$PoliticasTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
@@ -8521,7 +8625,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
@@ -8534,18 +8638,6 @@ class $$PoliticasTableTableManager extends RootTableManager<
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
           ),
         ));
-}
-
-class $$PoliticasTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $PoliticasTable,
-    Politica,
-    $$PoliticasTableFilterComposer,
-    $$PoliticasTableOrderingComposer,
-    $$PoliticasTableProcessedTableManager,
-    $$PoliticasTableInsertCompanionBuilder,
-    $$PoliticasTableUpdateCompanionBuilder> {
-  $$PoliticasTableProcessedTableManager(super.$state);
 }
 
 class $$PoliticasTableFilterComposer
@@ -8599,7 +8691,7 @@ class $$PoliticasTableOrderingComposer
               ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TemporadaTarifaTableInsertCompanionBuilder = TemporadaTarifaCompanion
+typedef $$TemporadaTarifaTableCreateCompanionBuilder = TemporadaTarifaCompanion
     Function({
   Value<int> id,
   Value<int?> temporadaId,
@@ -8618,8 +8710,7 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
     TemporadaTarifaData,
     $$TemporadaTarifaTableFilterComposer,
     $$TemporadaTarifaTableOrderingComposer,
-    $$TemporadaTarifaTableProcessedTableManager,
-    $$TemporadaTarifaTableInsertCompanionBuilder,
+    $$TemporadaTarifaTableCreateCompanionBuilder,
     $$TemporadaTarifaTableUpdateCompanionBuilder> {
   $$TemporadaTarifaTableTableManager(
       _$AppDatabase db, $TemporadaTarifaTable table)
@@ -8630,9 +8721,7 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
               $$TemporadaTarifaTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TemporadaTarifaTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TemporadaTarifaTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int?> temporadaId = const Value.absent(),
             Value<int?> TarifaId = const Value.absent(),
@@ -8642,7 +8731,7 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
             temporadaId: temporadaId,
             TarifaId: TarifaId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int?> temporadaId = const Value.absent(),
             Value<int?> TarifaId = const Value.absent(),
@@ -8653,18 +8742,6 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
             TarifaId: TarifaId,
           ),
         ));
-}
-
-class $$TemporadaTarifaTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TemporadaTarifaTable,
-    TemporadaTarifaData,
-    $$TemporadaTarifaTableFilterComposer,
-    $$TemporadaTarifaTableOrderingComposer,
-    $$TemporadaTarifaTableProcessedTableManager,
-    $$TemporadaTarifaTableInsertCompanionBuilder,
-    $$TemporadaTarifaTableUpdateCompanionBuilder> {
-  $$TemporadaTarifaTableProcessedTableManager(super.$state);
 }
 
 class $$TemporadaTarifaTableFilterComposer
@@ -8733,9 +8810,9 @@ class $$TemporadaTarifaTableOrderingComposer
   }
 }
 
-class _$AppDatabaseManager {
+class $AppDatabaseManager {
   final _$AppDatabase _db;
-  _$AppDatabaseManager(this._db);
+  $AppDatabaseManager(this._db);
   $$ImagesTableTableTableManager get imagesTable =>
       $$ImagesTableTableTableManager(_db, _db.imagesTable);
   $$UsuarioTableTableManager get usuario =>

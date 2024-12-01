@@ -112,4 +112,33 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
 
     return tarifasBase;
   }
+
+  Future<int> updateBaseTariff(
+      {required TarifaBaseData baseTariff,
+      required int id,
+      required String code}) {
+    return (update(tarifaBase)
+          ..where((tbl) => tbl.code.equals(code))
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(baseTariff);
+  }
+
+  Future<int> removePadreTarifaId({required int? padreId}) {
+    return (update(tarifaBase)
+          ..where((tbl) => tbl.tarifaPadreId.equals(padreId!)))
+        .write(
+      const TarifaBaseCompanion(
+        tarifaPadreId: Value(null),
+      ),
+    );
+  }
+
+  Future<int> deleteBaseTariff(TarifaBaseInt tarifaBaseSelect) {
+    if (tarifaBaseSelect.tarifaPadre != null) {
+      removePadreTarifaId(padreId: tarifaBaseSelect.tarifaPadre?.id);
+    }
+
+    return (delete(tarifaBase)..where((t) => t.id.equals(tarifaBaseSelect.id!)))
+        .go();
+  }
 }

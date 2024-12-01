@@ -99,6 +99,7 @@ class Buttons {
     Widget? auxwidget,
     String? tooltipText,
     IconData? icons,
+    double? sizeIcon,
   }) {
     return Tooltip(
       message: tooltipText ?? (auxwidget != null ? text : ""),
@@ -123,7 +124,10 @@ class Buttons {
               if (icons != null && !isLoading)
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0),
-                  child: Icon(icons),
+                  child: Icon(
+                    icons,
+                    size: sizeIcon,
+                  ),
                 ),
               if (isLoading)
                 const SizedBox(

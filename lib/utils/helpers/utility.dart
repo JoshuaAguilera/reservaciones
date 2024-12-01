@@ -588,6 +588,22 @@ class Utility {
     }
   }
 
+  static dynamic calculateIncrease(double? tarifa, double? aumento) {
+    double subtotal = 0;
+    double tarifaNum = tarifa ?? 0;
+    double aumentoNUM = aumento ?? 0;
+
+    if (aumentoNUM != 0) {
+      double increase = (tarifaNum / aumentoNUM);
+
+      subtotal = tarifaNum + increase;
+
+      return subtotal.round().toDouble();
+    } else {
+      return tarifaNum;
+    }
+  }
+
   static bool showTariffByWeek(
       List<PeriodoData>? periodos, DateTime initDayWeekGraphics) {
     bool show = false;
