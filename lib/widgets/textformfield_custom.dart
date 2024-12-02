@@ -30,6 +30,7 @@ class TextFormFieldCustom {
     TextInputAction? textInputAction,
     String? hintText,
     double marginBottom = 8,
+    FloatingLabelAlignment? floatingLabelAlignment,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -100,6 +101,7 @@ class TextFormFieldCustom {
                       fontSize: 13,
                     ),
                     alignLabelWithHint: true,
+                    floatingLabelAlignment: floatingLabelAlignment,
                     prefixIcon: isMoneda
                         ? const Icon(
                             CupertinoIcons.money_dollar,

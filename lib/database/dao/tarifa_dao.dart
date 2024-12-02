@@ -27,4 +27,8 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
       ),
     );
   }
+
+  Future<int> deleteForCodeRackTariff(String codeRackTariff) {
+    return (delete(tarifa)..where((t) => t.code.equals(codeRackTariff))).go();
+  }
 }

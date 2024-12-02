@@ -293,72 +293,98 @@ class TableRows {
     required TextEditingController paxAdic,
     required TextEditingController minor7a12,
     bool isGroup = false,
+    bool isCash = false,
+    required String categoria,
   }) {
-    Color colorText =
-        isGroup ? DesktopColors.cotGrupal : DesktopColors.cotIndiv;
+    Color? colorBox = isGroup
+        ? DesktopColors.cotGrupal
+        : isCash
+            ? Colors.lightGreen[500]
+            : DesktopColors.cotIndiv;
 
     return TableRow(
       children: [
         SizedBox(
           height: 50,
           child: Center(
-              child: TextStyles.mediumText(
-            text: element.nombre ?? '',
-            color: colorText,
-            aling: TextAlign.center,
-          )),
+            child: Card(
+              color: colorBox,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
+                child: TextStyles.mediumText(
+                  text: element.nombre ?? '',
+                  color: Colors.white,
+                  aling: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
         ),
         Center(
-            child: TextStyles.mediumText(
-          text: (adults1a2.text.isEmpty && element.porcentajePromocion == null)
-              ? "—"
-              : Utility.calculatePromotion(
-                  adults1a2.text,
-                  element.porcentajePromocion,
-                ),
+            child: TextStyles.standardText(
+          text: !((element.useTariff ?? false)) && isCash
+              ? Utility.formatterNumber(element.tarifa
+                      ?.where((element) => element.categoria == categoria)
+                      .firstOrNull
+                      ?.tarifaAdulto1a2 ??
+                  0)
+              : (adults1a2.text.isEmpty && element.porcentajePromocion == null)
+                  ? "—"
+                  : Utility.calculatePromotion(
+                      adults1a2.text,
+                      element.porcentajePromocion,
+                    ),
           color: Theme.of(context).primaryColor,
           aling: TextAlign.center,
         )),
         Center(
-            child: TextStyles.mediumText(
-          text: ((adults3.text.isEmpty || adults3.text == '0') &&
-                  element.porcentajePromocion == null)
-              ? "—"
-              : Utility.calculatePromotion(
-                  adults3.text,
-                  element.porcentajePromocion,
-                ),
+            child: TextStyles.standardText(
+          text: !((element.useTariff ?? false)) && isCash
+              ? Utility.formatterNumber(element.tarifa
+                      ?.where((element) => element.categoria == categoria)
+                      .firstOrNull
+                      ?.tarifaAdulto3 ??
+                  0)
+              : ((adults3.text.isEmpty || adults3.text == '0') &&
+                      element.porcentajePromocion == null)
+                  ? "—"
+                  : Utility.calculatePromotion(
+                      adults3.text,
+                      element.porcentajePromocion,
+                    ),
           color: Theme.of(context).primaryColor,
           aling: TextAlign.center,
         )),
         Center(
-          child: TextStyles.mediumText(
-            text: ((adults4.text.isEmpty || adults4.text == '0') &&
-                    element.porcentajePromocion == null)
-                ? "—"
-                : Utility.calculatePromotion(
-                    adults4.text,
-                    element.porcentajePromocion,
-                  ),
+          child: TextStyles.standardText(
+            text: !((element.useTariff ?? false)) && isCash
+                ? Utility.formatterNumber(element.tarifa
+                        ?.where((element) => element.categoria == categoria)
+                        .firstOrNull
+                        ?.tarifaAdulto4 ??
+                    0)
+                : ((adults4.text.isEmpty || adults4.text == '0') &&
+                        element.porcentajePromocion == null)
+                    ? "—"
+                    : Utility.calculatePromotion(
+                        adults4.text,
+                        element.porcentajePromocion,
+                      ),
             color: Theme.of(context).primaryColor,
             aling: TextAlign.center,
           ),
         ),
         Center(
-            child: TextStyles.mediumText(
-          text: (paxAdic.text.isEmpty && element.porcentajePromocion == null)
-              ? "—"
-              : Utility.calculatePromotion(
-                  paxAdic.text,
-                  element.porcentajePromocion,
-                ),
-          color: Theme.of(context).primaryColor,
-          aling: TextAlign.center,
-        )),
-        Center(
-          child: TextStyles.mediumText(
-            text:
-                (minor7a12.text.isEmpty && element.porcentajePromocion == null)
+          child: TextStyles.standardText(
+            text: !((element.useTariff ?? false)) && isCash
+                ? Utility.formatterNumber(element.tarifa
+                        ?.where((element) => element.categoria == categoria)
+                        .firstOrNull
+                        ?.tarifaMenores7a12 ??
+                    0)
+                : (minor7a12.text.isEmpty &&
+                        element.porcentajePromocion == null)
                     ? "—"
                     : Utility.calculatePromotion(
                         minor7a12.text,
@@ -369,7 +395,25 @@ class TableRows {
           ),
         ),
         Center(
-          child: TextStyles.mediumText(
+          child: TextStyles.standardText(
+            text: !((element.useTariff ?? false)) && isCash
+                ? Utility.formatterNumber(element.tarifa
+                        ?.where((element) => element.categoria == categoria)
+                        .firstOrNull
+                        ?.tarifaPaxAdicional ??
+                    0)
+                : (paxAdic.text.isEmpty && element.porcentajePromocion == null)
+                    ? "—"
+                    : Utility.calculatePromotion(
+                        paxAdic.text,
+                        element.porcentajePromocion,
+                      ),
+            color: Theme.of(context).primaryColor,
+            aling: TextAlign.center,
+          ),
+        ),
+        Center(
+          child: TextStyles.standardText(
             text: "GRATIS",
             color: Theme.of(context).primaryColor,
             aling: TextAlign.center,

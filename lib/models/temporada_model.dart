@@ -9,6 +9,8 @@ class Temporada {
   List<Tarifa>? tarifa;
   bool? editable;
   bool? forGroup;
+  bool? forCash;
+  bool? useTariff;
 
   Temporada({
     this.id,
@@ -19,5 +21,7 @@ class Temporada {
     this.tarifa,
     this.editable = true,
     this.forGroup = false,
+    this.forCash = false,
+    this.useTariff = false,
   });
 }

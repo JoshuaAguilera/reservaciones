@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
@@ -111,6 +112,11 @@ class _ManagerTariffDayWidgetState
     _tarifaPaxAdicionalController.dispose();
     _descuentoController.dispose();
     super.dispose();
+  }
+
+  void _toggleSnackbar() {
+    setState(() => showErrorTariff = true);
+    Future.delayed(5.seconds, () => setState(() => showErrorTariff = false));
   }
 
   @override
@@ -511,12 +517,12 @@ class _ManagerTariffDayWidgetState
                     ],
                   ),
                 ),
-                if (showErrorTariff)
-                  insideSnackBar(
-                    message:
-                        "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*",
-                    type: 'danger',
-                  ),
+                insideSnackBar(
+                  message:
+                      "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*",
+                  type: 'danger',
+                  showAnimation: showErrorTariff,
+                ),
               ],
             ),
           ),
@@ -559,10 +565,8 @@ class _ManagerTariffDayWidgetState
               }
 
               if (revisedPropiertiesSaveTariff() && !applyAllCategory) {
-                setState(() => showErrorTariff = true);
+                _toggleSnackbar();
                 return;
-              } else {
-                setState(() => showErrorTariff = false);
               }
 
               TarifaData? newTarifa = widget.tarifaXDia.tarifa;

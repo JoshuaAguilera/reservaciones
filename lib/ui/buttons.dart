@@ -96,13 +96,13 @@ class Buttons {
     bool isBold = false,
     bool withRoundedBorder = false,
     Color colorText = Colors.white,
-    Widget? auxwidget,
+    Widget? child,
     String? tooltipText,
     IconData? icons,
     double? sizeIcon,
   }) {
     return Tooltip(
-      message: tooltipText ?? (auxwidget != null ? text : ""),
+      message: tooltipText ?? (child != null ? text : ""),
       child: AbsorbPointer(
         absorbing: isLoading,
         child: ElevatedButton(
@@ -137,8 +137,8 @@ class Buttons {
                       strokeWidth: 2, color: Colors.white),
                 ),
               if (isLoading) const SizedBox(width: 10),
-              if (auxwidget != null)
-                Expanded(child: auxwidget)
+              if (child != null)
+                Expanded(child: child)
               else
                 !isBold
                     ? TextStyles.standardText(

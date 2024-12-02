@@ -12,6 +12,8 @@ class FormTariffWidget extends StatefulWidget {
     required this.tarifaMenoresController,
     required this.onUpdate,
     this.isEditing = false,
+    this.applyAutoCalculation = false,
+    this.autoCalculation,
   });
 
   final TextEditingController tarifaAdultoController;
@@ -21,6 +23,8 @@ class FormTariffWidget extends StatefulWidget {
   final TextEditingController tarifaMenoresController;
   final void Function() onUpdate;
   final bool isEditing;
+  final bool applyAutoCalculation;
+  final void Function()? autoCalculation;
 
   @override
   State<FormTariffWidget> createState() => _FormTariffWidgetState();
@@ -42,21 +46,34 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                   isMoneda: true,
                   isNumeric: true,
                   isDecimal: true,
-                  onChanged: (p0) => widget.onUpdate.call(),
+                  onChanged: (p0) {
+                    if (widget.autoCalculation != null) {
+                      widget.autoCalculation!.call();
+                    }
+                    widget.onUpdate.call();
+                  },
                   controller: widget.tarifaAdultoController,
                   readOnly: !widget.isEditing,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: TextFormFieldCustom.textFormFieldwithBorder(
-                  name: "Tarifa TPL",
-                  isMoneda: true,
-                  isNumeric: true,
-                  isDecimal: true,
-                  onChanged: (p0) => widget.onUpdate.call(),
-                  controller: widget.tarifaAdultoTPLController,
-                   readOnly: !widget.isEditing,
+                child: Opacity(
+                  opacity: widget.applyAutoCalculation ? 0.6 : 1,
+                  child: TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Tarifa TPL",
+                    isMoneda: true,
+                    isNumeric: true,
+                    isDecimal: true,
+                    onChanged: (p0) {
+                      if (!widget.applyAutoCalculation) {
+                        widget.onUpdate.call();
+                      }
+                    },
+                    controller: widget.tarifaAdultoTPLController,
+                    readOnly:
+                        (!widget.isEditing || widget.applyAutoCalculation),
+                  ),
                 ),
               ),
             ],
@@ -65,14 +82,22 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: TextFormFieldCustom.textFormFieldwithBorder(
-                  name: "Tarifa CPLE",
-                  isMoneda: true,
-                  isNumeric: true,
-                  isDecimal: true,
-                  onChanged: (p0) => widget.onUpdate.call(),
-                  controller: widget.tarifaAdultoCPLController,
-                   readOnly: !widget.isEditing,
+                child: Opacity(
+                  opacity: widget.applyAutoCalculation ? 0.6 : 1,
+                  child: TextFormFieldCustom.textFormFieldwithBorder(
+                    name: "Tarifa CPLE",
+                    isMoneda: true,
+                    isNumeric: true,
+                    isDecimal: true,
+                    onChanged: (p0) {
+                      if (!widget.applyAutoCalculation) {
+                        widget.onUpdate.call();
+                      }
+                    },
+                    controller: widget.tarifaAdultoCPLController,
+                    readOnly:
+                        (!widget.isEditing || widget.applyAutoCalculation),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -83,8 +108,14 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                   isNumeric: true,
                   isDecimal: true,
                   controller: widget.tarifaPaxAdicionalController,
-                  onChanged: (p0) => widget.onUpdate.call(),
-                   readOnly: !widget.isEditing,                ),
+                  onChanged: (p0) {
+                    if (widget.autoCalculation != null) {
+                      widget.autoCalculation!.call();
+                    }
+                    widget.onUpdate.call();
+                  },
+                  readOnly: !widget.isEditing,
+                ),
               ),
             ],
           ),
@@ -100,7 +131,7 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                   isDecimal: true,
                   controller: widget.tarifaMenoresController,
                   onChanged: (p0) => widget.onUpdate.call(),
-                   readOnly: !widget.isEditing,
+                  readOnly: !widget.isEditing,
                 ),
               ),
               const SizedBox(width: 10),

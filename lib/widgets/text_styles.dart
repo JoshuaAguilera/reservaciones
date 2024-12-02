@@ -61,6 +61,7 @@ class TextStyles {
     return Text(
       text,
       textAlign: aling,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: color,
         fontSize: size,
@@ -88,21 +89,26 @@ class TextStyles {
     );
   }
 
-  static Text titleText(
-      {String text = "",
-      Color? color,
-      double size = 18,
-      TextAlign textAlign = TextAlign.start,
-      bool isBold = true}) {
-    return Text(text,
-        textAlign: textAlign,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontFamily: isBold ? "poppins_bold" : "poppins_medium",
-          color: color ?? DesktopColors.cerulean,
-          fontWeight: FontWeight.bold,
-          fontSize: size,
-        ));
+  static Text titleText({
+    String text = "",
+    Color? color,
+    double size = 18,
+    TextAlign textAlign = TextAlign.start,
+    bool isBold = true,
+    TextOverflow? overflow,
+  }) {
+    return Text(
+      text,
+      textAlign: textAlign,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontFamily: isBold ? "poppins_bold" : "poppins_medium",
+        color: color ?? DesktopColors.cerulean,
+        fontWeight: FontWeight.bold,
+        fontSize: size,
+        overflow: overflow,
+      ),
+    );
   }
 
   static Column TextSpecial({

@@ -14,6 +14,7 @@ import 'package:generador_formato/views/tarifario/calendar_controller_widget.dar
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 
+import '../../models/tarifa_model.dart';
 import 'web_colors.dart';
 
 class Utility {
@@ -1933,5 +1934,15 @@ class Utility {
     code = code.toString().replaceAll(RegExp(r' '), '');
 
     return int.parse(code);
+  }
+
+  static bool revisedPropiertiesSaveTariff(Tarifa? saveTariff) {
+    if (saveTariff?.tarifaAdulto1a2 == null) return true;
+    if (saveTariff?.tarifaAdulto3 == null) return true;
+    if (saveTariff?.tarifaAdulto4 == null) return true;
+    if (saveTariff?.tarifaPaxAdicional == null) return true;
+    if (saveTariff?.tarifaMenores7a12 == null) return true;
+
+    return false;
   }
 }

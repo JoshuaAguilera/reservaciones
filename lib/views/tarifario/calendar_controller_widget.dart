@@ -252,15 +252,10 @@ class _ControllerCalendarWidgetState
                                 );
                             ref
                                 .read(temporadasGrupalesProvider.notifier)
-                                .update(
-                                  (state) => [
-                                    // Temporada(
-                                    //   nombre: "Grupos",
-                                    //   editable: false,
-                                    //   forGroup: true,
-                                    // ),
-                                  ],
-                                );
+                                .update((state) => []);
+                            ref
+                                .read(temporadasEfectivoProvider.notifier)
+                                .update((state) => []);
                             widget.onCreated!.call();
                           },
                         ),

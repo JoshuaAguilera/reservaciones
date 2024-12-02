@@ -72,6 +72,10 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           Utility.getTemporadas(register.temporadas
               ?.where((element) => element.forGroup ?? false)
               .toList()));
+      ref.read(temporadasEfectivoProvider.notifier).update((state) =>
+          Utility.getTemporadas(register.temporadas
+              ?.where((element) => element.forCash ?? false)
+              .toList()));
       onCreate.call();
     }
 
@@ -351,15 +355,11 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                     );
                                 ref
                                     .read(temporadasGrupalesProvider.notifier)
-                                    .update(
-                                      (state) => [
-                                        // Temporada(
-                                        //   nombre: "Grupos",
-                                        //   editable: false,
-                                        //   forGroup: true,
-                                        // ),
-                                      ],
-                                    );
+                                    .update((state) => []);
+
+                                ref
+                                    .read(temporadasEfectivoProvider.notifier)
+                                    .update((state) => []);
                                 onCreate.call();
                               },
                               text: "Crear tarifa",

@@ -152,191 +152,195 @@ class Dialogs {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                    child: Column(
-                      children: [
-                        Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        child: Column(
                           children: [
-                            Container(
-                              width: 45,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: brightness == Brightness.light
-                                        ? Colors.black87
-                                        : Colors.white,
-                                    width: 0.5,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(9))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Icon(
-                                  CupertinoIcons.person,
-                                  size: 32,
-                                  color: brightness == Brightness.light
-                                      ? Colors.black87
-                                      : Colors.white,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: [
-                                TextStyles.titleText(
-                                  text: usuario != null
-                                      ? "Editar Usuario"
-                                      : "Agregar Usuario",
-                                  color: Theme.of(buildContext).primaryColor,
+                                Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: brightness == Brightness.light
+                                            ? Colors.black87
+                                            : Colors.white,
+                                        width: 0.5,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(9))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Icon(
+                                      CupertinoIcons.person,
+                                      size: 32,
+                                      color: brightness == Brightness.light
+                                          ? Colors.black87
+                                          : Colors.white,
+                                    ),
+                                  ),
                                 ),
-                                TextStyles.standardText(
-                                    text:
-                                        "${usuario != null ? "Edita" : "Asigna"} atributos y maneja el acceso del usuario")
+                                const SizedBox(width: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextStyles.titleText(
+                                      text: usuario != null
+                                          ? "Editar Usuario"
+                                          : "Agregar Usuario",
+                                      color: Theme.of(buildContext).primaryColor,
+                                    ),
+                                    TextStyles.standardText(
+                                        text:
+                                            "${usuario != null ? "Edita" : "Asigna"} atributos y maneja el acceso del usuario")
+                                  ],
+                                ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                      color: Theme.of(context).primaryColor, thickness: 0.6),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: SizedBox(
-                      width: 450,
-                      height: usuario != null ? null : 232,
-                      child: SingleChildScrollView(
-                        child: Form(
-                          key: _formKeyUsuario,
-                          child: Column(
-                            children: [
-                              TextFormFieldCustom.textFormFieldwithBorder(
-                                name: "Nombre de usuario",
-                                controller: nameController,
-                                validator: (value) {
-                                  if ((value == null || value.isEmpty)) {
-                                    return "Campo requirido*";
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                      ),
+                      Divider(
+                          color: Theme.of(context).primaryColor, thickness: 0.6),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        child: SizedBox(
+                          width: 450,
+                          height: usuario != null ? null : 232,
+                          child: SingleChildScrollView(
+                            child: Form(
+                              key: _formKeyUsuario,
+                              child: Column(
                                 children: [
-                                  TextStyles.standardText(
-                                      text: "Rol del usuario: ",
-                                      overClip: true,
-                                      color: Theme.of(context).primaryColor),
-                                  const SizedBox(width: 15),
-                                  CustomDropdown.dropdownMenuCustom(
-                                    initialSelection:
-                                        usuario != null ? usuario.rol! : rol,
-                                    onSelected: (String? value) {
-                                      rol = value!;
+                                  TextFormFieldCustom.textFormFieldwithBorder(
+                                    name: "Nombre de usuario",
+                                    controller: nameController,
+                                    validator: (value) {
+                                      if ((value == null || value.isEmpty)) {
+                                        return "Campo requirido*";
+                                      }
+                  
+                                      return null;
                                     },
-                                    elements: roles,
-                                    screenWidth: 550,
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              if (usuario != null)
-                                TextFormFieldCustom.textFormFieldwithBorder(
-                                  name: "Correo electrónico",
-                                  isRequired: false,
-                                  controller: mailController,
-                                ),
-                              if (usuario != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 15),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Expanded(
-                                        child: ChangePasswordWidget(
-                                          passwordController:
-                                              passwordEditController,
-                                          isChanged: (value) => setState(
-                                              () => showConfigPassword = value),
-                                          userId: usuario.id,
-                                          username: usuario.username ?? '',
-                                          isPasswordMail: false,
-                                          notAskChange: passwordEditController
-                                              .text.isEmpty,
-                                          onSummitUser: () => saveFunction(
-                                              context, setState, true),
-                                        ),
+                                      TextStyles.standardText(
+                                          text: "Rol del usuario: ",
+                                          overClip: true,
+                                          color: Theme.of(context).primaryColor),
+                                      const SizedBox(width: 15),
+                                      CustomDropdown.dropdownMenuCustom(
+                                        initialSelection:
+                                            usuario != null ? usuario.rol! : rol,
+                                        onSelected: (String? value) {
+                                          rol = value!;
+                                        },
+                                        elements: roles,
+                                        screenWidth: 550,
                                       ),
                                     ],
                                   ),
-                                ),
-                              if (usuario == null)
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: TextFormFieldCustom
-                                          .textFormFieldwithBorder(
-                                        name: "Contraseña",
-                                        passwordVisible: true,
-                                        isPassword: true,
-                                        controller: passwordNewController,
-                                        validator: (p0) {
-                                          if (p0 == null ||
-                                              p0.isEmpty ||
-                                              p0.length < 4) {
-                                            return "La contraseña debe de tener al menos 4 caracteres*";
-                                          }
-                                          return null;
-                                        },
+                                  const SizedBox(height: 8),
+                                  if (usuario != null)
+                                    TextFormFieldCustom.textFormFieldwithBorder(
+                                      name: "Correo electrónico",
+                                      isRequired: false,
+                                      controller: mailController,
+                                    ),
+                                  if (usuario != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 15),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: ChangePasswordWidget(
+                                              passwordController:
+                                                  passwordEditController,
+                                              isChanged: (value) => setState(
+                                                  () => showConfigPassword = value),
+                                              userId: usuario.id,
+                                              username: usuario.username ?? '',
+                                              isPasswordMail: false,
+                                              notAskChange: passwordEditController
+                                                  .text.isEmpty,
+                                              onSummitUser: () => saveFunction(
+                                                  context, setState, true),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: TextFormFieldCustom
-                                          .textFormFieldwithBorder(
-                                        name: "Confirmar contraseña",
-                                        isPassword: true,
-                                        passwordVisible: true,
-                                        controller: passwordConfirmController,
-                                        validator: (p0) {
-                                          if (passwordNewController
-                                              .text.isNotEmpty) {
-                                            if (p0 == null ||
-                                                p0.isEmpty ||
-                                                p0 !=
-                                                    passwordNewController
-                                                        .text) {
-                                              return "La contraseña debe ser la misma*";
-                                            }
-                                          }
-                                          return null;
-                                        },
-                                      ),
+                                  if (usuario == null)
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Contraseña",
+                                            passwordVisible: true,
+                                            isPassword: true,
+                                            controller: passwordNewController,
+                                            validator: (p0) {
+                                              if (p0 == null ||
+                                                  p0.isEmpty ||
+                                                  p0.length < 4) {
+                                                return "La contraseña debe de tener al menos 4 caracteres*";
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Confirmar contraseña",
+                                            isPassword: true,
+                                            passwordVisible: true,
+                                            controller: passwordConfirmController,
+                                            validator: (p0) {
+                                              if (passwordNewController
+                                                  .text.isNotEmpty) {
+                                                if (p0 == null ||
+                                                    p0.isEmpty ||
+                                                    p0 !=
+                                                        passwordNewController
+                                                            .text) {
+                                                  return "La contraseña debe ser la misma*";
+                                                }
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              if (showError)
-                                insideSnackBar(
-                                  message: messageError,
-                                  type: 'danger',
-                                  duration: 3.seconds,
-                                ),
-                            ],
+                                  if (showError)
+                                    insideSnackBar(
+                                      message: messageError,
+                                      type: 'danger',
+                                      duration: 3.seconds,
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
               if (!showConfigPassword)
                 Padding(

@@ -3501,12 +3501,15 @@ class $TemporadaTable extends Temporada
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("for_group" IN (0, 1))'));
-  static const VerificationMeta _tarifaJSONMeta =
-      const VerificationMeta('tarifaJSON');
+  static const VerificationMeta _forCashMeta =
+      const VerificationMeta('forCash');
   @override
-  late final GeneratedColumn<String> tarifaJSON = GeneratedColumn<String>(
-      'tarifa_j_s_o_n', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<bool> forCash = GeneratedColumn<bool>(
+      'for_cash', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("for_cash" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3517,7 +3520,7 @@ class $TemporadaTable extends Temporada
         porcentajePromocion,
         codeTarifa,
         forGroup,
-        tarifaJSON
+        forCash
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3570,11 +3573,9 @@ class $TemporadaTable extends Temporada
       context.handle(_forGroupMeta,
           forGroup.isAcceptableOrUnknown(data['for_group']!, _forGroupMeta));
     }
-    if (data.containsKey('tarifa_j_s_o_n')) {
-      context.handle(
-          _tarifaJSONMeta,
-          tarifaJSON.isAcceptableOrUnknown(
-              data['tarifa_j_s_o_n']!, _tarifaJSONMeta));
+    if (data.containsKey('for_cash')) {
+      context.handle(_forCashMeta,
+          forCash.isAcceptableOrUnknown(data['for_cash']!, _forCashMeta));
     }
     return context;
   }
@@ -3601,8 +3602,8 @@ class $TemporadaTable extends Temporada
           .read(DriftSqlType.string, data['${effectivePrefix}code_tarifa']),
       forGroup: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}for_group']),
-      tarifaJSON: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}tarifa_j_s_o_n']),
+      forCash: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}for_cash']),
     );
   }
 
@@ -3621,7 +3622,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final double? porcentajePromocion;
   final String? codeTarifa;
   final bool? forGroup;
-  final String? tarifaJSON;
+  final bool? forCash;
   const TemporadaData(
       {required this.id,
       required this.code,
@@ -3631,7 +3632,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       this.porcentajePromocion,
       this.codeTarifa,
       this.forGroup,
-      this.tarifaJSON});
+      this.forCash});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3653,8 +3654,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     if (!nullToAbsent || forGroup != null) {
       map['for_group'] = Variable<bool>(forGroup);
     }
-    if (!nullToAbsent || tarifaJSON != null) {
-      map['tarifa_j_s_o_n'] = Variable<String>(tarifaJSON);
+    if (!nullToAbsent || forCash != null) {
+      map['for_cash'] = Variable<bool>(forCash);
     }
     return map;
   }
@@ -3678,9 +3679,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       forGroup: forGroup == null && nullToAbsent
           ? const Value.absent()
           : Value(forGroup),
-      tarifaJSON: tarifaJSON == null && nullToAbsent
+      forCash: forCash == null && nullToAbsent
           ? const Value.absent()
-          : Value(tarifaJSON),
+          : Value(forCash),
     );
   }
 
@@ -3697,7 +3698,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           serializer.fromJson<double?>(json['porcentajePromocion']),
       codeTarifa: serializer.fromJson<String?>(json['codeTarifa']),
       forGroup: serializer.fromJson<bool?>(json['forGroup']),
-      tarifaJSON: serializer.fromJson<String?>(json['tarifaJSON']),
+      forCash: serializer.fromJson<bool?>(json['forCash']),
     );
   }
   @override
@@ -3712,7 +3713,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       'porcentajePromocion': serializer.toJson<double?>(porcentajePromocion),
       'codeTarifa': serializer.toJson<String?>(codeTarifa),
       'forGroup': serializer.toJson<bool?>(forGroup),
-      'tarifaJSON': serializer.toJson<String?>(tarifaJSON),
+      'forCash': serializer.toJson<bool?>(forCash),
     };
   }
 
@@ -3725,7 +3726,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           Value<double?> porcentajePromocion = const Value.absent(),
           Value<String?> codeTarifa = const Value.absent(),
           Value<bool?> forGroup = const Value.absent(),
-          Value<String?> tarifaJSON = const Value.absent()}) =>
+          Value<bool?> forCash = const Value.absent()}) =>
       TemporadaData(
         id: id ?? this.id,
         code: code ?? this.code,
@@ -3738,7 +3739,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
             : this.porcentajePromocion,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
         forGroup: forGroup.present ? forGroup.value : this.forGroup,
-        tarifaJSON: tarifaJSON.present ? tarifaJSON.value : this.tarifaJSON,
+        forCash: forCash.present ? forCash.value : this.forCash,
       );
   TemporadaData copyWithCompanion(TemporadaCompanion data) {
     return TemporadaData(
@@ -3755,8 +3756,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       codeTarifa:
           data.codeTarifa.present ? data.codeTarifa.value : this.codeTarifa,
       forGroup: data.forGroup.present ? data.forGroup.value : this.forGroup,
-      tarifaJSON:
-          data.tarifaJSON.present ? data.tarifaJSON.value : this.tarifaJSON,
+      forCash: data.forCash.present ? data.forCash.value : this.forCash,
     );
   }
 
@@ -3771,14 +3771,14 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           ..write('porcentajePromocion: $porcentajePromocion, ')
           ..write('codeTarifa: $codeTarifa, ')
           ..write('forGroup: $forGroup, ')
-          ..write('tarifaJSON: $tarifaJSON')
+          ..write('forCash: $forCash')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, code, nombre, fecha, estanciaMinima,
-      porcentajePromocion, codeTarifa, forGroup, tarifaJSON);
+      porcentajePromocion, codeTarifa, forGroup, forCash);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3791,7 +3791,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           other.porcentajePromocion == this.porcentajePromocion &&
           other.codeTarifa == this.codeTarifa &&
           other.forGroup == this.forGroup &&
-          other.tarifaJSON == this.tarifaJSON);
+          other.forCash == this.forCash);
 }
 
 class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
@@ -3803,7 +3803,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<double?> porcentajePromocion;
   final Value<String?> codeTarifa;
   final Value<bool?> forGroup;
-  final Value<String?> tarifaJSON;
+  final Value<bool?> forCash;
   const TemporadaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -3813,7 +3813,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
     this.forGroup = const Value.absent(),
-    this.tarifaJSON = const Value.absent(),
+    this.forCash = const Value.absent(),
   });
   TemporadaCompanion.insert({
     this.id = const Value.absent(),
@@ -3824,7 +3824,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
     this.forGroup = const Value.absent(),
-    this.tarifaJSON = const Value.absent(),
+    this.forCash = const Value.absent(),
   })  : code = Value(code),
         nombre = Value(nombre);
   static Insertable<TemporadaData> custom({
@@ -3836,7 +3836,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     Expression<double>? porcentajePromocion,
     Expression<String>? codeTarifa,
     Expression<bool>? forGroup,
-    Expression<String>? tarifaJSON,
+    Expression<bool>? forCash,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3848,7 +3848,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
         'porcentaje_promocion': porcentajePromocion,
       if (codeTarifa != null) 'code_tarifa': codeTarifa,
       if (forGroup != null) 'for_group': forGroup,
-      if (tarifaJSON != null) 'tarifa_j_s_o_n': tarifaJSON,
+      if (forCash != null) 'for_cash': forCash,
     });
   }
 
@@ -3861,7 +3861,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       Value<double?>? porcentajePromocion,
       Value<String?>? codeTarifa,
       Value<bool?>? forGroup,
-      Value<String?>? tarifaJSON}) {
+      Value<bool?>? forCash}) {
     return TemporadaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -3871,7 +3871,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
       codeTarifa: codeTarifa ?? this.codeTarifa,
       forGroup: forGroup ?? this.forGroup,
-      tarifaJSON: tarifaJSON ?? this.tarifaJSON,
+      forCash: forCash ?? this.forCash,
     );
   }
 
@@ -3902,8 +3902,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     if (forGroup.present) {
       map['for_group'] = Variable<bool>(forGroup.value);
     }
-    if (tarifaJSON.present) {
-      map['tarifa_j_s_o_n'] = Variable<String>(tarifaJSON.value);
+    if (forCash.present) {
+      map['for_cash'] = Variable<bool>(forCash.value);
     }
     return map;
   }
@@ -3919,7 +3919,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
           ..write('porcentajePromocion: $porcentajePromocion, ')
           ..write('codeTarifa: $codeTarifa, ')
           ..write('forGroup: $forGroup, ')
-          ..write('tarifaJSON: $tarifaJSON')
+          ..write('forCash: $forCash')
           ..write(')'))
         .toString();
   }
@@ -6268,6 +6268,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PoliticasTable politicas = $PoliticasTable(this);
   late final $TemporadaTarifaTable temporadaTarifa =
       $TemporadaTarifaTable(this);
+  late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
+  late final TarifaDao tarifaDao = TarifaDao(this as AppDatabase);
+  late final TarifaRackDao tarifaRackDao = TarifaRackDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7652,7 +7655,7 @@ typedef $$TemporadaTableCreateCompanionBuilder = TemporadaCompanion Function({
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
   Value<bool?> forGroup,
-  Value<String?> tarifaJSON,
+  Value<bool?> forCash,
 });
 typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
@@ -7663,7 +7666,7 @@ typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
   Value<bool?> forGroup,
-  Value<String?> tarifaJSON,
+  Value<bool?> forCash,
 });
 
 class $$TemporadaTableTableManager extends RootTableManager<
@@ -7691,7 +7694,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
             Value<bool?> forGroup = const Value.absent(),
-            Value<String?> tarifaJSON = const Value.absent(),
+            Value<bool?> forCash = const Value.absent(),
           }) =>
               TemporadaCompanion(
             id: id,
@@ -7702,7 +7705,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
             forGroup: forGroup,
-            tarifaJSON: tarifaJSON,
+            forCash: forCash,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -7713,7 +7716,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
             Value<bool?> forGroup = const Value.absent(),
-            Value<String?> tarifaJSON = const Value.absent(),
+            Value<bool?> forCash = const Value.absent(),
           }) =>
               TemporadaCompanion.insert(
             id: id,
@@ -7724,7 +7727,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
             forGroup: forGroup,
-            tarifaJSON: tarifaJSON,
+            forCash: forCash,
           ),
         ));
 }
@@ -7772,8 +7775,8 @@ class $$TemporadaTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get tarifaJSON => $state.composableBuilder(
-      column: $state.table.tarifaJSON,
+  ColumnFilters<bool> get forCash => $state.composableBuilder(
+      column: $state.table.forCash,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7835,8 +7838,8 @@ class $$TemporadaTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get tarifaJSON => $state.composableBuilder(
-      column: $state.table.tarifaJSON,
+  ColumnOrderings<bool> get forCash => $state.composableBuilder(
+      column: $state.table.forCash,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

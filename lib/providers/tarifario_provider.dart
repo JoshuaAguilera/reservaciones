@@ -54,6 +54,7 @@ final temporadasIndividualesProvider = StateProvider<List<Temporada>>(
 );
 
 final temporadasGrupalesProvider = StateProvider<List<Temporada>>((ref) => []);
+final temporadasEfectivoProvider = StateProvider<List<Temporada>>((ref) => []);
 
 final tarifaBaseProvider = FutureProvider.family<List<TarifaBaseInt>, String>(
   (ref, arg) async {

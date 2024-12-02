@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/views/tarifario/manager_cash_tariff_dialog.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -36,6 +38,8 @@ class CustomWidgets {
     void Function(String)? onChangedEstancia,
     void Function(String)? onChangedDescuento,
     void Function(String)? onChangedName,
+    void Function(bool)? onChangedUseTariff,
+    void Function(List<Tarifa>)? onChangedTariffs,
   }) {
     bool editName = false;
     TextEditingController _controller =
@@ -54,35 +58,68 @@ class CustomWidgets {
               child: Column(
                 children: [
                   if (!editName)
-                    SizedBox(
-                      height: 32,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          TextStyles.mediumText(
-                              text: temporada.nombre ?? '',
-                              color: Theme.of(context).primaryColor,
-                              overflow: TextOverflow.ellipsis),
-                          if (temporada.editable!)
-                            Expanded(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 32,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  child: TextStyles.mediumText(
+                                    text: temporada.nombre ?? '',
+                                    color: Theme.of(context).primaryColor,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (temporada.editable!)
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 30,
+                                      width: 35,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: IconButton(
+                                          onPressed: () => snapshot(
+                                              () => editName = !editName),
+                                          icon: Icon(
+                                            HeroIcons.pencil_square,
+                                            size: 22,
+                                            color:
+                                                Theme.of(context).dividerColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (temporada.forCash ?? false)
+                          Expanded(
+                            flex: 2,
+                            child: Align(
+                              alignment: Alignment.centerRight,
                               child: SizedBox(
-                                height: 30,
-                                width: 35,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: IconButton(
-                                      onPressed: () =>
-                                          snapshot(() => editName = !editName),
-                                      icon: Icon(Icons.edit,
-                                          size: 22,
-                                          color:
-                                              Theme.of(context).dividerColor)),
+                                height: 32,
+                                child: FormWidgets.inputSwitch(
+                                  compact:
+                                      MediaQuery.of(context).size.width < 950,
+                                  name: "Usar tarifas",
+                                  value: temporada.useTariff ?? false,
+                                  activeColor: Theme.of(context).dividerColor,
+                                  context: context,
+                                  onChanged: (p0) =>
+                                      onChangedUseTariff?.call(p0),
                                 ),
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   if (editName)
                     Padding(
@@ -90,26 +127,33 @@ class CustomWidgets {
                           horizontal: 10, vertical: 5),
                       child: SizedBox(
                         height: 40,
-                        child: FormWidgets.textFormFieldResizable(
-                          name: "",
-                          autofocus: true,
-                          controller: _controller,
-                          onEditingComplete: () {
-                            snapshot(
-                              () {
-                                onChangedName!.call(_controller.text);
-                                editName = false;
-                              },
-                            );
+                        child: Focus(
+                          onFocusChange: (value) {
+                            if (!value) {
+                              snapshot(() => editName = false);
+                            }
                           },
-                          icon: IconButton(
-                            onPressed: () => snapshot(() {
-                              editName = !editName;
-                              _controller.text = temporada.nombre ?? '';
-                            }),
-                            icon: Icon(
-                              CupertinoIcons.clear_circled,
-                              color: Theme.of(context).primaryColor,
+                          child: FormWidgets.textFormFieldResizable(
+                            name: "",
+                            autofocus: true,
+                            controller: _controller,
+                            onEditingComplete: () {
+                              snapshot(
+                                () {
+                                  onChangedName!.call(_controller.text);
+                                  editName = false;
+                                },
+                              );
+                            },
+                            icon: IconButton(
+                              onPressed: () => snapshot(() {
+                                editName = !editName;
+                                _controller.text = temporada.nombre ?? '';
+                              }),
+                              icon: Icon(
+                                CupertinoIcons.clear_circled,
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
                           ),
                         ),
@@ -134,25 +178,55 @@ class CustomWidgets {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
-                        child: SizedBox(
-                          child: TextFormFieldCustom.textFormFieldwithBorder(
-                            name: "Descuento",
-                            isNumeric: true,
-                            initialValue:
-                                temporada.porcentajePromocion?.toString(),
-                            icon: const Icon(
-                              CupertinoIcons.percent,
-                              size: 20,
+                      if (!(temporada.forCash ?? false) ||
+                          (temporada.useTariff ?? false))
+                        Expanded(
+                          child: SizedBox(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Descuento",
+                              isNumeric: true,
+                              initialValue:
+                                  temporada.porcentajePromocion?.toString(),
+                              icon: const Icon(
+                                CupertinoIcons.percent,
+                                size: 20,
+                              ),
+                              onChanged: (p0) {
+                                onChangedDescuento!.call(p0);
+                              },
                             ),
-                            onChanged: (p0) {
-                              onChangedDescuento!.call(p0);
-                            },
+                          ),
+                        )
+                      else
+                        Expanded(
+                          child: SizedBox(
+                            height: 49,
+                            child: Buttons.commonButton(
+                              icons: HeroIcons.clipboard_document_list,
+                              child: TextStyles.standardText(
+                                  text: "Administrar Tarifa",
+                                  aling: TextAlign.center),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => ManagerCashTariffDialog(
+                                      temporada: temporada),
+                                ).then(
+                                  (value) {
+                                    if (value != null) {
+                                      if (onChangedTariffs != null) {
+                                        onChangedTariffs
+                                            .call(value as List<Tarifa>);
+                                      }
+                                    }
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -303,10 +377,8 @@ class CustomWidgets {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
             Table(
               border: TableBorder(
-                top: BorderSide(color: Theme.of(context).primaryColor),
                 bottom: BorderSide(color: Theme.of(context).primaryColor),
                 horizontalInside:
                     BorderSide(color: Theme.of(context).primaryColor),
@@ -349,16 +421,16 @@ class CustomWidgets {
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                        text: "PAX ADIC",
+                        text: "MENORES 7 A 12",
                         color: Theme.of(context).primaryColor,
+                        size: 10,
                         aling: TextAlign.center,
                       ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                        text: "MENORES 7 A 12",
+                        text: "PAX ADIC",
                         color: Theme.of(context).primaryColor,
-                        size: 10,
                         aling: TextAlign.center,
                       ),
                     ),
@@ -382,6 +454,8 @@ class CustomWidgets {
                     paxAdic: paxAdic,
                     minor7a12: minor7a12,
                     isGroup: element.forGroup ?? false,
+                    isCash: element.forCash ?? false,
+                    categoria: tipoHabitacion,
                   ),
               ],
             ),

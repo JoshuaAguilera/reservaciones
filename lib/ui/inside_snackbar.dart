@@ -11,17 +11,22 @@ Widget insideSnackBar({
   bool showAnimation = false,
 }) {
   return Center(
-    child: Card(
-      color: Utility.getColorNavbar(type),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextStyles.standardText(
-          text: message,
-          size: 10,
-          color: Colors.white,
-          aling: TextAlign.center,
+    child: AnimatedOpacity(
+      opacity: showAnimation ? 1.0 : 0.0,
+      duration: 350.ms,
+      child: Card(
+        color: Utility.getColorNavbar('danger'),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextStyles.standardText(
+            text: message,
+            size: 10,
+            color: Colors.white,
+            aling: TextAlign.center,
+            overClip: true,
+          ),
         ),
       ),
-    ).animate().flip(delay: 100.ms).fadeOut(delay: duration ?? 800.ms),
+    ),
   );
 }

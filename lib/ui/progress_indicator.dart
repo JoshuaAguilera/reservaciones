@@ -16,11 +16,23 @@ Widget ProgressIndicatorCustom(
   );
 }
 
-Widget ProgressIndicatorEstandar({double sizeProgressIndicator = 45}) {
-  return Center(
-    child: LoadingAnimationWidget.fourRotatingDots(
-      color: Colors.grey,
-      size: sizeProgressIndicator,
-    ),
-  );
+Widget ProgressIndicatorEstandar({
+  double sizeProgressIndicator = 45,
+  bool inHorizontal = false,
+}) {
+  if (inHorizontal) {
+    return Center(
+      child: LoadingAnimationWidget.progressiveDots(
+        color: Colors.grey,
+        size: sizeProgressIndicator,
+      ),
+    );
+  } else {
+    return Center(
+      child: LoadingAnimationWidget.fourRotatingDots(
+        color: Colors.grey,
+        size: sizeProgressIndicator,
+      ),
+    );
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
+import 'package:generador_formato/ui/inside_snackbar.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -44,8 +45,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   bool showError = false;
   Tarifa? firstTariff = Tarifa(categoria: tipoHabitacion.first);
   Tarifa? saveTariff;
-  double? upGradeCateg;
-  double? upGradeMenor;
+  double? upgradeCateg;
+  double? upgradeMenor;
   double? upGradePaxAdic;
   TarifaBaseInt? tarifaPadre;
   TarifaBaseInt? selectBaseTariff;
@@ -355,11 +356,11 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                               name: "Categoria",
                                               msgError: "",
                                               initialValue:
-                                                  upGradeCateg?.toString(),
+                                                  upgradeCateg?.toString(),
                                               marginBottom: 0,
                                               isNumeric: true,
                                               onChanged: (p0) {
-                                                upGradeCateg = double.parse(
+                                                upgradeCateg = double.parse(
                                                     p0.isEmpty ? "0" : p0);
                                               },
                                             ),
@@ -374,11 +375,11 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                               name: "Menor",
                                               msgError: "",
                                               initialValue:
-                                                  upGradeMenor?.toString(),
+                                                  upgradeMenor?.toString(),
                                               marginBottom: 0,
                                               isNumeric: true,
                                               onChanged: (p0) {
-                                                upGradeMenor = double.parse(
+                                                upgradeMenor = double.parse(
                                                     p0.isEmpty ? "0" : p0);
                                               },
                                             ),
@@ -424,24 +425,10 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
-                                child: Center(
-                                  child: AnimatedOpacity(
-                                    opacity: showError ? 1.0 : 0.0,
-                                    duration: 350.ms,
-                                    child: Card(
-                                      color: Utility.getColorNavbar('danger'),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextStyles.standardText(
-                                          text: messageError,
-                                          size: 10,
-                                          color: Colors.white,
-                                          aling: TextAlign.center,
-                                          overClip: true,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                child: insideSnackBar(
+                                  message: messageError,
+                                  type: 'danger',
+                                  showAnimation: showError,
                                 ),
                               ),
                             ],
@@ -504,7 +491,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     return;
                                   }
 
-                                  if (revisedPropiertiesSaveTariff() &&
+                                  if (Utility.revisedPropiertiesSaveTariff(
+                                          saveTariff) &&
                                       !applyUpgrades) {
                                     messageError =
                                         "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*";
@@ -517,8 +505,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   setState(() {});
 
                                   if (!applyUpgrades) {
-                                    upGradeCateg = null;
-                                    upGradeMenor = null;
+                                    upgradeCateg = null;
+                                    upgradeMenor = null;
                                     upGradePaxAdic = null;
                                   }
 
@@ -577,8 +565,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                       _nombreTarifaController.text;
                                   tarifaBase.descIntegrado = double.tryParse(
                                       _descuentoController.text);
-                                  tarifaBase.upgradeCategoria = upGradeCateg;
-                                  tarifaBase.upgradeMenor = upGradeMenor;
+                                  tarifaBase.upgradeCategoria = upgradeCateg;
+                                  tarifaBase.upgradeMenor = upgradeMenor;
                                   tarifaBase.upgradePaxAdic = upGradePaxAdic;
                                   tarifaBase.tarifaPadre = tarifaPadre;
                                   tarifaBase.tarifas = [
@@ -643,8 +631,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
       _updateDataInput(selectBaseTariff);
     } else {
       applyUpgrades = false;
-      upGradeCateg = null;
-      upGradeMenor = null;
+      upgradeCateg = null;
+      upgradeMenor = null;
       upGradePaxAdic = null;
       saveTariff = null;
       _nombreTarifaController.text = '';
@@ -660,8 +648,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   void _updateDataInput(TarifaBaseInt? selectTariff, {double? percent}) {
     applyUpgrades = selectTariff?.upgradeCategoria != null;
     if (applyUpgrades) {
-      upGradeCateg = selectTariff?.upgradeCategoria;
-      upGradeMenor = selectTariff?.upgradeMenor;
+      upgradeCateg = selectTariff?.upgradeCategoria;
+      upgradeMenor = selectTariff?.upgradeMenor;
       upGradePaxAdic = selectTariff?.upgradePaxAdic;
     }
 
@@ -791,15 +779,5 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
         iconData: Icons.delete,
       ),
     );
-  }
-
-  bool revisedPropiertiesSaveTariff() {
-    if (saveTariff?.tarifaAdulto1a2 == null) return true;
-    if (saveTariff?.tarifaAdulto3 == null) return true;
-    if (saveTariff?.tarifaAdulto4 == null) return true;
-    if (saveTariff?.tarifaPaxAdicional == null) return true;
-    if (saveTariff?.tarifaMenores7a12 == null) return true;
-
-    return false;
   }
 }

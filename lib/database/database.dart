@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
 import 'package:generador_formato/database/dao/tarifa_dao.dart';
+import 'package:generador_formato/database/dao/tarifa_rack_dao.dart';
 import 'package:generador_formato/database/tables/images_table.dart';
 import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
@@ -42,6 +43,7 @@ part 'database.g.dart';
 //   daos: [
 //     TarifaBaseDao,
 //     TarifaDao,
+//     TarifaRackDao,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -85,7 +87,8 @@ class SeasonTariff {
   ],
   daos: [
     TarifaBaseDao,
- TarifaDao,
+    TarifaDao,
+    TarifaRackDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -682,8 +685,6 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // -- // Tarifa Base Dao
-
-
 }
 
 LazyDatabase _openConnection() {
