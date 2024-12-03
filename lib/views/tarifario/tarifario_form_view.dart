@@ -512,6 +512,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                             fontSize: 12,
                                             initialSelection: selectTariff,
                                             onSelected: (String? value) {
+                                              if (value == selectTariff) return;
+
                                               selectBaseTariff = data
                                                   .where((element) =>
                                                       element.nombre == value)
@@ -847,14 +849,12 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                         temporadaIndListProvider
                                             .remove(element)),
                                     onChangedDescuento: (p0) => setState(() =>
-                                        element.porcentajePromocion = p0.isEmpty
-                                            ? null
-                                            : double.parse(p0)),
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
                                     onChangedName: (p0) =>
                                         setState(() => element.nombre = p0),
-                                    onChangedEstancia: (p0) =>
-                                        element.estanciaMinima =
-                                            p0.isEmpty ? null : int.parse(p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
                                   ),
                                 ),
                               Padding(
@@ -937,14 +937,12 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                         temporadaGrupListProvider
                                             .remove(element)),
                                     onChangedDescuento: (p0) => setState(() =>
-                                        element.porcentajePromocion = p0.isEmpty
-                                            ? null
-                                            : double.parse(p0)),
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
                                     onChangedName: (p0) =>
                                         setState(() => element.nombre = p0),
-                                    onChangedEstancia: (p0) =>
-                                        element.estanciaMinima =
-                                            p0.isEmpty ? null : int.parse(p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
                                   ),
                                 ),
                               Padding(
@@ -1035,18 +1033,16 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                         temporadaEfectivoListProvider
                                             .remove(element)),
                                     onChangedDescuento: (p0) => setState(() =>
-                                        element.porcentajePromocion = p0.isEmpty
-                                            ? null
-                                            : double.parse(p0)),
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
                                     onChangedUseTariff: (p0) =>
                                         setState(() => element.useTariff = p0),
                                     onChangedName: (p0) =>
                                         setState(() => element.nombre = p0),
-                                    onChangedEstancia: (p0) =>
-                                        element.estanciaMinima =
-                                            p0.isEmpty ? null : int.parse(p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
                                     onChangedTariffs: (p0) =>
-                                        setState(() => element.tarifa = p0),
+                                        setState(() => element.tarifas = p0),
                                   ),
                                 ),
                               Padding(
@@ -1260,7 +1256,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     }
 
     bool isSaves = oldRegister != null
-        ? await TarifaService().UpdateTarifaBD(
+        ? await TarifaService().updateTarifaBD(
             oldRegister: oldRegister!,
             name: nombreTarifaController.text,
             colorIdentificativo: colorTarifa,

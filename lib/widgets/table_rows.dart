@@ -324,7 +324,7 @@ class TableRows {
         Center(
             child: TextStyles.standardText(
           text: !((element.useTariff ?? false)) && isCash
-              ? Utility.formatterNumber(element.tarifa
+              ? Utility.formatterNumber(element.tarifas
                       ?.where((element) => element.categoria == categoria)
                       .firstOrNull
                       ?.tarifaAdulto1a2 ??
@@ -341,7 +341,7 @@ class TableRows {
         Center(
             child: TextStyles.standardText(
           text: !((element.useTariff ?? false)) && isCash
-              ? Utility.formatterNumber(element.tarifa
+              ? Utility.formatterNumber(element.tarifas
                       ?.where((element) => element.categoria == categoria)
                       .firstOrNull
                       ?.tarifaAdulto3 ??
@@ -359,7 +359,7 @@ class TableRows {
         Center(
           child: TextStyles.standardText(
             text: !((element.useTariff ?? false)) && isCash
-                ? Utility.formatterNumber(element.tarifa
+                ? Utility.formatterNumber(element.tarifas
                         ?.where((element) => element.categoria == categoria)
                         .firstOrNull
                         ?.tarifaAdulto4 ??
@@ -378,7 +378,7 @@ class TableRows {
         Center(
           child: TextStyles.standardText(
             text: !((element.useTariff ?? false)) && isCash
-                ? Utility.formatterNumber(element.tarifa
+                ? Utility.formatterNumber(element.tarifas
                         ?.where((element) => element.categoria == categoria)
                         .firstOrNull
                         ?.tarifaMenores7a12 ??
@@ -397,7 +397,7 @@ class TableRows {
         Center(
           child: TextStyles.standardText(
             text: !((element.useTariff ?? false)) && isCash
-                ? Utility.formatterNumber(element.tarifa
+                ? Utility.formatterNumber(element.tarifas
                         ?.where((element) => element.categoria == categoria)
                         .firstOrNull
                         ?.tarifaPaxAdicional ??

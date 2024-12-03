@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 
 class RegistroTarifa {
   int? id;
@@ -13,7 +14,7 @@ class RegistroTarifa {
   DateTime? fechaRegistro;
   int? userId;
   List<PeriodoData>? periodos;
-  List<TemporadaData>? temporadas;
+  List<Temporada>? temporadas;
   List<TarifaData>? tarifas;
   int numDays;
 
@@ -44,7 +45,7 @@ class RegistroTarifa {
     DateTime? fechaRegistro,
     int? userId,
     List<PeriodoData>? periodos,
-    List<TemporadaData>? temporadas,
+    List<Temporada>? temporadas,
     List<TarifaData>? tarifas,
     int? numDays,
   }) =>

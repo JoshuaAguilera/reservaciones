@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
@@ -41,7 +42,7 @@ class _ManagerTariffGroupDialogState
   List<TarifaXDia> roomTariffs = [];
   TarifaXDia? selectTariff;
   String temporadaSelect = '';
-  TemporadaData? temporadaDataSelect;
+  Temporada? temporadaDataSelect;
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   String selectCategory = "VISTA A LA RESERVA";
   final _formKeyManager = GlobalKey<FormState>();
@@ -523,7 +524,7 @@ class _ManagerTariffGroupDialogState
   }
 
   void _applyDiscountTariff(
-    TemporadaData? seasonSelect, {
+    Temporada? seasonSelect, {
     String descuentoText = '',
     double? descuentoProvisional,
   }) {

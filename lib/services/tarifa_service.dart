@@ -115,7 +115,7 @@ class TarifaService extends BaseService {
     String codeRack =
         "${Utility.getUniqueCode()}-tarifa-rack-$userId-$userName";
     String codeSeason =
-        "${Utility.getUniqueCode()}-temporada-$userId-$userName";
+        "${Utility.getUniqueCode()}-temporada-$userId-$userName-${UniqueKey().hashCode}";
     String codePeriod = "${Utility.getUniqueCode()}-periodo-$userId-$userName";
     DateTime now =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -177,11 +177,11 @@ class TarifaService extends BaseService {
 
           for (var element in temporadas) {
             String codeSeasonCash =
-                "${Utility.getUniqueCode()}-temporada-${element.nombre}-${element.estanciaMinima}-${temporadas.indexOf(element)}";
+                "${Utility.getUniqueCode()}-temporada-${element.nombre}-${element.estanciaMinima}-${UniqueKey().hashCode}";
 
             if (element.forCash ?? false) {
-              if ((element.tarifa ?? []).isNotEmpty) {
-                for (var tariff in element.tarifa!) {
+              if ((element.tarifas ?? []).isNotEmpty) {
+                for (var tariff in element.tarifas!) {
                   await database.into(database.tarifa).insert(
                         TarifaCompanion.insert(
                           code: Value(codeSeasonCash),
@@ -202,15 +202,17 @@ class TarifaService extends BaseService {
                   TemporadaCompanion.insert(
                     code: codeSeason,
                     nombre: element.nombre ?? '',
-                    codeTarifa: Value((element.forCash ?? false)
-                        ? codeSeasonCash
-                        : codeTariff),
+                    codeTarifa: Value(
+                      ((element.forCash ?? false) &&
+                              (element.tarifas ?? []).isNotEmpty)
+                          ? codeSeasonCash
+                          : codeTariff,
+                    ),
                     estanciaMinima: Value(element.estanciaMinima),
                     fecha: Value(now),
                     porcentajePromocion: Value(element.porcentajePromocion),
-                    forGroup: Value(
-                      element.forGroup,
-                    ),
+                    forGroup: Value(element.forGroup),
+                    forCash: Value(element.forCash),
                   ),
                 );
           }
@@ -238,7 +240,7 @@ class TarifaService extends BaseService {
     }
   }
 
-  Future<bool> UpdateTarifaBD({
+  Future<bool> updateTarifaBD({
     required String name,
     required RegistroTarifa oldRegister,
     required List<Periodo> periodos,
@@ -253,6 +255,9 @@ class TarifaService extends BaseService {
     DateTime now =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     String codeTariff = oldRegister.code!;
+    bool withPastBaseTariff =
+        oldRegister.tarifas?.any((element) => element.tarifaPadreId == null) ??
+            false;
 
     try {
       final tarifaDao = TarifaDao(database);
@@ -283,9 +288,7 @@ class TarifaService extends BaseService {
           }
 
           if (!withBaseTariff) {
-            if (oldRegister.tarifas
-                    ?.any((element) => element.tarifaPadreId != null) ??
-                false) {
+            if (!withPastBaseTariff) {
               await database.into(database.tarifa).insert(
                     TarifaCompanion.insert(
                       code: Value(codeTariff),
@@ -312,7 +315,7 @@ class TarifaService extends BaseService {
                   );
             } else {
               await database.updateTariff(
-                codeUniv: oldRegister.code ?? '',
+                codeTariff: oldRegister.code ?? '',
                 id: oldRegister.tarifas!.first.id,
                 tarifaUpdate: TarifaCompanion(
                   tarifaAdultoSGLoDBL: Value(tarifaVR.tarifaAdulto1a2),
@@ -323,8 +326,8 @@ class TarifaService extends BaseService {
                 ),
               );
               await database.updateTariff(
-                codeUniv: oldRegister.code ?? '',
-                id: oldRegister.tarifas![1].id,
+                codeTariff: oldRegister.code ?? '',
+                id: oldRegister.tarifas!.last.id,
                 tarifaUpdate: TarifaCompanion(
                   tarifaAdultoSGLoDBL: Value(tarifaVPM.tarifaAdulto1a2),
                   tarifaMenores7a12: Value(tarifaVPM.tarifaMenores7a12),
@@ -336,27 +339,44 @@ class TarifaService extends BaseService {
             }
           } else {
             codeTariff = tarifaVR.code ?? codeTariff;
-            if (oldRegister.tarifas
-                    ?.any((element) => element.tarifaPadreId == null) ??
-                false) {
-              tarifaDao.deleteForCodeRackTariff(oldRegister.code ?? '');
+            if (withPastBaseTariff) {
+              tarifaDao.deleteByCode(oldRegister.code ?? '');
             }
           }
 
           for (var element in oldRegister.temporadas!) {
             if (!temporadas.any((elementInt) =>
                 elementInt.id != null && elementInt.id == element.id)) {
+              if (element.forCash ?? false) {
+                await tarifaDao.deleteByCode(element.codeTarifa ?? '');
+              }
+
               await database.deleteSeasonByIDandCode(
-                  oldRegister.codeSeason ?? '', element.id);
+                  oldRegister.codeSeason ?? '', element.id!);
               print("Delete ${element.id}: ${element.nombre}");
             }
           }
 
           for (var element in temporadas) {
+            bool applyNewCashTariff = false;
+            bool applyBaseTariff = false;
+            bool isCash = (element.forCash ?? false);
+
+            String codeSeasonCash =
+                "${Utility.getUniqueCode()}-temporada-${element.nombre}-${element.estanciaMinima}-${UniqueKey().hashCode}";
+
             if (element.id != null) {
-              if ((element.tarifa ?? []).isNotEmpty) {
-                for (var tarifa in element.tarifa!) {
-                  if (tarifa.id != null) {
+              String codeSeasonTariff = codeTariff;
+
+              if (isCash && element.porcentajePromocion != null) {
+                if (element.tarifas?.first.code != codeTariff &&
+                    withBaseTariff) {
+                  await tarifaDao.deleteByCode(element.codeTarifa ?? '');
+                }
+                applyBaseTariff = true;
+              } else if ((element.tarifas ?? []).isNotEmpty && isCash) {
+                for (var tarifa in element.tarifas!) {
+                  if (tarifa.id != null && tarifa.code != codeTariff) {
                     database.updateTariff(
                       tarifaUpdate: TarifaCompanion(
                         tarifaAdultoSGLoDBL: Value(tarifa.tarifaAdulto1a2),
@@ -365,39 +385,81 @@ class TarifaService extends BaseService {
                         tarifaMenores7a12: Value(tarifa.tarifaMenores7a12),
                         tarifaPaxAdicional: Value(tarifa.tarifaPaxAdicional),
                       ),
-                      codeUniv: element.code!,
-                      id: element.id!,
+                      codeTariff: tarifa.code!,
+                      id: tarifa.id!,
                     );
                   } else {
-                    //Pendiente registrar las nuevas tarifas de temporadas a efectivo
+                    applyNewCashTariff = true;
+                    await database.into(database.tarifa).insert(
+                          TarifaCompanion.insert(
+                            code: Value(codeSeasonCash),
+                            categoria: Value(tarifa.categoria),
+                            fecha: Value(now),
+                            tarifaAdultoSGLoDBL: Value(tarifa.tarifaAdulto1a2),
+                            tarifaMenores7a12: Value(tarifa.tarifaMenores7a12),
+                            tarifaPaxAdicional:
+                                Value(tarifa.tarifaPaxAdicional),
+                            tarifaAdultoCPLE: Value(tarifa.tarifaAdulto4),
+                            tarifaAdultoTPL: Value(tarifa.tarifaAdulto3),
+                          ),
+                        );
                   }
                 }
               }
 
+              if (isCash) codeSeasonTariff = element.codeTarifa!;
+              if (applyBaseTariff && isCash) codeSeasonTariff = codeTariff;
+              if (applyNewCashTariff) codeSeasonTariff = codeSeasonCash;
+
               await database.updateSeason(
                 tempUpdate: TemporadaCompanion(
-                  codeTarifa: Value(codeTariff),
+                  nombre: Value(element.nombre ?? ''),
+                  codeTarifa: Value(codeSeasonTariff),
                   estanciaMinima: Value(element.estanciaMinima),
                   porcentajePromocion: Value(element.porcentajePromocion),
-                  forGroup: Value(
-                    element.forGroup,
-                  ),
                 ),
                 codeUniv: oldRegister.codeSeason ?? oldRegister.code ?? '',
                 id: element.id!,
               );
-            } else {
-              await database.into(database.temporada).insert(
-                    TemporadaCompanion.insert(
-                      code: oldRegister.codeSeason ?? oldRegister.code ?? '',
-                      nombre: element.nombre ?? '',
-                      codeTarifa: Value(codeTariff),
-                      estanciaMinima: Value(element.estanciaMinima),
-                      fecha: Value(now),
-                      porcentajePromocion: Value(element.porcentajePromocion),
-                    ),
-                  );
+              continue;
             }
+
+            if (isCash) {
+              if ((element.tarifas ?? []).isNotEmpty) {
+                for (var tariff in element.tarifas!) {
+                  await database.into(database.tarifa).insert(
+                        TarifaCompanion.insert(
+                          code: Value(codeSeasonCash),
+                          categoria: Value(tariff.categoria),
+                          fecha: Value(now),
+                          tarifaAdultoSGLoDBL: Value(tariff.tarifaAdulto1a2),
+                          tarifaMenores7a12: Value(tariff.tarifaMenores7a12),
+                          tarifaPaxAdicional: Value(tariff.tarifaPaxAdicional),
+                          tarifaAdultoCPLE: Value(tariff.tarifaAdulto4),
+                          tarifaAdultoTPL: Value(tariff.tarifaAdulto3),
+                        ),
+                      );
+                }
+              }
+            }
+
+            await database.into(database.temporada).insert(
+                  TemporadaCompanion.insert(
+                    code: oldRegister.codeSeason ?? oldRegister.code ?? '',
+                    nombre: element.nombre ?? '',
+                    codeTarifa: Value(
+                      ((element.forCash ?? false) &&
+                              (element.tarifas ?? []).isNotEmpty)
+                          ? codeSeasonCash
+                          : codeTariff,
+                    ),
+                    estanciaMinima: Value(element.estanciaMinima),
+                    fecha: Value(now),
+                    porcentajePromocion: Value(element.porcentajePromocion),
+                    forGroup: Value(element.forGroup),
+                    forCash: Value(element.forCash),
+                  ),
+                );
           }
 
           await database.updateTariffRack(
@@ -411,6 +473,7 @@ class TarifaService extends BaseService {
           );
         },
       );
+      await tarifaDao.close();
       await database.close();
       return true;
     } catch (e) {
@@ -451,27 +514,33 @@ class TarifaService extends BaseService {
                 .where((element) => element.categoria == tipoHabitacion.first)
                 .firstOrNull;
 
+            double tariffAdultUpgrade = (secondTariff?.tarifaAdulto1a2 ?? 0) +
+                (tarifaBase.upgradeCategoria ?? 0);
+
+            double tariffPaxAdicUpgrade =
+                (secondTariff?.tarifaPaxAdicional ?? 0) +
+                    (tarifaBase.upgradePaxAdic ?? 0);
+
+            double tariffMinorsUpgrade =
+                (secondTariff?.tarifaMenores7a12 ?? 0) +
+                    (tarifaBase.upgradeMenor ?? 0);
+
             await tarifaDao.updateForBaseTariff(
               tarifaData: TarifaCompanion(
-                tarifaAdultoCPLE: Value((secondTariff?.tarifaAdulto4 ?? 0) +
-                    tarifaBase.upgradeCategoria!),
-                tarifaAdultoSGLoDBL: Value(
-                    (secondTariff?.tarifaAdulto1a2 ?? 0) +
-                        tarifaBase.upgradeCategoria!),
-                tarifaAdultoTPL: Value((secondTariff?.tarifaAdulto3 ?? 0) +
-                    tarifaBase.upgradeCategoria!),
-                tarifaMenores7a12: Value(
-                    (secondTariff?.tarifaMenores7a12 ?? 0) +
-                        tarifaBase.upgradeMenor!),
-                tarifaPaxAdicional: Value(
-                    (secondTariff?.tarifaPaxAdicional ?? 0) +
-                        tarifaBase.upgradePaxAdic!),
+                tarifaAdultoSGLoDBL: Value(tariffAdultUpgrade),
+                tarifaPaxAdicional: Value(tariffPaxAdicUpgrade),
+                tarifaMenores7a12: Value(tariffMinorsUpgrade),
+                tarifaAdultoCPLE:
+                    Value(tariffAdultUpgrade + (tariffPaxAdicUpgrade * 2)),
+                tarifaAdultoTPL:
+                    Value(tariffAdultUpgrade + tariffPaxAdicUpgrade),
               ),
               baseTariffId: tarifaBase.id!,
               id: tarifasRegister
-                  .firstWhere(
-                      (element) => element.categoria == tipoHabitacion.last)
-                  .id!,
+                      .firstWhere(
+                          (element) => element.categoria == tipoHabitacion.last)
+                      .id ??
+                  0,
             );
 
             tarifasRegister.removeWhere(
@@ -487,7 +556,7 @@ class TarifaService extends BaseService {
                 tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
               ),
               baseTariffId: tarifaBase.id!,
-              id: element.id!,
+              id: element.id ?? 0,
             );
           }
         },
@@ -503,30 +572,41 @@ class TarifaService extends BaseService {
 
   Future<bool> deleteTarifaRack(RegistroTarifa tarifa) async {
     final database = AppDatabase();
-
+    final tarifaDao = TarifaDao(database);
     try {
       await database.transaction(
         () async {
           //Update periods
           for (var element in tarifa.periodos!) {
-            await database.deletePeriodByIDandCode(tarifa.code!, element.id);
+            await database.deletePeriodByIDandCode(
+                tarifa.codePeriod ?? '', element.id);
           }
 
           for (var element in tarifa.tarifas!) {
-            await database.deleteTariffByIDandCode(tarifa.code!, element.id);
+            await database.deleteTariffByIDandCode(
+                tarifa.code ?? '', element.id);
           }
 
           for (var element in tarifa.temporadas!) {
-            await database.deleteSeasonByIDandCode(tarifa.code!, element.id);
+            if ((element.forCash ?? false) &&
+                element.porcentajePromocion == null) {
+              tarifaDao.deleteByCode(element.codeTarifa ?? '');
+            }
+            if (element.id != null) {
+              await database.deleteSeasonByIDandCode(
+                  tarifa.codeSeason ?? '', element.id!);
+            }
           }
 
           await database.deleteTariffRackByIDandCode(tarifa.code!, tarifa.id!);
         },
       );
+      await tarifaDao.close();
       await database.close();
       return true;
     } catch (e) {
       print(e);
+      await tarifaDao.close();
       await database.close();
       return false;
     }
@@ -563,11 +643,32 @@ class TarifaService extends BaseService {
             newRegistroTarifa.periodos =
                 await databaseQuery.getPeriodByCode(tarifa.codePeriodo ?? '');
 
-            newRegistroTarifa.temporadas =
-                await databaseQuery.getSeasonByCode(tarifa.codeTemporada ?? '');
+            newRegistroTarifa.temporadas = Utility.getTemporadas(
+                await databaseQuery
+                    .getSeasonByCode(tarifa.codeTemporada ?? ''));
 
             newRegistroTarifa.tarifas = await databaseQuery.getTariffByCode(
                 newRegistroTarifa.temporadas?.first.codeTarifa ?? '');
+
+            final tarifaDao = TarifaDao(databaseQuery);
+
+            for (var temporada
+                in newRegistroTarifa.temporadas ?? List<Temporada>.empty()) {
+              if (temporada.forCash ?? false) {
+                temporada.tarifas = await tarifaDao
+                    .getTarifasByCode(temporada.codeTarifa ?? '');
+
+                if (newRegistroTarifa.temporadas
+                        ?.where((element) => !(element.forCash ?? false))
+                        .firstOrNull
+                        ?.codeTarifa ==
+                    temporada.codeTarifa) {
+                  temporada.useTariff = true;
+                }
+              }
+            }
+
+            tarifaDao.close();
           },
         );
 

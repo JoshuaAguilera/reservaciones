@@ -113,8 +113,11 @@ class CustomWidgets {
                                   value: temporada.useTariff ?? false,
                                   activeColor: Theme.of(context).dividerColor,
                                   context: context,
-                                  onChanged: (p0) =>
-                                      onChangedUseTariff?.call(p0),
+                                  onChanged: (p0) {
+                                    onChangedUseTariff?.call(p0);
+                                    temporada.porcentajePromocion = null;
+                                    onChangedDescuento!.call('');
+                                  },
                                 ),
                               ),
                             ),

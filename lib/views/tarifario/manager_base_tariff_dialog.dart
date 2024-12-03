@@ -458,9 +458,11 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        Navigator.pop(context);
+                                      },
                                 child: TextStyles.standardText(
                                   text: "Cancelar",
                                   isBold: true,
@@ -571,35 +573,41 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   tarifaBase.tarifaPadre = tarifaPadre;
                                   tarifaBase.tarifas = [
                                     nowTariff,
-                                    if (!applyUpgrades) saveTariff!
+                                    if (!applyUpgrades ||
+                                        (selectBaseTariff?.id != null &&
+                                            applyUpgrades &&
+                                            saveTariff != null))
+                                      saveTariff!
                                   ];
 
-                                  String messageResponse =
-                                      selectBaseTariff?.id != null
-                                          ? await TarifaService()
-                                              .updateBaseTariff(tarifaBase)
-                                          : await TarifaService()
-                                              .saveBaseTariff(tarifaBase);
+                                  if (mounted) {
+                                    String messageResponse =
+                                        selectBaseTariff?.id != null
+                                            ? await TarifaService()
+                                                .updateBaseTariff(tarifaBase)
+                                            : await TarifaService()
+                                                .saveBaseTariff(tarifaBase);
 
-                                  if (messageResponse.isNotEmpty) {
-                                    messageError =
-                                        "Se presento el siguiente problema al registrar una nueva tarifa base: $messageResponse.";
-                                    setState(() {});
-                                    _toggleSnackbar();
-                                    isLoading = false;
-                                    setState(() {});
-                                    return;
+                                    if (messageResponse.isNotEmpty) {
+                                      messageError =
+                                          "Se presento el siguiente problema al registrar una nueva tarifa base: $messageResponse.";
+                                      setState(() {});
+                                      _toggleSnackbar();
+                                      isLoading = false;
+                                      setState(() {});
+                                      return;
+                                    }
+
+                                    showSnackBar(
+                                      context: context,
+                                      title: "Tarifa Base creada",
+                                      message:
+                                          "Se creo la nueva tarifa base: ${tarifaBase.nombre}",
+                                      type: "success",
+                                    );
+
+                                    Navigator.of(context).pop(true);
                                   }
-
-                                  showSnackBar(
-                                    context: context,
-                                    title: "Tarifa Base creada",
-                                    message:
-                                        "Se creo la nueva tarifa base: ${tarifaBase.nombre}",
-                                    type: "success",
-                                  );
-
-                                  Navigator.of(context).pop(true);
                                 },
                               ),
                             ],
@@ -619,7 +627,9 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
   void _toggleSnackbar() {
     setState(() => showError = true);
-    Future.delayed(5.seconds, () => setState(() => showError = false));
+    Future.delayed(5.seconds, () {
+      if (mounted) setState(() => showError = false);
+    });
   }
 
   void _selectNewBaseTariff(TarifaBaseInt? baseTariff) {

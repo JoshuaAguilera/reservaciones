@@ -298,26 +298,44 @@ class _ControllerCalendarWidgetState
                                                   .read(
                                                       temporadasIndividualesProvider
                                                           .notifier)
-                                                  .update((state) => Utility
-                                                      .getTemporadas(list[index]
+                                                  .update((state) =>
+                                                      list[index]
                                                           .temporadas
                                                           ?.where((element) =>
-                                                              (element.forGroup ??
-                                                                  false) ==
-                                                              false)
-                                                          .toList()));
+                                                              ((element.forGroup ??
+                                                                      false) ==
+                                                                  false) &&
+                                                              ((element.forCash ??
+                                                                      false) ==
+                                                                  false))
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
                                               ref
                                                   .read(
                                                       temporadasGrupalesProvider
                                                           .notifier)
-                                                  .update((state) => Utility
-                                                      .getTemporadas(list[index]
+                                                  .update((state) =>
+                                                      list[index]
                                                           .temporadas
                                                           ?.where((element) =>
                                                               element
                                                                   .forGroup ??
                                                               false)
-                                                          .toList()));
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
+
+                                              ref
+                                                  .read(
+                                                      temporadasEfectivoProvider
+                                                          .notifier)
+                                                  .update((state) =>
+                                                      list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              element.forCash ??
+                                                              false)
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
                                               ref
                                                   .read(editTarifaProvider
                                                       .notifier)

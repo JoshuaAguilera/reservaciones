@@ -1181,15 +1181,15 @@ class Utility {
     }
   }
 
-  static TemporadaData? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
+  static Temporada? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
       {bool isGroup = false}) {
     if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
 
-    TemporadaData? nowSeason;
+    Temporada? nowSeason;
 
-    List<TemporadaData> validSeasons = [];
+    List<Temporada> validSeasons = [];
 
     validSeasons = nowRegister
             .copyWith()
@@ -1236,6 +1236,9 @@ class Utility {
           porcentajePromocion: element.porcentajePromocion,
           editable: !(count < 3),
           forGroup: element.forGroup ?? false,
+          forCash: element.forCash ?? false,
+          codeTarifa: element.codeTarifa,
+          fecha: element.fecha,
         ),
       );
       count++;
@@ -1873,7 +1876,7 @@ class Utility {
 
   static List<String>? getPromocionesNoValidas(
     Habitacion habitacion, {
-    required List<TemporadaData>? temporadas,
+    required List<Temporada>? temporadas,
   }) {
     if (temporadas == null) return null;
     if (temporadas.isEmpty) return null;
@@ -1886,22 +1889,22 @@ class Utility {
 
     for (var element in temporadas) {
       if (element.estanciaMinima! <= totalEstancia) {
-        promocionesNoValidas.add(element.nombre);
+        promocionesNoValidas.add(element.nombre ?? '');
       }
     }
 
     return promocionesNoValidas;
   }
 
-  static List<String> getSeasonstoString(List<TemporadaData>? temporadas,
+  static List<String> getSeasonstoString(List<Temporada>? temporadas,
       {bool onlyGroups = false}) {
     List<String> seasons = [];
     if (temporadas != null) {
       for (var element in temporadas) {
         if (!onlyGroups && !(element.forGroup ?? false)) {
-          seasons.add(element.nombre);
+          seasons.add(element.nombre ?? '');
         } else if (onlyGroups && (element.forGroup ?? false)) {
-          seasons.add(element.nombre);
+          seasons.add(element.nombre ?? '');
         }
       }
     }
@@ -1928,7 +1931,7 @@ class Utility {
     String code = "";
     DateTime nowDate = DateTime.now();
 
-    code = nowDate.toString().substring(2, 18).replaceAll(RegExp(r'-'), '');
+    code = nowDate.toString().substring(2, 20).replaceAll(RegExp(r'-'), '');
     code = code.toString().replaceAll(RegExp(r'[.]'), '');
     code = code.toString().replaceAll(RegExp(r':'), '');
     code = code.toString().replaceAll(RegExp(r' '), '');

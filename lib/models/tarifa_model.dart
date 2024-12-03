@@ -1,3 +1,14 @@
+import 'dart:convert';
+
+List<Tarifa> tarifasFromJson(String str) =>
+    List<Tarifa>.from(json.decode(str).map((x) => Tarifa.fromJson(x)));
+
+String tarifasToJson(List<Tarifa> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+List<Tarifa> listTarifasFromJson(List<dynamic> list) =>
+    List<Tarifa>.from(list.map((x) => Tarifa.fromJson(x)));
+
 class Tarifa {
   int? id;
   String? fecha;
@@ -47,4 +58,34 @@ class Tarifa {
         tarifaPaxAdicional: tarifaPaxAdicional ?? this.tarifaPaxAdicional,
         tarifaBaseId: tarifaBaseId ?? this.tarifaBaseId,
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'code': code,
+      'categoria': categoria,
+      'fecha': fecha,
+      'tarifaAdulto1a2': tarifaAdulto1a2,
+      'tarifaAdulto3': tarifaAdulto3,
+      'tarifaAdulto4': tarifaAdulto4,
+      'tarifaMenores7a12': tarifaMenores7a12,
+      'tarifaPaxAdicional': tarifaPaxAdicional,
+      'tarifaBaseId': tarifaBaseId,
+    };
+  }
+
+  factory Tarifa.fromJson(Map<String, dynamic> json) {
+    return Tarifa(
+      id: json['id'],
+      code: json['code'],
+      categoria: json['categoria'],
+      fecha: json['fecha'] ?? DateTime.now().toString(),
+      tarifaAdulto1a2: json['tarifaAdulto1a2'],
+      tarifaAdulto3: json['tarifaAdulto3'],
+      tarifaAdulto4: json['tarifaAdulto4'],
+      tarifaMenores7a12: json['tarifaMenores7a12'],
+      tarifaPaxAdicional: json['tarifaPaxAdicional'],
+      tarifaBaseId: json['tarifaBaseId'],
+    );
+  }
 }

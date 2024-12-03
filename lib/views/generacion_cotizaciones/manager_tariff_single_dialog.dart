@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/inside_snackbar.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
@@ -847,7 +848,7 @@ class _ManagerTariffDayWidgetState
           ? "0"
           : _tarifaMenoresController.text);
 
-  TemporadaData? getSeasonSelect() {
+  Temporada? getSeasonSelect() {
     if (widget.tarifaXDia.temporadas != null) {
       return widget.tarifaXDia.temporadas!
           .where((element) => element.nombre == temporadaSelect)

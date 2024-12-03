@@ -50,14 +50,14 @@ class _ManagerCashTariffDialogState extends State<ManagerCashTariffDialog> {
 
   @override
   void initState() {
-    Tarifa? initTariff = widget.temporada.tarifa
+    Tarifa? initTariff = widget.temporada.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
 
-    firstTariff = widget.temporada.tarifa
+    firstTariff = widget.temporada.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
-    saveTariff = widget.temporada.tarifa
+    saveTariff = widget.temporada.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.last)
         .firstOrNull;
 
@@ -376,6 +376,20 @@ class _ManagerCashTariffDialogState extends State<ManagerCashTariffDialog> {
                       setState(() {});
 
                       Tarifa nowTariff = Tarifa();
+                      nowTariff.id = widget.temporada.tarifas
+                          ?.where((element) =>
+                              element.categoria ==
+                              tipoHabitacion[
+                                  categorias.indexOf(selectCategory)])
+                          .firstOrNull
+                          ?.id;
+                      nowTariff.code = widget.temporada.tarifas
+                          ?.where((element) =>
+                              element.categoria ==
+                              tipoHabitacion[
+                                  categorias.indexOf(selectCategory)])
+                          .firstOrNull
+                          ?.code;
                       nowTariff.categoria =
                           tipoHabitacion[categorias.indexOf(selectCategory)];
                       nowTariff.tarifaAdulto1a2 =

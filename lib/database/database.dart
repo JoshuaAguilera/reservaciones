@@ -600,10 +600,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> updateTariff(
       {required TarifaCompanion tarifaUpdate,
-      required String codeUniv,
+      required String codeTariff,
       required int id}) {
     return (update(tarifa)
-          ..where((t) => t.code.equals(codeUniv))
+          ..where((t) => t.code.equals(codeTariff))
           ..where(
             (tbl) => tbl.id.equals(id),
           ))
@@ -638,9 +638,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deletePeriodByIDandCode(String codeUniv, int id) {
     return (delete(periodo)
-          ..where(
-            (tbl) => tbl.code.equals(codeUniv),
-          )
+          ..where((tbl) => tbl.code.equals(codeUniv))
           ..where((t) => t.id.equals(id)))
         .go();
   }
@@ -654,11 +652,9 @@ class AppDatabase extends _$AppDatabase {
         .go();
   }
 
-  Future<int> deleteSeasonByIDandCode(String codeUniv, int id) {
+  Future<int> deleteSeasonByIDandCode(String code, int id) {
     return (delete(temporada)
-          ..where(
-            (tbl) => tbl.code.equals(codeUniv),
-          )
+          ..where((tbl) => tbl.code.equals(code))
           ..where((t) => t.id.equals(id)))
         .go();
   }
@@ -711,6 +707,9 @@ LazyDatabase _openConnection() {
     // Explicitly tell it about the correct temporary directory.
     sqlite3.tempDirectory = cachebase;
 
-    return NativeDatabase.createInBackground(file);
+    return NativeDatabase.createInBackground(
+      file,
+      setup: (database) => database.execute('PRAGMA busy_timeout = 5000;'),
+    );
   });
 }

@@ -65,17 +65,22 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
       ref.read(temporadasIndividualesProvider.notifier).update((state) =>
-          Utility.getTemporadas(register.temporadas
-              ?.where((element) => (element.forGroup ?? false) == false)
-              .toList()));
+          register.temporadas
+              ?.where((element) =>
+                  ((element.forGroup ?? false) == false) &&
+                  (element.forCash ?? false) == false)
+              .toList() ??
+          List<Temporada>.empty());
       ref.read(temporadasGrupalesProvider.notifier).update((state) =>
-          Utility.getTemporadas(register.temporadas
+          register.temporadas
               ?.where((element) => element.forGroup ?? false)
-              .toList()));
+              .toList() ??
+          List<Temporada>.empty());
       ref.read(temporadasEfectivoProvider.notifier).update((state) =>
-          Utility.getTemporadas(register.temporadas
+          register.temporadas
               ?.where((element) => element.forCash ?? false)
-              .toList()));
+              .toList() ??
+          List<Temporada>.empty());
       onCreate.call();
     }
 
