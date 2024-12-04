@@ -60,8 +60,8 @@ class dynamicWidget {
     required double sectionDay,
     bool compact = false,
     double target = 1,
-    bool isUpDireccion = false,
-    bool showMonth = false,
+    bool alreadyLoading = false,
+    // bool showMonth = false,
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
@@ -198,10 +198,10 @@ class dynamicWidget {
             .animate(
                 target: target,
                 delay: !compact
-                    ? 450.ms
-                    : showMonth
-                        ? 350.ms
-                        : 2000.ms)
+                    ? !alreadyLoading
+                        ? 1750.ms
+                        : 350.ms
+                    : 2000.ms)
             .scaleX(alignment: Alignment.centerLeft));
       } else {
         isRepeat = false;

@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
@@ -12,9 +13,11 @@ import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../models/temporada_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../providers/usuario_provider.dart';
 import '../../ui/buttons.dart';
@@ -50,7 +53,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   bool showSaveButton = false;
   List<Widget> modesVisualRange = <Widget>[
     const Icon(Icons.table_chart),
-    const Icon(Icons.dehaze_sharp),
+    const Icon(HeroIcons.list_bullet),
   ];
   double target = 1;
   bool isEditing = false;
@@ -104,6 +107,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     final typeQuote = ref.watch(typeQuoteProvider);
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final usuario = ref.watch(userProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
+    final useCashSeasonRoom = ref.watch(useCashSeasonRoomProvider);
 
     return Scaffold(
       body: Padding(
@@ -122,6 +127,16 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                       title:
                           isEditing ? "Editar Habitación" : "Nueva Habitación",
                       showSaveButton: false,
+                      optionPage: FormWidgets.inputSwitch(
+                        compact: screenWidth < 950,
+                        activeColor: DesktopColors.azulClaro,
+                        value: useCashSeasonRoom,
+                        context: context,
+                        name: "Usar Temporadas en Efectivo",
+                        onChanged: (p0) => ref
+                            .watch(useCashSeasonRoomProvider.notifier)
+                            .update((ref) => p0),
+                      ),
                       onPressedBack: () {
                         if (target == 1) {
                           setState(() => target = 0);
@@ -149,6 +164,32 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
                         return tarifaProvider.when(
                           data: (list) {
+                            ref.listen<bool>(useCashSeasonRoomProvider,
+                                (previous, next) {
+                              if (next) {
+                                print("Si");
+                                getTarifasSelect(
+                                  list,
+                                  habitacionProvider,
+                                  tarifasProvisionalesProvider,
+                                  descuentoProvider,
+                                  refreshTariff: isEditing,
+                                  isGroup: typeQuote,
+                                  useCashSeason: true,
+                                );
+                              } else {
+                                getTarifasSelect(
+                                  list,
+                                  habitacionProvider,
+                                  tarifasProvisionalesProvider,
+                                  descuentoProvider,
+                                  refreshTariff: isEditing,
+                                  isGroup: typeQuote,
+                                  useCashSeason: false,
+                                );
+                              }
+                            });
+
                             if (!startflow) {
                               isEditing =
                                   habitacionProvider.tarifaXDia!.isNotEmpty;
@@ -189,6 +230,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 tarifasProvisionalesProvider,
                                 descuentoProvider,
                                 isGroup: typeQuote,
+                                useCashSeason:
+                                    useCashSeasonRoom || useCashSeason,
                               );
 
                               startflow = true;
@@ -242,6 +285,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         descuentoProvider,
                                                         onlyCategory: true,
                                                         isGroup: typeQuote,
+                                                        useCashSeason:
+                                                            useCashSeasonRoom ||
+                                                                useCashSeason,
                                                       );
                                                       setState(() {});
                                                     },
@@ -341,6 +387,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                   isEditing,
                                                               isGroup:
                                                                   typeQuote,
+                                                              useCashSeason:
+                                                                  useCashSeasonRoom ||
+                                                                      useCashSeason,
                                                             );
                                                             Future.delayed(
                                                               Durations.medium1,
@@ -398,6 +447,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                   isEditing,
                                                               isGroup:
                                                                   typeQuote,
+                                                              useCashSeason:
+                                                                  useCashSeasonRoom ||
+                                                                      useCashSeason,
                                                             );
                                                             Future.delayed(
                                                                 Durations
@@ -603,7 +655,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                           },
                                           color: Utility.darken(
                                               DesktopColors.cotGrupal, 0.15),
-                                          text: "Gestionar tarifa",
+                                          text: "Gestionar tarifas",
                                         ),
                                       ),
                                     if ((usuario.rol != 'RECEPCION'))
@@ -661,6 +713,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         refreshTariff:
                                                             isEditing,
                                                         isGroup: typeQuote,
+                                                        useCashSeason:
+                                                            useCashSeasonRoom ||
+                                                                useCashSeason,
                                                       );
                                                     } else {
                                                       setState(() =>
@@ -677,6 +732,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   descuentoProvider,
                                                   refreshTariff: isEditing,
                                                   isGroup: typeQuote,
+                                                  useCashSeason:
+                                                      useCashSeasonRoom ||
+                                                          useCashSeason,
                                                 );
                                               }
                                             },
@@ -851,6 +909,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                               tarifasProvisionalesProvider,
                               descuentoProvider,
                               typeQuote,
+                              useCashSeasonRoom || useCashSeason,
                             );
 
                             alternativeTariffInd.clear();
@@ -967,6 +1026,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     bool onlyCategory = false,
     bool refreshTariff = false,
     required bool isGroup,
+    required bool useCashSeason,
   }) {
     if (onlyCategory) {
       for (var tariffDay in habitacion.tarifaXDia!) {
@@ -992,7 +1052,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     } else {
       if (isEditing && !refreshTariff && !isGroup) return;
 
-      if (isGroup) {
+      if (isGroup || useCashSeason) {
         if (!alreadySaveTariff) {
           for (var element in habitacion.tarifaXDia!) {
             recoveryTariffs.add(element.copyWith());
@@ -1035,6 +1095,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             tarifasProvisionales,
             descuentoProvisional,
             isGroup,
+            useCashSeason,
           );
 
           alternativeTariffInd.clear();
@@ -1056,6 +1117,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   .difference(DateTime.parse(habitacion.fechaCheckIn!))
                   .inDays,
               isGroup: true,
+              useCashTariff: false,
             );
 
             Future.delayed(
@@ -1086,14 +1148,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
       }
 
       habitacion.tarifaXDia!.addAll(
-        getTariffXDia(
-          list,
-          days,
-          habitacion.categoria ?? tipoHabitacion.first,
-          tarifasProvisionales,
-          descuentoProvisional,
-          isGroup,
-        ),
+        getTariffXDia(list, days, habitacion.categoria ?? tipoHabitacion.first,
+            tarifasProvisionales, descuentoProvisional, isGroup, useCashSeason),
       );
     }
   }
@@ -1114,8 +1170,10 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           TarifaXDia? tarifaGrupal = tarifasFiltradas
               .reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
-          if (withoutAction && tarifaGrupal.code == alternativeGrupTariff!.code)
+          if (withoutAction &&
+              tarifaGrupal.code == alternativeGrupTariff!.code) {
             return;
+          }
 
           if (withoutAction) habitacion.tarifaXDia!.clear();
 
@@ -1187,6 +1245,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     List<TarifaData> tarifasProvisionales,
     double descuentoProvisional,
     bool isGroup,
+    bool useCashSeason,
   ) {
     List<TarifaXDia> tarifaXDiaList = [];
 
@@ -1249,6 +1308,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         continue;
       }
 
+      Temporada? selectSeason = Utility.getSeasonNow(
+        newTariff.copyWith(),
+        days,
+        isGroup: isGroup,
+        useCashTariff: useCashSeason,
+      );
+
       tarifaXDiaList.add(
         TarifaXDia(
           dia: ink,
@@ -1259,18 +1325,29 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           code: newTariff.copyWith().code,
           id: newTariff.copyWith().id,
           periodo: Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
-          tarifa: newTariff
-              .copyWith()
-              .tarifas!
-              .firstWhere((element) => element.categoria == categoria)
-              .copyWith(),
-          temporadaSelect: Utility.getSeasonNow(
-            newTariff.copyWith(),
-            days,
-            isGroup: isGroup,
-          ),
+          tarifa: (selectSeason?.forCash ?? false)
+              ? Utility.getTarifasData([
+                  selectSeason?.tarifas
+                      ?.where((element) => element.categoria == categoria)
+                      .firstOrNull
+                      ?.copyWith()
+                ]).first
+              : newTariff
+                  .copyWith()
+                  .tarifas!
+                  .firstWhere((element) => element.categoria == categoria)
+                  .copyWith(),
+          temporadaSelect: selectSeason,
           temporadas: newTariff.copyWith().temporadas,
-          tarifas: newTariff
+          tarifas: (selectSeason?.forCash ?? false)
+              ? Utility.getTarifasData(
+                  selectSeason?.tarifas ?? List<Tarifa?>.empty())
+              : newTariff
+                  .copyWith()
+                  .tarifas
+                  ?.map((element) => element.copyWith())
+                  .toList(),
+          tarifasBase: newTariff
               .copyWith()
               .tarifas
               ?.map((element) => element.copyWith())

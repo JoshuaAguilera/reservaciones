@@ -56,6 +56,7 @@ class _DiasListState extends ConsumerState<DiasList> {
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final listTariffProvider = ref.watch(listTariffDayProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
 
     return SingleChildScrollView(
       child: listTariffProvider.when(
@@ -262,6 +263,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                             tarifaXDia: list[ink],
                             setState: () => setState(() {}),
                             isGroupTariff: typeQuote,
+                            useCashSeason: useCashSeason,
                           );
                         },
                       ),
@@ -283,6 +285,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                         habitacion: habitacionProvider,
                         tarifaXDia: list[ink],
                         isGroupTariff: typeQuote,
+                        useSeasonCash: useCashSeason,
                       );
                     },
                   ),

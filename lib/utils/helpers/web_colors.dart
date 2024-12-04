@@ -39,4 +39,7 @@ class DesktopColors {
   //Colors Plans
   static Color vistaReserva = Color.fromARGB(255, 72, 151, 89);
   static Color vistaParcialMar = Color.fromARGB(255, 35, 150, 179);
+
+  //more...
+  static Color cashSeason = const Color.fromRGBO(139, 195, 74, 1);
 }

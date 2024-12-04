@@ -18,12 +18,14 @@ class CheckListtileTariffWidget extends StatefulWidget {
     required this.habitacion,
     this.viewTableRow = false,
     this.isGroupTariff = false,
+    this.useSeasonCash = false,
   });
 
   final TarifaXDia tarifaXDia;
   final Habitacion habitacion;
   final bool viewTableRow;
   final bool isGroupTariff;
+  final bool useSeasonCash;
 
   @override
   State<CheckListtileTariffWidget> createState() =>
@@ -131,6 +133,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
                     isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
                   ),
                 ),
                 color: Theme.of(context).primaryColor,
@@ -138,14 +141,18 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               ),
               TextStyles.TextAsociative(
                 "${(screenWidth > 1000) ? "Tarifa de Menores de 7 a 12" : "Men. 7 a 12"}:  ",
-                Utility.formatterNumber(Utility.calculateTotalTariffRoom(
-                  tarifa,
-                  widget.habitacion,
-                  widget.habitacion.tarifaXDia!.length,
-                  descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
-                  isCalculateChildren: true,
-                  isGroupTariff: widget.isGroupTariff,
-                )),
+                Utility.formatterNumber(
+                  Utility.calculateTotalTariffRoom(
+                    tarifa,
+                    widget.habitacion,
+                    widget.habitacion.tarifaXDia!.length,
+                    descuentoProvisional:
+                        widget.tarifaXDia.descuentoProvisional,
+                    isCalculateChildren: true,
+                    isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
+                  ),
+                ),
                 color: Theme.of(context).primaryColor,
                 size: 12,
               ),
@@ -165,6 +172,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
                     isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
                     getTotalRoom: true,
                   ),
                 ),

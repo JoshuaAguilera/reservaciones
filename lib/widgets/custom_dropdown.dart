@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -116,20 +117,22 @@ class CustomDropdown {
                             backgroundColor = null;
                         }
 
+                        bool enable = (excepcionItem.isNotEmpty &&
+                                value == excepcionItem)
+                            ? true
+                            : (notElements != null)
+                                ? notElements.any((element) => element == value)
+                                : true;
+
                         return DropdownMenuEntry<String>(
                           value: value,
                           label: value,
-                          enabled: (excepcionItem.isNotEmpty &&
-                                  value == excepcionItem)
-                              ? true
-                              : (notElements != null)
-                                  ? notElements
-                                      .any((element) => element == value)
-                                  : true,
+                          enabled: enable,
                           style: ButtonStyle(
                             backgroundColor:
                                 WidgetStatePropertyAll(backgroundColor),
-                            foregroundColor: WidgetStatePropertyAll(textColor),
+                            foregroundColor: WidgetStatePropertyAll(
+                                !enable ? DesktopColors.grisPalido : textColor),
                             textStyle: WidgetStatePropertyAll(
                               TextStyle(
                                 fontFamily: "poppins_regular",

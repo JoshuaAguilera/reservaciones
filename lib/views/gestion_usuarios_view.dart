@@ -10,6 +10,7 @@ import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/web_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/usuario_item_row.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../ui/custom_widgets.dart';
@@ -28,7 +29,7 @@ class GestionUsuariosView extends ConsumerStatefulWidget {
 
 const List<Widget> modesVisual = <Widget>[
   Icon(Icons.table_chart),
-  Icon(Icons.dehaze_sharp),
+  Icon(HeroIcons.list_bullet),
 ];
 
 class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {

@@ -22,11 +22,12 @@ import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 
 class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
-  const ManagerTariffSingleDialog(
-      {super.key,
-      required this.tarifaXDia,
-      this.isAppling = false,
-      required this.numDays});
+  const ManagerTariffSingleDialog({
+    super.key,
+    required this.tarifaXDia,
+    this.isAppling = false,
+    required this.numDays,
+  });
 
   final TarifaXDia tarifaXDia;
   final bool isAppling;
@@ -38,7 +39,7 @@ class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
 
 class _ManagerTariffDayWidgetState
     extends ConsumerState<ManagerTariffSingleDialog> {
-  String temporadaSelect = "Mayo - Abril";
+  String temporadaSelect = "No aplica";
   bool applyAllTariff = false;
   bool applyAllDays = false;
   bool applyAllNoTariff = false;
@@ -51,6 +52,7 @@ class _ManagerTariffDayWidgetState
   String selectCategory = "VISTA A LA RESERVA";
   TarifaData? saveTariff;
   bool startFlow = false;
+  List<TarifaData?> baseTariffs = [];
 
   List<String> promociones = [];
   final TextEditingController _tarifaAdultoController =
@@ -75,16 +77,7 @@ class _ManagerTariffDayWidgetState
     promociones.add("No aplicar");
 
     if (widget.tarifaXDia.tarifa != null) {
-      _tarifaAdultoController.text =
-          widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL!.toString();
-      _tarifaAdultoTPLController.text =
-          widget.tarifaXDia.tarifa!.tarifaAdultoTPL!.toString();
-      _tarifaAdultoCPLController.text =
-          widget.tarifaXDia.tarifa!.tarifaAdultoCPLE!.toString();
-      _tarifaMenoresController.text =
-          widget.tarifaXDia.tarifa!.tarifaMenores7a12!.toString();
-      _tarifaPaxAdicionalController.text =
-          widget.tarifaXDia.tarifa!.tarifaPaxAdicional.toString();
+      _insertTariffForm(widget.tarifaXDia.tarifa);
 
       selectCategory = categorias[
           tipoHabitacion.indexOf(widget.tarifaXDia.tarifa!.categoria!)];
@@ -100,8 +93,20 @@ class _ManagerTariffDayWidgetState
       if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
     }
 
-    // promociones += Utility.getSeasonstoString(widget.tarifaXDia.temporadas);
     super.initState();
+  }
+
+  void _insertTariffForm(TarifaData? tarifa) {
+    _tarifaAdultoController.text =
+        (tarifa?.tarifaAdultoSGLoDBL ?? '').toString();
+    _tarifaAdultoTPLController.text =
+        (tarifa?.tarifaAdultoTPL ?? '').toString();
+    _tarifaAdultoCPLController.text =
+        (tarifa?.tarifaAdultoCPLE ?? '').toString();
+    _tarifaMenoresController.text =
+        (tarifa?.tarifaMenores7a12 ?? '').toString();
+    _tarifaPaxAdicionalController.text =
+        (tarifa?.tarifaPaxAdicional ?? '').toString();
   }
 
   @override
@@ -127,6 +132,8 @@ class _ManagerTariffDayWidgetState
     double tariffChildren =
         calculateTariffMenor(habitacionProvider.menores7a12!);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
+    final useCashRoomSeason = ref.watch(useCashSeasonRoomProvider);
     final usuario = ref.watch(userProvider);
 
     if (!startFlow && widget.tarifaXDia.tarifa == null) {
@@ -198,12 +205,55 @@ class _ManagerTariffDayWidgetState
                       CustomDropdown.dropdownMenuCustom(
                         withPermisse: (usuario.rol != 'RECEPCION'),
                         initialSelection: temporadaSelect,
-                        onSelected: (String? value) =>
-                            setState(() => temporadaSelect = value!),
+                        onSelected: (String? value) {
+                          setState(() => temporadaSelect = value!);
+                          if (!useCashRoomSeason && !useCashSeason) return;
+
+                          if (temporadaSelect != 'No aplicar') {
+                            Temporada? selectSeason = widget
+                                .tarifaXDia.temporadas
+                                ?.where((element) =>
+                                    (element.nombre == temporadaSelect) &&
+                                    (element.forCash ?? false))
+                                .toList()
+                                .firstOrNull;
+
+                            if (selectSeason != null &&
+                                selectSeason.porcentajePromocion == null) {
+                              _insertTariffForm(Utility.getTarifasData([
+                                selectSeason.tarifas
+                                    ?.where((element) =>
+                                        element.categoria ==
+                                        tipoHabitacion[
+                                            categorias.indexOf(selectCategory)])
+                                    .toList()
+                                    .firstOrNull
+                              ]).first);
+
+                              saveTariff = Utility.getTarifasData([
+                                selectSeason.tarifas
+                                    ?.where((element) =>
+                                        element.categoria !=
+                                        tipoHabitacion[
+                                            categorias.indexOf(selectCategory)])
+                                    .toList()
+                                    .firstOrNull
+                              ]).first;
+                            } else {
+                              _recoveryTariffsInd();
+                              setState(() {});
+                            }
+                          } else {
+                            _recoveryTariffsInd();
+                            setState(() {});
+                          }
+                        },
                         elements: promociones +
                             Utility.getSeasonstoString(
-                                widget.tarifaXDia.temporadas,
-                                onlyGroups: typeQuote),
+                              widget.tarifaXDia.temporadas,
+                              onlyGroups: typeQuote,
+                              onlyCash: useCashSeason || useCashRoomSeason,
+                            ),
                         excepcionItem: "No aplicar",
                         notElements: Utility.getPromocionesNoValidas(
                           habitacionProvider,
@@ -310,21 +360,7 @@ class _ManagerTariffDayWidgetState
                                                       .text),
                                     );
 
-                                    _tarifaAdultoController.text =
-                                        (saveTariff?.tarifaAdultoSGLoDBL ?? '')
-                                            .toString();
-                                    _tarifaAdultoTPLController.text =
-                                        (saveTariff?.tarifaAdultoTPL ?? '')
-                                            .toString();
-                                    _tarifaAdultoCPLController.text =
-                                        (saveTariff?.tarifaAdultoCPLE ?? '')
-                                            .toString();
-                                    _tarifaPaxAdicionalController.text =
-                                        (saveTariff?.tarifaPaxAdicional ?? '')
-                                            .toString();
-                                    _tarifaMenoresController.text =
-                                        (saveTariff?.tarifaMenores7a12 ?? '')
-                                            .toString();
+                                    _insertTariffForm(saveTariff);
 
                                     saveTariff = saveIntTariff.copyWith();
                                     showErrorTariff = false;
@@ -862,7 +898,7 @@ class _ManagerTariffDayWidgetState
     double discount = 0;
 
     if (getSeasonSelect() != null) {
-      discount = (total * 0.01) * getSeasonSelect()!.porcentajePromocion!;
+      discount = (total * 0.01) * (getSeasonSelect()?.porcentajePromocion ?? 0);
     } else {
       if (isUnknow || isFreeTariff) {
         discount = (total * 0.01) *
@@ -997,5 +1033,21 @@ class _ManagerTariffDayWidgetState
     // ref.read(tarifasProvider.notifier).remove(widget.tarifaXDia.categoria!);
     ref.read(tarifasProvider.notifier).addItem(firstTariff!);
     ref.read(tarifasProvider.notifier).addItem(secondTariff!);
+  }
+
+  void _recoveryTariffsInd() {
+    _insertTariffForm(widget.tarifaXDia.tarifasBase
+        ?.where((element) =>
+            element.categoria ==
+            tipoHabitacion[categorias.indexOf(selectCategory)])
+        .toList()
+        .firstOrNull);
+
+    saveTariff = widget.tarifaXDia.tarifasBase
+        ?.where((element) =>
+            element.categoria !=
+            tipoHabitacion[categorias.indexOf(selectCategory)])
+        .toList()
+        .firstOrNull;
   }
 }

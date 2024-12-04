@@ -197,6 +197,7 @@ class _SideBarState extends ConsumerState<SideBar> {
               MySidebarXItem(
                 onTap: () => widget._controller.selectIndex(99),
                 controller: widget._controller,
+                tooltip: "Perfil",
                 selectIndex: 99,
                 children: [
                   Preferences.userImageUrl.isNotEmpty
@@ -234,32 +235,20 @@ class _SideBarState extends ConsumerState<SideBar> {
         }
       },
       items: [
-        const SidebarXItem(
-          icon: CupertinoIcons.home,
-          label: 'Inicio',
+        _SideBarCustomItem(name: "Inicio", icon: HeroIcons.home),
+        _SideBarCustomItem(
+          name: "Generar Cotización",
+          icon: Iconsax.money_send_outline,
         ),
-        const SidebarXItem(
-          icon: CupertinoIcons.money_dollar_circle,
-          label: 'Generar Cotización',
-        ),
-        const SidebarXItem(
-          icon: Icons.history,
-          label: 'Historial',
-        ),
-        const SidebarXItem(
-          icon: Icons.settings,
-          label: 'Configuracion',
-        ),
+        _SideBarCustomItem(
+            name: "Historial", icon: HeroIcons.clipboard_document_list),
+        _SideBarCustomItem(
+            name: "Configuracion", icon: HeroIcons.wrench_screwdriver),
         if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
-          const SidebarXItem(
-            icon: CupertinoIcons.book_fill,
-            label: 'Tarifario',
-          ),
+          _SideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
         if (usuario.rol == 'SUPERADMIN')
-          const SidebarXItem(
-            icon: CupertinoIcons.rectangle_stack_person_crop,
-            label: 'Gestión de usuarios',
-          ),
+          _SideBarCustomItem(
+              name: "Gestión de usuarios", icon: HeroIcons.user_group),
       ],
       headerDivider: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
@@ -276,7 +265,27 @@ class _SideBarState extends ConsumerState<SideBar> {
               selectIndex: 45,
               icon: HeroIcons.arrow_right_on_rectangle,
               label: "Cerrar sesión",
+              tooltip: widget._controller.extended ? '' : "Cerrar sesión",
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  SidebarXItem _SideBarCustomItem(
+      {required String name, required IconData icon}) {
+    return SidebarXItem(
+      label: name,
+      iconBuilder: (selected, hovered) {
+        return Tooltip(
+          message: !widget._controller.extended ? name : "",
+          child: Icon(
+            icon,
+            size: selected ? 21 : 20,
+            color: (selected || hovered)
+                ? Colors.white
+                : Colors.white.withOpacity(0.7),
           ),
         );
       },

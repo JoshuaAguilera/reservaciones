@@ -21,6 +21,7 @@ class TableRows {
     required TarifaXDia tarifaXDia,
     void Function()? setState,
     required bool isGroupTariff,
+    required bool useCashSeason,
   }) {
     RegistroTarifa? tarifa = tarifaXDia.tarifa == null
         ? null
@@ -40,6 +41,7 @@ class TableRows {
       habitacion.tarifaXDia!.length,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
+      useCashSeason: useCashSeason,
     );
 
     double tarifaMenores = Utility.calculateTotalTariffRoom(
@@ -49,6 +51,7 @@ class TableRows {
       isCalculateChildren: true,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
+      useCashSeason: useCashSeason,
     );
 
     void showDialogManagerTariff() {
@@ -299,7 +302,7 @@ class TableRows {
     Color? colorBox = isGroup
         ? DesktopColors.cotGrupal
         : isCash
-            ? Colors.lightGreen[500]
+            ? DesktopColors.cashSeason
             : DesktopColors.cotIndiv;
 
     return TableRow(

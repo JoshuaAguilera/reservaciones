@@ -59,6 +59,7 @@ class TarifaXDia {
   PeriodoData? periodo;
   List<Temporada>? temporadas;
   List<TarifaData>? tarifas;
+  List<TarifaData>? tarifasBase;
   int numDays;
 
   TarifaXDia({
@@ -78,6 +79,7 @@ class TarifaXDia {
     this.modificado = false,
     this.categoria,
     this.tarifas,
+    this.tarifasBase,
     this.numDays = 1,
   });
 
@@ -98,6 +100,7 @@ class TarifaXDia {
     bool? modificado,
     String? categoria,
     List<TarifaData>? tarifas,
+    List<TarifaData>? tarifasBase,
     int? numDays,
   }) =>
       TarifaXDia(
@@ -117,6 +120,7 @@ class TarifaXDia {
         periodo: periodo ?? this.periodo,
         subCode: subCode ?? this.subCode,
         tarifa: tarifa ?? this.tarifa,
+        tarifasBase: tarifasBase ?? this.tarifasBase,
         temporadaSelect: temporadaSelect ?? this.temporadaSelect,
       );
 
@@ -127,6 +131,7 @@ class TarifaXDia {
       'color': colorToHex(color ?? DesktopColors.cerulean),
       'temporadas': temporadas,
       'tarifas': tarifas,
+      'tarifasBase': tarifasBase,
       'numDays': numDays,
       'categoria': categoria,
       'descuentoProvisional': descuentoProvisional,
@@ -154,6 +159,11 @@ class TarifaXDia {
       tarifas: json['tarifas'] != null
           ? json['tarifas'] != '[]'
               ? listTarifasDataFromJson(json['tarifas'])
+              : List<TarifaData>.empty()
+          : List<TarifaData>.empty(),
+      tarifasBase: json['tarifasBase'] != null
+          ? json['tarifasBase'] != '[]'
+              ? listTarifasDataFromJson(json['tarifasBase'])
               : List<TarifaData>.empty()
           : List<TarifaData>.empty(),
       numDays: json['numDays'],

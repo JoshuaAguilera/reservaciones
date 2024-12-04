@@ -63,6 +63,7 @@ class _SummaryControllerWidgetState
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
 
     return SizedBox(
       width: screenWidth < 800 ? 260 : 310,
@@ -333,13 +334,14 @@ class _SummaryControllerWidgetState
                                                   : '',
                                               count: -(Utility
                                                       .calculateDiscountXTariff(
-                                                          element,
-                                                          habitacionProvider,
-                                                          widget.numDays,
-                                                          onlyDiscountUnitary:
-                                                              true,
-                                                          typeQuote:
-                                                              typeQuote)) *
+                                                    element,
+                                                    habitacionProvider,
+                                                    widget.numDays,
+                                                    onlyDiscountUnitary: true,
+                                                    typeQuote: typeQuote,
+                                                    useCashTariff:
+                                                        useCashSeason,
+                                                  )) *
                                                   element.numDays,
                                               context: context,
                                               sizeText: 11.5,
@@ -410,7 +412,7 @@ class _SummaryControllerWidgetState
                     isLoading: widget.finishQuote ? false : widget.isLoading,
                     onPressed: () {
                       if (widget.calculateRoom) {
-                        saveRoom(habitacionProvider, typeQuote);
+                        saveRoom(habitacionProvider, typeQuote, useCashSeason);
                       } else {
                         if (widget.onSaveQuote != null) {
                           widget.onSaveQuote!.call();
@@ -446,6 +448,7 @@ class _SummaryControllerWidgetState
     bool changeColor = false,
     required void Function(bool) onExpansionChanged,
     bool typeQuote = false,
+    bool useSeasonCash = false,
   }) {
     List<Habitacion> rooms =
         habitaciones.where((element) => !element.isFree).toList();
@@ -470,6 +473,7 @@ class _SummaryControllerWidgetState
           onlySecoundCategory: !isVR,
           onlyTotal: true,
           groupQuote: typeQuote,
+          useSeasonCash: useSeasonCash,
         ),
         children: [
           Column(
@@ -486,6 +490,7 @@ class _SummaryControllerWidgetState
                     onlyFirstCategory: isVR,
                     onlySecoundCategory: !isVR,
                     groupQuote: typeQuote,
+                    useSeasonCash: useSeasonCash,
                   ),
                   showList: showListSubtotalRoom,
                   onExpansionChanged: (value) =>
@@ -540,6 +545,7 @@ class _SummaryControllerWidgetState
                     onlyFirstCategory: isVR,
                     onlySecoundCategory: !isVR,
                     groupQuote: typeQuote,
+                    useSeasonCash: useSeasonCash,
                   ),
                   children: [
                     for (var element in (widget.saveRooms ?? habitaciones)
@@ -699,6 +705,7 @@ class _SummaryControllerWidgetState
                   onlyFirstCategory: isVR,
                   onlySecoundCategory: !isVR,
                   groupQuote: typeQuote,
+                  useSeasonCash: useSeasonCash,
                 ),
                 context: context,
                 isBold: true,
@@ -712,7 +719,7 @@ class _SummaryControllerWidgetState
     });
   }
 
-  void saveRoom(Habitacion habitacionProvider, bool typeQuote) {
+  void saveRoom(Habitacion habitacionProvider, bool typeQuote, bool useCashSeason) {
     if (revisedValidTariff(habitacionProvider)) {
       showSnackBar(
         context: context,

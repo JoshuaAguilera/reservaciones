@@ -34,6 +34,7 @@ class CustomWidgets {
   static Widget sectionConfigSeason({
     required BuildContext context,
     required Temporada temporada,
+    required List<Temporada> temporadas,
     void Function()? onRemove,
     void Function(String)? onChangedEstancia,
     void Function(String)? onChangedDescuento,
@@ -41,6 +42,7 @@ class CustomWidgets {
     void Function(bool)? onChangedUseTariff,
     void Function(List<Tarifa>)? onChangedTariffs,
   }) {
+    final _formKeySeason = GlobalKey<FormState>();
     bool editName = false;
     TextEditingController _controller =
         TextEditingController(text: temporada.nombre);
@@ -66,7 +68,7 @@ class CustomWidgets {
                             height: 32,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
                                   child: TextStyles.mediumText(
@@ -78,13 +80,17 @@ class CustomWidgets {
                                 if (temporada.editable!)
                                   Expanded(
                                     child: SizedBox(
-                                      height: 30,
                                       width: 35,
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: IconButton(
-                                          onPressed: () => snapshot(
-                                              () => editName = !editName),
+                                          padding: const EdgeInsets.all(0),
+                                          onPressed: () {
+                                            _controller = TextEditingController(
+                                                text: temporada.nombre);
+                                            snapshot(
+                                                () => editName = !editName);
+                                          },
                                           icon: Icon(
                                             HeroIcons.pencil_square,
                                             size: 22,
@@ -104,21 +110,18 @@ class CustomWidgets {
                             flex: 2,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: SizedBox(
-                                height: 32,
-                                child: FormWidgets.inputSwitch(
-                                  compact:
-                                      MediaQuery.of(context).size.width < 950,
-                                  name: "Usar tarifas",
-                                  value: temporada.useTariff ?? false,
-                                  activeColor: Theme.of(context).dividerColor,
-                                  context: context,
-                                  onChanged: (p0) {
-                                    onChangedUseTariff?.call(p0);
-                                    temporada.porcentajePromocion = null;
-                                    onChangedDescuento!.call('');
-                                  },
-                                ),
+                              child: FormWidgets.inputSwitch(
+                                compact:
+                                    MediaQuery.of(context).size.width < 950,
+                                name: "Usar tarifas",
+                                value: temporada.useTariff ?? false,
+                                activeColor: Theme.of(context).dividerColor,
+                                context: context,
+                                onChanged: (p0) {
+                                  onChangedUseTariff?.call(p0);
+                                  temporada.porcentajePromocion = null;
+                                  onChangedDescuento!.call('');
+                                },
                               ),
                             ),
                           ),
@@ -129,33 +132,49 @@ class CustomWidgets {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       child: SizedBox(
-                        height: 40,
+                        height: 60,
                         child: Focus(
                           onFocusChange: (value) {
-                            if (!value) {
-                              snapshot(() => editName = false);
-                            }
+                            if (!value) snapshot(() => editName = false);
                           },
-                          child: FormWidgets.textFormFieldResizable(
-                            name: "",
-                            autofocus: true,
-                            controller: _controller,
-                            onEditingComplete: () {
-                              snapshot(
+                          child: Form(
+                            key: _formKeySeason,
+                            child: FormWidgets.textFormFieldResizable(
+                              name: "",
+                              isRequired: true,
+                              validator: (p0) {
+                                if (temporada.nombre != p0 &&
+                                    temporadas.any(
+                                        (element) => element.nombre == p0)) {
+                                  return "Nombre ya existente.*";
+                                } else if (p0 == 'No aplicar') {
+                                  return "Nombre no valido.*";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              autofocus: true,
+                              controller: _controller,
+                              onEditingComplete: () => snapshot(
                                 () {
+                                  if (!_formKeySeason.currentState!
+                                      .validate()) {
+                                    return;
+                                  }
+
                                   onChangedName!.call(_controller.text);
                                   editName = false;
                                 },
-                              );
-                            },
-                            icon: IconButton(
-                              onPressed: () => snapshot(() {
-                                editName = !editName;
-                                _controller.text = temporada.nombre ?? '';
-                              }),
-                              icon: Icon(
-                                CupertinoIcons.clear_circled,
-                                color: Theme.of(context).primaryColor,
+                              ),
+                              icon: IconButton(
+                                onPressed: () => snapshot(() {
+                                  editName = !editName;
+                                  _controller.text = temporada.nombre ?? '';
+                                }),
+                                icon: Icon(
+                                  CupertinoIcons.clear_circled,
+                                  color: Theme.of(context).primaryColor,
+                                ),
                               ),
                             ),
                           ),
@@ -519,6 +538,7 @@ class CustomWidgets {
     required String title,
     void Function()? onPressedSaveButton,
     bool showSaveButton = true,
+    Widget? optionPage,
   }) {
     return Column(
       children: [
@@ -552,6 +572,7 @@ class CustomWidgets {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
+                  if (optionPage != null) optionPage,
                 ],
               ),
             ),

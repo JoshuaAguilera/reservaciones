@@ -155,6 +155,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
 
     Color colorCard = brightness == Brightness.light
         ? const Color.fromARGB(255, 243, 243, 243)

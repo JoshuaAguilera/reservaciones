@@ -1086,6 +1086,7 @@ class Utility {
     bool onlyTariffVPM = false,
     bool isGroupTariff = false,
     bool getTotalRoom = false,
+    bool useCashSeason = true,
   }) {
     double tariffAdult = 0;
     double tariffChildren = 0;
@@ -1117,8 +1118,12 @@ class Utility {
     double descuento = 0;
 
     if (nowRegister.temporadas != null && nowRegister.temporadas!.isNotEmpty) {
-      descuento = getSeasonNow(nowRegister, totalDays, isGroup: isGroupTariff)
-              ?.porcentajePromocion ??
+      descuento = getSeasonNow(
+            nowRegister,
+            totalDays,
+            isGroup: isGroupTariff,
+            useCashTariff: useCashSeason,
+          )?.porcentajePromocion ??
           0;
     } else {
       descuento = descuentoProvisional ?? 0;
@@ -1182,7 +1187,7 @@ class Utility {
   }
 
   static Temporada? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
-      {bool isGroup = false}) {
+      {bool isGroup = false, bool useCashTariff = false}) {
     if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
@@ -1194,7 +1199,9 @@ class Utility {
     validSeasons = nowRegister
             .copyWith()
             .temporadas
-            ?.where((element) => (element.forGroup ?? false) == false)
+            ?.where((element) =>
+                (element.forGroup ?? false) == false &&
+                (element.forCash ?? false) == false)
             .toList()
             .map((element) => element.copyWith())
             .toList() ??
@@ -1205,6 +1212,29 @@ class Utility {
               .copyWith()
               .temporadas
               ?.where((element) => (element.forGroup ?? false))
+              .toList()
+              .map((element) => element.copyWith())
+              .toList() ??
+          [];
+    }
+
+    if (!isGroup && useCashTariff) {
+      validSeasons = nowRegister
+              .copyWith()
+              .temporadas
+              ?.where((element) => (element.forCash ?? false))
+              .toList()
+              .map((element) => element.copyWith())
+              .toList() ??
+          [];
+    }
+
+    if (validSeasons.isEmpty && useCashTariff) {
+      validSeasons = nowRegister
+              .copyWith()
+              .temporadas
+              ?.where((element) =>
+                  !(element.forCash ?? false) && !(element.forGroup ?? false))
               .toList()
               .map((element) => element.copyWith())
               .toList() ??
@@ -1352,6 +1382,7 @@ class Utility {
     bool onlyFirstCategory = false,
     bool onlySecoundCategory = false,
     bool groupQuote = false,
+    bool useSeasonCash = false,
   }) {
     double total = 0;
 
@@ -1743,6 +1774,7 @@ class Utility {
     bool onlyTariffVPM = false,
     bool onlyDiscountUnitary = false,
     bool typeQuote = false,
+    bool useCashTariff = false,
   }) {
     double discount = 0;
 
@@ -1764,6 +1796,7 @@ class Utility {
       onlyTariffVPM: onlyTariffVPM,
       onlyTariffVR: onlyTariffVR,
       isGroupTariff: typeQuote,
+      useCashSeason: useCashTariff,
     );
     double totalChildren = Utility.calculateTotalTariffRoom(
       element.tarifa == null
@@ -1784,6 +1817,7 @@ class Utility {
       onlyTariffVR: onlyTariffVR,
       isCalculateChildren: true,
       isGroupTariff: typeQuote,
+      useCashSeason: useCashTariff,
     );
 
     double total = totalChildren + totalAdults;
@@ -1897,14 +1931,33 @@ class Utility {
   }
 
   static List<String> getSeasonstoString(List<Temporada>? temporadas,
-      {bool onlyGroups = false}) {
+      {bool onlyGroups = false, bool onlyCash = false}) {
     List<String> seasons = [];
     if (temporadas != null) {
       for (var element in temporadas) {
-        if (!onlyGroups && !(element.forGroup ?? false)) {
+        if (onlyCash && (element.forCash ?? false)) {
           seasons.add(element.nombre ?? '');
-        } else if (onlyGroups && (element.forGroup ?? false)) {
+          continue;
+        }
+
+        if (onlyGroups && (element.forGroup ?? false)) {
           seasons.add(element.nombre ?? '');
+          continue;
+        }
+
+        if (!onlyGroups &&
+            !onlyCash &&
+            !(element.forGroup ?? false) &&
+            !(element.forCash ?? false)) {
+          seasons.add(element.nombre ?? '');
+        }
+      }
+
+      if (seasons.isEmpty && onlyCash) {
+        for (var element in temporadas) {
+          if (!(element.forGroup ?? false) && !(element.forCash ?? false)) {
+            seasons.add(element.nombre ?? '');
+          }
         }
       }
     }
@@ -1947,5 +2000,26 @@ class Utility {
     if (saveTariff?.tarifaMenores7a12 == null) return true;
 
     return false;
+  }
+
+  static List<TarifaData> getTarifasData(List<Tarifa?> list) {
+    List<TarifaData> tarifas = [];
+
+    for (var element in list) {
+      tarifas.add(TarifaData(
+        id: element?.id ?? 0,
+        categoria: element?.categoria,
+        code: element?.code,
+        fecha: DateTime.tryParse(element?.fecha ?? ''),
+        tarifaAdultoCPLE: element?.tarifaAdulto4,
+        tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
+        tarifaAdultoTPL: element?.tarifaAdulto3,
+        tarifaMenores7a12: element?.tarifaMenores7a12,
+        tarifaPadreId: element?.tarifaBaseId,
+        tarifaPaxAdicional: element?.tarifaPaxAdicional,
+      ));
+    }
+
+    return tarifas;
   }
 }

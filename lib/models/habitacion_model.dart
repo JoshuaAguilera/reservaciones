@@ -32,6 +32,7 @@ class Habitacion {
   int count;
   bool isFree;
   TarifaXDia? tarifaGrupal;
+  bool? useCashSeason;
 
   Habitacion({
     this.id,
@@ -54,6 +55,7 @@ class Habitacion {
     this.count = 1,
     this.isFree = false,
     this.tarifaGrupal,
+    this.useCashSeason,
   });
 
   Habitacion CopyWith({
@@ -77,6 +79,7 @@ class Habitacion {
     int? count,
     bool? isFree,
     TarifaXDia? tarifaGrupal,
+    bool? useCashSeason,
   }) =>
       Habitacion(
         id: id ?? this.id,
@@ -99,6 +102,7 @@ class Habitacion {
         count: count ?? this.count,
         isFree: isFree ?? this.isFree,
         tarifaGrupal: tarifaGrupal ?? this.tarifaGrupal,
+        useCashSeason: useCashSeason ?? this.useCashSeason,
       );
 
   Map<String, dynamic> toJson() {
@@ -123,6 +127,7 @@ class Habitacion {
       'count': count,
       'isFree': isFree,
       'tarifaGrupal': tarifaGrupal,
+      'useCashSeason': useCashSeason,
     };
   }
 
@@ -154,6 +159,7 @@ class Habitacion {
       tarifaGrupal: json['tarifaGrupal'] == null
           ? null
           : TarifaXDia.fromJson(json['tarifaGrupal']),
+      useCashSeason: json['useCashSeason'],
     );
   }
 }

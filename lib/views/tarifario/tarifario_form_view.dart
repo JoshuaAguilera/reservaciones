@@ -251,6 +251,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           Wrap(
                             runSpacing: 15,
                             spacing: 25,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               SizedBox(
                                 width: 500,
@@ -845,6 +846,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   child: CustomWidgets.sectionConfigSeason(
                                     context: context,
                                     temporada: element,
+                                    temporadas: temporadaIndListProvider,
                                     onRemove: () => setState(() =>
                                         temporadaIndListProvider
                                             .remove(element)),
@@ -932,6 +934,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           35,
                                   child: CustomWidgets.sectionConfigSeason(
                                     context: context,
+                                    temporadas: temporadaGrupListProvider,
                                     temporada: element,
                                     onRemove: () => setState(() =>
                                         temporadaGrupListProvider
@@ -1028,6 +1031,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           35,
                                   child: CustomWidgets.sectionConfigSeason(
                                     context: context,
+                                    temporadas: temporadaEfectivoListProvider,
                                     temporada: element,
                                     onRemove: () => setState(() =>
                                         temporadaEfectivoListProvider

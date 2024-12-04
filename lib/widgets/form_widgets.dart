@@ -206,17 +206,20 @@ class FormWidgets {
                   text: name,
                   color: Theme.of(context).primaryColor,
                 ),
-              Switch(
-                value: value,
-                activeColor: activeColor ?? Colors.white,
-                inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
-                inactiveThumbColor: !isModeDark
-                    ? null
-                    : value
-                        ? Colors.white
-                        : Colors.amber,
-                activeTrackColor: !isModeDark ? null : Colors.black54,
-                onChanged: onChanged,
+              SizedBox(
+                height: 25,
+                child: Switch(
+                  value: value,
+                  activeColor: activeColor ?? Colors.white,
+                  inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
+                  inactiveThumbColor: !isModeDark
+                      ? null
+                      : value
+                          ? Colors.white
+                          : Colors.amber,
+                  activeTrackColor: !isModeDark ? null : Colors.black54,
+                  onChanged: onChanged,
+                ),
               ),
             ],
           ),
@@ -328,6 +331,7 @@ class FormWidgets {
             fontFamily: "poppins_regular",
             color: Colors.red[800],
             fontSize: 10,
+            height: 1,
           ),
         ),
         initialValue: initialValue,
