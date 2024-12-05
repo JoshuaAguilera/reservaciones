@@ -72,8 +72,15 @@ class Temporada {
     return {
       'id': id,
       'code': code,
-      'tarifas': tarifas,
+      'nombre': nombre,
       'fecha': fecha != null ? fecha!.toIso8601String() : '',
+      'estanciaMinima': estanciaMinima,
+      'porcentajePromocion': porcentajePromocion,
+      'codeTarifa': codeTarifa,
+      'tarifas': tarifas,
+      'forGroup': forGroup,
+      'forCash': forCash,
+      'useTariff': useTariff,
     };
   }
 

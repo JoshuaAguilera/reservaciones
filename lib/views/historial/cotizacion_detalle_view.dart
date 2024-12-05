@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
+import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -38,9 +41,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   Widget build(BuildContext context) {
     final cotizacion = ref.watch(cotizacionDetalleProvider);
     if (!startFlow) {
-      colorText = !cotizacion.esGrupo!
-          ? DesktopColors.azulUltClaro
-          : DesktopColors.prussianBlue;
+      colorText = Theme.of(context).primaryColor;
       startFlow = true;
     }
     double screenHight = MediaQuery.of(context).size.height;
@@ -62,43 +63,30 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              child: IconButton(
-                                onPressed: () {
-                                  if (!isFinish) {
-                                    widget.sideController.selectIndex(2);
-                                  } else {
-                                    isFinish = false;
-                                    isLoading = false;
-                                    setState(() {});
-                                  }
-                                },
-                                icon: Icon(CupertinoIcons.chevron_left_circle,
-                                    color: Theme.of(context).primaryColor),
-                                iconSize: 30,
-                              ),
-                            ),
-                            Expanded(
-                              child: TextStyles.titlePagText(
-                                text:
-                                    "Detalles de cotización - ${cotizacion.folioPrincipal}",
-                                overflow: TextOverflow.ellipsis,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ],
+                        CustomWidgets.titleFormPage(
+                          onPressedBack: () {
+                            if (!isFinish) {
+                              widget.sideController.selectIndex(2);
+                            } else {
+                              isFinish = false;
+                              isLoading = false;
+                              setState(() {});
+                            }
+                          },
+                          context: context,
+                          title:
+                              "Detalles de cotización - ${cotizacion.folioPrincipal}",
                         ),
-                        const Divider(),
                         if (!isLoading)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 5),
-                              TextStyles.titleText(text: "Datos del huesped"),
+                              TextStyles.titleText(
+                                text: "Datos del huesped",
+                                color: colorText,
+                              ),
+                              const SizedBox(height: 8),
                               Card(
                                 elevation: 7,
                                 color: cotizacion.esGrupo!
@@ -109,7 +97,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         ? DesktopColors.resIndiv
                                         : DesktopColors.cotIndiv,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(12.0),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -137,10 +125,14 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Padding(
-                                  padding: EdgeInsets.only(bottom: 8),
-                                  child: Divider()),
-                              TextStyles.titleText(text: "Cotizaciones"),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Divider(color: colorText),
+                              ),
+                              TextStyles.titleText(
+                                text: "Cotizaciones",
+                                color: colorText,
+                              ),
                               const SizedBox(height: 12),
                               if (!Utility.isResizable(
                                   extended: widget.sideController.extended,
@@ -235,16 +227,18 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                   ),
                                 ),
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 12, top: 8),
-                                child: Divider(),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 12, top: 8),
+                                child: Divider(color: colorText),
                               ),
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: SizedBox(
                                   width: 230,
                                   height: 40,
-                                  child: ElevatedButton(
+                                  child: Buttons.commonButton(
+                                    text: "Generar comprobante PDF",
                                     onPressed: () async {
                                       setState(() => isLoading = true);
 
@@ -268,12 +262,6 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         () => setState(() => isFinish = true),
                                       );
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                        elevation: 4,
-                                        backgroundColor:
-                                            DesktopColors.ceruleanOscure),
-                                    child: TextStyles.buttonTextStyle(
-                                        text: "Generar comprobante PDF"),
                                   ),
                                 ),
                               ),

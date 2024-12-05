@@ -10,6 +10,7 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -1187,7 +1188,9 @@ class Utility {
   }
 
   static Temporada? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
-      {bool isGroup = false, bool useCashTariff = false, bool saveCashTariff = false}) {
+      {bool isGroup = false,
+      bool useCashTariff = false,
+      bool saveCashTariff = false}) {
     if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
@@ -1999,7 +2002,7 @@ class Utility {
     code = code.toString().replaceAll(RegExp(r':'), '');
     code = code.toString().replaceAll(RegExp(r' '), '');
 
-    return int.parse(code);
+    return int.parse("$code${Preferences.userId}");
   }
 
   static bool revisedPropiertiesSaveTariff(Tarifa? saveTariff) {

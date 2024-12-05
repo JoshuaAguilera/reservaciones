@@ -53,7 +53,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
         : const Color.fromARGB(255, 188, 188, 188);
     Color colorLabel = brightness == Brightness.light
         ? Colors.black54
-        : DesktopColors.prussianBlue;
+        : DesktopColors.grisPalido;
 
     return Stack(
       children: [

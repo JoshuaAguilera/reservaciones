@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utils/encrypt/encrypter.dart';
 import 'base_service.dart';
 
 class SendQuoteService extends BaseService {
@@ -17,14 +18,15 @@ class SendQuoteService extends BaseService {
       Cotizacion receiptQuotePresent, List<Habitacion> quotesPresent,
       {String? newMail}) async {
     String messageSent = "";
+    String passMail = EncrypterTool.decryptData(passwordMail, null);
 
     // String username = 'sys2@coralbluehuatulco.mx';
     // String password = 'Sys2024CB';
 
     final smtpServer = SmtpServer(
       "mail.coralbluehuatulco.mx",
-      username: username,
-      password: passwordMail,
+      username: mail,
+      password: passMail,
       port: 465,
       ssl: true,
       //ignoreBadCertificate: true,
@@ -41,7 +43,7 @@ class SendQuoteService extends BaseService {
       file.writeAsBytesSync(pdfBytes);
 
       final message = Message()
-        ..from = Address(username, "$firstName $lastName")
+        ..from = Address(mail, "$firstName $lastName")
         ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
         ..subject =
             'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'

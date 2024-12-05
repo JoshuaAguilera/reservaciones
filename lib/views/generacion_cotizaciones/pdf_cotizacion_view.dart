@@ -208,6 +208,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
           iconCustom: CupertinoIcons.envelope_open_fill,
         );
       } else {
+        messageError = messageRequest;
         if (!mounted) return;
         setState(() => isSendingEmail = false);
       }
@@ -216,6 +217,8 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
       messageError = e.toString();
       setState(() => isSendingEmail = false);
     }
+
+    print(messageError);
 
     if (messageError.isNotEmpty) {
       showDialog(

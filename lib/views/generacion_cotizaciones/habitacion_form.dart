@@ -878,10 +878,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     final habitacionesProvider = HabitacionProvider.provider;
 
                     if (!isEditing) {
-                      habitacionProvider.folioHabitacion = UniqueKey()
-                          .toString()
-                          .replaceAll('[', '')
-                          .replaceAll(']', '');
+                      habitacionProvider.folioHabitacion = Utility.getUniqueCode().toString();
                     }
 
                     habitacionProvider.useCashSeason = useCashSeasonRoom;

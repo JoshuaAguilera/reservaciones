@@ -333,10 +333,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     duplicateRoom: (p0) {
                                       Habitacion roomDuplicate = p0.CopyWith();
                                       roomDuplicate.folioHabitacion =
-                                          UniqueKey()
-                                              .toString()
-                                              .replaceAll('[', '')
-                                              .replaceAll(']', '');
+                                          Utility.getUniqueCode().toString();
 
                                       roomDuplicate.count = 1;
 
@@ -471,8 +468,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               isLoading = false;
                             })
                         : () async {
-                            if (!_formKeyCotizacion.currentState!.validate())
+                            if (!_formKeyCotizacion.currentState!.validate()) {
                               return;
+                            }
+
                             if (habitaciones
                                 .where((element) => !element.isFree)
                                 .toList()
