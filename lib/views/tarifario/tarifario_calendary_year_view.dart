@@ -10,7 +10,7 @@ import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/day_info_item_row.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/text_styles.dart';

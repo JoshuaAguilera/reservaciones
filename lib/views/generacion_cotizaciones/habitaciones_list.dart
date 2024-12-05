@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../ui/buttons.dart';
@@ -37,7 +38,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
 
   List<Widget> modesVisualRange = <Widget>[
     const Icon(Icons.table_chart),
-    const Icon(Icons.dehaze_sharp),
+    const Icon(HeroIcons.list_bullet),
   ];
 
   @override

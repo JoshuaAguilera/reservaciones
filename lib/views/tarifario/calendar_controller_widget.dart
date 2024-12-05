@@ -5,7 +5,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/temporada_model.dart';
@@ -502,35 +502,6 @@ class _ControllerCalendarWidgetState
             color: Theme.of(context).primaryColor,
             size: 16,
           ),
-          /*
-          DropdownButton<int>(
-            // Dropdown for selecting a year
-            value: _currentMonth.year,
-            onChanged: (int? year) {
-              if (year != null) {
-                setState(() {
-                  // Sets the current month to January of the selected year
-                  _currentMonth = DateTime(year, 1, 1);
-
-                  // Calculates the month index based on the selected year and sets the page
-                  int yearDiff = DateTime.now().year - year;
-                  int monthIndex = 12 * yearDiff + _currentMonth.month - 1;
-                  widget.pageWeekController.jumpToPage(monthIndex);
-                });
-              }
-            },
-            items: [
-              // Generates DropdownMenuItems for a range of years from current year to 10 years ahead
-              for (int year = DateTime.now().year;
-                  year <= DateTime.now().year + 10;
-                  year++)
-                DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString()),
-                ),
-            ],
-          ),
-          */
           if (!isLastMonthOfYear)
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),

@@ -15,7 +15,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/tarifa_model.dart';
-import 'web_colors.dart';
+import 'desktop_colors.dart';
 
 class Utility {
   static String getTitleByIndex(int index) {
@@ -1187,7 +1187,7 @@ class Utility {
   }
 
   static Temporada? getSeasonNow(RegistroTarifa? nowRegister, int totalDays,
-      {bool isGroup = false, bool useCashTariff = false}) {
+      {bool isGroup = false, bool useCashTariff = false, bool saveCashTariff = false}) {
     if (nowRegister == null || nowRegister.temporadas == null) {
       return null;
     }
@@ -1219,6 +1219,17 @@ class Utility {
     }
 
     if (!isGroup && useCashTariff) {
+      validSeasons = nowRegister
+              .copyWith()
+              .temporadas
+              ?.where((element) => (element.forCash ?? false))
+              .toList()
+              .map((element) => element.copyWith())
+              .toList() ??
+          [];
+    }
+
+    if (saveCashTariff && useCashTariff) {
       validSeasons = nowRegister
               .copyWith()
               .temporadas
@@ -1838,9 +1849,8 @@ class Utility {
           );
     }
 
-    if (onlyDiscountUnitary) {
-      return (discount) + 0.0;
-    }
+    if (onlyDiscountUnitary) return (discount) + 0.0;
+
     return (discount * element.numDays) + 0.0;
   }
 

@@ -17,7 +17,7 @@ import 'package:icons_plus/icons_plus.dart';
 import '../database/database.dart';
 import '../services/auth_service.dart';
 import '../ui/show_snackbar.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 
 class GestorImagenes extends ConsumerStatefulWidget {
   const GestorImagenes({
@@ -60,9 +60,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
     var pickerImage;
 
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image, // Limita la selección a imágenes
-      );
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
 
       if (result != null && result.files.single.path != null) {
         pickerImage = File(result.files.single.path!);
@@ -70,7 +69,6 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
 
         setState(() {});
       }
-      // pickerImage = await picker.pickImage(source: ImageSource.gallery);
     } catch (e) {
       print(e);
     }
@@ -85,6 +83,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
       }
       isUploadingImage = false;
     });
+
+    ref.read(foundImageFileProvider.notifier).update((state) => false);
   }
 
   Future getData() async {
@@ -125,7 +125,11 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                       )
                     else
                       Container(
-                        decoration: const BoxDecoration(shape: BoxShape.circle),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 187, 209, 210),
+                                width: 2)),
                         child: ClipOval(
                           child: Image.file(
                             File(imageUser.urlImagen!),
@@ -373,6 +377,9 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                   onPressed: () async {
                                     isUploadingImage = true;
                                     setState(() {});
+                                    ref
+                                        .read(foundImageFileProvider.notifier)
+                                        .update((state) => true);
                                     await selectImage(2);
                                   },
                                 ),
@@ -527,12 +534,14 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                       child: Buttons.commonButton(
                                         text: "Cancelar",
                                         color: DesktopColors.prussianBlue,
-                                        onPressed: isUploadingImage ? null : () {
-                                          imagen = null;
-                                          isUpdatingImage = false;
-                                          imagenSelect?.newImage = null;
-                                          setState(() {});
-                                        },
+                                        onPressed: isUploadingImage
+                                            ? null
+                                            : () {
+                                                imagen = null;
+                                                isUpdatingImage = false;
+                                                imagenSelect?.newImage = null;
+                                                setState(() {});
+                                              },
                                       ),
                                     ),
                                   ],
@@ -548,7 +557,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
             )
                 .animate()
                 .fadeIn()
-                .slideY(begin: -0.1, delay: const Duration(milliseconds: 200))
+                .slideY(begin: -0.1, delay: const Duration(milliseconds: 200)),
         ],
       ),
     );

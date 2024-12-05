@@ -11,7 +11,7 @@ import 'package:sidebarx/sidebarx.dart';
 import '../models/registro_tarifa_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import '../utils/shared_preferences/preferences.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
@@ -437,7 +437,11 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   Widget build(BuildContext context) {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
+    Color colorCard = brightness == Brightness.light
+        ? const Color.fromARGB(255, 243, 243, 243)
+        : DesktopColors.grisSemiPalido;
     Color? colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
@@ -483,6 +487,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
 
     return Card(
       elevation: 5,
+      color: colorCard,
       child: ListTile(
         leading: TextStyles.TextSpecial(
           day: widget.index + 1,

@@ -24,6 +24,8 @@ final changeUsersProvider = StateProvider<int>((ref) {
 
 final isEmptyUserProvider = StateProvider<bool>((ref) => false);
 
+final foundImageFileProvider = StateProvider<bool>((ref) => false);
+
 final searchUserProvider = StateProvider<String>((ref) => '');
 
 final userQueryProvider =

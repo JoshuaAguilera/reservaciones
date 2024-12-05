@@ -7,7 +7,7 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import '../models/registro_tarifa_model.dart';
 import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import '../views/generacion_cotizaciones/manager_tariff_single_dialog.dart';
 import 'text_styles.dart';
 
@@ -33,8 +33,6 @@ class CheckListtileTariffWidget extends StatefulWidget {
 }
 
 class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
-  RegistroTarifa? tarifa;
-
   void showDialogEditQuote() {
     showDialog(
       context: context,
@@ -47,15 +45,20 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
     ).then(
       (value) {
         if (value != null) {
-          refreshTarifa();
           setState(() {});
         }
       },
     );
   }
 
-  void refreshTarifa() {
-    tarifa = widget.tarifaXDia.tarifa == null
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    RegistroTarifa? tarifa = widget.tarifaXDia.tarifa == null
         ? null
         : RegistroTarifa(
             tarifas: (widget.tarifaXDia.tarifas != null ||
@@ -66,16 +69,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                 ? [widget.tarifaXDia.temporadaSelect!]
                 : [],
           );
-  }
 
-  @override
-  void initState() {
-    refreshTarifa();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     Color colorTariff = widget.tarifaXDia.subCode == null

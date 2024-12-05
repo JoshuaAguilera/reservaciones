@@ -9,7 +9,7 @@ import 'package:generador_formato/services/habitacion_service.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:sidebarx/sidebarx.dart';
 

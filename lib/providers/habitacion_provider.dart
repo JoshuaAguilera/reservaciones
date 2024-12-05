@@ -183,10 +183,21 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   void implementGroupTariff(List<TarifaXDia?> selectTariffs) {
     for (var item in state) {
       if (selectTariffs.isNotEmpty) {
-        item.tarifaGrupal = selectTariffs.firstWhere(
+        TarifaXDia? selectTariff = selectTariffs.firstWhere(
           (element) => element?.folioRoom == item.folioHabitacion,
           orElse: () => null,
         );
+
+        if (selectTariff != null &&
+            (selectTariff.tarifasBase ?? []).isNotEmpty) {
+          selectTariff.tarifas = selectTariff.tarifasBase;
+          selectTariff.tarifa = selectTariff.tarifasBase
+              ?.where((element) => element.categoria == item.categoria)
+              .toList()
+              .firstOrNull;
+        }
+
+        item.tarifaGrupal = selectTariff;
         continue;
       }
 

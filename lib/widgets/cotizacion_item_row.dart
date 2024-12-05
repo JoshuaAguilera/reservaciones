@@ -5,7 +5,7 @@ import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
 
 class ComprobanteItemRow extends StatefulWidget {

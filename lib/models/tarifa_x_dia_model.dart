@@ -5,33 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 
 import '../database/database.dart';
-import '../utils/helpers/web_colors.dart';
-
-/*
-List<Categoria> CategoriasFromJson(String str) =>
-    List<Categoria>.from(json.decode(str).map((x) => Categoria.fromJson(x)));
-String CategoriasToJson(List<Categoria> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-List<Categoria> ListCategoriaFromJson(List<dynamic> str) =>
-    List<Categoria>.from(str.map((x) => Categoria.fromJson(x)));
-
-    List<DireccionCliente> ListClientesDireccionesFromJson(List<dynamic> str) =>
-    List<DireccionCliente>.from(str.map((x) => DireccionCliente.fromJson(x)));
-
-
-Categoria CategoriaFromJson(String str) => Categoria.fromJson(json.decode(str));
-String CategoriaToJson(Categoria data) => json.encode(data.toJson());
-*/
-
-// List<TemporadaData> temporadasFromJson(String str) => List<TemporadaData>.from(
-//     json.decode(str).map((x) => TemporadaData.fromJson(x)));
-
-// String temporadasToJson(List<TemporadaData> data) =>
-//     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-// List<TemporadaData> listTemporadaFromJson(List<dynamic> list) =>
-//     List<TemporadaData>.from(list.map((x) => TemporadaData.fromJson(x)));
+import '../utils/helpers/desktop_colors.dart';
 
 List<TarifaData> tarifasDataFromJson(String str) =>
     List<TarifaData>.from(json.decode(str).map((x) => TarifaData.fromJson(x)));
@@ -60,6 +34,7 @@ class TarifaXDia {
   List<Temporada>? temporadas;
   List<TarifaData>? tarifas;
   List<TarifaData>? tarifasBase;
+  List<TarifaData>? tarifasEfectivo;
   int numDays;
 
   TarifaXDia({
@@ -80,6 +55,7 @@ class TarifaXDia {
     this.categoria,
     this.tarifas,
     this.tarifasBase,
+    this.tarifasEfectivo,
     this.numDays = 1,
   });
 
@@ -101,6 +77,7 @@ class TarifaXDia {
     String? categoria,
     List<TarifaData>? tarifas,
     List<TarifaData>? tarifasBase,
+    List<TarifaData>? tarifasEfectivo,
     int? numDays,
   }) =>
       TarifaXDia(
@@ -121,6 +98,7 @@ class TarifaXDia {
         subCode: subCode ?? this.subCode,
         tarifa: tarifa ?? this.tarifa,
         tarifasBase: tarifasBase ?? this.tarifasBase,
+        tarifasEfectivo: tarifasEfectivo ?? this.tarifasEfectivo,
         temporadaSelect: temporadaSelect ?? this.temporadaSelect,
       );
 

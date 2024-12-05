@@ -12,7 +12,7 @@ import 'package:generador_formato/widgets/card_animation_widget.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 

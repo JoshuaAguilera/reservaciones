@@ -4,7 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'form_widgets.dart';
 import 'text_styles.dart';
 

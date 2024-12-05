@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -73,50 +73,6 @@ class CustomDropdown {
                         fontFamily: "poppins_regular", fontSize: fontSize),
                     dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
                       (String value) {
-                        Color? textColor;
-                        Color? backgroundColor;
-
-                        switch (value) {
-                          case "ADMIN":
-                            textColor = Utility.darken(
-                                Utility.getColorTypeUser("ADMIN")!);
-                            break;
-                          case "SUPERADMIN":
-                            textColor = Utility.getColorTypeUser("SUPERADMIN");
-                            break;
-                          case "VENTAS":
-                            textColor = Utility.getColorTypeUser("VENTAS");
-                            break;
-                          case "RECEPCION":
-                            textColor = Utility.getColorTypeUser("RECEPCION");
-                            break;
-                          default:
-                            textColor = Theme.of(context).primaryColor;
-                        }
-
-                        switch (value) {
-                          case "ADMIN":
-                            backgroundColor =
-                                Utility.getColorTypeUser("ADMIN", alpha: 100);
-                            break;
-                          case "SUPERADMIN":
-                            backgroundColor = Utility.getColorTypeUser(
-                                "SUPERADMIN",
-                                alpha: 100);
-                            break;
-                          case "VENTAS":
-                            backgroundColor =
-                                Utility.getColorTypeUser("VENTAS", alpha: 100);
-                            break;
-                          case "RECEPCION":
-                            backgroundColor = Utility.getColorTypeUser(
-                                "RECEPCION",
-                                alpha: 100);
-                            break;
-                          default:
-                            backgroundColor = null;
-                        }
-
                         bool enable = (excepcionItem.isNotEmpty &&
                                 value == excepcionItem)
                             ? true
@@ -129,10 +85,6 @@ class CustomDropdown {
                           label: value,
                           enabled: enable,
                           style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(backgroundColor),
-                            foregroundColor: WidgetStatePropertyAll(
-                                !enable ? DesktopColors.grisPalido : textColor),
                             textStyle: WidgetStatePropertyAll(
                               TextStyle(
                                 fontFamily: "poppins_regular",

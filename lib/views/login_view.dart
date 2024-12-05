@@ -2,14 +2,15 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/image_service.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
@@ -44,6 +45,15 @@ class _LoginViewState extends ConsumerState<LoginView> {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    Color colorText = brightness == Brightness.light
+        ? DesktopColors.prussianBlue
+        : Colors.white;
+    Color colorTextField = brightness == Brightness.light
+        ? Colors.black54
+        : const Color.fromARGB(255, 188, 188, 188);
+    Color colorLabel = brightness == Brightness.light
+        ? Colors.black54
+        : DesktopColors.prussianBlue;
 
     return Stack(
       children: [
@@ -53,7 +63,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).primaryColorDark,
+                brightness == Brightness.light
+                    ? Colors.white
+                    : DesktopColors.grisSemiPalido,
                 brightness == Brightness.light
                     ? DesktopColors.cerulean
                     : DesktopColors.grisPalido
@@ -77,6 +89,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 width: 700,
                 height: screenWidth > 350 ? 450 : 390,
                 child: Card(
+                  color: brightness == Brightness.light
+                      ? const Color.fromARGB(255, 242, 242, 242)
+                      : DesktopColors.cardColor,
                   elevation: 6,
                   child: Row(
                     mainAxisAlignment: (screenWidth > 700)
@@ -94,30 +109,33 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ? CrossAxisAlignment.start
                                 : CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SizedBox(
-                                    width: 230,
-                                    child: SvgPicture.asset(
-                                      'assets/image/logo_side_svg.svg',
-                                      semanticsLabel: 'My SVG Image',
-                                      width: screenWidth > 350 ? 250 : 200,
-                                      color: Theme.of(context).primaryColor,
-                                      fit: BoxFit.cover,
+                              SizedBox(
+                                width: 250,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      child: Image(
+                                        image: AssetImage(
+                                            "assets/image/${brightness == Brightness.light ? "logo_login_light" : "logo_login_dark"}.png"),
+                                        width: 280,
+                                      ),
                                     ),
-                                  ),
-                                  TextStyles.standardText(
-                                    text: "V 1.0.0",
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ],
+                                    Positioned(
+                                      bottom: 15,
+                                      right: 0,
+                                      child: TextStyles.standardText(
+                                        text: "Versión 1.0.3",
+                                        size: 11,
+                                        color: colorText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: 10),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
-                                color: Theme.of(context).primaryColor,
+                                color: colorText,
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
                               const SizedBox(height: 10),
@@ -135,7 +153,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 child: TextFormField(
                                   enabled: !isLoading,
                                   onFieldSubmitted: (value) async {
-                                    await submitData.call();
+                                    await submitData(brightness);
                                   },
                                   controller: userNameController,
                                   validator: (value) {
@@ -145,10 +163,30 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     return null;
                                   },
                                   decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 9),
                                     filled: true,
                                     fillColor: Colors.white.withOpacity(0.1),
-                                    border: const OutlineInputBorder(),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Utility.darken(
+                                            colorTextField, -0.05),
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: colorTextField),
+                                    ),
                                     labelText: "Usuario",
+                                    labelStyle: TextStyles.styleStandar(
+                                      color: colorLabel,
+                                    ),
+                                    floatingLabelStyle: TextStyles.styleStandar(
+                                      color: isLoading
+                                          ? colorTextField
+                                          : Colors.blueAccent,
+                                      size: 13,
+                                    ),
                                   ),
                                   style: const TextStyle(
                                     fontFamily: "poppins_regular",
@@ -171,7 +209,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 child: TextFormField(
                                   enabled: !isLoading,
                                   onFieldSubmitted: (value) async {
-                                    await submitData.call();
+                                    await submitData(brightness);
                                   },
                                   controller: passwordController,
                                   obscureText: passwordVisible,
@@ -186,15 +224,35 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     fontSize: 13,
                                   ),
                                   decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 9),
                                     filled: true,
                                     fillColor: Colors.white.withOpacity(0.1),
-                                    border: const OutlineInputBorder(),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Utility.darken(
+                                            colorTextField, -0.05),
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: colorTextField),
+                                    ),
+                                    labelStyle: TextStyles.styleStandar(
+                                      color: colorLabel,
+                                    ),
+                                    floatingLabelStyle: TextStyles.styleStandar(
+                                      color: isLoading
+                                          ? colorTextField
+                                          : Colors.blueAccent,
+                                      size: 13,
+                                    ),
                                     suffixIcon: IconButton(
                                       icon: Icon(
                                         passwordVisible
                                             ? CupertinoIcons.eye_solid
                                             : CupertinoIcons.eye_slash_fill,
-                                        color: Theme.of(context).primaryColor,
+                                        color: colorText,
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -208,37 +266,21 @@ class _LoginViewState extends ConsumerState<LoginView> {
                               ),
                               const SizedBox(height: 5),
                               SizedBox(
-                                width: 120,
-                                height: screenWidth > 350 ? 40 : 35,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    await submitData.call();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: isLoading
-                                          ? DesktopColors.cerulean
-                                          : DesktopColors.prussianBlue),
-                                  child: Row(
-                                    mainAxisAlignment: isLoading
-                                        ? MainAxisAlignment.spaceAround
-                                        : MainAxisAlignment.center,
-                                    children: [
-                                      if (isLoading)
-                                        const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.white),
-                                        ),
-                                      TextStyles.buttonTextStyle(
-                                          text: !isLoading
-                                              ? "Ingresar"
-                                              : "Espere"),
-                                    ],
-                                  ),
-                                ),
-                              )
+                                  width: 120,
+                                  height: screenWidth > 350 ? 40 : 35,
+                                  child: Buttons.commonButton(
+                                    isLoading: isLoading,
+                                    text: "Ingresar",
+                                    color: brightness != Brightness.light
+                                        ? isLoading
+                                            ? DesktopColors.prussianBlue
+                                            : DesktopColors.cerulean
+                                        : isLoading
+                                            ? DesktopColors.cerulean
+                                            : DesktopColors.prussianBlue,
+                                    onPressed: () async =>
+                                        await submitData(brightness),
+                                  ))
                             ],
                           ),
                         ),
@@ -267,7 +309,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     );
   }
 
-  Future<void> submitData() async {
+  Future submitData(Brightness brightness) async {
     setState(() => isLoading = true);
     if (_formKeyLogin.currentState!.validate()) {
       if (!await AuthService().foundUserName(userNameController.text)) {
@@ -348,10 +390,23 @@ class _LoginViewState extends ConsumerState<LoginView> {
           .read(changeUsersProvider.notifier)
           .update((state) => UniqueKey().hashCode);
 
+      ref
+          .read(changeTarifasBaseProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomeView()),
+      ).then(
+        (value) {
+          Future.delayed(Durations.short1, () {
+            brightness =
+                ThemeModelInheritedNotifier.of(context).theme.brightness;
+            setState(() {});
+          });
+        },
       );
+
       passwordVisible = true;
       isLoading = false;
       userNameController.text = '';

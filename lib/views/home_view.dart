@@ -6,7 +6,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../widgets/sidebar.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'menu_view.dart';
 
 class HomeView extends StatefulWidget {

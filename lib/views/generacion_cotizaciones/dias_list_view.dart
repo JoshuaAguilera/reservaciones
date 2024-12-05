@@ -14,8 +14,8 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/progress_indicator.dart';
 
-class DiasList extends ConsumerStatefulWidget {
-  const DiasList({
+class DiasListView extends ConsumerStatefulWidget {
+  const DiasListView({
     super.key,
     required this.initDay,
     required this.lastDay,
@@ -36,7 +36,7 @@ class DiasList extends ConsumerStatefulWidget {
   _DiasListState createState() => _DiasListState();
 }
 
-class _DiasListState extends ConsumerState<DiasList> {
+class _DiasListState extends ConsumerState<DiasListView> {
   //prepare V4
   DateTime checkIn = DateTime.now();
   DateTime checkOut = DateTime.now();
@@ -57,6 +57,7 @@ class _DiasListState extends ConsumerState<DiasList> {
     final listTariffProvider = ref.watch(listTariffDayProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final useCashSeason = ref.watch(useCashSeasonProvider);
+    final useCashRoomSeason = ref.watch(useCashSeasonRoomProvider);
 
     return SingleChildScrollView(
       child: listTariffProvider.when(
@@ -263,7 +264,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                             tarifaXDia: list[ink],
                             setState: () => setState(() {}),
                             isGroupTariff: typeQuote,
-                            useCashSeason: useCashSeason,
+                            useCashSeason: useCashSeason || useCashRoomSeason,
                           );
                         },
                       ),
@@ -285,7 +286,7 @@ class _DiasListState extends ConsumerState<DiasList> {
                         habitacion: habitacionProvider,
                         tarifaXDia: list[ink],
                         isGroupTariff: typeQuote,
-                        useSeasonCash: useCashSeason,
+                        useSeasonCash: useCashSeason || useCashRoomSeason,
                       );
                     },
                   ),

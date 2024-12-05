@@ -9,7 +9,7 @@ import 'package:generador_formato/views/tarifario/manager_cash_tariff_dialog.dar
 import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/text_styles.dart';
 import '../widgets/textformfield_custom.dart';

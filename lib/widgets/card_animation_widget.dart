@@ -10,7 +10,7 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_single_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 

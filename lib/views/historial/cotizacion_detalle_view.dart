@@ -8,7 +8,7 @@ import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
 import '../../widgets/text_styles.dart';

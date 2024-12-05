@@ -13,7 +13,7 @@ import '../providers/habitacion_provider.dart';
 import '../ui/buttons.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'dynamic_widget.dart';
 import 'text_styles.dart';
 
@@ -719,7 +719,8 @@ class _SummaryControllerWidgetState
     });
   }
 
-  void saveRoom(Habitacion habitacionProvider, bool typeQuote, bool useCashSeason) {
+  void saveRoom(
+      Habitacion habitacionProvider, bool typeQuote, bool useCashSeason) {
     if (revisedValidTariff(habitacionProvider)) {
       showSnackBar(
         context: context,

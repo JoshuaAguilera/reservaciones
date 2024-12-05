@@ -7,7 +7,7 @@ import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
 import '../ui/buttons.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
 import 'textformfield_custom.dart';
 

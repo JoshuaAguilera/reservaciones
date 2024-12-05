@@ -12,7 +12,7 @@ import 'package:icons_plus/icons_plus.dart';
 import '../../ui/buttons.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/dialogs.dart';
 import '../../widgets/form_tariff_widget.dart';
 import '../../widgets/text_styles.dart';

@@ -7,7 +7,7 @@ import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 import '../utils/helpers/constants.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 

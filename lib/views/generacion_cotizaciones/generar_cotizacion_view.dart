@@ -21,7 +21,7 @@ import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -46,6 +46,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
+  bool startflow = false;
 
   Cotizacion receiptQuotePresent = Cotizacion();
   List<Habitacion> quotesIndPresent = [];
@@ -74,6 +75,19 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final folio = ref.watch(uniqueFolioProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final useCashTariff = ref.watch(useCashSeasonProvider);
+    final useCashRoomTariff = ref.watch(useCashSeasonRoomProvider);
+
+    if (!startflow) {
+      if (useCashRoomTariff) {
+        Future.delayed(
+          100.ms,
+          () => ref.read(useCashSeasonRoomProvider.notifier).update(
+                (state) => useCashTariff,
+              ),
+        );
+      }
+      startflow = true;
+    }
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -93,9 +107,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           .read(detectChangeProvider.notifier)
           .update((state) => UniqueKey().hashCode);
 
-      ref
-          .read(useCashSeasonRoomProvider.notifier)
-          .update((state) => useCashTariff);
+      ref.read(useCashSeasonRoomProvider.notifier).update(
+          (state) => useCashTariff || (habitacion.useCashSeason ?? false));
 
       Future.delayed(
         800.ms,
@@ -178,7 +191,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           type: "Cotización Individual",
                                           color: DesktopColors.cotIndiv,
                                           withTarget: typeQuote,
-                                          // withSwithCashTariff: true,
+                                          //withSwithCashTariff: true,
                                           useCashTariff: useCashTariff,
                                           onPressedSwitch: (p0) {
                                             ref

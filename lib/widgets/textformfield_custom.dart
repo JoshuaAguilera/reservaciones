@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 
 class TextFormFieldCustom {
   static Widget textFormFieldwithBorder({

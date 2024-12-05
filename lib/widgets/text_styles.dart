@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -20,18 +20,21 @@ class TextStyles {
             size: size, isBold: isBold, overClip: overClip, color: color));
   }
 
-  static TextStyle styleStandar(
-      {double size = 13,
-      bool isBold = false,
-      bool overClip = false,
-      Color? color,
-      TextOverflow overflow = TextOverflow.ellipsis}) {
+  static TextStyle styleStandar({
+    double size = 13,
+    bool isBold = false,
+    bool overClip = false,
+    Color? color,
+    TextOverflow overflow = TextOverflow.ellipsis,
+    double? height,
+  }) {
     return TextStyle(
       fontFamily: "poppins_regular",
       color: color,
       fontSize: size,
       fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
       overflow: overClip ? TextOverflow.clip : overflow,
+      height: height,
     );
   }
 

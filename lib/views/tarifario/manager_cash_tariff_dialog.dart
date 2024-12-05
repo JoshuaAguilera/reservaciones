@@ -9,7 +9,7 @@ import '../../ui/buttons.dart';
 import '../../ui/inside_snackbar.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/form_tariff_widget.dart';
 import '../../widgets/text_styles.dart';
 

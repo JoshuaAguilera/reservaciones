@@ -5,13 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../ui/buttons.dart';
 import '../ui/inside_snackbar.dart';
@@ -193,7 +195,8 @@ class Dialogs {
                                       text: usuario != null
                                           ? "Editar Usuario"
                                           : "Agregar Usuario",
-                                      color: Theme.of(buildContext).primaryColor,
+                                      color:
+                                          Theme.of(buildContext).primaryColor,
                                     ),
                                     TextStyles.standardText(
                                         text:
@@ -206,7 +209,8 @@ class Dialogs {
                         ),
                       ),
                       Divider(
-                          color: Theme.of(context).primaryColor, thickness: 0.6),
+                          color: Theme.of(context).primaryColor,
+                          thickness: 0.6),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: SizedBox(
@@ -216,6 +220,7 @@ class Dialogs {
                             child: Form(
                               key: _formKeyUsuario,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TextFormFieldCustom.textFormFieldwithBorder(
                                     name: "Nombre de usuario",
@@ -224,7 +229,7 @@ class Dialogs {
                                       if ((value == null || value.isEmpty)) {
                                         return "Campo requirido*";
                                       }
-                  
+
                                       return null;
                                     },
                                   ),
@@ -235,17 +240,40 @@ class Dialogs {
                                       TextStyles.standardText(
                                           text: "Rol del usuario: ",
                                           overClip: true,
-                                          color: Theme.of(context).primaryColor),
+                                          color:
+                                              Theme.of(context).primaryColor),
                                       const SizedBox(width: 15),
-                                      CustomDropdown.dropdownMenuCustom(
-                                        initialSelection:
-                                            usuario != null ? usuario.rol! : rol,
-                                        onSelected: (String? value) {
-                                          rol = value!;
-                                        },
-                                        elements: roles,
-                                        screenWidth: 550,
-                                      ),
+                                      Container(
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(7)),
+                                        ),
+                                        child: DropdownButton<String>(
+                                          underline: const SizedBox(),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(7)),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          icon: const Icon(
+                                              HeroIcons.square_3_stack_3d),
+                                          isExpanded: true,
+                                          value: usuario?.rol ?? rol,
+                                          items: [
+                                            for (var item in roles)
+                                              DropdownMenuItem(
+                                                value: item,
+                                                child: CustomWidgets.roleMedal(
+                                                    item, brightness),
+                                              ),
+                                          ],
+                                          onChanged: (value) =>
+                                              setState(() => rol = value!),
+                                        ),
+                                      )
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -257,7 +285,8 @@ class Dialogs {
                                     ),
                                   if (usuario != null)
                                     Padding(
-                                      padding: const EdgeInsets.only(bottom: 15),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 15),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -267,12 +296,14 @@ class Dialogs {
                                               passwordController:
                                                   passwordEditController,
                                               isChanged: (value) => setState(
-                                                  () => showConfigPassword = value),
+                                                  () => showConfigPassword =
+                                                      value),
                                               userId: usuario.id,
                                               username: usuario.username ?? '',
                                               isPasswordMail: false,
-                                              notAskChange: passwordEditController
-                                                  .text.isEmpty,
+                                              notAskChange:
+                                                  passwordEditController
+                                                      .text.isEmpty,
                                               onSummitUser: () => saveFunction(
                                                   context, setState, true),
                                             ),
@@ -282,7 +313,8 @@ class Dialogs {
                                     ),
                                   if (usuario == null)
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: TextFormFieldCustom
@@ -308,7 +340,8 @@ class Dialogs {
                                             name: "Confirmar contraseña",
                                             isPassword: true,
                                             passwordVisible: true,
-                                            controller: passwordConfirmController,
+                                            controller:
+                                                passwordConfirmController,
                                             validator: (p0) {
                                               if (passwordNewController
                                                   .text.isNotEmpty) {

@@ -10,7 +10,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../ui/buttons.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/carousel_widget.dart';
 import '../../widgets/form_widgets.dart';
 

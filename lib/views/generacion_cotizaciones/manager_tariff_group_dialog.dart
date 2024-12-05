@@ -7,7 +7,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
@@ -58,6 +58,11 @@ class _ManagerTariffGroupDialogState
     _descuentoController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -151,7 +156,8 @@ class _ManagerTariffGroupDialogState
                           ),
                           const SizedBox(height: 16),
                           TextStyles.standardText(
-                            text: "Tarifa seleccionada (La tarifa inicial es la más frecuente):",
+                            text:
+                                "Tarifa seleccionada (La tarifa inicial es la más frecuente):",
                             size: 12.6,
                           ),
                           Padding(
@@ -529,7 +535,9 @@ class _ManagerTariffGroupDialogState
     double? descuentoProvisional,
   }) {
     temporadaSelect = seasonSelect?.nombre ?? 'No aplicar';
-    TarifaData? selectCategoryTariff = selectTariff?.tarifas
+    TarifaData? selectCategoryTariff = ((selectRoom?.useCashSeason ?? false)
+            ? selectTariff?.tarifasBase
+            : selectTariff?.tarifas)
         ?.where((element) =>
             element.categoria ==
             tipoHabitacion[categorias.indexOf(selectCategory)])

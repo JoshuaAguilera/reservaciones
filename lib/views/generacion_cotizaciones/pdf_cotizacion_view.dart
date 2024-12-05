@@ -15,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/send_quote_service.dart';
 import '../../ui/show_snackbar.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/dialogs.dart';
 import '../../widgets/textformfield_custom.dart';
 

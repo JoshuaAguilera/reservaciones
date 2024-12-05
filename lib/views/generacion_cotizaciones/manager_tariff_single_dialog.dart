@@ -16,7 +16,7 @@ import '../../providers/habitacion_provider.dart';
 import '../../providers/usuario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
