@@ -31,6 +31,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
+import '../../widgets/dynamic_widget.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -70,6 +71,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
@@ -156,6 +158,65 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       });
     }
 
+    Future saveQuoteBD() async {
+      if (!(await CotizacionService().createCotizacion(
+        cotizacion: cotizacion,
+        habitaciones: habitaciones,
+        folio: folio,
+        prefijoInit: prefijoInit,
+        isQuoteGroup: typeQuote,
+      ))) {
+        if (!context.mounted) return;
+        showSnackBar(
+          type: "danger",
+          context: context,
+          title: "Error al registrar la cotizacion",
+          message: "Se produjo un error al insertar la nueva cotización.",
+        );
+        return;
+      }
+
+      receiptQuotePresent = cotizacion.CopyWith();
+      receiptQuotePresent.folioPrincipal = folio;
+      receiptQuotePresent.esGrupo = typeQuote;
+      receiptQuotePresent.numeroTelefonico =
+          prefijoInit.prefijo + (cotizacion.numeroTelefonico ?? '');
+      receiptQuotePresent.habitaciones = [];
+      for (var element in habitaciones) {
+        receiptQuotePresent.habitaciones!.add(element.CopyWith());
+      }
+
+      comprobantePDF = await ref
+          .watch(HabitacionProvider.provider.notifier)
+          .generarComprobante(receiptQuotePresent, typeQuote);
+
+      ref.read(cotizacionProvider.notifier).update((state) => Cotizacion());
+      ref.watch(HabitacionProvider.provider.notifier).clear();
+
+      ref
+          .read(uniqueFolioProvider.notifier)
+          .update((state) => UniqueKey().hashCode.toString());
+
+      ref
+          .read(detectChangeProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
+      ref.read(changeProvider.notifier).update((state) => UniqueKey().hashCode);
+
+      ref
+          .read(changeHistoryProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
+      ref.read(typeQuoteProvider.notifier).update((state) => false);
+
+      ref.read(useCashSeasonProvider.notifier).update((state) => false);
+
+      ref.read(useCashSeasonRoomProvider.notifier).update((state) => false);
+
+      isFinish = true;
+      setState(() {});
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -178,7 +239,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           )
                               .animate(target: targetHabitaciones)
                               .fadeIn(duration: 250.ms),
-                          if (!isLoading)
+                          if (!isLoading && !isFinish)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -447,7 +508,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               ],
                             ),
                           if (isLoading && !isFinish)
-                            ProgressIndicatorCustom(screenHight: screenHeight),
+                            ProgressIndicatorCustom(
+                              screenHight: screenHeight,
+                              message: TextStyles.standardText(
+                                text: "Generando comprobante de\ncotización",
+                                aling: TextAlign.center,
+                                size: 11,
+                              ),
+                            ),
                           if (isFinish)
                             PdfCotizacionView(
                               comprobantePDF: comprobantePDF,
@@ -463,10 +531,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
                     onSaveQuote: isFinish
-                        ? () => setState(() {
-                              isFinish = false;
-                              isLoading = false;
-                            })
+                        ? () {
+                            isFinish = false;
+                            isLoading = false;
+                            setState(() {});
+                          }
                         : () async {
                             if (!_formKeyCotizacion.currentState!.validate()) {
                               return;
@@ -487,80 +556,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               return;
                             }
 
-                            if (!(await CotizacionService().createCotizacion(
-                              cotizacion: cotizacion,
-                              habitaciones: habitaciones,
-                              folio: folio,
-                              prefijoInit: prefijoInit,
-                              isQuoteGroup: typeQuote,
-                            ))) {
-                              if (!context.mounted) return;
-                              showSnackBar(
-                                type: "danger",
-                                context: context,
-                                title: "Error al registrar la cotizacion",
-                                message:
-                                    "Se produjo un error al insertar la nueva cotización.",
-                              );
-                              return;
-                            }
-
                             setState(() => isLoading = true);
-
-                            receiptQuotePresent = cotizacion.CopyWith();
-                            receiptQuotePresent.folioPrincipal = folio;
-                            receiptQuotePresent.esGrupo = typeQuote;
-                            receiptQuotePresent.numeroTelefonico =
-                                prefijoInit.prefijo +
-                                    (cotizacion.numeroTelefonico ?? '');
-                            receiptQuotePresent.habitaciones = [];
-                            for (var element in habitaciones) {
-                              receiptQuotePresent.habitaciones!
-                                  .add(element.CopyWith());
-                            }
-
-                            comprobantePDF = await ref
-                                .watch(HabitacionProvider.provider.notifier)
-                                .generarComprobante(
-                                    receiptQuotePresent, typeQuote);
-
-                            ref
-                                .read(cotizacionProvider.notifier)
-                                .update((state) => Cotizacion());
-                            ref
-                                .watch(HabitacionProvider.provider.notifier)
-                                .clear();
-
-                            ref.read(uniqueFolioProvider.notifier).update(
-                                (state) => UniqueKey().hashCode.toString());
-
-                            ref
-                                .read(detectChangeProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            ref
-                                .read(changeProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            ref
-                                .read(changeHistoryProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            ref
-                                .read(typeQuoteProvider.notifier)
-                                .update((state) => false);
-
-                            ref
-                                .read(useCashSeasonProvider.notifier)
-                                .update((state) => false);
-
-                            ref
-                                .read(useCashSeasonRoomProvider.notifier)
-                                .update((state) => false);
-
-                            if (!context.mounted) return;
-                            Future.delayed(Durations.long2,
-                                () => setState(() => isFinish = true));
+                            await saveQuoteBD();
+                            setState(() => isLoading = false);
                           },
                   )
                       .animate(target: targetHabitaciones)

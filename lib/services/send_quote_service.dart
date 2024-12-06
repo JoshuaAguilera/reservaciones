@@ -38,7 +38,8 @@ class SendQuoteService extends BaseService {
 
       final tempDir = await getTemporaryDirectory();
 
-      File file = await File('${tempDir.path}/example.pdf').create();
+      File file =
+          await File('${tempDir.path}/example$userId$userName.pdf').create();
 
       file.writeAsBytesSync(pdfBytes);
 
@@ -47,7 +48,8 @@ class SendQuoteService extends BaseService {
         ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
         ..subject =
             'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'
-        ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
+        ..html =
+            await FilesTemplate.getHTMLMail(receiptQuotePresent, quotesPresent)
         ..attachments = [
           FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
         ];
@@ -89,27 +91,29 @@ class SendQuoteService extends BaseService {
     }
     message += "\n\n";
     if (!(comprobante.esGrupo ?? false)) {
-      message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
+      message += "*Habitación Deluxe doble, vista a la reserva*";
       message += "\n";
       for (var element in habitaciones) {
         message += "\n";
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
-        message += "\n";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+        message +=
+            "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVR ?? 0.0) * element.count)}\n" : ""}";
       }
       message += "\n";
       message +=
-          "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
+          "*Habitación Deluxe doble o King size, vista parcial al océano*";
       message += "\n";
       for (var element in habitaciones) {
         message += "\n";
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))} *Total de estancia:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
-        message += "\n";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+        message +=
+            "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVPM ?? 0.0) * element.count)}\n" : ""}";
       }
       message += "\n";
     }
@@ -135,7 +139,7 @@ class SendQuoteService extends BaseService {
     message +=
         "Tarifas exclusivas de preventa, sujetas a cambio sin previo aviso. \n Depósito de garantía no es reembolsable. (Sujeto a cambios de fecha) \nEsperamos poder atenderle como usted se merece.";
 
-    var url = "https://wa.me/$phone/?text=${Uri.encodeQueryComponent(message)}";
+    var url = "https://wa.me/+52$phone/?text=${Uri.encodeQueryComponent(message)}";
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
       status = true;

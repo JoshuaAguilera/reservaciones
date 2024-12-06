@@ -16,10 +16,10 @@ void showSnackBar({
     SnackBar(
       elevation: 0,
       width: 500,
+      padding: const EdgeInsets.only(bottom: 50),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
       content: Card(
-        margin: const EdgeInsets.only(bottom: 25),
         elevation: 4,
         color: Utility.getColorNavbar(type),
         child: Padding(

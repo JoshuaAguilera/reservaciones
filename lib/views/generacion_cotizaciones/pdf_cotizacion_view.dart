@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,13 +8,13 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/send_quote_service.dart';
+import '../../ui/progress_indicator.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/dialogs.dart';
@@ -48,16 +49,21 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
       child: SizedBox(
         height: screenHeight * 0.89,
         child: PdfPreview(
-          loadingWidget: Center(
-            child: LoadingAnimationWidget.fourRotatingDots(
-              color: Colors.grey,
-              size: 45,
+          loadingWidget: ProgressIndicatorCustom(
+            screenHight: screenHeight,
+            inHorizontal: true,
+            message: TextStyles.standardText(
+              text: "Cargando comprobante",
+              aling: TextAlign.center,
+              size: 11,
+              color: Colors.white,
             ),
           ),
           scrollViewDecoration: BoxDecoration(
@@ -65,7 +71,9 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            color: Theme.of(context).cardColor,
+            color: brightness == Brightness.dark
+                ? Theme.of(context).cardColor
+                : DesktopColors.grisPalido,
           ),
           build: (format) => widget.comprobantePDF.save(),
           actionBarTheme: PdfActionBarTheme(
@@ -195,6 +203,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
         widget.comprobantePDF,
         widget.cotizacion,
         widget.cotizacion.habitaciones!,
+        newMail: newMail,
       );
       if (messageRequest.isEmpty) {
         if (!mounted) return;
@@ -282,6 +291,11 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                       msgError: "Campo requerido*",
                       isRequired: true,
                       controller: _mailController,
+                      onFieldSubmitted: (p0) {
+                        if (!_formDialogKey.currentState!.validate()) return;
+
+                        _SendMailSMTP(newMail: p0);
+                      },
                     ),
                   ],
                 ),
@@ -289,9 +303,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
             ),
             nameButtonMain: "Aceptar",
             funtionMain: () {
-              if (!_formDialogKey.currentState!.validate()) {
-                return;
-              }
+              if (!_formDialogKey.currentState!.validate()) return;
 
               _SendMailSMTP(newMail: _mailController.text);
             },

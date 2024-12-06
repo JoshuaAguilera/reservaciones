@@ -9,7 +9,6 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../database/database.dart';
 import 'base_service.dart';
 
 class GeneradorDocService extends BaseService {
@@ -60,8 +59,6 @@ class GeneradorDocService extends BaseService {
         await TextStyles.pwStylePDF(size: 9, isItalic: true, isBold: true);
     pw.TextStyle styleFooter =
         await TextStyles.pwStylePDF(size: 9, isRegular: true);
-    pw.TextStyle styleRegular =
-        await TextStyles.pwStylePDF(size: 9.4, isBold: true);
 
     // text Asotiative
     pw.RichText cancelPolity1 = await TextStyles.pwTextAsotiation(
@@ -292,8 +289,6 @@ class GeneradorDocService extends BaseService {
     //Styles
     pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF(size: 9);
     pw.TextStyle styleLigth = await TextStyles.pwStylePDF(size: 9);
-    pw.TextStyle styleLigthHeaderTable =
-        await TextStyles.pwStylePDF(size: 9, isWhite: true, isBold: true);
     pw.TextStyle styleBold = await TextStyles.pwStylePDF(size: 9, isBold: true);
     pw.TextStyle styleBoldTable =
         await TextStyles.pwStylePDF(size: 9, isBold: true, lineSpacing: 1);

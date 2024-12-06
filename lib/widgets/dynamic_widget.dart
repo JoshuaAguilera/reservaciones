@@ -61,6 +61,7 @@ class dynamicWidget {
     bool compact = false,
     double target = 1,
     bool alreadyLoading = false,
+    bool isntWeek = true,
     // bool showMonth = false,
   }) {
     List<Widget> cards = [];
@@ -97,6 +98,7 @@ class dynamicWidget {
             child: DayInfoItemRow(
               tarifa: tarifa,
               weekNow: weekNow,
+              isntWeek: isntWeek,
               child: Card(
                 elevation: 8,
                 color: tarifa.color ?? Colors.cyan,
@@ -131,6 +133,7 @@ class dynamicWidget {
                                   : Colors.black,
                             )
                             */
+
                               if (compact)
                                 Expanded(
                                   child: TextStyles.standardText(

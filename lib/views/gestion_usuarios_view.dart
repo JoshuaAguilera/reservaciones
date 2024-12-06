@@ -53,7 +53,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
     }
 
     if (!startFlow) {
-      if (isEmptyUser) {
+      if (!isEmptyUser) {
         Future.delayed(
             100.ms,
             () =>
@@ -277,7 +277,14 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                     );
                   },
                   loading: () {
-                    return ProgressIndicatorCustom(screenHight: 320);
+                    return ProgressIndicatorCustom(
+                      screenHight: 320,
+                      message: TextStyles.standardText(
+                        text: "Buscando usuarios",
+                        aling: TextAlign.center,
+                        size: 11,
+                      ),
+                    );
                   },
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -21,6 +22,7 @@ import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/show_snackbar.dart';
 import '../../widgets/cotizacion_item_row.dart';
+import '../../widgets/text_styles.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -50,7 +52,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final receiptQuoteQuery = ref.watch(receiptQuoteQueryProvider(""));
     final isEmpty = ref.watch(isEmptyProvider);
@@ -70,6 +72,38 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
             () => ref.read(isEmptyProvider.notifier).update((state) => true));
       }
       startFlow = true;
+    }
+
+    Future deleteQuote(CotizacionData quote) async {
+      if (await CotizacionService()
+          .eliminarCotizacion(quote.folioPrincipal ?? '')) {
+        ref
+            .read(changeHistoryProvider.notifier)
+            .update((state) => UniqueKey().hashCode);
+
+        ref
+            .read(changeProvider.notifier)
+            .update((state) => UniqueKey().hashCode);
+
+        if (!mounted) return;
+        showSnackBar(
+          type: "success",
+          context: context,
+          duration: 3.seconds,
+          title: "Elimación completada",
+          message:
+              "La cotizacion: ${quote.folioPrincipal} fue eliminada correctamente.",
+        );
+      } else {
+        if (!mounted) return;
+        showSnackBar(
+          type: "danger",
+          context: context,
+          duration: 3.seconds,
+          title: "Elimación erronea",
+          message: "Error al eliminar la cotizacion: ${quote.folioPrincipal}.",
+        );
+      }
     }
 
     return PopScope(
@@ -230,7 +264,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   data: (list) {
                     return list.isEmpty
                         ? SizedBox(
-                            height: screenHight * 0.5,
+                            height: screenHeight * 0.5,
                             child: CustomWidgets.messageNotResult(
                               sizeMessage: 12,
                               context: context,
@@ -291,56 +325,23 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                   deleteReceipt: () {
                                     showDialog(
                                       context: context,
-                                      builder: (context) =>
-                                          Dialogs.customAlertDialog(
-                                        context: context,
-                                        title: "Eliminar comprobante",
-                                        contentText:
-                                            "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
-                                        nameButtonMain: "Aceptar",
-                                        funtionMain: () async {
-                                          debugPrint(
-                                              list[index].folioPrincipal);
-                                          if (await CotizacionService()
-                                              .eliminarCotizacion(
-                                                  list[index].folioPrincipal ??
-                                                      '')) {
-                                            ref
-                                                .read(changeHistoryProvider
-                                                    .notifier)
-                                                .update((state) =>
-                                                    UniqueKey().hashCode);
-
-                                            ref
-                                                .read(changeProvider.notifier)
-                                                .update((state) =>
-                                                    UniqueKey().hashCode);
-
-                                            if (!mounted) return;
-                                            showSnackBar(
-                                              type: "success",
-                                              context: context,
-                                              duration: 3.seconds,
-                                              title: "Elimación completada",
-                                              message:
-                                                  "La cotizacion: ${list[index].folioPrincipal} fue eliminada correctamente.",
-                                            );
-                                          } else {
-                                            if (!mounted) return;
-                                            showSnackBar(
-                                              type: "danger",
-                                              context: context,
-                                              duration: 3.seconds,
-                                              title: "Elimación erronea",
-                                              message:
-                                                  "Error al eliminar la cotizacion: ${list[index].folioPrincipal}.",
-                                            );
-                                          }
-                                        },
-                                        nameButtonCancel: "Cancelar",
-                                        withButtonCancel: true,
-                                        iconData: Icons.delete,
-                                      ),
+                                      builder: (context) {
+                                        return Dialogs.customAlertDialog(
+                                          context: context,
+                                          title: "Eliminar comprobante",
+                                          contentText:
+                                              "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
+                                          nameButtonMain: "Aceptar",
+                                          otherButton: true,
+                                          withLoadingProcess: true,
+                                          funtionMain: () async {
+                                            await deleteQuote(list[index]);
+                                          },
+                                          nameButtonCancel: "Cancelar",
+                                          withButtonCancel: true,
+                                          iconData: Icons.delete,
+                                        );
+                                      },
                                     );
                                   },
                                 );
@@ -350,13 +351,21 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   },
                   error: (error, stackTrace) {
                     return SizedBox(
-                      height: screenHight * 0.5,
+                      height: screenHeight * 0.5,
                       child: CustomWidgets.messageNotResult(
                           sizeMessage: 15, context: context),
                     );
                   },
                   loading: () {
-                    return ProgressIndicatorCustom(screenHight: screenHight);
+                    return ProgressIndicatorCustom(
+                      screenHight: screenHeight,
+                      inHorizontal: true,
+                      message: TextStyles.standardText(
+                        text: "Buscando cotizaciones",
+                        aling: TextAlign.center,
+                        size: 11,
+                      ),
+                    );
                   },
                 )
               ],

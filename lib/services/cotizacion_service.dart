@@ -173,8 +173,14 @@ class CotizacionService extends BaseService {
   Future<bool> eliminarCotizacion(String folio) async {
     final database = AppDatabase();
     try {
-      await database.deleteCotizacionByFolio(folio).toString();
-      await database.deleteHabitacionByFolio(folio).toString();
+      await database.transaction(
+        () async {
+          int responseDQ = await database.deleteCotizacionByFolio(folio);
+          int responseDR = await database.deleteHabitacionByFolio(folio);
+
+          print("$responseDQ - $responseDR");
+        },
+      );
 
       await database.close();
       return true;

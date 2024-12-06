@@ -3,6 +3,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
+import '../database/database.dart';
 import '../utils/helpers/utility.dart';
 import '../utils/helpers/desktop_colors.dart';
 import 'form_widgets.dart';
@@ -17,6 +18,7 @@ class DayInfoItemRow extends StatefulWidget {
     this.day,
     this.month,
     this.weekNow,
+    this.isntWeek = true,
   });
 
   final RegistroTarifa tarifa;
@@ -25,6 +27,7 @@ class DayInfoItemRow extends StatefulWidget {
   final DateTime? month;
   final DateTime? weekNow;
   final Widget child;
+  final bool isntWeek;
 
   @override
   State<DayInfoItemRow> createState() => _DayInfoItemRowState();
@@ -34,6 +37,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   final _controller = SuperTooltipController();
   GlobalKey _containerKey = GlobalKey();
   TooltipDirection position = TooltipDirection.down;
+  late PeriodoData nowPeriod;
 
   Future<bool>? _willPopCallback() async {
     if (_controller.isVisible) {
@@ -51,7 +55,9 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    if (widget.weekNow != null) {
+      nowPeriod = Utility.getPeriodNow(widget.weekNow!, widget.tarifa.periodos);
+    }
     super.initState();
   }
 
@@ -106,6 +112,13 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                           widget.tarifa.periodos),
                       color: Theme.of(context).primaryColor,
                     ),
+                    if (widget.isntWeek && widget.weekNow != null)
+                      TextStyles.TextAsociative(
+                        "Estatus: ",
+                        Utility.defineStatusPeriod(nowPeriod),
+                        color: Theme.of(context).primaryColor,
+                        boldInversed: true,
+                      ),
                     TextStyles.standardText(
                       text: "Temporadas",
                       size: 11,
@@ -189,8 +202,8 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                   colorBorder: Theme.of(context).disabledColor,
                   colorIcon: Theme.of(context).inputDecorationTheme.iconColor,
                   initialValue: (porcentaje ?? 'No aplica').toString(),
-                  icon:  Icon(
-                  porcentaje != null ?  EvaIcons.percent : HeroIcons.no_symbol,
+                  icon: Icon(
+                    porcentaje != null ? EvaIcons.percent : HeroIcons.no_symbol,
                     size: 22,
                   ),
                 ),

@@ -64,11 +64,19 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Center(
-                      child: TextStyles.standardText(
-                          text: "ID",
-                          isBold: true,
-                          color: Theme.of(context).primaryColor,
-                          size: 14),
+                      child: Row(
+                        children: [
+                          // Checkbox(
+                          //   value: false,
+                          //   onChanged: (value) {},
+                          // ),
+                          TextStyles.standardText(
+                              text: "ID",
+                              isBold: true,
+                              color: Theme.of(context).primaryColor,
+                              size: 14),
+                        ],
+                      ),
                     ),
                   ),
                   Center(

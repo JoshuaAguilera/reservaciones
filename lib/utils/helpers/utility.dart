@@ -29,12 +29,16 @@ class Utility {
         return 'Historial';
       case 3:
         return 'Configuración';
-      case 4:
-        return 'Gestión de usuarios';
       case 5:
+        return 'Gestión de usuarios';
+      case 4:
         return 'Tarifario';
       case 12:
         return 'Detalle comprobante';
+      case 15:
+        return 'Gestión de tarifa';
+      case 16:
+        return 'Gestión de habitación';
       case 99:
         return 'Perfil';
       // case 4:
@@ -353,7 +357,7 @@ class Utility {
 
   static int getDifferenceInDays({List<Habitacion>? habitaciones}) {
     int days = DateTime.parse(habitaciones!.first.fechaCheckOut!)
-        .difference(DateTime.parse(habitaciones.last.fechaCheckIn!))
+        .difference(DateTime.parse(habitaciones.first.fechaCheckIn!))
         .inDays;
 
     return days;

@@ -31,6 +31,7 @@ class TextFormFieldCustom {
     String? hintText,
     double marginBottom = 8,
     FloatingLabelAlignment? floatingLabelAlignment,
+    void Function(String)? onFieldSubmitted,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -136,6 +137,7 @@ class TextFormFieldCustom {
                     ),
                   ),
                   initialValue: initialValue,
+                  onFieldSubmitted: onFieldSubmitted,
                 ),
               ),
             ],

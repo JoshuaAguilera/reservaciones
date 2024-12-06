@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/ui/my_sidebar_x_item.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -122,7 +123,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                             bottom: 10,
                             right: 5,
                             child: TextStyles.standardText(
-                              text: "Versión 1.0.3",
+                              text: "Versión $version",
                               size: 9,
                               color: Colors.white,
                             ),
@@ -206,11 +207,11 @@ class _SideBarState extends ConsumerState<SideBar> {
               children: [
                 GestureDetector(
                   onTap: () => widget._controller.selectIndex(0),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Image.network(
-                      "https://static.wixstatic.com/media/a3b865_02615e33874a4314b822456823c169eb~mv2.png",
-                      width: 33,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Image(
+                      image: AssetImage("assets/image/icon_home_sidebar.png"),
+                      width: 35,
                     ),
                   ),
                 ),

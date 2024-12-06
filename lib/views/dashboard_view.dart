@@ -15,7 +15,7 @@ import 'package:generador_formato/providers/notificacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:generador_formato/widgets/notification_widget.dart';
-import 'package:intl/intl.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -338,7 +338,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     return SizedBox(
                                       height: 450,
                                       child: ProgressIndicatorCustom(
-                                          screenHight: 0),
+                                          screenHight: 450),
                                     );
                                   },
                                 )
@@ -392,7 +392,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     },
                                     loading: () {
                                       return ProgressIndicatorCustom(
-                                          screenHight: 80);
+                                        screenHight: 450,
+                                      );
                                     },
                                   ),
                                 ],
@@ -543,7 +544,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     if (!Utility.foundQuotes(list)) {
                                       return Padding(
                                         padding:
-                                            const EdgeInsets.only(top: 28.0),
+                                            const EdgeInsets.only(top: 30.0),
                                         child: Center(
                                           child: TextStyles.standardText(
                                             text: "Sin nuevas\nCotizaciones",
@@ -552,10 +553,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 Theme.of(context).primaryColor,
                                             aling: TextAlign.center,
                                           ),
-                                        ).animate().fadeIn(
-                                              delay: const Duration(
-                                                  milliseconds: 850),
-                                            ),
+                                        ).animate().fadeIn(delay: 350.ms),
                                       );
                                     } else {
                                       return const SizedBox();
@@ -567,7 +565,54 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   loading: () {
                                     return const SizedBox();
                                   },
-                                )
+                                ),
+                                cotizacionesDiariasSync.when(
+                                  data: (list) {
+                                    if (!Utility.foundQuotes(list)) {
+                                      return Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20, left: 10, right: 10),
+                                          child: Wrap(
+                                            runAlignment: WrapAlignment.center,
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            alignment: WrapAlignment.center,
+                                            spacing: 7,
+                                            runSpacing: 4,
+                                            children: [
+                                              itemTodayData(
+                                                "Cotizaciones grupales",
+                                                DesktopColors.cotGrupal,
+                                              ),
+                                              itemTodayData(
+                                                "Cotizaciones individuales",
+                                                DesktopColors.cotIndiv,
+                                              ),
+                                              itemTodayData(
+                                                "Reservaciones individuales",
+                                                DesktopColors.resIndiv,
+                                              ),
+                                              itemTodayData(
+                                                "Reservaciones grupales",
+                                                DesktopColors.resGrupal,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  },
+                                  error: (error, stackTrace) {
+                                    return Container();
+                                  },
+                                  loading: () {
+                                    return const SizedBox();
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -698,6 +743,26 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget itemTodayData(String name, Color? colorIcon) {
+    return SizedBox(
+      width: 160,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(EvaIcons.pie_chart_outline, color: colorIcon, size: 15),
+          const SizedBox(width: 5),
+          Expanded(
+            child: TextStyles.standardText(
+              text: name,
+              color: Theme.of(context).primaryColor,
+              size: 11,
+            ),
+          ),
+        ],
       ),
     );
   }

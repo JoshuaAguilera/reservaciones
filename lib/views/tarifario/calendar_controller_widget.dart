@@ -763,8 +763,9 @@ class _ControllerCalendarWidgetState
                     _currentMonth = DateTime(_currentMonth.year, index + 1, 1));
               },
               child: Center(
-                child: Text(
-                  monthNames[index],
+                child: TextStyles.standardText(
+                  text: monthNames[index],
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -790,8 +791,9 @@ class _ControllerCalendarWidgetState
                 widget.setYear!.call(DateTime.now().year + (index));
               },
               child: Center(
-                child: Text(
-                  "${DateTime.now().year + index}",
+                child: TextStyles.standardText(
+                  text: "${DateTime.now().year + index}",
+                  color: Colors.white,
                 ),
               ),
             ),

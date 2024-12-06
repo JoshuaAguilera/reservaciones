@@ -392,7 +392,7 @@ class AppDatabase extends _$AppDatabase {
     return quotes;
   }
 
-  Future deleteCotizacionByFolio(String folio) {
+  Future<int> deleteCotizacionByFolio(String folio) {
     return (delete(cotizacion)..where((t) => t.folioPrincipal.equals(folio)))
         .go();
   }
@@ -450,7 +450,7 @@ class AppDatabase extends _$AppDatabase {
     return (update(habitacion)..where((t) => t.id.equals(hab.id))).write(hab);
   }
 
-  Future deleteHabitacionByFolio(String folio) {
+  Future<int> deleteHabitacionByFolio(String folio) {
     return (delete(habitacion)..where((t) => t.folioCotizacion.equals(folio)))
         .go();
   }

@@ -8,6 +8,7 @@ import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/image_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -54,6 +55,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
     Color colorLabel = brightness == Brightness.light
         ? Colors.black54
         : DesktopColors.grisPalido;
+    Color colorTextValue = brightness == Brightness.light
+        ? Colors.black87
+        : DesktopColors.white;
 
     return Stack(
       children: [
@@ -124,7 +128,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       bottom: 15,
                                       right: 0,
                                       child: TextStyles.standardText(
-                                        text: "Versión 1.0.3",
+                                        text: "Versión $version",
                                         size: 11,
                                         color: colorText,
                                       ),
@@ -188,9 +192,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       size: 13,
                                     ),
                                   ),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: "poppins_regular",
                                     fontSize: 13,
+                                    color: colorTextValue,
                                   ),
                                 ),
                               ),
@@ -219,9 +224,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     }
                                     return null;
                                   },
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: "poppins_regular",
                                     fontSize: 13,
+                                    color: colorTextValue,
                                   ),
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(

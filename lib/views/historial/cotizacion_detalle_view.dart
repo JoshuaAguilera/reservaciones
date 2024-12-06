@@ -5,7 +5,6 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -29,6 +28,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
+  Color? colorElement;
   Color? colorText;
   bool startFlow = false;
 
@@ -41,7 +41,10 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   Widget build(BuildContext context) {
     final cotizacion = ref.watch(cotizacionDetalleProvider);
     if (!startFlow) {
-      colorText = Theme.of(context).primaryColor;
+      colorElement = Theme.of(context).primaryColor;
+      colorText = !(cotizacion.esGrupo ?? false)
+          ? DesktopColors.azulUltClaro
+          : DesktopColors.prussianBlue;
       startFlow = true;
     }
     double screenHight = MediaQuery.of(context).size.height;
@@ -73,6 +76,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               setState(() {});
                             }
                           },
+                          showSaveButton: false,
                           context: context,
                           title:
                               "Detalles de cotización - ${cotizacion.folioPrincipal}",
@@ -84,7 +88,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               const SizedBox(height: 5),
                               TextStyles.titleText(
                                 text: "Datos del huesped",
-                                color: colorText,
+                                color: colorElement,
                               ),
                               const SizedBox(height: 8),
                               Card(
@@ -127,11 +131,11 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               const SizedBox(height: 12),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
-                                child: Divider(color: colorText),
+                                child: Divider(color: colorElement),
                               ),
                               TextStyles.titleText(
                                 text: "Cotizaciones",
-                                color: colorText,
+                                color: colorElement,
                               ),
                               const SizedBox(height: 12),
                               if (!Utility.isResizable(
@@ -230,39 +234,58 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               Padding(
                                 padding:
                                     const EdgeInsets.only(bottom: 12, top: 8),
-                                child: Divider(color: colorText),
+                                child: Divider(color: colorElement),
                               ),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: SizedBox(
-                                  width: 230,
-                                  height: 40,
-                                  child: Buttons.commonButton(
-                                    text: "Generar comprobante PDF",
-                                    onPressed: () async {
-                                      setState(() => isLoading = true);
+                                child: Wrap(
+                                  spacing: 10,
+                                  runSpacing: 5,
+                                  children: [
+                                    SizedBox(
+                                      width: 230,
+                                      height: 40,
+                                      child: Buttons.commonButton(
+                                        text: "Generar comprobante PDF",
+                                        onPressed: () async {
+                                          setState(() => isLoading = true);
 
-                                      if (cotizacion.esGrupo!) {
-                                        comprobantePDF = await GeneradorDocService()
-                                            .generarComprobanteCotizacionGrupal(
-                                                habitaciones: cotizacion
-                                                        .habitaciones ??
-                                                    List<Habitacion>.empty(),
-                                                cotizacion: cotizacion);
-                                      } else {
-                                        comprobantePDF = await GeneradorDocService()
-                                            .generarComprobanteCotizacionIndividual(
-                                                habitaciones:
-                                                    cotizacion.habitaciones!,
-                                                cotizacion: cotizacion);
-                                      }
+                                          if (cotizacion.esGrupo!) {
+                                            comprobantePDF = await GeneradorDocService()
+                                                .generarComprobanteCotizacionGrupal(
+                                                    habitaciones: cotizacion
+                                                            .habitaciones ??
+                                                        List<
+                                                            Habitacion>.empty(),
+                                                    cotizacion: cotizacion);
+                                          } else {
+                                            comprobantePDF =
+                                                await GeneradorDocService()
+                                                    .generarComprobanteCotizacionIndividual(
+                                                        habitaciones: cotizacion
+                                                            .habitaciones!,
+                                                        cotizacion: cotizacion);
+                                          }
 
-                                      Future.delayed(
-                                        Durations.long2,
-                                        () => setState(() => isFinish = true),
-                                      );
-                                    },
-                                  ),
+                                          Future.delayed(
+                                            Durations.long2,
+                                            () =>
+                                                setState(() => isFinish = true),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 230,
+                                      height: 40,
+                                      child: Buttons.commonButton(
+                                        text: "Concretar cotización",
+                                        onPressed: null,
+                                        tooltipText:
+                                            "Función aun no programada",
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

@@ -123,7 +123,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   height: 30,
                   width: 30,
                   child: CircularProgressIndicator(
-                    color: DesktopColors.ceruleanOscure,
+                    color: colorIconDetail,
                   ),
                 ),
               if (Preferences.rol != 'RECEPCION' && !widget.isQuery)

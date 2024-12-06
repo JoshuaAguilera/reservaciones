@@ -54,39 +54,18 @@ class _TarifarioCalendaryYearViewState
                         EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
                     child: GridView.builder(
                       key: const PageStorageKey('myGridViewKey'),
-                      //cacheExtent: 500,
                       addRepaintBoundaries: true,
                       padding: EdgeInsets.zero,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: (screenWidth > 1080) ? 3 : 2,
                         childAspectRatio: 0.9,
                         crossAxisSpacing: 25,
+                        mainAxisSpacing: 25,
                       ),
                       itemCount: 12,
                       itemBuilder: (context, index) {
                         DateTime month = DateTime(
                             widget.currentMonth.year, (index % 12) + 1, 1);
-
-                        // if (listMonthsCacheProvider.length < 12) {
-                        //   listMonthsCacheProvider.add(
-                        //     SizedBox(
-                        //       height: 380,
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           _buildHeaderYear(month),
-                        //           _buildWeeks(),
-                        //           const Divider(height: 5),
-                        //           Expanded(
-                        //             child: buildCalendarYear(month, list),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
-
-                        // return listMonthsCacheProvider[index];
 
                         return SizedBox(
                           height: 380,
@@ -97,7 +76,9 @@ class _TarifarioCalendaryYearViewState
                               _buildWeeks(),
                               const Divider(height: 5),
                               Expanded(
-                                child: buildCalendarYear(month, list),
+                                child: Card(
+                                    elevation: 5,
+                                    child: buildCalendarYear(month, list)),
                               ),
                             ],
                           ),

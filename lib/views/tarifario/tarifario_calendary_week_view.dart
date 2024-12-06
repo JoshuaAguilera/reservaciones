@@ -166,6 +166,7 @@ class _TarifarioCalendaryWeekViewState
                                               widget.initDayWeekGraphics) &&
                                           list[index].isSelected!) {
                                         return PeriodItemRow(
+                                          isntWeek: false,
                                           weekNow: widget.initDayWeekGraphics,
                                           tarifa: list[index],
                                           lenghtDays: 1,

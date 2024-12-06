@@ -4,6 +4,8 @@ import 'package:icons_plus/icons_plus.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
 
+const String version = "1.0.4";
+
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',
   'HABITACIÓN DELUXE O KING SIZE',

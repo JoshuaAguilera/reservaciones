@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-Widget ProgressIndicatorCustom(
-    {required double screenHight, double sizeProgressIndicator = 45}) {
+Widget ProgressIndicatorCustom({
+  required double screenHight,
+  double sizeProgressIndicator = 45,
+  Widget? message,
+  bool inHorizontal = false,
+}) {
   return Center(
     child: Padding(
       padding: EdgeInsets.only(top: screenHight * 0.37),
       child: Center(
-        child: LoadingAnimationWidget.fourRotatingDots(
-          color: Colors.grey,
-          size: sizeProgressIndicator,
+        child: Column(
+          children: [
+            if (!inHorizontal)
+              LoadingAnimationWidget.fourRotatingDots(
+                color: Colors.grey,
+                size: sizeProgressIndicator,
+              )
+            else
+              LoadingAnimationWidget.progressiveDots(
+                color: Colors.grey,
+                size: sizeProgressIndicator,
+              ),
+            message ?? const SizedBox(),
+          ],
         ),
       ),
     ),

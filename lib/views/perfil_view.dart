@@ -54,9 +54,8 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     lastnameController.text = Preferences.lastName;
     passwordController.text =
         EncrypterTool.decryptData(Preferences.password, null);
-    phoneController.text = Preferences.phone.isNotEmpty
-        ? Preferences.phone.toString().substring(3)
-        : '';
+    phoneController.text =
+        Preferences.phone.isNotEmpty ? Preferences.phone : '';
     mailController.text = Preferences.mail;
     passwordMailController.text = Preferences.passwordMail.isNotEmpty
         ? EncrypterTool.decryptData(Preferences.passwordMail, null)
@@ -87,6 +86,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final foundImageFile = ref.watch(foundImageFileProvider);
 
+    Future submitData() async {
+      setState(() => isSaving = true);
+      await updateUser(usuario.id);
+      setState(() => isSaving = false);
+    }
+
     return Stack(
       children: [
         Scaffold(
@@ -101,7 +106,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                           ? null
                           : () async {
                               setState(() => isSaving = true);
-                              await updateUser.call(usuario.id);
+                              await updateUser(usuario.id);
                               setState(() => isSaving = false);
                             },
                       text: "Guardar"),
@@ -158,6 +163,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                     name: "Nombre de usuario",
                                     controller: usernameController,
                                     textInputAction: TextInputAction.next,
+                                    onFieldSubmitted: (p0) async {
+                                      submitData();
+                                    },
                                   ),
                                   const SizedBox(height: 6),
                                   SizedBox(
@@ -172,6 +180,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           controller: firstnameController,
                                           textInputAction: TextInputAction.next,
                                           isRequired: false,
+                                          onFieldSubmitted: (p0) async {
+                                            submitData();
+                                          },
                                         ),
                                         TextFormFieldCustom
                                             .textFormFieldwithBorder(
@@ -179,6 +190,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           controller: lastnameController,
                                           textInputAction: TextInputAction.done,
                                           isRequired: false,
+                                          onFieldSubmitted: (p0) async {
+                                            submitData();
+                                          },
                                         ),
                                       ],
                                     ),
@@ -194,8 +208,6 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                       dateController: dateController,
                                       nowLastYear: true,
                                       fechaLimite: "1900-01-01",
-
-                                      // changed: !changeDate,
                                       onChanged: () {
                                         setState(() {
                                           changeDate = true;
@@ -256,6 +268,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           name: "Teléfono",
                                           isRequired: true,
                                           controller: phoneController,
+                                          onFieldSubmitted: (p0) async {
+                                            submitData();
+                                          },
                                           isNumeric: true,
                                           textInputAction: TextInputAction.next,
                                           validator: (p0) {
@@ -278,6 +293,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           name: "Correo electrónico",
                                           controller: mailController,
                                           textInputAction: TextInputAction.done,
+                                          onFieldSubmitted: (p0) async {
+                                            submitData();
+                                          },
                                         ),
                                       ],
                                     ),
@@ -306,8 +324,8 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                                 : () async {
                                                     setState(
                                                         () => isSaving = true);
-                                                    await updateUser
-                                                        .call(usuario.id);
+                                                    await updateUser(
+                                                        usuario.id);
                                                     setState(
                                                         () => isSaving = false);
                                                   },
@@ -327,11 +345,11 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
             ),
           ),
         ),
-        if(foundImageFile)
-        ModalBarrier(
-          dismissible: false,
-          color: Colors.black.withOpacity(0.5),
-        ),
+        if (foundImageFile)
+          ModalBarrier(
+            dismissible: false,
+            color: Colors.black.withOpacity(0.5),
+          ),
       ],
     );
   }
@@ -351,6 +369,18 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       return;
     }
 
+    if (await AuthService().foundUserName(usernameController.text, userId)) {
+      showSnackBar(
+        type: "alert",
+        context: context,
+        title: "Usuario ya existente",
+        message:
+            "No se puede registrar el nombre: '${usernameController.text}' porque ya esta siendo utilizado.",
+      );
+      usernameController.text = Preferences.username;
+      return;
+    }
+
     UsuarioData usuario = UsuarioData(
       id: userId,
       username: usernameController.text,
@@ -358,7 +388,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       apellido: lastnameController.text,
       fechaNacimiento: changeDate ? dateController.text : '',
       correoElectronico: mailController.text,
-      telefono: "+52${phoneController.text}",
+      telefono: phoneController.text,
     );
 
     if (await AuthService().updateUser(usuario)) {
@@ -376,7 +406,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     Preferences.firstName = firstnameController.text;
     Preferences.lastName = lastnameController.text;
     Preferences.mail = mailController.text;
-    Preferences.phone = "+52${phoneController.text}";
+    Preferences.phone = phoneController.text;
 
     showSnackBar(
         context: context,
