@@ -21,6 +21,7 @@ class ChangePasswordWidget extends StatefulWidget {
     required this.isPasswordMail,
     this.notAskChange = false,
     this.onSummitUser,
+    this.enable = true,
   });
 
   final TextEditingController passwordController;
@@ -30,6 +31,7 @@ class ChangePasswordWidget extends StatefulWidget {
   final String username;
   final bool isPasswordMail;
   final bool notAskChange;
+  final bool enable;
 
   @override
   State<ChangePasswordWidget> createState() => _ChangePasswordWidgetState();
@@ -60,6 +62,8 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
               : "Contraseña de cuenta",
           controller: widget.passwordController,
           readOnly: true,
+          enabled: widget.enable,
+          isRequired: false,
         ),
       ),
       if (!widget.notAskChange)
@@ -68,12 +72,14 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
           child: Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {
-                widget.isChanged.call(true);
-                setState(() => canChangedKeyMail = true);
-                Future.delayed(Durations.long1,
-                    () => setState(() => cancelChangedKeyMail = true));
-              },
+              onPressed: !widget.enable
+                  ? null
+                  : () {
+                      widget.isChanged.call(true);
+                      setState(() => canChangedKeyMail = true);
+                      Future.delayed(Durations.long1,
+                          () => setState(() => cancelChangedKeyMail = true));
+                    },
               child: TextStyles.buttonText(
                 text: "Cambiar contraseña  de correo",
                 size: 12,

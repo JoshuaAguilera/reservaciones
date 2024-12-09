@@ -69,10 +69,8 @@ class SendQuoteService extends BaseService {
     return messageSent;
   }
 
-  Future<bool> sendQuoteWhatsApp(
+  Future<String> generateMessageWhatsApp(
       Cotizacion comprobante, List<Habitacion> habitaciones) async {
-    bool status = false;
-
     var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
@@ -139,7 +137,14 @@ class SendQuoteService extends BaseService {
     message +=
         "Tarifas exclusivas de preventa, sujetas a cambio sin previo aviso. \n Depósito de garantía no es reembolsable. (Sujeto a cambios de fecha) \nEsperamos poder atenderle como usted se merece.";
 
-    var url = "https://wa.me/+52$phone/?text=${Uri.encodeQueryComponent(message)}";
+    return message;
+  }
+
+  Future<bool> sendQuoteWhatsApp(String message) async {
+    bool status = false;
+
+    var url =
+        "https://wa.me/+52$phone/?text=${Uri.encodeQueryComponent(message)}";
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
       status = true;

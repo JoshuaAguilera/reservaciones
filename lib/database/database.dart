@@ -143,140 +143,52 @@ class AppDatabase extends _$AppDatabase {
 
     return quotes;
   }
-
-  Future<List<CotizacionData>> getCotizacionesUltimoDia(
-      {String search = "", int? userId}) {
-    if (userId != null) {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where(
-                (t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 1)),
-                  DateTime.now(),
-                ),
-              ))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 1)),
-                  DateTime.now())))
-            .get();
-      }
-    } else {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where(
-                (t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 1)),
-                  DateTime.now(),
-                ),
-              ))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 1)),
-                  DateTime.now())))
-            .get();
-      }
-    }
-  }
-
-  Future<List<CotizacionData>> getCotizacionesUltimaSemana(
-      {String search = "", int? userId}) {
-    if (userId != null) {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 7)),
-                  DateTime.now())))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 7)),
-                  DateTime.now())))
-            .get();
-      }
-    } else {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 7)),
-                  DateTime.now())))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 7)),
-                  DateTime.now())))
-            .get();
-      }
-    }
-  }
-
-  Future<List<CotizacionData>> getCotizacionesUltimoMes(
-      {String search = "", int? userId}) {
-    if (userId != null) {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 30)),
-                  DateTime.now())))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((tbl) => tbl.usuarioID.equals(userId))
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 30)),
-                  DateTime.now())))
-            .get();
-      }
-    } else {
-      if (search.isEmpty) {
-        return (select(cotizacion)
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 30)),
-                  DateTime.now())))
-            .get();
-      } else {
-        return (select(cotizacion)
-              ..where((t) => t.nombreHuesped.contains(search))
-              ..where((t) => t.fecha.isBetweenValues(
-                  DateTime.now().subtract(const Duration(days: 30)),
-                  DateTime.now())))
-            .get();
-      }
-    }
-  }
-
+  
   Future<List<CotizacionData>> getQuotesFiltered({
     String search = "",
     int? userId,
     DateTime? initTime,
     DateTime? lastTime,
+    bool inLastDay = false,
+    bool inLastWeek = false,
+    bool inLastMonth = false,
+    // bool inLastYear = false,
   }) async {
     final query = select(cotizacion)
         .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
 
     if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
 
-    if (search.isNotEmpty)
+    if (search.isNotEmpty) {
       query.where(cotizacion.nombreHuesped.lower().like('%$search%'));
+    }
 
     if (initTime != null && lastTime != null) {
       query.where(cotizacion.fecha.isBetweenValues(initTime, lastTime));
+    }
+
+    if (inLastDay) {
+      query.where(cotizacion.fecha.isBetweenValues(
+        DateTime.now().subtract(const Duration(days: 1)),
+        DateTime.now(),
+      ));
+    }
+
+    if (inLastWeek) {
+      query.where(
+        cotizacion.fecha.isBetweenValues(
+          DateTime.now().subtract(const Duration(days: 7)),
+          DateTime.now(),
+        ),
+      );
+    }
+
+    if (inLastMonth) {
+      query.where(
+        cotizacion.fecha.isBetweenValues(
+            DateTime.now().subtract(const Duration(days: 30)),
+            DateTime.now()),
+      );
     }
 
     final result = await query.get();

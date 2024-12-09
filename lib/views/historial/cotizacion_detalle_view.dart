@@ -282,7 +282,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         text: "Concretar cotización",
                                         onPressed: null,
                                         tooltipText:
-                                            "Función aun no programada",
+                                            "Función aun no disponible",
                                       ),
                                     ),
                                   ],

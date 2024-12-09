@@ -26,12 +26,14 @@ class GestorImagenes extends ConsumerStatefulWidget {
     this.isDialog = false,
     this.isSingleImage = false,
     this.implementDirecty = false,
+    this.blocked = false,
   });
 
   final List<Imagen>? imagenes;
   final bool isDialog;
   final bool isSingleImage;
   final bool implementDirecty;
+  final bool blocked;
 
   @override
   _GestorImagenesState createState() => _GestorImagenesState();
@@ -147,11 +149,13 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                         width: 35,
                         child: FloatingActionButton(
                           backgroundColor: Colors.white,
-                          onPressed: () {
-                            setState(() {
-                              isUpdatingImage = !isUpdatingImage;
-                            });
-                          },
+                          onPressed: widget.blocked
+                              ? null
+                              : () {
+                                  setState(() {
+                                    isUpdatingImage = !isUpdatingImage;
+                                  });
+                                },
                           child: Icon(
                             isUpdatingImage
                                 ? Iconsax.close_circle_outline

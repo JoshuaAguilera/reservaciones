@@ -572,8 +572,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       return Align(
                                         alignment: Alignment.bottomCenter,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 20, left: 10, right: 10),
+                                          padding:  EdgeInsets.only(
+                                              bottom: screenWidth < 1090 ? 32 :  20, left: 10, right: 10),
                                           child: Wrap(
                                             runAlignment: WrapAlignment.center,
                                             crossAxisAlignment:
@@ -585,18 +585,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               itemTodayData(
                                                 "Cotizaciones grupales",
                                                 DesktopColors.cotGrupal,
+                                                compact: screenWidth < 1090,
                                               ),
                                               itemTodayData(
                                                 "Cotizaciones individuales",
                                                 DesktopColors.cotIndiv,
+                                                compact: screenWidth < 1090,
                                               ),
                                               itemTodayData(
                                                 "Reservaciones individuales",
                                                 DesktopColors.resIndiv,
+                                                compact: screenWidth < 1090,
                                               ),
                                               itemTodayData(
                                                 "Reservaciones grupales",
                                                 DesktopColors.resGrupal,
+                                                compact: screenWidth < 1090,
                                               ),
                                             ],
                                           ),
@@ -747,21 +751,25 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  Widget itemTodayData(String name, Color? colorIcon) {
+  Widget itemTodayData(String name, Color? colorIcon, {bool compact = false}) {
     return SizedBox(
-      width: 160,
+      width: compact ? 25 : 160,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(EvaIcons.pie_chart_outline, color: colorIcon, size: 15),
-          const SizedBox(width: 5),
-          Expanded(
-            child: TextStyles.standardText(
-              text: name,
-              color: Theme.of(context).primaryColor,
-              size: 11,
-            ),
+          Tooltip(
+            message: compact ? name : "",
+            child: Icon(EvaIcons.pie_chart_outline, color: colorIcon, size: 15),
           ),
+          if (!compact) const SizedBox(width: 5),
+          if (!compact)
+            Expanded(
+              child: TextStyles.standardText(
+                text: name,
+                color: Theme.of(context).primaryColor,
+                size: 11,
+              ),
+            ),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/send_message_dialog.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -163,7 +164,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
               ),
             // if (!widget.isDetail)
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 if (Preferences.phone.isEmpty) {
                   showSnackBar(
                     type: "alert",
@@ -177,8 +178,30 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                   return;
                 }
 
-                SendQuoteService().sendQuoteWhatsApp(
-                    widget.cotizacion, widget.cotizacion.habitaciones!);
+                String message = await SendQuoteService()
+                    .generateMessageWhatsApp(
+                        widget.cotizacion, widget.cotizacion.habitaciones!);
+
+                String response = "";
+
+                showDialog(
+                  context: context,
+                  builder: (context) => SendMessageDialog(
+                      message: message,
+                      nombreHuesped: widget.cotizacion.nombreHuesped ?? ''),
+                ).then(
+                  (value) async {
+                    if (value != null) {
+                      Future.delayed(
+                        Durations.short4,
+                        () async =>
+                            await SendQuoteService().sendQuoteWhatsApp(value),
+                      );
+                    } else {
+                      return;
+                    }
+                  },
+                );
               },
               icon: const Image(
                 image: AssetImage("assets/image/whatsApp_icon.png"),

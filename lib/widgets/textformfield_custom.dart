@@ -32,6 +32,8 @@ class TextFormFieldCustom {
     double marginBottom = 8,
     FloatingLabelAlignment? floatingLabelAlignment,
     void Function(String)? onFieldSubmitted,
+    int? maxLines,
+    bool isMultiline = false,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -51,6 +53,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: blocked,
                 child: TextFormField(
+                  maxLines: maxLines,
                   readOnly: readOnly,
                   textInputAction: textInputAction,
                   enabled: enabled,
@@ -73,12 +76,14 @@ class TextFormFieldCustom {
                     fontFamily: "poppins_regular",
                     fontSize: 13,
                   ),
-                  keyboardType: isNumeric
-                      ? TextInputType.numberWithOptions(
-                          decimal: isDecimal,
-                          signed: isNumeric,
-                        )
-                      : TextInputType.name,
+                  keyboardType: isMultiline
+                      ? TextInputType.multiline
+                      : isNumeric
+                          ? TextInputType.numberWithOptions(
+                              decimal: isDecimal,
+                              signed: isNumeric,
+                            )
+                          : TextInputType.name,
                   inputFormatters: <TextInputFormatter>[
                     isDecimal
                         ? FilteringTextInputFormatter.allow(
@@ -160,6 +165,7 @@ class TextFormFieldCustom {
     bool changed = false,
     bool compact = false,
     bool readOnly = false,
+    bool enabled = true,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -179,6 +185,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: true,
                 child: TextFormField(
+                  enabled: enabled,
                   readOnly: readOnly,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -213,30 +220,32 @@ class TextFormFieldCustom {
                       Icons.calendar_month,
                       color: DesktopColors.azulCielo,
                     ),
-                    onPressed: () {
-                      showDatePicker(
-                        context: context,
-                        initialDate: DateTime.parse(dateController.text),
-                        firstDate: fechaLimite.isNotEmpty
-                            ? DateTime.parse(fechaLimite)
-                                .add(const Duration(days: 1))
-                            : DateTime(DateTime.now().year - firstYear),
-                        lastDate: nowLastYear
-                            ? DateTime.now()
-                            : DateTime((DateTime.now().year + lastYear)),
-                        locale: const Locale('es', 'ES'),
-                      ).then(
-                        (date) {
-                          if (date != null) {
-                            setState(() {
-                              dateController.text =
-                                  date.toIso8601String().substring(0, 10);
-                              if (onChanged != null) onChanged.call();
-                            });
-                          }
-                        },
-                      );
-                    },
+                    onPressed: !enabled
+                        ? null
+                        : () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.parse(dateController.text),
+                              firstDate: fechaLimite.isNotEmpty
+                                  ? DateTime.parse(fechaLimite)
+                                      .add(const Duration(days: 1))
+                                  : DateTime(DateTime.now().year - firstYear),
+                              lastDate: nowLastYear
+                                  ? DateTime.now()
+                                  : DateTime((DateTime.now().year + lastYear)),
+                              locale: const Locale('es', 'ES'),
+                            ).then(
+                              (date) {
+                                if (date != null) {
+                                  setState(() {
+                                    dateController.text =
+                                        date.toIso8601String().substring(0, 10);
+                                    if (onChanged != null) onChanged.call();
+                                  });
+                                }
+                              },
+                            );
+                          },
                   ),
                 ),
               ),

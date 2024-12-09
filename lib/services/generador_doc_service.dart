@@ -434,7 +434,8 @@ class GeneradorDocService extends BaseService {
             ],
           ),
           pw.SizedBox(height: 3),
-          pw.Text("FECHAS DE ESTANCIA: ${Utility.getDatesStay(habitaciones)}",
+          pw.Text(
+              "FECHAS DE ESTANCIA: ${Utility.getPeriodReservation(habitaciones)}",
               style: styleBold),
           pw.SizedBox(height: 3),
           pw.Text(

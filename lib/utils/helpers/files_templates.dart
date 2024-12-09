@@ -716,6 +716,11 @@ class FilesTemplate {
               '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
                  <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifaXDia?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
         }
+      } else {
+        contentMail +=
+            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.</strong></p>''';
+        contentMail +=
+            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Quedamos a sus órdenes.</strong></p>''';
       }
 
       mailHTML = preMailHTML.replaceAll(r'LISTROOMSINSERT', contentMail);

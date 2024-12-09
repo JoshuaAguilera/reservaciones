@@ -11,12 +11,12 @@ import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
-import '../../models/tarifa_x_dia_model.dart';
-import '../../providers/habitacion_provider.dart';
-import '../../ui/buttons.dart';
-import '../../widgets/custom_dropdown.dart';
-import '../../widgets/item_rows.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../../models/tarifa_x_dia_model.dart';
+import '../../../providers/habitacion_provider.dart';
+import '../../../ui/buttons.dart';
+import '../../../widgets/custom_dropdown.dart';
+import '../../../widgets/item_rows.dart';
+import '../../../widgets/textformfield_custom.dart';
 
 class ManagerTariffGroupDialog extends ConsumerStatefulWidget {
   const ManagerTariffGroupDialog({super.key, this.tarifasHabitacion});

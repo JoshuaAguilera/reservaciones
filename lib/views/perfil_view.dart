@@ -116,7 +116,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: screenWidth < 800
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start,
                 children: [
                   const TitlePage(
                     title: "Perfil",
@@ -127,11 +129,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                   Form(
                     key: _formKey,
                     child: Wrap(
+                      runSpacing: 15,
                       children: [
                         SizedBox(
                           width: screenWidth < 800
                               ? (widget.sideController.extended
-                                  ? screenWidth
+                                  ? screenWidth * 0.8
                                   : 355)
                               : 355,
                           child: Card(
@@ -157,10 +160,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                     imagenes: [photoPeril],
                                     isDialog: true,
                                     implementDirecty: true,
+                                    blocked: isSaving,
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormFieldCustom.textFormFieldwithBorder(
                                     name: "Nombre de usuario",
+                                    enabled: !isSaving,
                                     controller: usernameController,
                                     textInputAction: TextInputAction.next,
                                     onFieldSubmitted: (p0) async {
@@ -177,6 +182,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                         TextFormFieldCustom
                                             .textFormFieldwithBorder(
                                           name: "Nombre",
+                                          enabled: !isSaving,
                                           controller: firstnameController,
                                           textInputAction: TextInputAction.next,
                                           isRequired: false,
@@ -187,6 +193,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                         TextFormFieldCustom
                                             .textFormFieldwithBorder(
                                           name: "Apellido",
+                                          enabled: !isSaving,
                                           controller: lastnameController,
                                           textInputAction: TextInputAction.done,
                                           isRequired: false,
@@ -207,6 +214,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                       msgError: "Campo requerido*",
                                       dateController: dateController,
                                       nowLastYear: true,
+                                      enabled: !isSaving,
                                       fechaLimite: "1900-01-01",
                                       onChanged: () {
                                         setState(() {
@@ -223,6 +231,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                     userId: usuario.id,
                                     username: usuario.username ?? '',
                                     isPasswordMail: false,
+                                    enable: !isSaving,
                                   ),
                                   const SizedBox(height: 7),
                                 ],
@@ -233,7 +242,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                         SizedBox(
                           width: screenWidth < 800
                               ? (widget.sideController.extended
-                                  ? screenWidth
+                                  ? screenWidth * 0.8
                                   : 355)
                               : 355,
                           child: Card(
@@ -271,6 +280,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           onFieldSubmitted: (p0) async {
                                             submitData();
                                           },
+                                          enabled: !isSaving,
                                           isNumeric: true,
                                           textInputAction: TextInputAction.next,
                                           validator: (p0) {
@@ -292,6 +302,8 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                             .textFormFieldwithBorder(
                                           name: "Correo electrónico",
                                           controller: mailController,
+                                          enabled: !isSaving,
+                                          isRequired: false,
                                           textInputAction: TextInputAction.done,
                                           onFieldSubmitted: (p0) async {
                                             submitData();
@@ -308,6 +320,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                     userId: usuario.id,
                                     username: usuario.username ?? '',
                                     isPasswordMail: true,
+                                    enable: !isSaving,
                                   ),
                                   const SizedBox(height: 7),
                                   if (screenWidth < 800)

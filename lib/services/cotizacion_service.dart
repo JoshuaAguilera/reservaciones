@@ -106,6 +106,8 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesLocales(
       String search, int pag, String filtro, bool empty, String periodo) async {
     final database = AppDatabase();
+    int? selectUser = (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null;
+
     try {
       List<CotizacionData> comprobantes = [];
       if (empty) {
@@ -119,40 +121,35 @@ class CotizacionService extends BaseService {
             initTime: initTime,
             lastTime: lastTime,
             search: search,
-            userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+            userId: selectUser,
           );
         } else {
           switch (filtro) {
             case "Todos":
-              if (search.isNotEmpty) {
-                comprobantes = await database.getQuotesFiltered(
-                  search: search,
-                  userId:
-                      (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
-                );
-              } else {
-                comprobantes = await database.getQuotesFiltered(
-                    userId: (rol != "SUPERADMIN" && rol != "ADMIN")
-                        ? userId
-                        : null);
-              }
+              comprobantes = await database.getQuotesFiltered(
+                search: search,
+                userId: selectUser,
+              );
               break;
             case 'Hace un dia':
-              comprobantes = await database.getCotizacionesUltimoDia(
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
                 search: search,
-                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+                inLastDay: true,
               );
               break;
             case 'Hace una semana':
-              comprobantes = await database.getCotizacionesUltimaSemana(
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
                 search: search,
-                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+                inLastWeek: true,
               );
               break;
             case 'Hace un mes':
-              comprobantes = await database.getCotizacionesUltimoMes(
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
                 search: search,
-                userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+                inLastMonth: true,
               );
               break;
             default:

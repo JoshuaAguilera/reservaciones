@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/temporada_model.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 
 import '../models/habitacion_model.dart';
 import '../models/registro_tarifa_model.dart';
@@ -10,7 +11,6 @@ import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
 import '../utils/helpers/desktop_colors.dart';
 import 'item_rows.dart';
-import '../views/generacion_cotizaciones/manager_tariff_single_dialog.dart';
 import 'text_styles.dart';
 
 class TableRows {

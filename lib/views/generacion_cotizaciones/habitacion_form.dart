@@ -10,6 +10,7 @@ import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
@@ -26,11 +27,10 @@ import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/dynamic_widget.dart';
-import 'manager_tariff_single_dialog.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
-import 'manager_tariff_group_dialog.dart';
+import 'dialogs/manager_tariff_group_dialog.dart';
 
 class HabitacionForm extends ConsumerStatefulWidget {
   const HabitacionForm({

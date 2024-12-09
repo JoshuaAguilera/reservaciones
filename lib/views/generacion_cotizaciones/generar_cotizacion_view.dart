@@ -14,7 +14,7 @@ import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/manager_tariff_group_dialog.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
@@ -31,7 +31,6 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
-import '../../widgets/dynamic_widget.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -71,7 +70,6 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     final habitaciones = ref.watch(HabitacionProvider.provider);
     final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);

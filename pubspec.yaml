@@ -67,7 +67,6 @@ dependencies:
   super_tooltip: ^2.0.8
   icons_plus: ^5.0.0
   file_selector: ^1.0.3
-  flutter_svg: ^2.0.16
   flutter_launcher_icons: ^0.14.1
 
 dev_dependencies:

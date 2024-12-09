@@ -384,4 +384,25 @@ class FormWidgets {
       ],
     );
   }
+
+  static Widget textAreaForm({
+    TextEditingController? controller,
+    String hintText = "",
+    bool readOnly = false,
+    int? maxLines,
+  }) {
+    return TextField(
+      readOnly: readOnly,
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+        border: const OutlineInputBorder(),
+        hintText: hintText,
+      ),
+      style: TextStyles.styleStandar(),
+    );
+  }
 }

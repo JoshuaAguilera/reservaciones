@@ -9,7 +9,6 @@ import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/change_password_widget.dart';
-import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
@@ -39,6 +38,8 @@ class Dialogs {
         TextEditingController(text: usuario != null ? usuario.username : '');
     final TextEditingController mailController = TextEditingController(
         text: usuario != null ? usuario.correoElectronico : '');
+    final TextEditingController numberController = TextEditingController(
+        text: usuario != null ? usuario.telefono ?? '' : '');
     final TextEditingController passwordNewController = TextEditingController();
     final TextEditingController passwordConfirmController =
         TextEditingController();
@@ -48,21 +49,15 @@ class Dialogs {
             ? EncrypterTool.decryptData(usuario.password!, null)
             : '');
 
-    // final TextEditingController passwordMailEditController =
-    //     TextEditingController(
-    //         text: usuario != null
-    //             ? (usuario.passwordCorreo != null &&
-    //                     usuario.passwordCorreo!.isNotEmpty)
-    //                 ? EncrypterTool.decryptData(usuario.passwordCorreo!, null)
-    //                 : ''
-    //             : '');
-
     bool detectChanges() {
       bool isDetect = false;
 
       if (usuario?.username != nameController.text) isDetect = true;
       if (usuario?.rol != rol) isDetect = true;
       if ((usuario?.correoElectronico ?? '') != mailController.text) {
+        isDetect = true;
+      }
+      if ((usuario?.telefono ?? '') != numberController.text) {
         isDetect = true;
       }
       if ((usuario != null
@@ -113,11 +108,7 @@ class Dialogs {
               id: usuario.id,
               username: nameController.text,
               correoElectronico: mailController.text,
-              // passwordCorreo: passwordMailEditController
-              //         .text.isEmpty
-              //     ? null
-              //     : EncrypterTool.encryptData(
-              //         passwordMailEditController.text, null),
+              telefono: numberController.text,
               rol: rol,
             )
           : UsuarioData(
@@ -233,60 +224,85 @@ class Dialogs {
                                       return null;
                                     },
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      TextStyles.standardText(
-                                          text: "Rol del usuario: ",
-                                          overClip: true,
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                      const SizedBox(width: 15),
-                                      Container(
-                                        width: 200,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(7)),
-                                        ),
-                                        child: DropdownButton<String>(
-                                          underline: const SizedBox(),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(7)),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12),
-                                          icon: const Icon(
-                                              HeroIcons.square_3_stack_3d),
-                                          isExpanded: true,
-                                          value: usuario?.rol ?? rol,
-                                          items: [
-                                            for (var item in roles)
-                                              DropdownMenuItem(
-                                                value: item,
-                                                child: CustomWidgets.roleMedal(
-                                                    item, brightness),
-                                              ),
-                                          ],
-                                          onChanged: (value) =>
-                                              setState(() => rol = value!),
-                                        ),
-                                      )
-                                    ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextStyles.standardText(
+                                            text: "Rol del usuario: ",
+                                            overClip: true,
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        const SizedBox(width: 15),
+                                        Container(
+                                          width: 200,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(7)),
+                                          ),
+                                          child: DropdownButton<String>(
+                                            underline: const SizedBox(),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(7)),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            icon: const Icon(
+                                                HeroIcons.square_3_stack_3d),
+                                            isExpanded: true,
+                                            value: usuario?.rol ?? rol,
+                                            items: [
+                                              for (var item in roles)
+                                                DropdownMenuItem(
+                                                  value: item,
+                                                  child:
+                                                      CustomWidgets.roleMedal(
+                                                          item, brightness),
+                                                ),
+                                            ],
+                                            onChanged: (value) =>
+                                                setState(() => rol = value!),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
                                   if (usuario != null)
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                      name: "Correo electrónico",
-                                      isRequired: false,
-                                      controller: mailController,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextFormFieldCustom
+                                                .textFormFieldwithBorder(
+                                              name: "Correo electrónico",
+                                              isRequired: false,
+                                              controller: mailController,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: TextFormFieldCustom
+                                                .textFormFieldwithBorder(
+                                              name: "Numero de contacto",
+                                              isRequired: false,
+                                              controller: numberController,
+                                              isNumeric: true,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   if (usuario != null)
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 15),
+                                      padding: const EdgeInsets.only(top: 10),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

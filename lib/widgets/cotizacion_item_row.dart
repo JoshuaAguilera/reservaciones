@@ -107,16 +107,17 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                 ),
               if (!isLoading && !widget.isQuery)
                 IconButton(
+                  tooltip: "Detalles",
+                  icon: Icon(
+                    color: colorIconDetail,
+                    CupertinoIcons.eye,
+                  ),
                   onPressed: () {
                     widget.seeReceipt!.call();
                     setState(() {
                       isLoading = true;
                     });
                   },
-                  icon: Icon(
-                    color: colorIconDetail,
-                    CupertinoIcons.eye,
-                  ),
                 )
               else if (!widget.isQuery)
                 SizedBox(
@@ -128,11 +129,12 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                 ),
               if (Preferences.rol != 'RECEPCION' && !widget.isQuery)
                 IconButton(
-                  onPressed: widget.deleteReceipt,
+                  tooltip: "Eliminar",
                   icon: Icon(
                     color: colorIconDelete,
                     CupertinoIcons.delete_solid,
                   ),
+                  onPressed: widget.deleteReceipt,
                 ),
             ],
           ),

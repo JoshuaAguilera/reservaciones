@@ -1247,7 +1247,7 @@ class Utility {
           [];
     }
 
-    if (validSeasons.isEmpty && useCashTariff) {
+    if (validSeasons.isEmpty && (useCashTariff || isGroup)) {
       validSeasons = nowRegister
               .copyWith()
               .temporadas
@@ -1970,7 +1970,7 @@ class Utility {
         }
       }
 
-      if (seasons.isEmpty && onlyCash) {
+      if (seasons.isEmpty && (onlyCash || onlyGroups)) {
         for (var element in temporadas) {
           if (!(element.forGroup ?? false) && !(element.forCash ?? false)) {
             seasons.add(element.nombre ?? '');
