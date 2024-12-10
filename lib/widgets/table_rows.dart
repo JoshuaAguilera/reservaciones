@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../models/habitacion_model.dart';
 import '../models/registro_tarifa_model.dart';
@@ -178,41 +180,46 @@ class TableRows {
       required BuildContext context,
       required double screenWidth,
       void Function(RegistroTarifa)? onEdit,
-      void Function(RegistroTarifa)? onDelete}) {
+      void Function(RegistroTarifa)? onDelete,
+      required List<TarifaBaseInt> tarifasBase}) {
     return TableRow(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Center(
             child: TextStyles.standardText(
-                text: element.id?.toString() ?? "",
-                color: Theme.of(context).primaryColor,
-                size: 14),
+              text: element.id?.toString() ?? "",
+              color: Theme.of(context).primaryColor,
+              size: 12,
+            ),
           ),
         ),
         Center(
           child: TextStyles.standardText(
-              text: element.fechaRegistro!
-                  .toIso8601String()
-                  .substring(0, 10)
-                  .replaceAll('-', '/'),
-              color: Theme.of(context).primaryColor,
-              size: 14),
+            text: element.fechaRegistro!
+                .toIso8601String()
+                .substring(0, 10)
+                .replaceAll('-', '/'),
+            color: Theme.of(context).primaryColor,
+            size: 12,
+          ),
         ),
         Center(
           child: TextStyles.standardText(
-              text: element.nombre ?? '',
-              color: Theme.of(context).primaryColor,
-              size: 14),
+            text: element.nombre ?? '',
+            color: Theme.of(context).primaryColor,
+            size: 12,
+          ),
         ),
         if (screenWidth > 1525)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: TextStyles.standardText(
-                  text: Utility.defineStatusTariff(element.periodos),
-                  color: Theme.of(context).primaryColor,
-                  size: 14),
+                text: Utility.defineStatusTariff(element.periodos),
+                color: Theme.of(context).primaryColor,
+                size: 12,
+              ),
             ),
           ),
         Center(
@@ -233,52 +240,48 @@ class TableRows {
                   colorCard: element.color!,
                   initDate: element.periodos![index].fechaInicial!,
                   lastDate: element.periodos![index].fechaFinal!,
+                  sizeText: 12,
                 ),
               ),
             ),
           ),
         ),
+        if (screenWidth > 1150)
+          Center(
+            child: TextStyles.standardText(
+              text: tarifasBase
+                      .where((elementInt) =>
+                          elementInt.id == element.tarifas!.first.tarifaPadreId)
+                      .firstOrNull
+                      ?.nombre ??
+                  '',
+              color: Theme.of(context).primaryColor,
+              size: 12,
+            ),
+          ),
         Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (screenWidth > 1300)
-                Expanded(
-                  child: Buttons.commonButton(
-                    onPressed: () => onEdit!.call(element),
-                    text: "Editar",
-                    color: DesktopColors.turquezaOscure,
-                  ),
-                )
-              else
-                IconButton(
-                  onPressed: () => onEdit!.call(element),
-                  tooltip: "Editar",
-                  icon: Icon(
-                    CupertinoIcons.pencil,
-                    size: 30,
-                    color: DesktopColors.turquezaOscure,
-                  ),
+              IconButton(
+                onPressed: () => onEdit!.call(element),
+                tooltip: "Editar",
+                icon: Icon(
+                  Iconsax.edit_outline,
+                  size: 30,
+                  color: DesktopColors.turquezaOscure,
                 ),
+              ),
               const SizedBox(width: 10),
-              if (screenWidth > 1300)
-                Expanded(
-                  child: Buttons.commonButton(
-                    onPressed: () => onDelete!.call(element),
-                    text: "Eliminar",
-                    color: DesktopColors.ceruleanOscure,
-                  ),
-                )
-              else
-                IconButton(
-                  onPressed: () => onDelete!.call(element),
-                  tooltip: "Eliminar",
-                  icon: Icon(
-                    CupertinoIcons.delete,
-                    size: 30,
-                    color: DesktopColors.ceruleanOscure,
-                  ),
+              IconButton(
+                onPressed: () => onDelete!.call(element),
+                tooltip: "Eliminar",
+                icon: Icon(
+                  CupertinoIcons.delete,
+                  size: 30,
+                  color: DesktopColors.ceruleanOscure,
                 ),
+              ),
               const SizedBox(width: 10),
             ],
           ),

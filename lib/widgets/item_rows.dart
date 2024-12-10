@@ -28,7 +28,7 @@ class ItemRows {
         ),
       ),
       padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 9),
       width: double.infinity,
       child: Stack(
         children: [
@@ -51,11 +51,10 @@ class ItemRows {
                 size: 13,
                 overClip: true,
               ),
-              const SizedBox(height: 15),
               TextStyles.TextTitleList(
                 index: register.numCotizaciones,
                 color: Colors.white,
-                size: 30,
+                size: 29.5,
                 isBold: false,
               ),
             ],
@@ -467,6 +466,7 @@ class ItemRows {
     bool withOutWidth = false,
     bool isSelect = true,
     Color? backgroundColor,
+    double? sizeText,
   }) {
     return SizedBox(
       width: withOutWidth ? null : 170,
@@ -490,14 +490,16 @@ class ItemRows {
               children: [
                 if (withDeleteButton) const SizedBox(width: 7),
                 TextStyles.standardText(
-                    text: (initDate == null && lastDate == null)
-                        ? title
-                        : Utility.getStringPeriod(
-                            initDate: initDate!, lastDate: lastDate!),
-                    color: useWhiteForeground(
-                            isSelect ? colorCard : backgroundColor ?? colorCard)
-                        ? Colors.white
-                        : Colors.black),
+                  text: (initDate == null && lastDate == null)
+                      ? title
+                      : Utility.getStringPeriod(
+                          initDate: initDate!, lastDate: lastDate!),
+                  color: useWhiteForeground(
+                          isSelect ? colorCard : backgroundColor ?? colorCard)
+                      ? Colors.white
+                      : Colors.black,
+                  size: sizeText ?? 13,
+                ),
                 if (withDeleteButton)
                   SizedBox(
                     width: 35,

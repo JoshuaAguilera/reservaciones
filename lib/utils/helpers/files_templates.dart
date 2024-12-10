@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
@@ -363,6 +364,14 @@ class FilesTemplate {
             habitacion.tarifaXDia?.first.temporadaSelect?.porcentajePromocion ??
             0;
 
+    TarifaData? tariffVR = habitacion.tarifaXDia?.first.tarifas
+        ?.where((element) => element.categoria == tipoHabitacion.first)
+        .firstOrNull;
+
+    TarifaData? tariffVPM = habitacion.tarifaXDia?.first.tarifas
+        ?.where((element) => element.categoria == tipoHabitacion.last)
+        .firstOrNull;
+
     contenido = [
       <pw.Widget>[
         pw.Align(
@@ -372,10 +381,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.first
-                            .tarifaAdultoSGLoDBL ??
-                        0)
-                    .toString(),
+                (tariffVR?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -384,9 +390,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.first.tarifaAdultoTPL ??
-                        0)
-                    .toString(),
+                (tariffVR?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -395,9 +399,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.first.tarifaAdultoCPLE ??
-                        0)
-                    .toString(),
+                (tariffVR?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -406,10 +408,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.first
-                            .tarifaMenores7a12 ??
-                        0)
-                    .toString(),
+                (tariffVR?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -424,10 +423,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.last
-                            .tarifaAdultoSGLoDBL ??
-                        0)
-                    .toString(),
+                (tariffVPM?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -436,9 +432,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.last.tarifaAdultoTPL ??
-                        0)
-                    .toString(),
+                (tariffVPM?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -447,9 +441,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.last.tarifaAdultoCPLE ??
-                        0)
-                    .toString(),
+                (tariffVPM?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -458,9 +450,7 @@ class FilesTemplate {
         pw.Text(
             Utility.formatterNumber(
               Utility.calculatePromotion(
-                (habitacion.tarifaXDia?.first.tarifas?.last.tarifaMenores7a12 ??
-                        0)
-                    .toString(),
+                (tariffVPM?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
               ),
@@ -684,46 +674,79 @@ class FilesTemplate {
   }
 
   static Future<String> getHTMLMail(
-      Cotizacion cotizacion, List<Habitacion> rooms) async {
+      Cotizacion cotizacion, List<Habitacion> habitaciones) async {
     String mailHTML = "";
 
-    try {
-      String contenidoHtml =
-          await rootBundle.loadString("assets/file/quote_send_mail.html");
-      String preMailHTML = contenidoHtml
-          .replaceAll(r'FNAMECUSTOMER', cotizacion.nombreHuesped ?? '')
-          .replaceAll(r'FFOLIOQUOTE', "${cotizacion.folioPrincipal}")
-          .replaceAll(r'FTIMESTATE', Utility.getPeriodReservation(rooms))
-          .replaceAll(r'FNUMNIGHT', "${rooms.first.tarifaXDia!.length}");
+    List<Habitacion> rooms =
+        habitaciones.where((element) => !element.isFree).toList();
 
-      String contentMail =
-          '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>''';
+    try {
+      String contenidoHtml = await rootBundle.loadString(
+          "assets/file/${!(cotizacion.esGrupo ?? false) ? "quote_send_mail" : "quote_send_mail_group"}.html");
+      String preMailHTML = "";
 
       if (!(cotizacion.esGrupo ?? false)) {
-        contentMail +=
-            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong></strong></p>''';
+        preMailHTML = contenidoHtml
+            .replaceAll(r'FNAMECUSTOMER', cotizacion.nombreHuesped ?? '')
+            .replaceAll(r'FFOLIOQUOTE', "${cotizacion.folioPrincipal}");
+
+        Map<String, List<Habitacion>> quoteFilters = {};
+
         for (var element in rooms) {
+          String selectDates =
+              "${element.fechaCheckIn}/${element.fechaCheckOut}";
+
+          if (quoteFilters.containsKey(selectDates)) {
+            quoteFilters[selectDates]!.add(element);
+          } else {
+            final item = {
+              selectDates: [element]
+            };
+            quoteFilters.addEntries(item.entries);
+          }
+        }
+
+        String contentMail = "";
+
+        for (var roomList in quoteFilters.values) {
           contentMail +=
-              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
+              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Plan Todo Incluido</strong><br>Estancia:<strong>FTIMESTATE</strong><br>Noches:<strong>FNUMNIGHT</strong></p>''';
+
+          contentMail = contentMail
+              .replaceAll(
+                  r'FTIMESTATE', Utility.getPeriodReservation([roomList.first]))
+              .replaceAll(r'FNUMNIGHT', "${roomList.first.tarifaXDia!.length}");
+
+          contentMail +=
+              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>''';
+
+          contentMail +=
+              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong></strong></p>''';
+          for (var element in roomList) {
+            contentMail +=
+                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
                  <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVR ?? 1) / (element.tarifaXDia?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVR ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVR ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
-        }
+          }
 
-        contentMail +=
-            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble o King size, vista parcial al océano 🌊</b></p>''';
-
-        for (var element in rooms) {
           contentMail +=
-              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
-                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifaXDia?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
-        }
-      } else {
-        contentMail +=
-            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.</strong></p>''';
-        contentMail +=
-            '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Quedamos a sus órdenes.</strong></p>''';
-      }
+              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble o King size, vista parcial al océano 🌊</b></p>''';
 
-      mailHTML = preMailHTML.replaceAll(r'LISTROOMSINSERT', contentMail);
+          for (var element in roomList) {
+            contentMail +=
+                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
+                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifaXDia?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
+          }
+
+          contentMail += ''' <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
+                                                                        <strong></strong><br></p>''';
+        }
+
+        mailHTML = preMailHTML.replaceAll(r'LISTROOMSINSERT', contentMail);
+      } else {
+        preMailHTML = contenidoHtml.replaceAll(
+            r'FNAMECUSTOMER', cotizacion.nombreHuesped ?? '');
+        mailHTML = preMailHTML;
+      }
     } catch (e) {
       print("Error al cargar el archivo HTML: $e");
     }

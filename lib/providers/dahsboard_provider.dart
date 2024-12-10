@@ -12,7 +12,9 @@ final reporteCotizacionesIndProvider =
   final filter = ref.watch(filterReport);
   final list = Utility.getCotizacionQuotes(
       cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
-          Utility.calculatePeriodReport(filter), DateTime.now()),
+        Utility.calculatePeriodReport(filter),
+        DateTime.now(),
+      ),
       filter: filter);
   return list;
 });

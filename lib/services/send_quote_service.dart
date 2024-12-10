@@ -71,27 +71,42 @@ class SendQuoteService extends BaseService {
 
   Future<String> generateMessageWhatsApp(
       Cotizacion comprobante, List<Habitacion> habitaciones) async {
+    List<Habitacion> rooms =
+        habitaciones.where((element) => !element.isFree).toList();
+
     var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
     message += "\n\n";
-    message += "*Plan Todo Incluido*";
-    message += "\n";
-    if (!(comprobante.esGrupo ?? false)) {
-      message += "*Estancia: ${Utility.getPeriodReservation(habitaciones)}*";
-      message += "\n";
-      message +=
-          "*Noches: ${Utility.getDifferenceInDays(habitaciones: habitaciones)}*";
-    } else {
-      message +=
-          "Fechas de estancia: ${Utility.getDatesStay(comprobante.habitaciones!)}";
+
+    Map<String, List<Habitacion>> quoteFilters = {};
+
+    for (var element in rooms) {
+      String selectDates = "${element.fechaCheckIn}/${element.fechaCheckOut}";
+
+      if (quoteFilters.containsKey(selectDates)) {
+        quoteFilters[selectDates]!.add(element);
+      } else {
+        final item = {
+          selectDates: [element]
+        };
+        quoteFilters.addEntries(item.entries);
+      }
     }
-    message += "\n\n";
-    if (!(comprobante.esGrupo ?? false)) {
-      message += "*Habitación Deluxe doble, vista a la reserva*";
+
+    for (var roomList in quoteFilters.values) {
+      message += "*Plan Todo Incluido*";
       message += "\n";
-      for (var element in habitaciones) {
+      message +=
+          "*Estancia: ${Utility.getPeriodReservation([roomList.first])}*";
+      message += "\n";
+      message += "*Noches: ${roomList.first.tarifaXDia?.length}*";
+
+      message += "\n\n";
+      message += "*Habitación Deluxe doble, vista a la reserva* 🏞️";
+      message += "\n";
+      for (var element in roomList) {
         message += "\n";
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
@@ -102,9 +117,9 @@ class SendQuoteService extends BaseService {
       }
       message += "\n";
       message +=
-          "*Habitación Deluxe doble o King size, vista parcial al océano*";
+          "*Habitación Deluxe doble o King size, vista parcial al océano* 🌊";
       message += "\n";
-      for (var element in habitaciones) {
+      for (var element in roomList) {
         message += "\n";
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
@@ -113,8 +128,9 @@ class SendQuoteService extends BaseService {
         message +=
             "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVPM ?? 0.0) * element.count)}\n" : ""}";
       }
-      message += "\n";
+      message += "\n\n";
     }
+
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";
     message += "\n\n";
@@ -136,6 +152,16 @@ class SendQuoteService extends BaseService {
     message += "\n\n";
     message +=
         "Tarifas exclusivas de preventa, sujetas a cambio sin previo aviso. \n Depósito de garantía no es reembolsable. (Sujeto a cambios de fecha) \nEsperamos poder atenderle como usted se merece.";
+
+    return message;
+  }
+
+  Future<String> generateMessageWhatsAppGroup(Cotizacion comprobante) async {
+    var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
+    message +=
+        "Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.";
+    message += "\n\n";
+    message += "*Quedamos a sus órdenes.*";
 
     return message;
   }

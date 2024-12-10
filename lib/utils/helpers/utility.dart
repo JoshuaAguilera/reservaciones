@@ -13,6 +13,7 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/tarifa_model.dart';
@@ -254,6 +255,9 @@ class Utility {
     NumeroCotizacion reservacionesGrupales =
         NumeroCotizacion(tipoCotizacion: "Reservaciones grupales");
 
+    NumeroCotizacion cotizacionesNoConcretadas =
+        NumeroCotizacion(tipoCotizacion: "Cotizaciones no concretadas");
+
     for (var element in respIndToday ?? List<CotizacionData>.empty()) {
       if (element.esGrupo ?? false) {
         if (element.esConcretado ?? false) {
@@ -275,6 +279,7 @@ class Utility {
       cotizacionesIndividuales,
       reservacionesGrupales,
       reservacionesIndividuales,
+      cotizacionesNoConcretadas,
     ]);
 
     return cot;
@@ -340,16 +345,41 @@ class Utility {
   static String getPeriodReservation(List<Habitacion> cotizaciones) {
     String period = "";
     Intl.defaultLocale = "es_ES";
+    List<Habitacion> realQuotes =
+        cotizaciones.where((element) => !element.isFree).toList();
 
-    DateTime initTime = DateTime.parse(cotizaciones.first.fechaCheckIn!);
-    DateTime lastTime = DateTime.parse(cotizaciones.first.fechaCheckOut!);
-    DateFormat formatter = DateFormat('MMMM');
+    if (realQuotes.length > 1) {
+      List<String> dates = [];
 
-    if (lastTime.month == initTime.month) {
-      period += "${initTime.day} al ${getCompleteDate(data: lastTime)}";
+      for (var element in realQuotes) {
+        DateTime initTime = DateTime.parse(element.fechaCheckIn!);
+        DateTime lastTime = DateTime.parse(element.fechaCheckOut!);
+        DateFormat formatter = DateFormat('MMMM');
+        if (lastTime.month == initTime.month) {
+          dates.add("${initTime.day} al ${getCompleteDate(data: lastTime)}");
+        } else {
+          dates.add(
+              "${initTime.day} de ${formatter.format(initTime)} al ${getCompleteDate(data: lastTime)}");
+        }
+      }
+
+      dates = dates.toSet().toList();
+
+      for (String date in dates) {
+        period += date;
+        if (dates.last == date) period += ".";
+        if (dates.last != date) period += ", ";
+      }
     } else {
-      period +=
-          "${initTime.day} de ${formatter.format(initTime)} al ${getCompleteDate(data: lastTime)}";
+      DateTime initTime = DateTime.parse(cotizaciones.first.fechaCheckIn!);
+      DateTime lastTime = DateTime.parse(cotizaciones.first.fechaCheckOut!);
+      DateFormat formatter = DateFormat('MMMM');
+      if (lastTime.month == initTime.month) {
+        period += "${initTime.day} al ${getCompleteDate(data: lastTime)}";
+      } else {
+        period +=
+            "${initTime.day} de ${formatter.format(initTime)} al ${getCompleteDate(data: lastTime)}";
+      }
     }
 
     return period;
@@ -373,6 +403,8 @@ class Utility {
         return CupertinoIcons.person_fill;
       case "Reservaciones individuales":
         return CupertinoIcons.person_fill;
+      case "Cotizaciones no concretadas":
+        return Iconsax.clipboard_outline;
       default:
         return Icons.error_outline;
     }
@@ -400,6 +432,11 @@ class Utility {
           DesktopColors.resIndiv,
           const Color.fromARGB(255, 140, 207, 240)
         ];
+      case "Cotizaciones no concretadas":
+        return [
+          DesktopColors.cotNoConcr,
+          DesktopColors.grisPalido,
+        ];
       default:
         return [];
     }
@@ -407,20 +444,24 @@ class Utility {
 
   static DateTime calculatePeriodReport(String filter) {
     DateTime initPeriod = DateTime.now();
+    DateTime selectPeriod = DateTime.now();
 
     switch (filter) {
       case "Semanal":
         int numDay = initPeriod.weekday;
-        initPeriod = initPeriod.subtract(Duration(days: numDay - 1));
+        selectPeriod = initPeriod.subtract(Duration(days: numDay - 1));
         break;
       case "Mensual":
-        initPeriod = initPeriod.subtract(Duration(days: initPeriod.day));
+        selectPeriod = initPeriod.subtract(Duration(days: initPeriod.day));
         break;
       case "Anual":
-        initPeriod = DateTime(initPeriod.year, 1, 1);
+        selectPeriod = DateTime(initPeriod.year, 1, 1);
         break;
       default:
     }
+
+    initPeriod =
+        DateTime(selectPeriod.year, selectPeriod.month, selectPeriod.day);
 
     return initPeriod;
   }
@@ -488,6 +529,8 @@ class Utility {
         return DesktopColors.cotIndiv;
       case "Reservaciones individuales":
         return DesktopColors.resIndiv;
+      case "Cotizaciones no concretadas":
+        return DesktopColors.cotNoConcr;
       default:
         return Colors.white;
     }

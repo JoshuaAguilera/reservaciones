@@ -13,9 +13,9 @@ Widget insideSnackBar({
   return Center(
     child: AnimatedOpacity(
       opacity: showAnimation ? 1.0 : 0.0,
-      duration: 350.ms,
+      duration: duration ?? 350.ms,
       child: Card(
-        color: Utility.getColorNavbar('danger'),
+        color: Utility.getColorNavbar(type),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextStyles.standardText(

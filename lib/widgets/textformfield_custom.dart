@@ -32,8 +32,6 @@ class TextFormFieldCustom {
     double marginBottom = 8,
     FloatingLabelAlignment? floatingLabelAlignment,
     void Function(String)? onFieldSubmitted,
-    int? maxLines,
-    bool isMultiline = false,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -53,7 +51,6 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: blocked,
                 child: TextFormField(
-                  maxLines: maxLines,
                   readOnly: readOnly,
                   textInputAction: textInputAction,
                   enabled: enabled,
@@ -76,14 +73,12 @@ class TextFormFieldCustom {
                     fontFamily: "poppins_regular",
                     fontSize: 13,
                   ),
-                  keyboardType: isMultiline
-                      ? TextInputType.multiline
-                      : isNumeric
-                          ? TextInputType.numberWithOptions(
-                              decimal: isDecimal,
-                              signed: isNumeric,
-                            )
-                          : TextInputType.name,
+                  keyboardType: isNumeric
+                      ? TextInputType.numberWithOptions(
+                          decimal: isDecimal,
+                          signed: isNumeric,
+                        )
+                      : TextInputType.name,
                   inputFormatters: <TextInputFormatter>[
                     isDecimal
                         ? FilteringTextInputFormatter.allow(

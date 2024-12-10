@@ -6,6 +6,7 @@ Widget ProgressIndicatorCustom({
   double sizeProgressIndicator = 45,
   Widget? message,
   bool inHorizontal = false,
+  Color? colorIndicator,
 }) {
   return Center(
     child: Padding(
@@ -15,12 +16,12 @@ Widget ProgressIndicatorCustom({
           children: [
             if (!inHorizontal)
               LoadingAnimationWidget.fourRotatingDots(
-                color: Colors.grey,
+                color: colorIndicator ?? Colors.grey,
                 size: sizeProgressIndicator,
               )
             else
               LoadingAnimationWidget.progressiveDots(
-                color: Colors.grey,
+                color: colorIndicator ?? Colors.grey,
                 size: sizeProgressIndicator,
               ),
             message ?? const SizedBox(),

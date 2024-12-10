@@ -204,21 +204,41 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: SizedBox(
-                                  height: Utility.limitHeightList(
-                                      cotizacion.habitaciones!.length),
+                                  height: Utility.limitHeightList(cotizacion
+                                          .habitaciones
+                                          ?.where((element) => !element.isFree)
+                                          .toList()
+                                          .length ??
+                                      0),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
-                                    itemCount: cotizacion.habitaciones!.length,
+                                    itemCount: cotizacion.habitaciones
+                                            ?.where(
+                                                (element) => !element.isFree)
+                                            .toList()
+                                            .length ??
+                                        0,
                                     itemBuilder: (context, index) {
                                       if (index <
-                                          cotizacion.habitaciones!.length) {
+                                          (cotizacion.habitaciones
+                                                  ?.where((element) =>
+                                                      !element.isFree)
+                                                  .toList()
+                                                  .length ??
+                                              0)) {
                                         return HabitacionItemRow(
                                           key: ObjectKey(cotizacion
-                                              .habitaciones![index].hashCode),
+                                              .habitaciones!
+                                              .where(
+                                                  (element) => !element.isFree)
+                                              .toList()[index]
+                                              .hashCode),
                                           index: index,
-                                          habitacion:
-                                              cotizacion.habitaciones![index],
+                                          habitacion: cotizacion.habitaciones!
+                                              .where(
+                                                  (element) => !element.isFree)
+                                              .toList()[index],
                                           isTable: !Utility.isResizable(
                                               extended: widget
                                                   .sideController.extended,
@@ -291,7 +311,15 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                             ],
                           ),
                         if (isLoading && !isFinish)
-                          ProgressIndicatorCustom(screenHight: screenHight),
+                          ProgressIndicatorCustom(
+                            screenHight: screenHight,
+                            message: TextStyles.standardText(
+                              text: "Generando comprante PDF",
+                              aling: TextAlign.center,
+                              size: 11,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         if (isFinish)
                           PdfCotizacionView(
                             comprobantePDF: comprobantePDF,

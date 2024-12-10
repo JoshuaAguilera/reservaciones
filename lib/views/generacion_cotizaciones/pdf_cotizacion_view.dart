@@ -39,6 +39,7 @@ class PdfCotizacionView extends StatefulWidget {
 
 class _PdfCotizacionViewState extends State<PdfCotizacionView> {
   bool isSendingEmail = false;
+  bool isDownloading = false;
   String selectMail = "";
 
   @override
@@ -50,167 +51,140 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-      child: SizedBox(
-        height: screenHeight * 0.89,
-        child: PdfPreview(
-          loadingWidget: ProgressIndicatorCustom(
-            screenHight: screenHeight,
-            inHorizontal: true,
-            message: TextStyles.standardText(
-              text: "Cargando comprobante",
-              aling: TextAlign.center,
-              size: 11,
-              color: Colors.white,
-            ),
-          ),
-          scrollViewDecoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-            color: brightness == Brightness.dark
-                ? Theme.of(context).cardColor
-                : DesktopColors.grisPalido,
-          ),
-          build: (format) => widget.comprobantePDF.save(),
-          actionBarTheme: PdfActionBarTheme(
-            backgroundColor: DesktopColors.ceruleanOscure,
-            iconColor: Colors.white,
-            actionSpacing: 30,
-            alignment: WrapAlignment.center,
-            elevation: 8,
-          ),
-          canChangeOrientation: false,
-          canChangePageFormat: false,
-          canDebug: false,
-          allowSharing: false,
-          allowPrinting: false,
-          pdfFileName:
-              "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
-          actions: [
-            IconButton(
-              onPressed: () async => await Printing.layoutPdf(
-                  onLayout: (_) async => widget.comprobantePDF.save()),
-              icon: const Icon(
-                CupertinoIcons.printer,
+      child: Center(
+        child: SizedBox(
+          height: screenHeight * 0.89,
+          width: screenWidth < 1080 ? null : 1080,
+          child: PdfPreview(
+            loadingWidget: ProgressIndicatorCustom(
+              screenHight: screenHeight,
+              colorIndicator: Colors.white,
+              inHorizontal: true,
+              message: TextStyles.standardText(
+                text: "Cargando comprobante",
+                aling: TextAlign.center,
+                size: 11,
                 color: Colors.white,
               ),
-              tooltip: "Imprimir",
             ),
-            IconButton(
-              tooltip: "Descargar",
-              onPressed: () async {
-                try {
-                  final output = await getDownloadsDirectory();
-                  final file = File(
-                      '${output!.path}/Comprobante de cotizacion ${widget.cotizacion.folioPrincipal} ${DateTime.now().toString().replaceAll(RegExp(r':'), "_")}.pdf');
-                  await file.writeAsBytes(await widget.comprobantePDF.save());
-
-                  final pdfUrl = Uri.file(file.path);
-                  await launchUrl(pdfUrl);
-                } catch (e) {
-                  if (!mounted) return;
-                  showSnackBar(
-                    type: "danger",
-                    context: context,
-                    title: "Error al guardar el documento",
-                    message: "Se produjo el siguiente error: $e",
-                  );
-                }
-              },
-              icon: const Icon(
-                // CupertinoIcons.tray_arrow_down_fill,
-                Icons.download_rounded,
-                color: Colors.white,
-                size: 25,
+            scrollViewDecoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
               ),
+              color: brightness == Brightness.dark
+                  ? Theme.of(context).cardColor
+                  : DesktopColors.grisPalido,
             ),
-            // if (!widget.isDetail)
-            if (isSendingEmail)
-              const SizedBox(
-                height: 22,
-                width: 22,
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-            else
+            build: (format) => widget.comprobantePDF.save(),
+            actionBarTheme: PdfActionBarTheme(
+              backgroundColor: DesktopColors.ceruleanOscure,
+              iconColor: Colors.white,
+              actionSpacing: 30,
+              alignment: WrapAlignment.center,
+              elevation: 8,
+            ),
+            canChangeOrientation: false,
+            canChangePageFormat: false,
+            canDebug: false,
+            allowSharing: false,
+            allowPrinting: false,
+            pdfFileName:
+                "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
+            actions: [
               IconButton(
-                tooltip: "Enviar por correo",
+                onPressed: () async => await Printing.layoutPdf(
+                    onLayout: (_) async => widget.comprobantePDF.save()),
                 icon: const Icon(
-                  CupertinoIcons.mail,
+                  CupertinoIcons.printer,
                   color: Colors.white,
-                  size: 22,
                 ),
+                tooltip: "Imprimir",
+              ),
+              if (isDownloading)
+                const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              else
+                IconButton(
+                  tooltip: "Descargar",
+                  onPressed: () async {
+                    await _downloadPDF();
+                  },
+                  icon: const Icon(
+                    // CupertinoIcons.tray_arrow_down_fill,
+                    Icons.download_rounded,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                ),
+              // if (!widget.isDetail)
+              if (isSendingEmail)
+                const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              else
+                IconButton(
+                  tooltip: "Enviar por correo",
+                  icon: const Icon(
+                    CupertinoIcons.mail,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                  onPressed: () async {
+                    if (Preferences.mail.isEmpty ||
+                        Preferences.passwordMail.isEmpty) {
+                      showSnackBar(
+                        type: "alert",
+                        context: context,
+                        iconCustom: CupertinoIcons.tray_fill,
+                        duration: 4.seconds,
+                        title: "Correo SMTP o contraseña no registrada",
+                        message:
+                            "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                      );
+                      return;
+                    }
+        
+                    await _SendMailSMTP();
+                  },
+                ),
+              // if (!widget.isDetail)
+              IconButton(
                 onPressed: () async {
-                  if (Preferences.mail.isEmpty ||
-                      Preferences.passwordMail.isEmpty) {
+                  if (Preferences.phone.isEmpty) {
                     showSnackBar(
                       type: "alert",
                       context: context,
                       iconCustom: CupertinoIcons.tray_fill,
                       duration: 4.seconds,
-                      title: "Correo SMTP o contraseña no registrada",
+                      title: "Número no registrada",
                       message:
-                          "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                          "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
                     );
                     return;
                   }
-
-                  await _SendMailSMTP();
+        
+                  await _sendMessage();
                 },
+                icon: const Image(
+                  image: AssetImage("assets/image/whatsApp_icon.png"),
+                  width: 22,
+                  color: Colors.white,
+                ),
+                tooltip: "Enviar por WhatsApp",
               ),
-            // if (!widget.isDetail)
-            IconButton(
-              onPressed: () async {
-                if (Preferences.phone.isEmpty) {
-                  showSnackBar(
-                    type: "alert",
-                    context: context,
-                    iconCustom: CupertinoIcons.tray_fill,
-                    duration: 4.seconds,
-                    title: "Número no registrada",
-                    message:
-                        "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
-                  );
-                  return;
-                }
-
-                String message = await SendQuoteService()
-                    .generateMessageWhatsApp(
-                        widget.cotizacion, widget.cotizacion.habitaciones!);
-
-                String response = "";
-
-                showDialog(
-                  context: context,
-                  builder: (context) => SendMessageDialog(
-                      message: message,
-                      nombreHuesped: widget.cotizacion.nombreHuesped ?? ''),
-                ).then(
-                  (value) async {
-                    if (value != null) {
-                      Future.delayed(
-                        Durations.short4,
-                        () async =>
-                            await SendQuoteService().sendQuoteWhatsApp(value),
-                      );
-                    } else {
-                      return;
-                    }
-                  },
-                );
-              },
-              icon: const Image(
-                image: AssetImage("assets/image/whatsApp_icon.png"),
-                width: 22,
-                color: Colors.white,
-              ),
-              tooltip: "Enviar por WhatsApp",
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -336,5 +310,58 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
         },
       );
     }
+  }
+
+  Future<void> _downloadPDF() async {
+    isDownloading = true;
+    setState(() {});
+    try {
+      final output = await getDownloadsDirectory();
+      final file = File(
+          '${output!.path}/Comprobante de cotizacion ${widget.cotizacion.folioPrincipal} ${DateTime.now().toString().replaceAll(RegExp(r':'), "_")}.pdf');
+      await file.writeAsBytes(await widget.comprobantePDF.save());
+
+      final pdfUrl = Uri.file(file.path);
+      await launchUrl(pdfUrl);
+    } catch (e) {
+      if (!mounted) return;
+      showSnackBar(
+        type: "danger",
+        context: context,
+        title: "Error al guardar el documento",
+        message: "Se produjo el siguiente error: $e",
+      );
+    }
+    isDownloading = false;
+    setState(() {});
+  }
+
+  Future<void> _sendMessage() async {
+    String message = (widget.cotizacion.esGrupo ?? false)
+        ? await SendQuoteService()
+            .generateMessageWhatsAppGroup(widget.cotizacion)
+        : await SendQuoteService().generateMessageWhatsApp(
+            widget.cotizacion, widget.cotizacion.habitaciones!);
+
+    String response = "";
+
+    showDialog(
+      context: context,
+      builder: (context) => SendMessageDialog(
+          message: message,
+          nombreHuesped: widget.cotizacion.nombreHuesped ?? ''),
+    ).then(
+      (value) async {
+        if (value != null) {
+          response =  value;
+          Future.delayed(
+            Durations.short4,
+            () async => await SendQuoteService().sendQuoteWhatsApp(response.replaceAll(r'🏞️', "").replaceAll(r'🌊', "")),
+          );
+        } else {
+          return;
+        }
+      },
+    );
   }
 }
