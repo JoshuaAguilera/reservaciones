@@ -18,6 +18,7 @@ class Preferences {
   static bool _modeDark = false;
   static int _numberQuotes = 0;
   static int _userId = 0;
+  static String _userImageUrl = '';
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -156,5 +157,14 @@ class Preferences {
   static set userId(int userId) {
     _userId = userId;
     _prefs.setInt('userId', userId);
+  }
+
+  static String get userImageUrl {
+    return _prefs.getString('userImageUrl') ?? _userImageUrl;
+  }
+
+  static set userImageUrl(String value) {
+    _userImageUrl = value;
+    _prefs.setString('userImageUrl', value);
   }
 }

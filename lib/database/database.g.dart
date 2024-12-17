@@ -3,6 +3,225 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class $ImagesTableTable extends ImagesTable
+    with TableInfo<$ImagesTableTable, ImagesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImagesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+      'code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _urlImageMeta =
+      const VerificationMeta('urlImage');
+  @override
+  late final GeneratedColumn<String> urlImage = GeneratedColumn<String>(
+      'url_image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [id, code, urlImage];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'images_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<ImagesTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+          _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
+    }
+    if (data.containsKey('url_image')) {
+      context.handle(_urlImageMeta,
+          urlImage.isAcceptableOrUnknown(data['url_image']!, _urlImageMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ImagesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ImagesTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      code: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}code']),
+      urlImage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url_image']),
+    );
+  }
+
+  @override
+  $ImagesTableTable createAlias(String alias) {
+    return $ImagesTableTable(attachedDatabase, alias);
+  }
+}
+
+class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
+  final int id;
+  final String? code;
+  final String? urlImage;
+  const ImagesTableData({required this.id, this.code, this.urlImage});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    if (!nullToAbsent || urlImage != null) {
+      map['url_image'] = Variable<String>(urlImage);
+    }
+    return map;
+  }
+
+  ImagesTableCompanion toCompanion(bool nullToAbsent) {
+    return ImagesTableCompanion(
+      id: Value(id),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      urlImage: urlImage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(urlImage),
+    );
+  }
+
+  factory ImagesTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ImagesTableData(
+      id: serializer.fromJson<int>(json['id']),
+      code: serializer.fromJson<String?>(json['code']),
+      urlImage: serializer.fromJson<String?>(json['urlImage']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'code': serializer.toJson<String?>(code),
+      'urlImage': serializer.toJson<String?>(urlImage),
+    };
+  }
+
+  ImagesTableData copyWith(
+          {int? id,
+          Value<String?> code = const Value.absent(),
+          Value<String?> urlImage = const Value.absent()}) =>
+      ImagesTableData(
+        id: id ?? this.id,
+        code: code.present ? code.value : this.code,
+        urlImage: urlImage.present ? urlImage.value : this.urlImage,
+      );
+  ImagesTableData copyWithCompanion(ImagesTableCompanion data) {
+    return ImagesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      urlImage: data.urlImage.present ? data.urlImage.value : this.urlImage,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImagesTableData(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('urlImage: $urlImage')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, code, urlImage);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ImagesTableData &&
+          other.id == this.id &&
+          other.code == this.code &&
+          other.urlImage == this.urlImage);
+}
+
+class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
+  final Value<int> id;
+  final Value<String?> code;
+  final Value<String?> urlImage;
+  const ImagesTableCompanion({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.urlImage = const Value.absent(),
+  });
+  ImagesTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.urlImage = const Value.absent(),
+  });
+  static Insertable<ImagesTableData> custom({
+    Expression<int>? id,
+    Expression<String>? code,
+    Expression<String>? urlImage,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (code != null) 'code': code,
+      if (urlImage != null) 'url_image': urlImage,
+    });
+  }
+
+  ImagesTableCompanion copyWith(
+      {Value<int>? id, Value<String?>? code, Value<String?>? urlImage}) {
+    return ImagesTableCompanion(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      urlImage: urlImage ?? this.urlImage,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (urlImage.present) {
+      map['url_image'] = Variable<String>(urlImage.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImagesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('urlImage: $urlImage')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -21,10 +240,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       const VerificationMeta('username');
   @override
   late final GeneratedColumn<String> username = GeneratedColumn<String>(
-      'username', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      'username', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _passwordMeta =
       const VerificationMeta('password');
   @override
@@ -35,6 +252,11 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   @override
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
       'rol', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _correoElectronicoMeta =
       const VerificationMeta('correoElectronico');
@@ -79,19 +301,30 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _imageIdMeta =
+      const VerificationMeta('imageId');
+  @override
+  late final GeneratedColumn<int> imageId = GeneratedColumn<int>(
+      'image_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES images_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
         username,
         password,
         rol,
+        status,
         correoElectronico,
         passwordCorreo,
         telefono,
         fechaNacimiento,
         nombre,
         apellido,
-        numCotizaciones
+        numCotizaciones,
+        imageId
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -109,8 +342,6 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
     if (data.containsKey('username')) {
       context.handle(_usernameMeta,
           username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
-    } else if (isInserting) {
-      context.missing(_usernameMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
@@ -119,6 +350,10 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
     if (data.containsKey('rol')) {
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
     }
     if (data.containsKey('correo_electronico')) {
       context.handle(
@@ -156,6 +391,10 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
           numCotizaciones.isAcceptableOrUnknown(
               data['num_cotizaciones']!, _numCotizacionesMeta));
     }
+    if (data.containsKey('image_id')) {
+      context.handle(_imageIdMeta,
+          imageId.isAcceptableOrUnknown(data['image_id']!, _imageIdMeta));
+    }
     return context;
   }
 
@@ -168,11 +407,13 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       username: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rol']),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status']),
       correoElectronico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}correo_electronico']),
       passwordCorreo: attachedDatabase.typeMapping
@@ -187,6 +428,8 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
           .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
       numCotizaciones: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}num_cotizaciones']),
+      imageId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}image_id']),
     );
   }
 
@@ -198,9 +441,10 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
 
 class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final int id;
-  final String username;
+  final String? username;
   final String? password;
   final String? rol;
+  final String? status;
   final String? correoElectronico;
   final String? passwordCorreo;
   final String? telefono;
@@ -208,28 +452,36 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final String? nombre;
   final String? apellido;
   final int? numCotizaciones;
+  final int? imageId;
   const UsuarioData(
       {required this.id,
-      required this.username,
+      this.username,
       this.password,
       this.rol,
+      this.status,
       this.correoElectronico,
       this.passwordCorreo,
       this.telefono,
       this.fechaNacimiento,
       this.nombre,
       this.apellido,
-      this.numCotizaciones});
+      this.numCotizaciones,
+      this.imageId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['username'] = Variable<String>(username);
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
     if (!nullToAbsent || password != null) {
       map['password'] = Variable<String>(password);
     }
     if (!nullToAbsent || rol != null) {
       map['rol'] = Variable<String>(rol);
+    }
+    if (!nullToAbsent || status != null) {
+      map['status'] = Variable<String>(status);
     }
     if (!nullToAbsent || correoElectronico != null) {
       map['correo_electronico'] = Variable<String>(correoElectronico);
@@ -252,17 +504,24 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     if (!nullToAbsent || numCotizaciones != null) {
       map['num_cotizaciones'] = Variable<int>(numCotizaciones);
     }
+    if (!nullToAbsent || imageId != null) {
+      map['image_id'] = Variable<int>(imageId);
+    }
     return map;
   }
 
   UsuarioCompanion toCompanion(bool nullToAbsent) {
     return UsuarioCompanion(
       id: Value(id),
-      username: Value(username),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
       password: password == null && nullToAbsent
           ? const Value.absent()
           : Value(password),
       rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
+      status:
+          status == null && nullToAbsent ? const Value.absent() : Value(status),
       correoElectronico: correoElectronico == null && nullToAbsent
           ? const Value.absent()
           : Value(correoElectronico),
@@ -283,6 +542,9 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       numCotizaciones: numCotizaciones == null && nullToAbsent
           ? const Value.absent()
           : Value(numCotizaciones),
+      imageId: imageId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageId),
     );
   }
 
@@ -291,9 +553,10 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuarioData(
       id: serializer.fromJson<int>(json['id']),
-      username: serializer.fromJson<String>(json['username']),
+      username: serializer.fromJson<String?>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
       rol: serializer.fromJson<String?>(json['rol']),
+      status: serializer.fromJson<String?>(json['status']),
       correoElectronico:
           serializer.fromJson<String?>(json['correoElectronico']),
       passwordCorreo: serializer.fromJson<String?>(json['passwordCorreo']),
@@ -302,6 +565,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       nombre: serializer.fromJson<String?>(json['nombre']),
       apellido: serializer.fromJson<String?>(json['apellido']),
       numCotizaciones: serializer.fromJson<int?>(json['numCotizaciones']),
+      imageId: serializer.fromJson<int?>(json['imageId']),
     );
   }
   @override
@@ -309,9 +573,10 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'username': serializer.toJson<String>(username),
+      'username': serializer.toJson<String?>(username),
       'password': serializer.toJson<String?>(password),
       'rol': serializer.toJson<String?>(rol),
+      'status': serializer.toJson<String?>(status),
       'correoElectronico': serializer.toJson<String?>(correoElectronico),
       'passwordCorreo': serializer.toJson<String?>(passwordCorreo),
       'telefono': serializer.toJson<String?>(telefono),
@@ -319,26 +584,30 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       'nombre': serializer.toJson<String?>(nombre),
       'apellido': serializer.toJson<String?>(apellido),
       'numCotizaciones': serializer.toJson<int?>(numCotizaciones),
+      'imageId': serializer.toJson<int?>(imageId),
     };
   }
 
   UsuarioData copyWith(
           {int? id,
-          String? username,
+          Value<String?> username = const Value.absent(),
           Value<String?> password = const Value.absent(),
           Value<String?> rol = const Value.absent(),
+          Value<String?> status = const Value.absent(),
           Value<String?> correoElectronico = const Value.absent(),
           Value<String?> passwordCorreo = const Value.absent(),
           Value<String?> telefono = const Value.absent(),
           Value<String?> fechaNacimiento = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
           Value<String?> apellido = const Value.absent(),
-          Value<int?> numCotizaciones = const Value.absent()}) =>
+          Value<int?> numCotizaciones = const Value.absent(),
+          Value<int?> imageId = const Value.absent()}) =>
       UsuarioData(
         id: id ?? this.id,
-        username: username ?? this.username,
+        username: username.present ? username.value : this.username,
         password: password.present ? password.value : this.password,
         rol: rol.present ? rol.value : this.rol,
+        status: status.present ? status.value : this.status,
         correoElectronico: correoElectronico.present
             ? correoElectronico.value
             : this.correoElectronico,
@@ -353,7 +622,34 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
         numCotizaciones: numCotizaciones.present
             ? numCotizaciones.value
             : this.numCotizaciones,
+        imageId: imageId.present ? imageId.value : this.imageId,
       );
+  UsuarioData copyWithCompanion(UsuarioCompanion data) {
+    return UsuarioData(
+      id: data.id.present ? data.id.value : this.id,
+      username: data.username.present ? data.username.value : this.username,
+      password: data.password.present ? data.password.value : this.password,
+      rol: data.rol.present ? data.rol.value : this.rol,
+      status: data.status.present ? data.status.value : this.status,
+      correoElectronico: data.correoElectronico.present
+          ? data.correoElectronico.value
+          : this.correoElectronico,
+      passwordCorreo: data.passwordCorreo.present
+          ? data.passwordCorreo.value
+          : this.passwordCorreo,
+      telefono: data.telefono.present ? data.telefono.value : this.telefono,
+      fechaNacimiento: data.fechaNacimiento.present
+          ? data.fechaNacimiento.value
+          : this.fechaNacimiento,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      apellido: data.apellido.present ? data.apellido.value : this.apellido,
+      numCotizaciones: data.numCotizaciones.present
+          ? data.numCotizaciones.value
+          : this.numCotizaciones,
+      imageId: data.imageId.present ? data.imageId.value : this.imageId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('UsuarioData(')
@@ -361,13 +657,15 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
+          ..write('status: $status, ')
           ..write('correoElectronico: $correoElectronico, ')
           ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones')
+          ..write('numCotizaciones: $numCotizaciones, ')
+          ..write('imageId: $imageId')
           ..write(')'))
         .toString();
   }
@@ -378,13 +676,15 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
       username,
       password,
       rol,
+      status,
       correoElectronico,
       passwordCorreo,
       telefono,
       fechaNacimiento,
       nombre,
       apellido,
-      numCotizaciones);
+      numCotizaciones,
+      imageId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -393,20 +693,23 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           other.username == this.username &&
           other.password == this.password &&
           other.rol == this.rol &&
+          other.status == this.status &&
           other.correoElectronico == this.correoElectronico &&
           other.passwordCorreo == this.passwordCorreo &&
           other.telefono == this.telefono &&
           other.fechaNacimiento == this.fechaNacimiento &&
           other.nombre == this.nombre &&
           other.apellido == this.apellido &&
-          other.numCotizaciones == this.numCotizaciones);
+          other.numCotizaciones == this.numCotizaciones &&
+          other.imageId == this.imageId);
 }
 
 class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<int> id;
-  final Value<String> username;
+  final Value<String?> username;
   final Value<String?> password;
   final Value<String?> rol;
+  final Value<String?> status;
   final Value<String?> correoElectronico;
   final Value<String?> passwordCorreo;
   final Value<String?> telefono;
@@ -414,11 +717,13 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<String?> nombre;
   final Value<String?> apellido;
   final Value<int?> numCotizaciones;
+  final Value<int?> imageId;
   const UsuarioCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
+    this.status = const Value.absent(),
     this.correoElectronico = const Value.absent(),
     this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
@@ -426,12 +731,14 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numCotizaciones = const Value.absent(),
+    this.imageId = const Value.absent(),
   });
   UsuarioCompanion.insert({
     this.id = const Value.absent(),
-    required String username,
+    this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
+    this.status = const Value.absent(),
     this.correoElectronico = const Value.absent(),
     this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
@@ -439,12 +746,14 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numCotizaciones = const Value.absent(),
-  }) : username = Value(username);
+    this.imageId = const Value.absent(),
+  });
   static Insertable<UsuarioData> custom({
     Expression<int>? id,
     Expression<String>? username,
     Expression<String>? password,
     Expression<String>? rol,
+    Expression<String>? status,
     Expression<String>? correoElectronico,
     Expression<String>? passwordCorreo,
     Expression<String>? telefono,
@@ -452,12 +761,14 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     Expression<String>? nombre,
     Expression<String>? apellido,
     Expression<int>? numCotizaciones,
+    Expression<int>? imageId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (username != null) 'username': username,
       if (password != null) 'password': password,
       if (rol != null) 'rol': rol,
+      if (status != null) 'status': status,
       if (correoElectronico != null) 'correo_electronico': correoElectronico,
       if (passwordCorreo != null) 'password_correo': passwordCorreo,
       if (telefono != null) 'telefono': telefono,
@@ -465,26 +776,30 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       if (nombre != null) 'nombre': nombre,
       if (apellido != null) 'apellido': apellido,
       if (numCotizaciones != null) 'num_cotizaciones': numCotizaciones,
+      if (imageId != null) 'image_id': imageId,
     });
   }
 
   UsuarioCompanion copyWith(
       {Value<int>? id,
-      Value<String>? username,
+      Value<String?>? username,
       Value<String?>? password,
       Value<String?>? rol,
+      Value<String?>? status,
       Value<String?>? correoElectronico,
       Value<String?>? passwordCorreo,
       Value<String?>? telefono,
       Value<String?>? fechaNacimiento,
       Value<String?>? nombre,
       Value<String?>? apellido,
-      Value<int?>? numCotizaciones}) {
+      Value<int?>? numCotizaciones,
+      Value<int?>? imageId}) {
     return UsuarioCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
       password: password ?? this.password,
       rol: rol ?? this.rol,
+      status: status ?? this.status,
       correoElectronico: correoElectronico ?? this.correoElectronico,
       passwordCorreo: passwordCorreo ?? this.passwordCorreo,
       telefono: telefono ?? this.telefono,
@@ -492,6 +807,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       nombre: nombre ?? this.nombre,
       apellido: apellido ?? this.apellido,
       numCotizaciones: numCotizaciones ?? this.numCotizaciones,
+      imageId: imageId ?? this.imageId,
     );
   }
 
@@ -509,6 +825,9 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     }
     if (rol.present) {
       map['rol'] = Variable<String>(rol.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
     }
     if (correoElectronico.present) {
       map['correo_electronico'] = Variable<String>(correoElectronico.value);
@@ -531,6 +850,9 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     if (numCotizaciones.present) {
       map['num_cotizaciones'] = Variable<int>(numCotizaciones.value);
     }
+    if (imageId.present) {
+      map['image_id'] = Variable<int>(imageId.value);
+    }
     return map;
   }
 
@@ -541,13 +863,15 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
+          ..write('status: $status, ')
           ..write('correoElectronico: $correoElectronico, ')
           ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones')
+          ..write('numCotizaciones: $numCotizaciones, ')
+          ..write('imageId: $imageId')
           ..write(')'))
         .toString();
   }
@@ -597,29 +921,6 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
       'fecha', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _usuarioIDMeta =
-      const VerificationMeta('usuarioID');
-  @override
-  late final GeneratedColumn<int> usuarioID = GeneratedColumn<int>(
-      'usuario_i_d', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _totalMeta = const VerificationMeta('total');
-  @override
-  late final GeneratedColumn<double> total = GeneratedColumn<double>(
-      'total', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _totalRealMeta =
-      const VerificationMeta('totalReal');
-  @override
-  late final GeneratedColumn<double> totalReal = GeneratedColumn<double>(
-      'total_real', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _descuentoMeta =
-      const VerificationMeta('descuento');
-  @override
-  late final GeneratedColumn<double> descuento = GeneratedColumn<double>(
-      'descuento', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _esGrupoMeta =
       const VerificationMeta('esGrupo');
   @override
@@ -644,6 +945,21 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<String> habitaciones = GeneratedColumn<String>(
       'habitaciones', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _usuarioIDMeta =
+      const VerificationMeta('usuarioID');
+  @override
+  late final GeneratedColumn<int> usuarioID = GeneratedColumn<int>(
+      'usuario_i_d', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -652,13 +968,11 @@ class $CotizacionTable extends Cotizacion
         numeroTelefonico,
         correoElectrico,
         fecha,
-        usuarioID,
-        total,
-        totalReal,
-        descuento,
         esGrupo,
         esConcretado,
-        habitaciones
+        habitaciones,
+        usuarioID,
+        username
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -703,24 +1017,6 @@ class $CotizacionTable extends Cotizacion
     } else if (isInserting) {
       context.missing(_fechaMeta);
     }
-    if (data.containsKey('usuario_i_d')) {
-      context.handle(
-          _usuarioIDMeta,
-          usuarioID.isAcceptableOrUnknown(
-              data['usuario_i_d']!, _usuarioIDMeta));
-    }
-    if (data.containsKey('total')) {
-      context.handle(
-          _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
-    }
-    if (data.containsKey('total_real')) {
-      context.handle(_totalRealMeta,
-          totalReal.isAcceptableOrUnknown(data['total_real']!, _totalRealMeta));
-    }
-    if (data.containsKey('descuento')) {
-      context.handle(_descuentoMeta,
-          descuento.isAcceptableOrUnknown(data['descuento']!, _descuentoMeta));
-    }
     if (data.containsKey('es_grupo')) {
       context.handle(_esGrupoMeta,
           esGrupo.isAcceptableOrUnknown(data['es_grupo']!, _esGrupoMeta));
@@ -736,6 +1032,16 @@ class $CotizacionTable extends Cotizacion
           _habitacionesMeta,
           habitaciones.isAcceptableOrUnknown(
               data['habitaciones']!, _habitacionesMeta));
+    }
+    if (data.containsKey('usuario_i_d')) {
+      context.handle(
+          _usuarioIDMeta,
+          usuarioID.isAcceptableOrUnknown(
+              data['usuario_i_d']!, _usuarioIDMeta));
+    }
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
     }
     return context;
   }
@@ -758,20 +1064,16 @@ class $CotizacionTable extends Cotizacion
           DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
-      usuarioID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
-      total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total']),
-      totalReal: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total_real']),
-      descuento: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}descuento']),
       esGrupo: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
       esConcretado: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_concretado']),
       habitaciones: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}habitaciones']),
+      usuarioID: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
     );
   }
 
@@ -788,13 +1090,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final String? numeroTelefonico;
   final String? correoElectrico;
   final DateTime fecha;
-  final int? usuarioID;
-  final double? total;
-  final double? totalReal;
-  final double? descuento;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
+  final int? usuarioID;
+  final String? username;
   const CotizacionData(
       {required this.id,
       this.folioPrincipal,
@@ -802,13 +1102,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       this.numeroTelefonico,
       this.correoElectrico,
       required this.fecha,
-      this.usuarioID,
-      this.total,
-      this.totalReal,
-      this.descuento,
       this.esGrupo,
       this.esConcretado,
-      this.habitaciones});
+      this.habitaciones,
+      this.usuarioID,
+      this.username});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -826,18 +1124,6 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       map['correo_electrico'] = Variable<String>(correoElectrico);
     }
     map['fecha'] = Variable<DateTime>(fecha);
-    if (!nullToAbsent || usuarioID != null) {
-      map['usuario_i_d'] = Variable<int>(usuarioID);
-    }
-    if (!nullToAbsent || total != null) {
-      map['total'] = Variable<double>(total);
-    }
-    if (!nullToAbsent || totalReal != null) {
-      map['total_real'] = Variable<double>(totalReal);
-    }
-    if (!nullToAbsent || descuento != null) {
-      map['descuento'] = Variable<double>(descuento);
-    }
     if (!nullToAbsent || esGrupo != null) {
       map['es_grupo'] = Variable<bool>(esGrupo);
     }
@@ -846,6 +1132,12 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     }
     if (!nullToAbsent || habitaciones != null) {
       map['habitaciones'] = Variable<String>(habitaciones);
+    }
+    if (!nullToAbsent || usuarioID != null) {
+      map['usuario_i_d'] = Variable<int>(usuarioID);
+    }
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
     }
     return map;
   }
@@ -866,17 +1158,6 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ? const Value.absent()
           : Value(correoElectrico),
       fecha: Value(fecha),
-      usuarioID: usuarioID == null && nullToAbsent
-          ? const Value.absent()
-          : Value(usuarioID),
-      total:
-          total == null && nullToAbsent ? const Value.absent() : Value(total),
-      totalReal: totalReal == null && nullToAbsent
-          ? const Value.absent()
-          : Value(totalReal),
-      descuento: descuento == null && nullToAbsent
-          ? const Value.absent()
-          : Value(descuento),
       esGrupo: esGrupo == null && nullToAbsent
           ? const Value.absent()
           : Value(esGrupo),
@@ -886,6 +1167,12 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       habitaciones: habitaciones == null && nullToAbsent
           ? const Value.absent()
           : Value(habitaciones),
+      usuarioID: usuarioID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioID),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
     );
   }
 
@@ -899,13 +1186,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
       correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
-      usuarioID: serializer.fromJson<int?>(json['usuarioID']),
-      total: serializer.fromJson<double?>(json['total']),
-      totalReal: serializer.fromJson<double?>(json['totalReal']),
-      descuento: serializer.fromJson<double?>(json['descuento']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
+      usuarioID: serializer.fromJson<int?>(json['usuarioID']),
+      username: serializer.fromJson<String?>(json['username']),
     );
   }
   @override
@@ -918,13 +1203,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
       'correoElectrico': serializer.toJson<String?>(correoElectrico),
       'fecha': serializer.toJson<DateTime>(fecha),
-      'usuarioID': serializer.toJson<int?>(usuarioID),
-      'total': serializer.toJson<double?>(total),
-      'totalReal': serializer.toJson<double?>(totalReal),
-      'descuento': serializer.toJson<double?>(descuento),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
+      'usuarioID': serializer.toJson<int?>(usuarioID),
+      'username': serializer.toJson<String?>(username),
     };
   }
 
@@ -935,13 +1218,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<String?> numeroTelefonico = const Value.absent(),
           Value<String?> correoElectrico = const Value.absent(),
           DateTime? fecha,
-          Value<int?> usuarioID = const Value.absent(),
-          Value<double?> total = const Value.absent(),
-          Value<double?> totalReal = const Value.absent(),
-          Value<double?> descuento = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
-          Value<String?> habitaciones = const Value.absent()}) =>
+          Value<String?> habitaciones = const Value.absent(),
+          Value<int?> usuarioID = const Value.absent(),
+          Value<String?> username = const Value.absent()}) =>
       CotizacionData(
         id: id ?? this.id,
         folioPrincipal:
@@ -955,16 +1236,42 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
             ? correoElectrico.value
             : this.correoElectrico,
         fecha: fecha ?? this.fecha,
-        usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
-        total: total.present ? total.value : this.total,
-        totalReal: totalReal.present ? totalReal.value : this.totalReal,
-        descuento: descuento.present ? descuento.value : this.descuento,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
             esConcretado.present ? esConcretado.value : this.esConcretado,
         habitaciones:
             habitaciones.present ? habitaciones.value : this.habitaciones,
+        usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
+        username: username.present ? username.value : this.username,
       );
+  CotizacionData copyWithCompanion(CotizacionCompanion data) {
+    return CotizacionData(
+      id: data.id.present ? data.id.value : this.id,
+      folioPrincipal: data.folioPrincipal.present
+          ? data.folioPrincipal.value
+          : this.folioPrincipal,
+      nombreHuesped: data.nombreHuesped.present
+          ? data.nombreHuesped.value
+          : this.nombreHuesped,
+      numeroTelefonico: data.numeroTelefonico.present
+          ? data.numeroTelefonico.value
+          : this.numeroTelefonico,
+      correoElectrico: data.correoElectrico.present
+          ? data.correoElectrico.value
+          : this.correoElectrico,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      esGrupo: data.esGrupo.present ? data.esGrupo.value : this.esGrupo,
+      esConcretado: data.esConcretado.present
+          ? data.esConcretado.value
+          : this.esConcretado,
+      habitaciones: data.habitaciones.present
+          ? data.habitaciones.value
+          : this.habitaciones,
+      usuarioID: data.usuarioID.present ? data.usuarioID.value : this.usuarioID,
+      username: data.username.present ? data.username.value : this.username,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('CotizacionData(')
@@ -974,13 +1281,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
-          ..write('usuarioID: $usuarioID, ')
-          ..write('total: $total, ')
-          ..write('totalReal: $totalReal, ')
-          ..write('descuento: $descuento, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
-          ..write('habitaciones: $habitaciones')
+          ..write('habitaciones: $habitaciones, ')
+          ..write('usuarioID: $usuarioID, ')
+          ..write('username: $username')
           ..write(')'))
         .toString();
   }
@@ -993,13 +1298,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico,
       correoElectrico,
       fecha,
-      usuarioID,
-      total,
-      totalReal,
-      descuento,
       esGrupo,
       esConcretado,
-      habitaciones);
+      habitaciones,
+      usuarioID,
+      username);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1010,13 +1313,11 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           other.numeroTelefonico == this.numeroTelefonico &&
           other.correoElectrico == this.correoElectrico &&
           other.fecha == this.fecha &&
-          other.usuarioID == this.usuarioID &&
-          other.total == this.total &&
-          other.totalReal == this.totalReal &&
-          other.descuento == this.descuento &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
-          other.habitaciones == this.habitaciones);
+          other.habitaciones == this.habitaciones &&
+          other.usuarioID == this.usuarioID &&
+          other.username == this.username);
 }
 
 class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
@@ -1026,13 +1327,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<String?> numeroTelefonico;
   final Value<String?> correoElectrico;
   final Value<DateTime> fecha;
-  final Value<int?> usuarioID;
-  final Value<double?> total;
-  final Value<double?> totalReal;
-  final Value<double?> descuento;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
+  final Value<int?> usuarioID;
+  final Value<String?> username;
   const CotizacionCompanion({
     this.id = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
@@ -1040,13 +1339,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
-    this.usuarioID = const Value.absent(),
-    this.total = const Value.absent(),
-    this.totalReal = const Value.absent(),
-    this.descuento = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
+    this.usuarioID = const Value.absent(),
+    this.username = const Value.absent(),
   });
   CotizacionCompanion.insert({
     this.id = const Value.absent(),
@@ -1055,13 +1352,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     required DateTime fecha,
-    this.usuarioID = const Value.absent(),
-    this.total = const Value.absent(),
-    this.totalReal = const Value.absent(),
-    this.descuento = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
+    this.usuarioID = const Value.absent(),
+    this.username = const Value.absent(),
   }) : fecha = Value(fecha);
   static Insertable<CotizacionData> custom({
     Expression<int>? id,
@@ -1070,13 +1365,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     Expression<String>? numeroTelefonico,
     Expression<String>? correoElectrico,
     Expression<DateTime>? fecha,
-    Expression<int>? usuarioID,
-    Expression<double>? total,
-    Expression<double>? totalReal,
-    Expression<double>? descuento,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
     Expression<String>? habitaciones,
+    Expression<int>? usuarioID,
+    Expression<String>? username,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1085,13 +1378,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
       if (correoElectrico != null) 'correo_electrico': correoElectrico,
       if (fecha != null) 'fecha': fecha,
-      if (usuarioID != null) 'usuario_i_d': usuarioID,
-      if (total != null) 'total': total,
-      if (totalReal != null) 'total_real': totalReal,
-      if (descuento != null) 'descuento': descuento,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
       if (habitaciones != null) 'habitaciones': habitaciones,
+      if (usuarioID != null) 'usuario_i_d': usuarioID,
+      if (username != null) 'username': username,
     });
   }
 
@@ -1102,13 +1393,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<String?>? numeroTelefonico,
       Value<String?>? correoElectrico,
       Value<DateTime>? fecha,
-      Value<int?>? usuarioID,
-      Value<double?>? total,
-      Value<double?>? totalReal,
-      Value<double?>? descuento,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
-      Value<String?>? habitaciones}) {
+      Value<String?>? habitaciones,
+      Value<int?>? usuarioID,
+      Value<String?>? username}) {
     return CotizacionCompanion(
       id: id ?? this.id,
       folioPrincipal: folioPrincipal ?? this.folioPrincipal,
@@ -1116,13 +1405,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
       correoElectrico: correoElectrico ?? this.correoElectrico,
       fecha: fecha ?? this.fecha,
-      usuarioID: usuarioID ?? this.usuarioID,
-      total: total ?? this.total,
-      totalReal: totalReal ?? this.totalReal,
-      descuento: descuento ?? this.descuento,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
       habitaciones: habitaciones ?? this.habitaciones,
+      usuarioID: usuarioID ?? this.usuarioID,
+      username: username ?? this.username,
     );
   }
 
@@ -1147,18 +1434,6 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
     }
-    if (usuarioID.present) {
-      map['usuario_i_d'] = Variable<int>(usuarioID.value);
-    }
-    if (total.present) {
-      map['total'] = Variable<double>(total.value);
-    }
-    if (totalReal.present) {
-      map['total_real'] = Variable<double>(totalReal.value);
-    }
-    if (descuento.present) {
-      map['descuento'] = Variable<double>(descuento.value);
-    }
     if (esGrupo.present) {
       map['es_grupo'] = Variable<bool>(esGrupo.value);
     }
@@ -1167,6 +1442,12 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     }
     if (habitaciones.present) {
       map['habitaciones'] = Variable<String>(habitaciones.value);
+    }
+    if (usuarioID.present) {
+      map['usuario_i_d'] = Variable<int>(usuarioID.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
     }
     return map;
   }
@@ -1180,13 +1461,11 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
-          ..write('usuarioID: $usuarioID, ')
-          ..write('total: $total, ')
-          ..write('totalReal: $totalReal, ')
-          ..write('descuento: $descuento, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
-          ..write('habitaciones: $habitaciones')
+          ..write('habitaciones: $habitaciones, ')
+          ..write('usuarioID: $usuarioID, ')
+          ..write('username: $username')
           ..write(')'))
         .toString();
   }
@@ -1218,12 +1497,6 @@ class $HabitacionTable extends Habitacion
   @override
   late final GeneratedColumn<String> folioCotizacion = GeneratedColumn<String>(
       'folio_cotizacion', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _categoriaMeta =
-      const VerificationMeta('categoria');
-  @override
-  late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
-      'categoria', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaCheckInMeta =
       const VerificationMeta('fechaCheckIn');
@@ -1266,23 +1539,6 @@ class $HabitacionTable extends Habitacion
   late final GeneratedColumn<int> paxAdic = GeneratedColumn<int>(
       'pax_adic', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _totalMeta = const VerificationMeta('total');
-  @override
-  late final GeneratedColumn<double> total = GeneratedColumn<double>(
-      'total', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _totalRealMeta =
-      const VerificationMeta('totalReal');
-  @override
-  late final GeneratedColumn<double> totalReal = GeneratedColumn<double>(
-      'total_real', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _descuentoMeta =
-      const VerificationMeta('descuento');
-  @override
-  late final GeneratedColumn<double> descuento = GeneratedColumn<double>(
-      'descuento', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _countMeta = const VerificationMeta('count');
   @override
   late final GeneratedColumn<int> count = GeneratedColumn<int>(
@@ -1307,7 +1563,6 @@ class $HabitacionTable extends Habitacion
         id,
         folioHabitacion,
         folioCotizacion,
-        categoria,
         fechaCheckIn,
         fechaCheckOut,
         fecha,
@@ -1315,9 +1570,6 @@ class $HabitacionTable extends Habitacion
         menores0a6,
         menores7a12,
         paxAdic,
-        total,
-        totalReal,
-        descuento,
         count,
         isFree,
         tarifaXDia
@@ -1346,10 +1598,6 @@ class $HabitacionTable extends Habitacion
           _folioCotizacionMeta,
           folioCotizacion.isAcceptableOrUnknown(
               data['folio_cotizacion']!, _folioCotizacionMeta));
-    }
-    if (data.containsKey('categoria')) {
-      context.handle(_categoriaMeta,
-          categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
     }
     if (data.containsKey('fecha_check_in')) {
       context.handle(
@@ -1389,18 +1637,6 @@ class $HabitacionTable extends Habitacion
       context.handle(_paxAdicMeta,
           paxAdic.isAcceptableOrUnknown(data['pax_adic']!, _paxAdicMeta));
     }
-    if (data.containsKey('total')) {
-      context.handle(
-          _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
-    }
-    if (data.containsKey('total_real')) {
-      context.handle(_totalRealMeta,
-          totalReal.isAcceptableOrUnknown(data['total_real']!, _totalRealMeta));
-    }
-    if (data.containsKey('descuento')) {
-      context.handle(_descuentoMeta,
-          descuento.isAcceptableOrUnknown(data['descuento']!, _descuentoMeta));
-    }
     if (data.containsKey('count')) {
       context.handle(
           _countMeta, count.isAcceptableOrUnknown(data['count']!, _countMeta));
@@ -1430,8 +1666,6 @@ class $HabitacionTable extends Habitacion
           DriftSqlType.string, data['${effectivePrefix}folio_habitacion']),
       folioCotizacion: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}folio_cotizacion']),
-      categoria: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}categoria']),
       fechaCheckIn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}fecha_check_in']),
       fechaCheckOut: attachedDatabase.typeMapping
@@ -1446,12 +1680,6 @@ class $HabitacionTable extends Habitacion
           .read(DriftSqlType.int, data['${effectivePrefix}menores7a12']),
       paxAdic: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}pax_adic']),
-      total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total']),
-      totalReal: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total_real']),
-      descuento: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}descuento']),
       count: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}count']),
       isFree: attachedDatabase.typeMapping
@@ -1471,7 +1699,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int id;
   final String? folioHabitacion;
   final String? folioCotizacion;
-  final String? categoria;
   final String? fechaCheckIn;
   final String? fechaCheckOut;
   final DateTime fecha;
@@ -1479,9 +1706,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int? menores0a6;
   final int? menores7a12;
   final int? paxAdic;
-  final double? total;
-  final double? totalReal;
-  final double? descuento;
   final int? count;
   final bool? isFree;
   final String? tarifaXDia;
@@ -1489,7 +1713,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       {required this.id,
       this.folioHabitacion,
       this.folioCotizacion,
-      this.categoria,
       this.fechaCheckIn,
       this.fechaCheckOut,
       required this.fecha,
@@ -1497,9 +1720,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       this.menores0a6,
       this.menores7a12,
       this.paxAdic,
-      this.total,
-      this.totalReal,
-      this.descuento,
       this.count,
       this.isFree,
       this.tarifaXDia});
@@ -1512,9 +1732,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     }
     if (!nullToAbsent || folioCotizacion != null) {
       map['folio_cotizacion'] = Variable<String>(folioCotizacion);
-    }
-    if (!nullToAbsent || categoria != null) {
-      map['categoria'] = Variable<String>(categoria);
     }
     if (!nullToAbsent || fechaCheckIn != null) {
       map['fecha_check_in'] = Variable<String>(fechaCheckIn);
@@ -1534,15 +1751,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     }
     if (!nullToAbsent || paxAdic != null) {
       map['pax_adic'] = Variable<int>(paxAdic);
-    }
-    if (!nullToAbsent || total != null) {
-      map['total'] = Variable<double>(total);
-    }
-    if (!nullToAbsent || totalReal != null) {
-      map['total_real'] = Variable<double>(totalReal);
-    }
-    if (!nullToAbsent || descuento != null) {
-      map['descuento'] = Variable<double>(descuento);
     }
     if (!nullToAbsent || count != null) {
       map['count'] = Variable<int>(count);
@@ -1565,9 +1773,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       folioCotizacion: folioCotizacion == null && nullToAbsent
           ? const Value.absent()
           : Value(folioCotizacion),
-      categoria: categoria == null && nullToAbsent
-          ? const Value.absent()
-          : Value(categoria),
       fechaCheckIn: fechaCheckIn == null && nullToAbsent
           ? const Value.absent()
           : Value(fechaCheckIn),
@@ -1587,14 +1792,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       paxAdic: paxAdic == null && nullToAbsent
           ? const Value.absent()
           : Value(paxAdic),
-      total:
-          total == null && nullToAbsent ? const Value.absent() : Value(total),
-      totalReal: totalReal == null && nullToAbsent
-          ? const Value.absent()
-          : Value(totalReal),
-      descuento: descuento == null && nullToAbsent
-          ? const Value.absent()
-          : Value(descuento),
       count:
           count == null && nullToAbsent ? const Value.absent() : Value(count),
       isFree:
@@ -1612,7 +1809,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       id: serializer.fromJson<int>(json['id']),
       folioHabitacion: serializer.fromJson<String?>(json['folioHabitacion']),
       folioCotizacion: serializer.fromJson<String?>(json['folioCotizacion']),
-      categoria: serializer.fromJson<String?>(json['categoria']),
       fechaCheckIn: serializer.fromJson<String?>(json['fechaCheckIn']),
       fechaCheckOut: serializer.fromJson<String?>(json['fechaCheckOut']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
@@ -1620,9 +1816,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       menores0a6: serializer.fromJson<int?>(json['menores0a6']),
       menores7a12: serializer.fromJson<int?>(json['menores7a12']),
       paxAdic: serializer.fromJson<int?>(json['paxAdic']),
-      total: serializer.fromJson<double?>(json['total']),
-      totalReal: serializer.fromJson<double?>(json['totalReal']),
-      descuento: serializer.fromJson<double?>(json['descuento']),
       count: serializer.fromJson<int?>(json['count']),
       isFree: serializer.fromJson<bool?>(json['isFree']),
       tarifaXDia: serializer.fromJson<String?>(json['tarifaXDia']),
@@ -1635,7 +1828,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       'id': serializer.toJson<int>(id),
       'folioHabitacion': serializer.toJson<String?>(folioHabitacion),
       'folioCotizacion': serializer.toJson<String?>(folioCotizacion),
-      'categoria': serializer.toJson<String?>(categoria),
       'fechaCheckIn': serializer.toJson<String?>(fechaCheckIn),
       'fechaCheckOut': serializer.toJson<String?>(fechaCheckOut),
       'fecha': serializer.toJson<DateTime>(fecha),
@@ -1643,9 +1835,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       'menores0a6': serializer.toJson<int?>(menores0a6),
       'menores7a12': serializer.toJson<int?>(menores7a12),
       'paxAdic': serializer.toJson<int?>(paxAdic),
-      'total': serializer.toJson<double?>(total),
-      'totalReal': serializer.toJson<double?>(totalReal),
-      'descuento': serializer.toJson<double?>(descuento),
       'count': serializer.toJson<int?>(count),
       'isFree': serializer.toJson<bool?>(isFree),
       'tarifaXDia': serializer.toJson<String?>(tarifaXDia),
@@ -1656,7 +1845,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           {int? id,
           Value<String?> folioHabitacion = const Value.absent(),
           Value<String?> folioCotizacion = const Value.absent(),
-          Value<String?> categoria = const Value.absent(),
           Value<String?> fechaCheckIn = const Value.absent(),
           Value<String?> fechaCheckOut = const Value.absent(),
           DateTime? fecha,
@@ -1664,9 +1852,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           Value<int?> menores0a6 = const Value.absent(),
           Value<int?> menores7a12 = const Value.absent(),
           Value<int?> paxAdic = const Value.absent(),
-          Value<double?> total = const Value.absent(),
-          Value<double?> totalReal = const Value.absent(),
-          Value<double?> descuento = const Value.absent(),
           Value<int?> count = const Value.absent(),
           Value<bool?> isFree = const Value.absent(),
           Value<String?> tarifaXDia = const Value.absent()}) =>
@@ -1678,7 +1863,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         folioCotizacion: folioCotizacion.present
             ? folioCotizacion.value
             : this.folioCotizacion,
-        categoria: categoria.present ? categoria.value : this.categoria,
         fechaCheckIn:
             fechaCheckIn.present ? fechaCheckIn.value : this.fechaCheckIn,
         fechaCheckOut:
@@ -1688,20 +1872,45 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         menores0a6: menores0a6.present ? menores0a6.value : this.menores0a6,
         menores7a12: menores7a12.present ? menores7a12.value : this.menores7a12,
         paxAdic: paxAdic.present ? paxAdic.value : this.paxAdic,
-        total: total.present ? total.value : this.total,
-        totalReal: totalReal.present ? totalReal.value : this.totalReal,
-        descuento: descuento.present ? descuento.value : this.descuento,
         count: count.present ? count.value : this.count,
         isFree: isFree.present ? isFree.value : this.isFree,
         tarifaXDia: tarifaXDia.present ? tarifaXDia.value : this.tarifaXDia,
       );
+  HabitacionData copyWithCompanion(HabitacionCompanion data) {
+    return HabitacionData(
+      id: data.id.present ? data.id.value : this.id,
+      folioHabitacion: data.folioHabitacion.present
+          ? data.folioHabitacion.value
+          : this.folioHabitacion,
+      folioCotizacion: data.folioCotizacion.present
+          ? data.folioCotizacion.value
+          : this.folioCotizacion,
+      fechaCheckIn: data.fechaCheckIn.present
+          ? data.fechaCheckIn.value
+          : this.fechaCheckIn,
+      fechaCheckOut: data.fechaCheckOut.present
+          ? data.fechaCheckOut.value
+          : this.fechaCheckOut,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      adultos: data.adultos.present ? data.adultos.value : this.adultos,
+      menores0a6:
+          data.menores0a6.present ? data.menores0a6.value : this.menores0a6,
+      menores7a12:
+          data.menores7a12.present ? data.menores7a12.value : this.menores7a12,
+      paxAdic: data.paxAdic.present ? data.paxAdic.value : this.paxAdic,
+      count: data.count.present ? data.count.value : this.count,
+      isFree: data.isFree.present ? data.isFree.value : this.isFree,
+      tarifaXDia:
+          data.tarifaXDia.present ? data.tarifaXDia.value : this.tarifaXDia,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('HabitacionData(')
           ..write('id: $id, ')
           ..write('folioHabitacion: $folioHabitacion, ')
           ..write('folioCotizacion: $folioCotizacion, ')
-          ..write('categoria: $categoria, ')
           ..write('fechaCheckIn: $fechaCheckIn, ')
           ..write('fechaCheckOut: $fechaCheckOut, ')
           ..write('fecha: $fecha, ')
@@ -1709,9 +1918,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           ..write('menores0a6: $menores0a6, ')
           ..write('menores7a12: $menores7a12, ')
           ..write('paxAdic: $paxAdic, ')
-          ..write('total: $total, ')
-          ..write('totalReal: $totalReal, ')
-          ..write('descuento: $descuento, ')
           ..write('count: $count, ')
           ..write('isFree: $isFree, ')
           ..write('tarifaXDia: $tarifaXDia')
@@ -1724,7 +1930,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       id,
       folioHabitacion,
       folioCotizacion,
-      categoria,
       fechaCheckIn,
       fechaCheckOut,
       fecha,
@@ -1732,9 +1937,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       menores0a6,
       menores7a12,
       paxAdic,
-      total,
-      totalReal,
-      descuento,
       count,
       isFree,
       tarifaXDia);
@@ -1745,7 +1947,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.id == this.id &&
           other.folioHabitacion == this.folioHabitacion &&
           other.folioCotizacion == this.folioCotizacion &&
-          other.categoria == this.categoria &&
           other.fechaCheckIn == this.fechaCheckIn &&
           other.fechaCheckOut == this.fechaCheckOut &&
           other.fecha == this.fecha &&
@@ -1753,9 +1954,6 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.menores0a6 == this.menores0a6 &&
           other.menores7a12 == this.menores7a12 &&
           other.paxAdic == this.paxAdic &&
-          other.total == this.total &&
-          other.totalReal == this.totalReal &&
-          other.descuento == this.descuento &&
           other.count == this.count &&
           other.isFree == this.isFree &&
           other.tarifaXDia == this.tarifaXDia);
@@ -1765,7 +1963,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int> id;
   final Value<String?> folioHabitacion;
   final Value<String?> folioCotizacion;
-  final Value<String?> categoria;
   final Value<String?> fechaCheckIn;
   final Value<String?> fechaCheckOut;
   final Value<DateTime> fecha;
@@ -1773,9 +1970,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int?> menores0a6;
   final Value<int?> menores7a12;
   final Value<int?> paxAdic;
-  final Value<double?> total;
-  final Value<double?> totalReal;
-  final Value<double?> descuento;
   final Value<int?> count;
   final Value<bool?> isFree;
   final Value<String?> tarifaXDia;
@@ -1783,7 +1977,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.id = const Value.absent(),
     this.folioHabitacion = const Value.absent(),
     this.folioCotizacion = const Value.absent(),
-    this.categoria = const Value.absent(),
     this.fechaCheckIn = const Value.absent(),
     this.fechaCheckOut = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -1791,9 +1984,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.menores0a6 = const Value.absent(),
     this.menores7a12 = const Value.absent(),
     this.paxAdic = const Value.absent(),
-    this.total = const Value.absent(),
-    this.totalReal = const Value.absent(),
-    this.descuento = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
@@ -1802,7 +1992,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.id = const Value.absent(),
     this.folioHabitacion = const Value.absent(),
     this.folioCotizacion = const Value.absent(),
-    this.categoria = const Value.absent(),
     this.fechaCheckIn = const Value.absent(),
     this.fechaCheckOut = const Value.absent(),
     required DateTime fecha,
@@ -1810,9 +1999,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.menores0a6 = const Value.absent(),
     this.menores7a12 = const Value.absent(),
     this.paxAdic = const Value.absent(),
-    this.total = const Value.absent(),
-    this.totalReal = const Value.absent(),
-    this.descuento = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
@@ -1821,7 +2007,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     Expression<int>? id,
     Expression<String>? folioHabitacion,
     Expression<String>? folioCotizacion,
-    Expression<String>? categoria,
     Expression<String>? fechaCheckIn,
     Expression<String>? fechaCheckOut,
     Expression<DateTime>? fecha,
@@ -1829,9 +2014,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     Expression<int>? menores0a6,
     Expression<int>? menores7a12,
     Expression<int>? paxAdic,
-    Expression<double>? total,
-    Expression<double>? totalReal,
-    Expression<double>? descuento,
     Expression<int>? count,
     Expression<bool>? isFree,
     Expression<String>? tarifaXDia,
@@ -1840,7 +2022,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       if (id != null) 'id': id,
       if (folioHabitacion != null) 'folio_habitacion': folioHabitacion,
       if (folioCotizacion != null) 'folio_cotizacion': folioCotizacion,
-      if (categoria != null) 'categoria': categoria,
       if (fechaCheckIn != null) 'fecha_check_in': fechaCheckIn,
       if (fechaCheckOut != null) 'fecha_check_out': fechaCheckOut,
       if (fecha != null) 'fecha': fecha,
@@ -1848,9 +2029,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       if (menores0a6 != null) 'menores0a6': menores0a6,
       if (menores7a12 != null) 'menores7a12': menores7a12,
       if (paxAdic != null) 'pax_adic': paxAdic,
-      if (total != null) 'total': total,
-      if (totalReal != null) 'total_real': totalReal,
-      if (descuento != null) 'descuento': descuento,
       if (count != null) 'count': count,
       if (isFree != null) 'is_free': isFree,
       if (tarifaXDia != null) 'tarifa_x_dia': tarifaXDia,
@@ -1861,7 +2039,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       {Value<int>? id,
       Value<String?>? folioHabitacion,
       Value<String?>? folioCotizacion,
-      Value<String?>? categoria,
       Value<String?>? fechaCheckIn,
       Value<String?>? fechaCheckOut,
       Value<DateTime>? fecha,
@@ -1869,9 +2046,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       Value<int?>? menores0a6,
       Value<int?>? menores7a12,
       Value<int?>? paxAdic,
-      Value<double?>? total,
-      Value<double?>? totalReal,
-      Value<double?>? descuento,
       Value<int?>? count,
       Value<bool?>? isFree,
       Value<String?>? tarifaXDia}) {
@@ -1879,7 +2053,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       id: id ?? this.id,
       folioHabitacion: folioHabitacion ?? this.folioHabitacion,
       folioCotizacion: folioCotizacion ?? this.folioCotizacion,
-      categoria: categoria ?? this.categoria,
       fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
       fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
       fecha: fecha ?? this.fecha,
@@ -1887,9 +2060,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       menores0a6: menores0a6 ?? this.menores0a6,
       menores7a12: menores7a12 ?? this.menores7a12,
       paxAdic: paxAdic ?? this.paxAdic,
-      total: total ?? this.total,
-      totalReal: totalReal ?? this.totalReal,
-      descuento: descuento ?? this.descuento,
       count: count ?? this.count,
       isFree: isFree ?? this.isFree,
       tarifaXDia: tarifaXDia ?? this.tarifaXDia,
@@ -1907,9 +2077,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     }
     if (folioCotizacion.present) {
       map['folio_cotizacion'] = Variable<String>(folioCotizacion.value);
-    }
-    if (categoria.present) {
-      map['categoria'] = Variable<String>(categoria.value);
     }
     if (fechaCheckIn.present) {
       map['fecha_check_in'] = Variable<String>(fechaCheckIn.value);
@@ -1932,15 +2099,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     if (paxAdic.present) {
       map['pax_adic'] = Variable<int>(paxAdic.value);
     }
-    if (total.present) {
-      map['total'] = Variable<double>(total.value);
-    }
-    if (totalReal.present) {
-      map['total_real'] = Variable<double>(totalReal.value);
-    }
-    if (descuento.present) {
-      map['descuento'] = Variable<double>(descuento.value);
-    }
     if (count.present) {
       map['count'] = Variable<int>(count.value);
     }
@@ -1959,7 +2117,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
           ..write('id: $id, ')
           ..write('folioHabitacion: $folioHabitacion, ')
           ..write('folioCotizacion: $folioCotizacion, ')
-          ..write('categoria: $categoria, ')
           ..write('fechaCheckIn: $fechaCheckIn, ')
           ..write('fechaCheckOut: $fechaCheckOut, ')
           ..write('fecha: $fecha, ')
@@ -1967,9 +2124,6 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
           ..write('menores0a6: $menores0a6, ')
           ..write('menores7a12: $menores7a12, ')
           ..write('paxAdic: $paxAdic, ')
-          ..write('total: $total, ')
-          ..write('totalReal: $totalReal, ')
-          ..write('descuento: $descuento, ')
           ..write('count: $count, ')
           ..write('isFree: $isFree, ')
           ..write('tarifaXDia: $tarifaXDia')
@@ -2409,6 +2563,40 @@ class TarifaXDiaTableData extends DataClass
             codeTemporada.present ? codeTemporada.value : this.codeTemporada,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
       );
+  TarifaXDiaTableData copyWithCompanion(TarifaXDiaTableCompanion data) {
+    return TarifaXDiaTableData(
+      id: data.id.present ? data.id.value : this.id,
+      subfolio: data.subfolio.present ? data.subfolio.value : this.subfolio,
+      dia: data.dia.present ? data.dia.value : this.dia,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      tarifaRealPaxAdic: data.tarifaRealPaxAdic.present
+          ? data.tarifaRealPaxAdic.value
+          : this.tarifaRealPaxAdic,
+      tarifaPreventaPaxAdic: data.tarifaPreventaPaxAdic.present
+          ? data.tarifaPreventaPaxAdic.value
+          : this.tarifaPreventaPaxAdic,
+      tarifaRealAdulto: data.tarifaRealAdulto.present
+          ? data.tarifaRealAdulto.value
+          : this.tarifaRealAdulto,
+      tarifaPreventaAdulto: data.tarifaPreventaAdulto.present
+          ? data.tarifaPreventaAdulto.value
+          : this.tarifaPreventaAdulto,
+      tarifaRealMenores7a12: data.tarifaRealMenores7a12.present
+          ? data.tarifaRealMenores7a12.value
+          : this.tarifaRealMenores7a12,
+      tarifaPreventaMenores7a12: data.tarifaPreventaMenores7a12.present
+          ? data.tarifaPreventaMenores7a12.value
+          : this.tarifaPreventaMenores7a12,
+      codePeriodo:
+          data.codePeriodo.present ? data.codePeriodo.value : this.codePeriodo,
+      codeTemporada: data.codeTemporada.present
+          ? data.codeTemporada.value
+          : this.codeTemporada,
+      codeTarifa:
+          data.codeTarifa.present ? data.codeTarifa.value : this.codeTarifa,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaXDiaTableData(')
@@ -3033,6 +3221,27 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
         enSabado: enSabado.present ? enSabado.value : this.enSabado,
         enDomingo: enDomingo.present ? enDomingo.value : this.enDomingo,
       );
+  PeriodoData copyWithCompanion(PeriodoCompanion data) {
+    return PeriodoData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      fechaInicial: data.fechaInicial.present
+          ? data.fechaInicial.value
+          : this.fechaInicial,
+      fechaFinal:
+          data.fechaFinal.present ? data.fechaFinal.value : this.fechaFinal,
+      enLunes: data.enLunes.present ? data.enLunes.value : this.enLunes,
+      enMartes: data.enMartes.present ? data.enMartes.value : this.enMartes,
+      enMiercoles:
+          data.enMiercoles.present ? data.enMiercoles.value : this.enMiercoles,
+      enJueves: data.enJueves.present ? data.enJueves.value : this.enJueves,
+      enViernes: data.enViernes.present ? data.enViernes.value : this.enViernes,
+      enSabado: data.enSabado.present ? data.enSabado.value : this.enSabado,
+      enDomingo: data.enDomingo.present ? data.enDomingo.value : this.enDomingo,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('PeriodoData(')
@@ -3283,6 +3492,24 @@ class $TemporadaTable extends Temporada
   late final GeneratedColumn<String> codeTarifa = GeneratedColumn<String>(
       'code_tarifa', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _forGroupMeta =
+      const VerificationMeta('forGroup');
+  @override
+  late final GeneratedColumn<bool> forGroup = GeneratedColumn<bool>(
+      'for_group', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("for_group" IN (0, 1))'));
+  static const VerificationMeta _forCashMeta =
+      const VerificationMeta('forCash');
+  @override
+  late final GeneratedColumn<bool> forCash = GeneratedColumn<bool>(
+      'for_cash', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("for_cash" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3291,7 +3518,9 @@ class $TemporadaTable extends Temporada
         fecha,
         estanciaMinima,
         porcentajePromocion,
-        codeTarifa
+        codeTarifa,
+        forGroup,
+        forCash
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3340,6 +3569,14 @@ class $TemporadaTable extends Temporada
           codeTarifa.isAcceptableOrUnknown(
               data['code_tarifa']!, _codeTarifaMeta));
     }
+    if (data.containsKey('for_group')) {
+      context.handle(_forGroupMeta,
+          forGroup.isAcceptableOrUnknown(data['for_group']!, _forGroupMeta));
+    }
+    if (data.containsKey('for_cash')) {
+      context.handle(_forCashMeta,
+          forCash.isAcceptableOrUnknown(data['for_cash']!, _forCashMeta));
+    }
     return context;
   }
 
@@ -3363,6 +3600,10 @@ class $TemporadaTable extends Temporada
           DriftSqlType.double, data['${effectivePrefix}porcentaje_promocion']),
       codeTarifa: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}code_tarifa']),
+      forGroup: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}for_group']),
+      forCash: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}for_cash']),
     );
   }
 
@@ -3380,6 +3621,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final int? estanciaMinima;
   final double? porcentajePromocion;
   final String? codeTarifa;
+  final bool? forGroup;
+  final bool? forCash;
   const TemporadaData(
       {required this.id,
       required this.code,
@@ -3387,7 +3630,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       this.fecha,
       this.estanciaMinima,
       this.porcentajePromocion,
-      this.codeTarifa});
+      this.codeTarifa,
+      this.forGroup,
+      this.forCash});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3405,6 +3650,12 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     }
     if (!nullToAbsent || codeTarifa != null) {
       map['code_tarifa'] = Variable<String>(codeTarifa);
+    }
+    if (!nullToAbsent || forGroup != null) {
+      map['for_group'] = Variable<bool>(forGroup);
+    }
+    if (!nullToAbsent || forCash != null) {
+      map['for_cash'] = Variable<bool>(forCash);
     }
     return map;
   }
@@ -3425,6 +3676,12 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       codeTarifa: codeTarifa == null && nullToAbsent
           ? const Value.absent()
           : Value(codeTarifa),
+      forGroup: forGroup == null && nullToAbsent
+          ? const Value.absent()
+          : Value(forGroup),
+      forCash: forCash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(forCash),
     );
   }
 
@@ -3440,6 +3697,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       porcentajePromocion:
           serializer.fromJson<double?>(json['porcentajePromocion']),
       codeTarifa: serializer.fromJson<String?>(json['codeTarifa']),
+      forGroup: serializer.fromJson<bool?>(json['forGroup']),
+      forCash: serializer.fromJson<bool?>(json['forCash']),
     );
   }
   @override
@@ -3453,6 +3712,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
       'estanciaMinima': serializer.toJson<int?>(estanciaMinima),
       'porcentajePromocion': serializer.toJson<double?>(porcentajePromocion),
       'codeTarifa': serializer.toJson<String?>(codeTarifa),
+      'forGroup': serializer.toJson<bool?>(forGroup),
+      'forCash': serializer.toJson<bool?>(forCash),
     };
   }
 
@@ -3463,7 +3724,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           Value<DateTime?> fecha = const Value.absent(),
           Value<int?> estanciaMinima = const Value.absent(),
           Value<double?> porcentajePromocion = const Value.absent(),
-          Value<String?> codeTarifa = const Value.absent()}) =>
+          Value<String?> codeTarifa = const Value.absent(),
+          Value<bool?> forGroup = const Value.absent(),
+          Value<bool?> forCash = const Value.absent()}) =>
       TemporadaData(
         id: id ?? this.id,
         code: code ?? this.code,
@@ -3475,7 +3738,28 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
             ? porcentajePromocion.value
             : this.porcentajePromocion,
         codeTarifa: codeTarifa.present ? codeTarifa.value : this.codeTarifa,
+        forGroup: forGroup.present ? forGroup.value : this.forGroup,
+        forCash: forCash.present ? forCash.value : this.forCash,
       );
+  TemporadaData copyWithCompanion(TemporadaCompanion data) {
+    return TemporadaData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      estanciaMinima: data.estanciaMinima.present
+          ? data.estanciaMinima.value
+          : this.estanciaMinima,
+      porcentajePromocion: data.porcentajePromocion.present
+          ? data.porcentajePromocion.value
+          : this.porcentajePromocion,
+      codeTarifa:
+          data.codeTarifa.present ? data.codeTarifa.value : this.codeTarifa,
+      forGroup: data.forGroup.present ? data.forGroup.value : this.forGroup,
+      forCash: data.forCash.present ? data.forCash.value : this.forCash,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TemporadaData(')
@@ -3485,14 +3769,16 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
-          ..write('codeTarifa: $codeTarifa')
+          ..write('codeTarifa: $codeTarifa, ')
+          ..write('forGroup: $forGroup, ')
+          ..write('forCash: $forCash')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, code, nombre, fecha, estanciaMinima, porcentajePromocion, codeTarifa);
+  int get hashCode => Object.hash(id, code, nombre, fecha, estanciaMinima,
+      porcentajePromocion, codeTarifa, forGroup, forCash);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3503,7 +3789,9 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           other.fecha == this.fecha &&
           other.estanciaMinima == this.estanciaMinima &&
           other.porcentajePromocion == this.porcentajePromocion &&
-          other.codeTarifa == this.codeTarifa);
+          other.codeTarifa == this.codeTarifa &&
+          other.forGroup == this.forGroup &&
+          other.forCash == this.forCash);
 }
 
 class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
@@ -3514,6 +3802,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<int?> estanciaMinima;
   final Value<double?> porcentajePromocion;
   final Value<String?> codeTarifa;
+  final Value<bool?> forGroup;
+  final Value<bool?> forCash;
   const TemporadaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -3522,6 +3812,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
+    this.forGroup = const Value.absent(),
+    this.forCash = const Value.absent(),
   });
   TemporadaCompanion.insert({
     this.id = const Value.absent(),
@@ -3531,6 +3823,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.estanciaMinima = const Value.absent(),
     this.porcentajePromocion = const Value.absent(),
     this.codeTarifa = const Value.absent(),
+    this.forGroup = const Value.absent(),
+    this.forCash = const Value.absent(),
   })  : code = Value(code),
         nombre = Value(nombre);
   static Insertable<TemporadaData> custom({
@@ -3541,6 +3835,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     Expression<int>? estanciaMinima,
     Expression<double>? porcentajePromocion,
     Expression<String>? codeTarifa,
+    Expression<bool>? forGroup,
+    Expression<bool>? forCash,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3551,6 +3847,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       if (porcentajePromocion != null)
         'porcentaje_promocion': porcentajePromocion,
       if (codeTarifa != null) 'code_tarifa': codeTarifa,
+      if (forGroup != null) 'for_group': forGroup,
+      if (forCash != null) 'for_cash': forCash,
     });
   }
 
@@ -3561,7 +3859,9 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       Value<DateTime?>? fecha,
       Value<int?>? estanciaMinima,
       Value<double?>? porcentajePromocion,
-      Value<String?>? codeTarifa}) {
+      Value<String?>? codeTarifa,
+      Value<bool?>? forGroup,
+      Value<bool?>? forCash}) {
     return TemporadaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -3570,6 +3870,8 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       estanciaMinima: estanciaMinima ?? this.estanciaMinima,
       porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
       codeTarifa: codeTarifa ?? this.codeTarifa,
+      forGroup: forGroup ?? this.forGroup,
+      forCash: forCash ?? this.forCash,
     );
   }
 
@@ -3597,6 +3899,12 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     if (codeTarifa.present) {
       map['code_tarifa'] = Variable<String>(codeTarifa.value);
     }
+    if (forGroup.present) {
+      map['for_group'] = Variable<bool>(forGroup.value);
+    }
+    if (forCash.present) {
+      map['for_cash'] = Variable<bool>(forCash.value);
+    }
     return map;
   }
 
@@ -3609,7 +3917,460 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
           ..write('fecha: $fecha, ')
           ..write('estanciaMinima: $estanciaMinima, ')
           ..write('porcentajePromocion: $porcentajePromocion, ')
-          ..write('codeTarifa: $codeTarifa')
+          ..write('codeTarifa: $codeTarifa, ')
+          ..write('forGroup: $forGroup, ')
+          ..write('forCash: $forCash')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TarifaBaseTable extends TarifaBase
+    with TableInfo<$TarifaBaseTable, TarifaBaseData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TarifaBaseTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+      'code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+      'nombre', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _descIntegradoMeta =
+      const VerificationMeta('descIntegrado');
+  @override
+  late final GeneratedColumn<double> descIntegrado = GeneratedColumn<double>(
+      'desc_integrado', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _upgradeCategoriaMeta =
+      const VerificationMeta('upgradeCategoria');
+  @override
+  late final GeneratedColumn<double> upgradeCategoria = GeneratedColumn<double>(
+      'upgrade_categoria', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _upgradeMenorMeta =
+      const VerificationMeta('upgradeMenor');
+  @override
+  late final GeneratedColumn<double> upgradeMenor = GeneratedColumn<double>(
+      'upgrade_menor', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _upgradePaxAdicMeta =
+      const VerificationMeta('upgradePaxAdic');
+  @override
+  late final GeneratedColumn<double> upgradePaxAdic = GeneratedColumn<double>(
+      'upgrade_pax_adic', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaPadreIdMeta =
+      const VerificationMeta('tarifaPadreId');
+  @override
+  late final GeneratedColumn<int> tarifaPadreId = GeneratedColumn<int>(
+      'tarifa_padre_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        code,
+        nombre,
+        descIntegrado,
+        upgradeCategoria,
+        upgradeMenor,
+        upgradePaxAdic,
+        tarifaPadreId
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tarifa_base';
+  @override
+  VerificationContext validateIntegrity(Insertable<TarifaBaseData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+          _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('desc_integrado')) {
+      context.handle(
+          _descIntegradoMeta,
+          descIntegrado.isAcceptableOrUnknown(
+              data['desc_integrado']!, _descIntegradoMeta));
+    }
+    if (data.containsKey('upgrade_categoria')) {
+      context.handle(
+          _upgradeCategoriaMeta,
+          upgradeCategoria.isAcceptableOrUnknown(
+              data['upgrade_categoria']!, _upgradeCategoriaMeta));
+    }
+    if (data.containsKey('upgrade_menor')) {
+      context.handle(
+          _upgradeMenorMeta,
+          upgradeMenor.isAcceptableOrUnknown(
+              data['upgrade_menor']!, _upgradeMenorMeta));
+    }
+    if (data.containsKey('upgrade_pax_adic')) {
+      context.handle(
+          _upgradePaxAdicMeta,
+          upgradePaxAdic.isAcceptableOrUnknown(
+              data['upgrade_pax_adic']!, _upgradePaxAdicMeta));
+    }
+    if (data.containsKey('tarifa_padre_id')) {
+      context.handle(
+          _tarifaPadreIdMeta,
+          tarifaPadreId.isAcceptableOrUnknown(
+              data['tarifa_padre_id']!, _tarifaPadreIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TarifaBaseData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TarifaBaseData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      code: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}code']),
+      nombre: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
+      descIntegrado: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}desc_integrado']),
+      upgradeCategoria: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}upgrade_categoria']),
+      upgradeMenor: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}upgrade_menor']),
+      upgradePaxAdic: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}upgrade_pax_adic']),
+      tarifaPadreId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_padre_id']),
+    );
+  }
+
+  @override
+  $TarifaBaseTable createAlias(String alias) {
+    return $TarifaBaseTable(attachedDatabase, alias);
+  }
+}
+
+class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
+  final int id;
+  final String? code;
+  final String? nombre;
+  final double? descIntegrado;
+  final double? upgradeCategoria;
+  final double? upgradeMenor;
+  final double? upgradePaxAdic;
+  final int? tarifaPadreId;
+  const TarifaBaseData(
+      {required this.id,
+      this.code,
+      this.nombre,
+      this.descIntegrado,
+      this.upgradeCategoria,
+      this.upgradeMenor,
+      this.upgradePaxAdic,
+      this.tarifaPadreId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String>(nombre);
+    }
+    if (!nullToAbsent || descIntegrado != null) {
+      map['desc_integrado'] = Variable<double>(descIntegrado);
+    }
+    if (!nullToAbsent || upgradeCategoria != null) {
+      map['upgrade_categoria'] = Variable<double>(upgradeCategoria);
+    }
+    if (!nullToAbsent || upgradeMenor != null) {
+      map['upgrade_menor'] = Variable<double>(upgradeMenor);
+    }
+    if (!nullToAbsent || upgradePaxAdic != null) {
+      map['upgrade_pax_adic'] = Variable<double>(upgradePaxAdic);
+    }
+    if (!nullToAbsent || tarifaPadreId != null) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId);
+    }
+    return map;
+  }
+
+  TarifaBaseCompanion toCompanion(bool nullToAbsent) {
+    return TarifaBaseCompanion(
+      id: Value(id),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      descIntegrado: descIntegrado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descIntegrado),
+      upgradeCategoria: upgradeCategoria == null && nullToAbsent
+          ? const Value.absent()
+          : Value(upgradeCategoria),
+      upgradeMenor: upgradeMenor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(upgradeMenor),
+      upgradePaxAdic: upgradePaxAdic == null && nullToAbsent
+          ? const Value.absent()
+          : Value(upgradePaxAdic),
+      tarifaPadreId: tarifaPadreId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPadreId),
+    );
+  }
+
+  factory TarifaBaseData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TarifaBaseData(
+      id: serializer.fromJson<int>(json['id']),
+      code: serializer.fromJson<String?>(json['code']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      descIntegrado: serializer.fromJson<double?>(json['descIntegrado']),
+      upgradeCategoria: serializer.fromJson<double?>(json['upgradeCategoria']),
+      upgradeMenor: serializer.fromJson<double?>(json['upgradeMenor']),
+      upgradePaxAdic: serializer.fromJson<double?>(json['upgradePaxAdic']),
+      tarifaPadreId: serializer.fromJson<int?>(json['tarifaPadreId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'code': serializer.toJson<String?>(code),
+      'nombre': serializer.toJson<String?>(nombre),
+      'descIntegrado': serializer.toJson<double?>(descIntegrado),
+      'upgradeCategoria': serializer.toJson<double?>(upgradeCategoria),
+      'upgradeMenor': serializer.toJson<double?>(upgradeMenor),
+      'upgradePaxAdic': serializer.toJson<double?>(upgradePaxAdic),
+      'tarifaPadreId': serializer.toJson<int?>(tarifaPadreId),
+    };
+  }
+
+  TarifaBaseData copyWith(
+          {int? id,
+          Value<String?> code = const Value.absent(),
+          Value<String?> nombre = const Value.absent(),
+          Value<double?> descIntegrado = const Value.absent(),
+          Value<double?> upgradeCategoria = const Value.absent(),
+          Value<double?> upgradeMenor = const Value.absent(),
+          Value<double?> upgradePaxAdic = const Value.absent(),
+          Value<int?> tarifaPadreId = const Value.absent()}) =>
+      TarifaBaseData(
+        id: id ?? this.id,
+        code: code.present ? code.value : this.code,
+        nombre: nombre.present ? nombre.value : this.nombre,
+        descIntegrado:
+            descIntegrado.present ? descIntegrado.value : this.descIntegrado,
+        upgradeCategoria: upgradeCategoria.present
+            ? upgradeCategoria.value
+            : this.upgradeCategoria,
+        upgradeMenor:
+            upgradeMenor.present ? upgradeMenor.value : this.upgradeMenor,
+        upgradePaxAdic:
+            upgradePaxAdic.present ? upgradePaxAdic.value : this.upgradePaxAdic,
+        tarifaPadreId:
+            tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
+      );
+  TarifaBaseData copyWithCompanion(TarifaBaseCompanion data) {
+    return TarifaBaseData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      descIntegrado: data.descIntegrado.present
+          ? data.descIntegrado.value
+          : this.descIntegrado,
+      upgradeCategoria: data.upgradeCategoria.present
+          ? data.upgradeCategoria.value
+          : this.upgradeCategoria,
+      upgradeMenor: data.upgradeMenor.present
+          ? data.upgradeMenor.value
+          : this.upgradeMenor,
+      upgradePaxAdic: data.upgradePaxAdic.present
+          ? data.upgradePaxAdic.value
+          : this.upgradePaxAdic,
+      tarifaPadreId: data.tarifaPadreId.present
+          ? data.tarifaPadreId.value
+          : this.tarifaPadreId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarifaBaseData(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('nombre: $nombre, ')
+          ..write('descIntegrado: $descIntegrado, ')
+          ..write('upgradeCategoria: $upgradeCategoria, ')
+          ..write('upgradeMenor: $upgradeMenor, ')
+          ..write('upgradePaxAdic: $upgradePaxAdic, ')
+          ..write('tarifaPadreId: $tarifaPadreId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, code, nombre, descIntegrado,
+      upgradeCategoria, upgradeMenor, upgradePaxAdic, tarifaPadreId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TarifaBaseData &&
+          other.id == this.id &&
+          other.code == this.code &&
+          other.nombre == this.nombre &&
+          other.descIntegrado == this.descIntegrado &&
+          other.upgradeCategoria == this.upgradeCategoria &&
+          other.upgradeMenor == this.upgradeMenor &&
+          other.upgradePaxAdic == this.upgradePaxAdic &&
+          other.tarifaPadreId == this.tarifaPadreId);
+}
+
+class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
+  final Value<int> id;
+  final Value<String?> code;
+  final Value<String?> nombre;
+  final Value<double?> descIntegrado;
+  final Value<double?> upgradeCategoria;
+  final Value<double?> upgradeMenor;
+  final Value<double?> upgradePaxAdic;
+  final Value<int?> tarifaPadreId;
+  const TarifaBaseCompanion({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.descIntegrado = const Value.absent(),
+    this.upgradeCategoria = const Value.absent(),
+    this.upgradeMenor = const Value.absent(),
+    this.upgradePaxAdic = const Value.absent(),
+    this.tarifaPadreId = const Value.absent(),
+  });
+  TarifaBaseCompanion.insert({
+    this.id = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.descIntegrado = const Value.absent(),
+    this.upgradeCategoria = const Value.absent(),
+    this.upgradeMenor = const Value.absent(),
+    this.upgradePaxAdic = const Value.absent(),
+    this.tarifaPadreId = const Value.absent(),
+  });
+  static Insertable<TarifaBaseData> custom({
+    Expression<int>? id,
+    Expression<String>? code,
+    Expression<String>? nombre,
+    Expression<double>? descIntegrado,
+    Expression<double>? upgradeCategoria,
+    Expression<double>? upgradeMenor,
+    Expression<double>? upgradePaxAdic,
+    Expression<int>? tarifaPadreId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (code != null) 'code': code,
+      if (nombre != null) 'nombre': nombre,
+      if (descIntegrado != null) 'desc_integrado': descIntegrado,
+      if (upgradeCategoria != null) 'upgrade_categoria': upgradeCategoria,
+      if (upgradeMenor != null) 'upgrade_menor': upgradeMenor,
+      if (upgradePaxAdic != null) 'upgrade_pax_adic': upgradePaxAdic,
+      if (tarifaPadreId != null) 'tarifa_padre_id': tarifaPadreId,
+    });
+  }
+
+  TarifaBaseCompanion copyWith(
+      {Value<int>? id,
+      Value<String?>? code,
+      Value<String?>? nombre,
+      Value<double?>? descIntegrado,
+      Value<double?>? upgradeCategoria,
+      Value<double?>? upgradeMenor,
+      Value<double?>? upgradePaxAdic,
+      Value<int?>? tarifaPadreId}) {
+    return TarifaBaseCompanion(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      nombre: nombre ?? this.nombre,
+      descIntegrado: descIntegrado ?? this.descIntegrado,
+      upgradeCategoria: upgradeCategoria ?? this.upgradeCategoria,
+      upgradeMenor: upgradeMenor ?? this.upgradeMenor,
+      upgradePaxAdic: upgradePaxAdic ?? this.upgradePaxAdic,
+      tarifaPadreId: tarifaPadreId ?? this.tarifaPadreId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (descIntegrado.present) {
+      map['desc_integrado'] = Variable<double>(descIntegrado.value);
+    }
+    if (upgradeCategoria.present) {
+      map['upgrade_categoria'] = Variable<double>(upgradeCategoria.value);
+    }
+    if (upgradeMenor.present) {
+      map['upgrade_menor'] = Variable<double>(upgradeMenor.value);
+    }
+    if (upgradePaxAdic.present) {
+      map['upgrade_pax_adic'] = Variable<double>(upgradePaxAdic.value);
+    }
+    if (tarifaPadreId.present) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TarifaBaseCompanion(')
+          ..write('id: $id, ')
+          ..write('code: $code, ')
+          ..write('nombre: $nombre, ')
+          ..write('descIntegrado: $descIntegrado, ')
+          ..write('upgradeCategoria: $upgradeCategoria, ')
+          ..write('upgradeMenor: $upgradeMenor, ')
+          ..write('upgradePaxAdic: $upgradePaxAdic, ')
+          ..write('tarifaPadreId: $tarifaPadreId')
           ..write(')'))
         .toString();
   }
@@ -3632,8 +4393,8 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
-      'code', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
@@ -3675,6 +4436,15 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   late final GeneratedColumn<double> tarifaPaxAdicional =
       GeneratedColumn<double>('tarifa_pax_adicional', aliasedName, true,
           type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaPadreIdMeta =
+      const VerificationMeta('tarifaPadreId');
+  @override
+  late final GeneratedColumn<int> tarifaPadreId = GeneratedColumn<int>(
+      'tarifa_padre_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3685,7 +4455,8 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
         tarifaAdultoTPL,
         tarifaAdultoCPLE,
         tarifaMenores7a12,
-        tarifaPaxAdicional
+        tarifaPaxAdicional,
+        tarifaPadreId
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3703,8 +4474,6 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
     if (data.containsKey('code')) {
       context.handle(
           _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
-    } else if (isInserting) {
-      context.missing(_codeMeta);
     }
     if (data.containsKey('fecha')) {
       context.handle(
@@ -3744,6 +4513,12 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
           tarifaPaxAdicional.isAcceptableOrUnknown(
               data['tarifa_pax_adicional']!, _tarifaPaxAdicionalMeta));
     }
+    if (data.containsKey('tarifa_padre_id')) {
+      context.handle(
+          _tarifaPadreIdMeta,
+          tarifaPadreId.isAcceptableOrUnknown(
+              data['tarifa_padre_id']!, _tarifaPadreIdMeta));
+    }
     return context;
   }
 
@@ -3756,7 +4531,7 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}code'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}code']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       categoria: attachedDatabase.typeMapping
@@ -3772,6 +4547,8 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
           DriftSqlType.double, data['${effectivePrefix}tarifa_menores7a12']),
       tarifaPaxAdicional: attachedDatabase.typeMapping.read(
           DriftSqlType.double, data['${effectivePrefix}tarifa_pax_adicional']),
+      tarifaPadreId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_padre_id']),
     );
   }
 
@@ -3783,7 +4560,7 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
 
 class TarifaData extends DataClass implements Insertable<TarifaData> {
   final int id;
-  final String code;
+  final String? code;
   final DateTime? fecha;
   final String? categoria;
   final double? tarifaAdultoSGLoDBL;
@@ -3791,21 +4568,25 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   final double? tarifaAdultoCPLE;
   final double? tarifaMenores7a12;
   final double? tarifaPaxAdicional;
+  final int? tarifaPadreId;
   const TarifaData(
       {required this.id,
-      required this.code,
+      this.code,
       this.fecha,
       this.categoria,
       this.tarifaAdultoSGLoDBL,
       this.tarifaAdultoTPL,
       this.tarifaAdultoCPLE,
       this.tarifaMenores7a12,
-      this.tarifaPaxAdicional});
+      this.tarifaPaxAdicional,
+      this.tarifaPadreId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['code'] = Variable<String>(code);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
     if (!nullToAbsent || fecha != null) {
       map['fecha'] = Variable<DateTime>(fecha);
     }
@@ -3827,13 +4608,16 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     if (!nullToAbsent || tarifaPaxAdicional != null) {
       map['tarifa_pax_adicional'] = Variable<double>(tarifaPaxAdicional);
     }
+    if (!nullToAbsent || tarifaPadreId != null) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId);
+    }
     return map;
   }
 
   TarifaCompanion toCompanion(bool nullToAbsent) {
     return TarifaCompanion(
       id: Value(id),
-      code: Value(code),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       categoria: categoria == null && nullToAbsent
@@ -3854,6 +4638,9 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       tarifaPaxAdicional: tarifaPaxAdicional == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaPaxAdicional),
+      tarifaPadreId: tarifaPadreId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaPadreId),
     );
   }
 
@@ -3862,7 +4649,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TarifaData(
       id: serializer.fromJson<int>(json['id']),
-      code: serializer.fromJson<String>(json['code']),
+      code: serializer.fromJson<String?>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       categoria: serializer.fromJson<String?>(json['categoria']),
       tarifaAdultoSGLoDBL:
@@ -3873,6 +4660,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           serializer.fromJson<double?>(json['tarifaMenores7a12']),
       tarifaPaxAdicional:
           serializer.fromJson<double?>(json['tarifaPaxAdicional']),
+      tarifaPadreId: serializer.fromJson<int?>(json['tarifaPadreId']),
     );
   }
   @override
@@ -3880,7 +4668,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'code': serializer.toJson<String>(code),
+      'code': serializer.toJson<String?>(code),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'categoria': serializer.toJson<String?>(categoria),
       'tarifaAdultoSGLoDBL': serializer.toJson<double?>(tarifaAdultoSGLoDBL),
@@ -3888,22 +4676,24 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       'tarifaAdultoCPLE': serializer.toJson<double?>(tarifaAdultoCPLE),
       'tarifaMenores7a12': serializer.toJson<double?>(tarifaMenores7a12),
       'tarifaPaxAdicional': serializer.toJson<double?>(tarifaPaxAdicional),
+      'tarifaPadreId': serializer.toJson<int?>(tarifaPadreId),
     };
   }
 
   TarifaData copyWith(
           {int? id,
-          String? code,
+          Value<String?> code = const Value.absent(),
           Value<DateTime?> fecha = const Value.absent(),
           Value<String?> categoria = const Value.absent(),
           Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
           Value<double?> tarifaAdultoTPL = const Value.absent(),
           Value<double?> tarifaAdultoCPLE = const Value.absent(),
           Value<double?> tarifaMenores7a12 = const Value.absent(),
-          Value<double?> tarifaPaxAdicional = const Value.absent()}) =>
+          Value<double?> tarifaPaxAdicional = const Value.absent(),
+          Value<int?> tarifaPadreId = const Value.absent()}) =>
       TarifaData(
         id: id ?? this.id,
-        code: code ?? this.code,
+        code: code.present ? code.value : this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
         categoria: categoria.present ? categoria.value : this.categoria,
         tarifaAdultoSGLoDBL: tarifaAdultoSGLoDBL.present
@@ -3921,7 +4711,36 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
         tarifaPaxAdicional: tarifaPaxAdicional.present
             ? tarifaPaxAdicional.value
             : this.tarifaPaxAdicional,
+        tarifaPadreId:
+            tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
       );
+  TarifaData copyWithCompanion(TarifaCompanion data) {
+    return TarifaData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      categoria: data.categoria.present ? data.categoria.value : this.categoria,
+      tarifaAdultoSGLoDBL: data.tarifaAdultoSGLoDBL.present
+          ? data.tarifaAdultoSGLoDBL.value
+          : this.tarifaAdultoSGLoDBL,
+      tarifaAdultoTPL: data.tarifaAdultoTPL.present
+          ? data.tarifaAdultoTPL.value
+          : this.tarifaAdultoTPL,
+      tarifaAdultoCPLE: data.tarifaAdultoCPLE.present
+          ? data.tarifaAdultoCPLE.value
+          : this.tarifaAdultoCPLE,
+      tarifaMenores7a12: data.tarifaMenores7a12.present
+          ? data.tarifaMenores7a12.value
+          : this.tarifaMenores7a12,
+      tarifaPaxAdicional: data.tarifaPaxAdicional.present
+          ? data.tarifaPaxAdicional.value
+          : this.tarifaPaxAdicional,
+      tarifaPadreId: data.tarifaPadreId.present
+          ? data.tarifaPadreId.value
+          : this.tarifaPadreId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaData(')
@@ -3933,7 +4752,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           ..write('tarifaAdultoTPL: $tarifaAdultoTPL, ')
           ..write('tarifaAdultoCPLE: $tarifaAdultoCPLE, ')
           ..write('tarifaMenores7a12: $tarifaMenores7a12, ')
-          ..write('tarifaPaxAdicional: $tarifaPaxAdicional')
+          ..write('tarifaPaxAdicional: $tarifaPaxAdicional, ')
+          ..write('tarifaPadreId: $tarifaPadreId')
           ..write(')'))
         .toString();
   }
@@ -3948,7 +4768,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
       tarifaAdultoTPL,
       tarifaAdultoCPLE,
       tarifaMenores7a12,
-      tarifaPaxAdicional);
+      tarifaPaxAdicional,
+      tarifaPadreId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3961,12 +4782,13 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           other.tarifaAdultoTPL == this.tarifaAdultoTPL &&
           other.tarifaAdultoCPLE == this.tarifaAdultoCPLE &&
           other.tarifaMenores7a12 == this.tarifaMenores7a12 &&
-          other.tarifaPaxAdicional == this.tarifaPaxAdicional);
+          other.tarifaPaxAdicional == this.tarifaPaxAdicional &&
+          other.tarifaPadreId == this.tarifaPadreId);
 }
 
 class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<int> id;
-  final Value<String> code;
+  final Value<String?> code;
   final Value<DateTime?> fecha;
   final Value<String?> categoria;
   final Value<double?> tarifaAdultoSGLoDBL;
@@ -3974,6 +4796,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<double?> tarifaAdultoCPLE;
   final Value<double?> tarifaMenores7a12;
   final Value<double?> tarifaPaxAdicional;
+  final Value<int?> tarifaPadreId;
   const TarifaCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -3984,10 +4807,11 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.tarifaAdultoCPLE = const Value.absent(),
     this.tarifaMenores7a12 = const Value.absent(),
     this.tarifaPaxAdicional = const Value.absent(),
+    this.tarifaPadreId = const Value.absent(),
   });
   TarifaCompanion.insert({
     this.id = const Value.absent(),
-    required String code,
+    this.code = const Value.absent(),
     this.fecha = const Value.absent(),
     this.categoria = const Value.absent(),
     this.tarifaAdultoSGLoDBL = const Value.absent(),
@@ -3995,7 +4819,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.tarifaAdultoCPLE = const Value.absent(),
     this.tarifaMenores7a12 = const Value.absent(),
     this.tarifaPaxAdicional = const Value.absent(),
-  }) : code = Value(code);
+    this.tarifaPadreId = const Value.absent(),
+  });
   static Insertable<TarifaData> custom({
     Expression<int>? id,
     Expression<String>? code,
@@ -4006,6 +4831,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     Expression<double>? tarifaAdultoCPLE,
     Expression<double>? tarifaMenores7a12,
     Expression<double>? tarifaPaxAdicional,
+    Expression<int>? tarifaPadreId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4019,19 +4845,21 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       if (tarifaMenores7a12 != null) 'tarifa_menores7a12': tarifaMenores7a12,
       if (tarifaPaxAdicional != null)
         'tarifa_pax_adicional': tarifaPaxAdicional,
+      if (tarifaPadreId != null) 'tarifa_padre_id': tarifaPadreId,
     });
   }
 
   TarifaCompanion copyWith(
       {Value<int>? id,
-      Value<String>? code,
+      Value<String?>? code,
       Value<DateTime?>? fecha,
       Value<String?>? categoria,
       Value<double?>? tarifaAdultoSGLoDBL,
       Value<double?>? tarifaAdultoTPL,
       Value<double?>? tarifaAdultoCPLE,
       Value<double?>? tarifaMenores7a12,
-      Value<double?>? tarifaPaxAdicional}) {
+      Value<double?>? tarifaPaxAdicional,
+      Value<int?>? tarifaPadreId}) {
     return TarifaCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -4042,6 +4870,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       tarifaAdultoCPLE: tarifaAdultoCPLE ?? this.tarifaAdultoCPLE,
       tarifaMenores7a12: tarifaMenores7a12 ?? this.tarifaMenores7a12,
       tarifaPaxAdicional: tarifaPaxAdicional ?? this.tarifaPaxAdicional,
+      tarifaPadreId: tarifaPadreId ?? this.tarifaPadreId,
     );
   }
 
@@ -4076,6 +4905,9 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     if (tarifaPaxAdicional.present) {
       map['tarifa_pax_adicional'] = Variable<double>(tarifaPaxAdicional.value);
     }
+    if (tarifaPadreId.present) {
+      map['tarifa_padre_id'] = Variable<int>(tarifaPadreId.value);
+    }
     return map;
   }
 
@@ -4090,7 +4922,8 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
           ..write('tarifaAdultoTPL: $tarifaAdultoTPL, ')
           ..write('tarifaAdultoCPLE: $tarifaAdultoCPLE, ')
           ..write('tarifaMenores7a12: $tarifaMenores7a12, ')
-          ..write('tarifaPaxAdicional: $tarifaPaxAdicional')
+          ..write('tarifaPaxAdicional: $tarifaPaxAdicional, ')
+          ..write('tarifaPadreId: $tarifaPadreId')
           ..write(')'))
         .toString();
   }
@@ -4136,7 +4969,10 @@ class $UserActivityTable extends UserActivity
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
   @override
   List<GeneratedColumn> get $columns =>
       [id, fecha, name, category, status, userId];
@@ -4296,6 +5132,17 @@ class UserActivityData extends DataClass
         status: status.present ? status.value : this.status,
         userId: userId.present ? userId.value : this.userId,
       );
+  UserActivityData copyWithCompanion(UserActivityCompanion data) {
+    return UserActivityData(
+      id: data.id.present ? data.id.value : this.id,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      name: data.name.present ? data.name.value : this.name,
+      category: data.category.present ? data.category.value : this.category,
+      status: data.status.present ? data.status.value : this.status,
+      userId: data.userId.present ? data.userId.value : this.userId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('UserActivityData(')
@@ -4690,6 +5537,25 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
         codePeriodo: codePeriodo.present ? codePeriodo.value : this.codePeriodo,
         usuarioId: usuarioId.present ? usuarioId.value : this.usuarioId,
       );
+  TarifaRackData copyWithCompanion(TarifaRackCompanion data) {
+    return TarifaRackData(
+      id: data.id.present ? data.id.value : this.id,
+      code: data.code.present ? data.code.value : this.code,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      nombreRack:
+          data.nombreRack.present ? data.nombreRack.value : this.nombreRack,
+      colorIdentificacion: data.colorIdentificacion.present
+          ? data.colorIdentificacion.value
+          : this.colorIdentificacion,
+      codeTemporada: data.codeTemporada.present
+          ? data.codeTemporada.value
+          : this.codeTemporada,
+      codePeriodo:
+          data.codePeriodo.present ? data.codePeriodo.value : this.codePeriodo,
+      usuarioId: data.usuarioId.present ? data.usuarioId.value : this.usuarioId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TarifaRackData(')
@@ -5030,6 +5896,21 @@ class Politica extends DataClass implements Insertable<Politica> {
             ? limiteHabitacionCotizacion.value
             : this.limiteHabitacionCotizacion,
       );
+  Politica copyWithCompanion(PoliticasCompanion data) {
+    return Politica(
+      id: data.id.present ? data.id.value : this.id,
+      fechaActualizacion: data.fechaActualizacion.present
+          ? data.fechaActualizacion.value
+          : this.fechaActualizacion,
+      intervaloHabitacionGratuita: data.intervaloHabitacionGratuita.present
+          ? data.intervaloHabitacionGratuita.value
+          : this.intervaloHabitacionGratuita,
+      limiteHabitacionCotizacion: data.limiteHabitacionCotizacion.present
+          ? data.limiteHabitacionCotizacion.value
+          : this.limiteHabitacionCotizacion,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Politica(')
@@ -5135,9 +6016,244 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
   }
 }
 
+class $TemporadaTarifaTable extends TemporadaTarifa
+    with TableInfo<$TemporadaTarifaTable, TemporadaTarifaData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TemporadaTarifaTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _temporadaIdMeta =
+      const VerificationMeta('temporadaId');
+  @override
+  late final GeneratedColumn<int> temporadaId = GeneratedColumn<int>(
+      'temporada_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES temporada (id)'));
+  static const VerificationMeta _TarifaIdMeta =
+      const VerificationMeta('TarifaId');
+  @override
+  late final GeneratedColumn<int> TarifaId = GeneratedColumn<int>(
+      'tarifa_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, temporadaId, TarifaId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'temporada_tarifa';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<TemporadaTarifaData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('temporada_id')) {
+      context.handle(
+          _temporadaIdMeta,
+          temporadaId.isAcceptableOrUnknown(
+              data['temporada_id']!, _temporadaIdMeta));
+    }
+    if (data.containsKey('tarifa_id')) {
+      context.handle(_TarifaIdMeta,
+          TarifaId.isAcceptableOrUnknown(data['tarifa_id']!, _TarifaIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TemporadaTarifaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TemporadaTarifaData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      temporadaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}temporada_id']),
+      TarifaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_id']),
+    );
+  }
+
+  @override
+  $TemporadaTarifaTable createAlias(String alias) {
+    return $TemporadaTarifaTable(attachedDatabase, alias);
+  }
+}
+
+class TemporadaTarifaData extends DataClass
+    implements Insertable<TemporadaTarifaData> {
+  final int id;
+  final int? temporadaId;
+  final int? TarifaId;
+  const TemporadaTarifaData(
+      {required this.id, this.temporadaId, this.TarifaId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || temporadaId != null) {
+      map['temporada_id'] = Variable<int>(temporadaId);
+    }
+    if (!nullToAbsent || TarifaId != null) {
+      map['tarifa_id'] = Variable<int>(TarifaId);
+    }
+    return map;
+  }
+
+  TemporadaTarifaCompanion toCompanion(bool nullToAbsent) {
+    return TemporadaTarifaCompanion(
+      id: Value(id),
+      temporadaId: temporadaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(temporadaId),
+      TarifaId: TarifaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TarifaId),
+    );
+  }
+
+  factory TemporadaTarifaData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TemporadaTarifaData(
+      id: serializer.fromJson<int>(json['id']),
+      temporadaId: serializer.fromJson<int?>(json['temporadaId']),
+      TarifaId: serializer.fromJson<int?>(json['TarifaId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'temporadaId': serializer.toJson<int?>(temporadaId),
+      'TarifaId': serializer.toJson<int?>(TarifaId),
+    };
+  }
+
+  TemporadaTarifaData copyWith(
+          {int? id,
+          Value<int?> temporadaId = const Value.absent(),
+          Value<int?> TarifaId = const Value.absent()}) =>
+      TemporadaTarifaData(
+        id: id ?? this.id,
+        temporadaId: temporadaId.present ? temporadaId.value : this.temporadaId,
+        TarifaId: TarifaId.present ? TarifaId.value : this.TarifaId,
+      );
+  TemporadaTarifaData copyWithCompanion(TemporadaTarifaCompanion data) {
+    return TemporadaTarifaData(
+      id: data.id.present ? data.id.value : this.id,
+      temporadaId:
+          data.temporadaId.present ? data.temporadaId.value : this.temporadaId,
+      TarifaId: data.TarifaId.present ? data.TarifaId.value : this.TarifaId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemporadaTarifaData(')
+          ..write('id: $id, ')
+          ..write('temporadaId: $temporadaId, ')
+          ..write('TarifaId: $TarifaId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, temporadaId, TarifaId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TemporadaTarifaData &&
+          other.id == this.id &&
+          other.temporadaId == this.temporadaId &&
+          other.TarifaId == this.TarifaId);
+}
+
+class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
+  final Value<int> id;
+  final Value<int?> temporadaId;
+  final Value<int?> TarifaId;
+  const TemporadaTarifaCompanion({
+    this.id = const Value.absent(),
+    this.temporadaId = const Value.absent(),
+    this.TarifaId = const Value.absent(),
+  });
+  TemporadaTarifaCompanion.insert({
+    this.id = const Value.absent(),
+    this.temporadaId = const Value.absent(),
+    this.TarifaId = const Value.absent(),
+  });
+  static Insertable<TemporadaTarifaData> custom({
+    Expression<int>? id,
+    Expression<int>? temporadaId,
+    Expression<int>? TarifaId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (temporadaId != null) 'temporada_id': temporadaId,
+      if (TarifaId != null) 'tarifa_id': TarifaId,
+    });
+  }
+
+  TemporadaTarifaCompanion copyWith(
+      {Value<int>? id, Value<int?>? temporadaId, Value<int?>? TarifaId}) {
+    return TemporadaTarifaCompanion(
+      id: id ?? this.id,
+      temporadaId: temporadaId ?? this.temporadaId,
+      TarifaId: TarifaId ?? this.TarifaId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (temporadaId.present) {
+      map['temporada_id'] = Variable<int>(temporadaId.value);
+    }
+    if (TarifaId.present) {
+      map['tarifa_id'] = Variable<int>(TarifaId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TemporadaTarifaCompanion(')
+          ..write('id: $id, ')
+          ..write('temporadaId: $temporadaId, ')
+          ..write('TarifaId: $TarifaId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
+  $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $ImagesTableTable imagesTable = $ImagesTableTable(this);
   late final $UsuarioTable usuario = $UsuarioTable(this);
   late final $CotizacionTable cotizacion = $CotizacionTable(this);
   late final $HabitacionTable habitacion = $HabitacionTable(this);
@@ -5145,33 +6261,146 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TarifaXDiaTableTable(this);
   late final $PeriodoTable periodo = $PeriodoTable(this);
   late final $TemporadaTable temporada = $TemporadaTable(this);
+  late final $TarifaBaseTable tarifaBase = $TarifaBaseTable(this);
   late final $TarifaTable tarifa = $TarifaTable(this);
   late final $UserActivityTable userActivity = $UserActivityTable(this);
   late final $TarifaRackTable tarifaRack = $TarifaRackTable(this);
   late final $PoliticasTable politicas = $PoliticasTable(this);
+  late final $TemporadaTarifaTable temporadaTarifa =
+      $TemporadaTarifaTable(this);
+  late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
+  late final TarifaDao tarifaDao = TarifaDao(this as AppDatabase);
+  late final TarifaRackDao tarifaRackDao = TarifaRackDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+        imagesTable,
         usuario,
         cotizacion,
         habitacion,
         tarifaXDiaTable,
         periodo,
         temporada,
+        tarifaBase,
         tarifa,
         userActivity,
         tarifaRack,
-        politicas
+        politicas,
+        temporadaTarifa
       ];
 }
 
-typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
+typedef $$ImagesTableTableCreateCompanionBuilder = ImagesTableCompanion
+    Function({
   Value<int> id,
-  required String username,
+  Value<String?> code,
+  Value<String?> urlImage,
+});
+typedef $$ImagesTableTableUpdateCompanionBuilder = ImagesTableCompanion
+    Function({
+  Value<int> id,
+  Value<String?> code,
+  Value<String?> urlImage,
+});
+
+class $$ImagesTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ImagesTableTable,
+    ImagesTableData,
+    $$ImagesTableTableFilterComposer,
+    $$ImagesTableTableOrderingComposer,
+    $$ImagesTableTableCreateCompanionBuilder,
+    $$ImagesTableTableUpdateCompanionBuilder> {
+  $$ImagesTableTableTableManager(_$AppDatabase db, $ImagesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ImagesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ImagesTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> urlImage = const Value.absent(),
+          }) =>
+              ImagesTableCompanion(
+            id: id,
+            code: code,
+            urlImage: urlImage,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> urlImage = const Value.absent(),
+          }) =>
+              ImagesTableCompanion.insert(
+            id: id,
+            code: code,
+            urlImage: urlImage,
+          ),
+        ));
+}
+
+class $$ImagesTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ImagesTableTable> {
+  $$ImagesTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get urlImage => $state.composableBuilder(
+      column: $state.table.urlImage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter usuarioRefs(
+      ComposableFilter Function($$UsuarioTableFilterComposer f) f) {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.imageId,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ImagesTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ImagesTableTable> {
+  $$ImagesTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get urlImage => $state.composableBuilder(
+      column: $state.table.urlImage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$UsuarioTableCreateCompanionBuilder = UsuarioCompanion Function({
+  Value<int> id,
+  Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
+  Value<String?> status,
   Value<String?> correoElectronico,
   Value<String?> passwordCorreo,
   Value<String?> telefono,
@@ -5179,12 +6408,14 @@ typedef $$UsuarioTableInsertCompanionBuilder = UsuarioCompanion Function({
   Value<String?> nombre,
   Value<String?> apellido,
   Value<int?> numCotizaciones,
+  Value<int?> imageId,
 });
 typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<int> id,
-  Value<String> username,
+  Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
+  Value<String?> status,
   Value<String?> correoElectronico,
   Value<String?> passwordCorreo,
   Value<String?> telefono,
@@ -5192,6 +6423,7 @@ typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<String?> nombre,
   Value<String?> apellido,
   Value<int?> numCotizaciones,
+  Value<int?> imageId,
 });
 
 class $$UsuarioTableTableManager extends RootTableManager<
@@ -5200,8 +6432,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
     UsuarioData,
     $$UsuarioTableFilterComposer,
     $$UsuarioTableOrderingComposer,
-    $$UsuarioTableProcessedTableManager,
-    $$UsuarioTableInsertCompanionBuilder,
+    $$UsuarioTableCreateCompanionBuilder,
     $$UsuarioTableUpdateCompanionBuilder> {
   $$UsuarioTableTableManager(_$AppDatabase db, $UsuarioTable table)
       : super(TableManagerState(
@@ -5211,12 +6442,12 @@ class $$UsuarioTableTableManager extends RootTableManager<
               $$UsuarioTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$UsuarioTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$UsuarioTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> username = const Value.absent(),
+            Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
+            Value<String?> status = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
             Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
@@ -5224,12 +6455,14 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<int?> numCotizaciones = const Value.absent(),
+            Value<int?> imageId = const Value.absent(),
           }) =>
               UsuarioCompanion(
             id: id,
             username: username,
             password: password,
             rol: rol,
+            status: status,
             correoElectronico: correoElectronico,
             passwordCorreo: passwordCorreo,
             telefono: telefono,
@@ -5237,12 +6470,14 @@ class $$UsuarioTableTableManager extends RootTableManager<
             nombre: nombre,
             apellido: apellido,
             numCotizaciones: numCotizaciones,
+            imageId: imageId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String username,
+            Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
+            Value<String?> status = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
             Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
@@ -5250,12 +6485,14 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<int?> numCotizaciones = const Value.absent(),
+            Value<int?> imageId = const Value.absent(),
           }) =>
               UsuarioCompanion.insert(
             id: id,
             username: username,
             password: password,
             rol: rol,
+            status: status,
             correoElectronico: correoElectronico,
             passwordCorreo: passwordCorreo,
             telefono: telefono,
@@ -5263,20 +6500,9 @@ class $$UsuarioTableTableManager extends RootTableManager<
             nombre: nombre,
             apellido: apellido,
             numCotizaciones: numCotizaciones,
+            imageId: imageId,
           ),
         ));
-}
-
-class $$UsuarioTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $UsuarioTable,
-    UsuarioData,
-    $$UsuarioTableFilterComposer,
-    $$UsuarioTableOrderingComposer,
-    $$UsuarioTableProcessedTableManager,
-    $$UsuarioTableInsertCompanionBuilder,
-    $$UsuarioTableUpdateCompanionBuilder> {
-  $$UsuarioTableProcessedTableManager(super.$state);
 }
 
 class $$UsuarioTableFilterComposer
@@ -5299,6 +6525,11 @@ class $$UsuarioTableFilterComposer
 
   ColumnFilters<String> get rol => $state.composableBuilder(
       column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5336,6 +6567,44 @@ class $$UsuarioTableFilterComposer
       column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ImagesTableTableFilterComposer get imageId {
+    final $$ImagesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.imageId,
+        referencedTable: $state.db.imagesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ImagesTableTableFilterComposer(ComposerState($state.db,
+                $state.db.imagesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter cotizacionRefs(
+      ComposableFilter Function($$CotizacionTableFilterComposer f) f) {
+    final $$CotizacionTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.cotizacion,
+        getReferencedColumn: (t) => t.usuarioID,
+        builder: (joinBuilder, parentComposers) =>
+            $$CotizacionTableFilterComposer(ComposerState($state.db,
+                $state.db.cotizacion, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter userActivityRefs(
+      ComposableFilter Function($$UserActivityTableFilterComposer f) f) {
+    final $$UserActivityTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.userActivity,
+        getReferencedColumn: (t) => t.userId,
+        builder: (joinBuilder, parentComposers) =>
+            $$UserActivityTableFilterComposer(ComposerState($state.db,
+                $state.db.userActivity, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$UsuarioTableOrderingComposer
@@ -5358,6 +6627,11 @@ class $$UsuarioTableOrderingComposer
 
   ColumnOrderings<String> get rol => $state.composableBuilder(
       column: $state.table.rol,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -5395,22 +6669,32 @@ class $$UsuarioTableOrderingComposer
       column: $state.table.numCotizaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ImagesTableTableOrderingComposer get imageId {
+    final $$ImagesTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.imageId,
+        referencedTable: $state.db.imagesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ImagesTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.imagesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
-typedef $$CotizacionTableInsertCompanionBuilder = CotizacionCompanion Function({
+typedef $$CotizacionTableCreateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
   Value<String?> folioPrincipal,
   Value<String?> nombreHuesped,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   required DateTime fecha,
-  Value<int?> usuarioID,
-  Value<double?> total,
-  Value<double?> totalReal,
-  Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<String?> username,
 });
 typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<int> id,
@@ -5419,13 +6703,11 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   Value<DateTime> fecha,
-  Value<int?> usuarioID,
-  Value<double?> total,
-  Value<double?> totalReal,
-  Value<double?> descuento,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<String?> username,
 });
 
 class $$CotizacionTableTableManager extends RootTableManager<
@@ -5434,8 +6716,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
     CotizacionData,
     $$CotizacionTableFilterComposer,
     $$CotizacionTableOrderingComposer,
-    $$CotizacionTableProcessedTableManager,
-    $$CotizacionTableInsertCompanionBuilder,
+    $$CotizacionTableCreateCompanionBuilder,
     $$CotizacionTableUpdateCompanionBuilder> {
   $$CotizacionTableTableManager(_$AppDatabase db, $CotizacionTable table)
       : super(TableManagerState(
@@ -5445,22 +6726,18 @@ class $$CotizacionTableTableManager extends RootTableManager<
               $$CotizacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$CotizacionTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$CotizacionTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             Value<DateTime> fecha = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
-            Value<double?> total = const Value.absent(),
-            Value<double?> totalReal = const Value.absent(),
-            Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
           }) =>
               CotizacionCompanion(
             id: id,
@@ -5469,28 +6746,24 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
-            usuarioID: usuarioID,
-            total: total,
-            totalReal: totalReal,
-            descuento: descuento,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            username: username,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             required DateTime fecha,
-            Value<int?> usuarioID = const Value.absent(),
-            Value<double?> total = const Value.absent(),
-            Value<double?> totalReal = const Value.absent(),
-            Value<double?> descuento = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
           }) =>
               CotizacionCompanion.insert(
             id: id,
@@ -5499,27 +6772,13 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
-            usuarioID: usuarioID,
-            total: total,
-            totalReal: totalReal,
-            descuento: descuento,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            username: username,
           ),
         ));
-}
-
-class $$CotizacionTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $CotizacionTable,
-    CotizacionData,
-    $$CotizacionTableFilterComposer,
-    $$CotizacionTableOrderingComposer,
-    $$CotizacionTableProcessedTableManager,
-    $$CotizacionTableInsertCompanionBuilder,
-    $$CotizacionTableUpdateCompanionBuilder> {
-  $$CotizacionTableProcessedTableManager(super.$state);
 }
 
 class $$CotizacionTableFilterComposer
@@ -5555,26 +6814,6 @@ class $$CotizacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get usuarioID => $state.composableBuilder(
-      column: $state.table.usuarioID,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get total => $state.composableBuilder(
-      column: $state.table.total,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get totalReal => $state.composableBuilder(
-      column: $state.table.totalReal,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get descuento => $state.composableBuilder(
-      column: $state.table.descuento,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<bool> get esGrupo => $state.composableBuilder(
       column: $state.table.esGrupo,
       builder: (column, joinBuilders) =>
@@ -5589,6 +6828,23 @@ class $$CotizacionTableFilterComposer
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get username => $state.composableBuilder(
+      column: $state.table.username,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableFilterComposer get usuarioID {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.usuarioID,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 class $$CotizacionTableOrderingComposer
@@ -5624,26 +6880,6 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get usuarioID => $state.composableBuilder(
-      column: $state.table.usuarioID,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get total => $state.composableBuilder(
-      column: $state.table.total,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get totalReal => $state.composableBuilder(
-      column: $state.table.totalReal,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get descuento => $state.composableBuilder(
-      column: $state.table.descuento,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<bool> get esGrupo => $state.composableBuilder(
       column: $state.table.esGrupo,
       builder: (column, joinBuilders) =>
@@ -5658,13 +6894,29 @@ class $$CotizacionTableOrderingComposer
       column: $state.table.habitaciones,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get username => $state.composableBuilder(
+      column: $state.table.username,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableOrderingComposer get usuarioID {
+    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.usuarioID,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableOrderingComposer(ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
-typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
+typedef $$HabitacionTableCreateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
   Value<String?> folioHabitacion,
   Value<String?> folioCotizacion,
-  Value<String?> categoria,
   Value<String?> fechaCheckIn,
   Value<String?> fechaCheckOut,
   required DateTime fecha,
@@ -5672,9 +6924,6 @@ typedef $$HabitacionTableInsertCompanionBuilder = HabitacionCompanion Function({
   Value<int?> menores0a6,
   Value<int?> menores7a12,
   Value<int?> paxAdic,
-  Value<double?> total,
-  Value<double?> totalReal,
-  Value<double?> descuento,
   Value<int?> count,
   Value<bool?> isFree,
   Value<String?> tarifaXDia,
@@ -5683,7 +6932,6 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int> id,
   Value<String?> folioHabitacion,
   Value<String?> folioCotizacion,
-  Value<String?> categoria,
   Value<String?> fechaCheckIn,
   Value<String?> fechaCheckOut,
   Value<DateTime> fecha,
@@ -5691,9 +6939,6 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int?> menores0a6,
   Value<int?> menores7a12,
   Value<int?> paxAdic,
-  Value<double?> total,
-  Value<double?> totalReal,
-  Value<double?> descuento,
   Value<int?> count,
   Value<bool?> isFree,
   Value<String?> tarifaXDia,
@@ -5705,8 +6950,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
     HabitacionData,
     $$HabitacionTableFilterComposer,
     $$HabitacionTableOrderingComposer,
-    $$HabitacionTableProcessedTableManager,
-    $$HabitacionTableInsertCompanionBuilder,
+    $$HabitacionTableCreateCompanionBuilder,
     $$HabitacionTableUpdateCompanionBuilder> {
   $$HabitacionTableTableManager(_$AppDatabase db, $HabitacionTable table)
       : super(TableManagerState(
@@ -5716,13 +6960,10 @@ class $$HabitacionTableTableManager extends RootTableManager<
               $$HabitacionTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$HabitacionTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$HabitacionTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioHabitacion = const Value.absent(),
             Value<String?> folioCotizacion = const Value.absent(),
-            Value<String?> categoria = const Value.absent(),
             Value<String?> fechaCheckIn = const Value.absent(),
             Value<String?> fechaCheckOut = const Value.absent(),
             Value<DateTime> fecha = const Value.absent(),
@@ -5730,9 +6971,6 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> menores0a6 = const Value.absent(),
             Value<int?> menores7a12 = const Value.absent(),
             Value<int?> paxAdic = const Value.absent(),
-            Value<double?> total = const Value.absent(),
-            Value<double?> totalReal = const Value.absent(),
-            Value<double?> descuento = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
@@ -5741,7 +6979,6 @@ class $$HabitacionTableTableManager extends RootTableManager<
             id: id,
             folioHabitacion: folioHabitacion,
             folioCotizacion: folioCotizacion,
-            categoria: categoria,
             fechaCheckIn: fechaCheckIn,
             fechaCheckOut: fechaCheckOut,
             fecha: fecha,
@@ -5749,18 +6986,14 @@ class $$HabitacionTableTableManager extends RootTableManager<
             menores0a6: menores0a6,
             menores7a12: menores7a12,
             paxAdic: paxAdic,
-            total: total,
-            totalReal: totalReal,
-            descuento: descuento,
             count: count,
             isFree: isFree,
             tarifaXDia: tarifaXDia,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioHabitacion = const Value.absent(),
             Value<String?> folioCotizacion = const Value.absent(),
-            Value<String?> categoria = const Value.absent(),
             Value<String?> fechaCheckIn = const Value.absent(),
             Value<String?> fechaCheckOut = const Value.absent(),
             required DateTime fecha,
@@ -5768,9 +7001,6 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> menores0a6 = const Value.absent(),
             Value<int?> menores7a12 = const Value.absent(),
             Value<int?> paxAdic = const Value.absent(),
-            Value<double?> total = const Value.absent(),
-            Value<double?> totalReal = const Value.absent(),
-            Value<double?> descuento = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
@@ -5779,7 +7009,6 @@ class $$HabitacionTableTableManager extends RootTableManager<
             id: id,
             folioHabitacion: folioHabitacion,
             folioCotizacion: folioCotizacion,
-            categoria: categoria,
             fechaCheckIn: fechaCheckIn,
             fechaCheckOut: fechaCheckOut,
             fecha: fecha,
@@ -5787,26 +7016,11 @@ class $$HabitacionTableTableManager extends RootTableManager<
             menores0a6: menores0a6,
             menores7a12: menores7a12,
             paxAdic: paxAdic,
-            total: total,
-            totalReal: totalReal,
-            descuento: descuento,
             count: count,
             isFree: isFree,
             tarifaXDia: tarifaXDia,
           ),
         ));
-}
-
-class $$HabitacionTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $HabitacionTable,
-    HabitacionData,
-    $$HabitacionTableFilterComposer,
-    $$HabitacionTableOrderingComposer,
-    $$HabitacionTableProcessedTableManager,
-    $$HabitacionTableInsertCompanionBuilder,
-    $$HabitacionTableUpdateCompanionBuilder> {
-  $$HabitacionTableProcessedTableManager(super.$state);
 }
 
 class $$HabitacionTableFilterComposer
@@ -5824,11 +7038,6 @@ class $$HabitacionTableFilterComposer
 
   ColumnFilters<String> get folioCotizacion => $state.composableBuilder(
       column: $state.table.folioCotizacion,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get categoria => $state.composableBuilder(
-      column: $state.table.categoria,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -5867,21 +7076,6 @@ class $$HabitacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get total => $state.composableBuilder(
-      column: $state.table.total,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get totalReal => $state.composableBuilder(
-      column: $state.table.totalReal,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<double> get descuento => $state.composableBuilder(
-      column: $state.table.descuento,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<int> get count => $state.composableBuilder(
       column: $state.table.count,
       builder: (column, joinBuilders) =>
@@ -5913,11 +7107,6 @@ class $$HabitacionTableOrderingComposer
 
   ColumnOrderings<String> get folioCotizacion => $state.composableBuilder(
       column: $state.table.folioCotizacion,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get categoria => $state.composableBuilder(
-      column: $state.table.categoria,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -5956,21 +7145,6 @@ class $$HabitacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get total => $state.composableBuilder(
-      column: $state.table.total,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get totalReal => $state.composableBuilder(
-      column: $state.table.totalReal,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<double> get descuento => $state.composableBuilder(
-      column: $state.table.descuento,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<int> get count => $state.composableBuilder(
       column: $state.table.count,
       builder: (column, joinBuilders) =>
@@ -5987,7 +7161,7 @@ class $$HabitacionTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaXDiaTableTableInsertCompanionBuilder = TarifaXDiaTableCompanion
+typedef $$TarifaXDiaTableTableCreateCompanionBuilder = TarifaXDiaTableCompanion
     Function({
   Value<int> id,
   Value<String?> subfolio,
@@ -6026,8 +7200,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
     TarifaXDiaTableData,
     $$TarifaXDiaTableTableFilterComposer,
     $$TarifaXDiaTableTableOrderingComposer,
-    $$TarifaXDiaTableTableProcessedTableManager,
-    $$TarifaXDiaTableTableInsertCompanionBuilder,
+    $$TarifaXDiaTableTableCreateCompanionBuilder,
     $$TarifaXDiaTableTableUpdateCompanionBuilder> {
   $$TarifaXDiaTableTableTableManager(
       _$AppDatabase db, $TarifaXDiaTableTable table)
@@ -6038,9 +7211,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
               $$TarifaXDiaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaXDiaTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TarifaXDiaTableTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> subfolio = const Value.absent(),
             Value<int?> dia = const Value.absent(),
@@ -6070,7 +7241,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             codeTemporada: codeTemporada,
             codeTarifa: codeTarifa,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> subfolio = const Value.absent(),
             Value<int?> dia = const Value.absent(),
@@ -6101,18 +7272,6 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             codeTarifa: codeTarifa,
           ),
         ));
-}
-
-class $$TarifaXDiaTableTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaXDiaTableTable,
-    TarifaXDiaTableData,
-    $$TarifaXDiaTableTableFilterComposer,
-    $$TarifaXDiaTableTableOrderingComposer,
-    $$TarifaXDiaTableTableProcessedTableManager,
-    $$TarifaXDiaTableTableInsertCompanionBuilder,
-    $$TarifaXDiaTableTableUpdateCompanionBuilder> {
-  $$TarifaXDiaTableTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaXDiaTableTableFilterComposer
@@ -6255,7 +7414,7 @@ class $$TarifaXDiaTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PeriodoTableInsertCompanionBuilder = PeriodoCompanion Function({
+typedef $$PeriodoTableCreateCompanionBuilder = PeriodoCompanion Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -6290,8 +7449,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
     PeriodoData,
     $$PeriodoTableFilterComposer,
     $$PeriodoTableOrderingComposer,
-    $$PeriodoTableProcessedTableManager,
-    $$PeriodoTableInsertCompanionBuilder,
+    $$PeriodoTableCreateCompanionBuilder,
     $$PeriodoTableUpdateCompanionBuilder> {
   $$PeriodoTableTableManager(_$AppDatabase db, $PeriodoTable table)
       : super(TableManagerState(
@@ -6301,8 +7459,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
               $$PeriodoTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$PeriodoTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$PeriodoTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -6330,7 +7487,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
             enSabado: enSabado,
             enDomingo: enDomingo,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             Value<DateTime?> fecha = const Value.absent(),
@@ -6359,18 +7516,6 @@ class $$PeriodoTableTableManager extends RootTableManager<
             enDomingo: enDomingo,
           ),
         ));
-}
-
-class $$PeriodoTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $PeriodoTable,
-    PeriodoData,
-    $$PeriodoTableFilterComposer,
-    $$PeriodoTableOrderingComposer,
-    $$PeriodoTableProcessedTableManager,
-    $$PeriodoTableInsertCompanionBuilder,
-    $$PeriodoTableUpdateCompanionBuilder> {
-  $$PeriodoTableProcessedTableManager(super.$state);
 }
 
 class $$PeriodoTableFilterComposer
@@ -6501,7 +7646,7 @@ class $$PeriodoTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
+typedef $$TemporadaTableCreateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
   required String code,
   required String nombre,
@@ -6509,6 +7654,8 @@ typedef $$TemporadaTableInsertCompanionBuilder = TemporadaCompanion Function({
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
+  Value<bool?> forGroup,
+  Value<bool?> forCash,
 });
 typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int> id,
@@ -6518,6 +7665,8 @@ typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<int?> estanciaMinima,
   Value<double?> porcentajePromocion,
   Value<String?> codeTarifa,
+  Value<bool?> forGroup,
+  Value<bool?> forCash,
 });
 
 class $$TemporadaTableTableManager extends RootTableManager<
@@ -6526,8 +7675,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
     TemporadaData,
     $$TemporadaTableFilterComposer,
     $$TemporadaTableOrderingComposer,
-    $$TemporadaTableProcessedTableManager,
-    $$TemporadaTableInsertCompanionBuilder,
+    $$TemporadaTableCreateCompanionBuilder,
     $$TemporadaTableUpdateCompanionBuilder> {
   $$TemporadaTableTableManager(_$AppDatabase db, $TemporadaTable table)
       : super(TableManagerState(
@@ -6537,9 +7685,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
               $$TemporadaTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TemporadaTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TemporadaTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<String> nombre = const Value.absent(),
@@ -6547,6 +7693,8 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
+            Value<bool?> forGroup = const Value.absent(),
+            Value<bool?> forCash = const Value.absent(),
           }) =>
               TemporadaCompanion(
             id: id,
@@ -6556,8 +7704,10 @@ class $$TemporadaTableTableManager extends RootTableManager<
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
+            forGroup: forGroup,
+            forCash: forCash,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             required String nombre,
@@ -6565,6 +7715,8 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<int?> estanciaMinima = const Value.absent(),
             Value<double?> porcentajePromocion = const Value.absent(),
             Value<String?> codeTarifa = const Value.absent(),
+            Value<bool?> forGroup = const Value.absent(),
+            Value<bool?> forCash = const Value.absent(),
           }) =>
               TemporadaCompanion.insert(
             id: id,
@@ -6574,20 +7726,10 @@ class $$TemporadaTableTableManager extends RootTableManager<
             estanciaMinima: estanciaMinima,
             porcentajePromocion: porcentajePromocion,
             codeTarifa: codeTarifa,
+            forGroup: forGroup,
+            forCash: forCash,
           ),
         ));
-}
-
-class $$TemporadaTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TemporadaTable,
-    TemporadaData,
-    $$TemporadaTableFilterComposer,
-    $$TemporadaTableOrderingComposer,
-    $$TemporadaTableProcessedTableManager,
-    $$TemporadaTableInsertCompanionBuilder,
-    $$TemporadaTableUpdateCompanionBuilder> {
-  $$TemporadaTableProcessedTableManager(super.$state);
 }
 
 class $$TemporadaTableFilterComposer
@@ -6627,6 +7769,30 @@ class $$TemporadaTableFilterComposer
       column: $state.table.codeTarifa,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get forGroup => $state.composableBuilder(
+      column: $state.table.forGroup,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get forCash => $state.composableBuilder(
+      column: $state.table.forCash,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter temporadaTarifaRefs(
+      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
+    final $$TemporadaTarifaTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.temporadaTarifa,
+            getReferencedColumn: (t) => t.temporadaId,
+            builder: (joinBuilder, parentComposers) =>
+                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
+                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TemporadaTableOrderingComposer
@@ -6666,11 +7832,216 @@ class $$TemporadaTableOrderingComposer
       column: $state.table.codeTarifa,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get forGroup => $state.composableBuilder(
+      column: $state.table.forGroup,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get forCash => $state.composableBuilder(
+      column: $state.table.forCash,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
+typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int> id,
-  required String code,
+  Value<String?> code,
+  Value<String?> nombre,
+  Value<double?> descIntegrado,
+  Value<double?> upgradeCategoria,
+  Value<double?> upgradeMenor,
+  Value<double?> upgradePaxAdic,
+  Value<int?> tarifaPadreId,
+});
+typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
+  Value<int> id,
+  Value<String?> code,
+  Value<String?> nombre,
+  Value<double?> descIntegrado,
+  Value<double?> upgradeCategoria,
+  Value<double?> upgradeMenor,
+  Value<double?> upgradePaxAdic,
+  Value<int?> tarifaPadreId,
+});
+
+class $$TarifaBaseTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TarifaBaseTable,
+    TarifaBaseData,
+    $$TarifaBaseTableFilterComposer,
+    $$TarifaBaseTableOrderingComposer,
+    $$TarifaBaseTableCreateCompanionBuilder,
+    $$TarifaBaseTableUpdateCompanionBuilder> {
+  $$TarifaBaseTableTableManager(_$AppDatabase db, $TarifaBaseTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TarifaBaseTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TarifaBaseTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<double?> descIntegrado = const Value.absent(),
+            Value<double?> upgradeCategoria = const Value.absent(),
+            Value<double?> upgradeMenor = const Value.absent(),
+            Value<double?> upgradePaxAdic = const Value.absent(),
+            Value<int?> tarifaPadreId = const Value.absent(),
+          }) =>
+              TarifaBaseCompanion(
+            id: id,
+            code: code,
+            nombre: nombre,
+            descIntegrado: descIntegrado,
+            upgradeCategoria: upgradeCategoria,
+            upgradeMenor: upgradeMenor,
+            upgradePaxAdic: upgradePaxAdic,
+            tarifaPadreId: tarifaPadreId,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> code = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<double?> descIntegrado = const Value.absent(),
+            Value<double?> upgradeCategoria = const Value.absent(),
+            Value<double?> upgradeMenor = const Value.absent(),
+            Value<double?> upgradePaxAdic = const Value.absent(),
+            Value<int?> tarifaPadreId = const Value.absent(),
+          }) =>
+              TarifaBaseCompanion.insert(
+            id: id,
+            code: code,
+            nombre: nombre,
+            descIntegrado: descIntegrado,
+            upgradeCategoria: upgradeCategoria,
+            upgradeMenor: upgradeMenor,
+            upgradePaxAdic: upgradePaxAdic,
+            tarifaPadreId: tarifaPadreId,
+          ),
+        ));
+}
+
+class $$TarifaBaseTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaBaseTable> {
+  $$TarifaBaseTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get descIntegrado => $state.composableBuilder(
+      column: $state.table.descIntegrado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get upgradeCategoria => $state.composableBuilder(
+      column: $state.table.upgradeCategoria,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get upgradeMenor => $state.composableBuilder(
+      column: $state.table.upgradeMenor,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get upgradePaxAdic => $state.composableBuilder(
+      column: $state.table.upgradePaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TarifaBaseTableFilterComposer get tarifaPadreId {
+    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter tarifaRefs(
+      ComposableFilter Function($$TarifaTableFilterComposer f) f) {
+    final $$TarifaTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tarifa,
+        getReferencedColumn: (t) => t.tarifaPadreId,
+        builder: (joinBuilder, parentComposers) => $$TarifaTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$TarifaBaseTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaBaseTable> {
+  $$TarifaBaseTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get descIntegrado => $state.composableBuilder(
+      column: $state.table.descIntegrado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get upgradeCategoria => $state.composableBuilder(
+      column: $state.table.upgradeCategoria,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get upgradeMenor => $state.composableBuilder(
+      column: $state.table.upgradeMenor,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get upgradePaxAdic => $state.composableBuilder(
+      column: $state.table.upgradePaxAdic,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TarifaBaseTableOrderingComposer get tarifaPadreId {
+    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$TarifaTableCreateCompanionBuilder = TarifaCompanion Function({
+  Value<int> id,
+  Value<String?> code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
   Value<double?> tarifaAdultoSGLoDBL,
@@ -6678,10 +8049,11 @@ typedef $$TarifaTableInsertCompanionBuilder = TarifaCompanion Function({
   Value<double?> tarifaAdultoCPLE,
   Value<double?> tarifaMenores7a12,
   Value<double?> tarifaPaxAdicional,
+  Value<int?> tarifaPadreId,
 });
 typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
   Value<int> id,
-  Value<String> code,
+  Value<String?> code,
   Value<DateTime?> fecha,
   Value<String?> categoria,
   Value<double?> tarifaAdultoSGLoDBL,
@@ -6689,6 +8061,7 @@ typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
   Value<double?> tarifaAdultoCPLE,
   Value<double?> tarifaMenores7a12,
   Value<double?> tarifaPaxAdicional,
+  Value<int?> tarifaPadreId,
 });
 
 class $$TarifaTableTableManager extends RootTableManager<
@@ -6697,8 +8070,7 @@ class $$TarifaTableTableManager extends RootTableManager<
     TarifaData,
     $$TarifaTableFilterComposer,
     $$TarifaTableOrderingComposer,
-    $$TarifaTableProcessedTableManager,
-    $$TarifaTableInsertCompanionBuilder,
+    $$TarifaTableCreateCompanionBuilder,
     $$TarifaTableUpdateCompanionBuilder> {
   $$TarifaTableTableManager(_$AppDatabase db, $TarifaTable table)
       : super(TableManagerState(
@@ -6708,10 +8080,9 @@ class $$TarifaTableTableManager extends RootTableManager<
               $$TarifaTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$TarifaTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> code = const Value.absent(),
+            Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
             Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
@@ -6719,6 +8090,7 @@ class $$TarifaTableTableManager extends RootTableManager<
             Value<double?> tarifaAdultoCPLE = const Value.absent(),
             Value<double?> tarifaMenores7a12 = const Value.absent(),
             Value<double?> tarifaPaxAdicional = const Value.absent(),
+            Value<int?> tarifaPadreId = const Value.absent(),
           }) =>
               TarifaCompanion(
             id: id,
@@ -6730,10 +8102,11 @@ class $$TarifaTableTableManager extends RootTableManager<
             tarifaAdultoCPLE: tarifaAdultoCPLE,
             tarifaMenores7a12: tarifaMenores7a12,
             tarifaPaxAdicional: tarifaPaxAdicional,
+            tarifaPadreId: tarifaPadreId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String code,
+            Value<String?> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
             Value<double?> tarifaAdultoSGLoDBL = const Value.absent(),
@@ -6741,6 +8114,7 @@ class $$TarifaTableTableManager extends RootTableManager<
             Value<double?> tarifaAdultoCPLE = const Value.absent(),
             Value<double?> tarifaMenores7a12 = const Value.absent(),
             Value<double?> tarifaPaxAdicional = const Value.absent(),
+            Value<int?> tarifaPadreId = const Value.absent(),
           }) =>
               TarifaCompanion.insert(
             id: id,
@@ -6752,20 +8126,9 @@ class $$TarifaTableTableManager extends RootTableManager<
             tarifaAdultoCPLE: tarifaAdultoCPLE,
             tarifaMenores7a12: tarifaMenores7a12,
             tarifaPaxAdicional: tarifaPaxAdicional,
+            tarifaPadreId: tarifaPadreId,
           ),
         ));
-}
-
-class $$TarifaTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaTable,
-    TarifaData,
-    $$TarifaTableFilterComposer,
-    $$TarifaTableOrderingComposer,
-    $$TarifaTableProcessedTableManager,
-    $$TarifaTableInsertCompanionBuilder,
-    $$TarifaTableUpdateCompanionBuilder> {
-  $$TarifaTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaTableFilterComposer
@@ -6815,6 +8178,32 @@ class $$TarifaTableFilterComposer
       column: $state.table.tarifaPaxAdicional,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TarifaBaseTableFilterComposer get tarifaPadreId {
+    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter temporadaTarifaRefs(
+      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
+    final $$TemporadaTarifaTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.temporadaTarifa,
+            getReferencedColumn: (t) => t.TarifaId,
+            builder: (joinBuilder, parentComposers) =>
+                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
+                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TarifaTableOrderingComposer
@@ -6864,9 +8253,21 @@ class $$TarifaTableOrderingComposer
       column: $state.table.tarifaPaxAdicional,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TarifaBaseTableOrderingComposer get tarifaPadreId {
+    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
-typedef $$UserActivityTableInsertCompanionBuilder = UserActivityCompanion
+typedef $$UserActivityTableCreateCompanionBuilder = UserActivityCompanion
     Function({
   Value<int> id,
   Value<DateTime?> fecha,
@@ -6891,8 +8292,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
     UserActivityData,
     $$UserActivityTableFilterComposer,
     $$UserActivityTableOrderingComposer,
-    $$UserActivityTableProcessedTableManager,
-    $$UserActivityTableInsertCompanionBuilder,
+    $$UserActivityTableCreateCompanionBuilder,
     $$UserActivityTableUpdateCompanionBuilder> {
   $$UserActivityTableTableManager(_$AppDatabase db, $UserActivityTable table)
       : super(TableManagerState(
@@ -6902,9 +8302,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
               $$UserActivityTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$UserActivityTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$UserActivityTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
@@ -6920,7 +8318,7 @@ class $$UserActivityTableTableManager extends RootTableManager<
             status: status,
             userId: userId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
             Value<String?> name = const Value.absent(),
@@ -6937,18 +8335,6 @@ class $$UserActivityTableTableManager extends RootTableManager<
             userId: userId,
           ),
         ));
-}
-
-class $$UserActivityTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $UserActivityTable,
-    UserActivityData,
-    $$UserActivityTableFilterComposer,
-    $$UserActivityTableOrderingComposer,
-    $$UserActivityTableProcessedTableManager,
-    $$UserActivityTableInsertCompanionBuilder,
-    $$UserActivityTableUpdateCompanionBuilder> {
-  $$UserActivityTableProcessedTableManager(super.$state);
 }
 
 class $$UserActivityTableFilterComposer
@@ -6979,10 +8365,17 @@ class $$UserActivityTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  $$UsuarioTableFilterComposer get userId {
+    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.userId,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 class $$UserActivityTableOrderingComposer
@@ -7013,13 +8406,20 @@ class $$UserActivityTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get userId => $state.composableBuilder(
-      column: $state.table.userId,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  $$UsuarioTableOrderingComposer get userId {
+    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.userId,
+        referencedTable: $state.db.usuario,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableOrderingComposer(ComposerState(
+                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
-typedef $$TarifaRackTableInsertCompanionBuilder = TarifaRackCompanion Function({
+typedef $$TarifaRackTableCreateCompanionBuilder = TarifaRackCompanion Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -7046,8 +8446,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
     TarifaRackData,
     $$TarifaRackTableFilterComposer,
     $$TarifaRackTableOrderingComposer,
-    $$TarifaRackTableProcessedTableManager,
-    $$TarifaRackTableInsertCompanionBuilder,
+    $$TarifaRackTableCreateCompanionBuilder,
     $$TarifaRackTableUpdateCompanionBuilder> {
   $$TarifaRackTableTableManager(_$AppDatabase db, $TarifaRackTable table)
       : super(TableManagerState(
@@ -7057,9 +8456,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
               $$TarifaRackTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$TarifaRackTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TarifaRackTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
@@ -7079,7 +8476,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             codePeriodo: codePeriodo,
             usuarioId: usuarioId,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String code,
             Value<DateTime?> fecha = const Value.absent(),
@@ -7100,18 +8497,6 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             usuarioId: usuarioId,
           ),
         ));
-}
-
-class $$TarifaRackTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TarifaRackTable,
-    TarifaRackData,
-    $$TarifaRackTableFilterComposer,
-    $$TarifaRackTableOrderingComposer,
-    $$TarifaRackTableProcessedTableManager,
-    $$TarifaRackTableInsertCompanionBuilder,
-    $$TarifaRackTableUpdateCompanionBuilder> {
-  $$TarifaRackTableProcessedTableManager(super.$state);
 }
 
 class $$TarifaRackTableFilterComposer
@@ -7202,7 +8587,7 @@ class $$TarifaRackTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PoliticasTableInsertCompanionBuilder = PoliticasCompanion Function({
+typedef $$PoliticasTableCreateCompanionBuilder = PoliticasCompanion Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
@@ -7221,8 +8606,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
     Politica,
     $$PoliticasTableFilterComposer,
     $$PoliticasTableOrderingComposer,
-    $$PoliticasTableProcessedTableManager,
-    $$PoliticasTableInsertCompanionBuilder,
+    $$PoliticasTableCreateCompanionBuilder,
     $$PoliticasTableUpdateCompanionBuilder> {
   $$PoliticasTableTableManager(_$AppDatabase db, $PoliticasTable table)
       : super(TableManagerState(
@@ -7232,9 +8616,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
               $$PoliticasTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
               $$PoliticasTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$PoliticasTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
+          updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
@@ -7246,7 +8628,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
           ),
-          getInsertCompanionBuilder: ({
+          createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
@@ -7259,18 +8641,6 @@ class $$PoliticasTableTableManager extends RootTableManager<
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
           ),
         ));
-}
-
-class $$PoliticasTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $PoliticasTable,
-    Politica,
-    $$PoliticasTableFilterComposer,
-    $$PoliticasTableOrderingComposer,
-    $$PoliticasTableProcessedTableManager,
-    $$PoliticasTableInsertCompanionBuilder,
-    $$PoliticasTableUpdateCompanionBuilder> {
-  $$PoliticasTableProcessedTableManager(super.$state);
 }
 
 class $$PoliticasTableFilterComposer
@@ -7324,9 +8694,130 @@ class $$PoliticasTableOrderingComposer
               ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-class _$AppDatabaseManager {
+typedef $$TemporadaTarifaTableCreateCompanionBuilder = TemporadaTarifaCompanion
+    Function({
+  Value<int> id,
+  Value<int?> temporadaId,
+  Value<int?> TarifaId,
+});
+typedef $$TemporadaTarifaTableUpdateCompanionBuilder = TemporadaTarifaCompanion
+    Function({
+  Value<int> id,
+  Value<int?> temporadaId,
+  Value<int?> TarifaId,
+});
+
+class $$TemporadaTarifaTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TemporadaTarifaTable,
+    TemporadaTarifaData,
+    $$TemporadaTarifaTableFilterComposer,
+    $$TemporadaTarifaTableOrderingComposer,
+    $$TemporadaTarifaTableCreateCompanionBuilder,
+    $$TemporadaTarifaTableUpdateCompanionBuilder> {
+  $$TemporadaTarifaTableTableManager(
+      _$AppDatabase db, $TemporadaTarifaTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TemporadaTarifaTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TemporadaTarifaTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> temporadaId = const Value.absent(),
+            Value<int?> TarifaId = const Value.absent(),
+          }) =>
+              TemporadaTarifaCompanion(
+            id: id,
+            temporadaId: temporadaId,
+            TarifaId: TarifaId,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> temporadaId = const Value.absent(),
+            Value<int?> TarifaId = const Value.absent(),
+          }) =>
+              TemporadaTarifaCompanion.insert(
+            id: id,
+            temporadaId: temporadaId,
+            TarifaId: TarifaId,
+          ),
+        ));
+}
+
+class $$TemporadaTarifaTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TemporadaTarifaTable> {
+  $$TemporadaTarifaTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TemporadaTableFilterComposer get temporadaId {
+    final $$TemporadaTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.temporadaId,
+        referencedTable: $state.db.temporada,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TemporadaTableFilterComposer(ComposerState(
+                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaTableFilterComposer get TarifaId {
+    final $$TarifaTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.TarifaId,
+        referencedTable: $state.db.tarifa,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$TarifaTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TemporadaTarifaTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TemporadaTarifaTable> {
+  $$TemporadaTarifaTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TemporadaTableOrderingComposer get temporadaId {
+    final $$TemporadaTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.temporadaId,
+        referencedTable: $state.db.temporada,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TemporadaTableOrderingComposer(ComposerState(
+                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaTableOrderingComposer get TarifaId {
+    final $$TarifaTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.TarifaId,
+        referencedTable: $state.db.tarifa,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableOrderingComposer(ComposerState(
+                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $AppDatabaseManager {
   final _$AppDatabase _db;
-  _$AppDatabaseManager(this._db);
+  $AppDatabaseManager(this._db);
+  $$ImagesTableTableTableManager get imagesTable =>
+      $$ImagesTableTableTableManager(_db, _db.imagesTable);
   $$UsuarioTableTableManager get usuario =>
       $$UsuarioTableTableManager(_db, _db.usuario);
   $$CotizacionTableTableManager get cotizacion =>
@@ -7339,6 +8830,8 @@ class _$AppDatabaseManager {
       $$PeriodoTableTableManager(_db, _db.periodo);
   $$TemporadaTableTableManager get temporada =>
       $$TemporadaTableTableManager(_db, _db.temporada);
+  $$TarifaBaseTableTableManager get tarifaBase =>
+      $$TarifaBaseTableTableManager(_db, _db.tarifaBase);
   $$TarifaTableTableManager get tarifa =>
       $$TarifaTableTableManager(_db, _db.tarifa);
   $$UserActivityTableTableManager get userActivity =>
@@ -7347,4 +8840,6 @@ class _$AppDatabaseManager {
       $$TarifaRackTableTableManager(_db, _db.tarifaRack);
   $$PoliticasTableTableManager get politicas =>
       $$PoliticasTableTableManager(_db, _db.politicas);
+  $$TemporadaTarifaTableTableManager get temporadaTarifa =>
+      $$TemporadaTarifaTableTableManager(_db, _db.temporadaTarifa);
 }

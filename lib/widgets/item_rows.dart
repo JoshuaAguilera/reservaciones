@@ -9,10 +9,10 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 
@@ -28,18 +28,19 @@ class ItemRows {
         ),
       ),
       padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 9),
       width: double.infinity,
       child: Stack(
         children: [
           Positioned(
             bottom: 0,
             right: 0,
-            child: Icon(
-              Utility.getIconCardDashboard(register.tipoCotizacion),
-              size: 55,
-              color: Utility.getColorRegisterQuote(register.tipoCotizacion!),
-            ),
+            child: Icon(Utility.getIconCardDashboard(register.tipoCotizacion),
+                size: 55,
+                color: Utility.darken(
+                  Utility.getColorRegisterQuote(register.tipoCotizacion!),
+                  0.12,
+                )),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,11 +51,10 @@ class ItemRows {
                 size: 13,
                 overClip: true,
               ),
-              const SizedBox(height: 15),
               TextStyles.TextTitleList(
                 index: register.numCotizaciones,
                 color: Colors.white,
-                size: 30,
+                size: 29.5,
                 isBold: false,
               ),
             ],
@@ -458,46 +458,68 @@ class ItemRows {
 
   static Widget filterItemRow({
     required Color colorCard,
-    required DateTime initDate,
-    required DateTime lastDate,
+    DateTime? initDate,
+    DateTime? lastDate,
     void Function()? onRemove,
     bool withDeleteButton = true,
+    String title = "",
+    bool withOutWidth = false,
+    bool isSelect = true,
+    Color? backgroundColor,
+    double? sizeText,
   }) {
     return SizedBox(
-      width: 170,
+      width: withOutWidth ? null : 170,
       height: withDeleteButton ? null : 38,
       child: Card(
-        color: colorCard,
-        child: Row(
-          mainAxisAlignment: withDeleteButton
-              ? MainAxisAlignment.spaceBetween
-              : MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 7),
-            TextStyles.standardText(
-                text: Utility.getStringPeriod(
-                    initDate: initDate, lastDate: lastDate),
-                color: useWhiteForeground(colorCard)
-                    ? Colors.white
-                    : Colors.black),
-            if (withDeleteButton)
-              SizedBox(
-                width: 35,
-                height: 40,
-                child: IconButton(
-                  onPressed: () {
-                    onRemove!.call();
-                  },
-                  icon: Icon(
-                    Icons.close,
-                    size: 25,
-                    color: useWhiteForeground(colorCard)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
+        color: isSelect ? colorCard : Colors.transparent,
+        child: Container(
+          decoration: isSelect
+              ? null
+              : BoxDecoration(
+                  border: Border.all(color: colorCard),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                 ),
-              ),
-          ],
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: !withDeleteButton ? 6 : 0),
+            child: Row(
+              mainAxisAlignment: withDeleteButton
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.center,
+              children: [
+                if (withDeleteButton) const SizedBox(width: 7),
+                TextStyles.standardText(
+                  text: (initDate == null && lastDate == null)
+                      ? title
+                      : Utility.getStringPeriod(
+                          initDate: initDate!, lastDate: lastDate!),
+                  color: useWhiteForeground(
+                          isSelect ? colorCard : backgroundColor ?? colorCard)
+                      ? Colors.white
+                      : Colors.black,
+                  size: sizeText ?? 13,
+                ),
+                if (withDeleteButton)
+                  SizedBox(
+                    width: 35,
+                    height: 40,
+                    child: IconButton(
+                      onPressed: () {
+                        onRemove!.call();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        size: 25,
+                        color: useWhiteForeground(colorCard)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

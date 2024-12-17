@@ -7,13 +7,16 @@ import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/views/tarifario/manager_base_tariff_dialog.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../providers/cotizacion_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
@@ -57,12 +60,27 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     double screenWidth = MediaQuery.of(context).size.width;
     final modeViewProvider = ref.watch(selectedModeViewProvider);
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     void onEdit(RegistroTarifa register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
-      ref
-          .read(temporadasProvider.notifier)
-          .update((state) => Utility.getTemporadas(register.temporadas));
+      ref.read(temporadasIndividualesProvider.notifier).update((state) =>
+          register.temporadas
+              ?.where((element) =>
+                  ((element.forGroup ?? false) == false) &&
+                  (element.forCash ?? false) == false)
+              .toList() ??
+          List<Temporada>.empty());
+      ref.read(temporadasGrupalesProvider.notifier).update((state) =>
+          register.temporadas
+              ?.where((element) => element.forGroup ?? false)
+              .toList() ??
+          List<Temporada>.empty());
+      ref.read(temporadasEfectivoProvider.notifier).update((state) =>
+          register.temporadas
+              ?.where((element) => element.forCash ?? false)
+              .toList() ??
+          List<Temporada>.empty());
       onCreate.call();
     }
 
@@ -93,9 +111,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   ref
                       .read(changeTarifasProvider.notifier)
                       .update((state) => UniqueKey().hashCode);
-                  ref
-                      .read(monthsCacheYearProvider.notifier)
-                      .update((state) => []);
                 },
               );
             } else {
@@ -104,7 +119,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                 title: "Error al eliminar tarifa",
                 message:
                     "La tarifa no fue eliminada debido a un error inesperado.",
-                type: "success",
+                type: "danger",
                 iconCustom: Icons.delete,
               );
             }
@@ -122,7 +137,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           data == null ? 1 : data.intervaloHabitacionGratuita ?? 0;
       int limiteCotizacionGrupal =
           data == null ? 1 : data.limiteHabitacionCotizacion ?? 0;
-      bool loadingProccess = false;
 
       showDialog(
         context: context,
@@ -130,7 +144,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           context: context,
           notCloseInstant: true,
           withLoadingProcess: true,
-          iconData: CupertinoIcons.slider_horizontal_3,
+          iconData: HeroIcons.adjustments_horizontal,
           title: "Políticas y criterios de Aplicación",
           nameButtonMain: "Guardar",
           contentCustom: SingleChildScrollView(
@@ -152,7 +166,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   widthInput: 70,
                   sizeText: 13.3,
                   nameField:
-                      "Intervalo de Aplicación de Habitaciones\nGratuitas",
+                      "Intervalo de Aplicación de Habitaciones\nde Cortesía",
                   initialValue: intervaloHabitacion.toString(),
                   onChanged: (p0) =>
                       intervaloHabitacion = p0.isEmpty ? 1 : int.parse(p0),
@@ -188,33 +202,17 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
             ),
           ),
           funtionMain: () async {
-            bool responseSavePolicy = await TarifaService().saveTariffPolicy(
-              Politica(
-                id: policy.id,
-                intervaloHabitacionGratuita: intervaloHabitacion,
-                fechaActualizacion: DateTime.now(),
-                limiteHabitacionCotizacion: limiteCotizacionGrupal,
-              ),
+            Politica savePolicy = Politica(
+              id: policy.id,
+              intervaloHabitacionGratuita: intervaloHabitacion,
+              fechaActualizacion: DateTime.now(),
+              limiteHabitacionCotizacion: limiteCotizacionGrupal,
             );
-            if (!context.mounted) return;
-            if (responseSavePolicy) {
-              showSnackBar(
-                context: context,
-                title:
-                    "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
-                message:
-                    "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
-                type: "success",
-                iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
-              );
 
-              Future.delayed(
-                500.ms,
-                () => ref
-                    .read(changeTariffPolicyProvider.notifier)
-                    .update((state) => UniqueKey().hashCode),
-              );
-            } else {
+            bool responseSavePolicy =
+                await TarifaService().saveTariffPolicy(savePolicy);
+            if (!context.mounted) return;
+            if (!responseSavePolicy) {
               if (mounted) return;
               showSnackBar(
                   context: context,
@@ -224,6 +222,29 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   type: "danger");
               return;
             }
+
+            showSnackBar(
+              context: context,
+              title:
+                  "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
+              message:
+                  "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
+              type: "success",
+              iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
+            );
+
+            Future.delayed(
+              500.ms,
+              () {
+                ref
+                    .read(saveTariffPolityProvider.notifier)
+                    .update((state) => savePolicy);
+
+                return ref
+                    .read(changeTariffPolicyProvider.notifier)
+                    .update((state) => UniqueKey().hashCode);
+              },
+            );
 
             Navigator.pop(context);
           },
@@ -252,9 +273,54 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          tarifasBase.when(
+                            data: (data) => Buttons.iconButtonCard(
+                              icon: HeroIcons.square_3_stack_3d,
+                              tooltip: "Tarifas Base",
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ManagerBaseTariffDialog(
+                                        tarifasBase: data);
+                                  },
+                                ).then((value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(changeTarifasProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                    ref
+                                        .read(
+                                            changeTarifasListProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                    ref
+                                        .read(
+                                            changeTarifasBaseProvider.notifier)
+                                        .update(
+                                            (state) => UniqueKey().hashCode);
+                                  }
+                                });
+                              },
+                            ),
+                            error: (error, stackTrace) => const Tooltip(
+                                message: "Error de consulta",
+                                child: Icon(Icons.warning_amber_rounded,
+                                    color: Colors.amber)),
+                            loading: () => Center(
+                              child: SizedBox(
+                                width: 40,
+                                child: ProgressIndicatorEstandar(
+                                    sizeProgressIndicator: 30),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
                           politicaTarifaProvider.when(
                             data: (data) => Buttons.iconButtonCard(
-                              icon: CupertinoIcons.slider_horizontal_3,
+                              icon: HeroIcons.adjustments_horizontal,
+                              tooltip: "Politicas de aplicación",
                               onPressed: () {
                                 _dialogConfigTariffs(data);
                               },
@@ -279,17 +345,26 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                 ref
                                     .read(editTarifaProvider.notifier)
                                     .update((state) => RegistroTarifa());
-                                ref.read(temporadasProvider.notifier).update(
+                                ref
+                                    .read(
+                                        temporadasIndividualesProvider.notifier)
+                                    .update(
                                       (state) => [
                                         Temporada(
-                                            nombre: "Promoción",
-                                            editable: false),
+                                            nombre: "DIRECTO", editable: false),
                                         Temporada(
                                             nombre: "BAR I", editable: false),
                                         Temporada(
                                             nombre: "BAR II", editable: false),
                                       ],
                                     );
+                                ref
+                                    .read(temporadasGrupalesProvider.notifier)
+                                    .update((state) => []);
+
+                                ref
+                                    .read(temporadasEfectivoProvider.notifier)
+                                    .update((state) => []);
                                 onCreate.call();
                               },
                               text: "Crear tarifa",

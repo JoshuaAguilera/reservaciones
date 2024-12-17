@@ -13,8 +13,9 @@ class PeriodItemRow extends StatefulWidget {
     required this.weekNow,
     this.compact = false,
     this.target = 1,
-    this.isUpDireccion = false,
+    this.alreadyLoading = false,
     this.showMonth = false,
+    this.isntWeek = true,
   }) : super(key: key);
 
   final RegistroTarifa tarifa;
@@ -23,8 +24,9 @@ class PeriodItemRow extends StatefulWidget {
   final DateTime weekNow;
   final bool compact;
   final double target;
-  final bool isUpDireccion;
+  final bool alreadyLoading;
   final bool showMonth;
+  final bool isntWeek;
 
   @override
   State<PeriodItemRow> createState() => _PeriodItemRowState();
@@ -32,7 +34,7 @@ class PeriodItemRow extends StatefulWidget {
 
 class _PeriodItemRowState extends State<PeriodItemRow> {
   List<DateTime> weekNowSegment = [];
-  
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -50,8 +52,9 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         sectionDay: sectionDay,
         compact: widget.compact,
         target: widget.target,
-        isUpDireccion: widget.isUpDireccion,
-        showMonth: widget.showMonth,
+        alreadyLoading: widget.alreadyLoading,
+        isntWeek: widget.isntWeek,
+        // showMonth: widget.showMonth,
       ),
     );
   }

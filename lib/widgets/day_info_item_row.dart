@@ -1,10 +1,11 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
+import '../database/database.dart';
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'form_widgets.dart';
 import 'text_styles.dart';
 
@@ -17,6 +18,7 @@ class DayInfoItemRow extends StatefulWidget {
     this.day,
     this.month,
     this.weekNow,
+    this.isntWeek = true,
   });
 
   final RegistroTarifa tarifa;
@@ -25,6 +27,7 @@ class DayInfoItemRow extends StatefulWidget {
   final DateTime? month;
   final DateTime? weekNow;
   final Widget child;
+  final bool isntWeek;
 
   @override
   State<DayInfoItemRow> createState() => _DayInfoItemRowState();
@@ -34,6 +37,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   final _controller = SuperTooltipController();
   GlobalKey _containerKey = GlobalKey();
   TooltipDirection position = TooltipDirection.down;
+  late PeriodoData nowPeriod;
 
   Future<bool>? _willPopCallback() async {
     if (_controller.isVisible) {
@@ -50,33 +54,37 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   }
 
   @override
+  void initState() {
+    if (widget.weekNow != null) {
+      nowPeriod = Utility.getPeriodNow(widget.weekNow!, widget.tarifa.periodos);
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double heigth = MediaQuery.of(context).size.height;
-    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return PopScope(
       onPopInvoked: (didPop) => _willPopCallback,
       child: GestureDetector(
         key: _containerKey,
         onTap: () async {
-          final RenderBox renderBox = await _containerKey.currentContext!
-              .findRenderObject() as RenderBox;
+          final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final Offset offset = await renderBox.localToGlobal(Offset.zero);
-
-          print(brightness == Brightness.light);
-
-          setState(() {
-            if (heigth > 500) {
-              if (offset.dy.round() > (heigth / 2)) {
-                position = TooltipDirection.up;
-              } else {
-                position = TooltipDirection.down;
-              }
-            } else {
+          if (heigth > 500) {
+            if (offset.dy.round() > (heigth / 2)) {
               position = TooltipDirection.up;
+            } else {
+              position = TooltipDirection.down;
             }
-          });
-          await _controller.showTooltip();
+          } else {
+            position = TooltipDirection.up;
+          }
+          setState(() {});
+
+          Future.delayed(
+              Durations.short1, () async => await _controller.showTooltip());
         },
         child: AbsorbPointer(
           absorbing: true,
@@ -87,357 +95,124 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
             barrierColor: Colors.transparent,
             borderColor: Colors.transparent,
             content: Padding(
-                padding: const EdgeInsets.all(4),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      TextStyles.standardText(
-                        text: widget.tarifa.nombre ?? '',
-                        isBold: true,
+              padding: const EdgeInsets.all(4),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextStyles.standardText(
+                      text: widget.tarifa.nombre ?? '',
+                      isBold: true,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    TextStyles.standardText(
+                      text: Utility.definePeriodNow(
+                          widget.weekNow ??
+                              DateTime(widget.yearNow!, widget.month!.month,
+                                  widget.day!),
+                          widget.tarifa.periodos),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    if (widget.isntWeek && widget.weekNow != null)
+                      TextStyles.TextAsociative(
+                        "Estatus: ",
+                        Utility.defineStatusPeriod(nowPeriod),
                         color: Theme.of(context).primaryColor,
+                        boldInversed: true,
                       ),
-                      TextStyles.standardText(
-                        text: Utility.definePeriodNow(
-                            widget.weekNow ??
-                                DateTime(widget.yearNow!, widget.month!.month,
-                                    widget.day!),
-                            widget.tarifa.periodos),
-                        color: Theme.of(context).primaryColor,
+                    TextStyles.standardText(
+                      text: "Temporadas",
+                      size: 11,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    for (var element in widget.tarifa.temporadas!)
+                      _itemSeasonInfo(
+                        nombre: element.nombre ?? '',
+                        estanciaMin: element.estanciaMinima,
+                        isCash: element.forCash ?? false,
+                        isGroup: element.forGroup ?? false,
+                        porcentaje: element.porcentajePromocion,
                       ),
-                      Container(
-                        width: 275,
-                        height: 30,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: DesktopColors.vistaReserva,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                        ),
-                        child: Center(
-                          child: TextStyles.mediumText(
-                            text: "VISTA RESERVA",
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "SGL/DBL",
-                                blocked: true,
-                                isDecimal: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                initialValue: widget
-                                    .tarifa.tarifas!.first.tarifaAdultoSGLoDBL!
-                                    .toStringAsFixed(2),
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "PAX ADIC",
-                                isDecimal: true,
-                                blocked: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: widget
-                                    .tarifa.tarifas!.first.tarifaPaxAdicional!
-                                    .toStringAsFixed(2),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "TPL",
-                                isDecimal: true,
-                                blocked: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: (widget.tarifa.tarifas!.first
-                                            .tarifaAdultoTPL ??
-                                        Utility.calculateRate(
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas!
-                                                    .first.tarifaAdultoSGLoDBL
-                                                    .toString()),
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas!
-                                                    .first.tarifaPaxAdicional
-                                                    .toString()),
-                                            1))
-                                    .toString(),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "CPLE",
-                                isDecimal: true,
-                                blocked: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: (widget.tarifa.tarifas!.first
-                                            .tarifaAdultoCPLE ??
-                                        Utility.calculateRate(
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas!
-                                                    .first.tarifaAdultoSGLoDBL
-                                                    .toString()),
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas!
-                                                    .first.tarifaPaxAdicional
-                                                    .toString()),
-                                            2))
-                                    .toString(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "MENORES 7-12 AÑOS",
-                                isDecimal: true,
-                                isNumeric: true,
-                                blocked: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: widget
-                                    .tarifa.tarifas!.first.tarifaMenores7a12!
-                                    .toStringAsFixed(2),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "MENORES 0-6 AÑOS",
-                                isDecimal: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                blocked: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: "GRATIS",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        width: 275,
-                        height: 30,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: DesktopColors.vistaParcialMar,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                        ),
-                        child: Center(
-                          child: TextStyles.mediumText(
-                            text: "VISTA PARCIAL AL MAR",
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "SGL/DBL",
-                                isDecimal: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                blocked: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: widget
-                                    .tarifa.tarifas![1].tarifaAdultoSGLoDBL!
-                                    .toStringAsFixed(2),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "PAX ADIC",
-                                isDecimal: true,
-                                isNumeric: true,
-                                blocked: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: widget
-                                    .tarifa.tarifas![1].tarifaPaxAdicional!
-                                    .toStringAsFixed(2),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "TPL",
-                                isDecimal: true,
-                                isNumeric: true,
-                                blocked: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: (widget.tarifa.tarifas![1]
-                                            .tarifaAdultoTPL ??
-                                        Utility.calculateRate(
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas![1]
-                                                    .tarifaAdultoSGLoDBL
-                                                    .toString()),
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas![1]
-                                                    .tarifaPaxAdicional
-                                                    .toString()),
-                                            1))
-                                    .toString(),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "CPLE",
-                                isDecimal: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                blocked: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                initialValue: (widget.tarifa.tarifas![1]
-                                            .tarifaAdultoCPLE ??
-                                        Utility.calculateRate(
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas![1]
-                                                    .tarifaAdultoSGLoDBL
-                                                    .toString()),
-                                            TextEditingController(
-                                                text: widget.tarifa.tarifas![1]
-                                                    .tarifaPaxAdicional
-                                                    .toString()),
-                                            2))
-                                    .toString(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: 275,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "MENORES 7-12 AÑOS",
-                                isDecimal: true,
-                                isNumeric: true,
-                                blocked: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: widget
-                                    .tarifa.tarifas![1].tarifaMenores7a12!
-                                    .toStringAsFixed(2),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FormWidgets.textFormFieldResizable(
-                                name: "MENORES 0-6 AÑOS",
-                                isDecimal: true,
-                                blocked: true,
-                                isNumeric: true,
-                                isMoneda: true,
-                                colorText: Theme.of(context).primaryColor,
-                                colorBorder: Theme.of(context).disabledColor,
-                                colorIcon: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .iconColor,
-                                initialValue: "GRATIS",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+                  ],
+                ),
+              ),
+            ),
             child: widget.child,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _itemSeasonInfo({
+    required String nombre,
+    required int? estanciaMin,
+    double? porcentaje,
+    bool isGroup = false,
+    bool isCash = false,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: 275,
+          height: 30,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isCash
+                ? DesktopColors.cashSeason
+                : isGroup
+                    ? DesktopColors.cotGrupal
+                    : DesktopColors.cotIndiv,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(7),
+            ),
+          ),
+          child: Center(
+            child: TextStyles.mediumText(
+              text: nombre,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 275,
+          child: Row(
+            children: [
+              Expanded(
+                child: FormWidgets.textFormFieldResizable(
+                  name: "Estancia Min.",
+                  blocked: true,
+                  isNumeric: true,
+                  initialValue: (estanciaMin ?? 0).toString(),
+                  colorText: Theme.of(context).primaryColor,
+                  colorBorder: Theme.of(context).disabledColor,
+                  colorIcon: Theme.of(context).inputDecorationTheme.iconColor,
+                  icon: const Icon(
+                    HeroIcons.users,
+                    size: 22,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: FormWidgets.textFormFieldResizable(
+                  name: "Descuento",
+                  blocked: true,
+                  isNumeric: true,
+                  colorText: Theme.of(context).primaryColor,
+                  colorBorder: Theme.of(context).disabledColor,
+                  colorIcon: Theme.of(context).inputDecorationTheme.iconColor,
+                  initialValue: (porcentaje ?? 'No aplica').toString(),
+                  icon: Icon(
+                    porcentaje != null ? EvaIcons.percent : HeroIcons.no_symbol,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 }

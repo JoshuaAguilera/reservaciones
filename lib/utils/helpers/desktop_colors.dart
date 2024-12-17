@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DesktopColors {
+  //Colors Widget
+  static Color cardColor = Color.fromARGB(255, 66, 66, 66);
+
   //Colors App
   static Color cerulean = Color.fromARGB(255, 0, 125, 167);
   static Color ceruleanOscure = Color.fromARGB(255, 0, 97, 129);
@@ -27,8 +30,9 @@ class DesktopColors {
   //Colors Graphics
   static Color cotGrupal = Color.fromARGB(255, 233, 170, 69);
   static Color cotIndiv = Color.fromARGB(255, 26, 112, 166);
-  static Color cotGroupPreColor = Color.fromARGB(255, 36, 142, 18);
-  static Color cotGroupColor = Color.fromARGB(255, 76, 162, 205);
+  static Color resGrupal = Color.fromARGB(255, 220, 108, 64);
+  static Color resIndiv = Color.fromARGB(255, 76, 162, 205);
+  static Color cotNoConcr = Color.fromARGB(255, 126, 126, 126);
   static Color notFound = const Color.fromARGB(255, 204, 202, 202);
 
   //Colors Settings Default
@@ -39,4 +43,7 @@ class DesktopColors {
   //Colors Plans
   static Color vistaReserva = Color.fromARGB(255, 72, 151, 89);
   static Color vistaParcialMar = Color.fromARGB(255, 35, 150, 179);
+
+  //more...
+  static Color cashSeason = const Color.fromRGBO(139, 195, 74, 1);
 }

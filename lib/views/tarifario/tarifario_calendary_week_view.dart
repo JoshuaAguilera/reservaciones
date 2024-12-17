@@ -33,6 +33,8 @@ class TarifarioCalendaryWeekView extends ConsumerStatefulWidget {
 
 class _TarifarioCalendaryWeekViewState
     extends ConsumerState<TarifarioCalendaryWeekView> {
+  bool alreadyLoading = false;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -40,6 +42,14 @@ class _TarifarioCalendaryWeekViewState
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
+    if (!alreadyLoading) {
+      Future.delayed(2.seconds, () {
+        if (mounted) {
+          setState(() => alreadyLoading = true);
+        }
+      });
+    }
 
     return SizedBox(
       height: screenHeight - 160,
@@ -156,6 +166,7 @@ class _TarifarioCalendaryWeekViewState
                                               widget.initDayWeekGraphics) &&
                                           list[index].isSelected!) {
                                         return PeriodItemRow(
+                                          isntWeek: false,
                                           weekNow: widget.initDayWeekGraphics,
                                           tarifa: list[index],
                                           lenghtDays: 1,
@@ -163,7 +174,7 @@ class _TarifarioCalendaryWeekViewState
                                               (widget.sideController.extended
                                                   ? 230
                                                   : 118),
-                                          isUpDireccion: true,
+                                          alreadyLoading: alreadyLoading,
                                         );
                                       } else {
                                         return const SizedBox();

@@ -1,16 +1,18 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../models/registro_tarifa_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
+import '../utils/shared_preferences/preferences.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
@@ -151,17 +153,14 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
   Widget build(BuildContext context) {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
 
-    Color? colorCard = widget.habitacion.isFree
-        ? Colors.green[200]
-        : widget.habitacion.categoria == tipoHabitacion.first
-            ? DesktopColors.vistaReserva
-            : DesktopColors.vistaParcialMar;
-    Color? colorText = widget.habitacion.isFree
-        ? Colors.black87
-        : widget.habitacion.categoria == tipoHabitacion.first
-            ? Colors.white
-            : Colors.white;
+    Color colorCard = brightness == Brightness.light
+        ? const Color.fromARGB(255, 243, 243, 243)
+        : DesktopColors.grisSemiPalido;
+    Color colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
@@ -181,10 +180,13 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
           if (!element.isFree) rooms += element.count;
         }
 
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        if (!(Preferences.rol == 'RECEPCION')) {
+          if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => true);
+          } else if (typeQuote &&
+              rooms < politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => false);
+          }
         }
 
         if (Utility.verifAddRoomFree(
@@ -203,7 +205,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
 
     return Card(
       color: colorCard,
-      elevation: 5,
+      elevation: 6,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
         child: Column(
@@ -272,19 +274,77 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       ),
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            widget.habitacion.totalReal ?? 0),
+                        text: "VR: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVR: true,
+                              isGroupTariff: true,
+                              withDiscount: false,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalRealVR ?? 0))}\nVPM: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVPM: true,
+                              isGroupTariff: true,
+                              withDiscount: false,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalRealVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
-                        size: 12,
+                        size: 11,
                       ),
                     if (screenWidthWithSideBar > 1550)
                       TextStyles.standardText(
-                        text: Utility.formatterNumber(
-                            widget.habitacion.total ?? 0),
+                        text: "VR: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVR: true,
+                              isGroupTariff: true,
+                              withDiscount: true,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalVR ?? 0))}\nVPM: ${Utility.formatterNumber(typeQuote ? (Utility.calculateTotalTariffRoom(
+                              RegistroTarifa(
+                                temporadas:
+                                    widget.habitacion.tarifaGrupal?.temporadas,
+                                tarifas:
+                                    widget.habitacion.tarifaGrupal?.tarifas,
+                              ),
+                              widget.habitacion,
+                              widget.habitacion.tarifaXDia!.length,
+                              getTotalRoom: true,
+                              descuentoProvisional: widget.habitacion
+                                  .tarifaGrupal?.descuentoProvisional,
+                              onlyTariffVPM: true,
+                              isGroupTariff: true,
+                              withDiscount: true,
+                            ) * widget.habitacion.tarifaXDia!.length) : (widget.habitacion.totalVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
-                        size: 12,
+                        size: 11,
                       ),
                     if (!widget.esDetalle && !widget.habitacion.isFree)
                       Wrap(
@@ -377,11 +437,12 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   Widget build(BuildContext context) {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
-    Color colorCard = widget.habitacion.categoria == tipoHabitacion.first
-        ? DesktopColors.vistaReserva
-        : DesktopColors.vistaParcialMar;
-    Color colorText = Colors.white;
+    Color colorCard = brightness == Brightness.light
+        ? const Color.fromARGB(255, 243, 243, 243)
+        : DesktopColors.grisSemiPalido;
+    Color? colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
@@ -401,10 +462,13 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
           if (!element.isFree) rooms += element.count;
         }
 
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
+        if (!(Preferences.rol == 'RECEPCION')) {
+          if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => true);
+          } else if (typeQuote &&
+              rooms < politica.limiteHabitacionCotizacion!) {
+            ref.read(typeQuoteProvider.notifier).update((state) => false);
+          }
         }
 
         if (Utility.verifAddRoomFree(
@@ -422,8 +486,8 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     }
 
     return Card(
-      color: colorCard,
       elevation: 5,
+      color: colorCard,
       child: ListTile(
         leading: TextStyles.TextSpecial(
           day: widget.index + 1,
@@ -452,21 +516,30 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               //"${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
               color: colorText,
             ),
+            // TextStyles.TextAsociative(
+            //   "Tarifa real: ",
+            //   Utility.formatterNumber(widget.habitacion.totalRealVR ?? 0),
+            //   color: colorText,
+            // ),
+            // TextStyles.TextAsociative(
+            //   (screenWidthWithSideBar < 1100)
+            //       ? "Tarifa desc: "
+            //       : "Tarifa descontada: ",
+            //   Utility.formatterNumber(-(widget.habitacion.descuentoVR ?? 0)),
+            //   color: colorText,
+            // ),
             TextStyles.TextAsociative(
-              "Tarifa real: ",
-              Utility.formatterNumber(widget.habitacion.totalReal ?? 0),
+              (screenWidthWithSideBar < 1100)
+                  ? "Tarifa VR:"
+                  : "Tarifa Vista Reserva: ",
+              Utility.formatterNumber(widget.habitacion.totalVR ?? 0),
               color: colorText,
             ),
             TextStyles.TextAsociative(
               (screenWidthWithSideBar < 1100)
-                  ? "Tarifa desc: "
-                  : "Tarifa descontada: ",
-              Utility.formatterNumber(-(widget.habitacion.descuento ?? 0)),
-              color: colorText,
-            ),
-            TextStyles.TextAsociative(
-              "Tarifa total: ",
-              Utility.formatterNumber(widget.habitacion.total ?? 0),
+                  ? "Tarifa VPM:"
+                  : "Tarifa Vista Parcial Mar: ",
+              Utility.formatterNumber(widget.habitacion.totalVPM ?? 0),
               color: colorText,
             ),
             Wrap(
@@ -560,13 +633,5 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         ),
       ],
     );
-  }
-
-  Widget statisticsCustomers(Habitacion cotizacion) {
-    return const Column(children: [
-      Row(
-        children: [],
-      )
-    ]);
   }
 }

@@ -6,6 +6,8 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../models/registro_tarifa_model.dart';
+import '../utils/helpers/utility.dart';
 import 'tarifario_provider.dart';
 
 class HabitacionProvider extends Notifier<List<Habitacion>> {
@@ -16,10 +18,12 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   Habitacion get current => _current;
   late pw.Document pdfPrinc;
 
-  void addItem(Habitacion item) {
+  void addItem(Habitacion item, bool groupQuote) {
     _current = item;
     state = [...state, item];
     if (state.length > 1) revisedFreeRooms();
+
+    if (groupQuote) implementGroupTariff([]);
   }
 
   void addFreeItem(Habitacion habitacion, int interval) {
@@ -43,6 +47,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
       _current = item;
       state = [...state, item];
     }
+
+    ref.notifyListeners();
   }
 
   void revisedFreeRooms() {
@@ -174,16 +180,87 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void clear() => state = [];
 
-  Future<pw.Document> generarComprobante(Cotizacion cotizacion) async =>
-      pdfPrinc = await GeneradorDocService()
+  void implementGroupTariff(List<TarifaXDia?> selectTariffs) {
+    for (var item in state) {
+      if (selectTariffs.isNotEmpty) {
+        TarifaXDia? selectTariff = selectTariffs.firstWhere(
+          (element) => element?.folioRoom == item.folioHabitacion,
+          orElse: () => null,
+        );
+
+        if (selectTariff != null &&
+            (selectTariff.tarifasBase ?? []).isNotEmpty) {
+          selectTariff.tarifas = selectTariff.tarifasBase;
+          selectTariff.tarifa = selectTariff.tarifasBase
+              ?.where((element) => element.categoria == item.categoria)
+              .toList()
+              .firstOrNull;
+        }
+
+        item.tarifaGrupal = selectTariff;
+        continue;
+      }
+
+      if (item.tarifaGrupal == null) {
+        List<TarifaXDia> filterTariffs =
+            Utility.getUniqueTariffs(item.tarifaXDia!);
+        TarifaXDia? tarifaGrupo =
+            filterTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
+
+        tarifaGrupo.temporadaSelect = Utility.getSeasonNow(
+          RegistroTarifa(temporadas: tarifaGrupo.temporadas),
+          DateTime.parse(item.fechaCheckOut!)
+              .difference(DateTime.parse(item.fechaCheckIn!))
+              .inDays,
+          isGroup: true,
+        );
+
+        item.tarifaGrupal = tarifaGrupo;
+      }
+    }
+
+    ref.notifyListeners();
+  }
+
+  void removeGroupTariff() {
+    for (var item in state) {
+      item.tarifaGrupal = null;
+    }
+    ref.notifyListeners();
+  }
+
+  Future<pw.Document> generarComprobante(
+      Cotizacion cotizacion, bool typeQuote) async {
+    if (!typeQuote) {
+      return pdfPrinc = await GeneradorDocService()
           .generarComprobanteCotizacionIndividual(
               habitaciones: state, cotizacion: cotizacion);
+    } else {
+      return pdfPrinc = await GeneradorDocService()
+          .generarComprobanteCotizacionGrupal(
+              habitaciones: state, cotizacion: cotizacion);
+    }
+  }
 
   //Definición del provider
   static final provider =
       NotifierProvider<HabitacionProvider, List<Habitacion>>(
           HabitacionProvider.new);
 }
+
+final totalRoomsProvider = Provider<int>((ref) {
+  int total = 0;
+  List<Habitacion> rooms = ref
+      .watch(HabitacionProvider.provider)
+      .where((todo) => !todo.isFree)
+      .toList();
+
+  for (var element in rooms) {
+    total += element.count;
+  }
+
+  return total;
+});
 
 final habitacionSelectProvider =
     StateProvider<Habitacion>((ref) => Habitacion());
@@ -196,7 +273,10 @@ final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   return list;
 });
 
+final useCashSeasonProvider = StateProvider<bool>((ref) => false);
+final useCashSeasonRoomProvider = StateProvider<bool>((ref) => false);
 final typeQuoteProvider = StateProvider<bool>((ref) => false);
+final showManagerTariffGroupProvider = StateProvider<bool>((ref) => false);
 
 final detectChangeRoomProvider = StateProvider<int>((ref) => 0);
 
@@ -225,6 +305,10 @@ class TarifasProvisionalesProvider extends StateNotifier<List<TarifaData>> {
       state = [...state.where((element) => element.categoria != categoria)];
 
   void clear() => state = [];
+
+  void addAll(List<TarifaData> items) {
+    state = items;
+  }
 }
 
 final descuentoProvisionalProvider = StateProvider<double>((ref) => 0);

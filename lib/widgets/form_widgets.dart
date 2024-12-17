@@ -7,7 +7,7 @@ import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 import '../utils/helpers/constants.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 
@@ -206,17 +206,20 @@ class FormWidgets {
                   text: name,
                   color: Theme.of(context).primaryColor,
                 ),
-              Switch(
-                value: value,
-                activeColor: activeColor ?? Colors.white,
-                inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
-                inactiveThumbColor: !isModeDark
-                    ? null
-                    : value
-                        ? Colors.white
-                        : Colors.amber,
-                activeTrackColor: !isModeDark ? null : Colors.black54,
-                onChanged: onChanged,
+              SizedBox(
+                height: 25,
+                child: Switch(
+                  value: value,
+                  activeColor: activeColor ?? Colors.white,
+                  inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
+                  inactiveThumbColor: !isModeDark
+                      ? null
+                      : value
+                          ? Colors.white
+                          : Colors.amber,
+                  activeTrackColor: !isModeDark ? null : Colors.black54,
+                  onChanged: onChanged,
+                ),
               ),
             ],
           ),
@@ -248,6 +251,7 @@ class FormWidgets {
     Color? colorText,
     Color? colorBorder,
     Color? colorIcon,
+    bool autofocus = false,
   }) {
     validator ??= (value) {
       if ((value == null || value.isEmpty)) {
@@ -258,6 +262,7 @@ class FormWidgets {
     return AbsorbPointer(
       absorbing: blocked,
       child: TextFormField(
+        autofocus: autofocus,
         enabled: enabled,
         controller: controller,
         readOnly: blocked,
@@ -326,6 +331,7 @@ class FormWidgets {
             fontFamily: "poppins_regular",
             color: Colors.red[800],
             fontSize: 10,
+            height: 1,
           ),
         ),
         initialValue: initialValue,
@@ -376,6 +382,27 @@ class FormWidgets {
             size: 12,
           ),
       ],
+    );
+  }
+
+  static Widget textAreaForm({
+    TextEditingController? controller,
+    String hintText = "",
+    bool readOnly = false,
+    int? maxLines,
+  }) {
+    return TextField(
+      readOnly: readOnly,
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+        border: const OutlineInputBorder(),
+        hintText: hintText,
+      ),
+      style: TextStyles.styleStandar(),
     );
   }
 }

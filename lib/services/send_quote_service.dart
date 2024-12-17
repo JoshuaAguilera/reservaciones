@@ -10,98 +10,127 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../utils/shared_preferences/preferences.dart';
+import '../utils/encrypt/encrypter.dart';
 import 'base_service.dart';
 
 class SendQuoteService extends BaseService {
-  var mailUser = Preferences.mail;
-  var passwordUser = Preferences.passwordMail;
-  var phoneUser = Preferences.phone;
-  var username = Preferences.username;
+  Future<String> sendQuoteMail(Document comprobantePDF,
+      Cotizacion receiptQuotePresent, List<Habitacion> quotesPresent,
+      {String? newMail}) async {
+    String messageSent = "";
+    String passMail = EncrypterTool.decryptData(passwordMail, null);
 
-  Future<bool> sendQuoteMail(
-    Document comprobantePDF,
-    Cotizacion receiptQuotePresent,
-    List<Habitacion> quotesPresent,
-  ) async {
-    bool isSent = false;
-
-    String username = 'sys2@coralbluehuatulco.mx';
-    String password = 'Sys2024CB';
+    // String username = 'sys2@coralbluehuatulco.mx';
+    // String password = 'Sys2024CB';
 
     final smtpServer = SmtpServer(
       "mail.coralbluehuatulco.mx",
-      username: username,
-      password: password,
+      username: mail,
+      password: passMail,
       port: 465,
       ssl: true,
-      ignoreBadCertificate: true,
+      //ignoreBadCertificate: true,
     );
 
-    // Convertir el PDF a bytes
-    final Uint8List pdfBytes = await comprobantePDF.save();
-
-    final tempDir = await getTemporaryDirectory();
-
-    File file = await File('${tempDir.path}/example.pdf').create();
-
-    file.writeAsBytesSync(pdfBytes);
-
-    final message = Message()
-      ..from = Address(username, username)
-      ..recipients.add(receiptQuotePresent.correoElectronico)
-      ..subject =
-          'Cotización de Reserva ${quotesPresent.first.categoria ?? ''} : ${DateTime.now().toString().substring(0, 10)}'
-      ..html = FilesTemplate.getHTML(receiptQuotePresent, quotesPresent)
-      ..attachments = [
-        FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
-      ];
-
     try {
+      // Convertir el PDF a bytes
+      final Uint8List pdfBytes = await comprobantePDF.save();
+
+      final tempDir = await getTemporaryDirectory();
+
+      File file =
+          await File('${tempDir.path}/example$userId$userName.pdf').create();
+
+      file.writeAsBytesSync(pdfBytes);
+
+      final message = Message()
+        ..from = Address(mail, "$firstName $lastName")
+        ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
+        ..subject =
+            'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'
+        ..html =
+            await FilesTemplate.getHTMLMail(receiptQuotePresent, quotesPresent)
+        ..attachments = [
+          FileAttachment(file, fileName: "cotizacion.pdf", contentType: "pdf")
+        ];
+
       final sendReport = await send(message, smtpServer);
       print('Message sent: ' + sendReport.toString());
-      isSent = true;
     } on MailerException catch (e) {
       print('Message not sent.');
       for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
+        messageSent += 'Problem: ${p.code}: ${p.msg}\n';
+        print(messageSent);
       }
     }
 
     var connection = PersistentConnection(smtpServer);
     await connection.close();
-    return isSent;
+    return messageSent;
   }
 
-  Future<bool> sendQuoteWhatsApp(
-      Cotizacion comprobante, List<Habitacion> cotizaciones) async {
-    bool status = false;
-    var phone = comprobante.numeroTelefonico;
+  Future<String> generateMessageWhatsApp(
+      Cotizacion comprobante, List<Habitacion> habitaciones) async {
+    List<Habitacion> rooms =
+        habitaciones.where((element) => !element.isFree).toList();
 
     var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
     message += "\n\n";
-    message += "*Plan Todo Incluido*";
-    message += "\n";
-    message += "*Estancia: ${Utility.getPeriodReservation(cotizaciones)}*";
-    message += "\n";
-    message +=
-        "*Noches: ${Utility.getDifferenceInDays(cotizaciones: cotizaciones)}*";
-    message += "\n\n";
-    message += "*Habitación Deluxe doble, vista a la reserva 🏞️*";
-    message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
-    message += "\n";
-    message += "Total por noche:\$ Total de estancia \$20,781.00";
-    message += "\n\n";
-    message += "*Habitación Deluxe doble o King size, vista parcial al océano 🌊*";
-    message += "\n\n";
-    message += "*${Utility.getOcupattionMessage(cotizaciones.first)}*";
-    message += "\n";
-    message += "Total por noche:\$ Total de estancia \$20,781.00";
-    message += "\n\n";
+
+    Map<String, List<Habitacion>> quoteFilters = {};
+
+    for (var element in rooms) {
+      String selectDates = "${element.fechaCheckIn}/${element.fechaCheckOut}";
+
+      if (quoteFilters.containsKey(selectDates)) {
+        quoteFilters[selectDates]!.add(element);
+      } else {
+        final item = {
+          selectDates: [element]
+        };
+        quoteFilters.addEntries(item.entries);
+      }
+    }
+
+    for (var roomList in quoteFilters.values) {
+      message += "*Plan Todo Incluido*";
+      message += "\n";
+      message +=
+          "*Estancia: ${Utility.getPeriodReservation([roomList.first])}*";
+      message += "\n";
+      message += "*Noches: ${roomList.first.tarifaXDia?.length}*";
+
+      message += "\n\n";
+      message += "*Habitación Deluxe doble, vista a la reserva* 🏞️";
+      message += "\n";
+      for (var element in roomList) {
+        message += "\n";
+        message += "*${Utility.getOcupattionMessage(element)}*";
+        message += "\n";
+        message +=
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+        message +=
+            "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVR ?? 0.0) * element.count)}\n" : ""}";
+      }
+      message += "\n";
+      message +=
+          "*Habitación Deluxe doble o King size, vista parcial al océano* 🌊";
+      message += "\n";
+      for (var element in roomList) {
+        message += "\n";
+        message += "*${Utility.getOcupattionMessage(element)}*";
+        message += "\n";
+        message +=
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+        message +=
+            "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVPM ?? 0.0) * element.count)}\n" : ""}";
+      }
+      message += "\n\n";
+    }
+
     message +=
         "*El total de la estancia puede tener variaciones en la tarifa diaria.";
     message += "\n\n";
@@ -124,7 +153,24 @@ class SendQuoteService extends BaseService {
     message +=
         "Tarifas exclusivas de preventa, sujetas a cambio sin previo aviso. \n Depósito de garantía no es reembolsable. (Sujeto a cambios de fecha) \nEsperamos poder atenderle como usted se merece.";
 
-    var url = "https://wa.me/$phone/?text=${Uri.encodeQueryComponent(message)}";
+    return message;
+  }
+
+  Future<String> generateMessageWhatsAppGroup(Cotizacion comprobante) async {
+    var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
+    message +=
+        "Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.";
+    message += "\n\n";
+    message += "*Quedamos a sus órdenes.*";
+
+    return message;
+  }
+
+  Future<bool> sendQuoteWhatsApp(String message) async {
+    bool status = false;
+
+    var url =
+        "https://wa.me/+52$phone/?text=${Uri.encodeQueryComponent(message)}";
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
       status = true;

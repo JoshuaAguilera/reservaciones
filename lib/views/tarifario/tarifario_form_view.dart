@@ -6,21 +6,25 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/item_rows.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
+import '../../widgets/custom_dropdown.dart';
 import '../../widgets/form_widgets.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
@@ -75,6 +79,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     false,
     false,
   ];
+  TarifaBaseInt? selectBaseTariff;
+  bool usedBaseTariff = false;
+  bool isLoading = false;
 
   void resetDates() {
     _fechaEntrada =
@@ -116,7 +123,10 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final actualTarifa = ref.watch(editTarifaProvider);
-    final temporadaListProvider = ref.read(temporadasProvider);
+    final temporadaIndListProvider = ref.read(temporadasIndividualesProvider);
+    final temporadaGrupListProvider = ref.read(temporadasGrupalesProvider);
+    final temporadaEfectivoListProvider = ref.read(temporadasEfectivoProvider);
+    final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     if (!starflow && actualTarifa.code != null) {
       nombreTarifaController.text = actualTarifa.nombre!;
@@ -171,6 +181,22 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       minors7_12VPMController.text =
           actualTarifa.tarifas![1].tarifaMenores7a12!.round().toString();
 
+      if (actualTarifa.tarifas?.first.tarifaPadreId != null) {
+        tarifasBase.when(
+          data: (data) {
+            selectBaseTariff = data
+                .where((element) =>
+                    element.code == actualTarifa.tarifas?.first.code)
+                .firstOrNull;
+
+            usedBaseTariff = selectBaseTariff != null;
+            setState(() {});
+          },
+          error: (error, stackTrace) => debugPrint("Not Found Base Tariff"),
+          loading: () {},
+        );
+      }
+
       starflow = true;
     }
 
@@ -187,17 +213,16 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                 CustomWidgets.titleFormPage(
                   context: context,
                   title: actualTarifa.code != null
-                      ? "Editar tarifa"
-                      : "Crear tarifa",
+                      ? "Editar tarifa: ${nombreTarifaController.text}"
+                      : "Registrar nueva tarifa",
                   onPressedBack: () {
                     setState(() => target = 0);
 
                     Future.delayed(
-                        500.ms, () => widget.sideController.selectIndex(5));
+                        500.ms, () => widget.sideController.selectIndex(4));
                   },
-                  onPressedSaveButton: () async {
-                    await savedTariff(temporadaListProvider);
-                  },
+                  onPressedSaveButton: () async => await savedTariff(
+                      temporadaIndListProvider + temporadaGrupListProvider),
                 ),
                 const SizedBox(height: 10),
                 Card(
@@ -211,15 +236,22 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: TextStyles.titleText(
-                              text: "Datos generales",
-                              size: 18,
-                              color: Theme.of(context).dividerColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextStyles.titleText(
+                                  text: "Datos generales",
+                                  size: 18,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                Divider(color: Theme.of(context).primaryColor),
+                              ],
                             ),
                           ),
                           Wrap(
                             runSpacing: 15,
                             spacing: 25,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               SizedBox(
                                 width: 500,
@@ -263,19 +295,20 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                             color:
                                                 Theme.of(context).primaryColor),
                                         CustomWidgets.sectionButton(
-                                            listModes: selectedDayWeek,
-                                            modesVisual: [],
-                                            onChanged: (p0, p1) {},
-                                            isReactive: false,
-                                            isCompact: true,
-                                            arrayStrings: daysNameShort,
-                                            borderRadius: 12,
-                                            selectedBorderColor: colorTarifa,
-                                            selectedColor: Color.fromARGB(
-                                                20,
-                                                colorTarifa.blue,
-                                                colorTarifa.green,
-                                                colorTarifa.red)),
+                                          listModes: selectedDayWeek,
+                                          modesVisual: [],
+                                          onChanged: (p0, p1) {},
+                                          isReactive: false,
+                                          isCompact: true,
+                                          arrayStrings: daysNameShort,
+                                          borderRadius: 12,
+                                          selectedBorderColor: colorTarifa,
+                                          selectedColor: Color.fromARGB(
+                                              20,
+                                              colorTarifa.blue,
+                                              colorTarifa.green,
+                                              colorTarifa.red),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -304,10 +337,16 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12, top: 10),
-                            child: TextStyles.titleText(
-                              text: "Periodos",
-                              size: 18,
-                              color: Theme.of(context).dividerColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextStyles.titleText(
+                                  text: "Periodos",
+                                  size: 18,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                Divider(color: Theme.of(context).primaryColor),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -319,7 +358,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   flex: 2,
                                   child: TextFormFieldCustom
                                       .textFormFieldwithBorderCalendar(
-                                    name: "Fecha de entrada",
+                                    name: "Fecha de apertura",
                                     msgError: "Campo requerido*",
                                     fechaLimite:
                                         DateTime(DateTime.now().year, 1, 1)
@@ -345,7 +384,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   flex: 2,
                                   child: TextFormFieldCustom
                                       .textFormFieldwithBorderCalendar(
-                                    name: "Fecha de salida",
+                                    name: "Fecha de clausura",
                                     msgError: "Campo requerido*",
                                     dateController: _fechaSalida,
                                     fechaLimite:
@@ -437,22 +476,361 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 1, top: 5),
-                          child: Row(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 1),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextStyles.titleText(
-                                text: "Temporadas ",
-                                size: 18,
-                                color: Theme.of(context).dividerColor,
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextStyles.titleText(
+                                    text: "Tarífas",
+                                    size: 18,
+                                    color: Theme.of(context).dividerColor,
+                                  ),
+                                  tarifasBase.when(
+                                    data: (data) {
+                                      String selectTariff =
+                                          selectBaseTariff != null
+                                              ? selectBaseTariff?.nombre ??
+                                                  'Ninguna'
+                                              : 'Ninguna';
+                                      List<String> baseTariffs = ['Ninguna'];
+
+                                      for (var element in data) {
+                                        baseTariffs.add(element.nombre ?? '');
+                                      }
+
+                                      return Row(
+                                        children: [
+                                          TextStyles.standardText(
+                                              text: "Tarifa Base:  "),
+                                          CustomDropdown.dropdownMenuCustom(
+                                            compactWidth: 260,
+                                            fontSize: 12,
+                                            initialSelection: selectTariff,
+                                            onSelected: (String? value) {
+                                              if (value == selectTariff) return;
+
+                                              selectBaseTariff = data
+                                                  .where((element) =>
+                                                      element.nombre == value)
+                                                  .toList()
+                                                  .firstOrNull;
+                                              setState(() => {});
+                                              if (selectBaseTariff == null) {
+                                                usedBaseTariff = false;
+                                                adults1_2VRController.text = '';
+                                                adults3VRController.text = '';
+                                                adults4VRController.text = '';
+                                                paxAdicVRController.text = '';
+                                                minors7_12VRController.text =
+                                                    '';
+                                                adults1_2VPMController.text =
+                                                    '';
+                                                adults3VPMController.text = '';
+                                                adults4VPMController.text = '';
+                                                paxAdicVPMController.text = '';
+                                                minors7_12VPMController.text =
+                                                    '';
+                                                setState(() {});
+                                                return;
+                                              }
+
+                                              autoCalculationVPM = false;
+                                              autoCalculationVR = false;
+                                              usedBaseTariff = true;
+
+                                              Tarifa? firstTariff =
+                                                  selectBaseTariff
+                                                      ?.tarifas
+                                                      ?.where((element) =>
+                                                          element.categoria ==
+                                                          tipoHabitacion.first)
+                                                      .toList()
+                                                      .firstOrNull;
+                                              Tarifa? secondTariff =
+                                                  selectBaseTariff?.tarifas
+                                                      ?.where((element) =>
+                                                          element.categoria ==
+                                                          tipoHabitacion.last)
+                                                      .toList()
+                                                      .firstOrNull;
+
+                                              adults1_2VRController
+                                                  .text = (firstTariff
+                                                          ?.tarifaAdulto1a2 ??
+                                                      0)
+                                                  .toString();
+
+                                              adults3VRController.text =
+                                                  (firstTariff?.tarifaAdulto3 ??
+                                                          0)
+                                                      .toString();
+
+                                              adults4VRController.text =
+                                                  (firstTariff?.tarifaAdulto4 ??
+                                                          0)
+                                                      .toString();
+
+                                              minors7_12VRController
+                                                  .text = (firstTariff
+                                                          ?.tarifaMenores7a12 ??
+                                                      0)
+                                                  .toString();
+
+                                              paxAdicVRController
+                                                  .text = (firstTariff
+                                                          ?.tarifaPaxAdicional ??
+                                                      0)
+                                                  .toString();
+
+                                              adults1_2VPMController
+                                                  .text = (secondTariff
+                                                          ?.tarifaAdulto1a2 ??
+                                                      0)
+                                                  .toString();
+
+                                              adults3VPMController.text =
+                                                  (secondTariff
+                                                              ?.tarifaAdulto3 ??
+                                                          0)
+                                                      .toString();
+
+                                              adults4VPMController.text =
+                                                  (secondTariff
+                                                              ?.tarifaAdulto4 ??
+                                                          0)
+                                                      .toString();
+
+                                              minors7_12VPMController
+                                                  .text = (secondTariff
+                                                          ?.tarifaMenores7a12 ??
+                                                      0)
+                                                  .toString();
+
+                                              paxAdicVPMController
+                                                  .text = (secondTariff
+                                                          ?.tarifaPaxAdicional ??
+                                                      0)
+                                                  .toString();
+
+                                              setState(() {});
+                                            },
+                                            elements: baseTariffs,
+                                            screenWidth: null,
+                                            compact: true,
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    error: (error, stackTrace) => const Tooltip(
+                                        message: "Error de consulta",
+                                        child: Icon(Icons.warning_amber_rounded,
+                                            color: Colors.amber)),
+                                    loading: () => Center(
+                                      child: SizedBox(
+                                        width: 40,
+                                        child: ProgressIndicatorEstandar(
+                                          sizeProgressIndicator: 30,
+                                          inHorizontal: true,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                               TextStyles.titleText(
-                                text: "(Solo para cotizaciones individuales)",
-                                size: 13,
-                                color: Theme.of(context).primaryColor,
+                              Divider(color: Theme.of(context).primaryColor),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Center(
+                          child: Wrap(
+                            runSpacing: 15,
+                            spacing: 15,
+                            children: [
+                              AbsorbPointer(
+                                absorbing: usedBaseTariff,
+                                child: SizedBox(
+                                  width: getWidthResizableTarifa(screenWidth),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: DesktopColors.vistaReserva,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(7))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Wrap(
+                                            alignment: getWrapAligmentContainer(
+                                                screenWidth),
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            runAlignment: WrapAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                child: TextStyles.mediumText(
+                                                  text: tipoHabitacion[0],
+                                                  color: Colors.white,
+                                                  aling: TextAlign.center,
+                                                ),
+                                              ),
+                                              if (!usedBaseTariff)
+                                                FormWidgets.inputSwitch(
+                                                  name: "Auto calculación:",
+                                                  context: context,
+                                                  value: autoCalculationVR,
+                                                  activeColor: Colors.white,
+                                                  onChanged: (p0) {
+                                                    autoCalculationVR = p0;
+                                                    if (!autoCalculationVR) {
+                                                      adults3VRController.text =
+                                                          '';
+                                                      adults4VRController.text =
+                                                          '';
+                                                    } else {
+                                                      _autoCalculationVR();
+                                                    }
+
+                                                    setState(() {});
+                                                  },
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      FormTariffWidget(
+                                        tarifaAdultoController:
+                                            adults1_2VRController,
+                                        tarifaAdultoTPLController:
+                                            adults3VRController,
+                                        tarifaAdultoCPLController:
+                                            adults4VRController,
+                                        tarifaPaxAdicionalController:
+                                            paxAdicVRController,
+                                        tarifaMenoresController:
+                                            minors7_12VRController,
+                                        onUpdate: () => setState(() {}),
+                                        applyAutoCalculation: autoCalculationVR,
+                                        isEditing: !usedBaseTariff,
+                                        autoCalculation: () {
+                                          _autoCalculationVR();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              AbsorbPointer(
+                                absorbing: usedBaseTariff,
+                                child: SizedBox(
+                                  width: getWidthResizableTarifa(screenWidth),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                DesktopColors.vistaParcialMar,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(7))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Wrap(
+                                            alignment: getWrapAligmentContainer(
+                                                screenWidth),
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            runAlignment: WrapAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                child: TextStyles.mediumText(
+                                                  text: tipoHabitacion[1],
+                                                  color: Colors.white,
+                                                  aling: TextAlign.center,
+                                                ),
+                                              ),
+                                              if (!usedBaseTariff)
+                                                FormWidgets.inputSwitch(
+                                                  name: "Auto calculación:",
+                                                  context: context,
+                                                  value: autoCalculationVPM,
+                                                  activeColor: Colors.white,
+                                                  onChanged: (p0) {
+                                                    autoCalculationVPM = p0;
+                                                    if (!autoCalculationVPM) {
+                                                      adults3VPMController
+                                                          .text = '';
+                                                      adults4VPMController
+                                                          .text = '';
+                                                    } else {
+                                                      _autoCalculationVPM();
+                                                    }
+
+                                                    setState(() {});
+                                                  },
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      FormTariffWidget(
+                                        tarifaAdultoController:
+                                            adults1_2VPMController,
+                                        tarifaAdultoTPLController:
+                                            adults3VPMController,
+                                        tarifaAdultoCPLController:
+                                            adults4VPMController,
+                                        tarifaPaxAdicionalController:
+                                            paxAdicVPMController,
+                                        tarifaMenoresController:
+                                            minors7_12VPMController,
+                                        onUpdate: () => setState(() {}),
+                                        applyAutoCalculation:
+                                            autoCalculationVPM,
+                                        isEditing: !usedBaseTariff,
+                                        autoCalculation: () {
+                                          _autoCalculationVPM();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 1, top: 20),
+                          child: TextStyles.titleText(
+                            text: "Temporadas",
+                            size: 18,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                        ),
+                        Divider(color: Theme.of(context).primaryColor),
                         Center(
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -460,7 +838,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             spacing: 2,
                             runSpacing: 4,
                             children: [
-                              for (var element in temporadaListProvider)
+                              for (var element in temporadaIndListProvider)
                                 SizedBox(
                                   width:
                                       getWidthResizableTemporada(screenWidth) -
@@ -468,26 +846,220 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   child: CustomWidgets.sectionConfigSeason(
                                     context: context,
                                     temporada: element,
+                                    temporadas: temporadaIndListProvider,
                                     onRemove: () => setState(() =>
-                                        temporadaListProvider.remove(element)),
+                                        temporadaIndListProvider
+                                            .remove(element)),
                                     onChangedDescuento: (p0) => setState(() =>
-                                        element.porcentajePromocion = p0.isEmpty
-                                            ? null
-                                            : double.parse(p0)),
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
                                     onChangedName: (p0) =>
                                         setState(() => element.nombre = p0),
-                                    onChangedEstancia: (p0) =>
-                                        element.estanciaMinima =
-                                            p0.isEmpty ? null : int.parse(p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
                                   ),
                                 ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 23),
                                 child: InkWell(
                                   onTap: () => setState(() {
-                                    temporadaListProvider.add(Temporada(
+                                    temporadaIndListProvider.add(Temporada(
                                         nombre:
-                                            "New Season(${temporadaListProvider.length + 1})"));
+                                            "BAR ${Utility.intToRoman(temporadaIndListProvider.length)}"));
+                                  }),
+                                  child: Container(
+                                    width: 95,
+                                    height: 109,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.add,
+                                          size: 35,
+                                          color: Theme.of(context).dividerColor,
+                                        ),
+                                        TextStyles.standardText(
+                                          text: "Agregar\nTemporada",
+                                          aling: TextAlign.center,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 11,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 1, top: 5),
+                          child: Row(
+                            children: [
+                              TextStyles.titleText(
+                                text: "Temporadas Grupales  ",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              TextStyles.titleText(
+                                text: "(Solo para cotizaciones grupales)",
+                                size: 13,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(color: Theme.of(context).primaryColor),
+                        Center(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            alignment: WrapAlignment.center,
+                            spacing: 2,
+                            runSpacing: 4,
+                            children: [
+                              for (var element in temporadaGrupListProvider)
+                                SizedBox(
+                                  width:
+                                      getWidthResizableTemporada(screenWidth) -
+                                          35,
+                                  child: CustomWidgets.sectionConfigSeason(
+                                    context: context,
+                                    temporadas: temporadaGrupListProvider,
+                                    temporada: element,
+                                    onRemove: () => setState(() =>
+                                        temporadaGrupListProvider
+                                            .remove(element)),
+                                    onChangedDescuento: (p0) => setState(() =>
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
+                                    onChangedName: (p0) =>
+                                        setState(() => element.nombre = p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 23),
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    temporadaGrupListProvider.add(Temporada(
+                                      nombre: (temporadaGrupListProvider
+                                              .isEmpty)
+                                          ? "GRUPOS"
+                                          : "GRUPOS (${temporadaGrupListProvider.length + 1})",
+                                      forGroup: true,
+                                    ));
+                                  }),
+                                  child: Container(
+                                    width: 95,
+                                    height: 109,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.add,
+                                          size: 35,
+                                          color: Theme.of(context).dividerColor,
+                                        ),
+                                        TextStyles.standardText(
+                                          text: "Agregar\nTemporada",
+                                          aling: TextAlign.center,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 11,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 1, top: 5),
+                          child: Row(
+                            children: [
+                              TextStyles.titleText(
+                                text: "Temporadas en Efectivo  ",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              Expanded(
+                                child: TextStyles.titleText(
+                                  text:
+                                      "(Solo para cotizaciones con método de pago en Efectivo)",
+                                  size: 13,
+                                  color: Theme.of(context).primaryColor,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(color: Theme.of(context).primaryColor),
+                        Center(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            alignment: WrapAlignment.center,
+                            spacing: 2,
+                            runSpacing: 4,
+                            children: [
+                              for (var element in temporadaEfectivoListProvider)
+                                SizedBox(
+                                  width:
+                                      getWidthResizableTemporada(screenWidth) -
+                                          35,
+                                  child: CustomWidgets.sectionConfigSeason(
+                                    context: context,
+                                    temporadas: temporadaEfectivoListProvider,
+                                    temporada: element,
+                                    onRemove: () => setState(() =>
+                                        temporadaEfectivoListProvider
+                                            .remove(element)),
+                                    onChangedDescuento: (p0) => setState(() =>
+                                        element.porcentajePromocion =
+                                            double.tryParse(p0)),
+                                    onChangedUseTariff: (p0) =>
+                                        setState(() => element.useTariff = p0),
+                                    onChangedName: (p0) =>
+                                        setState(() => element.nombre = p0),
+                                    onChangedEstancia: (p0) => element
+                                        .estanciaMinima = int.tryParse(p0),
+                                    onChangedTariffs: (p0) =>
+                                        setState(() => element.tarifas = p0),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 23),
+                                child: InkWell(
+                                  onTap: () => setState(() {
+                                    temporadaEfectivoListProvider.add(Temporada(
+                                      nombre: (temporadaEfectivoListProvider
+                                              .isEmpty)
+                                          ? "EFECTIVO"
+                                          : "EFECTIVO (${temporadaEfectivoListProvider.length + 1})",
+                                      forCash: true,
+                                    ));
                                   }),
                                   child: Container(
                                     width: 95,
@@ -526,369 +1098,26 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                         const SizedBox(height: 15),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 1),
-                          child: TextStyles.titleText(
-                            text: "Tarífas",
-                            size: 18,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Center(
-                          child: Wrap(
-                            runSpacing: 15,
-                            spacing: 15,
-                            children: [
-                              SizedBox(
-                                width: getWidthResizableTarifa(screenWidth),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                          color: DesktopColors.vistaReserva,
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(7))),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Wrap(
-                                          alignment: getWrapAligmentContainer(
-                                              screenWidth),
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.center,
-                                          runAlignment: WrapAlignment.center,
-                                          children: [
-                                            TextStyles.mediumText(
-                                              text: tipoHabitacion[0],
-                                              color: Colors.white,
-                                              aling: TextAlign.center,
-                                            ),
-                                            FormWidgets.inputSwitch(
-                                              name: "Auto calculación:",
-                                              context: context,
-                                              value: autoCalculationVR,
-                                              activeColor: Colors.white,
-                                              onChanged: (p0) => setState(
-                                                  () => autoCalculationVR = p0),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "SGL/DBL",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: adults1_2VRController,
-                                            onChanged: (p0) {
-                                              if (autoCalculationVR) {
-                                                adults3VRController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VRController,
-                                                        paxAdicVRController,
-                                                        1);
-                                                adults4VRController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VRController,
-                                                        paxAdicVRController,
-                                                        2);
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "PAX ADIC",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: paxAdicVRController,
-                                            onChanged: (p0) {
-                                              if (autoCalculationVR) {
-                                                adults3VRController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VRController,
-                                                        paxAdicVRController,
-                                                        1);
-                                                adults4VRController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VRController,
-                                                        paxAdicVRController,
-                                                        2);
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Opacity(
-                                      opacity: autoCalculationVR ? 0.5 : 1,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: FormWidgets
-                                                .textFormFieldResizable(
-                                              name: "TPL",
-                                              isDecimal: true,
-                                              isNumeric: true,
-                                              isMoneda: true,
-                                              blocked: autoCalculationVR,
-                                              controller: adults3VRController,
-                                              onChanged: (p0) {
-                                                if (!autoCalculationVR) {
-                                                  setState(() {});
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: FormWidgets
-                                                .textFormFieldResizable(
-                                              name: "CPLE",
-                                              isDecimal: true,
-                                              isNumeric: true,
-                                              isMoneda: true,
-                                              blocked: autoCalculationVR,
-                                              controller: adults4VRController,
-                                              onChanged: (p0) {
-                                                if (!autoCalculationVR) {
-                                                  setState(() {});
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "MENORES 7 A 12 AÑOS",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: minors7_12VRController,
-                                            onChanged: (p0) => setState(() {}),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "MENORES 0 A 6 AÑOS",
-                                            isDecimal: true,
-                                            initialValue: "GRATIS",
-                                            isNumeric: true,
-                                            // isMoneda: true,
-                                            blocked: true,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: getWidthResizableTarifa(screenWidth),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                          color: DesktopColors.vistaParcialMar,
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(7))),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Wrap(
-                                          alignment: getWrapAligmentContainer(
-                                              screenWidth),
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.center,
-                                          runAlignment: WrapAlignment.center,
-                                          children: [
-                                            TextStyles.mediumText(
-                                              text: tipoHabitacion[1],
-                                              color: Colors.white,
-                                              aling: TextAlign.center,
-                                            ),
-                                            FormWidgets.inputSwitch(
-                                              name: "Auto calculación:",
-                                              context: context,
-                                              value: autoCalculationVPM,
-                                              activeColor: Colors.white,
-                                              onChanged: (p0) => setState(() =>
-                                                  autoCalculationVPM = p0),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "SGL/DBL",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: adults1_2VPMController,
-                                            onChanged: (p0) {
-                                              if (autoCalculationVPM) {
-                                                adults3VPMController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VPMController,
-                                                        paxAdicVPMController,
-                                                        1);
-                                                adults4VPMController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VPMController,
-                                                        paxAdicVPMController,
-                                                        2);
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "PAX ADIC",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: paxAdicVPMController,
-                                            onChanged: (p0) {
-                                              if (autoCalculationVPM) {
-                                                adults3VPMController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VPMController,
-                                                        paxAdicVPMController,
-                                                        1);
-                                                adults4VPMController.text =
-                                                    Utility.calculateRate(
-                                                        adults1_2VPMController,
-                                                        paxAdicVPMController,
-                                                        2);
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Opacity(
-                                      opacity: autoCalculationVPM ? 0.5 : 1,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: FormWidgets
-                                                .textFormFieldResizable(
-                                              name: "TPL",
-                                              isDecimal: true,
-                                              isNumeric: true,
-                                              isMoneda: true,
-                                              blocked: autoCalculationVPM,
-                                              controller: adults3VPMController,
-                                              onChanged: (p0) {
-                                                if (!autoCalculationVPM) {
-                                                  setState(() {});
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: FormWidgets
-                                                .textFormFieldResizable(
-                                              name: "CPLE",
-                                              isDecimal: true,
-                                              isNumeric: true,
-                                              isMoneda: true,
-                                              blocked: autoCalculationVPM,
-                                              controller: adults4VPMController,
-                                              onChanged: (p0) {
-                                                if (!autoCalculationVPM) {
-                                                  setState(() {});
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "MENORES 7 A 12 AÑOS",
-                                            isDecimal: true,
-                                            isNumeric: true,
-                                            isMoneda: true,
-                                            controller: minors7_12VPMController,
-                                            onChanged: (p0) => setState(() {}),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: FormWidgets
-                                              .textFormFieldResizable(
-                                            name: "MENORES 0 A 6 AÑOS",
-                                            isDecimal: true,
-                                            initialValue: "GRATIS",
-                                            isNumeric: true,
-                                            // isMoneda: true,
-                                            blocked: true,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 1),
-                          child: TextStyles.titleText(
-                            text: "Tarífas de temporada",
-                            size: 18,
-                            color: Theme.of(context).dividerColor,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextStyles.titleText(
+                                text: "Tarífas de temporada",
+                                size: 18,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              Divider(color: Theme.of(context).primaryColor),
+                            ],
                           ),
                         ),
                         CustomWidgets.tableTarifasTemporadas(
                           context: context,
                           tipoHabitacion: tipoHabitacion[0],
                           colorTipo: DesktopColors.vistaReserva,
-                          temporadas: temporadaListProvider,
+                          temporadas: temporadaIndListProvider +
+                              temporadaEfectivoListProvider +
+                              temporadaGrupListProvider,
                           adults1a2: adults1_2VRController,
                           adults3: adults3VRController,
                           adults4: adults4VRController,
@@ -900,7 +1129,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                           context: context,
                           tipoHabitacion: tipoHabitacion[1],
                           colorTipo: DesktopColors.vistaParcialMar,
-                          temporadas: temporadaListProvider,
+                          temporadas: temporadaIndListProvider +
+                              temporadaEfectivoListProvider +
+                              temporadaGrupListProvider,
                           adults1a2: adults1_2VPMController,
                           adults3: adults3VPMController,
                           adults4: adults4VPMController,
@@ -914,11 +1145,14 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                             height: 35,
                             width: 130,
                             child: Buttons.commonButton(
-                              onPressed: () async {
-                                await savedTariff(temporadaListProvider);
-                              },
+                              isLoading: isLoading,
                               sizeText: 15,
                               text: "Guardar",
+                              onPressed: () async => await savedTariff(
+                                temporadaIndListProvider +
+                                    temporadaGrupListProvider +
+                                    temporadaEfectivoListProvider,
+                              ),
                             ),
                           ),
                         ),
@@ -947,8 +1181,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           (element.fechaInicial!.isSameDate(DateTime.parse(fechaSal))) ||
           (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) > 0 &&
               element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
-          // (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
-          //     element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) < 0) ||
           (element.fechaInicial!.compareTo(DateTime.parse(fechaIni)) <= 0 &&
               element.fechaFinal!.compareTo(DateTime.parse(fechaSal)) >= 0),
     );
@@ -996,24 +1228,39 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       return;
     }
 
-    TarifaTemporada tarifaVR = TarifaTemporada(
+    isLoading = true;
+    setState(() {});
+
+    late Tarifa tarifaVR;
+    late Tarifa tarifaVPM;
+
+    if (usedBaseTariff) {
+      tarifaVR = selectBaseTariff!.tarifas!
+          .firstWhere((element) => element.categoria == tipoHabitacion.first);
+      tarifaVPM = selectBaseTariff!.tarifas!
+          .firstWhere((element) => element.categoria == tipoHabitacion.last);
+    } else {
+      tarifaVR = Tarifa(
         categoria: tipoHabitacion[0],
         tarifaAdulto1a2: double.parse(adults1_2VRController.text),
         tarifaAdulto3: double.parse(adults3VRController.text),
         tarifaAdulto4: double.parse(adults4VRController.text),
         tarifaMenores7a12: double.parse(minors7_12VRController.text),
-        tarifaPaxAdicional: double.parse(paxAdicVRController.text));
-    TarifaTemporada tarifaVPM = TarifaTemporada(
+        tarifaPaxAdicional: double.parse(paxAdicVRController.text),
+      );
+
+      tarifaVPM = Tarifa(
         categoria: tipoHabitacion[1],
         tarifaAdulto1a2: double.parse(adults1_2VPMController.text),
         tarifaAdulto3: double.parse(adults3VPMController.text),
         tarifaAdulto4: double.parse(adults4VPMController.text),
         tarifaMenores7a12: double.parse(minors7_12VPMController.text),
-        tarifaPaxAdicional: double.parse(paxAdicVPMController.text));
+        tarifaPaxAdicional: double.parse(paxAdicVPMController.text),
+      );
+    }
 
     bool isSaves = oldRegister != null
-        ? await TarifaService().UpdateTarifaBD(
-            codeUniversal: oldRegister!.code!,
+        ? await TarifaService().updateTarifaBD(
             oldRegister: oldRegister!,
             name: nombreTarifaController.text,
             colorIdentificativo: colorTarifa,
@@ -1022,6 +1269,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
             temporadas: temporadas,
             tarifaVPM: tarifaVPM,
             tarifaVR: tarifaVR,
+            withBaseTariff: usedBaseTariff,
           )
         : await TarifaService().saveTarifaBD(
             name: nombreTarifaController.text,
@@ -1031,6 +1279,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
             periodos: periodos,
             tarifaVPM: tarifaVPM,
             tarifaVR: tarifaVR,
+            withBaseTariff: usedBaseTariff,
           );
 
     if (isSaves) {
@@ -1050,11 +1299,13 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           ref
               .read(changeTarifasProvider.notifier)
               .update((state) => UniqueKey().hashCode);
-          ref.read(monthsCacheYearProvider.notifier).update((state) => []);
+          ref
+              .read(changeTarifasListProvider.notifier)
+              .update((state) => UniqueKey().hashCode);
         },
       );
 
-      Future.delayed(650.ms, () => widget.sideController.selectIndex(5));
+      Future.delayed(650.ms, () => widget.sideController.selectIndex(4));
     } else {
       if (mounted) return;
       showSnackBar(
@@ -1063,7 +1314,27 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           message:
               "Se detecto un error al intentar guardar la tarifa. Intentelo más tarde.",
           type: "danger");
+      isLoading = false;
+      setState(() {});
       return;
+    }
+  }
+
+  void _autoCalculationVR() {
+    if (autoCalculationVR) {
+      adults3VRController.text =
+          Utility.calculateRate(adults1_2VRController, paxAdicVRController, 1);
+      adults4VRController.text =
+          Utility.calculateRate(adults1_2VRController, paxAdicVRController, 2);
+    }
+  }
+
+  void _autoCalculationVPM() {
+    if (autoCalculationVPM) {
+      adults3VPMController.text = Utility.calculateRate(
+          adults1_2VPMController, paxAdicVPMController, 1);
+      adults4VPMController.text = Utility.calculateRate(
+          adults1_2VPMController, paxAdicVPMController, 2);
     }
   }
 }

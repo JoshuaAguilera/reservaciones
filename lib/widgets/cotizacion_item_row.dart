@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
 
 class ComprobanteItemRow extends StatefulWidget {
@@ -44,8 +45,9 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
     colorText = !widget.cotizacion.esGrupo!
         ? DesktopColors.azulUltClaro
         : DesktopColors.prussianBlue;
-    colorTextIndice =
-        !widget.cotizacion.esGrupo! ? DesktopColors.azulUltClaro : null;
+    colorTextIndice = !widget.cotizacion.esGrupo!
+        ? DesktopColors.azulUltClaro
+        : DesktopColors.prussianBlue;
     colorIconDelete = !widget.cotizacion.esGrupo!
         ? DesktopColors.azulCielo
         : DesktopColors.ceruleanOscure;
@@ -62,7 +64,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
         margin: const EdgeInsets.all(0),
         elevation: 3,
         color: widget.cotizacion.esGrupo!
-            ? DesktopColors.cotGroupColor
+            ? DesktopColors.cotGrupal
             : DesktopColors.cotIndiv,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,
@@ -81,52 +83,63 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   "Folio: ", widget.cotizacion.folioPrincipal!,
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
-                  "${widget.cotizacion.fecha.toIso8601String().substring(0, 10)} ${widget.cotizacion.fecha.toIso8601String().substring(11, 16)}",
+                  "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               // TextStyles.TextAsociative("Tarifa: ",
               //     Utility.formatterNumber(widget.cotizacion.rateDay),
               //     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative(
-                  "Total: ", Utility.formatterNumber(widget.cotizacion.total ?? 0),
+                  "Correo: ", widget.cotizacion.correoElectrico ?? '',
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),
-          trailing: widget.isQuery
-              ? null
-              : Wrap(
-                  children: [
-                    if (!isLoading)
-                      IconButton(
-                        onPressed: () {
-                          widget.seeReceipt!.call();
-                          setState(() {
-                            isLoading = true;
-                          });
-                        },
-                        icon: Icon(
-                          color: colorIconDetail,
-                          CupertinoIcons.eye,
-                        ),
-                      )
-                    else
-                      SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: CircularProgressIndicator(
-                          color: DesktopColors.ceruleanOscure,
-                        ),
-                      ),
-                    IconButton(
-                      onPressed: widget.deleteReceipt,
-                      icon: Icon(
-                        color: colorIconDelete,
-                        CupertinoIcons.delete_solid,
-                      ),
-                    ),
-                  ],
+          trailing: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (!(Preferences.rol != "SUPERADMIN" &&
+                  Preferences.rol != "ADMIN"))
+                CustomWidgets.buildItemGraphics(
+                  icon: CupertinoIcons.person_alt_circle,
+                  color: colorText!,
+                  label: widget.cotizacion.username ?? 'Not found',
+                  fontSize: 11.5,
+                  iconSize: 16,
                 ),
+              if (!isLoading && !widget.isQuery)
+                IconButton(
+                  tooltip: "Detalles",
+                  icon: Icon(
+                    color: colorIconDetail,
+                    CupertinoIcons.eye,
+                  ),
+                  onPressed: () {
+                    widget.seeReceipt!.call();
+                    setState(() {
+                      isLoading = true;
+                    });
+                  },
+                )
+              else if (!widget.isQuery)
+                SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: CircularProgressIndicator(
+                    color: colorIconDetail,
+                  ),
+                ),
+              if (Preferences.rol != 'RECEPCION' && !widget.isQuery)
+                IconButton(
+                  tooltip: "Eliminar",
+                  icon: Icon(
+                    color: colorIconDelete,
+                    CupertinoIcons.delete_solid,
+                  ),
+                  onPressed: widget.deleteReceipt,
+                ),
+            ],
+          ),
         ),
-      ).animate().fadeIn(delay: Duration(milliseconds: 100 * widget.delay)),
+      ),
     );
   }
 }

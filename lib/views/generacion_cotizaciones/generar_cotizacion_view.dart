@@ -4,18 +4,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/tarifa_x_dia_model.dart';
+import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
+import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -25,7 +31,6 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -41,6 +46,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
+  bool startflow = false;
 
   Cotizacion receiptQuotePresent = Cotizacion();
   List<Habitacion> quotesIndPresent = [];
@@ -68,6 +74,20 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     final cotizacion = ref.watch(cotizacionProvider);
     final folio = ref.watch(uniqueFolioProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashTariff = ref.watch(useCashSeasonProvider);
+    final useCashRoomTariff = ref.watch(useCashSeasonRoomProvider);
+
+    if (!startflow) {
+      if (useCashRoomTariff) {
+        Future.delayed(
+          100.ms,
+          () => ref.read(useCashSeasonRoomProvider.notifier).update(
+                (state) => useCashTariff,
+              ),
+        );
+      }
+      startflow = true;
+    }
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
@@ -87,6 +107,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           .read(detectChangeProvider.notifier)
           .update((state) => UniqueKey().hashCode);
 
+      ref.read(useCashSeasonRoomProvider.notifier).update(
+          (state) => useCashTariff || (habitacion.useCashSeason ?? false));
+
       Future.delayed(
         800.ms,
         () => setState(
@@ -99,6 +122,97 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       );
 
       Future.delayed(1000.ms, () => widget.sideController.selectIndex(16));
+    }
+
+    void _showConfigurationTariffGroup({bool firstView = false}) {
+      showDialog(
+        context: context,
+        builder: (context) => const ManagerTariffGroupDialog(),
+      ).then(
+        (value) {
+          if (value == null && firstView) {
+            ref
+                .watch(HabitacionProvider.provider.notifier)
+                .implementGroupTariff([]);
+          } else {
+            if (value == null) return;
+
+            List<TarifaXDia?> selectTariffs = value;
+            ref
+                .watch(HabitacionProvider.provider.notifier)
+                .implementGroupTariff(selectTariffs);
+          }
+        },
+      );
+    }
+
+    if (!(Preferences.rol == 'RECEPCION')) {
+      ref.listen<bool>(typeQuoteProvider, (previous, next) {
+        if (next) {
+          _showConfigurationTariffGroup(firstView: true);
+        } else {
+          ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
+        }
+      });
+    }
+
+    Future saveQuoteBD() async {
+      if (!(await CotizacionService().createCotizacion(
+        cotizacion: cotizacion,
+        habitaciones: habitaciones,
+        folio: folio,
+        prefijoInit: prefijoInit,
+        isQuoteGroup: typeQuote,
+      ))) {
+        if (!context.mounted) return;
+        showSnackBar(
+          type: "danger",
+          context: context,
+          title: "Error al registrar la cotizacion",
+          message: "Se produjo un error al insertar la nueva cotización.",
+        );
+        return;
+      }
+
+      receiptQuotePresent = cotizacion.CopyWith();
+      receiptQuotePresent.folioPrincipal = folio;
+      receiptQuotePresent.esGrupo = typeQuote;
+      receiptQuotePresent.numeroTelefonico =
+          prefijoInit.prefijo + (cotizacion.numeroTelefonico ?? '');
+      receiptQuotePresent.habitaciones = [];
+      for (var element in habitaciones) {
+        receiptQuotePresent.habitaciones!.add(element.CopyWith());
+      }
+
+      comprobantePDF = await ref
+          .watch(HabitacionProvider.provider.notifier)
+          .generarComprobante(receiptQuotePresent, typeQuote);
+
+      ref.read(cotizacionProvider.notifier).update((state) => Cotizacion());
+      ref.watch(HabitacionProvider.provider.notifier).clear();
+
+      ref
+          .read(uniqueFolioProvider.notifier)
+          .update((state) => UniqueKey().hashCode.toString());
+
+      ref
+          .read(detectChangeProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
+      ref.read(changeProvider.notifier).update((state) => UniqueKey().hashCode);
+
+      ref
+          .read(changeHistoryProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
+      ref.read(typeQuoteProvider.notifier).update((state) => false);
+
+      ref.read(useCashSeasonProvider.notifier).update((state) => false);
+
+      ref.read(useCashSeasonRoomProvider.notifier).update((state) => false);
+
+      isFinish = true;
+      setState(() {});
     }
 
     return Scaffold(
@@ -123,22 +237,36 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                           )
                               .animate(target: targetHabitaciones)
                               .fadeIn(duration: 250.ms),
-                          if (!isLoading)
+                          if (!isLoading && !isFinish)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // if (!(Preferences.rol == 'RECEPCION'))
                                 const SizedBox(height: 8),
+                                // if (!(Preferences.rol == 'RECEPCION'))
                                 SizedBox(
                                   child: (!typeQuote)
                                       ? cardTypeQuote(
                                           type: "Cotización Individual",
                                           color: DesktopColors.cotIndiv,
                                           withTarget: typeQuote,
+                                          //withSwithCashTariff: true,
+                                          useCashTariff: useCashTariff,
+                                          onPressedSwitch: (p0) {
+                                            ref
+                                                .watch(useCashSeasonProvider
+                                                    .notifier)
+                                                .update((ref) => p0);
+                                          },
                                         )
                                       : cardTypeQuote(
                                           type: "Cotización Grupal",
                                           color: DesktopColors.cotGrupal,
                                           withTarget: !typeQuote,
+                                          withButton: true,
+                                          onPressedButton: () {
+                                            _showConfigurationTariffGroup();
+                                          },
                                         ),
                                 )
                                     .animate(target: targetHabitaciones)
@@ -242,40 +370,37 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 const SizedBox(height: 10),
                                 SizedBox(
                                   child: HabitacionesList(
-                                    newRoom: () => _goDetailRoom(Habitacion(
-                                      categoria: tipoHabitacion.first,
-                                      adultos: 1,
-                                      menores0a6: 0,
-                                      menores7a12: 0,
-                                      tarifaXDia: [],
-                                      isFree: false,
-                                      fechaCheckIn: DateTime.now()
-                                          .toString()
-                                          .substring(0, 10),
-                                      fechaCheckOut: DateTime.now()
-                                          .add(const Duration(days: 1))
-                                          .toString()
-                                          .substring(0, 10),
-                                    )),
+                                    newRoom: () => _goDetailRoom(
+                                      Habitacion(
+                                        categoria: tipoHabitacion.first,
+                                        adultos: 1,
+                                        menores0a6: 0,
+                                        menores7a12: 0,
+                                        tarifaXDia: [],
+                                        isFree: false,
+                                        fechaCheckIn: DateTime.now()
+                                            .toString()
+                                            .substring(0, 10),
+                                        fechaCheckOut: DateTime.now()
+                                            .add(const Duration(days: 1))
+                                            .toString()
+                                            .substring(0, 10),
+                                      ),
+                                    ),
                                     editRoom: (p0) =>
                                         _goDetailRoom(p0.CopyWith()),
                                     duplicateRoom: (p0) {
                                       Habitacion roomDuplicate = p0.CopyWith();
                                       roomDuplicate.folioHabitacion =
-                                          UniqueKey()
-                                              .toString()
-                                              .replaceAll('[', '')
-                                              .replaceAll(']', '');
+                                          Utility.getUniqueCode().toString();
 
                                       roomDuplicate.count = 1;
 
                                       ref
                                           .read(HabitacionProvider
                                               .provider.notifier)
-                                          .addItem(roomDuplicate);
+                                          .addItem(roomDuplicate, typeQuote);
 
-                                      final typeQuote =
-                                          ref.watch(typeQuoteProvider);
                                       final politicaTarifaProvider =
                                           ref.watch(tariffPolicyProvider(""));
                                       final habitaciones = ref
@@ -381,7 +506,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               ],
                             ),
                           if (isLoading && !isFinish)
-                            ProgressIndicatorCustom(screenHight: screenHeight),
+                            ProgressIndicatorCustom(
+                              screenHight: screenHeight,
+                              message: TextStyles.standardText(
+                                text: "Generando comprobante de\ncotización",
+                                aling: TextAlign.center,
+                                size: 11,
+                              ),
+                            ),
                           if (isFinish)
                             PdfCotizacionView(
                               comprobantePDF: comprobantePDF,
@@ -397,13 +529,16 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
                     onSaveQuote: isFinish
-                        ? () => setState(() {
-                              isFinish = false;
-                              isLoading = false;
-                            })
+                        ? () {
+                            isFinish = false;
+                            isLoading = false;
+                            setState(() {});
+                          }
                         : () async {
-                            if (!_formKeyCotizacion.currentState!.validate())
+                            if (!_formKeyCotizacion.currentState!.validate()) {
                               return;
+                            }
+
                             if (habitaciones
                                 .where((element) => !element.isFree)
                                 .toList()
@@ -419,78 +554,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               return;
                             }
 
-                            cotizacion.total = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyTotal: true,
-                            );
-
-                            cotizacion.totalReal = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyTotalReal: true,
-                            );
-
-                            cotizacion.descuento = Utility.calculateTotalRooms(
-                              habitaciones,
-                              onlyDiscount: true,
-                            );
-
-                            if (!(await CotizacionService().createCotizacion(
-                              cotizacion: cotizacion,
-                              habitaciones: habitaciones,
-                              folio: folio,
-                              prefijoInit: prefijoInit,
-                              isQuoteGroup: typeQuote,
-                            ))) {
-                              if (!context.mounted) return;
-                              showSnackBar(
-                                type: "danger",
-                                context: context,
-                                title: "Error al registrar la cotizacion",
-                                message:
-                                    "Se produjo un error al insertar la nueva cotización.",
-                              );
-                              return;
-                            }
-
                             setState(() => isLoading = true);
-
-                            receiptQuotePresent = cotizacion.CopyWith();
-                            receiptQuotePresent.folioPrincipal = folio;
-                            receiptQuotePresent.habitaciones = [];
-                            for (var element in habitaciones) {
-                              receiptQuotePresent.habitaciones!
-                                  .add(element.CopyWith());
-                            }
-
-                            comprobantePDF = await ref
-                                .watch(HabitacionProvider.provider.notifier)
-                                .generarComprobante(cotizacion);
-
-                            ref
-                                .read(cotizacionProvider.notifier)
-                                .update((state) => Cotizacion());
-                            ref
-                                .watch(HabitacionProvider.provider.notifier)
-                                .clear();
-
-                            ref.read(uniqueFolioProvider.notifier).update(
-                                (state) => UniqueKey().hashCode.toString());
-
-                            ref
-                                .read(detectChangeProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            ref
-                                .read(changeProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            ref
-                                .read(changeHistoryProvider.notifier)
-                                .update((state) => UniqueKey().hashCode);
-
-                            if (!context.mounted) return;
-                            Future.delayed(Durations.long2,
-                                () => setState(() => isFinish = true));
+                            await saveQuoteBD();
+                            setState(() => isLoading = false);
                           },
                   )
                       .animate(target: targetHabitaciones)
@@ -508,6 +574,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     required String type,
     required Color? color,
     bool withTarget = false,
+    bool withButton = false,
+    bool withSwithCashTariff = false,
+    bool useCashTariff = false,
+    void Function()? onPressedButton,
+    void Function(bool)? onPressedSwitch,
   }) {
     return Card(
       color: color,
@@ -518,11 +589,33 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextStyles.titleText(
                 text: type,
                 color: Colors.white,
               ),
+              if (withButton)
+                Buttons.commonButton(
+                  onPressed: () {
+                    if (onPressedButton == null) return;
+                    onPressedButton.call();
+                  },
+                  color: Utility.darken(color!, 0.15),
+                  text: "Gestionar tarifas",
+                ),
+              if (withSwithCashTariff)
+                FormWidgets.inputSwitch(
+                  activeColor: DesktopColors.azulClaro,
+                  value: useCashTariff,
+                  context: context,
+                  name: "Usar Temporadas en Efectivo en todas",
+                  onChanged: (p0) {
+                    if (onPressedSwitch != null) {
+                      onPressedSwitch.call(p0);
+                    }
+                  },
+                ),
             ],
           ),
         ),

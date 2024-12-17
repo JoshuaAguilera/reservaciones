@@ -2,13 +2,23 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/dahsboard_provider.dart';
+import 'package:generador_formato/providers/habitacion_provider.dart';
+import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/services/image_service.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 import '../database/database.dart';
+import '../models/imagen_model.dart';
+import '../providers/cotizacion_provider.dart';
 import '../ui/show_snackbar.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -22,12 +32,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKeyLogin = GlobalKey<FormState>();
-  bool _passwordVisible = false;
+  bool passwordVisible = false;
   bool isLoading = false;
 
   @override
   void initState() {
-    _passwordVisible = true;
+    passwordVisible = true;
     super.initState();
   }
 
@@ -36,6 +46,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    Color colorText = brightness == Brightness.light
+        ? DesktopColors.prussianBlue
+        : Colors.white;
+    Color colorTextField = brightness == Brightness.light
+        ? Colors.black54
+        : const Color.fromARGB(255, 188, 188, 188);
+    Color colorLabel = brightness == Brightness.light
+        ? Colors.black54
+        : DesktopColors.grisPalido;
+    Color colorTextValue = brightness == Brightness.light
+        ? Colors.black87
+        : DesktopColors.white;
 
     return Stack(
       children: [
@@ -43,12 +65,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
           height: screenHeight,
           width: screenWidth,
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Theme.of(context).primaryColorDark,
-              brightness == Brightness.light
-                  ? DesktopColors.cerulean
-                  : DesktopColors.grisPalido
-            ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+            gradient: LinearGradient(
+              colors: [
+                brightness == Brightness.light
+                    ? Colors.white
+                    : DesktopColors.grisSemiPalido,
+                brightness == Brightness.light
+                    ? DesktopColors.cerulean
+                    : DesktopColors.grisPalido
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
         ),
         Scaffold(
@@ -65,6 +93,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 width: 700,
                 height: screenWidth > 350 ? 450 : 390,
                 child: Card(
+                  color: brightness == Brightness.light
+                      ? const Color.fromARGB(255, 242, 242, 242)
+                      : DesktopColors.cardColor,
                   elevation: 6,
                   child: Row(
                     mainAxisAlignment: (screenWidth > 700)
@@ -74,40 +105,47 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: screenWidth > 500 ? 36.0 : 12,
-                            vertical: screenHeight > 500 ? 60 : 25),
+                            vertical: screenHeight > 500 ? 25 : 25),
                         child: Form(
                           key: _formKeyLogin,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: (screenWidth > 700)
                                 ? CrossAxisAlignment.start
                                 : CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Image(
-                                    image: const AssetImage(
-                                        "assets/image/logo_lobby.png"),
-                                    width: screenWidth > 350 ? 220 : 170,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  TextStyles.standardText(
-                                    text: "B 7.5.2",
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ],
+                              SizedBox(
+                                width: 250,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      child: Image(
+                                        image: AssetImage(
+                                            "assets/image/${brightness == Brightness.light ? "logo_login_light" : "logo_login_dark"}.png"),
+                                        width: 280,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 15,
+                                      right: 0,
+                                      child: TextStyles.standardText(
+                                        text: "Versión $version",
+                                        size: 11,
+                                        color: colorText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(height: 10),
                               TextStyles.titleText(
                                 text: "Iniciar sesión",
-                                color: Theme.of(context).primaryColor,
+                                color: colorText,
                                 size: screenWidth > 350 ? 18 : 15,
                               ),
+                              const SizedBox(height: 10),
                               Container(
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                                 constraints: BoxConstraints(
@@ -119,7 +157,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 child: TextFormField(
                                   enabled: !isLoading,
                                   onFieldSubmitted: (value) async {
-                                    await submitData.call();
+                                    await submitData(brightness);
                                   },
                                   controller: userNameController,
                                   validator: (value) {
@@ -128,12 +166,36 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     }
                                     return null;
                                   },
-                                  decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Usuario"),
-                                  style: const TextStyle(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 9),
+                                    filled: true,
+                                    fillColor: Colors.white.withOpacity(0.1),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Utility.darken(
+                                            colorTextField, -0.05),
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: colorTextField),
+                                    ),
+                                    labelText: "Usuario",
+                                    labelStyle: TextStyles.styleStandar(
+                                      color: colorLabel,
+                                    ),
+                                    floatingLabelStyle: TextStyles.styleStandar(
+                                      color: isLoading
+                                          ? colorTextField
+                                          : Colors.blueAccent,
+                                      size: 13,
+                                    ),
+                                  ),
+                                  style: TextStyle(
                                     fontFamily: "poppins_regular",
                                     fontSize: 13,
+                                    color: colorTextValue,
                                   ),
                                 ),
                               ),
@@ -141,7 +203,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 height: 45,
                                 margin: const EdgeInsets.only(bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                                 constraints: BoxConstraints(
@@ -153,71 +214,79 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 child: TextFormField(
                                   enabled: !isLoading,
                                   onFieldSubmitted: (value) async {
-                                    await submitData.call();
+                                    await submitData(brightness);
                                   },
                                   controller: passwordController,
-                                  obscureText: _passwordVisible,
+                                  obscureText: passwordVisible,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Ingrese contraseña';
                                     }
                                     return null;
                                   },
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: "poppins_regular",
                                     fontSize: 13,
+                                    color: colorTextValue,
                                   ),
                                   decoration: InputDecoration(
-                                      border: const OutlineInputBorder(),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _passwordVisible
-                                              ? CupertinoIcons.eye_solid
-                                              : CupertinoIcons.eye_slash_fill,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _passwordVisible =
-                                                !_passwordVisible;
-                                          });
-                                        },
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 9),
+                                    filled: true,
+                                    fillColor: Colors.white.withOpacity(0.1),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Utility.darken(
+                                            colorTextField, -0.05),
                                       ),
-                                      labelText: "Contraseña"),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 120,
-                                height: screenWidth > 350 ? 40 : 35,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    await submitData.call();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: isLoading
-                                          ? DesktopColors.cerulean
-                                          : DesktopColors.prussianBlue),
-                                  child: Row(
-                                    mainAxisAlignment: isLoading
-                                        ? MainAxisAlignment.spaceAround
-                                        : MainAxisAlignment.center,
-                                    children: [
-                                      if (isLoading)
-                                        const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.white),
-                                        ),
-                                      TextStyles.buttonTextStyle(
-                                          text: !isLoading
-                                              ? "Ingresar"
-                                              : "Espere"),
-                                    ],
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: colorTextField),
+                                    ),
+                                    labelStyle: TextStyles.styleStandar(
+                                      color: colorLabel,
+                                    ),
+                                    floatingLabelStyle: TextStyles.styleStandar(
+                                      color: isLoading
+                                          ? colorTextField
+                                          : Colors.blueAccent,
+                                      size: 13,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        passwordVisible
+                                            ? CupertinoIcons.eye_solid
+                                            : CupertinoIcons.eye_slash_fill,
+                                        color: colorText,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          passwordVisible = !passwordVisible;
+                                        });
+                                      },
+                                    ),
+                                    labelText: "Contraseña",
                                   ),
                                 ),
-                              )
+                              ),
+                              const SizedBox(height: 5),
+                              SizedBox(
+                                  width: 120,
+                                  height: screenWidth > 350 ? 40 : 35,
+                                  child: Buttons.commonButton(
+                                    isLoading: isLoading,
+                                    text: "Ingresar",
+                                    color: brightness != Brightness.light
+                                        ? isLoading
+                                            ? DesktopColors.prussianBlue
+                                            : DesktopColors.cerulean
+                                        : isLoading
+                                            ? DesktopColors.cerulean
+                                            : DesktopColors.prussianBlue,
+                                    onPressed: () async =>
+                                        await submitData(brightness),
+                                  ))
                             ],
                           ),
                         ),
@@ -246,7 +315,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
     );
   }
 
-  submitData() async {
+  Future submitData(Brightness brightness) async {
     setState(() => isLoading = true);
     if (_formKeyLogin.currentState!.validate()) {
       if (!await AuthService().foundUserName(userNameController.text)) {
@@ -263,6 +332,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
       if (!await AuthService()
           .loginUser(userNameController.text, passwordController.text)) {
+        passwordController.text = "";
         setState(() => isLoading = false);
         showSnackBar(
           type: "danger",
@@ -277,13 +347,73 @@ class _LoginViewState extends ConsumerState<LoginView> {
       UsuarioData usuario = await AuthService()
           .savePerfil(userNameController.text, passwordController.text);
 
+      if (usuario.imageId != null) {
+        ImagesTableData? imageUser =
+            await ImageService().getImageById(usuario.imageId!);
+
+        if (imageUser != null) {
+          Preferences.userImageUrl = imageUser.urlImage ?? '';
+          ref.watch(imagePerfilProvider.notifier).update(
+                (ref) => Imagen(
+                  code: int.parse(imageUser.code ?? '0'),
+                  urlImagen: imageUser.urlImage,
+                  usuarioId: usuario.id,
+                  id: imageUser.id,
+                ),
+              );
+        } else {
+          Preferences.userImageUrl = "";
+          ref.watch(imagePerfilProvider.notifier).update((ref) => Imagen());
+        }
+
+        setState(() {});
+      } else {
+        Preferences.userImageUrl = "";
+        ref.watch(imagePerfilProvider.notifier).update((ref) => Imagen());
+      }
+
       ref.read(userProvider.notifier).update((state) => usuario);
+      ref
+          .read(changeHistoryProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref.read(changeProvider.notifier).update((state) => UniqueKey().hashCode);
+      ref
+          .read(detectChangeRoomProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(detectChangeProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTarifasProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTarifasListProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeTariffPolicyProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+      ref
+          .read(changeUsersProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+
+      ref
+          .read(changeTarifasBaseProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
 
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomeView()),
+      ).then(
+        (value) {
+          Future.delayed(Durations.short1, () {
+            brightness =
+                ThemeModelInheritedNotifier.of(context).theme.brightness;
+            setState(() {});
+          });
+        },
       );
-      _passwordVisible = false;
+
+      passwordVisible = true;
       isLoading = false;
       userNameController.text = '';
       passwordController.text = '';

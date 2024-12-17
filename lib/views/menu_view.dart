@@ -43,9 +43,9 @@ class _MenuViewState extends State<MenuView> {
           case 3:
             return ConfiguracionView(sideController: widget.controller);
           case 4:
-            return GestionUsuariosView(sideController: widget.controller);
-          case 5:
             return TarifarioView(sideController: widget.controller);
+          case 5:
+            return GestionUsuariosView(sideController: widget.controller);
           case 99:
             return PerfilView(sideController: widget.controller);
           case 12:

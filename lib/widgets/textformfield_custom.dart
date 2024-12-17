@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:generador_formato/ui/textformfield_style.dart';
 
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 
 class TextFormFieldCustom {
   static Widget textFormFieldwithBorder({
@@ -28,14 +28,16 @@ class TextFormFieldCustom {
     bool readOnly = false,
     String? Function(String?)? validator,
     TextInputAction? textInputAction,
+    String? hintText,
+    double marginBottom = 8,
+    FloatingLabelAlignment? floatingLabelAlignment,
+    void Function(String)? onFieldSubmitted,
   }) {
-    bool withContent = false;
     return StatefulBuilder(
       builder: (context, snapshot) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 8),
+          margin: EdgeInsets.only(bottom: marginBottom),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(2),
           ),
           constraints: BoxConstraints(
@@ -54,15 +56,7 @@ class TextFormFieldCustom {
                   enabled: enabled,
                   controller: controller,
                   onChanged: (value) {
-                    snapshot(
-                      () {
-                        if (value.isEmpty) {
-                          withContent = false;
-                        } else {
-                          withContent = true;
-                        }
-                      },
-                    );
+                    snapshot(() {});
                     if (onChanged != null) onChanged.call(value);
                   },
                   obscureText: passwordVisible,
@@ -91,17 +85,24 @@ class TextFormFieldCustom {
                             RegExp(r'^[0-9]+[.]?[0-9]*'))
                         : isNumeric
                             ? FilteringTextInputFormatter.digitsOnly
-                            : FilteringTextInputFormatter.singleLineFormatter
+                            : FilteringTextInputFormatter.singleLineFormatter,
                   ],
                   textAlignVertical: TextAlignVertical.top,
                   textAlign: isMoneda ? TextAlign.right : TextAlign.left,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
                     border: const OutlineInputBorder(),
                     labelStyle: const TextStyle(
                       fontFamily: "poppins_regular",
                       fontSize: 13,
                     ),
+                    hintStyle: const TextStyle(
+                      fontFamily: "poppins_regular",
+                      fontSize: 13,
+                    ),
                     alignLabelWithHint: true,
+                    floatingLabelAlignment: floatingLabelAlignment,
                     prefixIcon: isMoneda
                         ? const Icon(
                             CupertinoIcons.money_dollar,
@@ -125,14 +126,18 @@ class TextFormFieldCustom {
                             },
                           )
                         : icon,
-                    labelText: name,
+                    labelText: hintText != null ? null : name,
+                    hintText: hintText,
+                    errorMaxLines: 2,
                     errorStyle: TextStyle(
                       fontFamily: "poppins_regular",
                       color: Colors.red[800],
                       fontSize: 10,
+                      height: msgError.isEmpty ? 0 : 1,
                     ),
                   ),
                   initialValue: initialValue,
+                  onFieldSubmitted: onFieldSubmitted,
                 ),
               ),
             ],
@@ -154,6 +159,8 @@ class TextFormFieldCustom {
     bool nowLastYear = false,
     bool changed = false,
     bool compact = false,
+    bool readOnly = false,
+    bool enabled = true,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -173,6 +180,8 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: true,
                 child: TextFormField(
+                  enabled: enabled,
+                  readOnly: readOnly,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return msgError;
@@ -206,30 +215,32 @@ class TextFormFieldCustom {
                       Icons.calendar_month,
                       color: DesktopColors.azulCielo,
                     ),
-                    onPressed: () {
-                      showDatePicker(
-                        context: context,
-                        initialDate: DateTime.parse(dateController.text),
-                        firstDate: fechaLimite.isNotEmpty
-                            ? DateTime.parse(fechaLimite)
-                                .add(const Duration(days: 1))
-                            : DateTime(DateTime.now().year - firstYear),
-                        lastDate: nowLastYear
-                            ? DateTime.now()
-                            : DateTime((DateTime.now().year + lastYear)),
-                        locale: const Locale('es', 'ES'),
-                      ).then(
-                        (date) {
-                          if (date != null) {
-                            setState(() {
-                              dateController.text =
-                                  date.toIso8601String().substring(0, 10);
-                              if (onChanged != null) onChanged.call();
-                            });
-                          }
-                        },
-                      );
-                    },
+                    onPressed: !enabled
+                        ? null
+                        : () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.parse(dateController.text),
+                              firstDate: fechaLimite.isNotEmpty
+                                  ? DateTime.parse(fechaLimite)
+                                      .add(const Duration(days: 1))
+                                  : DateTime(DateTime.now().year - firstYear),
+                              lastDate: nowLastYear
+                                  ? DateTime.now()
+                                  : DateTime((DateTime.now().year + lastYear)),
+                              locale: const Locale('es', 'ES'),
+                            ).then(
+                              (date) {
+                                if (date != null) {
+                                  setState(() {
+                                    dateController.text =
+                                        date.toIso8601String().substring(0, 10);
+                                    if (onChanged != null) onChanged.call();
+                                  });
+                                }
+                              },
+                            );
+                          },
                   ),
                 ),
               ),

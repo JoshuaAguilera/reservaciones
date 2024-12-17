@@ -47,3 +47,5 @@ final receiptQuoteQueryProvider =
   );
   return list;
 });
+
+final saveTariffPolityProvider = StateProvider<Politica?>((ref) => null);

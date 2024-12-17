@@ -1,5 +1,11 @@
 import 'dart:io';
 import 'package:drift/native.dart';
+import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
+import 'package:generador_formato/database/dao/tarifa_dao.dart';
+import 'package:generador_formato/database/dao/tarifa_rack_dao.dart';
+import 'package:generador_formato/database/tables/images_table.dart';
+import 'package:generador_formato/database/tables/tarifa_base_table.dart';
+import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,32 +24,73 @@ import 'tables/user_activity_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
-// @DriftDatabase(tables: [
-//  Usuario,
-//   Cotizacion,
-//   Habitacion,
-//   TarifaXDiaTable,
-//   Periodo,
-//   Temporada,
-//   Tarifa,
-//   UserActivity,
-//   TarifaRack,
-//   Politicas,
-// ])
+// @DriftDatabase(
+//   tables: [
+//     Usuario,
+//     Cotizacion,
+//     Habitacion,
+//     TarifaXDiaTable,
+//     Periodo,
+//     Temporada,
+//     Tarifa,
+//     UserActivity,
+//     TarifaRack,
+//     Politicas,
+//     ImagesTable,
+//     TemporadaTarifa,
+//     TarifaBase,
+//   ],
+//   daos: [
+//     TarifaBaseDao,
+//     TarifaDao,
+//     TarifaRackDao,
+//   ],
+// )
 // class AppDatabase extends _$AppDatabase {}
 
-@DriftDatabase(tables: [
-  Usuario,
-  Cotizacion,
-  Habitacion,
-  TarifaXDiaTable,
-  Periodo,
-  Temporada,
-  Tarifa,
-  UserActivity,
-  TarifaRack,
-  Politicas,
-])
+class QuoteWithUser {
+  QuoteWithUser(this.quote, this.user);
+
+  final CotizacionData quote;
+  final UsuarioData? user;
+}
+
+class UserWithImage {
+  UserWithImage(this.user, this.image);
+
+  final UsuarioData user;
+  final ImagesTableData? image;
+}
+
+class SeasonTariff {
+  SeasonTariff(this.season, this.tariff);
+
+  final TemporadaData season;
+  final Tarifa? tariff;
+}
+
+@DriftDatabase(
+  tables: [
+    Usuario,
+    Cotizacion,
+    Habitacion,
+    TarifaXDiaTable,
+    Periodo,
+    Temporada,
+    Tarifa,
+    UserActivity,
+    TarifaRack,
+    Politicas,
+    ImagesTable,
+    TemporadaTarifa,
+    TarifaBase,
+  ],
+  daos: [
+    TarifaBaseDao,
+    TarifaDao,
+    TarifaRackDao,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -57,105 +104,207 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<CotizacionData>> getCotizacionesSearch(String search) {
-    return (select(cotizacion)..where((t) => t.nombreHuesped.contains(search)))
-        .get();
+  Future<List<CotizacionData>> getCotizacionesSearch(
+      String search, int? userId) async {
+    final query = select(cotizacion)
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
+
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
+
+    query.where(cotizacion.nombreHuesped.equals(search));
+
+    final result = await query.get();
+
+    final list = result.map((row) {
+      final quote = row.readTable(cotizacion);
+      final user = row.readTable(usuario);
+      return QuoteWithUser(quote, user);
+    }).toList();
+
+    List<CotizacionData> quotes = [];
+
+    for (var element in list) {
+      CotizacionData data = CotizacionData(
+        id: element.quote.id,
+        fecha: element.quote.fecha,
+        correoElectrico: element.quote.correoElectrico,
+        esConcretado: element.quote.esConcretado,
+        esGrupo: element.quote.esGrupo,
+        folioPrincipal: element.quote.folioPrincipal,
+        habitaciones: element.quote.habitaciones,
+        nombreHuesped: element.quote.nombreHuesped,
+        numeroTelefonico: element.quote.numeroTelefonico,
+        usuarioID: element.quote.usuarioID,
+        username: element.user!.username,
+      );
+
+      quotes.add(data);
+    }
+
+    return quotes;
+  }
+  
+  Future<List<CotizacionData>> getQuotesFiltered({
+    String search = "",
+    int? userId,
+    DateTime? initTime,
+    DateTime? lastTime,
+    bool inLastDay = false,
+    bool inLastWeek = false,
+    bool inLastMonth = false,
+    // bool inLastYear = false,
+  }) async {
+    final query = select(cotizacion)
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
+
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
+
+    if (search.isNotEmpty) {
+      query.where(cotizacion.nombreHuesped.lower().like('%$search%'));
+    }
+
+    if (initTime != null && lastTime != null) {
+      query.where(cotizacion.fecha.isBetweenValues(initTime, lastTime));
+    }
+
+    if (inLastDay) {
+      query.where(cotizacion.fecha.isBetweenValues(
+        DateTime.now().subtract(const Duration(days: 1)),
+        DateTime.now(),
+      ));
+    }
+
+    if (inLastWeek) {
+      query.where(
+        cotizacion.fecha.isBetweenValues(
+          DateTime.now().subtract(const Duration(days: 7)),
+          DateTime.now(),
+        ),
+      );
+    }
+
+    if (inLastMonth) {
+      query.where(
+        cotizacion.fecha.isBetweenValues(
+            DateTime.now().subtract(const Duration(days: 30)),
+            DateTime.now()),
+      );
+    }
+
+    final result = await query.get();
+
+    final list = result.map((row) {
+      final quote = row.readTable(cotizacion);
+      final user = row.readTable(usuario);
+      return QuoteWithUser(quote, user);
+    }).toList();
+
+    List<CotizacionData> quotes = [];
+
+    for (var element in list) {
+      CotizacionData data = CotizacionData(
+        id: element.quote.id,
+        fecha: element.quote.fecha,
+        correoElectrico: element.quote.correoElectrico,
+        esConcretado: element.quote.esConcretado,
+        esGrupo: element.quote.esGrupo,
+        folioPrincipal: element.quote.folioPrincipal,
+        habitaciones: element.quote.habitaciones,
+        nombreHuesped: element.quote.nombreHuesped,
+        numeroTelefonico: element.quote.numeroTelefonico,
+        usuarioID: element.quote.usuarioID,
+        username: element.user!.username,
+      );
+
+      quotes.add(data);
+    }
+
+    return quotes;
   }
 
-  Future<List<CotizacionData>> getCotizacionesUltimoDia({String search = ""}) {
-    if (search.isEmpty) {
+  Future<List<CotizacionData>> getCotizacionesHoy(int? userId) {
+    if (userId != null) {
       return (select(cotizacion)
+            ..where((tbl) => tbl.usuarioID.equals(userId))
             ..where(
               (t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 1)),
+                DateTime.parse(
+                    DateTime.now().toIso8601String().substring(0, 10)),
                 DateTime.now(),
               ),
             ))
           .get();
     } else {
       return (select(cotizacion)
-            ..where((t) => t.nombreHuesped.contains(search))
-            ..where((t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 1)),
-                DateTime.now())))
+            ..where(
+              (t) => t.fecha.isBetweenValues(
+                DateTime.parse(
+                    DateTime.now().toIso8601String().substring(0, 10)),
+                DateTime.now(),
+              ),
+            ))
           .get();
     }
   }
 
-  Future<List<CotizacionData>> getCotizacionesUltimaSemana(
-      {String search = ""}) {
-    if (search.isEmpty) {
-      return (select(cotizacion)
-            ..where((t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 7)),
-                DateTime.now())))
-          .get();
-    } else {
-      return (select(cotizacion)
-            ..where((t) => t.nombreHuesped.contains(search))
-            ..where((t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 7)),
-                DateTime.now())))
-          .get();
+  Future<List<QuoteWithUser>> getCotizacionesRecientes(int? userId) async {
+    final query = select(cotizacion)
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
+
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
+
+    query.orderBy(
+        [OrderingTerm(expression: cotizacion.fecha, mode: OrderingMode.desc)]);
+
+    final result = await query.get();
+
+    final list = result.map((row) {
+      final quote = row.readTable(cotizacion);
+      final user = row.readTable(usuario);
+      return QuoteWithUser(quote, user);
+    }).toList();
+
+    return list;
+  }
+
+  Future<List<CotizacionData>> getHistorialCotizaciones(int? userId) async {
+    final query = select(cotizacion)
+        .join([innerJoin(usuario, usuario.id.equalsExp(cotizacion.usuarioID))]);
+
+    if (userId != null) query.where(cotizacion.usuarioID.equals(userId));
+
+    final result = await query.get();
+
+    final list = result.map((row) {
+      final quote = row.readTable(cotizacion);
+      final user = row.readTable(usuario);
+      return QuoteWithUser(quote, user);
+    }).toList();
+
+    List<CotizacionData> quotes = [];
+
+    for (var element in list) {
+      CotizacionData data = CotizacionData(
+        id: element.quote.id,
+        fecha: element.quote.fecha,
+        correoElectrico: element.quote.correoElectrico,
+        esConcretado: element.quote.esConcretado,
+        esGrupo: element.quote.esGrupo,
+        folioPrincipal: element.quote.folioPrincipal,
+        habitaciones: element.quote.habitaciones,
+        nombreHuesped: element.quote.nombreHuesped,
+        numeroTelefonico: element.quote.numeroTelefonico,
+        usuarioID: element.quote.usuarioID,
+        username: element.user!.username,
+      );
+
+      quotes.add(data);
     }
+
+    return quotes;
   }
 
-  Future<List<CotizacionData>> getCotizacionesUltimoMes({String search = ""}) {
-    if (search.isEmpty) {
-      return (select(cotizacion)
-            ..where((t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 30)),
-                DateTime.now())))
-          .get();
-    } else {
-      return (select(cotizacion)
-            ..where((t) => t.nombreHuesped.contains(search))
-            ..where((t) => t.fecha.isBetweenValues(
-                DateTime.now().subtract(const Duration(days: 30)),
-                DateTime.now())))
-          .get();
-    }
-  }
-
-  Future<List<CotizacionData>> getCotizacionesPeriodo(
-      DateTime initTime, DateTime lastTime,
-      {String search = ""}) {
-    if (search.isEmpty) {
-      return (select(cotizacion)
-            ..where((t) => t.fecha.isBetweenValues(initTime, lastTime)))
-          .get();
-    } else {
-      return (select(cotizacion)
-            ..where((t) => t.nombreHuesped.contains(search))
-            ..where((t) => t.fecha.isBetweenValues(initTime, lastTime)))
-          .get();
-    }
-  }
-
-  Future<List<CotizacionData>> getCotizacionesHoy() {
-    return (select(cotizacion)
-          ..where(
-            (t) => t.fecha.isBetweenValues(
-              DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
-              DateTime.now(),
-            ),
-          ))
-        .get();
-  }
-
-  Future<List<CotizacionData>> getCotizacionesRecientes() {
-    return (select(cotizacion)
-          ..orderBy([
-            (t) => OrderingTerm(expression: t.fecha, mode: OrderingMode.desc)
-          ]))
-        .get();
-  }
-
-  Future<List<CotizacionData>> getHistorialCotizaciones() {
-    return (select(cotizacion)).get();
-  }
-
-  Future deleteCotizacionByFolio(String folio) {
+  Future<int> deleteCotizacionByFolio(String folio) {
     return (delete(cotizacion)..where((t) => t.folioPrincipal.equals(folio)))
         .go();
   }
@@ -163,12 +312,22 @@ class AppDatabase extends _$AppDatabase {
   Future<List<CotizacionData>> getCotizacionByPeriod(
     DateTime initTime,
     DateTime lastTime,
+    int? userId,
   ) {
-    return (select(cotizacion)
-          ..where(
-            (t) => t.fecha.isBetweenValues(initTime, lastTime),
-          ))
-        .get();
+    if (userId != null) {
+      return (select(cotizacion)
+            ..where((tbl) => tbl.usuarioID.equals(userId))
+            ..where(
+              (t) => t.fecha.isBetweenValues(initTime, lastTime),
+            ))
+          .get();
+    } else {
+      return (select(cotizacion)
+            ..where(
+              (t) => t.fecha.isBetweenValues(initTime, lastTime),
+            ))
+          .get();
+    }
   }
 
   //habitacion DAO
@@ -203,7 +362,7 @@ class AppDatabase extends _$AppDatabase {
     return (update(habitacion)..where((t) => t.id.equals(hab.id))).write(hab);
   }
 
-  Future deleteHabitacionByFolio(String folio) {
+  Future<int> deleteHabitacionByFolio(String folio) {
     return (delete(habitacion)..where((t) => t.folioCotizacion.equals(folio)))
         .go();
   }
@@ -227,14 +386,28 @@ class AppDatabase extends _$AppDatabase {
 
   //usuario dao
 
-  Future<List<UsuarioData>> getUsuariosByUsername(String userName) async {
-    return await (select(usuario)..where((t) => t.username.equals(userName)))
-        .get();
+  Future<List<UsuarioData>> getUsuariosByUsername(
+      String userName, int? userId) async {
+    if (userId != null) {
+      return await (select(usuario)
+            ..where((tbl) => tbl.status.equals("INACTIVO").not())
+            ..where(
+              (tbl) => tbl.id.equals(userId).not(),
+            )
+            ..where((t) => t.username.equals(userName)))
+          .get();
+    } else {
+      return await (select(usuario)
+            ..where((tbl) => tbl.status.equals("INACTIVO").not())
+            ..where((t) => t.username.equals(userName)))
+          .get();
+    }
   }
 
   Future<List<UsuarioData>> getUsuarioByUsernameAndID(
       String userName, int id) async {
     return await (select(usuario)
+          ..where((tbl) => tbl.status.equals("INACTIVO").not())
           ..where((t) => t.username.equals(userName))
           ..where((tbl) => tbl.id.equals(id)))
         .get();
@@ -242,6 +415,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<UsuarioData>> loginUser(String userName, String password) async {
     return await (select(usuario)
+          ..where((tbl) => tbl.status.equals("INACTIVO").not())
           ..where((t) => t.username.equals(userName))
           ..where((tbl) => tbl.password.equals(password)))
         .get();
@@ -251,21 +425,67 @@ class AppDatabase extends _$AppDatabase {
     return (update(usuario)..where((t) => t.id.equals(user.id))).write(user);
   }
 
+  Future<int> deleteUsuario(UsuarioData user) {
+    UsuarioData selectUser = UsuarioData(
+      id: user.id,
+      username: user.username,
+      apellido: user.apellido,
+      correoElectronico: user.correoElectronico,
+      fechaNacimiento: user.fechaNacimiento,
+      nombre: user.nombre,
+      numCotizaciones: user.numCotizaciones,
+      password: user.password,
+      passwordCorreo: user.passwordCorreo,
+      rol: user.rol,
+      telefono: user.telefono,
+      status: "INACTIVO",
+    );
+    return (update(usuario)..where((t) => t.id.equals(user.id)))
+        .write(selectUser);
+  }
+
   Future<int> updatePasswordUser(
       int userId, String username, String newPassword) {
     return (update(usuario)..where((t) => t.id.equals(userId))).write(
         UsuarioData(id: userId, username: username, password: newPassword));
   }
 
-  Future<int> updatePasswordMailUser(
+  Future<int> updatePasswordMail(
       int userId, String username, String newPassword) {
     return (update(usuario)..where((t) => t.id.equals(userId))).write(
         UsuarioData(
             id: userId, username: username, passwordCorreo: newPassword));
   }
 
-  Future<List<UsuarioData>> getListUser() {
-    return (select(usuario)).get();
+  Future<List<UsuarioData>> getListUser(int idAdmin) async {
+    return await (select(usuario)
+          ..where((u) => u.status.equals("INACTIVO").not())
+          ..where((u) => u.id.equals(idAdmin).not()))
+        .get();
+  }
+
+  Future<List<UsuarioData>> getUsersSearch(String search, int idAdmin) {
+    return (select(usuario)
+          ..where((u) => u.status.equals("INACTIVO").not())
+          ..where((u) => u.id.equals(idAdmin).not())
+          ..where((t) => t.username.contains(search)))
+        .get();
+  }
+
+  Future<int> updateImageUser(int userId, String username, int imageId) {
+    return (update(usuario)..where((t) => t.id.equals(userId)))
+        .write(UsuarioData(id: userId, username: username, imageId: imageId));
+  }
+
+  // Image dao
+
+  Future<int> updateURLImage(int id, String code, String newUrl) {
+    return (update(imagesTable)..where((t) => t.id.equals(id)))
+        .write(ImagesTableData(id: id, code: code, urlImage: newUrl));
+  }
+
+  Future<List<ImagesTableData>> getImageById(int id) async {
+    return await (select(imagesTable)..where((tbl) => tbl.id.equals(id))).get();
   }
 
   //tarifa dao
@@ -292,10 +512,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> updateTariff(
       {required TarifaCompanion tarifaUpdate,
-      required String codeUniv,
+      required String codeTariff,
       required int id}) {
     return (update(tarifa)
-          ..where((t) => t.code.equals(codeUniv))
+          ..where((t) => t.code.equals(codeTariff))
           ..where(
             (tbl) => tbl.id.equals(id),
           ))
@@ -322,9 +542,7 @@ class AppDatabase extends _$AppDatabase {
   }) {
     return (update(tarifaRack)
           ..where((t) => t.code.equals(codeUniv))
-          ..where(
-            (tbl) => tbl.id.equals(id),
-          ))
+          ..where((tbl) => tbl.id.equals(id)))
         .write(tarifaUpdate);
   }
 
@@ -332,9 +550,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deletePeriodByIDandCode(String codeUniv, int id) {
     return (delete(periodo)
-          ..where(
-            (tbl) => tbl.code.equals(codeUniv),
-          )
+          ..where((tbl) => tbl.code.equals(codeUniv))
           ..where((t) => t.id.equals(id)))
         .go();
   }
@@ -348,11 +564,9 @@ class AppDatabase extends _$AppDatabase {
         .go();
   }
 
-  Future<int> deleteSeasonByIDandCode(String codeUniv, int id) {
+  Future<int> deleteSeasonByIDandCode(String code, int id) {
     return (delete(temporada)
-          ..where(
-            (tbl) => tbl.code.equals(codeUniv),
-          )
+          ..where((tbl) => tbl.code.equals(code))
           ..where((t) => t.id.equals(id)))
         .go();
   }
@@ -377,6 +591,8 @@ class AppDatabase extends _$AppDatabase {
     return (update(politicas)..where((tbl) => tbl.id.equals(id)))
         .write(politica);
   }
+
+  // -- // Tarifa Base Dao
 }
 
 LazyDatabase _openConnection() {
@@ -385,8 +601,8 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
 
-    //final dbFolder = "/";//DesCommit when release
-    //final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+    // final dbFolder = "/"; //DesCommit when release Windows
+    // final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
 
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
@@ -403,6 +619,9 @@ LazyDatabase _openConnection() {
     // Explicitly tell it about the correct temporary directory.
     sqlite3.tempDirectory = cachebase;
 
-    return NativeDatabase.createInBackground(file);
+    return NativeDatabase.createInBackground(
+      file,
+      setup: (database) => database.execute('PRAGMA busy_timeout = 5000;'),
+    );
   });
 }

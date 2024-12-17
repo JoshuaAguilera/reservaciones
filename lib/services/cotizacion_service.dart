@@ -4,6 +4,7 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 
 import '../database/database.dart';
+import '../models/tarifa_x_dia_model.dart';
 import 'base_service.dart';
 
 class CotizacionService extends BaseService {
@@ -11,8 +12,8 @@ class CotizacionService extends BaseService {
       DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp =
-          await dataBase.getCotizacionByPeriod(initTime, lastTime);
+      List<CotizacionData> resp = await dataBase.getCotizacionByPeriod(initTime,
+          lastTime, (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
@@ -31,26 +32,45 @@ class CotizacionService extends BaseService {
     final database = AppDatabase();
 
     try {
-      database.transaction(
+      await database.transaction(
         () async {
           for (var element in habitaciones!) {
+            if (isQuoteGroup) {
+              element.tarifaXDia!.clear();
+              int days = DateTime.parse(element.fechaCheckOut!)
+                  .difference(DateTime.parse(element.fechaCheckIn!))
+                  .inDays;
+
+              for (var ink = 0; ink < days; ink++) {
+                DateTime dateNow = DateTime.parse(element.fechaCheckOut!)
+                    .add(Duration(days: ink));
+                TarifaXDia newTariff = element.tarifaGrupal!.copyWith();
+                newTariff.fecha = dateNow;
+                newTariff.dia = ink;
+                newTariff.numDays = 1;
+                element.tarifaXDia!.add(
+                  newTariff.copyWith(),
+                );
+              }
+            }
+
             await database.into(database.habitacion).insert(
                   HabitacionCompanion.insert(
-                    categoria: Value(element.categoria),
+                    // categoria: Value(element.categoria),
                     fecha: DateTime.now(),
                     fechaCheckIn: Value(element.fechaCheckIn),
                     fechaCheckOut: Value(element.fechaCheckOut),
                     folioCotizacion: Value(folio),
                     adultos: Value(element.adultos),
                     count: Value(element.count),
-                    descuento: Value(element.descuento),
+                    // descuento: Value(element.descuento),
                     folioHabitacion: Value(element.folioHabitacion),
                     isFree: Value(element.isFree),
                     menores0a6: Value(element.menores0a6),
                     menores7a12: Value(element.menores7a12),
                     paxAdic: Value(0),
-                    total: Value(element.total),
-                    totalReal: Value(element.totalReal),
+                    // total: Value(element.total),
+                    // totalReal: Value(element.totalReal),
                     tarifaXDia: Value(tarifasXDiaToJson(element.tarifaXDia!)),
                   ),
                 );
@@ -67,9 +87,9 @@ class CotizacionService extends BaseService {
                   numeroTelefonico: Value(cotizacion.numeroTelefonico),
                   usuarioID: Value(userId),
                   esConcretado: const Value(false),
-                  descuento: Value(cotizacion.descuento),
-                  total: Value(cotizacion.total),
-                  totalReal: Value(cotizacion.totalReal),
+                  // descuento: Value(cotizacion.descuento),
+                  // total: Value(cotizacion.total),
+                  // totalReal: Value(cotizacion.totalReal),
                 ),
               );
         },
@@ -86,36 +106,51 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesLocales(
       String search, int pag, String filtro, bool empty, String periodo) async {
     final database = AppDatabase();
+    int? selectUser = (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null;
+
     try {
       List<CotizacionData> comprobantes = [];
       if (empty) {
-        comprobantes = await database.select(database.cotizacion).get();
+        comprobantes = await database.getQuotesFiltered(
+            userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
       } else {
         if (periodo.isNotEmpty) {
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
           DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
-          comprobantes = await database
-              .getCotizacionesPeriodo(initTime, lastTime, search: search);
+          comprobantes = await database.getQuotesFiltered(
+            initTime: initTime,
+            lastTime: lastTime,
+            search: search,
+            userId: selectUser,
+          );
         } else {
           switch (filtro) {
             case "Todos":
-              if (search.isNotEmpty) {
-                comprobantes = await database.getCotizacionesSearch(search);
-              } else {
-                comprobantes = await database.select(database.cotizacion).get();
-              }
+              comprobantes = await database.getQuotesFiltered(
+                search: search,
+                userId: selectUser,
+              );
               break;
             case 'Hace un dia':
-              comprobantes =
-                  await database.getCotizacionesUltimoDia(search: search);
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
+                search: search,
+                inLastDay: true,
+              );
               break;
             case 'Hace una semana':
-              comprobantes =
-                  await database.getCotizacionesUltimaSemana(search: search);
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
+                search: search,
+                inLastWeek: true,
+              );
               break;
             case 'Hace un mes':
-              comprobantes =
-                  await database.getCotizacionesUltimoMes(search: search);
+              comprobantes = await database.getQuotesFiltered(
+                userId: selectUser,
+                search: search,
+                inLastMonth: true,
+              );
               break;
             default:
           }
@@ -135,13 +170,20 @@ class CotizacionService extends BaseService {
   Future<bool> eliminarCotizacion(String folio) async {
     final database = AppDatabase();
     try {
-      await database.deleteCotizacionByFolio(folio).toString();
-      await database.deleteHabitacionByFolio(folio).toString();
+      await database.transaction(
+        () async {
+          int responseDQ = await database.deleteCotizacionByFolio(folio);
+          int responseDR = await database.deleteHabitacionByFolio(folio);
+
+          print("$responseDQ - $responseDR");
+        },
+      );
 
       await database.close();
       return true;
     } catch (e) {
       print(e);
+      await database.close();
       return false;
     }
   }
@@ -149,11 +191,34 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesRecientes() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesRecientes();
+      List<QuoteWithUser> resp = await dataBase.getCotizacionesRecientes(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
+
+      List<CotizacionData> quotes = [];
+
+      for (var element in resp) {
+        CotizacionData data = CotizacionData(
+          id: element.quote.id,
+          fecha: element.quote.fecha,
+          correoElectrico: element.quote.correoElectrico,
+          esConcretado: element.quote.esConcretado,
+          esGrupo: element.quote.esGrupo,
+          folioPrincipal: element.quote.folioPrincipal,
+          habitaciones: element.quote.habitaciones,
+          nombreHuesped: element.quote.nombreHuesped,
+          numeroTelefonico: element.quote.numeroTelefonico,
+          usuarioID: element.quote.usuarioID,
+          username: element.user!.username,
+        );
+
+        quotes.add(data);
+      }
 
       await dataBase.close();
-      return resp;
+      return quotes;
     } catch (e) {
+      print(e);
+      await dataBase.close();
       return List.empty();
     }
   }
@@ -161,11 +226,13 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getCotizacionesActuales() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesHoy();
+      List<CotizacionData> resp = await dataBase.getCotizacionesHoy(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
     } catch (e) {
+      await dataBase.close();
       return List.empty();
     }
   }
@@ -173,11 +240,13 @@ class CotizacionService extends BaseService {
   Future<List<CotizacionData>> getAllCotizaciones() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getHistorialCotizaciones();
+      List<CotizacionData> resp = await dataBase.getHistorialCotizaciones(
+          (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
       return resp;
     } catch (e) {
+      await dataBase.close();
       return List.empty();
     }
   }

@@ -5,16 +5,16 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:intl/intl.dart';
 
-import '../models/temporada_model.dart';
-import '../ui/custom_widgets.dart';
-import '../ui/progress_indicator.dart';
-import '../ui/show_snackbar.dart';
-import '../utils/helpers/utility.dart';
-import 'item_rows.dart';
-import 'text_styles.dart';
+import '../../models/temporada_model.dart';
+import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
+import '../../ui/show_snackbar.dart';
+import '../../utils/helpers/utility.dart';
+import '../../widgets/item_rows.dart';
+import '../../widgets/text_styles.dart';
 
 class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool target;
@@ -239,18 +239,25 @@ class _ControllerCalendarWidgetState
                             ref
                                 .read(editTarifaProvider.notifier)
                                 .update((state) => RegistroTarifa());
-                            ref.read(temporadasProvider.notifier).update(
+                            ref
+                                .read(temporadasIndividualesProvider.notifier)
+                                .update(
                                   (state) => [
                                     Temporada(
-                                        nombre: "Promoción", editable: false),
+                                        nombre: "DIRECTO", editable: false),
                                     Temporada(nombre: "BAR I", editable: false),
                                     Temporada(
                                         nombre: "BAR II", editable: false),
                                   ],
                                 );
+                            ref
+                                .read(temporadasGrupalesProvider.notifier)
+                                .update((state) => []);
+                            ref
+                                .read(temporadasEfectivoProvider.notifier)
+                                .update((state) => []);
                             widget.onCreated!.call();
                           },
-                          
                         ),
                         leading: SizedBox(
                           width: 175,
@@ -288,12 +295,47 @@ class _ControllerCalendarWidgetState
                                             registroTarifa: list[index],
                                             onEdit: () {
                                               ref
-                                                  .read(temporadasProvider
-                                                      .notifier)
+                                                  .read(
+                                                      temporadasIndividualesProvider
+                                                          .notifier)
                                                   .update((state) =>
-                                                      Utility.getTemporadas(
-                                                          list[index]
-                                                              .temporadas));
+                                                      list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              ((element.forGroup ??
+                                                                      false) ==
+                                                                  false) &&
+                                                              ((element.forCash ??
+                                                                      false) ==
+                                                                  false))
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
+                                              ref
+                                                  .read(
+                                                      temporadasGrupalesProvider
+                                                          .notifier)
+                                                  .update((state) =>
+                                                      list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              element
+                                                                  .forGroup ??
+                                                              false)
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
+
+                                              ref
+                                                  .read(
+                                                      temporadasEfectivoProvider
+                                                          .notifier)
+                                                  .update((state) =>
+                                                      list[index]
+                                                          .temporadas
+                                                          ?.where((element) =>
+                                                              element.forCash ??
+                                                              false)
+                                                          .toList() ??
+                                                      List<Temporada>.empty());
                                               ref
                                                   .read(editTarifaProvider
                                                       .notifier)
@@ -328,11 +370,6 @@ class _ControllerCalendarWidgetState
                                                         .update((state) =>
                                                             UniqueKey()
                                                                 .hashCode);
-                                                    ref
-                                                        .read(
-                                                            monthsCacheYearProvider
-                                                                .notifier)
-                                                        .update((state) => []);
                                                   },
                                                 );
                                               } else {
@@ -400,15 +437,15 @@ class _ControllerCalendarWidgetState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      flex: 2,
                       child: TextStyles.standardText(
                           text: "Ultima modificación:",
                           color: Theme.of(context).primaryColor),
                     ),
                     Expanded(
-                      flex: 3,
                       child: TextStyles.standardText(
-                        text: Utility.getCompleteDate(data: DateTime.now()),
+                        text: Utility.getCompleteDate(
+                                data: DateTime.now(), onlyNameDate: true)
+                            .replaceAll(r' ', ''),
                         color: Theme.of(context).dividerColor,
                         aling: TextAlign.end,
                       ),
@@ -465,35 +502,6 @@ class _ControllerCalendarWidgetState
             color: Theme.of(context).primaryColor,
             size: 16,
           ),
-          /*
-          DropdownButton<int>(
-            // Dropdown for selecting a year
-            value: _currentMonth.year,
-            onChanged: (int? year) {
-              if (year != null) {
-                setState(() {
-                  // Sets the current month to January of the selected year
-                  _currentMonth = DateTime(year, 1, 1);
-
-                  // Calculates the month index based on the selected year and sets the page
-                  int yearDiff = DateTime.now().year - year;
-                  int monthIndex = 12 * yearDiff + _currentMonth.month - 1;
-                  widget.pageWeekController.jumpToPage(monthIndex);
-                });
-              }
-            },
-            items: [
-              // Generates DropdownMenuItems for a range of years from current year to 10 years ahead
-              for (int year = DateTime.now().year;
-                  year <= DateTime.now().year + 10;
-                  year++)
-                DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString()),
-                ),
-            ],
-          ),
-          */
           if (!isLastMonthOfYear)
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),
@@ -755,8 +763,9 @@ class _ControllerCalendarWidgetState
                     _currentMonth = DateTime(_currentMonth.year, index + 1, 1));
               },
               child: Center(
-                child: Text(
-                  monthNames[index],
+                child: TextStyles.standardText(
+                  text: monthNames[index],
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -782,8 +791,9 @@ class _ControllerCalendarWidgetState
                 widget.setYear!.call(DateTime.now().year + (index));
               },
               child: Center(
-                child: Text(
-                  "${DateTime.now().year + index}",
+                child: TextStyles.standardText(
+                  text: "${DateTime.now().year + index}",
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -797,5 +807,28 @@ extension DateOnlyCompare on DateTime {
     return this.year == other.year &&
         this.month == other.month &&
         this.day == other.day;
+  }
+
+  int getDaysInMonth(int year, int month) {
+    if (month == DateTime.february) {
+      final bool isLeapYear =
+          (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
+      return isLeapYear ? 29 : 28;
+    }
+    const List<int> daysInMonth = <int>[
+      31,
+      -1,
+      31,
+      30,
+      31,
+      30,
+      31,
+      31,
+      30,
+      31,
+      30,
+      31
+    ];
+    return daysInMonth[month - 1];
   }
 }

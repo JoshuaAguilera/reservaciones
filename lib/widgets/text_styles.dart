@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class TextStyles {
   static Text standardText(
-      {String text = "",
+      {required String text,
       TextAlign aling = TextAlign.left,
       bool overClip = false,
       double size = 13,
@@ -20,18 +20,22 @@ class TextStyles {
             size: size, isBold: isBold, overClip: overClip, color: color));
   }
 
-  static TextStyle styleStandar(
-      {double size = 13,
-      bool isBold = false,
-      bool overClip = false,
-      Color? color,
-      TextOverflow overflow = TextOverflow.ellipsis}) {
+  static TextStyle styleStandar({
+    double size = 13,
+    bool isBold = false,
+    bool overClip = false,
+    Color? color,
+    TextOverflow overflow = TextOverflow.ellipsis,
+    double? height,
+  }) {
     return TextStyle(
-        fontFamily: "poppins_regular",
-        color: color ?? DesktopColors.prussianBlue,
-        fontSize: size,
-        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        overflow: overClip ? TextOverflow.clip : overflow, );
+      fontFamily: "poppins_regular",
+      color: color,
+      fontSize: size,
+      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+      overflow: overClip ? TextOverflow.clip : overflow,
+      height: height,
+    );
   }
 
   static Text buttonText(
@@ -60,6 +64,7 @@ class TextStyles {
     return Text(
       text,
       textAlign: aling,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: color,
         fontSize: size,
@@ -69,8 +74,12 @@ class TextStyles {
     );
   }
 
-  static Text errorText(
-      {String text = "", TextAlign aling = TextAlign.left, double size = 10}) {
+  static Text errorText({
+    String text = "",
+    TextAlign aling = TextAlign.left,
+    double size = 10,
+    TextOverflow? overflow,
+  }) {
     return Text(
       text,
       textAlign: aling,
@@ -78,25 +87,31 @@ class TextStyles {
         fontFamily: "poppins_regular",
         color: Colors.red[800],
         fontSize: size,
+        overflow: overflow,
       ),
     );
   }
 
-  static Text titleText(
-      {String text = "",
-      Color? color,
-      double size = 18,
-      TextAlign textAlign = TextAlign.start,
-      bool isBold = true}) {
-    return Text(text,
-        textAlign: textAlign,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontFamily: isBold ? "poppins_bold" : "poppins_medium",
-          color: color ?? DesktopColors.cerulean,
-          fontWeight: FontWeight.bold,
-          fontSize: size,
-        ));
+  static Text titleText({
+    String text = "",
+    Color? color,
+    double size = 18,
+    TextAlign textAlign = TextAlign.start,
+    bool isBold = true,
+    TextOverflow? overflow,
+  }) {
+    return Text(
+      text,
+      textAlign: textAlign,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontFamily: isBold ? "poppins_bold" : "poppins_medium",
+        color: color ?? DesktopColors.cerulean,
+        fontWeight: FontWeight.bold,
+        fontSize: size,
+        overflow: overflow,
+      ),
+    );
   }
 
   static Column TextSpecial({
@@ -175,6 +190,7 @@ class TextStyles {
     double? letterSpacing,
     double lineSpacing = 2,
     bool isRegular = false,
+    PdfColor? color,
   }) async {
     return pw.TextStyle(
       fontSize: size,
@@ -200,8 +216,8 @@ class TextStyles {
           : isItalic
               ? pw.FontStyle.italic
               : pw.FontStyle.normal,
-      color:
-          isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000"),
+      color: color ??
+          (isWhite ? PdfColor.fromHex("#FFFFFF") : PdfColor.fromHex("#000000")),
       decoration:
           withUnderline ? pw.TextDecoration.underline : pw.TextDecoration.none,
     );

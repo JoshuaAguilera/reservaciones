@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_windows
   printing
   screen_retriever
   share_plus

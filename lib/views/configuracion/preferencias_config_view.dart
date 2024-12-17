@@ -3,7 +3,7 @@ import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 
 class PreferenciasConfigView extends StatefulWidget {
   @override

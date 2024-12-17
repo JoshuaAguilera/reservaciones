@@ -65,6 +65,9 @@ dependencies:
   loading_animation_widget: ^1.2.1
   animated_theme_switcher: ^2.0.10
   super_tooltip: ^2.0.8
+  icons_plus: ^5.0.0
+  file_selector: ^1.0.3
+  flutter_launcher_icons: ^0.14.1
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +82,21 @@ dev_dependencies:
   drift_dev: ^2.18.0
   build_runner: ^2.4.11
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+ # ios: true
+  image_path: "assets/image/logo_desktop.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/image/logo_desktop.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/image/logo_desktop.png"
+    icon_size: 256 # min:48, max:256, default: 48
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -92,6 +110,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/image/
+    - assets/file/
     - assets/icons/
     - assets/fonts/calibri-regular.ttf
     - assets/fonts/calibri-italic.ttf

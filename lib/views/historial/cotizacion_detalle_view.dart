@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
+import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
 import '../../widgets/text_styles.dart';
@@ -25,6 +28,9 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   late pw.Document comprobantePDF;
   bool isLoading = false;
   bool isFinish = false;
+  Color? colorElement;
+  Color? colorText;
+  bool startFlow = false;
 
   @override
   void initState() {
@@ -34,6 +40,13 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
   @override
   Widget build(BuildContext context) {
     final cotizacion = ref.watch(cotizacionDetalleProvider);
+    if (!startFlow) {
+      colorElement = Theme.of(context).primaryColor;
+      colorText = !(cotizacion.esGrupo ?? false)
+          ? DesktopColors.azulUltClaro
+          : DesktopColors.prussianBlue;
+      startFlow = true;
+    }
     double screenHight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenWidthWithSideBar = screenWidth +
@@ -53,71 +66,77 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              child: IconButton(
-                                onPressed: () {
-                                  if (!isFinish) {
-                                    widget.sideController.selectIndex(2);
-                                  } else {
-                                    isFinish = false;
-                                    isLoading = false;
-                                    setState(() {});
-                                  }
-                                },
-                                icon: Icon(CupertinoIcons.chevron_left_circle,
-                                    color: Theme.of(context).primaryColor),
-                                iconSize: 30,
-                              ),
-                            ),
-                            Expanded(
-                              child: TextStyles.titlePagText(
-                                text:
-                                    "Detalles de cotización - ${cotizacion.folioPrincipal}",
-                                overflow: TextOverflow.ellipsis,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ],
+                        CustomWidgets.titleFormPage(
+                          onPressedBack: () {
+                            if (!isFinish) {
+                              widget.sideController.selectIndex(2);
+                            } else {
+                              isFinish = false;
+                              isLoading = false;
+                              setState(() {});
+                            }
+                          },
+                          showSaveButton: false,
+                          context: context,
+                          title:
+                              "Detalles de cotización - ${cotizacion.folioPrincipal}",
                         ),
-                        const Divider(),
                         if (!isLoading)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 5),
-                              TextStyles.titleText(text: "Datos del huesped"),
+                              TextStyles.titleText(
+                                text: "Datos del huesped",
+                                color: colorElement,
+                              ),
+                              const SizedBox(height: 8),
                               Card(
                                 elevation: 7,
-                                color: Colors.blue[100],
+                                color: cotizacion.esGrupo!
+                                    ? (cotizacion.esConcretado ?? false)
+                                        ? DesktopColors.resGrupal
+                                        : DesktopColors.cotGrupal
+                                    : (cotizacion.esConcretado ?? false)
+                                        ? DesktopColors.resIndiv
+                                        : DesktopColors.cotIndiv,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(12.0),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       TextStyles.TextAsociative(
-                                          "Nombre: ", cotizacion.nombreHuesped!,
-                                          size: 13),
+                                        "Nombre: ",
+                                        cotizacion.nombreHuesped!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
                                       TextStyles.TextAsociative(
-                                          "Correo electronico: ",
-                                          cotizacion.correoElectronico!,
-                                          size: 13),
-                                      TextStyles.TextAsociative("Telefono: ",
-                                          cotizacion.numeroTelefonico!,
-                                          size: 13),
+                                        "Correo electronico: ",
+                                        cotizacion.correoElectronico!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
+                                      TextStyles.TextAsociative(
+                                        "Telefono: ",
+                                        cotizacion.numeroTelefonico!,
+                                        size: 13,
+                                        color: colorText,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Padding(
-                                  padding: EdgeInsets.only(bottom: 8),
-                                  child: Divider()),
-                              TextStyles.titleText(text: "Cotizaciones"),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Divider(color: colorElement),
+                              ),
+                              TextStyles.titleText(
+                                text: "Cotizaciones",
+                                color: colorElement,
+                              ),
                               const SizedBox(height: 12),
                               if (!Utility.isResizable(
                                   extended: widget.sideController.extended,
@@ -182,116 +201,125 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                     ),
                                   ),
                                 ),
-                              if (!cotizacion.esGrupo!)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: SizedBox(
-                                    height: Utility.limitHeightList(
-                                        cotizacion.habitaciones!.length),
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount:
-                                          cotizacion.habitaciones!.length,
-                                      itemBuilder: (context, index) {
-                                        if (index <
-                                            cotizacion.habitaciones!.length) {
-                                          return HabitacionItemRow(
-                                            key: ObjectKey(cotizacion
-                                                .habitaciones![index].hashCode),
-                                            index: index,
-                                            habitacion:
-                                                cotizacion.habitaciones![index],
-                                            isTable: !Utility.isResizable(
-                                                extended: widget
-                                                    .sideController.extended,
-                                                context: context),
-                                            esDetalle: true,
-                                            sideController:
-                                                widget.sideController,
-                                          );
-                                        }
-                                      },
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: SizedBox(
+                                  height: Utility.limitHeightList(cotizacion
+                                          .habitaciones
+                                          ?.where((element) => !element.isFree)
+                                          .toList()
+                                          .length ??
+                                      0),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: cotizacion.habitaciones
+                                            ?.where(
+                                                (element) => !element.isFree)
+                                            .toList()
+                                            .length ??
+                                        0,
+                                    itemBuilder: (context, index) {
+                                      if (index <
+                                          (cotizacion.habitaciones
+                                                  ?.where((element) =>
+                                                      !element.isFree)
+                                                  .toList()
+                                                  .length ??
+                                              0)) {
+                                        return HabitacionItemRow(
+                                          key: ObjectKey(cotizacion
+                                              .habitaciones!
+                                              .where(
+                                                  (element) => !element.isFree)
+                                              .toList()[index]
+                                              .hashCode),
+                                          index: index,
+                                          habitacion: cotizacion.habitaciones!
+                                              .where(
+                                                  (element) => !element.isFree)
+                                              .toList()[index],
+                                          isTable: !Utility.isResizable(
+                                              extended: widget
+                                                  .sideController.extended,
+                                              context: context),
+                                          esDetalle: true,
+                                          sideController: widget.sideController,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
-                              if (cotizacion.esGrupo!)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: SizedBox(
-                                    height: Utility.limitHeightList(
-                                        cotizacion.habitaciones!.length),
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount:
-                                          cotizacion.habitaciones!.length,
-                                      itemBuilder: (context, index) {
-                                        if (index <
-                                            cotizacion.habitaciones!.length) {
-                                          return HabitacionItemRow(
-                                            key: ObjectKey(cotizacion
-                                                .habitaciones![index].hashCode),
-                                            index: index,
-                                            habitacion:
-                                                cotizacion.habitaciones![index],
-                                            isTable: !Utility.isResizable(
-                                                extended: widget
-                                                    .sideController.extended,
-                                                context: context),
-                                            esDetalle: true,
-                                            sideController:
-                                                widget.sideController,
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              const Padding(
-                                padding: EdgeInsets.only(bottom: 12, top: 8),
-                                child: Divider(),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 12, top: 8),
+                                child: Divider(color: colorElement),
                               ),
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: SizedBox(
-                                  width: 230,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      setState(() => isLoading = true);
+                                child: Wrap(
+                                  spacing: 10,
+                                  runSpacing: 5,
+                                  children: [
+                                    SizedBox(
+                                      width: 230,
+                                      height: 40,
+                                      child: Buttons.commonButton(
+                                        text: "Generar comprobante PDF",
+                                        onPressed: () async {
+                                          setState(() => isLoading = true);
 
-                                      if (cotizacion.esGrupo!) {
-                                        comprobantePDF = await GeneradorDocService()
-                                            .generarComprobanteCotizacionGrupal(
-                                                cotizacion.habitaciones!,
-                                                cotizacion);
-                                      } else {
-                                        comprobantePDF = await GeneradorDocService()
-                                            .generarComprobanteCotizacionIndividual(
-                                                habitaciones:
-                                                    cotizacion.habitaciones!,
-                                                cotizacion: cotizacion);
-                                      }
+                                          if (cotizacion.esGrupo!) {
+                                            comprobantePDF = await GeneradorDocService()
+                                                .generarComprobanteCotizacionGrupal(
+                                                    habitaciones: cotizacion
+                                                            .habitaciones ??
+                                                        List<
+                                                            Habitacion>.empty(),
+                                                    cotizacion: cotizacion);
+                                          } else {
+                                            comprobantePDF =
+                                                await GeneradorDocService()
+                                                    .generarComprobanteCotizacionIndividual(
+                                                        habitaciones: cotizacion
+                                                            .habitaciones!,
+                                                        cotizacion: cotizacion);
+                                          }
 
-                                      Future.delayed(
-                                        Durations.long2,
-                                        () => setState(() => isFinish = true),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        elevation: 4,
-                                        backgroundColor:
-                                            DesktopColors.ceruleanOscure),
-                                    child: TextStyles.buttonTextStyle(
-                                        text: "Generar comprobante PDF"),
-                                  ),
+                                          Future.delayed(
+                                            Durations.long2,
+                                            () =>
+                                                setState(() => isFinish = true),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 230,
+                                      height: 40,
+                                      child: Buttons.commonButton(
+                                        text: "Concretar cotización",
+                                        onPressed: null,
+                                        tooltipText:
+                                            "Función aun no disponible",
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         if (isLoading && !isFinish)
-                          ProgressIndicatorCustom(screenHight: screenHight),
+                          ProgressIndicatorCustom(
+                            screenHight: screenHight,
+                            message: TextStyles.standardText(
+                              text: "Generando comprante PDF",
+                              aling: TextAlign.center,
+                              size: 11,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         if (isFinish)
                           PdfCotizacionView(
                             comprobantePDF: comprobantePDF,
@@ -304,6 +332,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                   SummaryControllerWidget(
                     withSaveButton: false,
                     saveRooms: cotizacion.habitaciones,
+                    finishQuote: true,
                   ),
                 ],
               ),

@@ -3,24 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 
 import '../models/registro_tarifa_model.dart';
 import '../ui/buttons.dart';
 import '../utils/helpers/utility.dart';
-import '../utils/helpers/web_colors.dart';
-import 'manager_tariff_day_widget.dart';
+import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
 
 class CheckListtileTariffWidget extends StatefulWidget {
-  const CheckListtileTariffWidget(
-      {super.key,
-      required this.tarifaXDia,
-      required this.habitacion,
-      this.viewTableRow = false});
+  const CheckListtileTariffWidget({
+    super.key,
+    required this.tarifaXDia,
+    required this.habitacion,
+    this.viewTableRow = false,
+    this.isGroupTariff = false,
+    this.useSeasonCash = false,
+  });
 
   final TarifaXDia tarifaXDia;
   final Habitacion habitacion;
   final bool viewTableRow;
+  final bool isGroupTariff;
+  final bool useSeasonCash;
 
   @override
   State<CheckListtileTariffWidget> createState() =>
@@ -28,43 +33,49 @@ class CheckListtileTariffWidget extends StatefulWidget {
 }
 
 class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
-  RegistroTarifa? tarifa;
-
   void showDialogEditQuote() {
     showDialog(
       context: context,
-      builder: (context) =>
-          ManagerTariffDayWidget(tarifaXDia: widget.tarifaXDia),
+      builder: (context) => ManagerTariffSingleDialog(
+        tarifaXDia: widget.tarifaXDia,
+        numDays: DateTime.parse(widget.habitacion.fechaCheckOut ?? '')
+            .difference(DateTime.parse(widget.habitacion.fechaCheckIn ?? ''))
+            .inDays,
+      ),
     ).then(
       (value) {
         if (value != null) {
-          refreshTarifa();
           setState(() {});
         }
       },
     );
   }
 
-  void refreshTarifa() {
-    tarifa = widget.tarifaXDia.tarifa == null
-        ? null
-        : RegistroTarifa(
-            tarifas: [widget.tarifaXDia.tarifa!],
-            temporadas: widget.tarifaXDia.temporadaSelect != null
-                ? [widget.tarifaXDia.temporadaSelect!]
-                : [],
-          );
-  }
-
   @override
   void initState() {
-    refreshTarifa();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    RegistroTarifa? tarifa = widget.tarifaXDia.tarifa == null
+        ? null
+        : RegistroTarifa(
+            tarifas: (widget.tarifaXDia.tarifas != null ||
+                    widget.tarifaXDia.tarifas!.isNotEmpty)
+                ? widget.tarifaXDia.tarifas
+                : [widget.tarifaXDia.tarifa!],
+            temporadas: widget.tarifaXDia.temporadaSelect != null
+                ? [widget.tarifaXDia.temporadaSelect!]
+                : [],
+          );
+
     double screenWidth = MediaQuery.of(context).size.width;
+
+    Color colorTariff = widget.tarifaXDia.subCode == null
+        ? widget.tarifaXDia.color ?? DesktopColors.cerulean
+        : Utility.darken(
+            widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2);
 
     return Card(
       elevation: 5,
@@ -78,7 +89,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
             subtitle: "DIA",
             sizeTitle: 22,
             colorsubTitle: Theme.of(context).dividerColor,
-            colorTitle: widget.tarifaXDia.color ?? DesktopColors.cerulean,
+            colorTitle: colorTariff,
           ),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 5),
@@ -95,7 +106,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                 if (screenWidth > 925)
                   TextStyles.TextAsociative(
                     "Tarifa aplicada:  ",
-                    widget.tarifaXDia.nombreTarif ?? '',
+                    widget.tarifaXDia.nombreTariff ?? '',
                     color: Theme.of(context).primaryColor,
                     size: 12,
                   ),
@@ -109,12 +120,14 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               TextStyles.TextAsociative(
                 "${(screenWidth > 925) ? "Tarifa de adulto" : "Adul."}:  ",
                 Utility.formatterNumber(
-                  Utility.calculateTariffAdult(
+                  Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
                     widget.habitacion.tarifaXDia!.length,
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
+                    isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
                   ),
                 ),
                 color: Theme.of(context).primaryColor,
@@ -122,18 +135,41 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               ),
               TextStyles.TextAsociative(
                 "${(screenWidth > 1000) ? "Tarifa de Menores de 7 a 12" : "Men. 7 a 12"}:  ",
-                Utility.formatterNumber(Utility.calculateTariffChildren(
-                  tarifa,
-                  widget.habitacion,
-                  widget.habitacion.tarifaXDia!.length,
-                  descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
-                )),
+                Utility.formatterNumber(
+                  Utility.calculateTotalTariffRoom(
+                    tarifa,
+                    widget.habitacion,
+                    widget.habitacion.tarifaXDia!.length,
+                    descuentoProvisional:
+                        widget.tarifaXDia.descuentoProvisional,
+                    isCalculateChildren: true,
+                    isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
+                  ),
+                ),
                 color: Theme.of(context).primaryColor,
                 size: 12,
               ),
               TextStyles.TextAsociative(
                 "${(screenWidth > 1000) ? "Tarifa de Menores de 0 a 6" : "Men. 0 a 6"}:  ",
                 Utility.formatterNumber(0),
+                color: Theme.of(context).primaryColor,
+                size: 12,
+              ),
+              TextStyles.TextAsociative(
+                "${(screenWidth > 925) ? "Total Tarifa" : "Total tar."}:  ",
+                Utility.formatterNumber(
+                  Utility.calculateTotalTariffRoom(
+                    tarifa,
+                    widget.habitacion,
+                    widget.habitacion.tarifaXDia!.length,
+                    descuentoProvisional:
+                        widget.tarifaXDia.descuentoProvisional,
+                    isGroupTariff: widget.isGroupTariff,
+                    useCashSeason: widget.useSeasonCash,
+                    getTotalRoom: true,
+                  ),
+                ),
                 color: Theme.of(context).primaryColor,
                 size: 12,
               ),
@@ -164,29 +200,38 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   "${widget.tarifaXDia.descuentoProvisional ?? 0}%",
                   color: Theme.of(context).primaryColor,
                   size: 12,
-                )
+                ),
             ],
           ),
           trailing: (MediaQuery.of(context).size.width > 1400)
               ? SizedBox(
                   width: 115,
                   child: Buttons.commonButton(
-                    onPressed: () => showDialogEditQuote(),
+                    tooltipText: !widget.isGroupTariff
+                        ? null
+                        : "No aplica en cot. Grupales",
+                    onPressed: widget.isGroupTariff
+                        ? null
+                        : () => showDialogEditQuote(),
                     text: "Editar",
-                    color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
-                    colorText: useWhiteForeground(
-                            widget.tarifaXDia.color ?? DesktopColors.cerulean)
+                    color: colorTariff,
+                    colorText: useWhiteForeground(colorTariff)
                         ? Colors.white
                         : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 )
               : IconButton(
-                  onPressed: () => showDialogEditQuote(),
-                  tooltip: "Editar",
+                  onPressed:
+                      widget.isGroupTariff ? null : () => showDialogEditQuote(),
+                  tooltip: widget.isGroupTariff
+                      ? "No aplica en cot. Grupales"
+                      : "Editar",
                   icon: Icon(
                     CupertinoIcons.pencil,
                     size: 30,
-                    color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
+                    color: widget.isGroupTariff
+                        ? DesktopColors.grisPalido
+                        : colorTariff,
                   ),
                 ),
         ),

@@ -1,5 +1,7 @@
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:riverpod/riverpod.dart';
 
 final userProvider = StateProvider<UsuarioData>((ref) {
@@ -13,13 +15,29 @@ final userProvider = StateProvider<UsuarioData>((ref) {
   );
 });
 
-final allUsersProvider =
-    FutureProvider.family<List<UsuarioData>, String>((ref, arg) async {
-  final detectChanged = ref.watch(changeUsersProvider);
-  final list = await AuthService().getUsers();
-  return list;
-});
+final imagePerfilProvider =
+    StateProvider<Imagen>((ref) => Imagen(usuarioId: Preferences.userId));
 
 final changeUsersProvider = StateProvider<int>((ref) {
   return 0;
+});
+
+final isEmptyUserProvider = StateProvider<bool>((ref) => false);
+
+final foundImageFileProvider = StateProvider<bool>((ref) => false);
+
+final searchUserProvider = StateProvider<String>((ref) => '');
+
+final userQueryProvider =
+    FutureProvider.family<List<UsuarioData>, String>((ref, arg) async {
+  // final period = ref.watch(periodoProvider);
+  final empty = ref.watch(isEmptyUserProvider);
+  final search = ref.watch(searchUserProvider);
+  // final pag = ref.watch(paginaProvider);
+  // final filter = ref.watch(filtroProvider);
+
+  final detectChanged = ref.watch(changeUsersProvider);
+
+  final list = await AuthService().getUsers(search, empty);
+  return list;
 });

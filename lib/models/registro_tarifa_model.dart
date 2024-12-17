@@ -1,17 +1,20 @@
 import 'dart:ui';
 
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 
 class RegistroTarifa {
   int? id;
   bool? isSelected;
   String? code;
+  String? codeSeason;
+  String? codePeriod;
   String? nombre;
   Color? color;
   DateTime? fechaRegistro;
   int? userId;
   List<PeriodoData>? periodos;
-  List<TemporadaData>? temporadas;
+  List<Temporada>? temporadas;
   List<TarifaData>? tarifas;
   int numDays;
 
@@ -19,6 +22,8 @@ class RegistroTarifa {
     this.id,
     this.isSelected = true,
     this.code,
+    this.codePeriod,
+    this.codeSeason,
     this.nombre,
     this.color,
     this.fechaRegistro,
@@ -33,12 +38,14 @@ class RegistroTarifa {
     int? id,
     bool? isSelected,
     String? code,
+    String? codeSeason,
+    String? codePeriod,
     String? nombre,
     Color? color,
     DateTime? fechaRegistro,
     int? userId,
     List<PeriodoData>? periodos,
-    List<TemporadaData>? temporadas,
+    List<Temporada>? temporadas,
     List<TarifaData>? tarifas,
     int? numDays,
   }) =>
@@ -46,6 +53,8 @@ class RegistroTarifa {
         id: id ?? this.id,
         isSelected: isSelected ?? this.isSelected,
         code: code ?? this.code,
+        codeSeason: codeSeason ?? this.codeSeason,
+        codePeriod: codePeriod ?? this.codePeriod,
         nombre: nombre ?? this.nombre,
         color: color ?? this.color,
         fechaRegistro: fechaRegistro ?? this.fechaRegistro,

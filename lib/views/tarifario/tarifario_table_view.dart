@@ -4,16 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
-import 'package:path/path.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../ui/progress_indicator.dart';
 import '../../widgets/dynamic_widget.dart';
-import '../../widgets/item_rows.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
@@ -38,6 +34,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     return Padding(
       padding: const EdgeInsets.only(top: 5),
@@ -57,23 +54,37 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
               2: const FractionColumnWidth(.18),
               3: (screenWidth > 1525)
                   ? const FractionColumnWidth(0.1)
-                  : const FractionColumnWidth(.47),
+                  : screenWidth > 1150
+                      ? const FractionColumnWidth(.38)
+                      : const FractionColumnWidth(.51),
               4: (screenWidth > 1525)
-                  ? const FractionColumnWidth(.41)
-                  : const FractionColumnWidth(.2),
-              if (screenWidth > 1525) 5: const FractionColumnWidth(0.15),
+                  ? const FractionColumnWidth(.32)
+                  : const FractionColumnWidth(.16),
+              5: (screenWidth > 1525)
+                  ? const FractionColumnWidth(0.12)
+                  : const FractionColumnWidth(0.11),
+              if (screenWidth > 1675) 6: const FractionColumnWidth(0.1),
             },
             children: [
               TableRow(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Center(
-                      child: TextStyles.standardText(
-                          text: "#",
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Checkbox(
+                        //   value: false,
+                        //   onChanged: (value) {},
+                        // ),
+                        TextStyles.standardText(
+                          text: "ID",
                           isBold: true,
                           color: Theme.of(context).primaryColor,
-                          size: 14),
+                          size: 14,
+                          aling: TextAlign.center,
+                        ),
+                      ],
                     ),
                   ),
                   Center(
@@ -108,12 +119,21 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         color: Theme.of(context).primaryColor,
                         size: 14),
                   ),
+                  if (screenWidth > 1150)
+                    Center(
+                      child: TextStyles.standardText(
+                          text: "Tarifa Base",
+                          isBold: true,
+                          color: Theme.of(context).primaryColor,
+                          size: 14),
+                    ),
                   Center(
                     child: TextStyles.standardText(
-                        text: "Opciones",
-                        isBold: true,
-                        color: Theme.of(context).primaryColor,
-                        size: 14),
+                      text: "Opciones",
+                      isBold: true,
+                      color: Theme.of(context).primaryColor,
+                      size: 14,
+                    ),
                   ),
                 ],
               ),
@@ -126,38 +146,63 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                 return listTarifasProvider.when(
                   data: (list) {
                     if (list.isNotEmpty) {
-                      return Table(
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        border: TableBorder(
-                          horizontalInside: BorderSide(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 2,
+                      return tarifasBase.when(
+                        data: (data) {
+                          return Column(
+                            children: [
+                              for (var element in list)
+                                Card(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  elevation: 3,
+                                  child: Table(
+                                    defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    columnWidths: {
+                                      0: const FractionColumnWidth(0.05),
+                                      1: const FractionColumnWidth(0.1),
+                                      2: const FractionColumnWidth(.18),
+                                      3: (screenWidth > 1525)
+                                          ? const FractionColumnWidth(0.1)
+                                          : screenWidth > 1150
+                                              ? const FractionColumnWidth(.38)
+                                              : const FractionColumnWidth(.51),
+                                      4: (screenWidth > 1525)
+                                          ? const FractionColumnWidth(.32)
+                                          : const FractionColumnWidth(.16),
+                                      5: (screenWidth > 1525)
+                                          ? const FractionColumnWidth(0.12)
+                                          : const FractionColumnWidth(0.11),
+                                      if (screenWidth > 1675)
+                                        6: const FractionColumnWidth(0.1),
+                                    },
+                                    children: [
+                                      TableRows.tableRowTarifario(
+                                        element: element,
+                                        context: context,
+                                        screenWidth: screenWidth,
+                                        onEdit: (p0) =>
+                                            widget.onEdit!.call(element),
+                                        onDelete: (p0) =>
+                                            widget.onDelete!.call(element),
+                                        tarifasBase: data,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        error: (error, stackTrace) => const SizedBox(),
+                        loading: () => ProgressIndicatorCustom(
+                          screenHight: screenHeight,
+                          inHorizontal: true,
+                          message: TextStyles.standardText(
+                            text: "Cargando Tarifas Base",
+                            aling: TextAlign.center,
+                            size: 11,
                           ),
                         ),
-                        columnWidths: {
-                          0: const FractionColumnWidth(0.05),
-                          1: const FractionColumnWidth(0.1),
-                          2: const FractionColumnWidth(.18),
-                          3: (screenWidth > 1525)
-                              ? const FractionColumnWidth(0.1)
-                              : const FractionColumnWidth(.47),
-                          4: (screenWidth > 1525)
-                              ? const FractionColumnWidth(.41)
-                              : const FractionColumnWidth(.2),
-                          if (screenWidth > 1525)
-                            5: const FractionColumnWidth(0.15),
-                        },
-                        children: [
-                          for (var element in list)
-                            TableRows.tableRowTarifario(
-                              element: element,
-                              context: context,
-                              screenWidth: screenWidth,
-                              onEdit: (p0) => widget.onEdit!.call(element),
-                              onDelete: (p0) => widget.onDelete!.call(element),
-                            ),
-                        ],
                       );
                     }
                     return const SizedBox();
@@ -183,8 +228,15 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                     sizeImage: 100,
                     screenWidth: screenWidth,
                     extended: widget.sideController.extended)),
-            loading: () => dynamicWidget.loadingWidget(
-                screenWidth, screenHeight, widget.sideController.extended),
+            loading: () => ProgressIndicatorCustom(
+              screenHight: screenHeight,
+              inHorizontal: true,
+              message: TextStyles.standardText(
+                text: "Buscando Tarifario",
+                aling: TextAlign.center,
+                size: 11,
+              ),
+            ),
           ),
         ],
       ),

@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/widgets/day_info_item_row.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 
 import '../database/database.dart';
 import '../ui/progress_indicator.dart';
@@ -61,14 +60,13 @@ class dynamicWidget {
     required double sectionDay,
     bool compact = false,
     double target = 1,
-    bool isUpDireccion = false,
-    bool showMonth = false,
+    bool alreadyLoading = false,
+    bool isntWeek = true,
+    // bool showMonth = false,
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
     PeriodoData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
-
-    
 
     for (var element in weekNowSegment) {
       if (Utility.defineApplyDays(nowPeriod, element)) {
@@ -100,6 +98,7 @@ class dynamicWidget {
             child: DayInfoItemRow(
               tarifa: tarifa,
               weekNow: weekNow,
+              isntWeek: isntWeek,
               child: Card(
                 elevation: 8,
                 color: tarifa.color ?? Colors.cyan,
@@ -134,6 +133,7 @@ class dynamicWidget {
                                   : Colors.black,
                             )
                             */
+
                               if (compact)
                                 Expanded(
                                   child: TextStyles.standardText(
@@ -201,10 +201,10 @@ class dynamicWidget {
             .animate(
                 target: target,
                 delay: !compact
-                    ? 450.ms
-                    : showMonth
-                        ? 350.ms
-                        : 2000.ms)
+                    ? !alreadyLoading
+                        ? 1750.ms
+                        : 350.ms
+                    : 2000.ms)
             .scaleX(alignment: Alignment.centerLeft));
       } else {
         isRepeat = false;

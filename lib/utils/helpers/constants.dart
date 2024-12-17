@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
+
+const String version = "1.0.6";
 
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',
@@ -35,6 +38,7 @@ const List<String> roles = <String>[
   'SUPERADMIN',
   'ADMIN',
   'VENTAS',
+  'RECEPCION',
 ];
 
 const List<String> filtros = <String>[
@@ -275,5 +279,5 @@ const List<Text> textofFont = <Text>[
 List<Widget> modesVisual = <Widget>[
   const Icon(CupertinoIcons.calendar),
   const Icon(Icons.table_chart),
-  const Icon(Icons.dehaze_sharp),
+  const Icon(HeroIcons.list_bullet),
 ];

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -10,7 +10,7 @@ import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/web_colors.dart';
+import '../../utils/helpers/desktop_colors.dart';
 import '../../widgets/day_info_item_row.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/text_styles.dart';
@@ -34,15 +34,12 @@ class TarifarioCalendaryYearView extends ConsumerStatefulWidget {
 
 class _TarifarioCalendaryYearViewState
     extends ConsumerState<TarifarioCalendaryYearView> {
-  final List<Widget> _monthsCache = [];
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
-    final listMonthsCacheProvider = ref.watch(monthsCacheYearProvider);
 
     return SizedBox(
       height: screenHeight - 160,
@@ -57,39 +54,18 @@ class _TarifarioCalendaryYearViewState
                         EdgeInsets.only(left: (screenWidth > 1280) ? (380) : 0),
                     child: GridView.builder(
                       key: const PageStorageKey('myGridViewKey'),
-                      //cacheExtent: 500,
                       addRepaintBoundaries: true,
                       padding: EdgeInsets.zero,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: (screenWidth > 1080) ? 3 : 2,
                         childAspectRatio: 0.9,
                         crossAxisSpacing: 25,
+                        mainAxisSpacing: 25,
                       ),
                       itemCount: 12,
                       itemBuilder: (context, index) {
                         DateTime month = DateTime(
                             widget.currentMonth.year, (index % 12) + 1, 1);
-
-                        // if (listMonthsCacheProvider.length < 12) {
-                        //   listMonthsCacheProvider.add(
-                        //     SizedBox(
-                        //       height: 380,
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           _buildHeaderYear(month),
-                        //           _buildWeeks(),
-                        //           const Divider(height: 5),
-                        //           Expanded(
-                        //             child: buildCalendarYear(month, list),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
-
-                        // return listMonthsCacheProvider[index];
 
                         return SizedBox(
                           height: 380,
@@ -100,7 +76,9 @@ class _TarifarioCalendaryYearViewState
                               _buildWeeks(),
                               const Divider(height: 5),
                               Expanded(
-                                child: buildCalendarYear(month, list),
+                                child: Card(
+                                    elevation: 5,
+                                    child: buildCalendarYear(month, list)),
                               ),
                             ],
                           ),

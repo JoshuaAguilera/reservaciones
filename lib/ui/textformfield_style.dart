@@ -19,7 +19,7 @@ class TextFormFieldStyle {
   }
 
   static InputDecoration decorationFieldSearch(
-      {required String label, required void Function() function}) {
+      {required String label, required void Function() function, required TextEditingController controller}) {
     return InputDecoration(
       floatingLabelBehavior: FloatingLabelBehavior.never,
       border: const OutlineInputBorder(
@@ -40,7 +40,7 @@ class TextFormFieldStyle {
       suffixIcon: GestureDetector(
         onTap: function,
         child: Icon(
-          CupertinoIcons.search,
+        controller.text.isEmpty ?  CupertinoIcons.search : CupertinoIcons.multiply_circle,
           color: Colors.grey[600],
         ),
       ),

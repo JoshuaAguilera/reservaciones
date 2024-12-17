@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
-import 'package:tuple/tuple.dart';
 
 import '../database/database.dart';
 import '../models/numero_cotizacion_model.dart';
@@ -13,7 +12,9 @@ final reporteCotizacionesIndProvider =
   final filter = ref.watch(filterReport);
   final list = Utility.getCotizacionQuotes(
       cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
-          Utility.calculatePeriodReport(filter), DateTime.now()),
+        Utility.calculatePeriodReport(filter),
+        DateTime.now(),
+      ),
       filter: filter);
   return list;
 });

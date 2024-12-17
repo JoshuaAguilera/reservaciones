@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/views/tarifario/manager_cash_tariff_dialog.dart';
+import 'package:generador_formato/widgets/table_rows.dart';
+import 'package:icons_plus/icons_plus.dart';
 
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/text_styles.dart';
 import '../widgets/textformfield_custom.dart';
@@ -29,11 +34,15 @@ class CustomWidgets {
   static Widget sectionConfigSeason({
     required BuildContext context,
     required Temporada temporada,
+    required List<Temporada> temporadas,
     void Function()? onRemove,
     void Function(String)? onChangedEstancia,
     void Function(String)? onChangedDescuento,
     void Function(String)? onChangedName,
+    void Function(bool)? onChangedUseTariff,
+    void Function(List<Tarifa>)? onChangedTariffs,
   }) {
+    final _formKeySeason = GlobalKey<FormState>();
     bool editName = false;
     TextEditingController _controller =
         TextEditingController(text: temporada.nombre);
@@ -51,61 +60,122 @@ class CustomWidgets {
               child: Column(
                 children: [
                   if (!editName)
-                    SizedBox(
-                      height: 32,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          TextStyles.mediumText(
-                              text: temporada.nombre ?? '',
-                              color: Theme.of(context).primaryColor,
-                              overflow: TextOverflow.ellipsis),
-                          if (temporada.editable!)
-                            Expanded(
-                              child: SizedBox(
-                                height: 30,
-                                width: 35,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: IconButton(
-                                      onPressed: () =>
-                                          snapshot(() => editName = !editName),
-                                      icon: Icon(Icons.edit,
-                                          size: 22,
-                                          color:
-                                              Theme.of(context).dividerColor)),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 32,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: TextStyles.mediumText(
+                                    text: temporada.nombre ?? '',
+                                    color: Theme.of(context).primaryColor,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
+                                if (temporada.editable!)
+                                  Expanded(
+                                    child: SizedBox(
+                                      width: 35,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: IconButton(
+                                          padding: const EdgeInsets.all(0),
+                                          onPressed: () {
+                                            _controller = TextEditingController(
+                                                text: temporada.nombre);
+                                            snapshot(
+                                                () => editName = !editName);
+                                          },
+                                          icon: Icon(
+                                            HeroIcons.pencil_square,
+                                            size: 22,
+                                            color:
+                                                Theme.of(context).dividerColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (temporada.forCash ?? false)
+                          Expanded(
+                            flex: 2,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: FormWidgets.inputSwitch(
+                                compact:
+                                    MediaQuery.of(context).size.width < 950,
+                                name: "Usar tarifas",
+                                value: temporada.useTariff ?? false,
+                                activeColor: Theme.of(context).dividerColor,
+                                context: context,
+                                onChanged: (p0) {
+                                  onChangedUseTariff?.call(p0);
+                                  temporada.porcentajePromocion = null;
+                                  onChangedDescuento!.call('');
+                                },
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   if (editName)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       child: SizedBox(
-                        height: 40,
-                        child: FormWidgets.textFormFieldResizable(
-                          name: "",
-                          controller: _controller,
-                          onEditingComplete: () {
-                            snapshot(
-                              () {
-                                onChangedName!.call(_controller.text);
-                                editName = false;
-                              },
-                            );
+                        height: 60,
+                        child: Focus(
+                          onFocusChange: (value) {
+                            if (!value) snapshot(() => editName = false);
                           },
-                          icon: IconButton(
-                            onPressed: () => snapshot(() {
-                              editName = !editName;
-                              _controller.text = temporada.nombre ?? '';
-                            }),
-                            icon: Icon(
-                              CupertinoIcons.clear_circled,
-                              color: Theme.of(context).primaryColor,
+                          child: Form(
+                            key: _formKeySeason,
+                            child: FormWidgets.textFormFieldResizable(
+                              name: "",
+                              isRequired: true,
+                              validator: (p0) {
+                                if (temporada.nombre != p0 &&
+                                    temporadas.any(
+                                        (element) => element.nombre == p0)) {
+                                  return "Nombre ya existente.*";
+                                } else if (p0 == 'No aplicar') {
+                                  return "Nombre no valido.*";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              autofocus: true,
+                              controller: _controller,
+                              onEditingComplete: () => snapshot(
+                                () {
+                                  if (!_formKeySeason.currentState!
+                                      .validate()) {
+                                    return;
+                                  }
+
+                                  onChangedName!.call(_controller.text);
+                                  editName = false;
+                                },
+                              ),
+                              icon: IconButton(
+                                onPressed: () => snapshot(() {
+                                  editName = !editName;
+                                  _controller.text = temporada.nombre ?? '';
+                                }),
+                                icon: Icon(
+                                  CupertinoIcons.clear_circled,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -130,25 +200,55 @@ class CustomWidgets {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
-                        child: SizedBox(
-                          child: TextFormFieldCustom.textFormFieldwithBorder(
-                            name: "Descuento",
-                            isNumeric: true,
-                            initialValue:
-                                temporada.porcentajePromocion?.toString(),
-                            icon: const Icon(
-                              CupertinoIcons.percent,
-                              size: 20,
+                      if (!(temporada.forCash ?? false) ||
+                          (temporada.useTariff ?? false))
+                        Expanded(
+                          child: SizedBox(
+                            child: TextFormFieldCustom.textFormFieldwithBorder(
+                              name: "Descuento",
+                              isNumeric: true,
+                              initialValue:
+                                  temporada.porcentajePromocion?.toString(),
+                              icon: const Icon(
+                                CupertinoIcons.percent,
+                                size: 20,
+                              ),
+                              onChanged: (p0) {
+                                onChangedDescuento!.call(p0);
+                              },
                             ),
-                            onChanged: (p0) {
-                              onChangedDescuento!.call(p0);
-                            },
+                          ),
+                        )
+                      else
+                        Expanded(
+                          child: SizedBox(
+                            height: 49,
+                            child: Buttons.commonButton(
+                              icons: HeroIcons.clipboard_document_list,
+                              child: TextStyles.standardText(
+                                  text: "Administrar Tarifa",
+                                  aling: TextAlign.center),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => ManagerCashTariffDialog(
+                                      temporada: temporada),
+                                ).then(
+                                  (value) {
+                                    if (value != null) {
+                                      if (onChangedTariffs != null) {
+                                        onChangedTariffs
+                                            .call(value as List<Tarifa>);
+                                      }
+                                    }
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -203,6 +303,7 @@ class CustomWidgets {
               text: message,
               size: sizeMessage,
               color: Theme.of(context).primaryColor,
+              aling: TextAlign.center,
             ),
           ],
         ),
@@ -298,10 +399,8 @@ class CustomWidgets {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
             Table(
               border: TableBorder(
-                top: BorderSide(color: Theme.of(context).primaryColor),
                 bottom: BorderSide(color: Theme.of(context).primaryColor),
                 horizontalInside:
                     BorderSide(color: Theme.of(context).primaryColor),
@@ -344,16 +443,16 @@ class CustomWidgets {
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                        text: "PAX ADIC",
+                        text: "MENORES 7 A 12",
                         color: Theme.of(context).primaryColor,
+                        size: 10,
                         aling: TextAlign.center,
                       ),
                     ),
                     Center(
                       child: TextStyles.mediumText(
-                        text: "MENORES 7 A 12",
+                        text: "PAX ADIC",
                         color: Theme.of(context).primaryColor,
-                        size: 10,
                         aling: TextAlign.center,
                       ),
                     ),
@@ -368,98 +467,17 @@ class CustomWidgets {
                   ],
                 ),
                 for (var element in temporadas)
-                  TableRow(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: Center(
-                            child: TextStyles.mediumText(
-                          text: element.nombre ?? '',
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        )),
-                      ),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: (adults1a2.text.isEmpty &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                adults1a2,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: ((adults3.text.isEmpty || adults3.text == '0') &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                adults3,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text:
-                              ((adults4.text.isEmpty || adults4.text == '0') &&
-                                      element.porcentajePromocion == null)
-                                  ? "—"
-                                  : Utility.calculatePromotion(
-                                      adults4,
-                                      TextEditingController(
-                                          text: element.porcentajePromocion
-                                              ?.toString()),
-                                      0),
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                      Center(
-                          child: TextStyles.mediumText(
-                        text: (paxAdic.text.isEmpty &&
-                                element.porcentajePromocion == null)
-                            ? "—"
-                            : Utility.calculatePromotion(
-                                paxAdic,
-                                TextEditingController(
-                                    text: element.porcentajePromocion
-                                        ?.toString()),
-                                0),
-                        color: Theme.of(context).primaryColor,
-                        aling: TextAlign.center,
-                      )),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text: (minor7a12.text.isEmpty &&
-                                  element.porcentajePromocion == null)
-                              ? "—"
-                              : Utility.calculatePromotion(
-                                  minor7a12,
-                                  TextEditingController(
-                                      text: element.porcentajePromocion
-                                          ?.toString()),
-                                  0),
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                      Center(
-                        child: TextStyles.mediumText(
-                          text: "GRATIS",
-                          color: Theme.of(context).primaryColor,
-                          aling: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                  TableRows.tarifasTemporadaTableRow(
+                    context,
+                    element: element,
+                    adults1a2: adults1a2,
+                    adults3: adults3,
+                    adults4: adults4,
+                    paxAdic: paxAdic,
+                    minor7a12: minor7a12,
+                    isGroup: element.forGroup ?? false,
+                    isCash: element.forCash ?? false,
+                    categoria: tipoHabitacion,
                   ),
               ],
             ),
@@ -520,6 +538,7 @@ class CustomWidgets {
     required String title,
     void Function()? onPressedSaveButton,
     bool showSaveButton = true,
+    Widget? optionPage,
   }) {
     return Column(
       children: [
@@ -553,6 +572,7 @@ class CustomWidgets {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
+                  if (optionPage != null) optionPage,
                 ],
               ),
             ),
@@ -588,12 +608,34 @@ class CustomWidgets {
     Color? collapsedBackgroundColor,
     bool overClipText = false,
     Color? colorText,
+    double padding = 4,
+    bool showTrailing = true,
+    bool withTopBorder = false,
   }) {
     return ExpansionTile(
-      tilePadding: const EdgeInsets.all(4),
-      shape: Border(top: BorderSide(color: Theme.of(context).primaryColor)),
-      collapsedShape: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent)),
+      tilePadding: EdgeInsets.all(padding),
+      shape: collapsedBackgroundColor != null
+          ? OutlineInputBorder(
+              borderSide: BorderSide(
+                color: collapsedBackgroundColor,
+                width: 1.8,
+              ),
+            )
+          : Border(
+              top: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 1.3,
+              ),
+            ),
+      collapsedShape: withTopBorder
+          ? Border(
+              top: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 1.3,
+              ),
+            )
+          : const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent)),
       initiallyExpanded: showList,
       onExpansionChanged: onExpansionChanged,
       collapsedBackgroundColor: collapsedBackgroundColor,
@@ -607,20 +649,23 @@ class CustomWidgets {
               overClip: overClipText,
             ),
           ),
-          Icon(
-            showList
-                ? Icons.keyboard_arrow_up_rounded
-                : Icons.keyboard_arrow_down_rounded,
-            size: 20,
-            color: colorText ?? Theme.of(context).primaryColor,
-          ),
+          if (showTrailing)
+            Icon(
+              showList
+                  ? Icons.keyboard_arrow_up_rounded
+                  : Icons.keyboard_arrow_down_rounded,
+              size: 20,
+              color: colorText ?? Theme.of(context).primaryColor,
+            ),
         ],
       ),
-      trailing: TextStyles.standardText(
-        text: Utility.formatterNumber(total),
-        color: colorText ?? Theme.of(context).primaryColor,
-        size: 13,
-      ),
+      trailing: !showTrailing
+          ? null
+          : TextStyles.standardText(
+              text: Utility.formatterNumber(total),
+              color: colorText ?? Theme.of(context).primaryColor,
+              size: 13,
+            ),
       children: children.isNotEmpty
           ? children
           : [
@@ -709,53 +754,161 @@ class CustomWidgets {
       tooltip: "Opciones",
       itemBuilder: (BuildContext context) =>
           <PopupMenuEntry<ListTileTitleAlignment>>[
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.threeLine,
-          onTap: onPreseedEdit,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(Icons.edit, color: DesktopColors.turqueza),
-              TextStyles.standardText(
-                text: "Editar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPreseedEdit != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.threeLine,
+            onTap: onPreseedEdit,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Iconsax.edit_outline, color: DesktopColors.turqueza),
+                TextStyles.standardText(
+                  text: "Editar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.titleHeight,
-          onTap: onPressedDuplicate,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(CupertinoIcons.doc_on_doc_fill,
-                  color: DesktopColors.cerulean, size: 21),
-              TextStyles.standardText(
-                text: "Duplicar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPressedDuplicate != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.titleHeight,
+            onTap: onPressedDuplicate,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Iconsax.copy_outline,
+                    color: DesktopColors.cerulean, size: 21),
+                TextStyles.standardText(
+                  text: "Duplicar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem<ListTileTitleAlignment>(
-          value: ListTileTitleAlignment.titleHeight,
-          onTap: onPreseedDelete,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(Icons.delete, color: Colors.red[800]),
-              TextStyles.standardText(
-                text: "Eliminar",
-                color: Theme.of(context).primaryColor,
-                size: 12,
-              )
-            ],
+        if (onPreseedDelete != null)
+          PopupMenuItem<ListTileTitleAlignment>(
+            value: ListTileTitleAlignment.titleHeight,
+            onTap: onPreseedDelete,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(CupertinoIcons.delete, color: Colors.red[800]),
+                TextStyles.standardText(
+                  text: "Eliminar",
+                  color: Theme.of(context).primaryColor,
+                  size: 12,
+                )
+              ],
+            ),
           ),
-        ),
       ],
+    );
+  }
+
+  static Widget itemColorIndicator(
+    BuildContext context, {
+    required double screenWidth,
+    required String nameItem,
+    required Color? colorItem,
+  }) {
+    return Tooltip(
+      message: screenWidth > 1000 ? '' : nameItem,
+      child: Row(
+        children: [
+          Icon(
+            Icons.circle,
+            color: colorItem,
+            size: 26,
+          ),
+          if (screenWidth > 1000)
+            Container(
+              width: screenWidth * 0.07,
+              child: TextStyles.standardText(
+                text: "  $nameItem",
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
+  static Widget roleMedal(String rol, Brightness brightness) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Utility.getColorTypeUser(rol, alpha: 100),
+        border: Border.all(
+          color: Utility.getColorTypeUser(rol)!,
+          width: 1.5,
+        ),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: TextStyles.standardText(
+          text: rol,
+          aling: TextAlign.center,
+          color: Utility.darken(
+            Utility.getColorTypeUser(rol)!,
+            brightness == Brightness.light ? 0.1 : -0.1,
+          ),
+          overClip: true,
+          isBold: true,
+        ),
+      ),
+    ).animate(
+      onPlay: (controller) => controller.repeat(),
+      effects: [
+        if (rol == "SUPERADMIN" || rol == "ADMIN")
+          ShimmerEffect(
+            delay: 2.5.seconds,
+            duration: 750.ms,
+            color: Colors.white,
+          ),
+      ],
+    );
+  }
+
+  static Widget buildItemGraphics({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required double fontSize,
+    required double iconSize,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: color),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: iconSize, // Tamaño del ícono escalable
+              ),
+              const SizedBox(width: 8), // Espaciado fijo entre ícono y texto
+              TextStyles.standardText(
+                text: label,
+                color: color,
+                size: fontSize,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

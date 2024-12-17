@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 class SelectableButton extends StatefulWidget {
@@ -12,6 +12,7 @@ class SelectableButton extends StatefulWidget {
     this.color = const Color.fromRGBO(144, 202, 249, 1),
     this.round = 12,
     this.roundActive = 10,
+    this.elevation = 0,
   });
 
   final bool selected;
@@ -20,6 +21,7 @@ class SelectableButton extends StatefulWidget {
   final Color? color;
   final double? roundActive;
   final double? round;
+  final double elevation;
 
   @override
   State<SelectableButton> createState() => _SelectableButtonState();
@@ -58,9 +60,13 @@ class _SelectableButtonState extends State<SelectableButton> {
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(isBold: true),
               ),
-              foregroundColor: WidgetStatePropertyAll(widget.selected
-                  ? DesktopColors.ceruleanOscure
-                  : Colors.grey[700]))
+              foregroundColor: WidgetStatePropertyAll(
+                widget.selected
+                    ? DesktopColors.ceruleanOscure
+                    : Colors.grey[700],
+              ),
+              elevation: WidgetStatePropertyAll(widget.elevation),
+            )
           : ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
               shape: MaterialStatePropertyAll(
@@ -71,7 +77,9 @@ class _SelectableButtonState extends State<SelectableButton> {
               textStyle: WidgetStatePropertyAll(
                 TextStyles.styleStandar(),
               ),
-              foregroundColor: WidgetStatePropertyAll(Colors.grey[700])),
+              foregroundColor: WidgetStatePropertyAll(Colors.grey[700]),
+              elevation: WidgetStatePropertyAll(widget.elevation),
+            ),
       onPressed: widget.onPressed,
       child: widget.child,
     );
@@ -88,52 +96,65 @@ class Buttons {
     bool isBold = false,
     bool withRoundedBorder = false,
     Color colorText = Colors.white,
-    Widget? auxwidget,
+    Widget? child,
+    String? tooltipText,
+    IconData? icons,
+    double? sizeIcon,
   }) {
     return Tooltip(
-      message: auxwidget != null ? text : "",
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          elevation: 4,
-          backgroundColor: color ?? DesktopColors.ceruleanOscure,
-          shape: !withRoundedBorder
-              ? null
-              : const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15),
+      message: tooltipText ?? (child != null ? text : ""),
+      child: AbsorbPointer(
+        absorbing: isLoading,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            elevation: 4,
+            backgroundColor: color ?? DesktopColors.ceruleanOscure,
+            shape: !withRoundedBorder
+                ? null
+                : const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icons != null && !isLoading)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Icon(
+                    icons,
+                    size: sizeIcon,
                   ),
                 ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
-              ),
-            if (isLoading) const SizedBox(width: 10),
-            if (auxwidget != null)
-              Expanded(child: auxwidget)
-            else
-              isBold
-                  ? TextStyles.standardText(
-                      text: !isLoading ? text : "Espere",
-                      aling: TextAlign.center,
-                      size: sizeText,
-                      isBold: true,
-                      color: colorText,
-                    )
-                  : TextStyles.buttonTextStyle(
-                      text: !isLoading ? text : "Espere",
-                      aling: TextAlign.center,
-                      size: sizeText,
-                      color: colorText,
-                    ),
-          ],
+              if (isLoading)
+                const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
+                ),
+              if (isLoading) const SizedBox(width: 10),
+              if (child != null)
+                Expanded(child: child)
+              else
+                !isBold
+                    ? TextStyles.standardText(
+                        text: !isLoading ? text : "Espere",
+                        aling: TextAlign.center,
+                        size: sizeText,
+                        color: colorText,
+                      )
+                    : TextStyles.buttonTextStyle(
+                        text: !isLoading ? text : "Espere",
+                        aling: TextAlign.center,
+                        size: sizeText,
+                        color: colorText,
+                      ),
+            ],
+          ),
         ),
       ),
     );
@@ -144,6 +165,7 @@ class Buttons {
     required void Function()? onPressed,
     Color? backgroundColor,
     Color? colorIcon,
+    String tooltip = "",
   }) {
     return Card(
       color: backgroundColor ?? DesktopColors.ceruleanOscure,
@@ -151,6 +173,7 @@ class Buttons {
         height: 40,
         width: 40,
         child: IconButton(
+          tooltip: tooltip,
           onPressed: onPressed,
           icon: Icon(
             icon,

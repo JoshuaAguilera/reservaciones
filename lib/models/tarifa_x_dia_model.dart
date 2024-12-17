@@ -2,73 +2,51 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:generador_formato/models/temporada_model.dart';
 
 import '../database/database.dart';
-import '../utils/helpers/web_colors.dart';
+import '../utils/helpers/desktop_colors.dart';
 
-/*
-List<Categoria> CategoriasFromJson(String str) =>
-    List<Categoria>.from(json.decode(str).map((x) => Categoria.fromJson(x)));
-String CategoriasToJson(List<Categoria> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-List<Categoria> ListCategoriaFromJson(List<dynamic> str) =>
-    List<Categoria>.from(str.map((x) => Categoria.fromJson(x)));
-
-    List<DireccionCliente> ListClientesDireccionesFromJson(List<dynamic> str) =>
-    List<DireccionCliente>.from(str.map((x) => DireccionCliente.fromJson(x)));
-
-
-Categoria CategoriaFromJson(String str) => Categoria.fromJson(json.decode(str));
-String CategoriaToJson(Categoria data) => json.encode(data.toJson());
-*/
-
-List<TemporadaData> temporadasFromJson(String str) => List<TemporadaData>.from(
-    json.decode(str).map((x) => TemporadaData.fromJson(x)));
-
-String temporadasToJson(List<TemporadaData> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-List<TemporadaData> listTemporadaFromJson(List<dynamic> list) =>
-    List<TemporadaData>.from(list.map((x) => TemporadaData.fromJson(x)));
-
-List<TarifaData> tarifasFromJson(String str) =>
+List<TarifaData> tarifasDataFromJson(String str) =>
     List<TarifaData>.from(json.decode(str).map((x) => TarifaData.fromJson(x)));
 
-String tarifasToJson(List<TarifaData> data) =>
+String tarifasDataToJson(List<TarifaData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<TarifaData> listTarifasFromJson(List<dynamic> list) =>
+List<TarifaData> listTarifasDataFromJson(List<dynamic> list) =>
     List<TarifaData>.from(list.map((x) => TarifaData.fromJson(x)));
 
 class TarifaXDia {
   int? id;
   String? code;
+  String? folioRoom;
   String? categoria;
   String? subCode;
   double? descuentoProvisional;
   bool? modificado;
   int? dia;
   DateTime? fecha;
-  String? nombreTarif;
+  String? nombreTariff;
   Color? color;
   TarifaData? tarifa;
-  TemporadaData? temporadaSelect;
+  Temporada? temporadaSelect;
   PeriodoData? periodo;
-  List<TemporadaData>? temporadas;
+  List<Temporada>? temporadas;
   List<TarifaData>? tarifas;
+  List<TarifaData>? tarifasBase;
+  List<TarifaData>? tarifasEfectivo;
   int numDays;
-  // int numDays;
 
   TarifaXDia({
     this.id,
     this.color,
+    this.folioRoom,
     this.fecha,
     this.dia,
     this.code,
     this.subCode,
     this.descuentoProvisional,
-    this.nombreTarif,
+    this.nombreTariff,
     this.periodo,
     this.tarifa,
     this.temporadaSelect,
@@ -76,12 +54,15 @@ class TarifaXDia {
     this.modificado = false,
     this.categoria,
     this.tarifas,
+    this.tarifasBase,
+    this.tarifasEfectivo,
     this.numDays = 1,
   });
 
   TarifaXDia copyWith({
     int? id,
     Color? color,
+    String? folioRoom,
     DateTime? fecha,
     int? dia,
     String? code,
@@ -90,16 +71,19 @@ class TarifaXDia {
     String? nombreTarif,
     PeriodoData? periodo,
     TarifaData? tarifa,
-    TemporadaData? temporadaSelect,
-    List<TemporadaData>? temporadas,
+    Temporada? temporadaSelect,
+    List<Temporada>? temporadas,
     bool? modificado,
     String? categoria,
     List<TarifaData>? tarifas,
+    List<TarifaData>? tarifasBase,
+    List<TarifaData>? tarifasEfectivo,
     int? numDays,
   }) =>
       TarifaXDia(
         id: id ?? this.id,
         code: code ?? this.code,
+        folioRoom: folioRoom ?? this.folioRoom,
         color: color ?? this.color,
         temporadas: temporadas ?? this.temporadas,
         tarifas: tarifas ?? this.tarifas,
@@ -109,10 +93,12 @@ class TarifaXDia {
         dia: dia ?? this.dia,
         fecha: fecha ?? this.fecha,
         modificado: modificado ?? this.modificado,
-        nombreTarif: nombreTarif ?? this.nombreTarif,
+        nombreTariff: nombreTarif ?? this.nombreTariff,
         periodo: periodo ?? this.periodo,
         subCode: subCode ?? this.subCode,
         tarifa: tarifa ?? this.tarifa,
+        tarifasBase: tarifasBase ?? this.tarifasBase,
+        tarifasEfectivo: tarifasEfectivo ?? this.tarifasEfectivo,
         temporadaSelect: temporadaSelect ?? this.temporadaSelect,
       );
 
@@ -123,13 +109,14 @@ class TarifaXDia {
       'color': colorToHex(color ?? DesktopColors.cerulean),
       'temporadas': temporadas,
       'tarifas': tarifas,
+      'tarifasBase': tarifasBase,
       'numDays': numDays,
       'categoria': categoria,
       'descuentoProvisional': descuentoProvisional,
       'dia': dia,
       'fecha': fecha != null ? fecha!.toIso8601String() : '',
       'modificado': modificado,
-      'nombreTarif': nombreTarif,
+      'nombreTarif': nombreTariff,
       'periodo': periodo,
       'subCode': subCode,
       'tarifa': tarifa,
@@ -145,11 +132,16 @@ class TarifaXDia {
       temporadas: json['temporadas'] != null
           ? json['temporadas'] != '[]'
               ? listTemporadaFromJson(json['temporadas'])
-              : List<TemporadaData>.empty()
-          : List<TemporadaData>.empty(),
+              : List<Temporada>.empty()
+          : List<Temporada>.empty(),
       tarifas: json['tarifas'] != null
           ? json['tarifas'] != '[]'
-              ? listTarifasFromJson(json['tarifas'])
+              ? listTarifasDataFromJson(json['tarifas'])
+              : List<TarifaData>.empty()
+          : List<TarifaData>.empty(),
+      tarifasBase: json['tarifasBase'] != null
+          ? json['tarifasBase'] != '[]'
+              ? listTarifasDataFromJson(json['tarifasBase'])
               : List<TarifaData>.empty()
           : List<TarifaData>.empty(),
       numDays: json['numDays'],
@@ -158,7 +150,7 @@ class TarifaXDia {
       dia: json['dia'],
       fecha: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
       modificado: json['modificado'],
-      nombreTarif: json['nombreTarif'],
+      nombreTariff: json['nombreTarif'],
       periodo: json['periodo'] != null
           ? PeriodoData.fromJson(json['periodo'])
           : null,
@@ -166,7 +158,7 @@ class TarifaXDia {
       tarifa:
           json['tarifa'] != null ? TarifaData.fromJson(json['tarifa']) : null,
       temporadaSelect: json['temporadaSelect'] != null
-          ? TemporadaData.fromJson(json['temporadaSelect'])
+          ? Temporada.fromJson(json['temporadaSelect'])
           : null,
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../models/prefijo_telefonico_model.dart';
 
@@ -17,6 +19,9 @@ class CustomDropdown {
     String label = '',
     String excepcionItem = '',
     bool calculateWidth = true,
+    bool compact = false,
+    double compactWidth = 120,
+    bool withPermisse = true,
   }) {
     List<String> items = elements.toList();
 
@@ -26,35 +31,75 @@ class CustomDropdown {
 
     return StatefulBuilder(
       builder: (context, setState) {
-        return DropdownMenu<String>(
-          menuHeight: 200,
-          width:
-              screenWidth == null ? null : calculateWidth ? Utility.getWidthDynamic(screenWidth) :screenWidth,
-          requestFocusOnTap: false,
-          initialSelection: initialSelection,
-          onSelected: onSelected,
-          label: Text(label),
-          textStyle:
-              TextStyle(fontFamily: "poppins_regular", fontSize: fontSize),
-          dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
-            (String value) {
-              return DropdownMenuEntry<String>(
-                value: value,
-                label: value,
-                enabled: (excepcionItem.isNotEmpty && value == excepcionItem)
-                    ? true
-                    : (notElements != null)
-                        ? notElements.any((element) => element == value)
-                        : true,
-                style: ButtonStyle(
-                  textStyle: WidgetStatePropertyAll(
-                    TextStyle(
+        return Container(
+          height: compact ? 30 : null,
+          width: compact ? compactWidth : null,
+          child: Tooltip(
+            message: withPermisse ? "" : "No autorizado",
+            child: IgnorePointer(
+              ignoring: !withPermisse,
+              child: ExcludeFocus(
+                excluding: !withPermisse,
+                child: Focus(
+                  skipTraversal: !withPermisse,
+                  canRequestFocus: withPermisse,
+                  child: DropdownMenu<String>(
+                    menuHeight: 220,
+                    width: screenWidth == null
+                        ? null
+                        : calculateWidth
+                            ? Utility.getWidthDynamic(screenWidth)
+                            : screenWidth,
+                    requestFocusOnTap: false,
+                    initialSelection: initialSelection,
+                    onSelected: onSelected,
+                    label: Text(label),
+                    expandedInsets: !compact ? null : const EdgeInsets.all(1),
+                    trailingIcon: !withPermisse
+                        ? const Icon(HeroIcons.hand_raised)
+                        : !compact
+                            ? null
+                            : Transform.translate(
+                                offset: const Offset(0, -8),
+                                child: const Icon(Icons.arrow_drop_down),
+                              ),
+                    inputDecorationTheme: !compact
+                        ? null
+                        : const InputDecorationTheme(
+                            contentPadding: EdgeInsets.only(top: -5, left: 15),
+                            border: OutlineInputBorder(),
+                          ),
+                    textStyle: TextStyle(
                         fontFamily: "poppins_regular", fontSize: fontSize),
+                    dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
+                      (String value) {
+                        bool enable = (excepcionItem.isNotEmpty &&
+                                value == excepcionItem)
+                            ? true
+                            : (notElements != null)
+                                ? notElements.any((element) => element == value)
+                                : true;
+
+                        return DropdownMenuEntry<String>(
+                          value: value,
+                          label: value,
+                          enabled: enable,
+                          style: ButtonStyle(
+                            textStyle: WidgetStatePropertyAll(
+                              TextStyle(
+                                fontFamily: "poppins_regular",
+                                fontSize: fontSize,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(),
                   ),
                 ),
-              );
-            },
-          ).toList(),
+              ),
+            ),
+          ),
         );
       },
     );

@@ -48,14 +48,15 @@ final documentQuoteGroupProvider =
     FutureProvider.family<pw.Document, String>((ref, arg) async {
   final detectChanged = ref.watch(changeDocGroupProvider);
 
-  pw.Document comprobantePDF = await GeneradorDocService()
-      .generarComprobanteCotizacionGrupal(
-          [],
-          Cotizacion(
-              correoElectronico: "example@email.com",
-              fecha: "01-01-2021",
-              numeroTelefonico: "01-800-2020",
-              nombreHuesped: "Example Lorem ipsut"));
+  pw.Document comprobantePDF =
+      await GeneradorDocService().generarComprobanteCotizacionGrupal(
+    habitaciones: [],
+    cotizacion: Cotizacion(
+        correoElectronico: "example@email.com",
+        fecha: "01-01-2021",
+        numeroTelefonico: "01-800-2020",
+        nombreHuesped: "Example Lorem ipsut"),
+  );
 
   return comprobantePDF;
 });

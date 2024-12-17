@@ -10,8 +10,8 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/helpers/web_colors.dart';
-import 'package:generador_formato/widgets/manager_tariff_day_widget.dart';
+import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../providers/habitacion_provider.dart';
@@ -50,7 +50,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     nowRegister = widget.tarifaXDia.tarifa == null
         ? null
         : RegistroTarifa(
-            tarifas: [widget.tarifaXDia.tarifa!],
+            tarifas: (widget.tarifaXDia.tarifas != null ||
+                    widget.tarifaXDia.tarifas!.isNotEmpty)
+                ? widget.tarifaXDia.tarifas
+                : [widget.tarifaXDia.tarifa!],
             temporadas: (widget.tarifaXDia.temporadaSelect != null
                 ? [widget.tarifaXDia.temporadaSelect!]
                 : []),
@@ -61,11 +64,14 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   @override
   Widget build(BuildContext context) {
     final habitacionProvider = ref.watch(habitacionSelectProvider);
+    final typeQuote = ref.watch(typeQuoteProvider);
+    final useCashSeason = ref.watch(useCashSeasonProvider);
 
     return Center(
       child: Container(
         constraints: BoxConstraints.tight(const Size.square(200.0)),
-        child: _buildFlipAnimation(habitacionProvider),
+        child:
+            _buildFlipAnimation(habitacionProvider, typeQuote, useCashSeason),
       ),
     );
   }
@@ -106,7 +112,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     }
   }
 
-  Widget _buildFlipAnimation(Habitacion habitacion) {
+  Widget _buildFlipAnimation(
+      Habitacion habitacion, bool typeQuote, bool useCashSeason) {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
@@ -115,8 +122,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
         switchInCurve: Curves.easeInBack,
         switchOutCurve: Curves.easeInBack.flipped,
-        child:
-            _showFrontSide ? _buildFront(habitacion) : _buildRear(habitacion),
+        child: _showFrontSide
+            ? _buildFront(habitacion, typeQuote, useCashSeason)
+            : _buildRear(habitacion, typeQuote, useCashSeason),
       ),
     );
   }
@@ -143,20 +151,26 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildFront(Habitacion habitacion) {
+  Widget _buildFront(
+      Habitacion habitacion, bool typeQuote, bool useCashSeason) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
-    double totalAdulto = Utility.calculateTariffAdult(
+    double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      isGroupTariff: typeQuote,
+      useCashSeason: useCashSeason,
     );
 
-    double totalMenores = Utility.calculateTariffChildren(
+    double totalMenores = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
       habitacion.tarifaXDia!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      isCalculateChildren: true,
+      isGroupTariff: typeQuote,
+      useCashSeason: useCashSeason,
     );
 
     bool showToolTip = (MediaQuery.of(context).size.width >
@@ -177,7 +191,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       if (MediaQuery.of(context).size.width <
                           (1210 - (widget.sideController.extended ? 0 : 100)))
                         TextStyles.standardText(
-                          text: widget.tarifaXDia.nombreTarif ?? '',
+                          text: widget.tarifaXDia.nombreTariff ?? '',
                           size: 11,
                           color: Theme.of(context).primaryColorDark,
                         ),
@@ -237,7 +251,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   if (MediaQuery.of(context).size.width >
                       (1210 - (widget.sideController.extended ? 0 : 100)))
                     TextStyles.standardText(
-                      text: widget.tarifaXDia.nombreTarif ?? '',
+                      text: widget.tarifaXDia.nombreTariff ?? '',
                       size: 11,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -245,24 +259,27 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       (1510 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
                         title: "Adul: ",
-                        subtitle: widget.tarifaXDia.tarifa == null
-                            ? "\$0.00"
-                            : Utility.formatterNumber(totalAdulto)),
+                        subtitle: Utility.formatterNumber(
+                            widget.tarifaXDia.tarifa == null
+                                ? 0
+                                : totalAdulto)),
                   if (MediaQuery.of(context).size.width >
                       (1610 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
                         title: "Men 7-12: ",
-                        subtitle: widget.tarifaXDia.tarifa == null
-                            ? "\$0.00"
-                            : Utility.formatterNumber(totalMenores)),
+                        subtitle: Utility.formatterNumber(
+                            widget.tarifaXDia.tarifa == null
+                                ? 0
+                                : totalMenores)),
                   if (MediaQuery.of(context).size.width > 1710)
                     const SizedBox(height: 10),
                   if (showToolTip)
                     _messageAsociate(
                       title: "Total: ",
-                      subtitle: widget.tarifaXDia.tarifa == null
-                          ? "\$0.00"
-                          : Utility.formatterNumber(totalMenores + totalAdulto),
+                      subtitle: Utility.formatterNumber(
+                          widget.tarifaXDia.tarifa == null
+                              ? 0
+                              : (totalMenores + totalAdulto)),
                     ),
                 ],
               ),
@@ -289,7 +306,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildRear(Habitacion habitacion) {
+  Widget _buildRear(Habitacion habitacion, bool typeQuote, bool useCashSeason) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
     bool isUnknow = widget.tarifaXDia.code!.contains("Unknow") ||
         widget.tarifaXDia.code!.contains("tariffFree");
@@ -310,8 +327,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.center,
             children: [
-              if (MediaQuery.of(context).size.width >
-                  (1100 + (widget.sideController.extended ? 120 : 0)))
+              if (typeQuote
+                  ? true
+                  : MediaQuery.of(context).size.width >
+                      (1100 + (widget.sideController.extended ? 120 : 0)))
                 TextStyles.TextTitleList(
                   index: widget.tarifaXDia.fecha!.day,
                   color: widget.tarifaXDia.color == null
@@ -325,7 +344,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                                   0.2))
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
-                  size: (MediaQuery.of(context).size.width > 1390) ? 28 : 20,
+                  size: (MediaQuery.of(context).size.width > 1390)
+                      ? 28
+                      : !typeQuote
+                          ? 20
+                          : 26,
                 ),
               if (MediaQuery.of(context).size.width > 1590)
                 const SizedBox(height: 8),
@@ -354,7 +377,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                             : const Color.fromARGB(255, 43, 43, 43),
                     overflow: (MediaQuery.of(context).size.width > 1590)
                         ? TextOverflow.clip
-                        : TextOverflow.ellipsis,
+                        : typeQuote
+                            ? TextOverflow.clip
+                            : TextOverflow.ellipsis,
                   ),
                 ),
               if (MediaQuery.of(context).size.width >
@@ -384,12 +409,12 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                 ),
-              if (MediaQuery.of(context).size.width > 1490)
+              if (MediaQuery.of(context).size.width > 1490 && !typeQuote)
                 SizedBox(
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
                   child: Buttons.commonButton(
-                    onPressed: () => showDialogEditQuote(),
+                    onPressed: () => showDialogEditQuote(habitacion),
                     text: "Cambiar",
                     sizeText: 11.5,
                     isBold: true,
@@ -417,11 +442,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                             : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 ),
-              if (MediaQuery.of(context).size.width <= 1490)
+              if (MediaQuery.of(context).size.width <= 1490 && !typeQuote)
                 Tooltip(
                   message: "Cambiar",
                   child: IconButton(
-                    onPressed: () => showDialogEditQuote(),
+                    onPressed: () => showDialogEditQuote(habitacion),
                     icon: Icon(
                       Icons.mode_edit_outline_outlined,
                       color: useWhiteForeground(
@@ -438,15 +463,19 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  void showDialogEditQuote() {
+  void showDialogEditQuote(Habitacion habitacion) {
     setState(() {
       flipCard.cancel;
       _isEditing = true;
     });
     showDialog(
       context: context,
-      builder: (context) =>
-          ManagerTariffDayWidget(tarifaXDia: widget.tarifaXDia),
+      builder: (context) => ManagerTariffSingleDialog(
+        tarifaXDia: widget.tarifaXDia,
+        numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
+            .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
+            .inDays,
+      ),
     ).then(
       (value) {
         if (mounted) {
@@ -465,7 +494,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         nowRegister = widget.tarifaXDia.tarifa == null
             ? null
             : RegistroTarifa(
-                tarifas: [widget.tarifaXDia.tarifa!],
+                tarifas: (widget.tarifaXDia.tarifas != null ||
+                        widget.tarifaXDia.tarifas!.isNotEmpty)
+                    ? widget.tarifaXDia.tarifas
+                    : [widget.tarifaXDia.tarifa!],
                 temporadas: widget.tarifaXDia.temporadaSelect != null
                     ? [widget.tarifaXDia.temporadaSelect!]
                     : []);

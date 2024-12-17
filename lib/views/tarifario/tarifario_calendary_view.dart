@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_month_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_week_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_year_view.dart';
-import 'package:generador_formato/widgets/controller_calendar_widget.dart';
+import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
