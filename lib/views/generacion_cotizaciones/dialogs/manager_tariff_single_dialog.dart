@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
+import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
@@ -12,6 +14,7 @@ import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
 import 'package:generador_formato/ui/inside_snackbar.dart';
+import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -19,6 +22,10 @@ import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:icons_plus/icons_plus.dart';
+
+import '../../../providers/tarifario_provider.dart';
+import '../../../ui/progress_indicator.dart';
 
 class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
   const ManagerTariffSingleDialog({
@@ -52,6 +59,7 @@ class _ManagerTariffDayWidgetState
   TarifaData? saveTariff;
   bool startFlow = false;
   List<TarifaData?> baseTariffs = [];
+  RegistroTarifa? selectTariffDefined;
 
   List<String> promociones = [];
   final TextEditingController _tarifaAdultoController =
@@ -126,6 +134,7 @@ class _ManagerTariffDayWidgetState
 
   @override
   Widget build(BuildContext context) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     double tariffAdult = calculateTariffAdult(habitacionProvider.adultos!);
     double tariffChildren =
@@ -134,6 +143,7 @@ class _ManagerTariffDayWidgetState
     final useCashSeason = ref.watch(useCashSeasonProvider);
     final useCashRoomSeason = ref.watch(useCashSeasonRoomProvider);
     final usuario = ref.watch(userProvider);
+    final tarifaProvider = ref.watch(allTarifaProvider(""));
 
     if (!startFlow && widget.tarifaXDia.tarifa == null) {
       selectCategory =
@@ -142,39 +152,33 @@ class _ManagerTariffDayWidgetState
     }
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       elevation: 15,
       actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Card(
-            color: widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure,
-            elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: Icon(
-                CupertinoIcons.pencil_outline,
-                size: 33,
-                color: useWhiteForeground(
-                        widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure)
-                    ? Colors.white
-                    : const Color.fromARGB(255, 43, 43, 43),
+      titlePadding: const EdgeInsets.only(top: 20),
+      contentPadding: const EdgeInsets.fromLTRB(25, 5, 25, 20),
+      title: Container(
+        color: Theme.of(context).cardColor,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: TitlePage(
+                icons: HeroIcons.calendar,
+                isDialog: true,
+                sizeTitle: 18,
+                title: widget.isAppling
+                    ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre"
+                    : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)}",
+                subtitle: widget.isAppling
+                    ? Utility.getPeriodReservation([habitacionProvider])
+                    : "Tarifa aplicada: ${widget.tarifaXDia.nombreTariff} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextStyles.titleText(
-                text: widget.isAppling
-                    ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre \n${Utility.getPeriodReservation([
-                            habitacionProvider
-                          ])}"
-                    : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)} \nTarifa aplicada: ${widget.tarifaXDia.nombreTariff} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
-                size:
-                    (widget.tarifaXDia.subCode != null && !isUnknow) ? 13 : 16,
-                color: Theme.of(context).primaryColor),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Divider(color: Theme.of(context).primaryColor, thickness: 0.6)
+          ],
+        ),
       ),
       content: SizedBox(
         height: 625,
@@ -184,6 +188,72 @@ class _ManagerTariffDayWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (isUnknow)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextStyles.standardText(
+                          text: "Tarifa Aplicada:  ",
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        tarifaProvider.when(
+                          data: (data) {
+                            return Container(
+                              width: 300,
+                              height: 43,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(7)),
+                              ),
+                              child: DropdownButton<RegistroTarifa>(
+                                underline: const SizedBox(),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(7)),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                icon: const Icon(HeroIcons.square_3_stack_3d),
+                                isExpanded: true,
+                                value: selectTariffDefined,
+                                items: [
+                                  for (var item in data)
+                                    DropdownMenuItem(
+                                      value: item,
+                                      child: CustomWidgets.itemMedal(
+                                          item.nombre ?? '', brightness,
+                                          color: item.color),
+                                    ),
+                                  DropdownMenuItem(
+                                    value: null,
+                                    child: CustomWidgets.itemMedal(
+                                        'Ninguna', brightness),
+                                  )
+                                ],
+                                onChanged: (value) =>
+                                    setState(() => selectTariffDefined = value),
+                              ),
+                            );
+                          },
+                          error: (error, stackTrace) => const Tooltip(
+                              message: "Error de consulta",
+                              child: Icon(Icons.warning_amber_rounded,
+                                  color: Colors.amber)),
+                          loading: () => Center(
+                            child: SizedBox(
+                              width: 40,
+                              child: ProgressIndicatorEstandar(
+                                sizeProgressIndicator: 30,
+                                inHorizontal: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 Row(
                   mainAxisAlignment:
                       (widget.tarifaXDia.temporadaSelect != null ||
@@ -255,6 +325,7 @@ class _ManagerTariffDayWidgetState
                             ),
                         excepcionItem: "No aplicar",
                         notElements: Utility.getPromocionesNoValidas(
+                          //Revisar Si es necesario el bloqueo dependiendo de la estancia minima
                           habitacionProvider,
                           temporadas: widget.tarifaXDia.temporadas,
                         ),

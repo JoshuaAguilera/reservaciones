@@ -8,16 +8,17 @@ import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/views/usuarios/edit_user_dialog.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/usuario_item_row.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../ui/custom_widgets.dart';
-import '../ui/progress_indicator.dart';
-import '../ui/textformfield_style.dart';
-import '../utils/helpers/utility.dart';
-import '../widgets/text_styles.dart';
+import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
+import '../../ui/textformfield_style.dart';
+import '../../utils/helpers/utility.dart';
+import '../../widgets/text_styles.dart';
 
 class GestionUsuariosView extends ConsumerStatefulWidget {
   const GestionUsuariosView({super.key, required this.sideController});
@@ -96,9 +97,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       showDialog(
                         context: context,
                         builder: (contextBL) {
-                          return Dialogs().userFormDialog(
-                            brightness: brightness,
-                            buildContext: contextBL,
+                          return EditUserDialog(
                             onInsert: (p0) async {
                               if (!await AuthService().saveUsers(p0)) {
                                 showSnackBar(

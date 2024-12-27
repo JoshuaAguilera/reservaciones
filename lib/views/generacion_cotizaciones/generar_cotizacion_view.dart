@@ -331,13 +331,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             Expanded(
                                               child: TextFormFieldCustom
                                                   .textFormFieldwithBorder(
-                                                name: "Teléfono",
+                                                name:
+                                                    "Numero Telefonico (Contacto o WhatsApp)",
                                                 msgError: "Campo requerido*",
                                                 initialValue:
                                                     cotizacion.numeroTelefonico,
                                                 isNumeric: true,
                                                 isDecimal: false,
-                                                isRequired: true,
+                                                isRequired: false,
                                                 onChanged: (p0) {
                                                   cotizacion.numeroTelefonico =
                                                       p0;
@@ -352,7 +353,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 msgError: "Campo requerido*",
                                                 initialValue: cotizacion
                                                     .correoElectronico,
-                                                isRequired: true,
+                                                isRequired: false,
                                                 onChanged: (p0) {
                                                   cotizacion.correoElectronico =
                                                       p0;

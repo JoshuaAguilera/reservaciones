@@ -152,7 +152,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                       size: 16),
                                   const SizedBox(height: 10),
                                   Center(
-                                    child: CustomWidgets.roleMedal(
+                                    child: CustomWidgets.itemMedal(
                                         usuario.rol!, brightness),
                                   ),
                                   const SizedBox(height: 7),

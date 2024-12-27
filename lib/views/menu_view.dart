@@ -3,7 +3,7 @@ import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.dart';
 import 'package:generador_formato/views/tarifario/tarifario_form_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_view.dart';
-import 'package:generador_formato/views/gestion_usuarios_view.dart';
+import 'package:generador_formato/views/usuarios/gestion_usuarios_view.dart';
 import 'package:generador_formato/views/historial/cotizacion_detalle_view.dart';
 import 'package:generador_formato/views/configuracion/configuracion_view.dart';
 import 'package:generador_formato/views/dashboard_view.dart';

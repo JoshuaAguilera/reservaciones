@@ -214,7 +214,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           isTooltip: true,
                         ),
                       if (MediaQuery.of(context).size.width <
-                          (1710 - (widget.sideController.extended ? 100 : 200)))
+                          (1720 - (widget.sideController.extended ? 100 : 200)))
                         _messageAsociate(
                           title: "Total: ",
                           subtitle: widget.tarifaXDia.tarifa == null

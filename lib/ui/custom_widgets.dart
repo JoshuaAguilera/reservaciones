@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
@@ -835,12 +836,16 @@ class CustomWidgets {
     );
   }
 
-  static Widget roleMedal(String rol, Brightness brightness) {
+  static Widget itemMedal(String rol, Brightness brightness, {Color? color}) {
     return Container(
       decoration: BoxDecoration(
-        color: Utility.getColorTypeUser(rol, alpha: 100),
+        color: color ?? Utility.getColorTypeUser(rol, alpha: 100),
         border: Border.all(
-          color: Utility.getColorTypeUser(rol)!,
+          color: color != null
+              ? useWhiteForeground(color)
+                  ? Colors.white
+                  : Utility.darken(color, 0.25)
+              : Utility.getColorTypeUser(rol) ?? DesktopColors.grisPalido,
           width: 1.5,
         ),
         borderRadius: const BorderRadius.all(
@@ -852,10 +857,14 @@ class CustomWidgets {
         child: TextStyles.standardText(
           text: rol,
           aling: TextAlign.center,
-          color: Utility.darken(
-            Utility.getColorTypeUser(rol)!,
-            brightness == Brightness.light ? 0.1 : -0.1,
-          ),
+          color: color != null
+              ? useWhiteForeground(color)
+                  ? Colors.white
+                  : Utility.darken(color, 0.25)
+              : Utility.darken(
+                  Utility.getColorTypeUser(rol) ?? DesktopColors.grisPalido,
+                  brightness == Brightness.light ? 0.1 : -0.1,
+                ),
           overClip: true,
           isBold: true,
         ),

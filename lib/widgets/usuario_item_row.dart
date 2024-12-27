@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/views/usuarios/edit_user_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -43,9 +44,7 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
     showDialog(
       context: context,
       builder: (contextBL) {
-        return Dialogs().userFormDialog(
-          buildContext: contextBL,
-          brightness: brightness,
+        return EditUserDialog(
           usuario: user,
           onUpdateList: () {
             if (widget.onUpdateList != null) widget.onUpdateList!.call();
@@ -206,7 +205,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: CustomWidgets.roleMedal(widget.usuario.rol!, brightness),
+                child: CustomWidgets.itemMedal(widget.usuario.rol!, brightness),
               ),
               TextStyles.standardText(
                 text: widget.usuario.username ?? '',
