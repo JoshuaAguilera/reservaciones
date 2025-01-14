@@ -95,27 +95,36 @@ class Buttons {
     double sizeText = 14,
     bool isBold = false,
     bool withRoundedBorder = false,
+    double? borderRadius,
     Color colorText = Colors.white,
     Widget? child,
     String? tooltipText,
     IconData? icons,
     double? sizeIcon,
+    bool onlyIcon = false,
+    double? elevation,
+    Color? colorBorder,
+    double? spaceBetween,
   }) {
     return Tooltip(
+      margin: const EdgeInsets.only(top: 10),
       message: tooltipText ?? (child != null ? text : ""),
       child: AbsorbPointer(
         absorbing: isLoading,
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            elevation: 4,
+            elevation: elevation ?? 4,
             backgroundColor: color ?? DesktopColors.ceruleanOscure,
             shape: !withRoundedBorder
                 ? null
-                : const RoundedRectangleBorder(
+                : RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+                      Radius.circular(borderRadius ?? 15),
                     ),
+                    side: colorBorder == null
+                        ? BorderSide.none
+                        : BorderSide(color: colorBorder),
                   ),
           ),
           child: Row(
@@ -123,7 +132,8 @@ class Buttons {
             children: [
               if (icons != null && !isLoading)
                 Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
+                  padding: EdgeInsets.only(
+                      right: onlyIcon ? 0 : spaceBetween ?? 10.0),
                   child: Icon(
                     icons,
                     size: sizeIcon,

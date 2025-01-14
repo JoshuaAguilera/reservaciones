@@ -32,6 +32,8 @@ class TextFormFieldCustom {
     double marginBottom = 8,
     FloatingLabelAlignment? floatingLabelAlignment,
     void Function(String)? onFieldSubmitted,
+    void Function()? onUnfocus,
+    bool withLabelAndHint = false,
   }) {
     return StatefulBuilder(
       builder: (context, snapshot) {
@@ -50,94 +52,105 @@ class TextFormFieldCustom {
             children: [
               AbsorbPointer(
                 absorbing: blocked,
-                child: TextFormField(
-                  readOnly: readOnly,
-                  textInputAction: textInputAction,
-                  enabled: enabled,
-                  controller: controller,
-                  onChanged: (value) {
-                    snapshot(() {});
-                    if (onChanged != null) onChanged.call(value);
+                child: Focus(
+                  onFocusChange: (value) {
+                    if (!value && onUnfocus != null) {
+                      onUnfocus.call();
+                    }
                   },
-                  obscureText: passwordVisible,
-                  validator: validator ??
-                      (value) {
-                        if (isRequired) {
-                          if ((value == null || value.isEmpty)) {
-                            return msgError;
+                  child: TextFormField(
+                    readOnly: readOnly,
+                    textInputAction: textInputAction,
+                    enabled: enabled,
+                    controller: controller,
+                    onChanged: (value) {
+                      snapshot(() {});
+                      if (onChanged != null) onChanged.call(value);
+                    },
+                    obscureText: passwordVisible,
+                    validator: validator ??
+                        (value) {
+                          if (isRequired) {
+                            if ((value == null || value.isEmpty)) {
+                              return msgError;
+                            }
                           }
-                        }
-                        return null;
-                      },
-                  style: const TextStyle(
-                    fontFamily: "poppins_regular",
-                    fontSize: 13,
-                  ),
-                  keyboardType: isNumeric
-                      ? TextInputType.numberWithOptions(
-                          decimal: isDecimal,
-                          signed: isNumeric,
-                        )
-                      : TextInputType.name,
-                  inputFormatters: <TextInputFormatter>[
-                    isDecimal
-                        ? FilteringTextInputFormatter.allow(
-                            RegExp(r'^[0-9]+[.]?[0-9]*'))
-                        : isNumeric
-                            ? FilteringTextInputFormatter.digitsOnly
-                            : FilteringTextInputFormatter.singleLineFormatter,
-                  ],
-                  textAlignVertical: TextAlignVertical.top,
-                  textAlign: isMoneda ? TextAlign.right : TextAlign.left,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    border: const OutlineInputBorder(),
-                    labelStyle: const TextStyle(
+                          return null;
+                        },
+                    style: const TextStyle(
                       fontFamily: "poppins_regular",
                       fontSize: 13,
                     ),
-                    hintStyle: const TextStyle(
-                      fontFamily: "poppins_regular",
-                      fontSize: 13,
-                    ),
-                    alignLabelWithHint: true,
-                    floatingLabelAlignment: floatingLabelAlignment,
-                    prefixIcon: isMoneda
-                        ? const Icon(
-                            CupertinoIcons.money_dollar,
-                            size: 20,
+                    keyboardType: isNumeric
+                        ? TextInputType.numberWithOptions(
+                            decimal: isDecimal,
+                            signed: isNumeric,
                           )
-                        : null,
-                    prefixIconConstraints:
-                        const BoxConstraints(maxWidth: 20, minWidth: 20),
-                    suffixIcon: isPassword
-                        ? IconButton(
-                            icon: Icon(
-                              passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: DesktopColors.azulCielo,
-                            ),
-                            onPressed: () {
-                              snapshot(() {
-                                passwordVisible = !passwordVisible;
-                              });
-                            },
-                          )
-                        : icon,
-                    labelText: hintText != null ? null : name,
-                    hintText: hintText,
-                    errorMaxLines: 2,
-                    errorStyle: TextStyle(
-                      fontFamily: "poppins_regular",
-                      color: Colors.red[800],
-                      fontSize: 10,
-                      height: msgError.isEmpty ? 0 : 1,
+                        : TextInputType.name,
+                    inputFormatters: <TextInputFormatter>[
+                      isDecimal
+                          ? FilteringTextInputFormatter.allow(
+                              RegExp(r'^[0-9]+[.]?[0-9]*'))
+                          : isNumeric
+                              ? FilteringTextInputFormatter.digitsOnly
+                              : FilteringTextInputFormatter.singleLineFormatter,
+                    ],
+                    textAlignVertical: TextAlignVertical.top,
+                    textAlign: isMoneda ? TextAlign.right : TextAlign.left,
+                    decoration: InputDecoration(
+                      filled: readOnly,
+                      fillColor: Colors.white.withOpacity(0.1),
+                      border: const OutlineInputBorder(),
+                      labelStyle: const TextStyle(
+                        fontFamily: "poppins_regular",
+                        fontSize: 13,
+                      ),
+                      hintStyle: const TextStyle(
+                        fontFamily: "poppins_regular",
+                        fontSize: 13,
+                      ),
+                      alignLabelWithHint: true,
+                      floatingLabelAlignment: floatingLabelAlignment,
+                      prefixIcon: isMoneda
+                          ? const Icon(
+                              CupertinoIcons.money_dollar,
+                              size: 20,
+                            )
+                          : null,
+                      prefixIconConstraints:
+                          const BoxConstraints(maxWidth: 20, minWidth: 20),
+                      suffixIcon: isPassword
+                          ? IconButton(
+                              icon: Icon(
+                                passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: DesktopColors.azulCielo,
+                              ),
+                              onPressed: () {
+                                snapshot(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
+                            )
+                          : icon,
+                      labelText: withLabelAndHint
+                          ? name
+                          : hintText != null
+                              ? null
+                              : name,
+                      hintText: hintText,
+                      errorMaxLines: 2,
+                      errorStyle: TextStyle(
+                        fontFamily: "poppins_regular",
+                        color: Colors.red[800],
+                        fontSize: 10,
+                        height: msgError.isEmpty ? 0 : 1,
+                      ),
                     ),
+                    initialValue: initialValue,
+                    onFieldSubmitted: onFieldSubmitted,
                   ),
-                  initialValue: initialValue,
-                  onFieldSubmitted: onFieldSubmitted,
                 ),
               ),
             ],
@@ -149,7 +162,7 @@ class TextFormFieldCustom {
 
   static Widget textFormFieldwithBorderCalendar({
     required String name,
-    required String msgError,
+    String msgError = "",
     required TextEditingController dateController,
     void Function()? onChanged,
     String fechaLimite = "",
@@ -161,6 +174,8 @@ class TextFormFieldCustom {
     bool compact = false,
     bool readOnly = false,
     bool enabled = true,
+    bool withButton = true,
+    TextAlign align = TextAlign.start,
   }) {
     return StatefulBuilder(
       builder: (context, setState) {
@@ -180,6 +195,7 @@ class TextFormFieldCustom {
               AbsorbPointer(
                 absorbing: true,
                 child: TextFormField(
+                  textAlign: align,
                   enabled: enabled,
                   readOnly: readOnly,
                   validator: (value) {
@@ -193,7 +209,7 @@ class TextFormFieldCustom {
                     return null;
                   },
                   controller: TextEditingController(
-                    text: Utility.getCompleteDate(
+                    text: dateController.text.isEmpty ? "" : Utility.getCompleteDate(
                       data: DateTime.parse(dateController.text),
                       compact: compact,
                     ),
@@ -205,45 +221,49 @@ class TextFormFieldCustom {
                   decoration: TextFormFieldStyle.decorationFieldStandar(name),
                 ),
               ),
-              Positioned(
-                right: 5,
-                top: 5,
-                child: Container(
-                  color: Theme.of(context).secondaryHeaderColor,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.calendar_month,
-                      color: DesktopColors.azulCielo,
+              if (withButton)
+                Positioned(
+                  right: 5,
+                  top: 5,
+                  child: Container(
+                    color: Theme.of(context).secondaryHeaderColor,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.calendar_month,
+                        color: DesktopColors.azulCielo,
+                      ),
+                      onPressed: !enabled
+                          ? null
+                          : () {
+                              showDatePicker(
+                                context: context,
+                                initialDate:
+                                    DateTime.parse(dateController.text),
+                                firstDate: fechaLimite.isNotEmpty
+                                    ? DateTime.parse(fechaLimite)
+                                        .add(const Duration(days: 1))
+                                    : DateTime(DateTime.now().year - firstYear),
+                                lastDate: nowLastYear
+                                    ? DateTime.now()
+                                    : DateTime(
+                                        (DateTime.now().year + lastYear)),
+                                locale: const Locale('es', 'ES'),
+                              ).then(
+                                (date) {
+                                  if (date != null) {
+                                    setState(() {
+                                      dateController.text = date
+                                          .toIso8601String()
+                                          .substring(0, 10);
+                                      if (onChanged != null) onChanged.call();
+                                    });
+                                  }
+                                },
+                              );
+                            },
                     ),
-                    onPressed: !enabled
-                        ? null
-                        : () {
-                            showDatePicker(
-                              context: context,
-                              initialDate: DateTime.parse(dateController.text),
-                              firstDate: fechaLimite.isNotEmpty
-                                  ? DateTime.parse(fechaLimite)
-                                      .add(const Duration(days: 1))
-                                  : DateTime(DateTime.now().year - firstYear),
-                              lastDate: nowLastYear
-                                  ? DateTime.now()
-                                  : DateTime((DateTime.now().year + lastYear)),
-                              locale: const Locale('es', 'ES'),
-                            ).then(
-                              (date) {
-                                if (date != null) {
-                                  setState(() {
-                                    dateController.text =
-                                        date.toIso8601String().substring(0, 10);
-                                    if (onChanged != null) onChanged.call();
-                                  });
-                                }
-                              },
-                            );
-                          },
                   ),
                 ),
-              ),
             ],
           ),
         );

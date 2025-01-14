@@ -65,13 +65,11 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   Widget build(BuildContext context) {
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
-    final useCashSeason = ref.watch(useCashSeasonProvider);
 
     return Center(
       child: Container(
         constraints: BoxConstraints.tight(const Size.square(200.0)),
-        child:
-            _buildFlipAnimation(habitacionProvider, typeQuote, useCashSeason),
+        child: _buildFlipAnimation(habitacionProvider, typeQuote),
       ),
     );
   }
@@ -112,8 +110,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     }
   }
 
-  Widget _buildFlipAnimation(
-      Habitacion habitacion, bool typeQuote, bool useCashSeason) {
+  Widget _buildFlipAnimation(Habitacion habitacion, bool typeQuote) {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
@@ -123,8 +120,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         switchInCurve: Curves.easeInBack,
         switchOutCurve: Curves.easeInBack.flipped,
         child: _showFrontSide
-            ? _buildFront(habitacion, typeQuote, useCashSeason)
-            : _buildRear(habitacion, typeQuote, useCashSeason),
+            ? _buildFront(habitacion, typeQuote)
+            : _buildRear(habitacion, typeQuote),
       ),
     );
   }
@@ -151,8 +148,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildFront(
-      Habitacion habitacion, bool typeQuote, bool useCashSeason) {
+  Widget _buildFront(Habitacion habitacion, bool typeQuote) {
+    final useCashSeason = ref.watch(useCashSeasonRoomProvider);
+
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
@@ -306,7 +304,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildRear(Habitacion habitacion, bool typeQuote, bool useCashSeason) {
+  Widget _buildRear(Habitacion habitacion, bool typeQuote) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
     bool isUnknow = widget.tarifaXDia.code!.contains("Unknow") ||
         widget.tarifaXDia.code!.contains("tariffFree");

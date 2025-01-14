@@ -142,7 +142,7 @@ class _TarifarioCalendaryMonthViewState
                     ),
                   Positioned(
                     left: (screenWidth > 1280) ? (385) : 0,
-                    top: 65,
+                    top: 0,
                     child: SizedBox(
                       height: screenHeight - 238,
                       child: tarifaProvider.when(

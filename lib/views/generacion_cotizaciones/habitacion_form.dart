@@ -17,6 +17,7 @@ import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/periodo_model.dart';
 import '../../models/registro_tarifa_model.dart';
 import '../../models/temporada_model.dart';
 import '../../providers/tarifario_provider.dart';
@@ -30,6 +31,7 @@ import '../../widgets/dynamic_widget.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
+import '../tarifario/dialogs/period_calendar_dialog.dart';
 import 'dialogs/manager_tariff_group_dialog.dart';
 
 class HabitacionForm extends ConsumerStatefulWidget {
@@ -58,6 +60,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   double target = 1;
   bool isEditing = false;
   bool applyFreeTariff = false;
+  bool showSwitchCashSeason = false;
   TarifaXDia tarifaLibre = TarifaXDia(
     color: DesktopColors.turquezaOscure,
     descuentoProvisional: 0,
@@ -126,7 +129,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                       title:
                           isEditing ? "Editar Habitación" : "Nueva Habitación",
                       showSaveButton: false,
-                      optionPage: typeQuote
+                      optionPage: (!showSwitchCashSeason || typeQuote)
                           ? null
                           : FormWidgets.inputSwitch(
                               compact: screenWidth < 950,
@@ -176,6 +179,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   refreshTariff: isEditing,
                                   isGroup: typeQuote,
                                   useCashSeason: true,
+                                  updateToCash: true,
                                 );
                               } else {
                                 getTarifasSelect(
@@ -186,6 +190,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   refreshTariff: isEditing,
                                   isGroup: typeQuote,
                                   useCashSeason: false,
+                                  updateToCash: true,
                                 );
                               }
                             });
@@ -197,11 +202,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 Future.delayed(
                                   600.ms,
                                   () => showSnackBar(
-                                      context: context,
-                                      title: "Tarifario no configurado",
-                                      message:
-                                          "Aun no se cuenta con tarifas predefinidas en el sistema. Consulte con el administrador.",
-                                      type: "danger"),
+                                    context: context,
+                                    title: "Tarifario no configurado",
+                                    message:
+                                        "Aun no se cuenta con tarifas predefinidas en el sistema. Consulte con el administrador.",
+                                    type: "danger",
+                                  ),
                                 );
                               }
                               Future.delayed(250.ms,
@@ -324,139 +330,141 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         .primaryColor,
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: screenWidth > 1120
-                                                      ? 500
-                                                      : null,
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: TextFormFieldCustom
-                                                            .textFormFieldwithBorderCalendar(
-                                                          compact: (screenWidth <
-                                                                      1000 &&
-                                                                  widget
-                                                                      .sideController
-                                                                      .extended) ||
-                                                              (screenWidth <
-                                                                      900 &&
-                                                                  !widget
-                                                                      .sideController
-                                                                      .extended),
-                                                          name:
-                                                              "Fecha de entrada",
-                                                          msgError:
-                                                              "Campo requerido*",
-                                                          fechaLimite: DateTime
-                                                                  .now()
-                                                              .subtract(
-                                                                  const Duration(
-                                                                      days: 1))
-                                                              .toIso8601String()
-                                                              .substring(0, 10),
-                                                          dateController:
-                                                              _fechaEntrada,
-                                                          onChanged: () {
-                                                            setState(() {
-                                                              _fechaSalida
-                                                                      .text =
-                                                                  Utility.getNextDay(
-                                                                      _fechaEntrada
-                                                                          .text);
-                                                              changedDate =
-                                                                  true;
-                                                            });
-
-                                                            habitacionProvider
-                                                                    .fechaCheckIn =
+                                                InkWell(
+                                                  onTap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          PeriodCalendarDialog(
+                                                        colorTariff: typeQuote
+                                                            ? DesktopColors
+                                                                .cotGrupal
+                                                            : DesktopColors
+                                                                .cotIndiv,
+                                                        initDate:
+                                                            DateTime.tryParse(
                                                                 _fechaEntrada
-                                                                    .text;
-                                                            habitacionProvider
-                                                                    .fechaCheckOut =
+                                                                    .text),
+                                                        lastDate:
+                                                            DateTime.tryParse(
                                                                 _fechaSalida
-                                                                    .text;
+                                                                    .text),
+                                                        withLimit: true,
+                                                        title:
+                                                            "Selección de fechas",
+                                                        description:
+                                                            "Selecciona la fecha de entrada y salida.",
+                                                      ),
+                                                    ).then(
+                                                      (value) {
+                                                        if (value != null) {
+                                                          Periodo newPeriod =
+                                                              value as Periodo;
 
-                                                            getTarifasSelect(
-                                                              list,
-                                                              habitacionProvider,
-                                                              tarifasProvisionalesProvider,
-                                                              descuentoProvider,
-                                                              refreshTariff:
-                                                                  isEditing,
-                                                              isGroup:
-                                                                  typeQuote,
-                                                              useCashSeason:
-                                                                  useCashSeasonRoom,
-                                                            );
-                                                            Future.delayed(
-                                                              Durations.medium1,
-                                                              () => setState(
-                                                                () {
-                                                                  changedDate =
-                                                                      false;
-                                                                },
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        child: Icon(
-                                                            CupertinoIcons
-                                                                .ellipsis),
-                                                      ),
-                                                      Expanded(
-                                                        child: TextFormFieldCustom
-                                                            .textFormFieldwithBorderCalendar(
-                                                          compact: (screenWidth <
-                                                                      1000 &&
-                                                                  widget
-                                                                      .sideController
-                                                                      .extended) ||
-                                                              (screenWidth <
-                                                                      900 &&
-                                                                  !widget
-                                                                      .sideController
-                                                                      .extended),
-                                                          name:
-                                                              "Fecha de salida",
-                                                          msgError:
-                                                              "Campo requerido*",
-                                                          dateController:
-                                                              _fechaSalida,
-                                                          fechaLimite:
+                                                          _fechaEntrada.text =
+                                                              newPeriod
+                                                                  .fechaInicial
+                                                                  .toString();
+
+                                                          _fechaSalida.text =
+                                                              newPeriod
+                                                                  .fechaFinal
+                                                                  .toString();
+
+                                                          changedDate = true;
+                                                          setState(() {});
+
+                                                          habitacionProvider
+                                                                  .fechaCheckIn =
                                                               _fechaEntrada
-                                                                  .text,
-                                                          onChanged: () {
-                                                            setState(() =>
+                                                                  .text;
+                                                          habitacionProvider
+                                                                  .fechaCheckOut =
+                                                              _fechaSalida.text;
+
+                                                          getTarifasSelect(
+                                                            list,
+                                                            habitacionProvider,
+                                                            tarifasProvisionalesProvider,
+                                                            descuentoProvider,
+                                                            refreshTariff:
+                                                                isEditing,
+                                                            isGroup: typeQuote,
+                                                            useCashSeason:
+                                                                useCashSeasonRoom,
+                                                          );
+                                                          Future.delayed(
+                                                            Durations.medium1,
+                                                            () => setState(
+                                                              () {
                                                                 changedDate =
-                                                                    true);
-                                                            habitacionProvider
-                                                                    .fechaCheckOut =
-                                                                _fechaSalida
-                                                                    .text;
-                                                            getTarifasSelect(
-                                                              list,
-                                                              habitacionProvider,
-                                                              tarifasProvisionalesProvider,
-                                                              descuentoProvider,
-                                                              refreshTariff:
-                                                                  isEditing,
-                                                              isGroup:
-                                                                  typeQuote,
-                                                              useCashSeason:
-                                                                  useCashSeasonRoom,
-                                                            );
-                                                            Future.delayed(
-                                                                Durations
-                                                                    .medium1,
-                                                                () => setState(() =>
-                                                                    changedDate =
-                                                                        false));
-                                                          },
+                                                                    false;
+                                                              },
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    );
+                                                  },
+                                                  child: SizedBox(
+                                                    width: screenWidth > 1120
+                                                        ? 500
+                                                        : null,
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextFormFieldCustom
+                                                              .textFormFieldwithBorderCalendar(
+                                                            align: TextAlign
+                                                                .center,
+                                                            compact: (screenWidth <
+                                                                        1000 &&
+                                                                    widget
+                                                                        .sideController
+                                                                        .extended) ||
+                                                                (screenWidth <
+                                                                        900 &&
+                                                                    !widget
+                                                                        .sideController
+                                                                        .extended),
+                                                            withButton: false,
+                                                            name:
+                                                                "Fecha de entrada",
+                                                            dateController:
+                                                                _fechaEntrada,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        const SizedBox(
+                                                          child: RotatedBox(
+                                                            quarterTurns: 1,
+                                                            child: Icon(HeroIcons
+                                                                .chevron_up_down),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: TextFormFieldCustom
+                                                              .textFormFieldwithBorderCalendar(
+                                                            align: TextAlign
+                                                                .center,
+                                                            compact: (screenWidth <
+                                                                        1000 &&
+                                                                    widget
+                                                                        .sideController
+                                                                        .extended) ||
+                                                                (screenWidth <
+                                                                        900 &&
+                                                                    !widget
+                                                                        .sideController
+                                                                        .extended),
+                                                            name:
+                                                                "Fecha de salida",
+                                                            dateController:
+                                                                _fechaSalida,
+                                                            withButton: false,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -878,7 +886,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     final habitacionesProvider = HabitacionProvider.provider;
 
                     if (!isEditing) {
-                      habitacionProvider.folioHabitacion = Utility.getUniqueCode().toString();
+                      habitacionProvider.folioHabitacion =
+                          Utility.getUniqueCode().toString();
                     }
 
                     habitacionProvider.useCashSeason = useCashSeasonRoom;
@@ -1033,6 +1042,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     List<TarifaData> tarifasProvisionales,
     double descuentoProvisional, {
     bool onlyCategory = false,
+    bool updateToCash = false,
     bool refreshTariff = false,
     required bool isGroup,
     required bool useCashSeason,
@@ -1070,11 +1080,27 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         }
       }
 
-      habitacion.tarifaXDia!.clear();
-
       int days = DateTime.parse(_fechaSalida.text)
           .difference(DateTime.parse(_fechaEntrada.text))
           .inDays;
+
+      if (updateToCash) {
+        for (var element in habitacion.tarifaXDia!) {
+          Temporada? selectSeason = Utility.getSeasonNow(
+            RegistroTarifa(temporadas: element.temporadas),
+            days,
+            isGroup: isGroup,
+            useCashTariff: useCashSeason,
+          );
+
+          element.temporadaSelect = selectSeason;
+        }
+
+        setState(() {});
+        return;
+      }
+
+      habitacion.tarifaXDia!.clear();
 
       if (isGroup) {
         if (habitacion.tarifaGrupal != null && !alreadyApply) {
@@ -1158,8 +1184,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
       }
 
       habitacion.tarifaXDia!.addAll(
-        getTariffXDia(list, days, habitacion.categoria ?? tipoHabitacion.first,
-            tarifasProvisionales, descuentoProvisional, isGroup, useCashSeason),
+        getTariffXDia(
+          list,
+          days,
+          habitacion.categoria ?? tipoHabitacion.first,
+          tarifasProvisionales,
+          descuentoProvisional,
+          isGroup,
+          useCashSeason,
+        ),
       );
     }
   }
@@ -1257,14 +1290,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   }
 
   List<TarifaXDia> getTariffXDia(
-      List<RegistroTarifa> list,
-      int days,
-      String categoria,
-      List<TarifaData> tarifasProvisionales,
-      double descuentoProvisional,
-      bool isGroup,
-      bool useCashSeason,
-      {bool saveCashTariff = false}) {
+    List<RegistroTarifa> list,
+    int days,
+    String categoria,
+    List<TarifaData> tarifasProvisionales,
+    double descuentoProvisional,
+    bool isGroup,
+    bool useCashSeason, {
+    bool saveCashTariff = false,
+  }) {
     List<TarifaXDia> tarifaXDiaList = [];
 
     for (var ink = 0; ink < days; ink++) {
@@ -1334,6 +1368,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         saveCashTariff: saveCashTariff,
       );
 
+      //Retiro de roundUtils por discrepancia
+
       tarifaXDiaList.add(
         TarifaXDia(
           dia: ink,
@@ -1345,12 +1381,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           id: newTariff.copyWith().id,
           periodo: Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
           tarifa: (selectSeason?.forCash ?? false)
-              ? Utility.getTarifasData([
-                  selectSeason?.tarifas
-                      ?.where((element) => element.categoria == categoria)
-                      .firstOrNull
-                      ?.copyWith()
-                ]).first
+              ? Utility.getTarifasData(
+                  [
+                    selectSeason?.tarifas
+                        ?.where((element) => element.categoria == categoria)
+                        .firstOrNull
+                        ?.copyWith()
+                  ],
+                ).first
               : newTariff
                   .copyWith()
                   .tarifas!
@@ -1360,7 +1398,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           temporadas: newTariff.copyWith().temporadas,
           tarifas: (selectSeason?.forCash ?? false)
               ? Utility.getTarifasData(
-                  selectSeason?.tarifas ?? List<Tarifa?>.empty())
+                  selectSeason?.tarifas ?? List<Tarifa?>.empty(),
+                )
               : newTariff
                   .copyWith()
                   .tarifas
@@ -1374,6 +1413,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         ),
       );
     }
+
+    showSwitchCashSeason = tarifaXDiaList.any((element) =>
+        element.temporadas?.any((element) => element.forCash ?? false) ??
+        false);
+    setState(() {});
 
     return tarifaXDiaList;
   }

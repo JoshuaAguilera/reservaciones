@@ -17,6 +17,7 @@ class DesktopColors {
   static Color mentaOscure = Color.fromARGB(255, 82, 170, 138);
   static Color grisSemiPalido = Color.fromARGB(255, 85, 85, 85);
   static Color grisPalido = Color.fromARGB(255, 162, 162, 162);
+  static Color greyClean = Color.fromARGB(255, 196, 196, 196);
 
   //Colors sidebar
   static Color primaryColor = Color(0xFF685BFF);
@@ -46,4 +47,5 @@ class DesktopColors {
 
   //more...
   static Color cashSeason = const Color.fromRGBO(139, 195, 74, 1);
+  static Color errorColor = const Color.fromARGB(255, 197, 19, 7);
 }

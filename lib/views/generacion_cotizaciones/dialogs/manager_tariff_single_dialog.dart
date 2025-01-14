@@ -24,8 +24,10 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../../models/tarifa_model.dart';
 import '../../../providers/tarifario_provider.dart';
 import '../../../ui/progress_indicator.dart';
+import '../../../widgets/select_buttons_widget.dart';
 
 class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
   const ManagerTariffSingleDialog({
@@ -56,12 +58,18 @@ class _ManagerTariffDayWidgetState
   final _formKeyTariffDay = GlobalKey<FormState>();
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   String selectCategory = "VISTA A LA RESERVA";
+  List<Map<String, Color>> categoriesColor = [
+    {"VISTA A LA RESERVA": DesktopColors.vistaReserva},
+    {"VISTA PARCIAL AL MAR": DesktopColors.vistaParcialMar},
+  ];
   TarifaData? saveTariff;
   bool startFlow = false;
   List<TarifaData?> baseTariffs = [];
   RegistroTarifa? selectTariffDefined;
+  Color colorTariff = DesktopColors.cerulean;
+  bool isEditing = false;
 
-  List<String> promociones = [];
+  List<String> promociones = ["No aplicar"];
   final TextEditingController _tarifaAdultoController =
       TextEditingController(text: "");
   final TextEditingController _tarifaAdultoTPLController =
@@ -80,14 +88,24 @@ class _ManagerTariffDayWidgetState
         (widget.tarifaXDia.descuentoProvisional ?? 0).toString();
     isUnknow = widget.tarifaXDia.code!.contains("Unknow");
     isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
+    colorTariff = widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure;
+    applyTariffData();
+
+    super.initState();
+  }
+
+  void applyTariffData() {
     temporadaSelect = widget.tarifaXDia.temporadaSelect?.nombre ?? 'No aplicar';
-    promociones.add("No aplicar");
 
     if (widget.tarifaXDia.tarifa != null) {
       _insertTariffForm(widget.tarifaXDia.tarifa);
 
       selectCategory = categorias[
           tipoHabitacion.indexOf(widget.tarifaXDia.tarifa!.categoria!)];
+    }
+
+    if ((widget.tarifaXDia.tarifas ?? List<TarifaData>.empty()).isNotEmpty) {
+      baseTariffs = widget.tarifaXDia.tarifas!;
     }
 
     if (widget.tarifaXDia.tarifa != null) {
@@ -99,8 +117,6 @@ class _ManagerTariffDayWidgetState
               .firstOrNull;
       if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
     }
-
-    super.initState();
   }
 
   void _insertTariffForm(TarifaData? tarifa) {
@@ -155,25 +171,22 @@ class _ManagerTariffDayWidgetState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       elevation: 15,
       actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      titlePadding: const EdgeInsets.only(top: 20),
+      titlePadding: const EdgeInsets.only(top: 10),
       contentPadding: const EdgeInsets.fromLTRB(25, 5, 25, 20),
       title: Container(
         color: Theme.of(context).cardColor,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TitlePage(
-                icons: HeroIcons.calendar,
-                isDialog: true,
-                sizeTitle: 18,
-                title: widget.isAppling
-                    ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre"
-                    : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)}",
-                subtitle: widget.isAppling
-                    ? Utility.getPeriodReservation([habitacionProvider])
-                    : "Tarifa aplicada: ${widget.tarifaXDia.nombreTariff} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
-              ),
+            TitlePage(
+              icons: HeroIcons.calendar,
+              isDialog: true,
+              sizeTitle: 18,
+              title: widget.isAppling
+                  ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre"
+                  : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXDia.fecha)}",
+              subtitle: widget.isAppling
+                  ? Utility.getPeriodReservation([habitacionProvider])
+                  : "Tarifa aplicada: ${widget.tarifaXDia.nombreTariff} ${widget.tarifaXDia.subCode != null ? "(modificada)" : ""}",
             ),
             const SizedBox(height: 10),
             Divider(color: Theme.of(context).primaryColor, thickness: 0.6)
@@ -181,7 +194,7 @@ class _ManagerTariffDayWidgetState
         ),
       ),
       content: SizedBox(
-        height: 625,
+        height: isUnknow ? 690 : 640,
         child: Form(
           key: _formKeyTariffDay,
           child: SingleChildScrollView(
@@ -209,7 +222,7 @@ class _ManagerTariffDayWidgetState
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(7)),
                               ),
-                              child: DropdownButton<RegistroTarifa>(
+                              child: DropdownButton(
                                 underline: const SizedBox(),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(7)),
@@ -232,8 +245,66 @@ class _ManagerTariffDayWidgetState
                                         'Ninguna', brightness),
                                   )
                                 ],
-                                onChanged: (value) =>
-                                    setState(() => selectTariffDefined = value),
+                                onChanged: (value) {
+                                  setState(() => selectTariffDefined = value);
+
+                                  if (value != null) {
+                                    Temporada? selectSeason =
+                                        Utility.getSeasonNow(
+                                      value.copyWith(),
+                                      widget.numDays,
+                                      isGroup: false,
+                                      useCashTariff: useCashSeason,
+                                    );
+
+                                    widget.tarifaXDia.temporadaSelect =
+                                        selectSeason;
+                                    widget.tarifaXDia.temporadas =
+                                        value.temporadas;
+                                    widget.tarifaXDia.tarifas =
+                                        (selectSeason?.forCash ?? false)
+                                            ? Utility.getTarifasData(
+                                                selectSeason?.tarifas ??
+                                                    List<Tarifa?>.empty())
+                                            : value
+                                                .copyWith()
+                                                .tarifas
+                                                ?.map((element) =>
+                                                    element.copyWith())
+                                                .toList();
+
+                                    widget.tarifaXDia.tarifasBase = value
+                                        .copyWith()
+                                        .tarifas
+                                        ?.map((element) => element.copyWith())
+                                        .toList();
+
+                                    widget.tarifaXDia.tarifa =
+                                        (selectSeason?.forCash ?? false)
+                                            ? Utility.getTarifasData([
+                                                selectSeason?.tarifas
+                                                    ?.where((element) =>
+                                                        element.categoria ==
+                                                        tipoHabitacion[
+                                                            categorias.indexOf(
+                                                                selectCategory)])
+                                                    .firstOrNull
+                                                    ?.copyWith()
+                                              ]).first
+                                            : value
+                                                .copyWith()
+                                                .tarifas!
+                                                .firstWhere((element) =>
+                                                    element.categoria ==
+                                                    tipoHabitacion[
+                                                        categorias.indexOf(
+                                                            selectCategory)])
+                                                .copyWith();
+
+                                    applyTariffData();
+                                    setState(() {});
+                                  }
+                                },
                               ),
                             );
                           },
@@ -262,15 +333,17 @@ class _ManagerTariffDayWidgetState
                           : MainAxisAlignment.end,
                   children: [
                     TextStyles.standardText(
-                      text: widget.tarifaXDia.temporadaSelect != null
+                      text: (selectTariffDefined != null ||
+                              widget.tarifaXDia.temporadaSelect != null)
                           ? "Temporada: "
                           : "Descuento en toda la tarifa:         ",
                       overClip: true,
                       color: Theme.of(context).primaryColor,
                     ),
                     const SizedBox(width: 10),
-                    if (widget.tarifaXDia.temporadas != null &&
-                        widget.tarifaXDia.temporadas!.isNotEmpty)
+                    if (selectTariffDefined != null ||
+                        (widget.tarifaXDia.temporadas != null &&
+                            widget.tarifaXDia.temporadas!.isNotEmpty))
                       CustomDropdown.dropdownMenuCustom(
                         withPermisse: (usuario.rol != 'RECEPCION'),
                         initialSelection: temporadaSelect,
@@ -310,12 +383,12 @@ class _ManagerTariffDayWidgetState
                               ]).first;
                             } else {
                               _recoveryTariffsInd();
-                              setState(() {});
                             }
                           } else {
                             _recoveryTariffsInd();
-                            setState(() {});
                           }
+
+                          setState(() {});
                         },
                         elements: promociones +
                             Utility.getSeasonstoString(
@@ -346,117 +419,87 @@ class _ManagerTariffDayWidgetState
                   ],
                 ),
                 const SizedBox(height: 15),
-                AbsorbPointer(
-                  absorbing: applyAllCategory,
-                  child: Opacity(
-                    opacity: applyAllCategory ? 0.5 : 1,
-                    child: SizedBox(
-                      height: 32,
-                      width: 350,
-                      child: StatefulBuilder(
-                        builder: (context, snapshot) {
-                          return ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: 2,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: SelectableButton(
-                                  selected: selectCategory == categorias[index],
-                                  color: Utility.darken(
-                                      selectCategory == categorias.first
-                                          ? DesktopColors.vistaReserva
-                                          : DesktopColors.vistaParcialMar,
-                                      -0.15),
-                                  onPressed: () {
-                                    if (selectCategory == categorias[index])
-                                      return;
+                Row(
+                  children: [
+                    Expanded(
+                      child: AbsorbPointer(
+                        absorbing: applyAllCategory,
+                        child: Opacity(
+                          opacity: applyAllCategory ? 0.5 : 1,
+                          child: SelectButtonsWidget(
+                            selectButton: selectCategory,
+                            buttons: categoriesColor,
+                            width: 350,
+                            onPressed: (index) {
+                              TarifaData? selectTariff =
+                                  (isFreeTariff || isUnknow)
+                                      ? null
+                                      : widget.tarifaXDia.tarifas
+                                          ?.firstWhere(
+                                            (element) =>
+                                                element.categoria ==
+                                                tipoHabitacion[categorias
+                                                    .indexOf(selectCategory)],
+                                          )
+                                          .copyWith();
 
-                                    TarifaData? selectTariff = (isFreeTariff ||
-                                            isUnknow)
-                                        ? null
-                                        : widget.tarifaXDia.tarifas
-                                            ?.firstWhere(
-                                              (element) =>
-                                                  element.categoria ==
-                                                  tipoHabitacion[categorias
-                                                      .indexOf(selectCategory)],
-                                            )
-                                            .copyWith();
-
-                                    TarifaData saveIntTariff = TarifaData(
-                                      categoria: tipoHabitacion[
-                                          categorias.indexOf(selectCategory)],
-                                      code: selectTariff?.code ??
-                                          "${widget.tarifaXDia.code} - $selectCategory",
-                                      fecha:
-                                          selectTariff?.fecha ?? DateTime.now(),
-                                      id: selectTariff?.id ??
-                                          categorias.indexOf(selectCategory),
-                                      tarifaAdultoSGLoDBL:
-                                          _tarifaAdultoController.text.isEmpty
-                                              ? selectTariff
-                                                  ?.tarifaAdultoSGLoDBL
-                                              : double.parse(
-                                                  _tarifaAdultoController.text),
-                                      tarifaAdultoTPL:
-                                          _tarifaAdultoTPLController
-                                                  .text.isEmpty
-                                              ? selectTariff?.tarifaAdultoTPL
-                                              : double.parse(
-                                                  _tarifaAdultoTPLController
-                                                      .text),
-                                      tarifaAdultoCPLE:
-                                          _tarifaAdultoCPLController
-                                                  .text.isEmpty
-                                              ? selectTariff?.tarifaAdultoCPLE
-                                              : double.parse(
-                                                  _tarifaAdultoCPLController
-                                                      .text),
-                                      tarifaPaxAdicional:
-                                          _tarifaPaxAdicionalController
-                                                  .text.isEmpty
-                                              ? selectTariff?.tarifaPaxAdicional
-                                              : double.parse(
-                                                  _tarifaPaxAdicionalController
-                                                      .text),
-                                      tarifaMenores7a12:
-                                          _tarifaMenoresController.text.isEmpty
-                                              ? selectTariff?.tarifaMenores7a12
-                                              : double.parse(
-                                                  _tarifaMenoresController
-                                                      .text),
-                                    );
-
-                                    _insertTariffForm(saveTariff);
-
-                                    saveTariff = saveIntTariff.copyWith();
-                                    showErrorTariff = false;
-
-                                    setState(() =>
-                                        selectCategory = categorias[index]);
-                                  },
-                                  child: Text(
-                                    categorias[index],
-                                    style: TextStyle(
-                                      color: Utility.darken(
-                                        selectCategory == categorias.first
-                                            ? DesktopColors.vistaReserva
-                                            : DesktopColors.vistaParcialMar,
-                                        0.15,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              TarifaData saveIntTariff = TarifaData(
+                                categoria: tipoHabitacion[
+                                    categorias.indexOf(selectCategory)],
+                                code: selectTariff?.code ??
+                                    "${widget.tarifaXDia.code} - $selectCategory",
+                                fecha: selectTariff?.fecha ?? DateTime.now(),
+                                id: selectTariff?.id ??
+                                    categorias.indexOf(selectCategory),
+                                tarifaAdultoSGLoDBL:
+                                    _tarifaAdultoController.text.isEmpty
+                                        ? selectTariff?.tarifaAdultoSGLoDBL
+                                        : double.parse(
+                                            _tarifaAdultoController.text),
+                                tarifaAdultoTPL:
+                                    _tarifaAdultoTPLController.text.isEmpty
+                                        ? selectTariff?.tarifaAdultoTPL
+                                        : double.parse(
+                                            _tarifaAdultoTPLController.text),
+                                tarifaAdultoCPLE:
+                                    _tarifaAdultoCPLController.text.isEmpty
+                                        ? selectTariff?.tarifaAdultoCPLE
+                                        : double.parse(
+                                            _tarifaAdultoCPLController.text),
+                                tarifaPaxAdicional:
+                                    _tarifaPaxAdicionalController.text.isEmpty
+                                        ? selectTariff?.tarifaPaxAdicional
+                                        : double.parse(
+                                            _tarifaPaxAdicionalController.text),
+                                tarifaMenores7a12:
+                                    _tarifaMenoresController.text.isEmpty
+                                        ? selectTariff?.tarifaMenores7a12
+                                        : double.parse(
+                                            _tarifaMenoresController.text),
                               );
+
+                              _insertTariffForm(saveTariff);
+
+                              saveTariff = saveIntTariff.copyWith();
+                              showErrorTariff = false;
+
+                              setState(
+                                  () => selectCategory = categorias[index]);
                             },
-                          );
-                        },
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Buttons.iconButtonCard(
+                      icon: Iconsax.edit_outline,
+                      backgroundColor: colorTariff,
+                      colorIcon: useWhiteForeground(colorTariff)
+                          ? Utility.darken(colorTariff, -0.2)
+                          : Utility.darken(colorTariff, 0.2),
+                      tooltip: "Modificar",
+                      onPressed: () {},
+                    )
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
@@ -470,8 +513,9 @@ class _ManagerTariffDayWidgetState
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
                         onUpdate: () => setState(() {}),
-                        isEditing: (usuario.rol != 'RECEPCION') ||
-                            (isUnknow || isFreeTariff),
+                        isEditing: isEditing &&
+                            ((usuario.rol != 'RECEPCION') ||
+                                (isUnknow || isFreeTariff)),
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -487,7 +531,7 @@ class _ManagerTariffDayWidgetState
                                 if (widget.isAppling || isUnknow)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
-                                    activeColor: widget.tarifaXDia.color,
+                                    activeColor: colorTariff,
                                     title: "Aplicar en ambas categorias",
                                     description:
                                         "(Vista Reserva, Vista Parcial al mar)",
@@ -506,7 +550,7 @@ class _ManagerTariffDayWidgetState
                                     widget.numDays > 1)
                                   CustomWidgets.checkBoxWithDescription(
                                     context,
-                                    activeColor: widget.tarifaXDia.color,
+                                    activeColor: colorTariff,
                                     title: "Aplicar en dias sin tarifa",
                                     description:
                                         "(Esta opción aplicara los siguientes cambios en todos los dias que no esten en el margen de las tarifas definidas).",
@@ -526,7 +570,7 @@ class _ManagerTariffDayWidgetState
                                       widget.numDays > 1)
                                     CustomWidgets.checkBoxWithDescription(
                                       context,
-                                      activeColor: widget.tarifaXDia.color,
+                                      activeColor: colorTariff,
                                       title: "Aplicar en toda la tarifa",
                                       description:
                                           "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXDia.nombreTariff}${widget.tarifaXDia.subCode != null ? " [modificado]" : ""}\").",
@@ -546,7 +590,7 @@ class _ManagerTariffDayWidgetState
                                   if (!widget.isAppling && widget.numDays > 1)
                                     CustomWidgets.checkBoxWithDescription(
                                       context,
-                                      activeColor: widget.tarifaXDia.color,
+                                      activeColor: colorTariff,
                                       title: "Aplicar en todos los dias",
                                       description: "",
                                       value: applyAllDays,
@@ -645,8 +689,7 @@ class _ManagerTariffDayWidgetState
           width: 100,
           child: Buttons.commonButton(
             text: "ACEPTAR",
-            colorText: useWhiteForeground(
-                    widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure)
+            colorText: useWhiteForeground(colorTariff)
                 ? Colors.white
                 : const Color.fromARGB(255, 43, 43, 43),
             color: widget.tarifaXDia.color ?? DesktopColors.cerulean,

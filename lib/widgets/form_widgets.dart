@@ -5,6 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../utils/helpers/constants.dart';
 import '../utils/helpers/desktop_colors.dart';
@@ -252,6 +253,7 @@ class FormWidgets {
     Color? colorBorder,
     Color? colorIcon,
     bool autofocus = false,
+    bool filled = false,
   }) {
     validator ??= (value) {
       if ((value == null || value.isEmpty)) {
@@ -298,6 +300,8 @@ class FormWidgets {
         ],
         textAlign: isMoneda ? TextAlign.right : TextAlign.left,
         decoration: InputDecoration(
+          filled: filled,
+          fillColor: Colors.white.withOpacity(0.1),
           alignLabelWithHint: true,
           floatingLabelAlignment:
               isMoneda ? FloatingLabelAlignment.center : null,
@@ -331,7 +335,7 @@ class FormWidgets {
             fontFamily: "poppins_regular",
             color: Colors.red[800],
             fontSize: 10,
-            height: 1,
+            height: msgError.isEmpty ? 0 : 1,
           ),
         ),
         initialValue: initialValue,
@@ -343,6 +347,7 @@ class FormWidgets {
     required Color colorText,
     required String nameField,
     required String initialValue,
+    String description = "",
     String definition = "",
     double sizeText = 12,
     double widthInput = 50,
@@ -350,15 +355,31 @@ class FormWidgets {
     void Function(int)? onDecrement,
     void Function(int)? onIncrement,
   }) {
+    bool showMessage = false;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TextStyles.standardText(
-          text: nameField,
-          color: colorText,
-          size: sizeText,
+        Expanded(
+          child: TextStyles.standardText(
+            text: nameField,
+            color: colorText,
+            size: sizeText,
+          ),
         ),
+        if (description.isNotEmpty)
+          StatefulBuilder(builder: (context, snapshot) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: IconButton(
+                tooltip: !showMessage ? "" : description,
+                icon: const Icon(Iconsax.info_circle_outline),
+                onPressed: () {
+                  snapshot(() => showMessage = !showMessage);
+                },
+              ),
+            );
+          }),
         SizedBox(
           width: widthInput,
           height: 40,
@@ -376,10 +397,14 @@ class FormWidgets {
           ),
         ),
         if (definition.isNotEmpty)
-          TextStyles.standardText(
-            text: definition,
-            color: colorText,
-            size: 12,
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: TextStyles.standardText(
+              text: definition,
+              color: colorText,
+              isBold: true,
+              size: sizeText,
+            ),
           ),
       ],
     );
@@ -388,6 +413,7 @@ class FormWidgets {
   static Widget textAreaForm({
     TextEditingController? controller,
     String hintText = "",
+    bool isError = false,
     bool readOnly = false,
     int? maxLines,
   }) {
@@ -398,11 +424,14 @@ class FormWidgets {
       keyboardType: TextInputType.multiline,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: isError
+            ? Colors.white.withOpacity(0.3)
+            : Colors.white.withOpacity(0.1),
         border: const OutlineInputBorder(),
         hintText: hintText,
       ),
-      style: TextStyles.styleStandar(),
+      style: TextStyles.styleStandar(
+          color: isError ? DesktopColors.errorColor : null),
     );
   }
 }

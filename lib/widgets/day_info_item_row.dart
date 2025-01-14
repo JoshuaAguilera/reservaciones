@@ -124,14 +124,23 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                       size: 11,
                       color: Theme.of(context).primaryColor,
                     ),
-                    for (var element in widget.tarifa.temporadas!)
-                      _itemSeasonInfo(
-                        nombre: element.nombre ?? '',
-                        estanciaMin: element.estanciaMinima,
-                        isCash: element.forCash ?? false,
-                        isGroup: element.forGroup ?? false,
-                        porcentaje: element.porcentajePromocion,
+                    SizedBox(
+                      height: 325,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            for (var element in widget.tarifa.temporadas!)
+                              _itemSeasonInfo(
+                                nombre: element.nombre ?? '',
+                                estanciaMin: element.estanciaMinima,
+                                isCash: element.forCash ?? false,
+                                isGroup: element.forGroup ?? false,
+                                porcentaje: element.porcentajePromocion,
+                              ),
+                          ],
+                        ),
                       ),
+                    )
                   ],
                 ),
               ),

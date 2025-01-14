@@ -24,6 +24,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
         c.upgrade_menor AS tarifaBaseUpgradeMenor, 
         c.upgrade_pax_adic AS tarifaBaseUpgradePaxAdic, 
         c.tarifa_padre_id AS tarifaPadreId, 
+        c.tarifa_origen_id AS tarifaOrigenId, 
         p.id AS tarifaId, 
         p.code AS tarifaCode,
         p.fecha AS tarifaFecha,
@@ -82,6 +83,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
 
     for (final row in rows) {
       final tarifaBaseId = row.read<int>('tarifaBaseId');
+      final tarifaOrigenId = row.read<int?>('tarifaOrigenId');
       final code = row.read<String?>('tarifaBaseCode');
       final nombre = row.read<String?>('tarifaBaseNombre');
       final descuento = row.read<double?>('tarifaBaseDescuento');
@@ -100,6 +102,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
             upgradeCategoria: upgradeCategoria,
             upgradeMenor: upgradeMenor,
             upgradePaxAdic: upgradePaxAdic,
+            tarifaOrigenId: tarifaOrigenId,
             tarifaPadre: tarifaPadreId != null
                 ? (await getBaseTariffComplement(tarifaBaseId: tarifaPadreId))
                     .first
@@ -123,20 +126,31 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
         .write(baseTariff);
   }
 
+  Future<int> removeOrigenTarifaId({required int? origenId}) {
+    return (update(tarifaBase)
+          ..where((tbl) => tbl.tarifaOrigenId.equals(origenId!)))
+        .write(
+      const TarifaBaseCompanion(
+        tarifaOrigenId: Value(null),
+      ),
+    );
+  }
+
   Future<int> removePadreTarifaId({required int? padreId}) {
     return (update(tarifaBase)
           ..where((tbl) => tbl.tarifaPadreId.equals(padreId!)))
         .write(
       const TarifaBaseCompanion(
         tarifaPadreId: Value(null),
+        tarifaOrigenId: Value(null),
+        descIntegrado: Value(null),
       ),
     );
   }
 
   Future<int> deleteBaseTariff(TarifaBaseInt tarifaBaseSelect) {
-    if (tarifaBaseSelect.tarifaPadre != null) {
-      removePadreTarifaId(padreId: tarifaBaseSelect.tarifaPadre?.id);
-    }
+    removePadreTarifaId(padreId: tarifaBaseSelect.id);
+    removeOrigenTarifaId(origenId: tarifaBaseSelect.id);
 
     return (delete(tarifaBase)..where((t) => t.id.equals(tarifaBaseSelect.id!)))
         .go();

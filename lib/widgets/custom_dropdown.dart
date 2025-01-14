@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -21,7 +20,9 @@ class CustomDropdown {
     bool calculateWidth = true,
     bool compact = false,
     double compactWidth = 120,
+    double compactHeight = 30,
     bool withPermisse = true,
+    double dyCompact = -8,
   }) {
     List<String> items = elements.toList();
 
@@ -32,7 +33,7 @@ class CustomDropdown {
     return StatefulBuilder(
       builder: (context, setState) {
         return Container(
-          height: compact ? 30 : null,
+          height: compact ? compactHeight : null,
           width: compact ? compactWidth : null,
           child: Tooltip(
             message: withPermisse ? "" : "No autorizado",
@@ -60,7 +61,7 @@ class CustomDropdown {
                         : !compact
                             ? null
                             : Transform.translate(
-                                offset: const Offset(0, -8),
+                                offset: Offset(0, dyCompact),
                                 child: const Icon(Icons.arrow_drop_down),
                               ),
                     inputDecorationTheme: !compact

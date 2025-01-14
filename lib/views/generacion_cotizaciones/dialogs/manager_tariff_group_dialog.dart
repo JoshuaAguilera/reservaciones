@@ -16,6 +16,7 @@ import '../../../providers/habitacion_provider.dart';
 import '../../../ui/buttons.dart';
 import '../../../widgets/custom_dropdown.dart';
 import '../../../widgets/item_rows.dart';
+import '../../../widgets/select_buttons_widget.dart';
 import '../../../widgets/textformfield_custom.dart';
 
 class ManagerTariffGroupDialog extends ConsumerStatefulWidget {
@@ -44,6 +45,10 @@ class _ManagerTariffGroupDialogState
   String temporadaSelect = '';
   Temporada? temporadaDataSelect;
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
+  List<Map<String, Color>> categoriesColor = [
+    {"VISTA A LA RESERVA": DesktopColors.vistaReserva},
+    {"VISTA PARCIAL AL MAR": DesktopColors.vistaParcialMar},
+  ];
   String selectCategory = "VISTA A LA RESERVA";
   final _formKeyManager = GlobalKey<FormState>();
   List<TarifaXDia?> selectTariffs = [];
@@ -260,68 +265,17 @@ class _ManagerTariffGroupDialogState
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            height: 35,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            child: StatefulBuilder(
-                              builder: (context, snapshot) {
-                                return ListView.builder(
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: 2,
-                                  scrollDirection: Axis.horizontal,
-                                  shrinkWrap: true,
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 2, vertical: 3),
-                                      child: SelectableButton(
-                                        selected:
-                                            selectCategory == categorias[index],
-                                        roundActive: 6,
-                                        round: 6,
-                                        color: Utility.darken(
-                                            selectCategory == categorias.first
-                                                ? DesktopColors.vistaReserva
-                                                : DesktopColors.vistaParcialMar,
-                                            -0.15),
-                                        onPressed: () {
-                                          if (selectCategory ==
-                                              categorias[index]) return;
-
-                                          setState(() => selectCategory =
-                                              categorias[index]);
-                                          _applyDiscountTariff(
-                                            temporadaDataSelect,
-                                            descuentoText:
-                                                _descuentoController.text,
-                                          );
-                                          setState(() {});
-                                        },
-                                        child: Text(
-                                          categorias[index],
-                                          style: TextStyle(
-                                            color: Utility.darken(
-                                              selectCategory == categorias.first
-                                                  ? DesktopColors.vistaReserva
-                                                  : DesktopColors
-                                                      .vistaParcialMar,
-                                              0.15,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                          SelectButtonsWidget(
+                            selectButton: selectCategory,
+                            buttons: categoriesColor,
+                            onPressed: (index) {
+                              selectCategory = categorias[index];
+                              _applyDiscountTariff(
+                                temporadaDataSelect,
+                                descuentoText: _descuentoController.text,
+                              );
+                              setState(() {});
+                            },
                           ),
                           const SizedBox(height: 22),
                           FormTariffWidget(

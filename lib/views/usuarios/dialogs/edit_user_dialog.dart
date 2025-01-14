@@ -5,17 +5,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/ui/title_page.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../database/database.dart';
-import '../../services/auth_service.dart';
-import '../../ui/buttons.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/inside_snackbar.dart';
-import '../../utils/encrypt/encrypter.dart';
-import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/desktop_colors.dart';
-import '../../widgets/change_password_widget.dart';
-import '../../widgets/text_styles.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../../database/database.dart';
+import '../../../services/auth_service.dart';
+import '../../../ui/buttons.dart';
+import '../../../ui/custom_widgets.dart';
+import '../../../ui/inside_snackbar.dart';
+import '../../../utils/encrypt/encrypter.dart';
+import '../../../utils/helpers/constants.dart';
+import '../../../utils/helpers/desktop_colors.dart';
+import '../../../widgets/change_password_widget.dart';
+import '../../../widgets/text_styles.dart';
+import '../../../widgets/textformfield_custom.dart';
 
 class EditUserDialog extends StatefulWidget {
   const EditUserDialog({
@@ -167,21 +167,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                      child: Column(
-                        children: [
-                          TitlePage(
-                            icons: CupertinoIcons.person,
-                            isDialog: true,
-                            title: widget.usuario != null
-                                ? "Editar Usuario"
-                                : "Agregar Usuario",
-                            subtitle:
-                                "${widget.usuario != null ? "Edita" : "Asigna"} atributos y maneja el acceso del usuario",
-                          )
-                        ],
-                      ),
+                    TitlePage(
+                      icons: CupertinoIcons.person,
+                      isDialog: true,
+                      title: widget.usuario != null
+                          ? "Editar Usuario"
+                          : "Agregar Usuario",
+                      subtitle:
+                          "${widget.usuario != null ? "Edita" : "Asigna"} atributos y maneja el acceso del usuario",
                     ),
                     Divider(
                         color: Theme.of(context).primaryColor, thickness: 0.6),

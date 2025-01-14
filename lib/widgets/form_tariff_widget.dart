@@ -14,6 +14,7 @@ class FormTariffWidget extends StatefulWidget {
     this.isEditing = false,
     this.applyAutoCalculation = false,
     this.autoCalculation,
+    this.applyRound = false,
   });
 
   final TextEditingController tarifaAdultoController;
@@ -25,12 +26,21 @@ class FormTariffWidget extends StatefulWidget {
   final bool isEditing;
   final bool applyAutoCalculation;
   final void Function()? autoCalculation;
+  final bool applyRound;
 
   @override
   State<FormTariffWidget> createState() => _FormTariffWidgetState();
 }
 
 class _FormTariffWidgetState extends State<FormTariffWidget> {
+  TextEditingController _roundController(TextEditingController controller) {
+    if (!widget.applyRound) {
+      return controller;
+    }
+    return TextEditingController(
+        text: "${double.tryParse(controller.text)?.round().toDouble()}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
@@ -52,7 +62,7 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                     }
                     widget.onUpdate.call();
                   },
-                  controller: widget.tarifaAdultoController,
+                  controller: _roundController(widget.tarifaAdultoController),
                   readOnly: !widget.isEditing,
                 ),
               ),
@@ -70,7 +80,8 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                         widget.onUpdate.call();
                       }
                     },
-                    controller: widget.tarifaAdultoTPLController,
+                    controller:
+                        _roundController(widget.tarifaAdultoTPLController),
                     readOnly:
                         (!widget.isEditing || widget.applyAutoCalculation),
                   ),
@@ -94,7 +105,8 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                         widget.onUpdate.call();
                       }
                     },
-                    controller: widget.tarifaAdultoCPLController,
+                    controller:
+                        _roundController(widget.tarifaAdultoCPLController),
                     readOnly:
                         (!widget.isEditing || widget.applyAutoCalculation),
                   ),
@@ -107,7 +119,8 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                   isMoneda: true,
                   isNumeric: true,
                   isDecimal: true,
-                  controller: widget.tarifaPaxAdicionalController,
+                  controller:
+                      _roundController(widget.tarifaPaxAdicionalController),
                   onChanged: (p0) {
                     if (widget.autoCalculation != null) {
                       widget.autoCalculation!.call();
@@ -129,7 +142,7 @@ class _FormTariffWidgetState extends State<FormTariffWidget> {
                   isMoneda: true,
                   isNumeric: true,
                   isDecimal: true,
-                  controller: widget.tarifaMenoresController,
+                  controller: _roundController(widget.tarifaMenoresController),
                   onChanged: (p0) => widget.onUpdate.call(),
                   readOnly: !widget.isEditing,
                 ),

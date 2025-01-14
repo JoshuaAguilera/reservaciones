@@ -9,4 +9,5 @@ class TarifaBase extends Table {
   RealColumn get upgradeMenor => real().nullable()();
   RealColumn get upgradePaxAdic => real().nullable()();
   IntColumn get tarifaPadreId => integer().nullable().references(TarifaBase, #id)();
+  IntColumn get tarifaOrigenId => integer().nullable().references(TarifaBase, #id)();
 }

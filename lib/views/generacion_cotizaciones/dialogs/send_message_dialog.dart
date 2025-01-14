@@ -2,21 +2,36 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../../database/database.dart';
+import '../../../services/cotizacion_service.dart';
+import '../../../services/send_quote_service.dart';
 import '../../../ui/buttons.dart';
 import '../../../ui/inside_snackbar.dart';
+import '../../../ui/title_page.dart';
 import '../../../utils/helpers/desktop_colors.dart';
 import '../../../widgets/text_styles.dart';
+import '../../../widgets/textformfield_custom.dart';
 
 class SendMessageDialog extends StatefulWidget {
-  const SendMessageDialog(
-      {super.key, required this.message, required this.nombreHuesped});
+  const SendMessageDialog({
+    super.key,
+    required this.message,
+    required this.nombreHuesped,
+    required this.numberContact,
+    required this.cotizacionId,
+    this.saveFunction,
+  });
 
   final String message;
   final String nombreHuesped;
+  final String numberContact;
+  final int cotizacionId;
+  final void Function(String)? saveFunction;
 
   @override
   State<SendMessageDialog> createState() => _SendMessageDialogState();
@@ -24,19 +39,66 @@ class SendMessageDialog extends StatefulWidget {
 
 class _SendMessageDialogState extends State<SendMessageDialog> {
   final _messageController = TextEditingController();
+  TextEditingController _newNumberController = TextEditingController();
   bool inProcess = false;
+  bool isSaving = false;
   bool isEditable = false;
-  bool showMessageCopy = false;
+  bool showMessage = false;
+  String typeMessage = "info";
+  String snackMessage = "Mensaje copiado en el portapapeles.";
+  final _formKeyMessage = GlobalKey<FormState>();
 
   @override
   void initState() {
     _messageController.text = widget.message;
+    _newNumberController = TextEditingController(text: widget.numberContact);
     super.initState();
   }
 
   void _toggleSnackbar() {
-    setState(() => showMessageCopy = true);
-    Future.delayed(3.seconds, () => setState(() => showMessageCopy = false));
+    setState(() => showMessage = true);
+    Future.delayed(3.seconds, () => setState(() => showMessage = false));
+  }
+
+  Future<bool> _sendingMessage() async {
+    bool send = false;
+    try {
+      await SendQuoteService().sendQuoteWhatsApp(
+        widget.numberContact.isNotEmpty
+            ? widget.numberContact
+            : _messageController.text
+                .trim()
+                .replaceAll(r'🏞️', "")
+                .replaceAll(r'🌊', ""),
+      );
+
+      send = true;
+    } catch (e) {
+      print(e);
+      snackMessage = "Error al enviar mensaje por web WhatsApp";
+      typeMessage = "danger";
+      setState(() {});
+      _toggleSnackbar();
+    }
+
+    return send;
+  }
+
+  Future<void> _sendMessage() async {
+    if (!_formKeyMessage.currentState!.validate()) {
+      return;
+    }
+
+    inProcess = true;
+    setState(() {});
+
+    if (!mounted) return;
+    bool status = await _sendingMessage();
+    inProcess = false;
+    setState(() {});
+    if (!status) return;
+
+    Navigator.of(context).pop(true);
   }
 
   @override
@@ -46,7 +108,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: SizedBox(
-        height: 500,
+        height: widget.numberContact.isEmpty ? 580 : 500,
         width: 400,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,51 +117,13 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 45,
-                                height: 45,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: brightness == Brightness.light
-                                          ? Colors.black87
-                                          : Colors.white,
-                                      width: 0.5,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(9))),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Brand(
-                                    Brands.whatsapp,
-                                    size: 32,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextStyles.titleText(
-                                    text: "Enviar Mensaje de WhatsApp",
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  TextStyles.standardText(
-                                    text:
-                                        "Revisa o modifica el mensaje predefinido para cliente.",
-                                    size: 10.5,
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                    const TitlePage(
+                      icons: Bootstrap.whatsapp,
+                      isDialog: true,
+                      title: "Enviar Mensaje de WhatsApp",
+                      sizeSubtitle: 10,
+                      subtitle:
+                          "Revisa o modifica el mensaje predefinido para cliente.",
                     ),
                     Divider(
                         color: Theme.of(context).primaryColor, thickness: 0.6),
@@ -146,6 +170,11 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                                           icon: Iconsax.copy_bold,
                                           tooltip: "Copiar",
                                           onPressed: () {
+                                            snackMessage =
+                                                "Mensaje copiado en el portapapeles.";
+                                            typeMessage = "info";
+                                            setState(() {});
+
                                             Clipboard.setData(ClipboardData(
                                                 text: _messageController.text));
 
@@ -170,14 +199,33 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                             top: 100,
                             right: 70,
                             child: insideSnackBar(
-                              message: "Mensaje copiado en el portapapeles.",
-                              type: 'info',
-                              showAnimation: showMessageCopy,
+                              message: snackMessage,
+                              type: typeMessage,
+                              showAnimation: showMessage,
                             ),
                           ),
                         ],
                       ),
                     ),
+                    if (widget.numberContact.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        child: Form(
+                          key: _formKeyMessage,
+                          child: TextFormFieldCustom.textFormFieldwithBorder(
+                            name: "Numero de contacto de WhatsApp",
+                            withLabelAndHint: true,
+                            hintText: "Ejemp: 52 9589990000",
+                            msgError: "Campo requerido*",
+                            isRequired: true,
+                            isNumeric: true,
+                            controller: _newNumberController,
+                            onFieldSubmitted: isSaving
+                                ? null
+                                : (p0) async => await _sendMessage(),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -185,31 +233,82 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: widget.numberContact.isEmpty
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: TextStyles.standardText(
-                      text: "Cerrar",
-                      isBold: true,
-                      size: 12.5,
-                      color: brightness == Brightness.light
-                          ? DesktopColors.cerulean
-                          : DesktopColors.azulUltClaro,
+                  if (widget.numberContact.isEmpty)
+                    Buttons.commonButton(
+                      text: "Guardar y enviar",
+                      isLoading: isSaving,
+                      sizeText: 12.5,
+                      onPressed: inProcess
+                          ? null
+                          : () async {
+                              if (!_formKeyMessage.currentState!.validate()) {
+                                return;
+                              }
+
+                              isSaving = true;
+                              setState(() {});
+
+                              bool result = await CotizacionService()
+                                  .updateCotizacion(CotizacionData(
+                                id: widget.cotizacionId,
+                                numeroTelefonico: _newNumberController.text,
+                              ));
+
+                              if (!result) {
+                                snackMessage =
+                                    "Error al guardar nuevo contacto";
+                                typeMessage = "danger";
+                                setState(() {});
+
+                                _toggleSnackbar();
+                                return;
+                              }
+
+                              if (widget.saveFunction != null) {
+                                widget.saveFunction!
+                                    .call(_newNumberController.text);
+                              }
+
+                              if (!mounted) return;
+                              bool status = await _sendingMessage();
+                              isSaving = false;
+                              setState(() {});
+                              if (!status) return;
+
+                              Navigator.of(context).pop(true);
+                            },
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Buttons.commonButton(
-                    text: "Enviar por WhatsApp Web",
-                    isLoading: inProcess,
-                    sizeText: 12.5,
-                    onPressed: () {
-                      inProcess = true;
-                      setState(() {});
-                      Navigator.of(context).pop(_messageController.text);
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: (inProcess || isSaving)
+                            ? null
+                            : () {
+                                Navigator.pop(context);
+                              },
+                        child: TextStyles.standardText(
+                          text: "Cerrar",
+                          isBold: true,
+                          size: 12.5,
+                          color: brightness == Brightness.light
+                              ? DesktopColors.cerulean
+                              : DesktopColors.azulUltClaro,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Buttons.commonButton(
+                        text: "Enviar por Web",
+                        isLoading: inProcess,
+                        sizeText: 12.5,
+                        onPressed:
+                            isSaving ? null : () async => await _sendMessage(),
+                      ),
+                    ],
                   ),
                 ],
               ),

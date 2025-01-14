@@ -157,13 +157,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     }
 
     Future saveQuoteBD() async {
-      if (!(await CotizacionService().createCotizacion(
+      int id = await CotizacionService().createCotizacion(
         cotizacion: cotizacion,
         habitaciones: habitaciones,
         folio: folio,
         prefijoInit: prefijoInit,
         isQuoteGroup: typeQuote,
-      ))) {
+      );
+
+      if (id == 0) {
         if (!context.mounted) return;
         showSnackBar(
           type: "danger",
@@ -175,10 +177,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       }
 
       receiptQuotePresent = cotizacion.CopyWith();
+      receiptQuotePresent.id = id;
       receiptQuotePresent.folioPrincipal = folio;
       receiptQuotePresent.esGrupo = typeQuote;
       receiptQuotePresent.numeroTelefonico =
-          prefijoInit.prefijo + (cotizacion.numeroTelefonico ?? '');
+          (cotizacion.numeroTelefonico ?? '').isEmpty
+              ? ""
+              : prefijoInit.prefijo.replaceAll("+", "") +
+                  (cotizacion.numeroTelefonico ?? '');
       receiptQuotePresent.habitaciones = [];
       for (var element in habitaciones) {
         receiptQuotePresent.habitaciones!.add(element.CopyWith());
@@ -294,12 +300,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             .textFormFieldwithBorder(
                                           name: "Nombre completo",
                                           msgError: "Campo requerido*",
-                                          initialValue:
-                                              cotizacion.nombreHuesped,
+                                          controller: TextEditingController(
+                                              text: cotizacion.nombreHuesped ??
+                                                  ''),
                                           isRequired: true,
-                                          onChanged: (p0) {
-                                            cotizacion.nombreHuesped = p0;
-                                          },
+                                          onChanged: (p0) =>
+                                              cotizacion.nombreHuesped = p0,
+                                          onUnfocus: () => setState(() {}),
                                         ),
                                         Row(
                                           crossAxisAlignment:
@@ -334,8 +341,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 name:
                                                     "Numero Telefonico (Contacto o WhatsApp)",
                                                 msgError: "Campo requerido*",
-                                                initialValue:
-                                                    cotizacion.numeroTelefonico,
+                                                controller: TextEditingController(
+                                                    text: cotizacion
+                                                            .numeroTelefonico ??
+                                                        ''),
                                                 isNumeric: true,
                                                 isDecimal: false,
                                                 isRequired: false,
@@ -343,6 +352,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   cotizacion.numeroTelefonico =
                                                       p0;
                                                 },
+                                                onUnfocus: () =>
+                                                    setState(() {}),
                                               ),
                                             ),
                                             const SizedBox(width: 12),
@@ -351,13 +362,17 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                   .textFormFieldwithBorder(
                                                 name: "Correo electronico",
                                                 msgError: "Campo requerido*",
-                                                initialValue: cotizacion
-                                                    .correoElectronico,
+                                                controller: TextEditingController(
+                                                    text: cotizacion
+                                                            .correoElectronico ??
+                                                        ''),
                                                 isRequired: false,
                                                 onChanged: (p0) {
                                                   cotizacion.correoElectronico =
                                                       p0;
                                                 },
+                                                onUnfocus: () =>
+                                                    setState(() {}),
                                               ),
                                             ),
                                           ],
@@ -529,6 +544,18 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                     saveRooms:
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
+                    showCancel: (habitaciones.isNotEmpty ||
+                        (cotizacion.nombreHuesped?.isNotEmpty ?? false) ||
+                        (cotizacion.correoElectronico?.isNotEmpty ?? false) ||
+                        (cotizacion.numeroTelefonico?.isNotEmpty ?? false)),
+                    onCancel: () {
+                      ref
+                          .read(cotizacionProvider.notifier)
+                          .update((state) => Cotizacion());
+                      ref.watch(HabitacionProvider.provider.notifier).clear();
+
+                      setState(() {});
+                    },
                     onSaveQuote: isFinish
                         ? () {
                             isFinish = false;

@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/views/tarifario/manager_cash_tariff_dialog.dart';
+import 'package:generador_formato/views/tarifario/dialogs/manager_cash_tariff_dialog.dart';
 import 'package:generador_formato/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -52,7 +52,7 @@ class CustomWidgets {
       return Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 23, right: 21),
+            padding: const EdgeInsets.only(bottom: 15, top: 5),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
@@ -111,18 +111,21 @@ class CustomWidgets {
                             flex: 2,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: FormWidgets.inputSwitch(
-                                compact:
-                                    MediaQuery.of(context).size.width < 950,
-                                name: "Usar tarifas",
-                                value: temporada.useTariff ?? false,
-                                activeColor: Theme.of(context).dividerColor,
-                                context: context,
-                                onChanged: (p0) {
-                                  onChangedUseTariff?.call(p0);
-                                  temporada.porcentajePromocion = null;
-                                  onChangedDescuento!.call('');
-                                },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: FormWidgets.inputSwitch(
+                                  compact:
+                                      MediaQuery.of(context).size.width < 970,
+                                  name: "Usar tarifas",
+                                  value: temporada.useTariff ?? false,
+                                  activeColor: Theme.of(context).dividerColor,
+                                  context: context,
+                                  onChanged: (p0) {
+                                    onChangedUseTariff?.call(p0);
+                                    temporada.porcentajePromocion = null;
+                                    onChangedDescuento!.call('');
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -488,12 +491,15 @@ class CustomWidgets {
     );
   }
 
-  static Widget checkBoxWithDescription(BuildContext context,
-      {required String title,
-      required String description,
-      required bool value,
-      required void Function(bool?) onChanged,
-      Color? activeColor}) {
+  static Widget checkBoxWithDescription(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required bool value,
+    required void Function(bool?) onChanged,
+    Color? activeColor,
+    bool compact = false,
+  }) {
     return Column(
       children: [
         Row(
@@ -513,34 +519,49 @@ class CustomWidgets {
               ),
             ),
             Expanded(
-              child: TextStyles.standardText(
-                text: title,
-                color: Theme.of(context).primaryColor,
-                size: 12,
-                overClip: true,
+              child: Row(
+                children: [
+                  TextStyles.standardText(
+                    text: title,
+                    color: Theme.of(context).primaryColor,
+                    size: 12,
+                    overClip: true,
+                  ),
+                  if (compact)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Tooltip(
+                        message: description,
+                        textAlign: TextAlign.center,
+                        child:
+                            const Icon(Iconsax.info_circle_outline, size: 22),
+                      ),
+                    )
+                ],
               ),
-            )
+            ),
           ],
         ),
-        TextStyles.standardText(
-            text: description,
-            color: Theme.of(context).primaryColor,
-            size: 10,
-            overClip: true,
-            aling: TextAlign.justify),
-        const SizedBox(height: 30),
+        if (!compact)
+          TextStyles.standardText(
+              text: description,
+              color: Theme.of(context).primaryColor,
+              size: 10,
+              overClip: true,
+              aling: TextAlign.justify),
+        if (!compact) const SizedBox(height: 30),
       ],
     );
   }
 
-  static Widget titleFormPage({
-    required void Function()? onPressedBack,
-    required BuildContext context,
-    required String title,
-    void Function()? onPressedSaveButton,
-    bool showSaveButton = true,
-    Widget? optionPage,
-  }) {
+  static Widget titleFormPage(
+      {required void Function()? onPressedBack,
+      required BuildContext context,
+      required String title,
+      void Function()? onPressedSaveButton,
+      bool showSaveButton = true,
+      Widget? optionPage,
+      bool isLoadingButton = false}) {
     return Column(
       children: [
         Row(
@@ -587,6 +608,7 @@ class CustomWidgets {
                       onPressedSaveButton.call();
                     }
                   },
+                  isLoading: isLoadingButton,
                   sizeText: 15,
                   text: "Guardar",
                 ),
@@ -843,9 +865,10 @@ class CustomWidgets {
         border: Border.all(
           color: color != null
               ? useWhiteForeground(color)
-                  ? Colors.white
+                  ? Utility.darken(color, -0.40)
                   : Utility.darken(color, 0.25)
-              : Utility.getColorTypeUser(rol) ?? DesktopColors.grisPalido,
+              : Utility.getColorTypeUser(rol, isText: true) ??
+                  DesktopColors.grisPalido,
           width: 1.5,
         ),
         borderRadius: const BorderRadius.all(
@@ -859,12 +882,12 @@ class CustomWidgets {
           aling: TextAlign.center,
           color: color != null
               ? useWhiteForeground(color)
-                  ? Colors.white
+                  ? Utility.darken(color, -0.40)
                   : Utility.darken(color, 0.25)
               : Utility.darken(
-                  Utility.getColorTypeUser(rol) ?? DesktopColors.grisPalido,
-                  brightness == Brightness.light ? 0.1 : -0.1,
-                ),
+                  Utility.getColorTypeUser(rol, isText: true) ??
+                      DesktopColors.grisPalido,
+                  0.1),
           overClip: true,
           isBold: true,
         ),
@@ -917,6 +940,52 @@ class CustomWidgets {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  static Widget titleSeccion(
+    BuildContext context, {
+    required String title,
+    String subTitle = "",
+    double size = 18,
+    double bottomPadding = 10,
+    double topPadding = 0,
+    Widget? child,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomPadding, top: topPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: child != null
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextStyles.titleText(
+                text: title,
+                size: size,
+                color: Theme.of(context).dividerColor,
+              ),
+              if (subTitle.isNotEmpty)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: TextStyles.titleText(
+                      text: subTitle,
+                      size: 13,
+                      color: Theme.of(context).primaryColor,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              if (child != null) child,
+            ],
+          ),
+          Divider(color: Theme.of(context).primaryColor),
+        ],
       ),
     );
   }

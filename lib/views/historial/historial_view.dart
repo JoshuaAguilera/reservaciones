@@ -275,8 +275,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             .fadeIn()
                         : SizedBox(
                             width: screenWidth,
-                            height:
-                                Utility.limitHeightList(list.length, 10, 150),
+                            height: Utility.limitHeightList(
+                                list.length, 10, screenHeight * 0.85),
                             child: ListView.builder(
                               itemCount: list.length,
                               shrinkWrap: true,
@@ -308,6 +308,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       // descuento: list[index].descuento,
                                       // total: list[index].total,
                                       habitaciones: respHabitaciones,
+                                      id: list[index].id,
                                     );
 
                                     ref
@@ -359,7 +360,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   loading: () {
                     return ProgressIndicatorCustom(
                       screenHight: screenHeight,
-                      inHorizontal: true,
+                      typeLoading: "progressiveDots",
                       message: TextStyles.standardText(
                         text: "Buscando cotizaciones",
                         aling: TextAlign.center,

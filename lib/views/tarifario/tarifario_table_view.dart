@@ -9,7 +9,6 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
-import '../../widgets/dynamic_widget.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
@@ -196,7 +195,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         error: (error, stackTrace) => const SizedBox(),
                         loading: () => ProgressIndicatorCustom(
                           screenHight: screenHeight,
-                          inHorizontal: true,
+                          typeLoading: "progressiveDots",
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
                             aling: TextAlign.center,
@@ -230,7 +229,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                     extended: widget.sideController.extended)),
             loading: () => ProgressIndicatorCustom(
               screenHight: screenHeight,
-              inHorizontal: true,
+              typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Buscando Tarifario",
                 aling: TextAlign.center,

@@ -919,8 +919,8 @@ class $CotizacionTable extends Cotizacion
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
-      'fecha', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      'fecha', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _esGrupoMeta =
       const VerificationMeta('esGrupo');
   @override
@@ -1014,8 +1014,6 @@ class $CotizacionTable extends Cotizacion
     if (data.containsKey('fecha')) {
       context.handle(
           _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
-    } else if (isInserting) {
-      context.missing(_fechaMeta);
     }
     if (data.containsKey('es_grupo')) {
       context.handle(_esGrupoMeta,
@@ -1063,7 +1061,7 @@ class $CotizacionTable extends Cotizacion
       correoElectrico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
       fecha: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       esGrupo: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
       esConcretado: attachedDatabase.typeMapping
@@ -1089,7 +1087,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final String? nombreHuesped;
   final String? numeroTelefonico;
   final String? correoElectrico;
-  final DateTime fecha;
+  final DateTime? fecha;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
@@ -1101,7 +1099,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       this.nombreHuesped,
       this.numeroTelefonico,
       this.correoElectrico,
-      required this.fecha,
+      this.fecha,
       this.esGrupo,
       this.esConcretado,
       this.habitaciones,
@@ -1123,7 +1121,9 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     if (!nullToAbsent || correoElectrico != null) {
       map['correo_electrico'] = Variable<String>(correoElectrico);
     }
-    map['fecha'] = Variable<DateTime>(fecha);
+    if (!nullToAbsent || fecha != null) {
+      map['fecha'] = Variable<DateTime>(fecha);
+    }
     if (!nullToAbsent || esGrupo != null) {
       map['es_grupo'] = Variable<bool>(esGrupo);
     }
@@ -1157,7 +1157,8 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       correoElectrico: correoElectrico == null && nullToAbsent
           ? const Value.absent()
           : Value(correoElectrico),
-      fecha: Value(fecha),
+      fecha:
+          fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       esGrupo: esGrupo == null && nullToAbsent
           ? const Value.absent()
           : Value(esGrupo),
@@ -1185,7 +1186,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       nombreHuesped: serializer.fromJson<String?>(json['nombreHuesped']),
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
       correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
-      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      fecha: serializer.fromJson<DateTime?>(json['fecha']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
@@ -1202,7 +1203,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'nombreHuesped': serializer.toJson<String?>(nombreHuesped),
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
       'correoElectrico': serializer.toJson<String?>(correoElectrico),
-      'fecha': serializer.toJson<DateTime>(fecha),
+      'fecha': serializer.toJson<DateTime?>(fecha),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
@@ -1217,7 +1218,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<String?> nombreHuesped = const Value.absent(),
           Value<String?> numeroTelefonico = const Value.absent(),
           Value<String?> correoElectrico = const Value.absent(),
-          DateTime? fecha,
+          Value<DateTime?> fecha = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
           Value<String?> habitaciones = const Value.absent(),
@@ -1235,7 +1236,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
         correoElectrico: correoElectrico.present
             ? correoElectrico.value
             : this.correoElectrico,
-        fecha: fecha ?? this.fecha,
+        fecha: fecha.present ? fecha.value : this.fecha,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
             esConcretado.present ? esConcretado.value : this.esConcretado,
@@ -1326,7 +1327,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<String?> nombreHuesped;
   final Value<String?> numeroTelefonico;
   final Value<String?> correoElectrico;
-  final Value<DateTime> fecha;
+  final Value<DateTime?> fecha;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
@@ -1351,13 +1352,13 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.nombreHuesped = const Value.absent(),
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
-    required DateTime fecha,
+    this.fecha = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
     this.usuarioID = const Value.absent(),
     this.username = const Value.absent(),
-  }) : fecha = Value(fecha);
+  });
   static Insertable<CotizacionData> custom({
     Expression<int>? id,
     Expression<String>? folioPrincipal,
@@ -1392,7 +1393,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<String?>? nombreHuesped,
       Value<String?>? numeroTelefonico,
       Value<String?>? correoElectrico,
-      Value<DateTime>? fecha,
+      Value<DateTime?>? fecha,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
       Value<String?>? habitaciones,
@@ -3983,6 +3984,15 @@ class $TarifaBaseTable extends TarifaBase
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
+  static const VerificationMeta _tarifaOrigenIdMeta =
+      const VerificationMeta('tarifaOrigenId');
+  @override
+  late final GeneratedColumn<int> tarifaOrigenId = GeneratedColumn<int>(
+      'tarifa_origen_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3992,7 +4002,8 @@ class $TarifaBaseTable extends TarifaBase
         upgradeCategoria,
         upgradeMenor,
         upgradePaxAdic,
-        tarifaPadreId
+        tarifaPadreId,
+        tarifaOrigenId
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4045,6 +4056,12 @@ class $TarifaBaseTable extends TarifaBase
           tarifaPadreId.isAcceptableOrUnknown(
               data['tarifa_padre_id']!, _tarifaPadreIdMeta));
     }
+    if (data.containsKey('tarifa_origen_id')) {
+      context.handle(
+          _tarifaOrigenIdMeta,
+          tarifaOrigenId.isAcceptableOrUnknown(
+              data['tarifa_origen_id']!, _tarifaOrigenIdMeta));
+    }
     return context;
   }
 
@@ -4070,6 +4087,8 @@ class $TarifaBaseTable extends TarifaBase
           DriftSqlType.double, data['${effectivePrefix}upgrade_pax_adic']),
       tarifaPadreId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}tarifa_padre_id']),
+      tarifaOrigenId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_origen_id']),
     );
   }
 
@@ -4088,6 +4107,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
   final double? upgradeMenor;
   final double? upgradePaxAdic;
   final int? tarifaPadreId;
+  final int? tarifaOrigenId;
   const TarifaBaseData(
       {required this.id,
       this.code,
@@ -4096,7 +4116,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       this.upgradeCategoria,
       this.upgradeMenor,
       this.upgradePaxAdic,
-      this.tarifaPadreId});
+      this.tarifaPadreId,
+      this.tarifaOrigenId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4122,6 +4143,9 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
     if (!nullToAbsent || tarifaPadreId != null) {
       map['tarifa_padre_id'] = Variable<int>(tarifaPadreId);
     }
+    if (!nullToAbsent || tarifaOrigenId != null) {
+      map['tarifa_origen_id'] = Variable<int>(tarifaOrigenId);
+    }
     return map;
   }
 
@@ -4146,6 +4170,9 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       tarifaPadreId: tarifaPadreId == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaPadreId),
+      tarifaOrigenId: tarifaOrigenId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaOrigenId),
     );
   }
 
@@ -4161,6 +4188,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       upgradeMenor: serializer.fromJson<double?>(json['upgradeMenor']),
       upgradePaxAdic: serializer.fromJson<double?>(json['upgradePaxAdic']),
       tarifaPadreId: serializer.fromJson<int?>(json['tarifaPadreId']),
+      tarifaOrigenId: serializer.fromJson<int?>(json['tarifaOrigenId']),
     );
   }
   @override
@@ -4175,6 +4203,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       'upgradeMenor': serializer.toJson<double?>(upgradeMenor),
       'upgradePaxAdic': serializer.toJson<double?>(upgradePaxAdic),
       'tarifaPadreId': serializer.toJson<int?>(tarifaPadreId),
+      'tarifaOrigenId': serializer.toJson<int?>(tarifaOrigenId),
     };
   }
 
@@ -4186,7 +4215,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           Value<double?> upgradeCategoria = const Value.absent(),
           Value<double?> upgradeMenor = const Value.absent(),
           Value<double?> upgradePaxAdic = const Value.absent(),
-          Value<int?> tarifaPadreId = const Value.absent()}) =>
+          Value<int?> tarifaPadreId = const Value.absent(),
+          Value<int?> tarifaOrigenId = const Value.absent()}) =>
       TarifaBaseData(
         id: id ?? this.id,
         code: code.present ? code.value : this.code,
@@ -4202,6 +4232,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
             upgradePaxAdic.present ? upgradePaxAdic.value : this.upgradePaxAdic,
         tarifaPadreId:
             tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
+        tarifaOrigenId:
+            tarifaOrigenId.present ? tarifaOrigenId.value : this.tarifaOrigenId,
       );
   TarifaBaseData copyWithCompanion(TarifaBaseCompanion data) {
     return TarifaBaseData(
@@ -4223,6 +4255,9 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       tarifaPadreId: data.tarifaPadreId.present
           ? data.tarifaPadreId.value
           : this.tarifaPadreId,
+      tarifaOrigenId: data.tarifaOrigenId.present
+          ? data.tarifaOrigenId.value
+          : this.tarifaOrigenId,
     );
   }
 
@@ -4236,14 +4271,23 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           ..write('upgradeCategoria: $upgradeCategoria, ')
           ..write('upgradeMenor: $upgradeMenor, ')
           ..write('upgradePaxAdic: $upgradePaxAdic, ')
-          ..write('tarifaPadreId: $tarifaPadreId')
+          ..write('tarifaPadreId: $tarifaPadreId, ')
+          ..write('tarifaOrigenId: $tarifaOrigenId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, code, nombre, descIntegrado,
-      upgradeCategoria, upgradeMenor, upgradePaxAdic, tarifaPadreId);
+  int get hashCode => Object.hash(
+      id,
+      code,
+      nombre,
+      descIntegrado,
+      upgradeCategoria,
+      upgradeMenor,
+      upgradePaxAdic,
+      tarifaPadreId,
+      tarifaOrigenId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4255,7 +4299,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           other.upgradeCategoria == this.upgradeCategoria &&
           other.upgradeMenor == this.upgradeMenor &&
           other.upgradePaxAdic == this.upgradePaxAdic &&
-          other.tarifaPadreId == this.tarifaPadreId);
+          other.tarifaPadreId == this.tarifaPadreId &&
+          other.tarifaOrigenId == this.tarifaOrigenId);
 }
 
 class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
@@ -4267,6 +4312,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
   final Value<double?> upgradeMenor;
   final Value<double?> upgradePaxAdic;
   final Value<int?> tarifaPadreId;
+  final Value<int?> tarifaOrigenId;
   const TarifaBaseCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
@@ -4276,6 +4322,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.upgradeMenor = const Value.absent(),
     this.upgradePaxAdic = const Value.absent(),
     this.tarifaPadreId = const Value.absent(),
+    this.tarifaOrigenId = const Value.absent(),
   });
   TarifaBaseCompanion.insert({
     this.id = const Value.absent(),
@@ -4286,6 +4333,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.upgradeMenor = const Value.absent(),
     this.upgradePaxAdic = const Value.absent(),
     this.tarifaPadreId = const Value.absent(),
+    this.tarifaOrigenId = const Value.absent(),
   });
   static Insertable<TarifaBaseData> custom({
     Expression<int>? id,
@@ -4296,6 +4344,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     Expression<double>? upgradeMenor,
     Expression<double>? upgradePaxAdic,
     Expression<int>? tarifaPadreId,
+    Expression<int>? tarifaOrigenId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4306,6 +4355,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       if (upgradeMenor != null) 'upgrade_menor': upgradeMenor,
       if (upgradePaxAdic != null) 'upgrade_pax_adic': upgradePaxAdic,
       if (tarifaPadreId != null) 'tarifa_padre_id': tarifaPadreId,
+      if (tarifaOrigenId != null) 'tarifa_origen_id': tarifaOrigenId,
     });
   }
 
@@ -4317,7 +4367,8 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       Value<double?>? upgradeCategoria,
       Value<double?>? upgradeMenor,
       Value<double?>? upgradePaxAdic,
-      Value<int?>? tarifaPadreId}) {
+      Value<int?>? tarifaPadreId,
+      Value<int?>? tarifaOrigenId}) {
     return TarifaBaseCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
@@ -4327,6 +4378,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       upgradeMenor: upgradeMenor ?? this.upgradeMenor,
       upgradePaxAdic: upgradePaxAdic ?? this.upgradePaxAdic,
       tarifaPadreId: tarifaPadreId ?? this.tarifaPadreId,
+      tarifaOrigenId: tarifaOrigenId ?? this.tarifaOrigenId,
     );
   }
 
@@ -4357,6 +4409,9 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     if (tarifaPadreId.present) {
       map['tarifa_padre_id'] = Variable<int>(tarifaPadreId.value);
     }
+    if (tarifaOrigenId.present) {
+      map['tarifa_origen_id'] = Variable<int>(tarifaOrigenId.value);
+    }
     return map;
   }
 
@@ -4370,7 +4425,8 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
           ..write('upgradeCategoria: $upgradeCategoria, ')
           ..write('upgradeMenor: $upgradeMenor, ')
           ..write('upgradePaxAdic: $upgradePaxAdic, ')
-          ..write('tarifaPadreId: $tarifaPadreId')
+          ..write('tarifaPadreId: $tarifaPadreId, ')
+          ..write('tarifaOrigenId: $tarifaOrigenId')
           ..write(')'))
         .toString();
   }
@@ -5740,12 +5796,26 @@ class $PoliticasTable extends Politicas
   late final GeneratedColumn<int> limiteHabitacionCotizacion =
       GeneratedColumn<int>('limite_habitacion_cotizacion', aliasedName, true,
           type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _diasVigenciaCotIndMeta =
+      const VerificationMeta('diasVigenciaCotInd');
+  @override
+  late final GeneratedColumn<int> diasVigenciaCotInd = GeneratedColumn<int>(
+      'dias_vigencia_cot_ind', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _diasVigenciaCotGroupMeta =
+      const VerificationMeta('diasVigenciaCotGroup');
+  @override
+  late final GeneratedColumn<int> diasVigenciaCotGroup = GeneratedColumn<int>(
+      'dias_vigencia_cot_group', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         fechaActualizacion,
         intervaloHabitacionGratuita,
-        limiteHabitacionCotizacion
+        limiteHabitacionCotizacion,
+        diasVigenciaCotInd,
+        diasVigenciaCotGroup
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -5780,6 +5850,18 @@ class $PoliticasTable extends Politicas
               data['limite_habitacion_cotizacion']!,
               _limiteHabitacionCotizacionMeta));
     }
+    if (data.containsKey('dias_vigencia_cot_ind')) {
+      context.handle(
+          _diasVigenciaCotIndMeta,
+          diasVigenciaCotInd.isAcceptableOrUnknown(
+              data['dias_vigencia_cot_ind']!, _diasVigenciaCotIndMeta));
+    }
+    if (data.containsKey('dias_vigencia_cot_group')) {
+      context.handle(
+          _diasVigenciaCotGroupMeta,
+          diasVigenciaCotGroup.isAcceptableOrUnknown(
+              data['dias_vigencia_cot_group']!, _diasVigenciaCotGroupMeta));
+    }
     return context;
   }
 
@@ -5799,6 +5881,10 @@ class $PoliticasTable extends Politicas
       limiteHabitacionCotizacion: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
           data['${effectivePrefix}limite_habitacion_cotizacion']),
+      diasVigenciaCotInd: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}dias_vigencia_cot_ind']),
+      diasVigenciaCotGroup: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}dias_vigencia_cot_group']),
     );
   }
 
@@ -5813,11 +5899,15 @@ class Politica extends DataClass implements Insertable<Politica> {
   final DateTime? fechaActualizacion;
   final int? intervaloHabitacionGratuita;
   final int? limiteHabitacionCotizacion;
+  final int? diasVigenciaCotInd;
+  final int? diasVigenciaCotGroup;
   const Politica(
       {required this.id,
       this.fechaActualizacion,
       this.intervaloHabitacionGratuita,
-      this.limiteHabitacionCotizacion});
+      this.limiteHabitacionCotizacion,
+      this.diasVigenciaCotInd,
+      this.diasVigenciaCotGroup});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -5832,6 +5922,12 @@ class Politica extends DataClass implements Insertable<Politica> {
     if (!nullToAbsent || limiteHabitacionCotizacion != null) {
       map['limite_habitacion_cotizacion'] =
           Variable<int>(limiteHabitacionCotizacion);
+    }
+    if (!nullToAbsent || diasVigenciaCotInd != null) {
+      map['dias_vigencia_cot_ind'] = Variable<int>(diasVigenciaCotInd);
+    }
+    if (!nullToAbsent || diasVigenciaCotGroup != null) {
+      map['dias_vigencia_cot_group'] = Variable<int>(diasVigenciaCotGroup);
     }
     return map;
   }
@@ -5850,6 +5946,12 @@ class Politica extends DataClass implements Insertable<Politica> {
           limiteHabitacionCotizacion == null && nullToAbsent
               ? const Value.absent()
               : Value(limiteHabitacionCotizacion),
+      diasVigenciaCotInd: diasVigenciaCotInd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(diasVigenciaCotInd),
+      diasVigenciaCotGroup: diasVigenciaCotGroup == null && nullToAbsent
+          ? const Value.absent()
+          : Value(diasVigenciaCotGroup),
     );
   }
 
@@ -5864,6 +5966,9 @@ class Politica extends DataClass implements Insertable<Politica> {
           serializer.fromJson<int?>(json['intervaloHabitacionGratuita']),
       limiteHabitacionCotizacion:
           serializer.fromJson<int?>(json['limiteHabitacionCotizacion']),
+      diasVigenciaCotInd: serializer.fromJson<int?>(json['diasVigenciaCotInd']),
+      diasVigenciaCotGroup:
+          serializer.fromJson<int?>(json['diasVigenciaCotGroup']),
     );
   }
   @override
@@ -5876,6 +5981,8 @@ class Politica extends DataClass implements Insertable<Politica> {
           serializer.toJson<int?>(intervaloHabitacionGratuita),
       'limiteHabitacionCotizacion':
           serializer.toJson<int?>(limiteHabitacionCotizacion),
+      'diasVigenciaCotInd': serializer.toJson<int?>(diasVigenciaCotInd),
+      'diasVigenciaCotGroup': serializer.toJson<int?>(diasVigenciaCotGroup),
     };
   }
 
@@ -5883,7 +5990,9 @@ class Politica extends DataClass implements Insertable<Politica> {
           {int? id,
           Value<DateTime?> fechaActualizacion = const Value.absent(),
           Value<int?> intervaloHabitacionGratuita = const Value.absent(),
-          Value<int?> limiteHabitacionCotizacion = const Value.absent()}) =>
+          Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+          Value<int?> diasVigenciaCotInd = const Value.absent(),
+          Value<int?> diasVigenciaCotGroup = const Value.absent()}) =>
       Politica(
         id: id ?? this.id,
         fechaActualizacion: fechaActualizacion.present
@@ -5895,6 +6004,12 @@ class Politica extends DataClass implements Insertable<Politica> {
         limiteHabitacionCotizacion: limiteHabitacionCotizacion.present
             ? limiteHabitacionCotizacion.value
             : this.limiteHabitacionCotizacion,
+        diasVigenciaCotInd: diasVigenciaCotInd.present
+            ? diasVigenciaCotInd.value
+            : this.diasVigenciaCotInd,
+        diasVigenciaCotGroup: diasVigenciaCotGroup.present
+            ? diasVigenciaCotGroup.value
+            : this.diasVigenciaCotGroup,
       );
   Politica copyWithCompanion(PoliticasCompanion data) {
     return Politica(
@@ -5908,6 +6023,12 @@ class Politica extends DataClass implements Insertable<Politica> {
       limiteHabitacionCotizacion: data.limiteHabitacionCotizacion.present
           ? data.limiteHabitacionCotizacion.value
           : this.limiteHabitacionCotizacion,
+      diasVigenciaCotInd: data.diasVigenciaCotInd.present
+          ? data.diasVigenciaCotInd.value
+          : this.diasVigenciaCotInd,
+      diasVigenciaCotGroup: data.diasVigenciaCotGroup.present
+          ? data.diasVigenciaCotGroup.value
+          : this.diasVigenciaCotGroup,
     );
   }
 
@@ -5917,14 +6038,21 @@ class Politica extends DataClass implements Insertable<Politica> {
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
-          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
+          ..write('diasVigenciaCotInd: $diasVigenciaCotInd, ')
+          ..write('diasVigenciaCotGroup: $diasVigenciaCotGroup')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, fechaActualizacion,
-      intervaloHabitacionGratuita, limiteHabitacionCotizacion);
+  int get hashCode => Object.hash(
+      id,
+      fechaActualizacion,
+      intervaloHabitacionGratuita,
+      limiteHabitacionCotizacion,
+      diasVigenciaCotInd,
+      diasVigenciaCotGroup);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -5933,7 +6061,9 @@ class Politica extends DataClass implements Insertable<Politica> {
           other.fechaActualizacion == this.fechaActualizacion &&
           other.intervaloHabitacionGratuita ==
               this.intervaloHabitacionGratuita &&
-          other.limiteHabitacionCotizacion == this.limiteHabitacionCotizacion);
+          other.limiteHabitacionCotizacion == this.limiteHabitacionCotizacion &&
+          other.diasVigenciaCotInd == this.diasVigenciaCotInd &&
+          other.diasVigenciaCotGroup == this.diasVigenciaCotGroup);
 }
 
 class PoliticasCompanion extends UpdateCompanion<Politica> {
@@ -5941,23 +6071,31 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
   final Value<DateTime?> fechaActualizacion;
   final Value<int?> intervaloHabitacionGratuita;
   final Value<int?> limiteHabitacionCotizacion;
+  final Value<int?> diasVigenciaCotInd;
+  final Value<int?> diasVigenciaCotGroup;
   const PoliticasCompanion({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
     this.limiteHabitacionCotizacion = const Value.absent(),
+    this.diasVigenciaCotInd = const Value.absent(),
+    this.diasVigenciaCotGroup = const Value.absent(),
   });
   PoliticasCompanion.insert({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
     this.limiteHabitacionCotizacion = const Value.absent(),
+    this.diasVigenciaCotInd = const Value.absent(),
+    this.diasVigenciaCotGroup = const Value.absent(),
   });
   static Insertable<Politica> custom({
     Expression<int>? id,
     Expression<DateTime>? fechaActualizacion,
     Expression<int>? intervaloHabitacionGratuita,
     Expression<int>? limiteHabitacionCotizacion,
+    Expression<int>? diasVigenciaCotInd,
+    Expression<int>? diasVigenciaCotGroup,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5966,6 +6104,10 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
         'intervalo_habitacion_gratuita': intervaloHabitacionGratuita,
       if (limiteHabitacionCotizacion != null)
         'limite_habitacion_cotizacion': limiteHabitacionCotizacion,
+      if (diasVigenciaCotInd != null)
+        'dias_vigencia_cot_ind': diasVigenciaCotInd,
+      if (diasVigenciaCotGroup != null)
+        'dias_vigencia_cot_group': diasVigenciaCotGroup,
     });
   }
 
@@ -5973,7 +6115,9 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
       {Value<int>? id,
       Value<DateTime?>? fechaActualizacion,
       Value<int?>? intervaloHabitacionGratuita,
-      Value<int?>? limiteHabitacionCotizacion}) {
+      Value<int?>? limiteHabitacionCotizacion,
+      Value<int?>? diasVigenciaCotInd,
+      Value<int?>? diasVigenciaCotGroup}) {
     return PoliticasCompanion(
       id: id ?? this.id,
       fechaActualizacion: fechaActualizacion ?? this.fechaActualizacion,
@@ -5981,6 +6125,8 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
           intervaloHabitacionGratuita ?? this.intervaloHabitacionGratuita,
       limiteHabitacionCotizacion:
           limiteHabitacionCotizacion ?? this.limiteHabitacionCotizacion,
+      diasVigenciaCotInd: diasVigenciaCotInd ?? this.diasVigenciaCotInd,
+      diasVigenciaCotGroup: diasVigenciaCotGroup ?? this.diasVigenciaCotGroup,
     );
   }
 
@@ -6001,6 +6147,13 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
       map['limite_habitacion_cotizacion'] =
           Variable<int>(limiteHabitacionCotizacion.value);
     }
+    if (diasVigenciaCotInd.present) {
+      map['dias_vigencia_cot_ind'] = Variable<int>(diasVigenciaCotInd.value);
+    }
+    if (diasVigenciaCotGroup.present) {
+      map['dias_vigencia_cot_group'] =
+          Variable<int>(diasVigenciaCotGroup.value);
+    }
     return map;
   }
 
@@ -6010,7 +6163,9 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
-          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion')
+          ..write('limiteHabitacionCotizacion: $limiteHabitacionCotizacion, ')
+          ..write('diasVigenciaCotInd: $diasVigenciaCotInd, ')
+          ..write('diasVigenciaCotGroup: $diasVigenciaCotGroup')
           ..write(')'))
         .toString();
   }
@@ -6689,7 +6844,7 @@ typedef $$CotizacionTableCreateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> nombreHuesped,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  required DateTime fecha,
+  Value<DateTime?> fecha,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
@@ -6702,7 +6857,7 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> nombreHuesped,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  Value<DateTime> fecha,
+  Value<DateTime?> fecha,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
@@ -6732,7 +6887,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            Value<DateTime> fecha = const Value.absent(),
+            Value<DateTime?> fecha = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
@@ -6758,7 +6913,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> nombreHuesped = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            required DateTime fecha,
+            Value<DateTime?> fecha = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
@@ -7853,6 +8008,7 @@ typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
   Value<double?> upgradeMenor,
   Value<double?> upgradePaxAdic,
   Value<int?> tarifaPadreId,
+  Value<int?> tarifaOrigenId,
 });
 typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int> id,
@@ -7863,6 +8019,7 @@ typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
   Value<double?> upgradeMenor,
   Value<double?> upgradePaxAdic,
   Value<int?> tarifaPadreId,
+  Value<int?> tarifaOrigenId,
 });
 
 class $$TarifaBaseTableTableManager extends RootTableManager<
@@ -7890,6 +8047,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<double?> upgradeMenor = const Value.absent(),
             Value<double?> upgradePaxAdic = const Value.absent(),
             Value<int?> tarifaPadreId = const Value.absent(),
+            Value<int?> tarifaOrigenId = const Value.absent(),
           }) =>
               TarifaBaseCompanion(
             id: id,
@@ -7900,6 +8058,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             upgradeMenor: upgradeMenor,
             upgradePaxAdic: upgradePaxAdic,
             tarifaPadreId: tarifaPadreId,
+            tarifaOrigenId: tarifaOrigenId,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -7910,6 +8069,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<double?> upgradeMenor = const Value.absent(),
             Value<double?> upgradePaxAdic = const Value.absent(),
             Value<int?> tarifaPadreId = const Value.absent(),
+            Value<int?> tarifaOrigenId = const Value.absent(),
           }) =>
               TarifaBaseCompanion.insert(
             id: id,
@@ -7920,6 +8080,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             upgradeMenor: upgradeMenor,
             upgradePaxAdic: upgradePaxAdic,
             tarifaPadreId: tarifaPadreId,
+            tarifaOrigenId: tarifaOrigenId,
           ),
         ));
 }
@@ -7966,6 +8127,18 @@ class $$TarifaBaseTableFilterComposer
     final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaBaseTableFilterComposer get tarifaOrigenId {
+    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaOrigenId,
         referencedTable: $state.db.tarifaBase,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -8030,6 +8203,18 @@ class $$TarifaBaseTableOrderingComposer
     final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.tarifaPadreId,
+        referencedTable: $state.db.tarifaBase,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
+                $state.db.tarifaBase, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaBaseTableOrderingComposer get tarifaOrigenId {
+    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaOrigenId,
         referencedTable: $state.db.tarifaBase,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -8592,12 +8777,16 @@ typedef $$PoliticasTableCreateCompanionBuilder = PoliticasCompanion Function({
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
   Value<int?> limiteHabitacionCotizacion,
+  Value<int?> diasVigenciaCotInd,
+  Value<int?> diasVigenciaCotGroup,
 });
 typedef $$PoliticasTableUpdateCompanionBuilder = PoliticasCompanion Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
   Value<int?> limiteHabitacionCotizacion,
+  Value<int?> diasVigenciaCotInd,
+  Value<int?> diasVigenciaCotGroup,
 });
 
 class $$PoliticasTableTableManager extends RootTableManager<
@@ -8621,24 +8810,32 @@ class $$PoliticasTableTableManager extends RootTableManager<
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
             Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+            Value<int?> diasVigenciaCotInd = const Value.absent(),
+            Value<int?> diasVigenciaCotGroup = const Value.absent(),
           }) =>
               PoliticasCompanion(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
+            diasVigenciaCotInd: diasVigenciaCotInd,
+            diasVigenciaCotGroup: diasVigenciaCotGroup,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
             Value<int?> intervaloHabitacionGratuita = const Value.absent(),
             Value<int?> limiteHabitacionCotizacion = const Value.absent(),
+            Value<int?> diasVigenciaCotInd = const Value.absent(),
+            Value<int?> diasVigenciaCotGroup = const Value.absent(),
           }) =>
               PoliticasCompanion.insert(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
             limiteHabitacionCotizacion: limiteHabitacionCotizacion,
+            diasVigenciaCotInd: diasVigenciaCotInd,
+            diasVigenciaCotGroup: diasVigenciaCotGroup,
           ),
         ));
 }
@@ -8664,6 +8861,16 @@ class $$PoliticasTableFilterComposer
 
   ColumnFilters<int> get limiteHabitacionCotizacion => $state.composableBuilder(
       column: $state.table.limiteHabitacionCotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get diasVigenciaCotInd => $state.composableBuilder(
+      column: $state.table.diasVigenciaCotInd,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get diasVigenciaCotGroup => $state.composableBuilder(
+      column: $state.table.diasVigenciaCotGroup,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
@@ -8692,6 +8899,16 @@ class $$PoliticasTableOrderingComposer
           column: $state.table.limiteHabitacionCotizacion,
           builder: (column, joinBuilders) =>
               ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get diasVigenciaCotInd => $state.composableBuilder(
+      column: $state.table.diasVigenciaCotInd,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get diasVigenciaCotGroup => $state.composableBuilder(
+      column: $state.table.diasVigenciaCotGroup,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$TemporadaTarifaTableCreateCompanionBuilder = TemporadaTarifaCompanion

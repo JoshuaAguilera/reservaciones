@@ -8,7 +8,7 @@ import 'package:generador_formato/services/auth_service.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
-import 'package:generador_formato/views/usuarios/edit_user_dialog.dart';
+import 'package:generador_formato/views/usuarios/dialogs/edit_user_dialog.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/usuario_item_row.dart';
 import 'package:icons_plus/icons_plus.dart';

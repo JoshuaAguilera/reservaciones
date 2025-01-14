@@ -22,7 +22,7 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<bool> createCotizacion({
+  Future<int> createCotizacion({
     required Cotizacion cotizacion,
     List<Habitacion>? habitaciones,
     required String folio,
@@ -30,6 +30,7 @@ class CotizacionService extends BaseService {
     bool isQuoteGroup = false,
   }) async {
     final database = AppDatabase();
+    int id = 0;
 
     try {
       await database.transaction(
@@ -76,9 +77,9 @@ class CotizacionService extends BaseService {
                 );
           }
 
-          await database.into(database.cotizacion).insert(
+          id = await database.into(database.cotizacion).insert(
                 CotizacionCompanion.insert(
-                  fecha: DateTime.now(),
+                  fecha: Value(DateTime.now()),
                   correoElectrico: Value(cotizacion.correoElectronico ?? ''),
                   esGrupo: Value(isQuoteGroup),
                   folioPrincipal: Value(folio),
@@ -95,11 +96,11 @@ class CotizacionService extends BaseService {
         },
       );
       await database.close();
-      return true;
+      return id;
     } catch (e) {
       print(e);
       await database.close();
-      return false;
+      return id;
     }
   }
 
@@ -248,6 +249,20 @@ class CotizacionService extends BaseService {
     } catch (e) {
       await dataBase.close();
       return List.empty();
+    }
+  }
+
+  Future<bool> updateCotizacion(CotizacionData data) async {
+    final database = AppDatabase();
+
+    try {
+      int result = await database.updateCotizacion(data);
+      await database.close();
+      return result != 0;
+    } catch (e) {
+      print(e);
+      await database.close();
+      return false;
     }
   }
 }

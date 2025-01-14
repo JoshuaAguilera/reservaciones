@@ -7,11 +7,10 @@ import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/views/tarifario/manager_base_tariff_dialog.dart';
+import 'package:generador_formato/views/tarifario/dialogs/manager_base_tariff_dialog.dart';
+import 'package:generador_formato/views/tarifario/dialogs/politics_tarifario_dialog.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_table_view.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -22,7 +21,6 @@ import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/show_snackbar.dart';
 import '../../ui/title_page.dart';
-import '../../utils/helpers/utility.dart';
 import '../../widgets/dialogs.dart';
 import 'tarifario_calendary_view.dart';
 
@@ -132,127 +130,21 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     }
 
     void _dialogConfigTariffs(Politica? data) {
-      Politica policy = data ?? const Politica(id: 0);
-      int intervaloHabitacion =
-          data == null ? 1 : data.intervaloHabitacionGratuita ?? 0;
-      int limiteCotizacionGrupal =
-          data == null ? 1 : data.limiteHabitacionCotizacion ?? 0;
-
       showDialog(
         context: context,
-        builder: (context) => Dialogs.customAlertDialog(
-          context: context,
-          notCloseInstant: true,
-          withLoadingProcess: true,
-          iconData: HeroIcons.adjustments_horizontal,
-          title: "Políticas y criterios de Aplicación",
-          nameButtonMain: "Guardar",
-          contentCustom: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (policy.fechaActualizacion != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: TextStyles.standardText(
-                      text:
-                          "Ultima modificación: ${Utility.getCompleteDate(data: policy.fechaActualizacion)}",
-                      size: 11.5,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                FormWidgets.inputCountField(
-                  colorText: Theme.of(context).primaryColor,
-                  widthInput: 70,
-                  sizeText: 13.3,
-                  nameField:
-                      "Intervalo de Aplicación de Habitaciones\nde Cortesía",
-                  initialValue: intervaloHabitacion.toString(),
-                  onChanged: (p0) =>
-                      intervaloHabitacion = p0.isEmpty ? 1 : int.parse(p0),
-                  onDecrement: (p0) => intervaloHabitacion = p0 < 1 ? 1 : p0,
-                  onIncrement: (p0) => intervaloHabitacion = p0,
-                ),
-                const SizedBox(height: 40),
-                FormWidgets.inputCountField(
-                  colorText: Theme.of(context).primaryColor,
-                  widthInput: 70,
-                  sizeText: 13.3,
-                  nameField: "Limite de Habitaciones para Cotización\nGrupal",
-                  initialValue: limiteCotizacionGrupal.toString(),
-                  onChanged: (p0) =>
-                      limiteCotizacionGrupal = p0.isEmpty ? 1 : int.parse(p0),
-                  onDecrement: (p0) => limiteCotizacionGrupal = p0 < 1 ? 1 : p0,
-                  onIncrement: (p0) => limiteCotizacionGrupal = p0,
-                ),
-                const SizedBox(height: 7.5),
-                SizedBox(
-                  width: 345,
-                  child: TextStyles.standardText(
-                    text:
-                        "(Especifica el número máximo de habitaciones para una cotización individual. Más de este número será considerado una cotización grupal).",
-                    color: Theme.of(context).primaryColor,
-                    size: 11.5,
-                    aling: TextAlign.justify,
-                    overClip: true,
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-          funtionMain: () async {
-            Politica savePolicy = Politica(
-              id: policy.id,
-              intervaloHabitacionGratuita: intervaloHabitacion,
-              fechaActualizacion: DateTime.now(),
-              limiteHabitacionCotizacion: limiteCotizacionGrupal,
-            );
+        builder: (context) => PoliticsTarifarioDialog(policy: data),
+      ).then(
+        (value) {
+          if (value != null) {
+            ref
+                .read(saveTariffPolityProvider.notifier)
+                .update((state) => value as Politica);
 
-            bool responseSavePolicy =
-                await TarifaService().saveTariffPolicy(savePolicy);
-            if (!context.mounted) return;
-            if (!responseSavePolicy) {
-              if (mounted) return;
-              showSnackBar(
-                  context: context,
-                  title: "Error de guardado",
-                  message:
-                      "Se detecto un error al intentar guardar las tarifas. Intentelo más tarde.",
-                  type: "danger");
-              return;
-            }
-
-            showSnackBar(
-              context: context,
-              title:
-                  "Politicas ${policy.id != 0 ? "Actualizadas" : "Implementadas"}",
-              message:
-                  "Las politicas de implementación de tarifas fue ${policy.id != 0 ? "actualizada" : "guardada"} con exito",
-              type: "success",
-              iconCustom: policy.id != 0 ? Icons.edit : Icons.save,
-            );
-
-            Future.delayed(
-              500.ms,
-              () {
-                ref
-                    .read(saveTariffPolityProvider.notifier)
-                    .update((state) => savePolicy);
-
-                return ref
-                    .read(changeTariffPolicyProvider.notifier)
-                    .update((state) => UniqueKey().hashCode);
-              },
-            );
-
-            Navigator.pop(context);
-          },
-          nameButtonCancel: "Cancelar",
-          withButtonCancel: true,
-          otherButton: true,
-          colorTextButton: Theme.of(context).primaryColor,
-        ),
+            ref
+                .read(changeTariffPolicyProvider.notifier)
+                .update((state) => UniqueKey().hashCode);
+          }
+        },
       );
     }
 

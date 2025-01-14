@@ -143,7 +143,7 @@ class AppDatabase extends _$AppDatabase {
 
     return quotes;
   }
-  
+
   Future<List<CotizacionData>> getQuotesFiltered({
     String search = "",
     int? userId,
@@ -186,8 +186,7 @@ class AppDatabase extends _$AppDatabase {
     if (inLastMonth) {
       query.where(
         cotizacion.fecha.isBetweenValues(
-            DateTime.now().subtract(const Duration(days: 30)),
-            DateTime.now()),
+            DateTime.now().subtract(const Duration(days: 30)), DateTime.now()),
       );
     }
 
@@ -302,6 +301,11 @@ class AppDatabase extends _$AppDatabase {
     }
 
     return quotes;
+  }
+
+  Future<int> updateCotizacion(CotizacionData quote) {
+    return (update(cotizacion)..where((t) => t.id.equals(quote.id)))
+        .write(quote);
   }
 
   Future<int> deleteCotizacionByFolio(String folio) {

@@ -108,19 +108,19 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                     children: [
                                       TextStyles.TextAsociative(
                                         "Nombre: ",
-                                        cotizacion.nombreHuesped!,
+                                        cotizacion.nombreHuesped ?? '',
                                         size: 13,
                                         color: colorText,
                                       ),
                                       TextStyles.TextAsociative(
                                         "Correo electronico: ",
-                                        cotizacion.correoElectronico!,
+                                        cotizacion.correoElectronico ?? '',
                                         size: 13,
                                         color: colorText,
                                       ),
                                       TextStyles.TextAsociative(
                                         "Telefono: ",
-                                        cotizacion.numeroTelefonico!,
+                                        cotizacion.numeroTelefonico ?? '',
                                         size: 13,
                                         color: colorText,
                                       ),

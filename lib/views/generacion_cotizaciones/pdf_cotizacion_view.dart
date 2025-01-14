@@ -4,24 +4,25 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/views/generacion_cotizaciones/dialogs/send_mail_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/send_message_dialog.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../providers/cotizacion_provider.dart';
 import '../../services/send_quote_service.dart';
 import '../../ui/progress_indicator.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/desktop_colors.dart';
-import '../../widgets/dialogs.dart';
-import '../../widgets/textformfield_custom.dart';
 
-class PdfCotizacionView extends StatefulWidget {
+class PdfCotizacionView extends ConsumerStatefulWidget {
   const PdfCotizacionView({
     super.key,
     required this.comprobantePDF,
@@ -34,17 +35,19 @@ class PdfCotizacionView extends StatefulWidget {
   final bool isDetail;
 
   @override
-  State<PdfCotizacionView> createState() => _PdfCotizacionViewState();
+  _PdfCotizacionViewState createState() => _PdfCotizacionViewState();
 }
 
-class _PdfCotizacionViewState extends State<PdfCotizacionView> {
+class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
   bool isSendingEmail = false;
   bool isDownloading = false;
   String selectMail = "";
+  bool isLoadingDoc = false;
 
   @override
   void initState() {
     selectMail = widget.cotizacion.correoElectronico ?? '';
+    isLoadingDoc = true;
     super.initState();
   }
 
@@ -64,7 +67,7 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
             loadingWidget: ProgressIndicatorCustom(
               screenHight: screenHeight,
               colorIndicator: Colors.white,
-              inHorizontal: true,
+              typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Cargando comprobante",
                 aling: TextAlign.center,
@@ -81,7 +84,19 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
                   ? Theme.of(context).cardColor
                   : DesktopColors.grisPalido,
             ),
-            build: (format) => widget.comprobantePDF.save(),
+            build: (format) => widget.comprobantePDF.save().then(
+              (value) {
+                Future.delayed(
+                  Durations.short4,
+                  () {
+                    if (!mounted) return;
+                    isLoadingDoc = false;
+                    setState(() {});
+                  },
+                );
+                return value;
+              },
+            ),
             actionBarTheme: PdfActionBarTheme(
               backgroundColor: DesktopColors.ceruleanOscure,
               iconColor: Colors.white,
@@ -97,92 +112,96 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
             pdfFileName:
                 "Comprobante de cotizacion ${DateTime.now().toString().substring(0, 10)}.pdf",
             actions: [
-              IconButton(
-                onPressed: () async => await Printing.layoutPdf(
-                    onLayout: (_) async => widget.comprobantePDF.save()),
-                icon: const Icon(
-                  CupertinoIcons.printer,
-                  color: Colors.white,
+              if (isLoadingDoc)
+                ProgressIndicatorCustom(
+                  screenHight: 17,
+                  sizeProgressIndicator: 43,
+                  colorIndicator: Colors.white,
+                  typeLoading: "staggeredDotsWave",
                 ),
-                tooltip: "Imprimir",
-              ),
-              if (isDownloading)
-                const SizedBox(
-                  height: 22,
-                  width: 22,
-                  child: CircularProgressIndicator(color: Colors.white),
-                )
-              else
+              if (!isLoadingDoc)
                 IconButton(
-                  tooltip: "Descargar",
-                  onPressed: () async {
-                    await _downloadPDF();
-                  },
+                  onPressed: () async => await Printing.layoutPdf(
+                      onLayout: (_) async => widget.comprobantePDF.save()),
                   icon: const Icon(
-                    // CupertinoIcons.tray_arrow_down_fill,
-                    Icons.download_rounded,
+                    CupertinoIcons.printer,
                     color: Colors.white,
-                    size: 25,
                   ),
+                  tooltip: "Imprimir",
                 ),
-              // if (!widget.isDetail)
-              if (isSendingEmail)
-                const SizedBox(
-                  height: 22,
-                  width: 22,
-                  child: CircularProgressIndicator(color: Colors.white),
-                )
-              else
-                IconButton(
-                  tooltip: "Enviar por correo",
-                  icon: const Icon(
-                    CupertinoIcons.mail,
-                    color: Colors.white,
-                    size: 22,
+              if (!isLoadingDoc)
+                if (isDownloading)
+                  const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(color: Colors.white),
+                  )
+                else
+                  IconButton(
+                    tooltip: "Descargar",
+                    onPressed: () async {
+                      await _downloadPDF();
+                    },
+                    icon: const Icon(
+                      Icons.download_rounded,
+                      color: Colors.white,
+                      size: 25,
+                    ),
                   ),
+              if (!isLoadingDoc)
+                if (isSendingEmail)
+                  const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(color: Colors.white),
+                  )
+                else
+                  IconButton(
+                    tooltip: "Enviar por correo",
+                    icon: const Icon(
+                      CupertinoIcons.mail,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                    onPressed: () async {
+                      if (Preferences.mail.isEmpty ||
+                          Preferences.passwordMail.isEmpty) {
+                        showSnackBar(
+                          type: "alert",
+                          context: context,
+                          iconCustom: CupertinoIcons.tray_fill,
+                          duration: 4.seconds,
+                          title: "Correo SMTP o contraseña no registrada",
+                          message:
+                              "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                        );
+                        return;
+                      }
+
+                      await _SendMailSMTP();
+                    },
+                  ),
+              if (!isLoadingDoc)
+                IconButton(
                   onPressed: () async {
-                    if (Preferences.mail.isEmpty ||
-                        Preferences.passwordMail.isEmpty) {
+                    if (Preferences.phone.isEmpty) {
                       showSnackBar(
                         type: "alert",
                         context: context,
                         iconCustom: CupertinoIcons.tray_fill,
                         duration: 4.seconds,
-                        title: "Correo SMTP o contraseña no registrada",
+                        title: "Número no registrada",
                         message:
-                            "Se requiere del correo SMTP o contraseña para enviar este comprobante por correo.",
+                            "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
                       );
                       return;
                     }
-        
-                    await _SendMailSMTP();
+
+                    await _sendMessage();
                   },
+                  icon: const Icon(Bootstrap.whatsapp, size: 20),
+                  tooltip: "Enviar por WhatsApp",
                 ),
-              // if (!widget.isDetail)
-              IconButton(
-                onPressed: () async {
-                  if (Preferences.phone.isEmpty) {
-                    showSnackBar(
-                      type: "alert",
-                      context: context,
-                      iconCustom: CupertinoIcons.tray_fill,
-                      duration: 4.seconds,
-                      title: "Número no registrada",
-                      message:
-                          "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
-                    );
-                    return;
-                  }
-        
-                  await _sendMessage();
-                },
-                icon: const Image(
-                  image: AssetImage("assets/image/whatsApp_icon.png"),
-                  width: 22,
-                  color: Colors.white,
-                ),
-                tooltip: "Enviar por WhatsApp",
-              ),
             ],
           ),
         ),
@@ -192,8 +211,13 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
 
   Future<void> _SendMailSMTP({String? newMail}) async {
     setState(() => isSendingEmail = true);
-
     String messageError = "";
+
+    if ((widget.cotizacion.correoElectronico ?? '').isEmpty &&
+        newMail == null) {
+      showDialogMail(messageError);
+      return;
+    }
 
     try {
       String messageRequest = await SendQuoteService().sendQuoteMail(
@@ -226,89 +250,52 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
 
     print(messageError);
 
-    if (messageError.isNotEmpty) {
-      showDialog(
+    if (messageError.isNotEmpty) showDialogMail(messageError);
+  }
+
+  void showDialogMail(String messageError) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SendMailDialog(
+          id: widget.cotizacion.id ?? 0,
+          selectMail: selectMail,
+          messageError: messageError,
+          returnFunction: (p0, p1) {
+            selectMail = p0;
+
+            if (p1) {
+              widget.cotizacion.correoElectronico = p0;
+              ref
+                  .read(changeHistoryProvider.notifier)
+                  .update((state) => UniqueKey().hashCode);
+              setState(() {});
+              _SendMailSMTP();
+              return;
+            }
+
+            _SendMailSMTP(newMail: p0);
+          },
+        );
+      },
+    ).then(
+      (value) => verifSaveMail(value),
+    );
+  }
+
+  void verifSaveMail(value) {
+    if (value != null) {
+      if (!value) return;
+      if (!mounted) return;
+      setState(() => isSendingEmail = false);
+      showSnackBar(
+        type: "danger",
         context: context,
-        builder: (context) {
-          TextEditingController _mailController =
-              TextEditingController(text: selectMail);
-          final GlobalKey<FormState> _formDialogKey = GlobalKey<FormState>();
-
-          return Dialogs.customAlertDialog(
-            context: context,
-            iconData: Icons.cancel_schedule_send_rounded,
-            iconColor: DesktopColors.turqueza,
-            title: "Error al enviar el comprobante\nde cotización por correo",
-            contentCustom: SizedBox(
-              height: 200,
-              child: Form(
-                key: _formDialogKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextStyles.standardText(
-                      text: "Se produjo el siguiente error al enviar:",
-                      size: 12,
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      height: 70,
-                      width: 350,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Theme.of(context).primaryColor,
-                              width: 0.8),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
-                          color: Utility.darken(
-                              Theme.of(context).cardColor, -0.2)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SingleChildScrollView(
-                            child: Column(
-                          children: [
-                            TextStyles.errorText(
-                              text: messageError,
-                              size: 11.5,
-                            ),
-                          ],
-                        )),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    TextStyles.standardText(
-                      text:
-                          "Utilice otro correo electronico para realizar el envió:",
-                      size: 12,
-                    ),
-                    const SizedBox(height: 5),
-                    TextFormFieldCustom.textFormFieldwithBorder(
-                      name: "",
-                      hintText: "example@mail.com",
-                      msgError: "Campo requerido*",
-                      isRequired: true,
-                      controller: _mailController,
-                      onFieldSubmitted: (p0) {
-                        if (!_formDialogKey.currentState!.validate()) return;
-
-                        _SendMailSMTP(newMail: p0);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            nameButtonMain: "Aceptar",
-            funtionMain: () {
-              if (!_formDialogKey.currentState!.validate()) return;
-
-              _SendMailSMTP(newMail: _mailController.text);
-            },
-            nameButtonCancel: "",
-            withButtonCancel: false,
-          );
-        },
+        title: "Error al guardar nuevo email",
+        message: "Se produjo al intentar guardar nuevo email en la cotización.",
       );
+    } else {
+      setState(() => isSendingEmail = false);
     }
   }
 
@@ -343,23 +330,30 @@ class _PdfCotizacionViewState extends State<PdfCotizacionView> {
         : await SendQuoteService().generateMessageWhatsApp(
             widget.cotizacion, widget.cotizacion.habitaciones!);
 
-    String response = "";
-
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (context) => SendMessageDialog(
-          message: message,
-          nombreHuesped: widget.cotizacion.nombreHuesped ?? ''),
+        message: message,
+        nombreHuesped: widget.cotizacion.nombreHuesped ?? '',
+        numberContact: widget.cotizacion.numeroTelefonico ?? '',
+        cotizacionId: widget.cotizacion.id ?? 0,
+        saveFunction: (p0) {
+          print(p0);
+          widget.cotizacion.numeroTelefonico = p0;
+          setState(() {});
+        },
+      ),
     ).then(
-      (value) async {
+      (value) {
         if (value != null) {
-          response =  value;
-          Future.delayed(
-            Durations.short4,
-            () async => await SendQuoteService().sendQuoteWhatsApp(response.replaceAll(r'🏞️', "").replaceAll(r'🌊', "")),
+          showSnackBar(
+            type: "success",
+            context: context,
+            title: "Mensaje de WhatsApp enviado",
+            message: "El mensaje fue enviado correctamente.",
+            iconCustom: Bootstrap.whatsapp,
           );
-        } else {
-          return;
         }
       },
     );

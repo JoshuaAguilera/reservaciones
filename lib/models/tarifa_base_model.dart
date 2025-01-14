@@ -10,6 +10,7 @@ class TarifaBaseInt {
   double? upgradeMenor;
   double? upgradePaxAdic;
   List<Tarifa>? tarifas;
+  int? tarifaOrigenId;
 
   TarifaBaseInt({
     this.id,
@@ -21,6 +22,7 @@ class TarifaBaseInt {
     this.upgradeMenor,
     this.upgradePaxAdic,
     this.tarifas,
+    this.tarifaOrigenId,
   });
 
   TarifaBaseInt copyWith({
@@ -33,6 +35,7 @@ class TarifaBaseInt {
     double? upgradeMenor,
     double? upgradePaxAdic,
     List<Tarifa>? tarifas,
+    int? tarifaOrigenId,
   }) =>
       TarifaBaseInt(
         id: id ?? this.id,
@@ -44,5 +47,6 @@ class TarifaBaseInt {
         upgradeMenor: upgradeMenor ?? this.upgradeMenor,
         upgradePaxAdic: upgradePaxAdic ?? this.upgradePaxAdic,
         tarifas: tarifas ?? this.tarifas,
+        tarifaOrigenId: tarifaOrigenId ?? this.tarifaOrigenId,
       );
 }

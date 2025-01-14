@@ -520,14 +520,14 @@ class _ControllerCalendarWidgetState
 
   Widget _buildHeaderMonth() {
     Intl.defaultLocale = "es_ES";
-    int yearNowStatic = DateTime.now().year;
+    int yearNowStatic = DateTime.now().year - 1;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (widget.yearNow > yearNowStatic)
+          if ((widget.yearNow) > yearNowStatic)
             IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
@@ -782,17 +782,17 @@ class _ControllerCalendarWidgetState
         itemCount: 12,
         itemBuilder: (context, index) {
           return Card(
-            color: ((DateTime.now().year + index) == (widget.yearNow))
+            color: (((DateTime.now().year- 1) + index) == (widget.yearNow))
                 ? DesktopColors.ceruleanOscure
                 : DesktopColors.cerulean,
             elevation: 10,
             child: InkWell(
               onTap: () {
-                widget.setYear!.call(DateTime.now().year + (index));
+                widget.setYear!.call((DateTime.now().year - 1) + (index));
               },
               child: Center(
                 child: TextStyles.standardText(
-                  text: "${DateTime.now().year + index}",
+                  text: "${(DateTime.now().year - 1) + index}",
                   color: Colors.white,
                 ),
               ),

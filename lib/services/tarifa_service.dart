@@ -34,6 +34,7 @@ class TarifaService extends BaseService {
                       descIntegrado: Value(tarifaBase.descIntegrado),
                       nombre: Value(tarifaBase.nombre),
                       tarifaPadreId: Value(tarifaBase.tarifaPadre?.id),
+                      tarifaOrigenId: Value(tarifaBase.tarifaOrigenId),
                       upgradeCategoria: Value(tarifaBase.upgradeCategoria),
                       upgradeMenor: Value(tarifaBase.upgradeMenor),
                       upgradePaxAdic: Value(tarifaBase.upgradePaxAdic),
@@ -176,6 +177,8 @@ class TarifaService extends BaseService {
           }
 
           for (var element in temporadas) {
+            print(element.nombre);
+
             String codeSeasonCash =
                 "${Utility.getUniqueCode()}-temporada-${element.nombre}-${element.estanciaMinima}-${UniqueKey().hashCode}";
 
@@ -505,6 +508,7 @@ class TarifaService extends BaseService {
               upgradeCategoria: tarifaBase.upgradeCategoria,
               upgradeMenor: tarifaBase.upgradeMenor,
               upgradePaxAdic: tarifaBase.upgradePaxAdic,
+              tarifaOrigenId: tarifaBase.tarifaOrigenId,
             ),
             code: tarifaBase.code!,
             id: tarifaBase.id!,

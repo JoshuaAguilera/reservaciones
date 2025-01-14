@@ -5,25 +5,41 @@ Widget ProgressIndicatorCustom({
   required double screenHight,
   double sizeProgressIndicator = 45,
   Widget? message,
-  bool inHorizontal = false,
+  String typeLoading = "fourRotatingDots",
   Color? colorIndicator,
 }) {
+  Widget typeLoadingIndicator = LoadingAnimationWidget.fourRotatingDots(
+    color: colorIndicator ?? Colors.grey,
+    size: sizeProgressIndicator,
+  );
+
+  switch (typeLoading) {
+    case "progressiveDots":
+      typeLoadingIndicator = LoadingAnimationWidget.progressiveDots(
+        color: colorIndicator ?? Colors.grey,
+        size: sizeProgressIndicator,
+      );
+      break;
+    case "staggeredDotsWave":
+      typeLoadingIndicator = LoadingAnimationWidget.staggeredDotsWave(
+        color: colorIndicator ?? Colors.grey,
+        size: sizeProgressIndicator - 10,
+      );
+      break;
+    default:
+      typeLoadingIndicator = LoadingAnimationWidget.fourRotatingDots(
+        color: colorIndicator ?? Colors.grey,
+        size: sizeProgressIndicator,
+      );
+  }
+
   return Center(
     child: Padding(
       padding: EdgeInsets.only(top: screenHight * 0.37),
       child: Center(
         child: Column(
           children: [
-            if (!inHorizontal)
-              LoadingAnimationWidget.fourRotatingDots(
-                color: colorIndicator ?? Colors.grey,
-                size: sizeProgressIndicator,
-              )
-            else
-              LoadingAnimationWidget.progressiveDots(
-                color: colorIndicator ?? Colors.grey,
-                size: sizeProgressIndicator,
-              ),
+            typeLoadingIndicator,
             message ?? const SizedBox(),
           ],
         ),

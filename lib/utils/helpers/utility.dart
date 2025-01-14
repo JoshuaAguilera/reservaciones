@@ -146,7 +146,7 @@ class Utility {
 
             if (cotizaciones != null) {
               List<CotizacionData> quotesInd = cotizaciones
-                  .where((element) => element.fecha.weekday == i)
+                  .where((element) => element.fecha?.weekday == i)
                   .toList();
 
               for (var element in quotesInd) {
@@ -176,7 +176,7 @@ class Utility {
 
           if (cotizaciones != null) {
             List<CotizacionData> quotes = cotizaciones
-                .where((element) => element.fecha.day == i)
+                .where((element) => element.fecha?.day == i)
                 .toList();
 
             for (var element in quotes) {
@@ -204,7 +204,7 @@ class Utility {
 
           if (cotizaciones != null) {
             List<CotizacionData> quotes = cotizaciones
-                .where((element) => element.fecha.month == i)
+                .where((element) => element.fecha?.month == i)
                 .toList();
 
             for (var element in quotes) {
@@ -485,23 +485,6 @@ class Utility {
     return width;
   }
 
-  static String getDatesStay(List<Habitacion> habitaciones) {
-    String dates = '';
-    List<DateTime> datesList = [];
-
-    for (var element in habitaciones) {
-      datesList.add(DateTime.parse(element.fechaCheckIn!));
-      datesList.add(DateTime.parse(element.fechaCheckOut!));
-    }
-
-    datesList.sort((a, b) => a.compareTo(b));
-
-    DateTime firstDate = datesList.first;
-    DateTime lastDate = datesList.last;
-
-    return dates;
-  }
-
   static String getRangeDate(DateTime firstDate, DateTime lastDate) {
     String range = "";
 
@@ -536,7 +519,8 @@ class Utility {
     }
   }
 
-  static Color? getColorTypeUser(String rol, {int alpha = 255}) {
+  static Color? getColorTypeUser(String rol,
+      {int alpha = 255, bool isText = false}) {
     switch (rol) {
       case "SUPERADMIN":
         return Color.fromARGB(alpha, 255, 192, 1);
@@ -547,8 +531,8 @@ class Utility {
       case "RECEPCION":
         return Color.fromARGB(alpha, 230, 92, 0);
       default:
+        return isText ? DesktopColors.grisPalido : DesktopColors.greyClean;
     }
-    return null;
   }
 
   static String defineMonthPeriod(String initDay, String lastDay) {
@@ -624,20 +608,31 @@ class Utility {
 
     if (!returnDouble) {
       if (rounded) {
-        return formatterNumber(subtotal.round().toDouble());
+        return formatterNumber(formatNumber(subtotal).roundToDouble());
       } else {
         return formatterNumber(subtotal);
       }
     } else {
       if (rounded) {
-        return (onlyDiscount ? descuento : subtotal).round().toDouble();
+        return (onlyDiscount ? descuento : subtotal).roundToDouble();
       } else {
         return onlyDiscount ? descuento : subtotal;
       }
     }
   }
 
-  static dynamic calculateIncrease(double? tarifa, double? aumento) {
+  static double formatNumber(double number) {
+    if (number > 0) {
+      return double.parse(number.toStringAsFixed(7));
+    } else if (number < 0) {
+      return double.parse(number.toStringAsFixed(7));
+    } else {
+      return 0.0;
+    }
+  }
+
+  static dynamic calculateIncrease(double? tarifa, double? aumento,
+      {bool withRound = true}) {
     double subtotal = 0;
     double tarifaNum = tarifa ?? 0;
     double aumentoNUM = aumento ?? 0;
@@ -645,10 +640,12 @@ class Utility {
     if (aumentoNUM != 0) {
       double increase = (tarifaNum / aumentoNUM);
 
-      subtotal = tarifaNum + increase;
+      subtotal = increase;
 
-      return subtotal.round().toDouble();
+      if (withRound) return subtotal.round().toDouble();
+      return subtotal;
     } else {
+      if (withRound) return tarifaNum.round().toDouble();
       return tarifaNum;
     }
   }
@@ -2062,24 +2059,68 @@ class Utility {
     return false;
   }
 
-  static List<TarifaData> getTarifasData(List<Tarifa?> list) {
+  static List<TarifaData> getTarifasData(List<Tarifa?> list,
+      {bool withRound = false}) {
     List<TarifaData> tarifas = [];
 
     for (var element in list) {
-      tarifas.add(TarifaData(
-        id: element?.id ?? 0,
-        categoria: element?.categoria,
-        code: element?.code,
-        fecha: DateTime.tryParse(element?.fecha ?? ''),
-        tarifaAdultoCPLE: element?.tarifaAdulto4,
-        tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
-        tarifaAdultoTPL: element?.tarifaAdulto3,
-        tarifaMenores7a12: element?.tarifaMenores7a12,
-        tarifaPadreId: element?.tarifaBaseId,
-        tarifaPaxAdicional: element?.tarifaPaxAdicional,
-      ));
+      if (withRound) {
+        tarifas.add(getRoundTariff(TarifaData(
+          id: element?.id ?? 0,
+          categoria: element?.categoria,
+          code: element?.code,
+          fecha: DateTime.tryParse(element?.fecha ?? ''),
+          tarifaAdultoCPLE: element?.tarifaAdulto4,
+          tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
+          tarifaAdultoTPL: element?.tarifaAdulto3,
+          tarifaMenores7a12: element?.tarifaMenores7a12,
+          tarifaPadreId: element?.tarifaBaseId,
+          tarifaPaxAdicional: element?.tarifaPaxAdicional,
+        ))!);
+      } else {
+        tarifas.add(TarifaData(
+          id: element?.id ?? 0,
+          categoria: element?.categoria,
+          code: element?.code,
+          fecha: DateTime.tryParse(element?.fecha ?? ''),
+          tarifaAdultoCPLE: element?.tarifaAdulto4,
+          tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
+          tarifaAdultoTPL: element?.tarifaAdulto3,
+          tarifaMenores7a12: element?.tarifaMenores7a12,
+          tarifaPadreId: element?.tarifaBaseId,
+          tarifaPaxAdicional: element?.tarifaPaxAdicional,
+        ));
+      }
     }
 
     return tarifas;
+  }
+
+  static TarifaData? getRoundTariff(TarifaData? tariff) {
+    TarifaData? roundTariff;
+
+    roundTariff = TarifaData(
+      id: tariff?.id ?? 0,
+      categoria: tariff?.categoria,
+      code: tariff?.code,
+      fecha: tariff?.fecha,
+      tarifaPadreId: tariff?.tarifaPadreId,
+      tarifaAdultoSGLoDBL: calculatePromotion(
+          "${tariff?.tarifaAdultoSGLoDBL ?? 0}", 0,
+          returnDouble: true),
+      tarifaAdultoCPLE: calculatePromotion(
+          "${tariff?.tarifaAdultoCPLE ?? 0}", 0,
+          returnDouble: true),
+      tarifaAdultoTPL: calculatePromotion("${tariff?.tarifaAdultoTPL ?? 0}", 0,
+          returnDouble: true),
+      tarifaMenores7a12: calculatePromotion(
+          "${tariff?.tarifaMenores7a12 ?? 0}", 0,
+          returnDouble: true),
+      tarifaPaxAdicional: calculatePromotion(
+          "${tariff?.tarifaPaxAdicional ?? 0}", 0,
+          returnDouble: true),
+    );
+
+    return roundTariff;
   }
 }

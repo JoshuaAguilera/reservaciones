@@ -24,17 +24,21 @@ class SummaryControllerWidget extends ConsumerStatefulWidget {
     this.isLoading = false,
     this.numDays = 0,
     this.onSaveQuote,
+    this.onCancel,
     this.saveRooms,
     this.finishQuote = false,
     this.withSaveButton = true,
+    this.showCancel = false,
   });
 
   final bool calculateRoom;
   final bool isLoading;
   final bool finishQuote;
   final bool withSaveButton;
+  final bool showCancel;
   final int numDays;
   final void Function()? onSaveQuote;
+  final void Function()? onCancel;
   final List<Habitacion>? saveRooms;
 
   @override
@@ -399,27 +403,57 @@ class _SummaryControllerWidgetState
             if (widget.withSaveButton)
               Padding(
                 padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                child: SizedBox(
-                  height: 35,
-                  child: Buttons.commonButton(
-                    sizeText: 15,
-                    text: (widget.finishQuote)
-                        ? "Nueva Cotización"
-                        : (widget.calculateRoom)
-                            ? "Guardar Habitación"
-                            : "Generar Cotización",
-                    color: DesktopColors.ceruleanOscure,
-                    isLoading: widget.finishQuote ? false : widget.isLoading,
-                    onPressed: () {
-                      if (widget.calculateRoom) {
-                        saveRoom(habitacionProvider, typeQuote, useCashSeason);
-                      } else {
-                        if (widget.onSaveQuote != null) {
-                          widget.onSaveQuote!.call();
-                        }
-                      }
-                    },
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: Buttons.commonButton(
+                          sizeText: 15,
+                          text: (widget.finishQuote)
+                              ? "Nueva Cotización"
+                              : (widget.calculateRoom)
+                                  ? "Guardar Habitación"
+                                  : "Generar Cotización",
+                          color: DesktopColors.ceruleanOscure,
+                          isLoading:
+                              widget.finishQuote ? false : widget.isLoading,
+                          onPressed: () {
+                            if (widget.calculateRoom) {
+                              saveRoom(
+                                  habitacionProvider, typeQuote, useCashSeason);
+                            } else {
+                              if (widget.onSaveQuote != null) {
+                                widget.onSaveQuote!.call();
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    if (widget.showCancel)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: SizedBox(
+                          height: 35,
+                          child: Buttons.commonButton(
+                            sizeText: 15,
+                            text: "Cancelar",
+                            color:
+                                Utility.darken(DesktopColors.cerulean, -0.05),
+                            onPressed:
+                                (widget.finishQuote ? false : widget.isLoading)
+                                    ? null
+                                    : () {
+                                        if (widget.onCancel != null) {
+                                          widget.onCancel!.call();
+                                        }
+                                      },
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
           ],

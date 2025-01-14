@@ -9,14 +9,15 @@ import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../ui/buttons.dart';
-import '../../ui/show_snackbar.dart';
-import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/desktop_colors.dart';
-import '../../widgets/dialogs.dart';
-import '../../widgets/form_tariff_widget.dart';
-import '../../widgets/text_styles.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../../ui/buttons.dart';
+import '../../../ui/show_snackbar.dart';
+import '../../../utils/helpers/utility.dart';
+import '../../../utils/helpers/desktop_colors.dart';
+import '../../../widgets/custom_dropdown.dart';
+import '../../../widgets/dialogs.dart';
+import '../../../widgets/form_tariff_widget.dart';
+import '../../../widgets/text_styles.dart';
+import '../../../widgets/textformfield_custom.dart';
 
 class ManagerBaseTariffDialog extends StatefulWidget {
   const ManagerBaseTariffDialog({super.key, required this.tarifasBase});
@@ -39,7 +40,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   final _tarifaAdultoCPLController = TextEditingController();
   final _tarifaPaxAdicionalController = TextEditingController();
   final _tarifaMenoresController = TextEditingController();
-  final _descuentoController = TextEditingController();
+  final _dividendoController = TextEditingController();
   final _formKeyManagerBase = GlobalKey<FormState>();
   bool applyUpgrades = false;
   bool showError = false;
@@ -52,16 +53,87 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   TarifaBaseInt? selectBaseTariff;
   String messageError = "";
   bool isLoading = false;
+  bool isTariffPadre = false;
+  bool applyPropageChange = false;
 
   @override
   void initState() {
-    for (var element in widget.tarifasBase) {
-      tarifasBaseTags.add(element.nombre!);
-    }
-
     _selectNewBaseTariff(widget.tarifasBase.firstOrNull);
+    _updateTarifasPadre(widget.tarifasBase.first);
 
     super.initState();
+  }
+
+  void _updateTarifasPadre(TarifaBaseInt? selectTariff) {
+    isTariffPadre = false;
+    tarifaPadre = selectTariff?.tarifaPadre;
+    if (widget.tarifasBase.any((element) =>
+        (element.tarifaPadre?.nombre == (selectTariff?.nombre ?? '') ||
+            (element.tarifaOrigenId == (selectTariff?.id ?? 0))))) {
+      isTariffPadre = true;
+      setState(() {});
+    }
+    tarifasBaseTags = [];
+    tarifasBaseTags.add("Ninguna");
+
+    //Arreglar administracion de tarifas padre en cuanto a su uso, evitando sobre uso de propios hijos
+    for (var element in widget.tarifasBase) {
+      if ((element.nombre ?? '') == selectTariff?.nombre) continue;
+      if ((element.tarifaPadre?.id ?? 0) == selectTariff?.id) continue;
+      if ((element.tarifaOrigenId ?? 0) == selectTariff?.id) continue;
+      if ((element.tarifaPadre?.tarifaPadre?.id ?? 0) == selectTariff?.id) {
+        continue;
+      }
+      if ((element.tarifaPadre?.tarifaPadre?.tarifaPadre?.id ?? 0) ==
+          selectTariff?.id) {
+        continue;
+      }
+      if ((element.tarifaPadre?.tarifaPadre?.tarifaPadre?.tarifaPadre?.id ??
+              0) ==
+          selectTariff?.id) {
+        continue;
+      }
+      tarifasBaseTags.add(element.nombre!);
+    }
+  }
+
+  Widget _textFieldData(double? data, String name) {
+    return Expanded(
+      child: SizedBox(
+        height: 33,
+        child: TextFormFieldCustom.textFormFieldwithBorder(
+          name: name,
+          msgError: "",
+          initialValue: data?.toString(),
+          marginBottom: 0,
+          isNumeric: true,
+          onChanged: (p0) {
+            data = double.parse(p0.isEmpty ? "0" : p0);
+          },
+        ),
+      ),
+    );
+  }
+
+  double? obtenerTarifa({
+    required TextEditingController controller,
+    required double? Function(Tarifa tarifa) obtenerCampo,
+  }) {
+    if (controller.text.isNotEmpty && tarifaPadre == null) {
+      return double.parse(controller.text);
+    }
+
+    String categoriaSeleccionada =
+        tipoHabitacion[categorias.indexOf(selectCategory)];
+
+    if (tarifaPadre?.tarifas != null) {
+      Tarifa tarifaMayor = tarifaPadre?.tarifas?.firstWhere(
+              (element) => element.categoria == categoriaSeleccionada) ??
+          Tarifa(categoria: categoriaSeleccionada);
+      return obtenerCampo(tarifaMayor) ?? 0;
+    }
+
+    return null;
   }
 
   @override
@@ -72,11 +144,12 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
       ),
       child: SizedBox(
         width: 700,
-        height: 570,
+        height: 620,
         child: Row(
           children: [
             Container(
               width: 190,
+              height: 620,
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
               decoration: BoxDecoration(
                 color: Utility.darken(Theme.of(context).cardColor, 0.07),
@@ -85,32 +158,34 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                   bottomLeft: Radius.circular(12),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextStyles.titleText(
-                    text: "Tarifas Base",
-                    color: Theme.of(context).primaryColor,
-                    size: 17,
-                  ),
-                  const SizedBox(height: 15),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        for (var element in widget.tarifasBase)
-                          _buildStepItem(
-                            element.nombre ?? '',
-                            element,
-                          ),
-                        _buildStepItem(
-                          "Nueva Tarifa",
-                          null,
-                          isNew: true,
-                        ),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextStyles.titleText(
+                      text: "Tarifas Base",
+                      color: Theme.of(context).primaryColor,
+                      size: 17,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 15),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (var element in widget.tarifasBase)
+                            _buildStepItem(
+                              element.nombre ?? '',
+                              element,
+                            ),
+                          _buildStepItem(
+                            "Nueva Tarifa",
+                            null,
+                            isNew: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -139,59 +214,166 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                 overClip: true,
                                 size: 12,
                               ),
+                              if (widget.tarifasBase.length > 1)
+                                const SizedBox(height: 12),
+                              if (widget.tarifasBase.length > 1)
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextStyles.standardText(
+                                      text: "Tarifa Padre:",
+                                    ),
+                                    const SizedBox(width: 10),
+                                    CustomDropdown.dropdownMenuCustom(
+                                      fontSize: 12,
+                                      initialSelection:
+                                          tarifaPadre?.nombre ?? 'Ninguna',
+                                      onSelected: (String? value) {
+                                        tarifaPadre = widget.tarifasBase
+                                            .where((element) =>
+                                                (element.nombre ?? '') == value)
+                                            .firstOrNull;
+
+                                        saveTariff = tarifaPadre?.tarifas
+                                            ?.where((element) =>
+                                                element.categoria !=
+                                                tipoHabitacion[categorias
+                                                    .indexOf(selectCategory)])
+                                            .firstOrNull;
+
+                                        saveTariff?.tarifaBaseId = null;
+
+                                        _applyDiscountTariff(
+                                          tarifaPadre?.tarifas
+                                              ?.where((element) =>
+                                                  element.categoria ==
+                                                  tipoHabitacion[categorias
+                                                      .indexOf(selectCategory)])
+                                              .firstOrNull,
+                                          percent: double.tryParse(
+                                              _dividendoController.text),
+                                        );
+                                        setState(() {});
+                                      },
+                                      elements: tarifasBaseTags,
+                                      screenWidth: null,
+                                      compact: true,
+                                      compactHeight: 37,
+                                      compactWidth: 200,
+                                      dyCompact: -5,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: AbsorbPointer(
+                                        absorbing: tarifaPadre == null,
+                                        child: Opacity(
+                                          opacity:
+                                              tarifaPadre != null ? 1 : 0.5,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              TextStyles.standardText(
+                                                text: "Dividendo:",
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                height: 35,
+                                                width: 80,
+                                                child: FormWidgets
+                                                    .textFormFieldResizable(
+                                                  name: "",
+                                                  msgError: "",
+                                                  isNumeric: true,
+                                                  isDecimal: true,
+                                                  icon: const Icon(
+                                                      Icons.splitscreen,
+                                                      size: 20),
+                                                  controller:
+                                                      _dividendoController,
+                                                  onChanged: (p0) {
+                                                    _applyDiscountTariff(
+                                                      tarifaPadre?.tarifas
+                                                          ?.where((element) =>
+                                                              element
+                                                                  .categoria ==
+                                                              tipoHabitacion[
+                                                                  categorias
+                                                                      .indexOf(
+                                                                          selectCategory)])
+                                                          .firstOrNull,
+                                                      percent:
+                                                          double.tryParse(p0),
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               const SizedBox(height: 12),
                               SizedBox(
-                                height: 35,
-                                child:
-                                    TextFormFieldCustom.textFormFieldwithBorder(
-                                  name: "Nombre Tarifa Base",
-                                  msgError: "",
-                                  controller: _nombreTarifaController,
-                                  icon: const Icon(
-                                    HeroIcons.square_3_stack_3d,
-                                    size: 20,
-                                  ),
-                                  onChanged: (p0) {},
-                                  marginBottom: 0,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              FormWidgets.inputSwitch(
-                                value: applyUpgrades,
-                                activeColor: Colors.amber,
-                                context: context,
-                                name: "Implementar upgrades automaticamente: ",
-                                onChanged: (p0) {
-                                  applyUpgrades = p0;
-                                  setState(() {});
-                                  if (p0) {
-                                    if (saveTariff?.categoria ==
-                                        tipoHabitacion.first) {
-                                      _tarifaAdultoSingleController.text =
-                                          (saveTariff?.tarifaAdulto1a2 ?? '')
-                                              .toString();
-                                      _tarifaAdultoTPLController.text =
-                                          (saveTariff?.tarifaAdulto3 ?? '')
-                                              .toString();
-                                      _tarifaAdultoCPLController.text =
-                                          (saveTariff?.tarifaAdulto4 ?? '')
-                                              .toString();
-                                      _tarifaPaxAdicionalController.text =
-                                          (saveTariff?.tarifaPaxAdicional ?? '')
-                                              .toString();
-                                      _tarifaMenoresController.text =
-                                          (saveTariff?.tarifaMenores7a12 ?? '')
-                                              .toString();
-                                    }
-                                    saveTariff = null;
-                                    selectCategory = categorias.first;
-
+                                  height: 35,
+                                  child: FormWidgets.textFormFieldResizable(
+                                    name: "Nombre Tarifa Base",
+                                    filled: true,
+                                    msgError: "",
+                                    controller: _nombreTarifaController,
+                                    icon: const Icon(
+                                      HeroIcons.square_3_stack_3d,
+                                      size: 20,
+                                    ),
+                                  )),
+                              if (tarifaPadre == null)
+                                const SizedBox(height: 12),
+                              if (tarifaPadre == null)
+                                FormWidgets.inputSwitch(
+                                  value: applyUpgrades,
+                                  activeColor: Colors.amber,
+                                  context: context,
+                                  name:
+                                      "Implementar upgrades automaticamente: ",
+                                  onChanged: (p0) {
+                                    applyUpgrades = p0;
                                     setState(() {});
-                                  } else {
-                                    _recoverySaveTariff(selectBaseTariff);
-                                  }
-                                },
-                              ),
+                                    if (p0) {
+                                      if (saveTariff?.categoria ==
+                                          tipoHabitacion.first) {
+                                        _tarifaAdultoSingleController.text =
+                                            (saveTariff?.tarifaAdulto1a2 ?? '')
+                                                .toString();
+                                        _tarifaAdultoTPLController.text =
+                                            (saveTariff?.tarifaAdulto3 ?? '')
+                                                .toString();
+                                        _tarifaAdultoCPLController.text =
+                                            (saveTariff?.tarifaAdulto4 ?? '')
+                                                .toString();
+                                        _tarifaPaxAdicionalController.text =
+                                            (saveTariff?.tarifaPaxAdicional ??
+                                                    '')
+                                                .toString();
+                                        _tarifaMenoresController.text =
+                                            (saveTariff?.tarifaMenores7a12 ??
+                                                    '')
+                                                .toString();
+                                      }
+                                      saveTariff = null;
+                                      selectCategory = categorias.first;
+
+                                      setState(() {});
+                                    } else {
+                                      _recoverySaveTariff(selectBaseTariff);
+                                    }
+                                  },
+                                ),
                               SizedBox(height: applyUpgrades ? 0 : 8),
                               if (!applyUpgrades)
                                 Container(
@@ -246,78 +428,60 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                       categorias.indexOf(
                                                           selectCategory),
                                                   tarifaAdulto1a2:
-                                                      _tarifaAdultoSingleController
-                                                              .text.isEmpty
-                                                          ? selectTariff
-                                                              .tarifaAdulto1a2
-                                                          : double.parse(
-                                                              _tarifaAdultoSingleController
-                                                                  .text),
-                                                  tarifaAdulto3:
-                                                      _tarifaAdultoTPLController
-                                                              .text.isEmpty
-                                                          ? selectTariff
-                                                              .tarifaAdulto3
-                                                          : double.parse(
-                                                              _tarifaAdultoTPLController
-                                                                  .text),
-                                                  tarifaAdulto4:
-                                                      _tarifaAdultoCPLController
-                                                              .text.isEmpty
-                                                          ? selectTariff
-                                                              .tarifaAdulto4
-                                                          : double.parse(
-                                                              _tarifaAdultoCPLController
-                                                                  .text),
+                                                      obtenerTarifa(
+                                                    controller:
+                                                        _tarifaAdultoSingleController,
+                                                    obtenerCampo: (tarifa) =>
+                                                        tarifa.tarifaAdulto1a2,
+                                                  ),
+                                                  tarifaAdulto3: obtenerTarifa(
+                                                    controller:
+                                                        _tarifaAdultoTPLController,
+                                                    obtenerCampo: (tarifa) =>
+                                                        tarifa.tarifaAdulto3,
+                                                  ),
+                                                  tarifaAdulto4: obtenerTarifa(
+                                                    controller:
+                                                        _tarifaAdultoCPLController,
+                                                    obtenerCampo: (tarifa) =>
+                                                        tarifa.tarifaAdulto4,
+                                                  ),
                                                   tarifaPaxAdicional:
-                                                      _tarifaPaxAdicionalController
-                                                              .text.isEmpty
-                                                          ? selectTariff
-                                                              .tarifaPaxAdicional
-                                                          : double.parse(
-                                                              _tarifaPaxAdicionalController
-                                                                  .text),
+                                                      obtenerTarifa(
+                                                    controller:
+                                                        _tarifaPaxAdicionalController,
+                                                    obtenerCampo: (tarifa) =>
+                                                        tarifa
+                                                            .tarifaPaxAdicional,
+                                                  ),
                                                   tarifaMenores7a12:
-                                                      _tarifaMenoresController
-                                                              .text.isEmpty
-                                                          ? selectTariff
-                                                              .tarifaMenores7a12
-                                                          : double.parse(
-                                                              _tarifaMenoresController
-                                                                  .text),
+                                                      obtenerTarifa(
+                                                    controller:
+                                                        _tarifaMenoresController,
+                                                    obtenerCampo: (tarifa) =>
+                                                        tarifa
+                                                            .tarifaMenores7a12,
+                                                  ),
                                                 );
 
-                                                _tarifaAdultoSingleController
-                                                    .text = (saveTariff
-                                                            ?.tarifaAdulto1a2 ??
-                                                        '')
-                                                    .toString();
-                                                _tarifaAdultoTPLController
-                                                    .text = (saveTariff
-                                                            ?.tarifaAdulto3 ??
-                                                        '')
-                                                    .toString();
-                                                _tarifaAdultoCPLController
-                                                    .text = (saveTariff
-                                                            ?.tarifaAdulto4 ??
-                                                        '')
-                                                    .toString();
-                                                _tarifaPaxAdicionalController
-                                                    .text = (saveTariff
-                                                            ?.tarifaPaxAdicional ??
-                                                        '')
-                                                    .toString();
-                                                _tarifaMenoresController
-                                                    .text = (saveTariff
-                                                            ?.tarifaMenores7a12 ??
-                                                        '')
-                                                    .toString();
+                                                _applyDiscountTariff(
+                                                  saveTariff,
+                                                  percent: (tarifaPadre ==
+                                                              null ||
+                                                          saveTariff
+                                                                  ?.tarifaBaseId !=
+                                                              null)
+                                                      ? null
+                                                      : double.tryParse(
+                                                          _dividendoController
+                                                              .text),
+                                                );
 
                                                 saveTariff =
                                                     saveIntTariff.copyWith();
 
-                                                setState(() => selectCategory =
-                                                    categorias[index]);
+                                                selectCategory =
+                                                    categorias[index];
                                                 setState(() {});
                                               },
                                               child: Text(
@@ -341,69 +505,20 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     },
                                   ),
                                 ),
-                              if (applyUpgrades)
+                              if (applyUpgrades && tarifaPadre == null)
                                 Column(
                                   children: [
                                     TextStyles.standardText(text: "Up Grades"),
                                     const SizedBox(height: 7),
                                     Row(
                                       children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 33,
-                                            child: TextFormFieldCustom
-                                                .textFormFieldwithBorder(
-                                              name: "Categoria",
-                                              msgError: "",
-                                              initialValue:
-                                                  upgradeCateg?.toString(),
-                                              marginBottom: 0,
-                                              isNumeric: true,
-                                              onChanged: (p0) {
-                                                upgradeCateg = double.parse(
-                                                    p0.isEmpty ? "0" : p0);
-                                              },
-                                            ),
-                                          ),
-                                        ),
+                                        _textFieldData(
+                                            upgradeCateg, "Categoria"),
                                         const SizedBox(width: 10),
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 33,
-                                            child: TextFormFieldCustom
-                                                .textFormFieldwithBorder(
-                                              name: "Menor",
-                                              msgError: "",
-                                              initialValue:
-                                                  upgradeMenor?.toString(),
-                                              marginBottom: 0,
-                                              isNumeric: true,
-                                              onChanged: (p0) {
-                                                upgradeMenor = double.parse(
-                                                    p0.isEmpty ? "0" : p0);
-                                              },
-                                            ),
-                                          ),
-                                        ),
+                                        _textFieldData(upgradeMenor, "Menor"),
                                         const SizedBox(width: 10),
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 33,
-                                            child: TextFormFieldCustom
-                                                .textFormFieldwithBorder(
-                                              name: "Pax Adic",
-                                              msgError: "",
-                                              initialValue:
-                                                  upGradePaxAdic?.toString(),
-                                              marginBottom: 0,
-                                              isNumeric: true,
-                                              onChanged: (p0) {
-                                                upGradePaxAdic = double.parse(
-                                                    p0.isEmpty ? "0" : p0);
-                                              },
-                                            ),
-                                          ),
-                                        ),
+                                        _textFieldData(
+                                            upGradePaxAdic, "Pax Adic"),
                                       ],
                                     ),
                                   ],
@@ -421,8 +536,19 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                 tarifaMenoresController:
                                     _tarifaMenoresController,
                                 onUpdate: () {},
-                                isEditing: true,
+                                isEditing: tarifaPadre == null,
                               ),
+                              // if (isTariffPadre)
+                              //   CustomWidgets.checkBoxWithDescription(
+                              //     context,
+                              //     title: "Propagar cambios",
+                              //     description:
+                              //         "Esta funcion permite propagar los\nsiguientes cambios hacia todos las\ntarifas base que se asocien a esta Tarifa.",
+                              //     value: applyPropageChange,
+                              //     compact: true,
+                              //     onChanged: (p0) =>
+                              //         setState(() => applyPropageChange = p0!),
+                              //   ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: insideSnackBar(
@@ -487,7 +613,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                       selectBaseTariff?.nombre !=
                                           _nombreTarifaController.text) {
                                     messageError =
-                                        "El nombre ${_nombreTarifaController.text} ya esta siendo ocupado, ingrese otro nombre";
+                                        "El nombre ${_nombreTarifaController.text} ya esta siendo utilizado, ingrese otro nombre";
                                     setState(() {});
                                     _toggleSnackbar();
                                     return;
@@ -497,7 +623,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                           saveTariff) &&
                                       !applyUpgrades) {
                                     messageError =
-                                        "Se detectaron uno o mas campos por capturar la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*";
+                                        "Se detectaron uno o mas campos por capturar en la categoria: ${categorias.firstWhere((element) => element != selectCategory)}*";
                                     setState(() {});
                                     _toggleSnackbar();
                                     return;
@@ -560,17 +686,70 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                         ?.id;
                                   }
 
+                                  if (tarifaPadre != null) {
+                                    Tarifa? firstTariff = tarifaPadre?.tarifas
+                                        ?.where((element) =>
+                                            element.categoria ==
+                                            tipoHabitacion[categorias
+                                                .indexOf(selectCategory)])
+                                        .firstOrNull;
+
+                                    nowTariff.tarifaAdulto1a2 = _getParentRate(
+                                        firstTariff?.tarifaAdulto1a2);
+
+                                    nowTariff.tarifaAdulto3 = _getParentRate(
+                                        firstTariff?.tarifaAdulto3);
+
+                                    nowTariff.tarifaAdulto4 = _getParentRate(
+                                        firstTariff?.tarifaAdulto4);
+
+                                    nowTariff.tarifaPaxAdicional =
+                                        _getParentRate(
+                                            firstTariff?.tarifaPaxAdicional);
+
+                                    nowTariff.tarifaMenores7a12 =
+                                        _getParentRate(
+                                            firstTariff?.tarifaMenores7a12);
+
+                                    Tarifa? secondTariff = tarifaPadre?.tarifas
+                                        ?.where((element) =>
+                                            element.categoria !=
+                                            tipoHabitacion[categorias
+                                                .indexOf(selectCategory)])
+                                        .firstOrNull;
+
+                                    saveTariff?.tarifaAdulto1a2 =
+                                        _getParentRate(
+                                            secondTariff?.tarifaAdulto1a2);
+
+                                    saveTariff?.tarifaAdulto3 = _getParentRate(
+                                        secondTariff?.tarifaAdulto3);
+
+                                    saveTariff?.tarifaAdulto4 = _getParentRate(
+                                        secondTariff?.tarifaAdulto4);
+
+                                    saveTariff?.tarifaPaxAdicional =
+                                        _getParentRate(
+                                            secondTariff?.tarifaPaxAdicional);
+
+                                    saveTariff?.tarifaMenores7a12 =
+                                        _getParentRate(
+                                            secondTariff?.tarifaMenores7a12);
+                                  }
+
                                   TarifaBaseInt tarifaBase =
                                       TarifaBaseInt(id: selectBaseTariff?.id);
                                   tarifaBase.code = selectBaseTariff?.code;
                                   tarifaBase.nombre =
                                       _nombreTarifaController.text;
                                   tarifaBase.descIntegrado = double.tryParse(
-                                      _descuentoController.text);
+                                      _dividendoController.text);
                                   tarifaBase.upgradeCategoria = upgradeCateg;
                                   tarifaBase.upgradeMenor = upgradeMenor;
                                   tarifaBase.upgradePaxAdic = upGradePaxAdic;
                                   tarifaBase.tarifaPadre = tarifaPadre;
+                                  tarifaBase.tarifaOrigenId =
+                                      tarifaPadre?.tarifaOrigenId;
                                   tarifaBase.tarifas = [
                                     nowTariff,
                                     if (!applyUpgrades ||
@@ -598,6 +777,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                       return;
                                     }
 
+                                    if (!mounted) return;
                                     showSnackBar(
                                       context: context,
                                       title: "Tarifa Base creada",
@@ -633,6 +813,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   }
 
   void _selectNewBaseTariff(TarifaBaseInt? baseTariff) {
+    _updateTarifasPadre(baseTariff);
     selectBaseTariff = baseTariff;
     selectCategory = categorias.first;
     selectTarifaPadre = baseTariff?.tarifaPadre?.nombre ?? 'Ninguna';
@@ -651,8 +832,18 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
       _tarifaAdultoCPLController.text = '';
       _tarifaPaxAdicionalController.text = '';
       _tarifaMenoresController.text = '';
-      _descuentoController.text = '';
+      _dividendoController.text = '';
     }
+  }
+
+  double? _getParentRate(double? rate) {
+    double dividendo = double.tryParse(_dividendoController.text) ?? 0;
+    double parentRate = Utility.calculateIncrease(
+      (rate ?? 0),
+      dividendo,
+      withRound: false,
+    );
+    return parentRate;
   }
 
   void _updateDataInput(TarifaBaseInt? selectTariff, {double? percent}) {
@@ -673,8 +864,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
 
-    _descuentoController.text = (selectTariff?.descIntegrado ?? '').toString();
-
+    _dividendoController.text = (selectTariff?.descIntegrado ?? '').toString();
     _applyDiscountTariff(initTariff, percent: percent);
   }
 

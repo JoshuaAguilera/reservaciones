@@ -83,7 +83,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   "Folio: ", widget.cotizacion.folioPrincipal!,
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
-                  "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha.toIso8601String().substring(11, 16)}",
+                  "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha?.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               // TextStyles.TextAsociative("Tarifa: ",
               //     Utility.formatterNumber(widget.cotizacion.rateDay),
