@@ -32,6 +32,7 @@ class Dialogs {
     return StatefulBuilder(builder: (context, snapshot) {
       var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
       return AlertDialog(
+        actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         title: Row(children: [
           if (iconData != null)

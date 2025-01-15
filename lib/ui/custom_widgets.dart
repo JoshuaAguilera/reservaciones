@@ -494,7 +494,7 @@ class CustomWidgets {
   static Widget checkBoxWithDescription(
     BuildContext context, {
     required String title,
-    required String description,
+    String description = "",
     required bool value,
     required void Function(bool?) onChanged,
     Color? activeColor,
@@ -527,7 +527,7 @@ class CustomWidgets {
                     size: 12,
                     overClip: true,
                   ),
-                  if (compact)
+                  if (compact && description.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Tooltip(

@@ -18,7 +18,9 @@ import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
+import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
@@ -68,6 +70,7 @@ class _ManagerTariffDayWidgetState
   RegistroTarifa? selectTariffDefined;
   Color colorTariff = DesktopColors.cerulean;
   bool isEditing = false;
+  bool canBeReset = false;
 
   List<String> promociones = ["No aplicar"];
   final TextEditingController _tarifaAdultoController =
@@ -89,6 +92,8 @@ class _ManagerTariffDayWidgetState
     isUnknow = widget.tarifaXDia.code!.contains("Unknow");
     isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
     colorTariff = widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure;
+    isEditing = widget.tarifaXDia.modificado ?? false;
+    canBeReset = (widget.tarifaXDia.tarifasBase ?? List.empty()).isNotEmpty;
     applyTariffData();
 
     super.initState();
@@ -155,6 +160,13 @@ class _ManagerTariffDayWidgetState
     double tariffAdult = calculateTariffAdult(habitacionProvider.adultos!);
     double tariffChildren =
         calculateTariffMenor(habitacionProvider.menores7a12!);
+    double totalTariff = !isEditing
+        ? Utility.formatNumberRound((tariffAdult + tariffChildren))
+            .roundToDouble()
+        : (tariffAdult + tariffChildren);
+    double descTariff = !isEditing
+        ? -(calculateDiscount(totalTariff)).roundToDouble()
+        : -calculateDiscount(totalTariff);
     final typeQuote = ref.watch(typeQuoteProvider);
     final useCashSeason = ref.watch(useCashSeasonProvider);
     final useCashRoomSeason = ref.watch(useCashSeasonRoomProvider);
@@ -451,31 +463,21 @@ class _ManagerTariffDayWidgetState
                                 fecha: selectTariff?.fecha ?? DateTime.now(),
                                 id: selectTariff?.id ??
                                     categorias.indexOf(selectCategory),
-                                tarifaAdultoSGLoDBL:
-                                    _tarifaAdultoController.text.isEmpty
-                                        ? selectTariff?.tarifaAdultoSGLoDBL
-                                        : double.parse(
-                                            _tarifaAdultoController.text),
-                                tarifaAdultoTPL:
-                                    _tarifaAdultoTPLController.text.isEmpty
-                                        ? selectTariff?.tarifaAdultoTPL
-                                        : double.parse(
-                                            _tarifaAdultoTPLController.text),
-                                tarifaAdultoCPLE:
-                                    _tarifaAdultoCPLController.text.isEmpty
-                                        ? selectTariff?.tarifaAdultoCPLE
-                                        : double.parse(
-                                            _tarifaAdultoCPLController.text),
-                                tarifaPaxAdicional:
-                                    _tarifaPaxAdicionalController.text.isEmpty
-                                        ? selectTariff?.tarifaPaxAdicional
-                                        : double.parse(
-                                            _tarifaPaxAdicionalController.text),
-                                tarifaMenores7a12:
-                                    _tarifaMenoresController.text.isEmpty
-                                        ? selectTariff?.tarifaMenores7a12
-                                        : double.parse(
-                                            _tarifaMenoresController.text),
+                                tarifaAdultoSGLoDBL: double.tryParse(
+                                        _tarifaAdultoController.text) ??
+                                    selectTariff?.tarifaAdultoSGLoDBL,
+                                tarifaAdultoTPL: double.tryParse(
+                                        _tarifaAdultoTPLController.text) ??
+                                    selectTariff?.tarifaAdultoTPL,
+                                tarifaAdultoCPLE: double.tryParse(
+                                        _tarifaAdultoCPLController.text) ??
+                                    selectTariff?.tarifaAdultoCPLE,
+                                tarifaPaxAdicional: double.tryParse(
+                                        _tarifaPaxAdicionalController.text) ??
+                                    selectTariff?.tarifaPaxAdicional,
+                                tarifaMenores7a12: double.tryParse(
+                                        _tarifaMenoresController.text) ??
+                                    selectTariff?.tarifaMenores7a12,
                               );
 
                               _insertTariffForm(saveTariff);
@@ -490,15 +492,115 @@ class _ManagerTariffDayWidgetState
                         ),
                       ),
                     ),
-                    Buttons.iconButtonCard(
-                      icon: Iconsax.edit_outline,
-                      backgroundColor: colorTariff,
-                      colorIcon: useWhiteForeground(colorTariff)
-                          ? Utility.darken(colorTariff, -0.2)
-                          : Utility.darken(colorTariff, 0.2),
-                      tooltip: "Modificar",
-                      onPressed: () {},
-                    )
+                    if (canBeReset &&
+                        (usuario.rol != 'RECEPCION') &&
+                        !(isUnknow || isFreeTariff))
+                      Buttons.iconButtonCard(
+                        icon: isEditing
+                            ? Iconsax.refresh_bold
+                            : Iconsax.edit_outline,
+                        backgroundColor: colorTariff,
+                        colorIcon: useWhiteForeground(colorTariff)
+                            ? Utility.darken(colorTariff, -0.2)
+                            : Utility.darken(colorTariff, 0.2),
+                        tooltip: isEditing ? "Restablecer" : "Modificar",
+                        invertColor: isEditing,
+                        onPressed: () {
+                          if (!isEditing) {
+                            bool showAlertDialog =
+                                Preferences.showAlertTariffModified;
+
+                            if (!showAlertDialog) {
+                              isEditing = true;
+                              setState(() {});
+                              return;
+                            }
+
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialogs.customAlertDialog(
+                                context: context,
+                                iconData: Iconsax.danger_outline,
+                                iconColor: Colors.amber[400],
+                                title: "Alerta de modificación",
+                                contentCustom: SizedBox(
+                                  height: 110,
+                                  width: 300,
+                                  child: StatefulBuilder(
+                                      builder: (context, snapshot) {
+                                    return Column(
+                                      children: [
+                                        TextStyles.standardText(
+                                          text:
+                                              "¿Estas seguro de modificar la siguiente tarifa?",
+                                          size: 12.5,
+                                          overClip: true,
+                                        ),
+                                        const SizedBox(height: 7.5),
+                                        TextStyles.standardText(
+                                          text:
+                                              "Esta funcion puede remover el redondeo preaplicado a las tarifas originales, tome sus debidas precauciones.",
+                                          size: 10.5,
+                                          overClip: true,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        CustomWidgets.checkBoxWithDescription(
+                                          context,
+                                          title: "No volver a preguntar",
+                                          compact: true,
+                                          value: !showAlertDialog,
+                                          onChanged: (p0) {
+                                            showAlertDialog = !p0!;
+                                            Preferences
+                                                    .showAlertTariffModified =
+                                                showAlertDialog;
+                                            snapshot(() {});
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }),
+                                ),
+                                nameButtonMain: "SI",
+                                withButtonCancel: true,
+                                nameButtonCancel: "NO",
+                                otherButton: true,
+                                funtionMain: () {
+                                  isEditing = true;
+                                  setState(() {});
+                                },
+                              ),
+                            );
+                            return;
+                          }
+
+                          bool isModificado =
+                              widget.tarifaXDia.modificado ?? false;
+
+                          TarifaData? tariffVG = (isModificado
+                                  ? widget.tarifaXDia.tarifasBase
+                                  : widget.tarifaXDia.tarifas)
+                              ?.where((element) =>
+                                  element.categoria ==
+                                  tipoHabitacion[
+                                      categorias.indexOf(selectCategory)])
+                              .firstOrNull;
+
+                          TarifaData? tariffVPM = (isModificado
+                                  ? widget.tarifaXDia.tarifasBase
+                                  : widget.tarifaXDia.tarifas)
+                              ?.where((element) =>
+                                  element.categoria !=
+                                  tipoHabitacion[
+                                      categorias.indexOf(selectCategory)])
+                              .firstOrNull;
+
+                          _insertTariffForm(tariffVG);
+                          saveTariff = tariffVPM;
+                          isEditing = false;
+                          setState(() {});
+                        },
+                      )
                   ],
                 ),
                 Padding(
@@ -513,7 +615,8 @@ class _ManagerTariffDayWidgetState
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
                         onUpdate: () => setState(() {}),
-                        isEditing: isEditing &&
+                        applyRound: !isEditing,
+                        isEditing: (isEditing || (isUnknow || isFreeTariff)) &&
                             ((usuario.rol != 'RECEPCION') ||
                                 (isUnknow || isFreeTariff)),
                       ),
@@ -612,38 +715,45 @@ class _ManagerTariffDayWidgetState
                               child: Column(
                                 children: [
                                   CustomWidgets.itemListCount(
-                                      nameItem:
-                                          "Adultos x${habitacionProvider.adultos}:",
-                                      count: tariffAdult,
-                                      context: context,
-                                      height: 40),
+                                    nameItem:
+                                        "Adultos (x${habitacionProvider.adultos}):",
+                                    count: !isEditing
+                                        ? Utility.formatNumberRound(tariffAdult)
+                                            .roundToDouble()
+                                        : tariffAdult,
+                                    context: context,
+                                    height: 40,
+                                  ),
                                   CustomWidgets.itemListCount(
-                                      nameItem:
-                                          "Menores de 7 a 12 x${habitacionProvider.menores7a12}:",
-                                      count: tariffChildren,
-                                      context: context,
-                                      height: 40),
+                                    nameItem:
+                                        "Menores de 7 a 12 (x${habitacionProvider.menores7a12}):",
+                                    count: !isEditing
+                                        ? Utility.formatNumberRound(
+                                                tariffChildren)
+                                            .roundToDouble()
+                                        : tariffChildren,
+                                    context: context,
+                                    height: 40,
+                                  ),
                                   CustomWidgets.itemListCount(
-                                      nameItem:
-                                          "Menores de 0 a 6 x${habitacionProvider.menores0a6}:",
-                                      count: 0,
-                                      context: context,
-                                      height: 40),
+                                    nameItem:
+                                        "Menores de 0 a 6 (x${habitacionProvider.menores0a6}):",
+                                    count: 0,
+                                    context: context,
+                                    height: 40,
+                                  ),
                                   Divider(
                                       color: Theme.of(context).primaryColor),
                                   const SizedBox(height: 5),
                                   CustomWidgets.itemListCount(
                                       nameItem: "Total:",
-                                      count: tariffAdult + tariffChildren,
+                                      count: totalTariff,
                                       context: context,
                                       height: 40),
                                   CustomWidgets.itemListCount(
                                       nameItem:
                                           "Descuento (${(getSeasonSelect() != null) ? getSeasonSelect()?.porcentajePromocion ?? 0 : _descuentoController.text}%):",
-                                      count: -(calculateDiscount(
-                                                  tariffAdult + tariffChildren))
-                                              .round() +
-                                          0.0,
+                                      count: descTariff,
                                       context: context,
                                       height: 40),
                                   Divider(
@@ -651,11 +761,12 @@ class _ManagerTariffDayWidgetState
                                   const SizedBox(height: 5),
                                   CustomWidgets.itemListCount(
                                     nameItem: "Total del dia(s):",
-                                    count: ((tariffChildren + tariffAdult) -
+                                    count: isEditing
+                                        ? (totalTariff + descTariff)
+                                        : ((tariffChildren + tariffAdult) -
                                                 (calculateDiscount(tariffAdult +
                                                     tariffChildren)))
-                                            .round() +
-                                        0.0,
+                                            .roundToDouble(),
                                     context: context,
                                     height: 40,
                                   ),
@@ -689,9 +800,10 @@ class _ManagerTariffDayWidgetState
           width: 100,
           child: Buttons.commonButton(
             text: "ACEPTAR",
+            isBold: true,
             colorText: useWhiteForeground(colorTariff)
-                ? Colors.white
-                : const Color.fromARGB(255, 43, 43, 43),
+                ? Utility.darken(colorTariff, -0.25)
+                : Utility.darken(colorTariff, 0.25),
             color: widget.tarifaXDia.color ?? DesktopColors.cerulean,
             onPressed: () {
               if (!_formKeyTariffDay.currentState!.validate()) return;
@@ -743,15 +855,15 @@ class _ManagerTariffDayWidgetState
                   categoria: newTarifa.categoria,
                   fecha: newTarifa.fecha ?? DateTime.now(),
                   tarifaAdultoSGLoDBL:
-                      double.parse(_tarifaAdultoController.text),
+                      double.tryParse(_tarifaAdultoController.text),
                   tarifaAdultoTPL:
-                      double.parse(_tarifaAdultoTPLController.text),
+                      double.tryParse(_tarifaAdultoTPLController.text),
                   tarifaAdultoCPLE:
-                      double.parse(_tarifaAdultoCPLController.text),
+                      double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
-                      double.parse(_tarifaMenoresController.text),
+                      double.tryParse(_tarifaMenoresController.text),
                   tarifaPaxAdicional:
-                      double.parse(_tarifaPaxAdicionalController.text),
+                      double.tryParse(_tarifaPaxAdicionalController.text),
                 );
 
                 int indexSecondTariff = widget.tarifaXDia.tarifas!.indexWhere(
@@ -772,15 +884,15 @@ class _ManagerTariffDayWidgetState
                       newTarifa?.categoria ?? widget.tarifaXDia.categoria,
                   fecha: newTarifa?.fecha ?? DateTime.now(),
                   tarifaAdultoSGLoDBL:
-                      double.parse(_tarifaAdultoController.text),
+                      double.tryParse(_tarifaAdultoController.text),
                   tarifaAdultoTPL:
-                      double.parse(_tarifaAdultoTPLController.text),
+                      double.tryParse(_tarifaAdultoTPLController.text),
                   tarifaAdultoCPLE:
-                      double.parse(_tarifaAdultoCPLController.text),
+                      double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
-                      double.parse(_tarifaMenoresController.text),
+                      double.tryParse(_tarifaMenoresController.text),
                   tarifaPaxAdicional:
-                      double.parse(_tarifaPaxAdicionalController.text),
+                      double.tryParse(_tarifaPaxAdicionalController.text),
                 );
 
                 int indexFirstTariff = widget.tarifaXDia.tarifas!.indexWhere(
@@ -808,21 +920,22 @@ class _ManagerTariffDayWidgetState
                   categoria: tipoHabitacion[categorias.indexOf(selectCategory)],
                   fecha: newTarifa?.fecha ?? DateTime.now(),
                   tarifaAdultoSGLoDBL:
-                      double.parse(_tarifaAdultoController.text),
+                      double.tryParse(_tarifaAdultoController.text),
                   tarifaAdultoTPL:
-                      double.parse(_tarifaAdultoTPLController.text),
+                      double.tryParse(_tarifaAdultoTPLController.text),
                   tarifaAdultoCPLE:
-                      double.parse(_tarifaAdultoCPLController.text),
+                      double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
-                      double.parse(_tarifaMenoresController.text),
+                      double.tryParse(_tarifaMenoresController.text),
                   tarifaPaxAdicional:
-                      double.parse(_tarifaPaxAdicionalController.text),
+                      double.tryParse(_tarifaPaxAdicionalController.text),
                 );
 
                 widget.tarifaXDia.tarifa = newTariff.copyWith();
 
-                if (applyAllCategory)
+                if (applyAllCategory) {
                   saveTariff = widget.tarifaXDia.tarifa!.copyWith();
+                }
 
                 TarifaData secondTariff = TarifaData(
                   id: categorias.indexOf(categorias
@@ -859,6 +972,7 @@ class _ManagerTariffDayWidgetState
               }
 
               widget.tarifaXDia.temporadaSelect = getSeasonSelect();
+              widget.tarifaXDia.modificado = isEditing;
 
               if (isUnknow || isFreeTariff) {
                 widget.tarifaXDia.descuentoProvisional =
@@ -970,32 +1084,18 @@ class _ManagerTariffDayWidgetState
   double calculateTariffAdult(int adultos) {
     switch (adultos) {
       case 1 || 2:
-        return double.parse(_tarifaAdultoController.text.isEmpty
-            ? "0"
-            : _tarifaAdultoController.text);
-
+        return double.tryParse(_tarifaAdultoController.text) ?? 0;
       case 3:
-        return double.parse(_tarifaAdultoTPLController.text.isEmpty
-            ? "0"
-            : _tarifaAdultoTPLController.text);
-
+        return double.tryParse(_tarifaAdultoTPLController.text) ?? 0;
       case 4:
-        return double.parse(_tarifaAdultoCPLController.text.isEmpty
-            ? "0"
-            : _tarifaAdultoCPLController.text);
-
+        return double.tryParse(_tarifaAdultoCPLController.text) ?? 0;
       default:
-        return double.parse(_tarifaAdultoCPLController.text.isEmpty
-            ? "0"
-            : _tarifaAdultoCPLController.text);
+        return double.tryParse(_tarifaAdultoController.text) ?? 0;
     }
   }
 
   double calculateTariffMenor(int menores) =>
-      menores *
-      double.parse(_tarifaMenoresController.text.isEmpty
-          ? "0"
-          : _tarifaMenoresController.text);
+      menores * (double.tryParse(_tarifaAdultoController.text) ?? 0);
 
   Temporada? getSeasonSelect() {
     if (widget.tarifaXDia.temporadas != null) {
@@ -1047,15 +1147,15 @@ class _ManagerTariffDayWidgetState
         widget.tarifaXDia.tarifa!.categoria ==
             tipoHabitacion[categorias.indexOf(selectCategory)]) {
       if (widget.tarifaXDia.tarifa!.tarifaAdultoSGLoDBL !=
-          double.parse(_tarifaAdultoController.text)) return true;
+          double.tryParse(_tarifaAdultoController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaAdultoTPL !=
-          double.parse(_tarifaAdultoTPLController.text)) return true;
+          double.tryParse(_tarifaAdultoTPLController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaAdultoCPLE !=
-          double.parse(_tarifaAdultoCPLController.text)) return true;
+          double.tryParse(_tarifaAdultoCPLController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaMenores7a12 !=
-          double.parse(_tarifaMenoresController.text)) return true;
+          double.tryParse(_tarifaMenoresController.text)) return true;
       if (widget.tarifaXDia.tarifa!.tarifaPaxAdicional !=
-          double.parse(_tarifaPaxAdicionalController.text)) return true;
+          double.tryParse(_tarifaPaxAdicionalController.text)) return true;
 
       if (widget.tarifaXDia.tarifas == null) return false;
       TarifaData? secondTariff = widget.tarifaXDia.tarifas
@@ -1102,15 +1202,15 @@ class _ManagerTariffDayWidgetState
       if (secondTariff == null) return false;
 
       if (secondTariff.tarifaAdultoSGLoDBL !=
-          double.parse(_tarifaAdultoController.text)) return true;
+          double.tryParse(_tarifaAdultoController.text)) return true;
       if (secondTariff.tarifaAdultoTPL !=
-          double.parse(_tarifaAdultoTPLController.text)) return true;
+          double.tryParse(_tarifaAdultoTPLController.text)) return true;
       if (secondTariff.tarifaAdultoCPLE !=
-          double.parse(_tarifaAdultoCPLController.text)) return true;
+          double.tryParse(_tarifaAdultoCPLController.text)) return true;
       if (secondTariff.tarifaMenores7a12 !=
-          double.parse(_tarifaMenoresController.text)) return true;
+          double.tryParse(_tarifaMenoresController.text)) return true;
       if (secondTariff.tarifaPaxAdicional !=
-          double.parse(_tarifaPaxAdicionalController.text)) return true;
+          double.tryParse(_tarifaPaxAdicionalController.text)) return true;
     }
 
     return withChanges;

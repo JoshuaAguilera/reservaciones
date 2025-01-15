@@ -608,7 +608,7 @@ class Utility {
 
     if (!returnDouble) {
       if (rounded) {
-        return formatterNumber(formatNumber(subtotal).roundToDouble());
+        return formatterNumber(formatNumberRound(subtotal).roundToDouble());
       } else {
         return formatterNumber(subtotal);
       }
@@ -621,7 +621,7 @@ class Utility {
     }
   }
 
-  static double formatNumber(double number) {
+  static double formatNumberRound(double number) {
     if (number > 0) {
       return double.parse(number.toStringAsFixed(7));
     } else if (number < 0) {
@@ -1132,6 +1132,7 @@ class Utility {
     bool isGroupTariff = false,
     bool getTotalRoom = false,
     bool useCashSeason = true,
+    bool applyRoundFormat = false,
   }) {
     double tariffAdult = 0;
     double tariffChildren = 0;
@@ -1174,21 +1175,24 @@ class Utility {
       descuento = descuentoProvisional ?? 0;
     }
 
-    tariffChildren =
-        (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
+    tariffChildren = applyRoundFormat
+        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0))
+        : (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     switch (habitacion.adultos) {
       case 1 || 2:
-        tariffAdult = nowTarifa?.tarifaAdultoSGLoDBL ?? 0;
-        break;
+        double adult1o2 = (nowTarifa?.tarifaAdultoSGLoDBL ?? 0);
+        tariffAdult = applyRoundFormat ? formatNumberRound(adult1o2) : adult1o2;
       case 3:
-        tariffAdult = nowTarifa?.tarifaAdultoTPL ?? 0;
-        break;
+        double adult3 = (nowTarifa?.tarifaAdultoTPL ?? 0);
+        tariffAdult = applyRoundFormat ? formatNumberRound(adult3) : adult3;
       case 4:
-        tariffAdult = nowTarifa?.tarifaAdultoCPLE ?? 0;
+        double adult4 = (nowTarifa?.tarifaAdultoCPLE ?? 0);
+        tariffAdult = applyRoundFormat ? formatNumberRound(adult4) : adult4;
         break;
       default:
-        tariffAdult = nowTarifa?.tarifaPaxAdicional ?? 0;
+        double paxAdic = (nowTarifa?.tarifaPaxAdicional ?? 0);
+        tariffAdult = applyRoundFormat ? formatNumberRound(paxAdic) : paxAdic;
     }
 
     if (withDiscount) {
@@ -1757,6 +1761,7 @@ class Utility {
     bool onlyChildren = false,
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
+    bool applyRoundFormat = false,
   }) {
     double total = 0;
 
@@ -1778,21 +1783,33 @@ class Utility {
       if (onlyAdults) {
         switch (habitacion.adultos) {
           case 1 || 2:
-            total += (selectTarifa?.tarifaAdultoSGLoDBL ?? 0) * element.numDays;
-            break;
+            double adult1o2 = selectTarifa?.tarifaAdultoSGLoDBL ?? 0;
+            total +=
+                (applyRoundFormat ? formatNumberRound(adult1o2) : adult1o2) *
+                    element.numDays;
+
           case 3:
-            total += (selectTarifa?.tarifaAdultoTPL ?? 0) * element.numDays;
-            break;
+            total += (applyRoundFormat
+                    ? formatNumberRound((selectTarifa?.tarifaAdultoTPL ?? 0))
+                    : (selectTarifa?.tarifaAdultoTPL ?? 0)) *
+                element.numDays;
+
           case 4:
-            total += (selectTarifa?.tarifaAdultoCPLE ?? 0) * element.numDays;
-            break;
+            total += (applyRoundFormat
+                    ? formatNumberRound((selectTarifa?.tarifaAdultoCPLE ?? 0))
+                    : (selectTarifa?.tarifaAdultoCPLE ?? 0)) *
+                element.numDays;
+
           default:
             total += 0;
         }
       }
 
       if (onlyChildren) {
-        total += ((selectTarifa?.tarifaMenores7a12 ?? 0) * element.numDays) *
+        total += ((applyRoundFormat
+                    ? formatNumberRound((selectTarifa?.tarifaMenores7a12 ?? 0))
+                    : (selectTarifa?.tarifaMenores7a12 ?? 0)) *
+                element.numDays) *
             (habitacion.menores7a12 ?? 0);
       }
     }
@@ -1807,6 +1824,7 @@ class Utility {
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
     bool typeQuote = false,
+    bool applyRoundFormatt = false,
   }) {
     double discountTotal = 0;
 
@@ -1818,6 +1836,7 @@ class Utility {
         onlyTariffVPM: onlyTariffVPM,
         onlyTariffVR: onlyTariffVR,
         typeQuote: typeQuote,
+        applyRoundFormatt: applyRoundFormatt,
       );
     }
 
@@ -1833,6 +1852,7 @@ class Utility {
     bool onlyDiscountUnitary = false,
     bool typeQuote = false,
     bool useCashTariff = false,
+    bool applyRoundFormatt = false,
   }) {
     double discount = 0;
 

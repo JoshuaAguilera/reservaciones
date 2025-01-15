@@ -19,6 +19,7 @@ class Preferences {
   static int _numberQuotes = 0;
   static int _userId = 0;
   static String _userImageUrl = '';
+  static bool _showAlertTariffModified = true;
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -166,5 +167,15 @@ class Preferences {
   static set userImageUrl(String value) {
     _userImageUrl = value;
     _prefs.setString('userImageUrl', value);
+  }
+
+  static bool get showAlertTariffModified {
+    return _prefs.getBool('showAlertTariffModified') ??
+        _showAlertTariffModified;
+  }
+
+  static set showAlertTariffModified(bool value) {
+    _showAlertTariffModified = value;
+    _prefs.setBool('showAlertTariffModified', value);
   }
 }

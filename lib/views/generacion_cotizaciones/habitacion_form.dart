@@ -13,6 +13,7 @@ import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list_view.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/widgets/select_buttons_widget.dart';
 import 'package:generador_formato/widgets/summary_controller_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -72,6 +73,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   bool alreadyApply = false;
   List<TarifaXDia> alternativeTariffInd = [];
   TarifaXDia? alternativeGrupTariff;
+
+  List<Map<String, Color>> categoriesColor = [
+    {tipoHabitacion.first: DesktopColors.vistaReserva},
+    {tipoHabitacion.last: DesktopColors.vistaParcialMar},
+  ];
 
   final List<bool> _selectedModeRange = <bool>[
     true,
@@ -262,6 +268,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                             Wrap(
                                               spacing: 20,
                                               runSpacing: 15,
+                                              alignment:
+                                                  WrapAlignment.spaceBetween,
                                               crossAxisAlignment:
                                                   WrapCrossAlignment.center,
                                               children: [
@@ -271,43 +279,29 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   color: Theme.of(context)
                                                       .primaryColor,
                                                 ),
-                                                SizedBox(
-                                                  child: CustomDropdown
-                                                      .dropdownMenuCustom(
-                                                    initialSelection:
-                                                        habitacionProvider
-                                                                .categoria ??
-                                                            tipoHabitacion
-                                                                .first,
-                                                    onSelected:
-                                                        (String? value) {
+                                                SelectButtonsWidget(
+                                                  selectButton:
                                                       habitacionProvider
-                                                          .categoria = value!;
-                                                      getTarifasSelect(
-                                                        list,
-                                                        habitacionProvider,
-                                                        tarifasProvisionalesProvider,
-                                                        descuentoProvider,
-                                                        onlyCategory: true,
-                                                        isGroup: typeQuote,
-                                                        useCashSeason:
-                                                            useCashSeasonRoom,
-                                                      );
-                                                      setState(() {});
-                                                    },
-                                                    elements: tipoHabitacion,
-                                                    screenWidth: screenWidth >
-                                                            800
-                                                        ? (screenWidth +
-                                                                (widget.sideController
-                                                                        .extended
-                                                                    ? 0
-                                                                    : 250)) *
-                                                            0.26
-                                                        : 295,
-                                                    calculateWidth: false,
-                                                  ),
-                                                ),
+                                                              .categoria ??
+                                                          tipoHabitacion.first,
+                                                  buttons: categoriesColor,
+                                                  onPressed: (p0) {
+                                                    habitacionProvider
+                                                            .categoria =
+                                                        tipoHabitacion[p0];
+                                                    getTarifasSelect(
+                                                      list,
+                                                      habitacionProvider,
+                                                      tarifasProvisionalesProvider,
+                                                      descuentoProvider,
+                                                      onlyCategory: true,
+                                                      isGroup: typeQuote,
+                                                      useCashSeason:
+                                                          useCashSeasonRoom,
+                                                    );
+                                                    setState(() {});
+                                                  },
+                                                )
                                               ],
                                             ),
                                             const SizedBox(height: 30),
@@ -1367,8 +1361,6 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         useCashTariff: useCashSeason,
         saveCashTariff: saveCashTariff,
       );
-
-      //Retiro de roundUtils por discrepancia
 
       tarifaXDiaList.add(
         TarifaXDia(

@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 import '../models/registro_tarifa_model.dart';
 import '../ui/buttons.dart';
@@ -227,7 +228,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                       ? "No aplica en cot. Grupales"
                       : "Editar",
                   icon: Icon(
-                    CupertinoIcons.pencil,
+                    Iconsax.edit_outline,
                     size: 30,
                     color: widget.isGroupTariff
                         ? DesktopColors.grisPalido

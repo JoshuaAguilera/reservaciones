@@ -188,6 +188,7 @@ class _SummaryControllerWidgetState
                                           messageNotFound: "Sin tarifas",
                                           total: Utility.calculateTariffTotals(
                                             tarifasFiltradas,
+                                            applyRoundFormat: true,
                                             habitacionProvider,
                                             onlyAdults: true,
                                             onlyTariffVR:
@@ -228,6 +229,7 @@ class _SummaryControllerWidgetState
                                                       habitacionProvider,
                                                       widget.numDays,
                                                       withDiscount: false,
+                                                      applyRoundFormat: true,
                                                     ) *
                                                     element.numDays,
                                                 context: context,
@@ -247,6 +249,7 @@ class _SummaryControllerWidgetState
                                             tarifasFiltradas,
                                             habitacionProvider,
                                             onlyChildren: true,
+                                            applyRoundFormat: true,
                                           ),
                                           children: [
                                             for (var element
@@ -278,6 +281,7 @@ class _SummaryControllerWidgetState
                                                             ),
                                                       habitacionProvider,
                                                       widget.numDays,
+                                                      applyRoundFormat: true,
                                                       withDiscount: false,
                                                       isCalculateChildren: true,
                                                     ) *
@@ -308,6 +312,7 @@ class _SummaryControllerWidgetState
                                         habitacionProvider,
                                         onlyChildren: true,
                                         onlyAdults: true,
+                                        applyRoundFormat: true,
                                       ),
                                       context: context,
                                     ),

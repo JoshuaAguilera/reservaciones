@@ -160,7 +160,7 @@ class TableRows {
                     tooltip:
                         isGroupTariff ? "No aplica en cot. Grupales" : "Editar",
                     icon: Icon(
-                      CupertinoIcons.pencil,
+                      Iconsax.edit_outline,
                       size: 25,
                       color: isGroupTariff
                           ? DesktopColors.grisPalido

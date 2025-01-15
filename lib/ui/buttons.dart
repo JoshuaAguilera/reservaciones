@@ -176,9 +176,11 @@ class Buttons {
     Color? backgroundColor,
     Color? colorIcon,
     String tooltip = "",
+    bool invertColor = false,
   }) {
     return Card(
-      color: backgroundColor ?? DesktopColors.ceruleanOscure,
+      color: (invertColor ? colorIcon : backgroundColor) ??
+          DesktopColors.ceruleanOscure,
       child: SizedBox(
         height: 40,
         width: 40,
@@ -187,7 +189,7 @@ class Buttons {
           onPressed: onPressed,
           icon: Icon(
             icon,
-            color: colorIcon ?? Colors.white,
+            color: (invertColor ? backgroundColor : colorIcon) ?? Colors.white,
             size: 25,
           ),
         ),
