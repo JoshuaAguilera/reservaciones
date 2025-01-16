@@ -22,6 +22,7 @@ class TarifaXDia {
   String? folioRoom;
   String? categoria;
   String? subCode;
+  String? tariffCode;
   double? descuentoProvisional;
   bool? modificado;
   int? dia;
@@ -41,6 +42,7 @@ class TarifaXDia {
     this.id,
     this.color,
     this.folioRoom,
+    this.tariffCode,
     this.fecha,
     this.dia,
     this.code,
@@ -63,6 +65,7 @@ class TarifaXDia {
     int? id,
     Color? color,
     String? folioRoom,
+    String? tariffCode,
     DateTime? fecha,
     int? dia,
     String? code,
@@ -100,12 +103,14 @@ class TarifaXDia {
         tarifasBase: tarifasBase ?? this.tarifasBase,
         tarifasEfectivo: tarifasEfectivo ?? this.tarifasEfectivo,
         temporadaSelect: temporadaSelect ?? this.temporadaSelect,
+        tariffCode: tariffCode ?? this.tariffCode,
       );
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'code': code,
+      'tariffCode': tariffCode,
       'color': colorToHex(color ?? DesktopColors.cerulean),
       'temporadas': temporadas,
       'tarifas': tarifas,
@@ -128,6 +133,7 @@ class TarifaXDia {
     return TarifaXDia(
       id: json['id'],
       code: json['code'],
+      tariffCode: json['tariffCode'],
       color: colorFromHex(json['color']),
       temporadas: json['temporadas'] != null
           ? json['temporadas'] != '[]'
