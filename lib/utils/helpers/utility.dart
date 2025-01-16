@@ -1176,7 +1176,7 @@ class Utility {
     }
 
     tariffChildren = applyRoundFormat
-        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0))
+        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0))* habitacion.menores7a12!
         : (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     switch (habitacion.adultos) {

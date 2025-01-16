@@ -715,51 +715,66 @@ class CustomWidgets {
     double height = 60,
     String subTitle = '',
     void Function()? onChanged,
+    Color? color,
+    double paddingBottom = 0,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: SizedBox(
-        height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: TextStyles.standardText(
-                text: nameItem,
-                color: Theme.of(context).primaryColor,
+    Color colorText = color != null
+        ? useWhiteForeground(color, bias: 18)
+            ? Colors.white
+            : Colors.black87
+        : Theme.of(context).primaryColor;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: paddingBottom),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: SizedBox(
+          height: height,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextStyles.standardText(
+                  text: nameItem,
+                  color: colorText,
+                  size: sizeText,
+                  isBold: isBold,
+                ),
+              ),
+              if (subTitle.isNotEmpty)
+                SizedBox(
+                  width: 40,
+                  child: TextStyles.standardText(
+                    text: subTitle,
+                    size: sizeText,
+                    color: colorText,
+                    isBold: true,
+                  ),
+                ),
+              if (onChanged != null)
+                IconButton(
+                  tooltip: "Cambiar de hab.",
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    Icons.sync,
+                    color: color != null ? colorText : Colors.green[400],
+                  ),
+                  onPressed: () {
+                    onChanged.call();
+                  },
+                ),
+              TextStyles.standardText(
+                text: Utility.formatterNumber(count),
+                color: colorText,
                 size: sizeText,
                 isBold: isBold,
               ),
-            ),
-            if (subTitle.isNotEmpty)
-              SizedBox(
-                width: 40,
-                child: TextStyles.standardText(
-                  text: subTitle,
-                  size: sizeText,
-                  color: Theme.of(context).primaryColor,
-                  isBold: true,
-                ),
-              ),
-            if (onChanged != null)
-              IconButton(
-                tooltip: "Cambiar de hab.",
-                visualDensity: VisualDensity.compact,
-                icon: Icon(
-                  Icons.sync,
-                  color: Colors.green[400],
-                ),
-                onPressed: () {
-                  onChanged.call();
-                },
-              ),
-            TextStyles.standardText(
-              text: Utility.formatterNumber(count),
-              color: Theme.of(context).primaryColor,
-              size: sizeText,
-              isBold: isBold,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

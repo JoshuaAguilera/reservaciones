@@ -25,6 +25,7 @@ import 'package:generador_formato/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:generador_formato/widgets/textformfield_custom.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart' as ACD;
 
 import '../../../models/tarifa_model.dart';
 import '../../../providers/tarifario_provider.dart';
@@ -92,7 +93,8 @@ class _ManagerTariffDayWidgetState
     isUnknow = widget.tarifaXDia.code!.contains("Unknow");
     isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
     colorTariff = widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure;
-    isEditing = widget.tarifaXDia.modificado ?? false;
+    isEditing =
+        (widget.tarifaXDia.modificado ?? false) || (isUnknow || isFreeTariff);
     canBeReset = (widget.tarifaXDia.tarifasBase ?? List.empty()).isNotEmpty;
     applyTariffData();
 
@@ -213,130 +215,207 @@ class _ManagerTariffDayWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ////Custom
                 if (isUnknow)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextStyles.standardText(
                           text: "Tarifa Aplicada:  ",
                           color: Theme.of(context).primaryColor,
                         ),
-                        tarifaProvider.when(
-                          data: (data) {
-                            return Container(
-                              width: 300,
-                              height: 43,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Theme.of(context).primaryColor),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(7)),
-                              ),
-                              child: DropdownButton(
-                                underline: const SizedBox(),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(7)),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                icon: const Icon(HeroIcons.square_3_stack_3d),
-                                isExpanded: true,
-                                value: selectTariffDefined,
-                                items: [
-                                  for (var item in data)
-                                    DropdownMenuItem(
-                                      value: item,
-                                      child: CustomWidgets.itemMedal(
-                                          item.nombre ?? '', brightness,
-                                          color: item.color),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: tarifaProvider.when(
+                                data: (data) {
+                                  return SizedBox(
+                                    width:
+                                        selectTariffDefined != null ? 275 : 310,
+                                    height: 35,
+                                    child: ACD
+                                        .CustomDropdown<RegistroTarifa>.search(
+                                      searchHintText: "Buscar",
+                                      hintText: "Selecciona la tarifa definida",
+                                      closedHeaderPadding: EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: selectTariffDefined == null
+                                              ? 10
+                                              : 0),
+                                      items: data,
+                                      decoration: ACD.CustomDropdownDecoration(
+                                        closedFillColor:
+                                            Theme.of(context).primaryColorDark,
+                                        expandedFillColor:
+                                            Theme.of(context).primaryColorDark,
+                                        searchFieldDecoration:
+                                            ACD.SearchFieldDecoration(
+                                          fillColor: Theme.of(context)
+                                              .primaryColorDark,
+                                          hintStyle: TextStyles.styleStandar(),
+                                          textStyle: TextStyles.styleStandar(),
+                                        ),
+                                        closedBorderRadius:
+                                            const BorderRadius.all(
+                                                Radius.circular(5)),
+                                        expandedBorderRadius:
+                                            const BorderRadius.all(
+                                                Radius.circular(4)),
+                                        closedBorder:
+                                            Border.all(color: Colors.grey),
+                                        hintStyle: TextStyles.styleStandar(),
+                                        headerStyle: TextStyles.styleStandar(),
+                                        listItemStyle:
+                                            TextStyles.styleStandar(),
+                                        errorStyle: TextStyles.styleStandar(),
+                                        noResultFoundStyle:
+                                            TextStyles.styleStandar(),
+                                      ),
+                                      initialItem: selectTariffDefined,
+                                      onChanged: (value) {
+                                        setState(
+                                            () => selectTariffDefined = value);
+
+                                        if (value != null) {
+                                          Temporada? selectSeason =
+                                              Utility.getSeasonNow(
+                                            value.copyWith(),
+                                            widget.numDays,
+                                            isGroup: false,
+                                            useCashTariff: useCashSeason,
+                                          );
+
+                                          widget.tarifaXDia.temporadaSelect =
+                                              selectSeason;
+                                          widget.tarifaXDia.temporadas =
+                                              value.temporadas;
+                                          widget.tarifaXDia.tarifas =
+                                              (selectSeason?.forCash ?? false)
+                                                  ? Utility.getTarifasData(
+                                                      selectSeason?.tarifas ??
+                                                          List<Tarifa?>.empty())
+                                                  : value
+                                                      .copyWith()
+                                                      .tarifas
+                                                      ?.map((element) =>
+                                                          element.copyWith())
+                                                      .toList();
+
+                                          widget.tarifaXDia.tarifasBase = value
+                                              .copyWith()
+                                              .tarifas
+                                              ?.map((element) =>
+                                                  element.copyWith())
+                                              .toList();
+
+                                          widget
+                                              .tarifaXDia.tarifa = (selectSeason
+                                                      ?.forCash ??
+                                                  false)
+                                              ? Utility.getTarifasData([
+                                                  selectSeason?.tarifas
+                                                      ?.where((element) =>
+                                                          element.categoria ==
+                                                          tipoHabitacion[
+                                                              categorias.indexOf(
+                                                                  selectCategory)])
+                                                      .firstOrNull
+                                                      ?.copyWith()
+                                                ]).first
+                                              : value
+                                                  .copyWith()
+                                                  .tarifas!
+                                                  .firstWhere((element) =>
+                                                      element.categoria ==
+                                                      tipoHabitacion[
+                                                          categorias.indexOf(
+                                                              selectCategory)])
+                                                  .copyWith();
+
+                                          applyTariffData();
+                                          setState(() {});
+                                        }
+                                      },
+                                      noResultFoundText: "Tarifa no encontrada",
+                                      headerBuilder:
+                                          (context, selectedItem, enabled) {
+                                        return DropdownMenuItem(
+                                          child: CustomWidgets.itemMedal(
+                                            selectedItem.nombre ?? '',
+                                            brightness,
+                                            color: selectedItem.color,
+                                          ),
+                                        );
+                                      },
+                                      expandedHeaderPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 15),
+                                      listItemBuilder: (context, item,
+                                          isSelected, onItemSelect) {
+                                        return DropdownMenuItem(
+                                          child: CustomWidgets.itemMedal(
+                                            item.nombre ?? '',
+                                            brightness,
+                                            color: item.color,
+                                          ),
+                                        );
+                                      },
+                                      listItemPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 15),
                                     ),
-                                  DropdownMenuItem(
-                                    value: null,
-                                    child: CustomWidgets.itemMedal(
-                                        'Ninguna', brightness),
-                                  )
-                                ],
-                                onChanged: (value) {
-                                  setState(() => selectTariffDefined = value);
-
-                                  if (value != null) {
-                                    Temporada? selectSeason =
-                                        Utility.getSeasonNow(
-                                      value.copyWith(),
-                                      widget.numDays,
-                                      isGroup: false,
-                                      useCashTariff: useCashSeason,
-                                    );
-
-                                    widget.tarifaXDia.temporadaSelect =
-                                        selectSeason;
-                                    widget.tarifaXDia.temporadas =
-                                        value.temporadas;
-                                    widget.tarifaXDia.tarifas =
-                                        (selectSeason?.forCash ?? false)
-                                            ? Utility.getTarifasData(
-                                                selectSeason?.tarifas ??
-                                                    List<Tarifa?>.empty())
-                                            : value
-                                                .copyWith()
-                                                .tarifas
-                                                ?.map((element) =>
-                                                    element.copyWith())
-                                                .toList();
-
-                                    widget.tarifaXDia.tarifasBase = value
-                                        .copyWith()
-                                        .tarifas
-                                        ?.map((element) => element.copyWith())
-                                        .toList();
-
-                                    widget.tarifaXDia.tarifa =
-                                        (selectSeason?.forCash ?? false)
-                                            ? Utility.getTarifasData([
-                                                selectSeason?.tarifas
-                                                    ?.where((element) =>
-                                                        element.categoria ==
-                                                        tipoHabitacion[
-                                                            categorias.indexOf(
-                                                                selectCategory)])
-                                                    .firstOrNull
-                                                    ?.copyWith()
-                                              ]).first
-                                            : value
-                                                .copyWith()
-                                                .tarifas!
-                                                .firstWhere((element) =>
-                                                    element.categoria ==
-                                                    tipoHabitacion[
-                                                        categorias.indexOf(
-                                                            selectCategory)])
-                                                .copyWith();
-
-                                    applyTariffData();
-                                    setState(() {});
-                                  }
+                                  );
                                 },
-                              ),
-                            );
-                          },
-                          error: (error, stackTrace) => const Tooltip(
-                              message: "Error de consulta",
-                              child: Icon(Icons.warning_amber_rounded,
-                                  color: Colors.amber)),
-                          loading: () => Center(
-                            child: SizedBox(
-                              width: 40,
-                              child: ProgressIndicatorEstandar(
-                                sizeProgressIndicator: 30,
-                                inHorizontal: true,
+                                error: (error, stackTrace) => const Tooltip(
+                                    message: "Error de consulta",
+                                    child: Icon(Icons.warning_amber_rounded,
+                                        color: Colors.amber)),
+                                loading: () => Center(
+                                  child: SizedBox(
+                                    width: 40,
+                                    child: ProgressIndicatorEstandar(
+                                      sizeProgressIndicator: 30,
+                                      inHorizontal: true,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            if (selectTariffDefined != null)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Buttons.iconButtonCard(
+                                  tooltip: "Remover",
+                                  icon: Icons.close,
+                                  onPressed: () {
+                                    selectTariffDefined = null;
+                                    //Remplazar modo de operacion al trabajar con 
+                                    //tarifas no definidas, preAlmacenar temporadas 
+                                    //en vez de autoInsertarlas en el modelo original
+                                    widget.tarifaXDia.temporadaSelect = null;
+                                    widget.tarifaXDia.temporadas = null;
+                                    widget.tarifaXDia.tarifas = null;
+                                    widget.tarifaXDia.tarifasBase = null;
+                                    widget.tarifaXDia.tarifa = null;
+
+                                    applyTariffData();
+                                    _insertTariffForm(null);
+                                    setState(() {});
+                                  },
+                                ),
+                              )
+                          ],
                         ),
                       ],
                     ),
                   ),
+                /////
                 Row(
                   mainAxisAlignment:
                       (widget.tarifaXDia.temporadaSelect != null ||
@@ -615,7 +694,7 @@ class _ManagerTariffDayWidgetState
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
                         onUpdate: () => setState(() {}),
-                        applyRound: !isEditing,
+                        applyRound: (!isEditing),
                         isEditing: (isEditing || (isUnknow || isFreeTariff)) &&
                             ((usuario.rol != 'RECEPCION') ||
                                 (isUnknow || isFreeTariff)),
