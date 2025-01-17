@@ -355,8 +355,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 Padding(
                   padding: EdgeInsets.only(bottom: isUnknow ? 10 : 0),
                   child: TextStyles.TextAsociative(
-                    isUnknow ? "Descuento: " : "Temporada: ",
-                    isUnknow
+                    (isUnknow && widget.tarifaXDia.tariffCode == null)
+                        ? "Descuento: "
+                        : "Temporada: ",
+                    (isUnknow && widget.tarifaXDia.tariffCode == null)
                         ? "${widget.tarifaXDia.descuentoProvisional}%"
                         : widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                     boldInversed: true,

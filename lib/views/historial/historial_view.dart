@@ -303,10 +303,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       numeroTelefonico:
                                           list[index].numeroTelefonico,
                                       fecha: list[index].fecha.toString(),
+                                      fechaLimite:
+                                          list[index].fechaLimite.toString(),
                                       folioPrincipal:
                                           list[index].folioPrincipal,
-                                      // descuento: list[index].descuento,
-                                      // total: list[index].total,
                                       habitaciones: respHabitaciones,
                                       id: list[index].id,
                                     );

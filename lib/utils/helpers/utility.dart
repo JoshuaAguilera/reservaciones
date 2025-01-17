@@ -272,6 +272,11 @@ class Utility {
           cotizacionesIndividuales.numCotizaciones++;
         }
       }
+
+      if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
+          1) {
+        cotizacionesNoConcretadas.numCotizaciones++;
+      }
     }
 
     cot.addAll([
@@ -1176,7 +1181,8 @@ class Utility {
     }
 
     tariffChildren = applyRoundFormat
-        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0))* habitacion.menores7a12!
+        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0)) *
+            habitacion.menores7a12!
         : (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     switch (habitacion.adultos) {
@@ -1189,7 +1195,6 @@ class Utility {
       case 4:
         double adult4 = (nowTarifa?.tarifaAdultoCPLE ?? 0);
         tariffAdult = applyRoundFormat ? formatNumberRound(adult4) : adult4;
-        break;
       default:
         double paxAdic = (nowTarifa?.tarifaPaxAdicional ?? 0);
         tariffAdult = applyRoundFormat ? formatNumberRound(paxAdic) : paxAdic;
@@ -1860,9 +1865,7 @@ class Utility {
       element.tarifa == null
           ? null
           : RegistroTarifa(
-              tarifas: (onlyTariffVR || onlyTariffVPM)
-                  ? element.tarifas
-                  : [element.tarifa!],
+              tarifas: element.tarifas,
               temporadas: element.temporadas ??
                   (element.temporadaSelect != null
                       ? [element.temporadaSelect!]
@@ -1913,6 +1916,7 @@ class Utility {
             total.toString(),
             (element.descuentoProvisional ?? 0),
             returnDouble: true,
+            rounded: false,
           );
     }
 

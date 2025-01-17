@@ -902,7 +902,7 @@ class CustomWidgets {
               : Utility.darken(
                   Utility.getColorTypeUser(rol, isText: true) ??
                       DesktopColors.grisPalido,
-                  0.1),
+                  -0.1),
           overClip: true,
           isBold: true,
         ),

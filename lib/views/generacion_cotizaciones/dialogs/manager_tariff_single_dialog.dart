@@ -107,6 +107,7 @@ class _ManagerTariffDayWidgetState
     isEditing = (widget.tarifaXDia.modificado ?? false) ||
         ((isUnknow || isFreeTariff) && (widget.tarifaXDia.modificado ?? false));
     canBeReset = (widget.tarifaXDia.tarifasBase ?? List.empty()).isNotEmpty;
+
     applyTariffData();
 
     super.initState();
@@ -231,7 +232,6 @@ class _ManagerTariffDayWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ////Custom
                 if (isUnknow)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
@@ -367,6 +367,8 @@ class _ManagerTariffDayWidgetState
                                                   element.copyWith())
                                               .toList();
 
+                                          _descuentoController.text = "0";
+
                                           isEditing = false;
                                           canBeReset = true;
 
@@ -430,17 +432,37 @@ class _ManagerTariffDayWidgetState
                                   icon: Icons.close,
                                   onPressed: () {
                                     selectItemTariff = null;
-                                    selectSeason = null;
-                                    seasons = null;
-                                    selectTariff = null;
-                                    tariffs = null;
-                                    baseTariffs = null;
+
+                                    if (widget.tarifaXDia.tariffCode == null) {
+                                      selectSeason =
+                                          widget.tarifaXDia.temporadaSelect;
+                                      seasons = widget.tarifaXDia.temporadas;
+                                      selectTariff = widget.tarifaXDia.tarifa;
+                                      tariffs = widget.tarifaXDia.tarifas;
+                                      baseTariffs =
+                                          widget.tarifaXDia.tarifasBase;
+                                      setState(() {});
+                                    } else {
+                                      selectSeason = null;
+                                      seasons = null;
+                                      selectTariff = null;
+                                      tariffs = null;
+                                      baseTariffs = null;
+                                    }
+
                                     saveTariff = null;
                                     setState(() {});
                                     applyTariffData();
-                                    _insertTariffForm(null);
+                                    if (widget.tarifaXDia.tariffCode != null) {
+                                      _insertTariffForm(null);
+                                    }
                                     isEditing = true;
                                     canBeReset = false;
+                                    _descuentoController.text = (widget
+                                                .tarifaXDia
+                                                .descuentoProvisional ??
+                                            0)
+                                        .toString();
                                     setState(() {});
                                   },
                                 ),
@@ -450,7 +472,6 @@ class _ManagerTariffDayWidgetState
                       ],
                     ),
                   ),
-                /////
                 Row(
                   mainAxisAlignment: (seasons != null)
                       ? MainAxisAlignment.spaceBetween
@@ -726,9 +747,13 @@ class _ManagerTariffDayWidgetState
                             _tarifaPaxAdicionalController,
                         tarifaMenoresController: _tarifaMenoresController,
                         onUpdate: () => setState(() {}),
-                        applyRound: (!isEditing),
-                        isEditing:
-                            (isEditing) && ((usuario.rol != 'RECEPCION')),
+                        applyRound: (isUnknow || isFreeTariff)
+                            ? (!isEditing && selectItemTariff != null)
+                            : !isEditing,
+                        isEditing: ((isUnknow || isFreeTariff)
+                                ? selectItemTariff == null
+                                : false) ||
+                            ((isEditing) && (usuario.rol != 'RECEPCION')),
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -1090,7 +1115,11 @@ class _ManagerTariffDayWidgetState
 
               if (isUnknow || isFreeTariff) {
                 widget.tarifaXDia.descuentoProvisional =
-                    double.parse(_descuentoController.text);
+                    double.tryParse(_descuentoController.text);
+              }
+
+              if (selectItemTariff != null && isUnknow) {
+                widget.tarifaXDia.descuentoProvisional = null;
               }
 
               if (applyAllTariff) {
@@ -1238,8 +1267,8 @@ class _ManagerTariffDayWidgetState
         (selectSeason?.nombre ?? '');
 
     if ((isUnknow || isFreeTariff) && selectItemTariff == null) {
-      isSame = double.parse(_descuentoController.text) ==
-          widget.tarifaXDia.descuentoProvisional!;
+      isSame = double.tryParse(_descuentoController.text) ==
+          (widget.tarifaXDia.descuentoProvisional ?? 0);
     }
 
     return isSame;

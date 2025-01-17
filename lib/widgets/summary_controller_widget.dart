@@ -10,6 +10,7 @@ import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 
 import '../providers/habitacion_provider.dart';
+import '../providers/tarifario_provider.dart';
 import '../ui/buttons.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
@@ -68,6 +69,7 @@ class _SummaryControllerWidgetState
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final useCashSeason = ref.watch(useCashSeasonProvider);
+    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
 
     return SizedBox(
       width: screenWidth < 800 ? 260 : 310,
@@ -213,9 +215,8 @@ class _SummaryControllerWidgetState
                                                       element.tarifa == null
                                                           ? null
                                                           : RegistroTarifa(
-                                                              tarifas: [
-                                                                element.tarifa!
-                                                              ],
+                                                              tarifas: element
+                                                                  .tarifas,
                                                               temporadas: element
                                                                       .temporadas ??
                                                                   (element.temporadaSelect !=
@@ -253,6 +254,12 @@ class _SummaryControllerWidgetState
                                             habitacionProvider,
                                             onlyChildren: true,
                                             applyRoundFormat: true,
+                                            onlyTariffVR:
+                                                habitacionProvider.categoria ==
+                                                    tipoHabitacion.first,
+                                            onlyTariffVPM:
+                                                habitacionProvider.categoria ==
+                                                    tipoHabitacion.last,
                                           ),
                                           children: [
                                             for (var element
@@ -269,9 +276,8 @@ class _SummaryControllerWidgetState
                                                       element.tarifa == null
                                                           ? null
                                                           : RegistroTarifa(
-                                                              tarifas: [
-                                                                element.tarifa!
-                                                              ],
+                                                              tarifas: element
+                                                                  .tarifas,
                                                               temporadas: element
                                                                       .temporadas ??
                                                                   (element.temporadaSelect !=
@@ -319,6 +325,12 @@ class _SummaryControllerWidgetState
                                         onlyChildren: true,
                                         onlyAdults: true,
                                         applyRoundFormat: true,
+                                        onlyTariffVR:
+                                            habitacionProvider.categoria ==
+                                                tipoHabitacion.first,
+                                        onlyTariffVPM:
+                                            habitacionProvider.categoria ==
+                                                tipoHabitacion.last,
                                       ),
                                       context: context,
                                     ),
@@ -337,6 +349,12 @@ class _SummaryControllerWidgetState
                                         habitacionProvider,
                                         widget.numDays,
                                         typeQuote: typeQuote,
+                                        onlyTariffVR:
+                                            habitacionProvider.categoria ==
+                                                tipoHabitacion.first,
+                                        onlyTariffVPM:
+                                            habitacionProvider.categoria ==
+                                                tipoHabitacion.last,
                                       )),
                                       children: [
                                         if (widget.calculateRoom)
@@ -372,6 +390,54 @@ class _SummaryControllerWidgetState
                           ),
                           if (widget.calculateRoom)
                             Divider(color: Theme.of(context).primaryColor),
+                          if (!widget.calculateRoom && widget.withSaveButton)
+                            politicaTarifaProvider.when(
+                              data: (data) => Card(
+                                color: typeQuote
+                                    ? DesktopColors.cotGrupal
+                                    : DesktopColors.cotIndiv,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextStyles.standardText(
+                                        text: "Vigencia:",
+                                        size: 12,
+                                        color: !typeQuote
+                                            ? DesktopColors.azulUltClaro
+                                            : DesktopColors.prussianBlue,
+                                      ),
+                                      TextStyles.standardText(
+                                        text: Utility.getCompleteDate(
+                                          data: DateTime.now().add(
+                                            Duration(
+                                              days: typeQuote
+                                                  ? data?.diasVigenciaCotGroup ??
+                                                      0
+                                                  : data?.diasVigenciaCotInd ??
+                                                      0,
+                                            ),
+                                          ),
+                                        ),
+                                        size: 12,
+                                        isBold: true,
+                                        color: !typeQuote
+                                            ? DesktopColors.azulUltClaro
+                                            : DesktopColors.prussianBlue,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              error: (error, stackTrace) => const Tooltip(
+                                message: "Error de consulta",
+                                child: Icon(Icons.warning_amber_rounded,
+                                    color: Colors.amber),
+                              ),
+                              loading: () => const SizedBox(),
+                            ),
                           if (widget.calculateRoom)
                             CustomWidgets.itemListCount(
                               nameItem: "Total cotizado:",
@@ -380,12 +446,24 @@ class _SummaryControllerWidgetState
                                     habitacionProvider,
                                     onlyChildren: true,
                                     onlyAdults: true,
+                                    onlyTariffVR:
+                                        habitacionProvider.categoria ==
+                                            tipoHabitacion.first,
+                                    onlyTariffVPM:
+                                        habitacionProvider.categoria ==
+                                            tipoHabitacion.last,
                                   ) -
                                   Utility.calculateDiscountTotal(
                                     tarifasFiltradas,
                                     habitacionProvider,
                                     widget.numDays,
                                     typeQuote: typeQuote,
+                                    onlyTariffVR:
+                                        habitacionProvider.categoria ==
+                                            tipoHabitacion.first,
+                                    onlyTariffVPM:
+                                        habitacionProvider.categoria ==
+                                            tipoHabitacion.last,
                                   )),
                               context: context,
                               isBold: true,

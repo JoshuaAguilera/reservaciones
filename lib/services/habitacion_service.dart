@@ -23,6 +23,7 @@ class HabitacionService extends BaseService {
           folioHabitacion: element.folioHabitacion,
           adultos: element.adultos,
           count: element.count ?? 1,
+          useCashSeason: element.useCashSeason,
           // descuento: element.descuento,
           folioCotizacion: element.folioCotizacion,
           isFree: element.isFree ?? false,

@@ -156,13 +156,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       });
     }
 
-    Future saveQuoteBD() async {
+    Future saveQuoteBD({int? limitDay}) async {
       int id = await CotizacionService().createCotizacion(
         cotizacion: cotizacion,
         habitaciones: habitaciones,
         folio: folio,
         prefijoInit: prefijoInit,
         isQuoteGroup: typeQuote,
+        limitDay: limitDay, 
       );
 
       if (id == 0) {
@@ -474,8 +475,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           if (data != null) {
                                             int rooms = 0;
                                             for (var element in habitaciones) {
-                                              if (!element.isFree)
+                                              if (!element.isFree) {
                                                 rooms += element.count;
+                                              }
                                             }
 
                                             if (!typeQuote &&
@@ -583,7 +585,28 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             }
 
                             setState(() => isLoading = true);
-                            await saveQuoteBD();
+                            final politicaTarifaProvider =
+                                ref.watch(tariffPolicyProvider(""));
+
+                            await politicaTarifaProvider.when(
+                              data: (data) async {
+                                int? limitDay;
+                                if (data != null) {
+                                  if (typeQuote) {
+                                    limitDay = data.diasVigenciaCotGroup;
+                                  } else {
+                                    limitDay = data.diasVigenciaCotInd;
+                                  }
+                                }
+                                await saveQuoteBD(limitDay: limitDay);
+                              },
+                              error: (error, stackTrace) {
+                                print("Politicas no encontradas");
+                              },
+                              loading: () {
+                                print("Cargando politicas");
+                              },
+                            );
                             setState(() => isLoading = false);
                           },
                   )

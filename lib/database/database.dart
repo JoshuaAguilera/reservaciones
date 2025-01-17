@@ -204,6 +204,7 @@ class AppDatabase extends _$AppDatabase {
       CotizacionData data = CotizacionData(
         id: element.quote.id,
         fecha: element.quote.fecha,
+        fechaLimite: element.quote.fechaLimite,
         correoElectrico: element.quote.correoElectrico,
         esConcretado: element.quote.esConcretado,
         esGrupo: element.quote.esGrupo,
@@ -286,6 +287,7 @@ class AppDatabase extends _$AppDatabase {
       CotizacionData data = CotizacionData(
         id: element.quote.id,
         fecha: element.quote.fecha,
+        fechaLimite: element.quote.fechaLimite,
         correoElectrico: element.quote.correoElectrico,
         esConcretado: element.quote.esConcretado,
         esGrupo: element.quote.esGrupo,
@@ -601,31 +603,33 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
-  return LazyDatabase(() async {
-    // put the database file, called db.sqlite here, into the documents folder
-    // for your app.
+  return LazyDatabase(
+    () async {
+      // put the database file, called db.sqlite here, into the documents folder
+      // for your app.
 
-    // final dbFolder = "/"; //DesCommit when release Windows
-    // final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+      final dbFolder = "/"; //DesCommit when release Windows
+      final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
 
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
+      // final dbFolder = await getApplicationDocumentsDirectory();
+      // final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
 
-    // Also work around limitations on old Android versions
-    if (Platform.isAndroid) {
-      await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
-    }
+      // Also work around limitations on old Android versions
+      if (Platform.isAndroid) {
+        await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
+      }
 
-    // Make sqlite3 pick a more suitable location for temporary files - the
-    // one from the system may be inaccessible due to sandboxing.
-    final cachebase = (await getTemporaryDirectory()).path;
-    // We can't access /tmp on Android, which sqlite3 would try by default.
-    // Explicitly tell it about the correct temporary directory.
-    sqlite3.tempDirectory = cachebase;
+      // Make sqlite3 pick a more suitable location for temporary files - the
+      // one from the system may be inaccessible due to sandboxing.
+      final cachebase = (await getTemporaryDirectory()).path;
+      // We can't access /tmp on Android, which sqlite3 would try by default.
+      // Explicitly tell it about the correct temporary directory.
+      sqlite3.tempDirectory = cachebase;
 
-    return NativeDatabase.createInBackground(
-      file,
-      setup: (database) => database.execute('PRAGMA busy_timeout = 5000;'),
-    );
-  });
+      return NativeDatabase.createInBackground(
+        file,
+        setup: (database) => database.execute('PRAGMA busy_timeout = 5000;'),
+      );
+    },
+  );
 }

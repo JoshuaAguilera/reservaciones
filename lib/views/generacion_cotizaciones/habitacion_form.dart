@@ -27,7 +27,6 @@ import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
-import '../../widgets/custom_dropdown.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
@@ -235,6 +234,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   (element) => element.code == "tariffFree")) {
                                 applyFreeTariff = true;
                               }
+
+                              showSwitchCashSeason = habitacionProvider
+                                      .tarifaXDia
+                                      ?.any((element) =>
+                                          element.temporadas?.any((element) =>
+                                              element.forCash ?? false) ??
+                                          false) ??
+                                  false;
 
                               getTarifasSelect(
                                 list,

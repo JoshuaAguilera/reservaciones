@@ -473,6 +473,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               DesktopColors.cotIndiv,
                                               DesktopColors.resGrupal,
                                               DesktopColors.resIndiv,
+                                              DesktopColors.cotNoConcr,
                                             ],
                                             legend: Legend(
                                               isVisible:
@@ -572,8 +573,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       return Align(
                                         alignment: Alignment.bottomCenter,
                                         child: Padding(
-                                          padding:  EdgeInsets.only(
-                                              bottom: screenWidth < 1090 ? 32 :  20, left: 10, right: 10),
+                                          padding: EdgeInsets.only(
+                                              bottom:
+                                                  screenWidth < 1090 ? 32 : 20,
+                                              left: 10,
+                                              right: 10),
                                           child: Wrap(
                                             runAlignment: WrapAlignment.center,
                                             crossAxisAlignment:

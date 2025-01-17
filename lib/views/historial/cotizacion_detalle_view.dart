@@ -112,18 +112,42 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         size: 13,
                                         color: colorText,
                                       ),
-                                      TextStyles.TextAsociative(
-                                        "Correo electronico: ",
-                                        cotizacion.correoElectronico ?? '',
-                                        size: 13,
-                                        color: colorText,
-                                      ),
-                                      TextStyles.TextAsociative(
-                                        "Telefono: ",
-                                        cotizacion.numeroTelefonico ?? '',
-                                        size: 13,
-                                        color: colorText,
-                                      ),
+                                      // TextStyles.TextAsociative(
+                                      //   "Fecha de Registro: ",
+                                      //   cotizacion.fecha ?? '',
+                                      //   size: 13,
+                                      //   color: colorText,
+                                      // ),
+                                      // TextStyles.TextAsociative(
+                                      //   "Fecha de Vigencia: ",
+                                      //   cotizacion.fechaLimite ?? '',
+                                      //   size: 13,
+                                      //   color: colorText,
+                                      // ),
+
+                                      TextStyles.TextAsociative("Fecha: ",
+                                          "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fecha!))} ${cotizacion.fecha?.substring(11, 16)}",
+                                          size: 13, color: colorText),
+
+                                      TextStyles.TextAsociative("Vigencia: ",
+                                          "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
+                                          size: 13, color: colorText),
+                                      if ((cotizacion.correoElectronico ?? '')
+                                          .isNotEmpty)
+                                        TextStyles.TextAsociative(
+                                          "Correo electronico: ",
+                                          cotizacion.correoElectronico ?? '',
+                                          size: 13,
+                                          color: colorText,
+                                        ),
+                                      if ((cotizacion.numeroTelefonico ?? '')
+                                          .isNotEmpty)
+                                        TextStyles.TextAsociative(
+                                          "Telefono: ",
+                                          cotizacion.numeroTelefonico ?? '',
+                                          size: 13,
+                                          color: colorText,
+                                        ),
                                     ],
                                   ),
                                 ),

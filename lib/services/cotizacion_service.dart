@@ -27,6 +27,7 @@ class CotizacionService extends BaseService {
     List<Habitacion>? habitaciones,
     required String folio,
     required PrefijoTelefonico prefijoInit,
+    int? limitDay,
     bool isQuoteGroup = false,
   }) async {
     final database = AppDatabase();
@@ -59,6 +60,7 @@ class CotizacionService extends BaseService {
                   HabitacionCompanion.insert(
                     // categoria: Value(element.categoria),
                     fecha: DateTime.now(),
+                    useCashSeason: Value(element.useCashSeason),
                     fechaCheckIn: Value(element.fechaCheckIn),
                     fechaCheckOut: Value(element.fechaCheckOut),
                     folioCotizacion: Value(folio),
@@ -79,19 +81,21 @@ class CotizacionService extends BaseService {
 
           id = await database.into(database.cotizacion).insert(
                 CotizacionCompanion.insert(
-                  fecha: Value(DateTime.now()),
-                  correoElectrico: Value(cotizacion.correoElectronico ?? ''),
-                  esGrupo: Value(isQuoteGroup),
-                  folioPrincipal: Value(folio),
-                  habitaciones: const Value(""),
-                  nombreHuesped: Value(cotizacion.nombreHuesped),
-                  numeroTelefonico: Value(cotizacion.numeroTelefonico),
-                  usuarioID: Value(userId),
-                  esConcretado: const Value(false),
-                  // descuento: Value(cotizacion.descuento),
-                  // total: Value(cotizacion.total),
-                  // totalReal: Value(cotizacion.totalReal),
-                ),
+                    fecha: Value(DateTime.now()),
+                    correoElectrico: Value(cotizacion.correoElectronico ?? ''),
+                    esGrupo: Value(isQuoteGroup),
+                    folioPrincipal: Value(folio),
+                    habitaciones: const Value(""),
+                    nombreHuesped: Value(cotizacion.nombreHuesped),
+                    numeroTelefonico: Value(cotizacion.numeroTelefonico),
+                    usuarioID: Value(userId),
+                    esConcretado: const Value(false),
+                    fechaLimite:
+                        Value(DateTime.now().add(Duration(days: limitDay ?? 0)))
+                    // descuento: Value(cotizacion.descuento),
+                    // total: Value(cotizacion.total),
+                    // totalReal: Value(cotizacion.totalReal),
+                    ),
               );
         },
       );

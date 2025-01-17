@@ -13,5 +13,6 @@ class Habitacion extends Table {
   IntColumn get paxAdic => integer().nullable()();
   IntColumn get count => integer().nullable()();
   BoolColumn get isFree => boolean().nullable()();
+  BoolColumn get useCashSeason => boolean().nullable()();
   TextColumn get tarifaXDia => text().nullable()();
 }

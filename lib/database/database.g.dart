@@ -921,6 +921,12 @@ class $CotizacionTable extends Cotizacion
   late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
       'fecha', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _fechaLimiteMeta =
+      const VerificationMeta('fechaLimite');
+  @override
+  late final GeneratedColumn<DateTime> fechaLimite = GeneratedColumn<DateTime>(
+      'fecha_limite', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _esGrupoMeta =
       const VerificationMeta('esGrupo');
   @override
@@ -968,6 +974,7 @@ class $CotizacionTable extends Cotizacion
         numeroTelefonico,
         correoElectrico,
         fecha,
+        fechaLimite,
         esGrupo,
         esConcretado,
         habitaciones,
@@ -1014,6 +1021,12 @@ class $CotizacionTable extends Cotizacion
     if (data.containsKey('fecha')) {
       context.handle(
           _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
+    }
+    if (data.containsKey('fecha_limite')) {
+      context.handle(
+          _fechaLimiteMeta,
+          fechaLimite.isAcceptableOrUnknown(
+              data['fecha_limite']!, _fechaLimiteMeta));
     }
     if (data.containsKey('es_grupo')) {
       context.handle(_esGrupoMeta,
@@ -1062,6 +1075,8 @@ class $CotizacionTable extends Cotizacion
           DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
+      fechaLimite: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha_limite']),
       esGrupo: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
       esConcretado: attachedDatabase.typeMapping
@@ -1088,6 +1103,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
   final String? numeroTelefonico;
   final String? correoElectrico;
   final DateTime? fecha;
+  final DateTime? fechaLimite;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
@@ -1100,6 +1116,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       this.numeroTelefonico,
       this.correoElectrico,
       this.fecha,
+      this.fechaLimite,
       this.esGrupo,
       this.esConcretado,
       this.habitaciones,
@@ -1123,6 +1140,9 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     }
     if (!nullToAbsent || fecha != null) {
       map['fecha'] = Variable<DateTime>(fecha);
+    }
+    if (!nullToAbsent || fechaLimite != null) {
+      map['fecha_limite'] = Variable<DateTime>(fechaLimite);
     }
     if (!nullToAbsent || esGrupo != null) {
       map['es_grupo'] = Variable<bool>(esGrupo);
@@ -1159,6 +1179,9 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           : Value(correoElectrico),
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
+      fechaLimite: fechaLimite == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaLimite),
       esGrupo: esGrupo == null && nullToAbsent
           ? const Value.absent()
           : Value(esGrupo),
@@ -1187,6 +1210,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
       correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
+      fechaLimite: serializer.fromJson<DateTime?>(json['fechaLimite']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
@@ -1204,6 +1228,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
       'correoElectrico': serializer.toJson<String?>(correoElectrico),
       'fecha': serializer.toJson<DateTime?>(fecha),
+      'fechaLimite': serializer.toJson<DateTime?>(fechaLimite),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
@@ -1219,6 +1244,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           Value<String?> numeroTelefonico = const Value.absent(),
           Value<String?> correoElectrico = const Value.absent(),
           Value<DateTime?> fecha = const Value.absent(),
+          Value<DateTime?> fechaLimite = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
           Value<String?> habitaciones = const Value.absent(),
@@ -1237,6 +1263,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
             ? correoElectrico.value
             : this.correoElectrico,
         fecha: fecha.present ? fecha.value : this.fecha,
+        fechaLimite: fechaLimite.present ? fechaLimite.value : this.fechaLimite,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
             esConcretado.present ? esConcretado.value : this.esConcretado,
@@ -1261,6 +1288,8 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ? data.correoElectrico.value
           : this.correoElectrico,
       fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      fechaLimite:
+          data.fechaLimite.present ? data.fechaLimite.value : this.fechaLimite,
       esGrupo: data.esGrupo.present ? data.esGrupo.value : this.esGrupo,
       esConcretado: data.esConcretado.present
           ? data.esConcretado.value
@@ -1282,6 +1311,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
+          ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
@@ -1299,6 +1329,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       numeroTelefonico,
       correoElectrico,
       fecha,
+      fechaLimite,
       esGrupo,
       esConcretado,
       habitaciones,
@@ -1314,6 +1345,7 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           other.numeroTelefonico == this.numeroTelefonico &&
           other.correoElectrico == this.correoElectrico &&
           other.fecha == this.fecha &&
+          other.fechaLimite == this.fechaLimite &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
           other.habitaciones == this.habitaciones &&
@@ -1328,6 +1360,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
   final Value<String?> numeroTelefonico;
   final Value<String?> correoElectrico;
   final Value<DateTime?> fecha;
+  final Value<DateTime?> fechaLimite;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
@@ -1340,6 +1373,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
+    this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
@@ -1353,6 +1387,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     this.numeroTelefonico = const Value.absent(),
     this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
+    this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
@@ -1366,6 +1401,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     Expression<String>? numeroTelefonico,
     Expression<String>? correoElectrico,
     Expression<DateTime>? fecha,
+    Expression<DateTime>? fechaLimite,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
     Expression<String>? habitaciones,
@@ -1379,6 +1415,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
       if (correoElectrico != null) 'correo_electrico': correoElectrico,
       if (fecha != null) 'fecha': fecha,
+      if (fechaLimite != null) 'fecha_limite': fechaLimite,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
       if (habitaciones != null) 'habitaciones': habitaciones,
@@ -1394,6 +1431,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       Value<String?>? numeroTelefonico,
       Value<String?>? correoElectrico,
       Value<DateTime?>? fecha,
+      Value<DateTime?>? fechaLimite,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
       Value<String?>? habitaciones,
@@ -1406,6 +1444,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
       numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
       correoElectrico: correoElectrico ?? this.correoElectrico,
       fecha: fecha ?? this.fecha,
+      fechaLimite: fechaLimite ?? this.fechaLimite,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
       habitaciones: habitaciones ?? this.habitaciones,
@@ -1435,6 +1474,9 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
     }
+    if (fechaLimite.present) {
+      map['fecha_limite'] = Variable<DateTime>(fechaLimite.value);
+    }
     if (esGrupo.present) {
       map['es_grupo'] = Variable<bool>(esGrupo.value);
     }
@@ -1462,6 +1504,7 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
           ..write('numeroTelefonico: $numeroTelefonico, ')
           ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
+          ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
@@ -1553,6 +1596,15 @@ class $HabitacionTable extends Habitacion
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_free" IN (0, 1))'));
+  static const VerificationMeta _useCashSeasonMeta =
+      const VerificationMeta('useCashSeason');
+  @override
+  late final GeneratedColumn<bool> useCashSeason = GeneratedColumn<bool>(
+      'use_cash_season', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("use_cash_season" IN (0, 1))'));
   static const VerificationMeta _tarifaXDiaMeta =
       const VerificationMeta('tarifaXDia');
   @override
@@ -1573,6 +1625,7 @@ class $HabitacionTable extends Habitacion
         paxAdic,
         count,
         isFree,
+        useCashSeason,
         tarifaXDia
       ];
   @override
@@ -1646,6 +1699,12 @@ class $HabitacionTable extends Habitacion
       context.handle(_isFreeMeta,
           isFree.isAcceptableOrUnknown(data['is_free']!, _isFreeMeta));
     }
+    if (data.containsKey('use_cash_season')) {
+      context.handle(
+          _useCashSeasonMeta,
+          useCashSeason.isAcceptableOrUnknown(
+              data['use_cash_season']!, _useCashSeasonMeta));
+    }
     if (data.containsKey('tarifa_x_dia')) {
       context.handle(
           _tarifaXDiaMeta,
@@ -1685,6 +1744,8 @@ class $HabitacionTable extends Habitacion
           .read(DriftSqlType.int, data['${effectivePrefix}count']),
       isFree: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_free']),
+      useCashSeason: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}use_cash_season']),
       tarifaXDia: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}tarifa_x_dia']),
     );
@@ -1709,6 +1770,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final int? paxAdic;
   final int? count;
   final bool? isFree;
+  final bool? useCashSeason;
   final String? tarifaXDia;
   const HabitacionData(
       {required this.id,
@@ -1723,6 +1785,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       this.paxAdic,
       this.count,
       this.isFree,
+      this.useCashSeason,
       this.tarifaXDia});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1758,6 +1821,9 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     }
     if (!nullToAbsent || isFree != null) {
       map['is_free'] = Variable<bool>(isFree);
+    }
+    if (!nullToAbsent || useCashSeason != null) {
+      map['use_cash_season'] = Variable<bool>(useCashSeason);
     }
     if (!nullToAbsent || tarifaXDia != null) {
       map['tarifa_x_dia'] = Variable<String>(tarifaXDia);
@@ -1797,6 +1863,9 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           count == null && nullToAbsent ? const Value.absent() : Value(count),
       isFree:
           isFree == null && nullToAbsent ? const Value.absent() : Value(isFree),
+      useCashSeason: useCashSeason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(useCashSeason),
       tarifaXDia: tarifaXDia == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaXDia),
@@ -1819,6 +1888,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       paxAdic: serializer.fromJson<int?>(json['paxAdic']),
       count: serializer.fromJson<int?>(json['count']),
       isFree: serializer.fromJson<bool?>(json['isFree']),
+      useCashSeason: serializer.fromJson<bool?>(json['useCashSeason']),
       tarifaXDia: serializer.fromJson<String?>(json['tarifaXDia']),
     );
   }
@@ -1838,6 +1908,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       'paxAdic': serializer.toJson<int?>(paxAdic),
       'count': serializer.toJson<int?>(count),
       'isFree': serializer.toJson<bool?>(isFree),
+      'useCashSeason': serializer.toJson<bool?>(useCashSeason),
       'tarifaXDia': serializer.toJson<String?>(tarifaXDia),
     };
   }
@@ -1855,6 +1926,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           Value<int?> paxAdic = const Value.absent(),
           Value<int?> count = const Value.absent(),
           Value<bool?> isFree = const Value.absent(),
+          Value<bool?> useCashSeason = const Value.absent(),
           Value<String?> tarifaXDia = const Value.absent()}) =>
       HabitacionData(
         id: id ?? this.id,
@@ -1875,6 +1947,8 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
         paxAdic: paxAdic.present ? paxAdic.value : this.paxAdic,
         count: count.present ? count.value : this.count,
         isFree: isFree.present ? isFree.value : this.isFree,
+        useCashSeason:
+            useCashSeason.present ? useCashSeason.value : this.useCashSeason,
         tarifaXDia: tarifaXDia.present ? tarifaXDia.value : this.tarifaXDia,
       );
   HabitacionData copyWithCompanion(HabitacionCompanion data) {
@@ -1901,6 +1975,9 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       paxAdic: data.paxAdic.present ? data.paxAdic.value : this.paxAdic,
       count: data.count.present ? data.count.value : this.count,
       isFree: data.isFree.present ? data.isFree.value : this.isFree,
+      useCashSeason: data.useCashSeason.present
+          ? data.useCashSeason.value
+          : this.useCashSeason,
       tarifaXDia:
           data.tarifaXDia.present ? data.tarifaXDia.value : this.tarifaXDia,
     );
@@ -1921,6 +1998,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           ..write('paxAdic: $paxAdic, ')
           ..write('count: $count, ')
           ..write('isFree: $isFree, ')
+          ..write('useCashSeason: $useCashSeason, ')
           ..write('tarifaXDia: $tarifaXDia')
           ..write(')'))
         .toString();
@@ -1940,6 +2018,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
       paxAdic,
       count,
       isFree,
+      useCashSeason,
       tarifaXDia);
   @override
   bool operator ==(Object other) =>
@@ -1957,6 +2036,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.paxAdic == this.paxAdic &&
           other.count == this.count &&
           other.isFree == this.isFree &&
+          other.useCashSeason == this.useCashSeason &&
           other.tarifaXDia == this.tarifaXDia);
 }
 
@@ -1973,6 +2053,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<int?> paxAdic;
   final Value<int?> count;
   final Value<bool?> isFree;
+  final Value<bool?> useCashSeason;
   final Value<String?> tarifaXDia;
   const HabitacionCompanion({
     this.id = const Value.absent(),
@@ -1987,6 +2068,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.paxAdic = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
+    this.useCashSeason = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
   });
   HabitacionCompanion.insert({
@@ -2002,6 +2084,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.paxAdic = const Value.absent(),
     this.count = const Value.absent(),
     this.isFree = const Value.absent(),
+    this.useCashSeason = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
   }) : fecha = Value(fecha);
   static Insertable<HabitacionData> custom({
@@ -2017,6 +2100,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     Expression<int>? paxAdic,
     Expression<int>? count,
     Expression<bool>? isFree,
+    Expression<bool>? useCashSeason,
     Expression<String>? tarifaXDia,
   }) {
     return RawValuesInsertable({
@@ -2032,6 +2116,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       if (paxAdic != null) 'pax_adic': paxAdic,
       if (count != null) 'count': count,
       if (isFree != null) 'is_free': isFree,
+      if (useCashSeason != null) 'use_cash_season': useCashSeason,
       if (tarifaXDia != null) 'tarifa_x_dia': tarifaXDia,
     });
   }
@@ -2049,6 +2134,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       Value<int?>? paxAdic,
       Value<int?>? count,
       Value<bool?>? isFree,
+      Value<bool?>? useCashSeason,
       Value<String?>? tarifaXDia}) {
     return HabitacionCompanion(
       id: id ?? this.id,
@@ -2063,6 +2149,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       paxAdic: paxAdic ?? this.paxAdic,
       count: count ?? this.count,
       isFree: isFree ?? this.isFree,
+      useCashSeason: useCashSeason ?? this.useCashSeason,
       tarifaXDia: tarifaXDia ?? this.tarifaXDia,
     );
   }
@@ -2106,6 +2193,9 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     if (isFree.present) {
       map['is_free'] = Variable<bool>(isFree.value);
     }
+    if (useCashSeason.present) {
+      map['use_cash_season'] = Variable<bool>(useCashSeason.value);
+    }
     if (tarifaXDia.present) {
       map['tarifa_x_dia'] = Variable<String>(tarifaXDia.value);
     }
@@ -2127,6 +2217,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
           ..write('paxAdic: $paxAdic, ')
           ..write('count: $count, ')
           ..write('isFree: $isFree, ')
+          ..write('useCashSeason: $useCashSeason, ')
           ..write('tarifaXDia: $tarifaXDia')
           ..write(')'))
         .toString();
@@ -6845,6 +6936,7 @@ typedef $$CotizacionTableCreateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   Value<DateTime?> fecha,
+  Value<DateTime?> fechaLimite,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
@@ -6858,6 +6950,7 @@ typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
   Value<DateTime?> fecha,
+  Value<DateTime?> fechaLimite,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
@@ -6888,6 +6981,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
+            Value<DateTime?> fechaLimite = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
@@ -6901,6 +6995,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
+            fechaLimite: fechaLimite,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
@@ -6914,6 +7009,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
             Value<DateTime?> fecha = const Value.absent(),
+            Value<DateTime?> fechaLimite = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
@@ -6927,6 +7023,7 @@ class $$CotizacionTableTableManager extends RootTableManager<
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
             fecha: fecha,
+            fechaLimite: fechaLimite,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
@@ -6966,6 +7063,11 @@ class $$CotizacionTableFilterComposer
 
   ColumnFilters<DateTime> get fecha => $state.composableBuilder(
       column: $state.table.fecha,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get fechaLimite => $state.composableBuilder(
+      column: $state.table.fechaLimite,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7035,6 +7137,11 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<DateTime> get fechaLimite => $state.composableBuilder(
+      column: $state.table.fechaLimite,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<bool> get esGrupo => $state.composableBuilder(
       column: $state.table.esGrupo,
       builder: (column, joinBuilders) =>
@@ -7081,6 +7188,7 @@ typedef $$HabitacionTableCreateCompanionBuilder = HabitacionCompanion Function({
   Value<int?> paxAdic,
   Value<int?> count,
   Value<bool?> isFree,
+  Value<bool?> useCashSeason,
   Value<String?> tarifaXDia,
 });
 typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
@@ -7096,6 +7204,7 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<int?> paxAdic,
   Value<int?> count,
   Value<bool?> isFree,
+  Value<bool?> useCashSeason,
   Value<String?> tarifaXDia,
 });
 
@@ -7128,6 +7237,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> paxAdic = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
+            Value<bool?> useCashSeason = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
           }) =>
               HabitacionCompanion(
@@ -7143,6 +7253,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             paxAdic: paxAdic,
             count: count,
             isFree: isFree,
+            useCashSeason: useCashSeason,
             tarifaXDia: tarifaXDia,
           ),
           createCompanionCallback: ({
@@ -7158,6 +7269,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<int?> paxAdic = const Value.absent(),
             Value<int?> count = const Value.absent(),
             Value<bool?> isFree = const Value.absent(),
+            Value<bool?> useCashSeason = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
           }) =>
               HabitacionCompanion.insert(
@@ -7173,6 +7285,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             paxAdic: paxAdic,
             count: count,
             isFree: isFree,
+            useCashSeason: useCashSeason,
             tarifaXDia: tarifaXDia,
           ),
         ));
@@ -7238,6 +7351,11 @@ class $$HabitacionTableFilterComposer
 
   ColumnFilters<bool> get isFree => $state.composableBuilder(
       column: $state.table.isFree,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get useCashSeason => $state.composableBuilder(
+      column: $state.table.useCashSeason,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7307,6 +7425,11 @@ class $$HabitacionTableOrderingComposer
 
   ColumnOrderings<bool> get isFree => $state.composableBuilder(
       column: $state.table.isFree,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get useCashSeason => $state.composableBuilder(
+      column: $state.table.useCashSeason,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

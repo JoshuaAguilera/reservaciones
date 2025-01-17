@@ -38,22 +38,40 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   Color? colorTextIndice;
   Color? colorIconDetail;
   Color? colorIconDelete;
+  Color? colorItem;
+  bool isInvalid = false;
 
   @override
   void initState() {
     super.initState();
-    colorText = !widget.cotizacion.esGrupo!
-        ? DesktopColors.azulUltClaro
-        : DesktopColors.prussianBlue;
-    colorTextIndice = !widget.cotizacion.esGrupo!
-        ? DesktopColors.azulUltClaro
-        : DesktopColors.prussianBlue;
-    colorIconDelete = !widget.cotizacion.esGrupo!
-        ? DesktopColors.azulCielo
-        : DesktopColors.ceruleanOscure;
-    colorIconDetail = !widget.cotizacion.esGrupo!
-        ? DesktopColors.azulClaro
-        : DesktopColors.ceruleanOscure;
+    isInvalid = DateTime.now()
+            .compareTo(widget.cotizacion.fechaLimite ?? DateTime.now()) ==
+        1;
+    colorText = isInvalid
+        ? Colors.white
+        : !widget.cotizacion.esGrupo!
+            ? DesktopColors.azulUltClaro
+            : DesktopColors.prussianBlue;
+    colorTextIndice = isInvalid
+        ? Colors.white
+        : !widget.cotizacion.esGrupo!
+            ? DesktopColors.azulUltClaro
+            : DesktopColors.prussianBlue;
+    colorIconDelete = isInvalid
+        ? Colors.white
+        : !widget.cotizacion.esGrupo!
+            ? DesktopColors.azulCielo
+            : DesktopColors.ceruleanOscure;
+    colorIconDetail = isInvalid
+        ? Colors.white
+        : !widget.cotizacion.esGrupo!
+            ? DesktopColors.azulClaro
+            : DesktopColors.ceruleanOscure;
+    colorItem = isInvalid
+        ? DesktopColors.cotNoConcr
+        : widget.cotizacion.esGrupo!
+            ? DesktopColors.cotGrupal
+            : DesktopColors.cotIndiv;
   }
 
   @override
@@ -63,9 +81,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
       child: Card(
         margin: const EdgeInsets.all(0),
         elevation: 3,
-        color: widget.cotizacion.esGrupo!
-            ? DesktopColors.cotGrupal
-            : DesktopColors.cotIndiv,
+        color: colorItem,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,
           leading: widget.isQuery
@@ -85,12 +101,17 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
               TextStyles.TextAsociative("Fecha: ",
                   "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha?.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
+
+              TextStyles.TextAsociative("Vigencia: ",
+                  "${Utility.getCompleteDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
+                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               // TextStyles.TextAsociative("Tarifa: ",
               //     Utility.formatterNumber(widget.cotizacion.rateDay),
               //     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
-              TextStyles.TextAsociative(
-                  "Correo: ", widget.cotizacion.correoElectrico ?? '',
-                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
+              if ((widget.cotizacion.correoElectrico ?? '').isNotEmpty)
+                TextStyles.TextAsociative(
+                    "Correo: ", widget.cotizacion.correoElectrico ?? '',
+                    size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),
           trailing: Wrap(

@@ -9,7 +9,7 @@ class Cotizacion {
   String? tipo;
   String? fecha;
   int? responsableId;
-
+  String? fechaLimite;
   bool? esGrupo;
   bool? esConcretado;
   List<Habitacion>? habitaciones;
@@ -21,6 +21,7 @@ class Cotizacion {
     this.numeroTelefonico,
     this.correoElectronico,
     this.fecha,
+    this.fechaLimite,
     this.folioPrincipal,
     this.habitaciones,
     this.responsableId,
@@ -53,5 +54,6 @@ class Cotizacion {
         esGrupo: esGrupo ?? this.esGrupo,
         esConcretado: esConcretado ?? this.esConcretado,
         habitaciones: habitaciones ?? this.habitaciones,
+        fechaLimite: fechaLimite ?? this.fechaLimite,
       );
 }

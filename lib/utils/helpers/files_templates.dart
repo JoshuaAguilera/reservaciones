@@ -640,6 +640,7 @@ class FilesTemplate {
         descuentoProvisional: habitacion.tarifaXDia![i].descuentoProvisional,
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
+        useCashSeason: habitacion.useCashSeason ?? false,
       );
 
       double totalMenores = Utility.calculateTotalTariffRoom(
@@ -652,6 +653,7 @@ class FilesTemplate {
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
         isCalculateChildren: true,
+        useCashSeason: habitacion.useCashSeason ?? false,
       );
 
       DateTime now = DateTime.parse(habitacion.fechaCheckIn!);
@@ -737,7 +739,8 @@ class FilesTemplate {
                  <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifaXDia?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
           }
 
-          contentMail += ''' <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
+          contentMail +=
+              ''' <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
                                                                         <strong></strong><br></p>''';
         }
 
