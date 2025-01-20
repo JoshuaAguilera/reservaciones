@@ -59,7 +59,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   @override
   void initState() {
     _selectNewBaseTariff(widget.tarifasBase.firstOrNull);
-    _updateTarifasPadre(widget.tarifasBase.first);
+    _updateTarifasPadre(widget.tarifasBase.firstOrNull);
 
     super.initState();
   }

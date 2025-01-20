@@ -55,9 +55,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
     Color colorLabel = brightness == Brightness.light
         ? Colors.black54
         : DesktopColors.grisPalido;
-    Color colorTextValue = brightness == Brightness.light
-        ? Colors.black87
-        : DesktopColors.white;
+    Color colorTextValue =
+        brightness == Brightness.light ? Colors.black87 : DesktopColors.white;
 
     return Stack(
       children: [
@@ -65,19 +64,25 @@ class _LoginViewState extends ConsumerState<LoginView> {
           height: screenHeight,
           width: screenWidth,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                brightness == Brightness.light
-                    ? Colors.white
-                    : DesktopColors.grisSemiPalido,
-                brightness == Brightness.light
-                    ? DesktopColors.cerulean
-                    : DesktopColors.grisPalido
-              ],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-            ),
+              image: DecorationImage(
+            image: brightness == Brightness.light
+                ? const AssetImage("assets/image/background_1.png")
+                : const AssetImage("assets/image/background_2.png"),
+            fit: BoxFit.cover,
           ),
+              // gradient: LinearGradient(
+              //   colors: [
+              //     brightness == Brightness.light
+              //         ? Colors.white
+              //         : DesktopColors.grisSemiPalido,
+              //     brightness == Brightness.light
+              //         ? DesktopColors.cerulean
+              //         : DesktopColors.grisPalido
+              //   ],
+              //   begin: Alignment.bottomCenter,
+              //   end: Alignment.topCenter,
+              // ),
+              ),
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
@@ -114,18 +119,17 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 : CrossAxisAlignment.center,
                             children: [
                               SizedBox(
-                                width: 250,
+                                width: 255,
                                 child: Stack(
                                   children: [
                                     SizedBox(
                                       child: Image(
                                         image: AssetImage(
                                             "assets/image/${brightness == Brightness.light ? "logo_login_light" : "logo_login_dark"}.png"),
-                                        width: 280,
                                       ),
                                     ),
                                     Positioned(
-                                      bottom: 15,
+                                      bottom: 0,
                                       right: 0,
                                       child: TextStyles.standardText(
                                         text: "Versión $version",

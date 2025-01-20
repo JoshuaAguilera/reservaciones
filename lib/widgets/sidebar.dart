@@ -120,7 +120,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                             ),
                           ),
                           Positioned(
-                            bottom: 10,
+                            bottom: 0,
                             right: 5,
                             child: TextStyles.standardText(
                               text: "Versión $version",
@@ -207,11 +207,14 @@ class _SideBarState extends ConsumerState<SideBar> {
               children: [
                 GestureDetector(
                   onTap: () => widget._controller.selectIndex(0),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Image(
-                      image: AssetImage("assets/image/icon_home_sidebar.png"),
-                      width: 35,
+                  child: const Tooltip(
+                    message: "Versión $version",
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Image(
+                        image: AssetImage("assets/image/icon_home_sidebar.png"),
+                        width: 35,
+                      ),
                     ),
                   ),
                 ),

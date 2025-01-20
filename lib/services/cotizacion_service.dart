@@ -214,6 +214,7 @@ class CotizacionService extends BaseService {
           numeroTelefonico: element.quote.numeroTelefonico,
           usuarioID: element.quote.usuarioID,
           username: element.user!.username,
+          fechaLimite: element.quote.fechaLimite,
         );
 
         quotes.add(data);
