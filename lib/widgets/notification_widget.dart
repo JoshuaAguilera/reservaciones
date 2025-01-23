@@ -1,19 +1,37 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/notificacion_model.dart';
+import 'package:generador_formato/utils/helpers/utility.dart';
 
 import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
 
-class NotificationWidget {
-  static Widget notificationsWidget({
-    required GlobalKey<TooltipState> key,
-    required double screenWidth,
-    required List<Notificacion> notifications,
-    required Brightness brightness,
-  }) {
+class NotificationWidget extends StatefulWidget {
+  const NotificationWidget({
+    super.key,
+    required this.notifications,
+    required this.keyTool,
+    required this.onPressed,
+    this.viewNotification = false,
+  });
+
+  final List<Notificacion> notifications;
+  final GlobalKey<TooltipState> keyTool;
+  final void Function() onPressed;
+  final bool viewNotification;
+
+  @override
+  State<NotificationWidget> createState() => _NotificationWidgetState();
+}
+
+class _NotificationWidgetState extends State<NotificationWidget> {
+  @override
+  Widget build(BuildContext context) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
     return Tooltip(
-      key: key,
+      key: widget.keyTool,
       triggerMode: TooltipTriggerMode.manual,
       margin: const EdgeInsets.only(right: 50),
       showDuration: const Duration(seconds: 1),
@@ -31,28 +49,28 @@ class NotificationWidget {
           ),
         ],
       ),
+      //Realizar llamado para desaparecer la notificacion de visto
       richMessage: WidgetSpan(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: notifications.isEmpty ? 60 : 200,
-            width: 250,
+            width: 300,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextStyles.titleText(
                     size: 14,
-                    text: "Notificaciones",
-                    color: brightness == Brightness.light
-                        ? DesktopColors.ceruleanOscure
-                        : DesktopColors.azulClaro,
+                    text:
+                        "Notificaciones ${widget.notifications.length > 0 ? "(${widget.notifications.length})" : ""}",
+                    color: Theme.of(context).primaryColor,
                   ),
                   const Divider(
                     height: 10,
                     color: Colors.grey,
                   ),
-                  if (notifications.isEmpty)
+                  SizedBox(height: 5),
+                  if (widget.notifications.isEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Center(
@@ -62,15 +80,21 @@ class NotificationWidget {
                     )
                   else
                     SizedBox(
-                      width: screenWidth,
+                      height: Utility.limitHeightList(
+                          widget.notifications.length, 3, 200),
                       child: ListView.builder(
-                        itemCount: notifications.length,
-                        shrinkWrap: false,
+                        itemCount: widget.notifications.length,
+                        shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return Text(notifications[index].title!);
+                          return _NotificationItem(
+                            notificacion: widget.notifications[index],
+                            isLast: widget.notifications[index] ==
+                                widget.notifications.last,
+                          );
                         },
                       ),
                     ),
+                  const SizedBox(height: 5)
                 ],
               ),
             ),
@@ -79,16 +103,101 @@ class NotificationWidget {
       ),
       child: IconButton(
         onPressed: () {
-          key.currentState?.ensureTooltipVisible();
+          widget.keyTool.currentState?.ensureTooltipVisible();
+          widget.onPressed.call();
         },
-        icon: Icon(
-          CupertinoIcons.bell_solid,
-          color: brightness == Brightness.light
-              ? DesktopColors.cerulean
-              : DesktopColors.azulUltClaro,
-          size: 26,
+        icon: Stack(
+          children: [
+            Icon(
+              CupertinoIcons.bell_solid,
+              color: brightness == Brightness.light
+                  ? DesktopColors.cerulean
+                  : DesktopColors.azulUltClaro,
+              size: 26,
+            ),
+            if (widget.notifications.isNotEmpty && !widget.viewNotification)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Icon(
+                  Icons.circle,
+                  color: DesktopColors.notDanger,
+                  size: 14,
+                ),
+              )
+          ],
         ),
       ),
     );
+  }
+}
+
+class _NotificationItem extends StatelessWidget {
+  const _NotificationItem(
+      {Key? key, required this.notificacion, this.isLast = false})
+      : super(key: key);
+
+  final Notificacion notificacion;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: isLast ? 0 : 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            _getColorNotification(notificacion.level ?? ''),
+            Utility.darken(
+                _getColorNotification(notificacion.level ?? ''), -0.15)
+          ],
+          end: Alignment.centerRight,
+          begin: Alignment.centerLeft,
+        ),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            child: Icon(
+              notificacion.icon ?? CupertinoIcons.bell,
+              color: Utility.darken(
+                  _getColorNotification(notificacion.level ?? ''), 0.05),
+              size: 60,
+            ),
+          ),
+          ListTile(
+            title: TextStyles.standardText(
+              text: notificacion.title ?? '',
+              size: 12.5,
+              isBold: true,
+              color: Colors.white,
+            ),
+            subtitle: TextStyles.standardText(
+              text: notificacion.content ?? '',
+              size: 11,
+              overClip: true,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Color _getColorNotification(String level) {
+  switch (level) {
+    case "info":
+      return DesktopColors.notNormal;
+    case "alert":
+      return DesktopColors.cotGrupal;
+    case "danger":
+      return DesktopColors.notDanger;
+    case "success":
+      return DesktopColors.notSuccess;
+    default:
+      return DesktopColors.notNormal;
   }
 }

@@ -8,8 +8,6 @@ import '../services/cotizacion_service.dart';
 
 final cotizacionProvider = StateProvider<Cotizacion>((ref) => Cotizacion());
 
-final cotizacionGeneradoProvider = StateProvider<bool>((ref) => false);
-
 final uniqueFolioProvider =
     StateProvider<String>((ref) => UniqueKey().hashCode.toString());
 

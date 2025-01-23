@@ -243,7 +243,7 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<List<CotizacionData>> getAllCotizaciones() async {
+  Future<List<CotizacionData>> getCotizaciones() async {
     final dataBase = AppDatabase();
     try {
       List<CotizacionData> resp = await dataBase.getHistorialCotizaciones(

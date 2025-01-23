@@ -17,6 +17,13 @@ class NotificacionProvider extends StateNotifier<List<Notificacion>> {
     state = [...state, item];
   }
 
+  void editItem(Notificacion item) {
+    int index = state.indexWhere((element) => element.id == item.id);
+    if (index != -1) {
+      state[index] = item;
+    }
+  }
+
   void remove(int id) {
     state = [...state.where((element) => element.id != id)];
   }
@@ -25,3 +32,7 @@ class NotificacionProvider extends StateNotifier<List<Notificacion>> {
     state = [];
   }
 }
+
+final userViewProvider = StateProvider<bool>((ref) {
+  return false;
+});

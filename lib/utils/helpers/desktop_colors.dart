@@ -36,6 +36,11 @@ class DesktopColors {
   static Color cotNoConcr = Color.fromARGB(255, 126, 126, 126);
   static Color notFound = const Color.fromARGB(255, 204, 202, 202);
 
+  //Color notification
+  static Color notNormal = Color.fromARGB(255, 74, 131, 204);
+  static Color notDanger = Color.fromARGB(255, 204, 104, 74);
+  static Color notSuccess = Color.fromARGB(255, 143, 204, 74);
+
   //Colors Settings Default
   static Color colorLogo = const Color.fromARGB(255, 6, 174, 181);
   static Color colorTablesInd = const Color.fromARGB(255, 0, 153, 153);

@@ -390,7 +390,9 @@ class _SummaryControllerWidgetState
                           ),
                           if (widget.calculateRoom)
                             Divider(color: Theme.of(context).primaryColor),
-                          if (!widget.calculateRoom && widget.withSaveButton)
+                          if (!widget.calculateRoom &&
+                              widget.withSaveButton &&
+                              !(widget.finishQuote))
                             politicaTarifaProvider.when(
                               data: (data) => Card(
                                 color: typeQuote
@@ -413,7 +415,7 @@ class _SummaryControllerWidgetState
                                         text: Utility.getCompleteDate(
                                           data: DateTime.now().add(
                                             Duration(
-                                              days: typeQuote
+                                              days: (typeQuote)
                                                   ? data?.diasVigenciaCotGroup ??
                                                       0
                                                   : data?.diasVigenciaCotInd ??

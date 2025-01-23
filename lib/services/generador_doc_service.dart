@@ -421,19 +421,24 @@ class GeneradorDocService extends BaseService {
           pw.SizedBox(height: 8),
           pw.Text("ESTIMAD@: ${cotizacion.nombreHuesped}", style: styleBold),
           pw.SizedBox(height: 3),
-          pw.Text("TELÉFONO: ${cotizacion.numeroTelefonico}", style: styleBold),
-          pw.SizedBox(height: 3),
-          pw.Row(
-            children: [
-              pw.Text("CORREO: ", style: styleBold),
-              pw.UrlLink(
-                child: pw.Text("${cotizacion.correoElectronico}",
-                    style: styleUrlLink),
-                destination: "mailto:${cotizacion.correoElectronico}",
-              )
-            ],
-          ),
-          pw.SizedBox(height: 3),
+          if ((cotizacion.numeroTelefonico ?? '').isNotEmpty)
+            pw.Text("TELÉFONO: ${cotizacion.numeroTelefonico}",
+                style: styleBold),
+          if ((cotizacion.numeroTelefonico ?? '').isNotEmpty)
+            pw.SizedBox(height: 3),
+          if ((cotizacion.correoElectronico ?? '').isNotEmpty)
+            pw.Row(
+              children: [
+                pw.Text("CORREO: ", style: styleBold),
+                pw.UrlLink(
+                  child: pw.Text("${cotizacion.correoElectronico}",
+                      style: styleUrlLink),
+                  destination: "mailto:${cotizacion.correoElectronico}",
+                )
+              ],
+            ),
+          if ((cotizacion.correoElectronico ?? '').isNotEmpty)
+            pw.SizedBox(height: 3),
           pw.Text(
               "FECHAS DE ESTANCIA: ${Utility.getPeriodReservation(habitaciones)}",
               style: styleBold),

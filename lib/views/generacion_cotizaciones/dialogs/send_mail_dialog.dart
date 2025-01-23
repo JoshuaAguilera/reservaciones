@@ -142,8 +142,9 @@ class _SendMailDialogState extends State<SendMailDialog> {
                       onPressed: isSending
                           ? null
                           : () async {
-                              if (!_formDialogKey.currentState!.validate())
+                              if (!_formDialogKey.currentState!.validate()) {
                                 return;
+                              }
 
                               bool result = await CotizacionService()
                                   .updateCotizacion(CotizacionData(
@@ -190,11 +191,12 @@ class _SendMailDialogState extends State<SendMailDialog> {
                         onPressed: isSaving
                             ? null
                             : () async {
+                                if (!_formDialogKey.currentState!.validate()) {
+                                  return;
+                                }
+
                                 isSending = true;
                                 setState(() {});
-
-                                if (!_formDialogKey.currentState!.validate())
-                                  return;
 
                                 if (widget.returnFunction != null) {
                                   widget.returnFunction!

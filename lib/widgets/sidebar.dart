@@ -3,12 +3,20 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/providers/dahsboard_provider.dart';
+import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/my_sidebar_x_item.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../database/database.dart';
+import '../models/cotizacion_model.dart';
+import '../models/registro_tarifa_model.dart';
+import '../providers/cotizacion_provider.dart';
+import '../providers/notificacion_provider.dart';
+import '../providers/tarifario_provider.dart';
 import '../providers/usuario_provider.dart';
 import '../utils/helpers/desktop_colors.dart';
 import 'text_styles.dart';
@@ -284,7 +292,53 @@ class _SideBarState extends ConsumerState<SideBar> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
               child: MySidebarXItem(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  ref.watch(NotificacionProvider.provider.notifier).clear();
+                  ref.watch(HabitacionProvider.provider.notifier).clear();
+                  ref
+                      .read(cotizacionProvider.notifier)
+                      .update((state) => Cotizacion());
+                  ref
+                      .read(saveTariffPolityProvider.notifier)
+                      .update((state) => null);
+                  ref.read(filterReport.notifier).update((state) => "Semanal");
+                  ref
+                      .read(useCashSeasonProvider.notifier)
+                      .update((state) => false);
+                  ref
+                      .read(useCashSeasonRoomProvider.notifier)
+                      .update((state) => false);
+                  ref.read(typeQuoteProvider.notifier).update((state) => false);
+                  ref
+                      .read(showManagerTariffGroupProvider.notifier)
+                      .update((state) => false);
+                  ref
+                      .watch(TarifasProvisionalesProvider.provider.notifier)
+                      .clear();
+                  ref
+                      .read(descuentoProvisionalProvider.notifier)
+                      .update((state) => 0);
+                  ref
+                      .read(editTarifaProvider.notifier)
+                      .update((state) => RegistroTarifa());
+                  ref
+                      .read(selectedModeViewProvider.notifier)
+                      .update((state) => <bool>[true, false, false]);
+                  ref.read(userProvider.notifier).update(
+                        (state) => const UsuarioData(
+                          id: 0,
+                          username: "",
+                          password: "",
+                          rol: "",
+                          correoElectronico: "",
+                          passwordCorreo: "",
+                        ),
+                      );
+
+                  ref.read(userViewProvider.notifier).update((state) => false);
+
+                  Navigator.pop(context);
+                },
                 controller: widget._controller,
                 selectIndex: 45,
                 icon: HeroIcons.arrow_right_on_rectangle,

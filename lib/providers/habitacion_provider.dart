@@ -248,20 +248,6 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
           HabitacionProvider.new);
 }
 
-final totalRoomsProvider = Provider<int>((ref) {
-  int total = 0;
-  List<Habitacion> rooms = ref
-      .watch(HabitacionProvider.provider)
-      .where((todo) => !todo.isFree)
-      .toList();
-
-  for (var element in rooms) {
-    total += element.count;
-  }
-
-  return total;
-});
-
 final habitacionSelectProvider =
     StateProvider<Habitacion>((ref) => Habitacion());
 

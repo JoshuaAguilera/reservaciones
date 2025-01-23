@@ -25,8 +25,10 @@ import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../models/notificacion_model.dart';
 import '../../models/prefijo_telefonico_model.dart';
 import '../../providers/dahsboard_provider.dart';
+import '../../providers/notificacion_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
@@ -163,7 +165,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
         folio: folio,
         prefijoInit: prefijoInit,
         isQuoteGroup: typeQuote,
-        limitDay: limitDay, 
+        limitDay: limitDay,
       );
 
       if (id == 0) {
@@ -217,6 +219,22 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       ref.read(useCashSeasonProvider.notifier).update((state) => false);
 
       ref.read(useCashSeasonRoomProvider.notifier).update((state) => false);
+
+      final notificaciones = ref.watch(NotificacionProvider.provider);
+
+      Notificacion newNotification = Notificacion(
+        id: notificaciones.length + 1,
+        level: "info",
+        content:
+            "Nueva cotización a nombre de ${receiptQuotePresent.nombreHuesped ?? ''} ha sido registrada.",
+        title: "Nueva cotización registrada",
+      );
+
+      ref.read(userViewProvider.notifier).update((state) => false);
+
+      ref
+          .watch(NotificacionProvider.provider.notifier)
+          .addItem(newNotification);
 
       isFinish = true;
       setState(() {});

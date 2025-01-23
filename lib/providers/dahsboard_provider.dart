@@ -35,10 +35,9 @@ final ultimaCotizacionesProvider =
 });
 
 final allQuotesProvider =
-    FutureProvider.family<List<NumeroCotizacion>, String>((ref, arg) async {
+    FutureProvider.family<List<CotizacionData>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
-  final list = await Utility.getDailyQuotesReport(
-      respIndToday: await CotizacionService().getAllCotizaciones());
+  final list = await CotizacionService().getCotizaciones();
   return list;
 });
 

@@ -78,10 +78,18 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Card(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [colorItem!, Utility.darken(colorItem!, -0.15)],
+            end: Alignment.centerRight,
+            begin: Alignment.centerLeft,
+          ),
+          borderRadius: BorderRadius.circular(6),
+          // boxShadow: const [BoxShadow(spreadRadius:-1, blurRadius: 5, offset: Offset(0, 1.5))]
+        ),
         margin: const EdgeInsets.all(0),
-        elevation: 3,
-        color: colorItem,
+        // elevation: 3,
         child: ListTile(
           visualDensity: VisualDensity.comfortable,
           leading: widget.isQuery

@@ -17,7 +17,8 @@ import 'dialogs.dart';
 import 'text_styles.dart';
 
 class ItemRows {
-  static Widget statusQuoteRow(NumeroCotizacion register) {
+  static Widget statusQuoteRow(NumeroCotizacion register,
+      {double sizeText = 13}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -48,7 +49,7 @@ class ItemRows {
               TextStyles.standardText(
                 text: register.tipoCotizacion ?? '',
                 color: Colors.white,
-                size: 13,
+                size: sizeText,
                 overClip: true,
               ),
               TextStyles.TextTitleList(

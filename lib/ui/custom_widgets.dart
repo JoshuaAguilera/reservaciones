@@ -898,11 +898,12 @@ class CustomWidgets {
           color: color != null
               ? useWhiteForeground(color)
                   ? Utility.darken(color, -0.40)
-                  : Utility.darken(color, 0.25)
+                  : Utility.darken(
+                      color, brightness == Brightness.light ? 0.15 : -0.15)
               : Utility.darken(
                   Utility.getColorTypeUser(rol, isText: true) ??
                       DesktopColors.grisPalido,
-                  -0.1),
+                  brightness == Brightness.light ? 0.15 : -0.15),
           overClip: true,
           isBold: true,
         ),
