@@ -608,11 +608,13 @@ LazyDatabase _openConnection() {
       // put the database file, called db.sqlite here, into the documents folder
       // for your app.
 
-      final dbFolder = "/"; //DesCommit when release Windows
-      final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+      //Location BD for release version (commit in developer)
+      // final dbFolder = "/";
+      // final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
 
-      // final dbFolder = await getApplicationDocumentsDirectory();
-      // final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
+      //Location BD for beta version (commit then to generate release)
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
 
       // Also work around limitations on old Android versions
       if (Platform.isAndroid) {

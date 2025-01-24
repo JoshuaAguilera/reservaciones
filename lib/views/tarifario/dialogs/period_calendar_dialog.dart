@@ -142,7 +142,8 @@ class _PeriodCalendarDialogState extends State<PeriodCalendarDialog> {
                             compact: true,
                             withButton: false,
                             readOnly: true,
-                            name: "Fecha de entrada",
+                            name:
+                                "Fecha de ${widget.initDate != null ? "llegada" : "inicio"}",
                             dateController: TextEditingController(
                                 text: initDate?.toIso8601String() ?? ""),
                           ),
@@ -159,7 +160,8 @@ class _PeriodCalendarDialogState extends State<PeriodCalendarDialog> {
                             align: TextAlign.center,
                             compact: true,
                             readOnly: true,
-                            name: "Fecha de salida",
+                            name:
+                                "Fecha de ${widget.initDate != null ? "salida" : "fin"}",
                             dateController: TextEditingController(
                                 text: lastDate?.toIso8601String() ?? ""),
                             withButton: false,

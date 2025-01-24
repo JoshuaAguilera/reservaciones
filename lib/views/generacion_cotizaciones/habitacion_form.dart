@@ -354,7 +354,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         title:
                                                             "Selección de fechas",
                                                         description:
-                                                            "Selecciona la fecha de entrada y salida.",
+                                                            "Selecciona la fecha de llegada y salida.",
                                                       ),
                                                     ).then(
                                                       (value) {
@@ -430,7 +430,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                                         .extended),
                                                             withButton: false,
                                                             name:
-                                                                "Fecha de entrada",
+                                                                "Fecha de llegada",
                                                             dateController:
                                                                 _fechaEntrada,
                                                           ),

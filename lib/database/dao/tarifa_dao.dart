@@ -43,17 +43,6 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
         .write(tarifaData);
   }
 
-   Future<int> updateForBaseTariffObject({
-    required TarifaCompanion tarifaData,
-    required int baseTariffId,
-    required int id,
-  }) {
-    return (update(tarifa)
-          ..where((tbl) => tbl.tarifaPadreId.equals(baseTariffId))
-          ..where((tbl) => tbl.id.equals(id)))
-        .write(tarifaData);
-  }
-
   Future<int> removeBaseTariff(int tarifaBaseId) {
     return (update(tarifa)..where((t) => t.tarifaPadreId.equals(tarifaBaseId)))
         .write(

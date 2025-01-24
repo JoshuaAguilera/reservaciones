@@ -81,7 +81,8 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   )
                 else
                   Buttons.iconButtonCard(
-                    icon: CupertinoIcons.add,
+                    icon: Iconsax.add_square_outline,
+                    tooltip: "Agregar habitacion",
                     onPressed: () => widget.newRoom!.call(),
                   ),
               ],
