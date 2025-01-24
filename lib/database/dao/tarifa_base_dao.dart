@@ -4,6 +4,9 @@ import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/tarifa_table.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart' as tf;
+import 'package:generador_formato/utils/helpers/utility.dart';
+
+import 'tarifa_dao.dart';
 part 'tarifa_base_dao.g.dart';
 
 @DriftAccessor(tables: [TarifaBase, Tarifa])
@@ -12,13 +15,14 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
   TarifaBaseDao(AppDatabase db) : super(db);
 
   Future<List<TarifaBaseInt>> getBaseTariffComplement(
-      {int? tarifaBaseId}) async {
+      {int? tarifaBaseId, int? tarifaPadreId}) async {
     final query = customSelect(
       '''
       SELECT 
         c.id AS tarifaBaseId, 
         c.code AS tarifaBaseCode, 
         c.nombre AS tarifaBaseNombre,
+        c.with_auto AS withAuto,
         c.desc_integrado AS tarifaBaseDescuento,
         c.upgrade_categoria AS tarifaBaseUpgradeCategoria,
         c.upgrade_menor AS tarifaBaseUpgradeMenor, 
@@ -38,9 +42,14 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
       LEFT JOIN tarifa p 
         ON c.id = p.tarifa_padre_id
         ${tarifaBaseId != null ? 'WHERE c.id = ?' : ''}
+        ${tarifaPadreId != null ? 'WHERE c.tarifa_padre_id = ?' : ''}
         ORDER BY c.id, p.id
       ''',
-      variables: tarifaBaseId != null ? [Variable<int>(tarifaBaseId)] : [],
+      variables: tarifaBaseId != null
+          ? [Variable<int>(tarifaBaseId)]
+          : tarifaPadreId != null
+              ? [Variable<int>(tarifaPadreId)]
+              : [],
       readsFrom: {tarifaBase, tarifa},
     );
 
@@ -86,6 +95,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
       final tarifaOrigenId = row.read<int?>('tarifaOrigenId');
       final code = row.read<String?>('tarifaBaseCode');
       final nombre = row.read<String?>('tarifaBaseNombre');
+      final withAuto = row.read<bool?>('withAuto');
       final descuento = row.read<double?>('tarifaBaseDescuento');
       final upgradeCategoria = row.read<double?>('tarifaBaseUpgradeCategoria');
       final upgradeMenor = row.read<double?>('tarifaBaseUpgradeMenor');
@@ -98,6 +108,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
             id: tarifaBaseId,
             code: code,
             nombre: nombre,
+            withAuto: withAuto,
             descIntegrado: descuento,
             upgradeCategoria: upgradeCategoria,
             upgradeMenor: upgradeMenor,
@@ -124,6 +135,66 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
           ..where((tbl) => tbl.code.equals(code))
           ..where((tbl) => tbl.id.equals(id)))
         .write(baseTariff);
+  }
+
+  Future<int> propageChangesTariff(
+      {required TarifaBaseData baseTariff,
+      required List<tf.Tarifa> tarifasBase}) async {
+    int tarifaId = baseTariff.id;
+    final tarifaDao = TarifaDao(db);
+
+    List<TarifaBaseInt> _tariffs =
+        await getBaseTariffComplement(tarifaPadreId: tarifaId);
+
+    if (_tariffs.isNotEmpty) {
+      for (var tarifaBase in _tariffs) {
+        if ((tarifaBase.tarifas ?? []).isEmpty) {
+          continue;
+        }
+
+        double divisor = tarifaBase.descIntegrado ?? 1;
+
+        for (var element in (tarifaBase.tarifas!)) {
+          tf.Tarifa? selectTariff = await tarifasBase
+              .where((elementInt) =>
+                  elementInt.categoria == (element.categoria ?? ''))
+              .firstOrNull;
+
+          if (selectTariff == null) continue;
+
+          element.tarifaAdulto4 = Utility.formatNumberRound(
+              (selectTariff.tarifaAdulto4 ?? 0) / divisor);
+          element.tarifaAdulto1a2 = Utility.formatNumberRound(
+              (selectTariff.tarifaAdulto1a2 ?? 0) / divisor);
+          element.tarifaAdulto3 = Utility.formatNumberRound(
+              (selectTariff.tarifaAdulto3 ?? 0) / divisor);
+          element.tarifaMenores7a12 = Utility.formatNumberRound(
+              (selectTariff.tarifaMenores7a12 ?? 0) / divisor);
+
+          await tarifaDao.updateForBaseTariff(
+            tarifaData: TarifaCompanion(
+              tarifaAdultoCPLE: Value(element.tarifaAdulto4),
+              tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
+              tarifaAdultoTPL: Value(element.tarifaAdulto3),
+              tarifaMenores7a12: Value(element.tarifaMenores7a12),
+              tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
+            ),
+            baseTariffId: tarifaBase.id!,
+            id: element.id ?? 0,
+          );
+        }
+
+        await propageChangesTariff(
+          baseTariff: TarifaBaseData(
+              id: tarifaBase.id!, descIntegrado: tarifaBase.descIntegrado),
+          tarifasBase: tarifaBase.tarifas ?? List<tf.Tarifa>.empty(),
+        );
+      }
+    }
+
+    tarifaDao.close();
+
+    return tarifaId;
   }
 
   Future<int> removeOrigenTarifaId({required int? origenId}) {

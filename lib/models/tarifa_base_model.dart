@@ -4,6 +4,7 @@ class TarifaBaseInt {
   int? id;
   String? code;
   String? nombre;
+  bool? withAuto;
   TarifaBaseInt? tarifaPadre;
   double? descIntegrado;
   double? upgradeCategoria;
@@ -16,6 +17,7 @@ class TarifaBaseInt {
     this.id,
     this.code,
     this.nombre,
+    this.withAuto,
     this.tarifaPadre,
     this.descIntegrado,
     this.upgradeCategoria,
@@ -29,6 +31,7 @@ class TarifaBaseInt {
     int? id,
     String? code,
     String? nombre,
+    bool? withAuto,
     TarifaBaseInt? tarifaPadre,
     double? descIntegrado,
     double? upgradeCategoria,
@@ -41,6 +44,7 @@ class TarifaBaseInt {
         id: id ?? this.id,
         code: code ?? this.code,
         nombre: nombre ?? this.nombre,
+        withAuto: withAuto ?? this.withAuto,
         tarifaPadre: tarifaPadre ?? this.tarifaPadre,
         descIntegrado: descIntegrado ?? this.descIntegrado,
         upgradeCategoria: upgradeCategoria ?? this.upgradeCategoria,

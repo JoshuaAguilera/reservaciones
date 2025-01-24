@@ -4042,6 +4042,15 @@ class $TarifaBaseTable extends TarifaBase
   late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
       'nombre', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _withAutoMeta =
+      const VerificationMeta('withAuto');
+  @override
+  late final GeneratedColumn<bool> withAuto = GeneratedColumn<bool>(
+      'with_auto', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("with_auto" IN (0, 1))'));
   static const VerificationMeta _descIntegradoMeta =
       const VerificationMeta('descIntegrado');
   @override
@@ -4089,6 +4098,7 @@ class $TarifaBaseTable extends TarifaBase
         id,
         code,
         nombre,
+        withAuto,
         descIntegrado,
         upgradeCategoria,
         upgradeMenor,
@@ -4116,6 +4126,10 @@ class $TarifaBaseTable extends TarifaBase
     if (data.containsKey('nombre')) {
       context.handle(_nombreMeta,
           nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('with_auto')) {
+      context.handle(_withAutoMeta,
+          withAuto.isAcceptableOrUnknown(data['with_auto']!, _withAutoMeta));
     }
     if (data.containsKey('desc_integrado')) {
       context.handle(
@@ -4168,6 +4182,8 @@ class $TarifaBaseTable extends TarifaBase
           .read(DriftSqlType.string, data['${effectivePrefix}code']),
       nombre: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
+      withAuto: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}with_auto']),
       descIntegrado: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}desc_integrado']),
       upgradeCategoria: attachedDatabase.typeMapping.read(
@@ -4193,6 +4209,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
   final int id;
   final String? code;
   final String? nombre;
+  final bool? withAuto;
   final double? descIntegrado;
   final double? upgradeCategoria;
   final double? upgradeMenor;
@@ -4203,6 +4220,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       {required this.id,
       this.code,
       this.nombre,
+      this.withAuto,
       this.descIntegrado,
       this.upgradeCategoria,
       this.upgradeMenor,
@@ -4218,6 +4236,9 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
     }
     if (!nullToAbsent || nombre != null) {
       map['nombre'] = Variable<String>(nombre);
+    }
+    if (!nullToAbsent || withAuto != null) {
+      map['with_auto'] = Variable<bool>(withAuto);
     }
     if (!nullToAbsent || descIntegrado != null) {
       map['desc_integrado'] = Variable<double>(descIntegrado);
@@ -4246,6 +4267,9 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       nombre:
           nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      withAuto: withAuto == null && nullToAbsent
+          ? const Value.absent()
+          : Value(withAuto),
       descIntegrado: descIntegrado == null && nullToAbsent
           ? const Value.absent()
           : Value(descIntegrado),
@@ -4274,6 +4298,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String?>(json['code']),
       nombre: serializer.fromJson<String?>(json['nombre']),
+      withAuto: serializer.fromJson<bool?>(json['withAuto']),
       descIntegrado: serializer.fromJson<double?>(json['descIntegrado']),
       upgradeCategoria: serializer.fromJson<double?>(json['upgradeCategoria']),
       upgradeMenor: serializer.fromJson<double?>(json['upgradeMenor']),
@@ -4289,6 +4314,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       'id': serializer.toJson<int>(id),
       'code': serializer.toJson<String?>(code),
       'nombre': serializer.toJson<String?>(nombre),
+      'withAuto': serializer.toJson<bool?>(withAuto),
       'descIntegrado': serializer.toJson<double?>(descIntegrado),
       'upgradeCategoria': serializer.toJson<double?>(upgradeCategoria),
       'upgradeMenor': serializer.toJson<double?>(upgradeMenor),
@@ -4302,6 +4328,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           {int? id,
           Value<String?> code = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
+          Value<bool?> withAuto = const Value.absent(),
           Value<double?> descIntegrado = const Value.absent(),
           Value<double?> upgradeCategoria = const Value.absent(),
           Value<double?> upgradeMenor = const Value.absent(),
@@ -4312,6 +4339,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
         id: id ?? this.id,
         code: code.present ? code.value : this.code,
         nombre: nombre.present ? nombre.value : this.nombre,
+        withAuto: withAuto.present ? withAuto.value : this.withAuto,
         descIntegrado:
             descIntegrado.present ? descIntegrado.value : this.descIntegrado,
         upgradeCategoria: upgradeCategoria.present
@@ -4331,6 +4359,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      withAuto: data.withAuto.present ? data.withAuto.value : this.withAuto,
       descIntegrado: data.descIntegrado.present
           ? data.descIntegrado.value
           : this.descIntegrado,
@@ -4358,6 +4387,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
+          ..write('withAuto: $withAuto, ')
           ..write('descIntegrado: $descIntegrado, ')
           ..write('upgradeCategoria: $upgradeCategoria, ')
           ..write('upgradeMenor: $upgradeMenor, ')
@@ -4373,6 +4403,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
       id,
       code,
       nombre,
+      withAuto,
       descIntegrado,
       upgradeCategoria,
       upgradeMenor,
@@ -4386,6 +4417,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           other.id == this.id &&
           other.code == this.code &&
           other.nombre == this.nombre &&
+          other.withAuto == this.withAuto &&
           other.descIntegrado == this.descIntegrado &&
           other.upgradeCategoria == this.upgradeCategoria &&
           other.upgradeMenor == this.upgradeMenor &&
@@ -4398,6 +4430,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
   final Value<int> id;
   final Value<String?> code;
   final Value<String?> nombre;
+  final Value<bool?> withAuto;
   final Value<double?> descIntegrado;
   final Value<double?> upgradeCategoria;
   final Value<double?> upgradeMenor;
@@ -4408,6 +4441,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.nombre = const Value.absent(),
+    this.withAuto = const Value.absent(),
     this.descIntegrado = const Value.absent(),
     this.upgradeCategoria = const Value.absent(),
     this.upgradeMenor = const Value.absent(),
@@ -4419,6 +4453,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.nombre = const Value.absent(),
+    this.withAuto = const Value.absent(),
     this.descIntegrado = const Value.absent(),
     this.upgradeCategoria = const Value.absent(),
     this.upgradeMenor = const Value.absent(),
@@ -4430,6 +4465,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     Expression<int>? id,
     Expression<String>? code,
     Expression<String>? nombre,
+    Expression<bool>? withAuto,
     Expression<double>? descIntegrado,
     Expression<double>? upgradeCategoria,
     Expression<double>? upgradeMenor,
@@ -4441,6 +4477,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       if (id != null) 'id': id,
       if (code != null) 'code': code,
       if (nombre != null) 'nombre': nombre,
+      if (withAuto != null) 'with_auto': withAuto,
       if (descIntegrado != null) 'desc_integrado': descIntegrado,
       if (upgradeCategoria != null) 'upgrade_categoria': upgradeCategoria,
       if (upgradeMenor != null) 'upgrade_menor': upgradeMenor,
@@ -4454,6 +4491,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       {Value<int>? id,
       Value<String?>? code,
       Value<String?>? nombre,
+      Value<bool?>? withAuto,
       Value<double?>? descIntegrado,
       Value<double?>? upgradeCategoria,
       Value<double?>? upgradeMenor,
@@ -4464,6 +4502,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       id: id ?? this.id,
       code: code ?? this.code,
       nombre: nombre ?? this.nombre,
+      withAuto: withAuto ?? this.withAuto,
       descIntegrado: descIntegrado ?? this.descIntegrado,
       upgradeCategoria: upgradeCategoria ?? this.upgradeCategoria,
       upgradeMenor: upgradeMenor ?? this.upgradeMenor,
@@ -4484,6 +4523,9 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     }
     if (nombre.present) {
       map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (withAuto.present) {
+      map['with_auto'] = Variable<bool>(withAuto.value);
     }
     if (descIntegrado.present) {
       map['desc_integrado'] = Variable<double>(descIntegrado.value);
@@ -4512,6 +4554,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
+          ..write('withAuto: $withAuto, ')
           ..write('descIntegrado: $descIntegrado, ')
           ..write('upgradeCategoria: $upgradeCategoria, ')
           ..write('upgradeMenor: $upgradeMenor, ')
@@ -8126,6 +8169,7 @@ typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> nombre,
+  Value<bool?> withAuto,
   Value<double?> descIntegrado,
   Value<double?> upgradeCategoria,
   Value<double?> upgradeMenor,
@@ -8137,6 +8181,7 @@ typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> nombre,
+  Value<bool?> withAuto,
   Value<double?> descIntegrado,
   Value<double?> upgradeCategoria,
   Value<double?> upgradeMenor,
@@ -8165,6 +8210,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
+            Value<bool?> withAuto = const Value.absent(),
             Value<double?> descIntegrado = const Value.absent(),
             Value<double?> upgradeCategoria = const Value.absent(),
             Value<double?> upgradeMenor = const Value.absent(),
@@ -8176,6 +8222,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             id: id,
             code: code,
             nombre: nombre,
+            withAuto: withAuto,
             descIntegrado: descIntegrado,
             upgradeCategoria: upgradeCategoria,
             upgradeMenor: upgradeMenor,
@@ -8187,6 +8234,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
+            Value<bool?> withAuto = const Value.absent(),
             Value<double?> descIntegrado = const Value.absent(),
             Value<double?> upgradeCategoria = const Value.absent(),
             Value<double?> upgradeMenor = const Value.absent(),
@@ -8198,6 +8246,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             id: id,
             code: code,
             nombre: nombre,
+            withAuto: withAuto,
             descIntegrado: descIntegrado,
             upgradeCategoria: upgradeCategoria,
             upgradeMenor: upgradeMenor,
@@ -8223,6 +8272,11 @@ class $$TarifaBaseTableFilterComposer
 
   ColumnFilters<String> get nombre => $state.composableBuilder(
       column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get withAuto => $state.composableBuilder(
+      column: $state.table.withAuto,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -8299,6 +8353,11 @@ class $$TarifaBaseTableOrderingComposer
 
   ColumnOrderings<String> get nombre => $state.composableBuilder(
       column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get withAuto => $state.composableBuilder(
+      column: $state.table.withAuto,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

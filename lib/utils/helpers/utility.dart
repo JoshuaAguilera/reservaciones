@@ -573,7 +573,8 @@ class Utility {
   }
 
   static String calculateRate(TextEditingController tarifaAdulto,
-      TextEditingController tarifaPaxAdicional, int numPaxAdic) {
+      TextEditingController tarifaPaxAdicional, int numPaxAdic,
+      {bool applyRound = true}) {
     String subtotalString = '0';
     double subtotal = 0;
     double tarifaAdultoNum =
@@ -583,7 +584,11 @@ class Utility {
 
     subtotal = tarifaAdultoNum + (tarifaPaxAdicNum * numPaxAdic);
 
-    subtotalString = subtotal.round().toString();
+    if (applyRound) {
+      subtotalString = subtotal.round().toString();
+    } else {
+      subtotalString = formatNumberRound(subtotal).toString();
+    }
 
     return subtotalString;
   }

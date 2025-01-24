@@ -139,7 +139,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             .difference(DateTime.now())
                             .inDays;
 
-                        if (difference <= 3 && difference > 0) {
+                        if (difference <= 2 && difference >= 0) {
                           return true;
                         }
 

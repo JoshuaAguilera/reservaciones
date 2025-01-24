@@ -69,7 +69,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                     height: 10,
                     color: Colors.grey,
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   if (widget.notifications.isEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -164,7 +164,7 @@ class _NotificationItem extends StatelessWidget {
               notificacion.icon ?? CupertinoIcons.bell,
               color: Utility.darken(
                   _getColorNotification(notificacion.level ?? ''), 0.05),
-              size: 60,
+              size: 80,
             ),
           ),
           ListTile(

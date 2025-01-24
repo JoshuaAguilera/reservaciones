@@ -10,6 +10,7 @@ import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../ui/buttons.dart';
+import '../../../ui/custom_widgets.dart';
 import '../../../ui/show_snackbar.dart';
 import '../../../utils/helpers/utility.dart';
 import '../../../utils/helpers/desktop_colors.dart';
@@ -54,7 +55,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   String messageError = "";
   bool isLoading = false;
   bool isTariffPadre = false;
-  bool applyPropageChange = false;
+  bool applyPropageChange = true;
+  bool withAutocalculation = false;
 
   @override
   void initState() {
@@ -144,12 +146,12 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
       ),
       child: SizedBox(
         width: 700,
-        height: 620,
+        height: 655,
         child: Row(
           children: [
             Container(
               width: 190,
-              height: 620,
+              height: 655,
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
               decoration: BoxDecoration(
                 color: Utility.darken(Theme.of(context).cardColor, 0.07),
@@ -288,6 +290,9 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                     .textFormFieldResizable(
                                                   name: "",
                                                   msgError: "",
+                                                  enabled: tarifaPadre != null,
+                                                  isRequired:
+                                                      tarifaPadre != null,
                                                   isNumeric: true,
                                                   isDecimal: true,
                                                   icon: const Icon(
@@ -535,20 +540,77 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     _tarifaPaxAdicionalController,
                                 tarifaMenoresController:
                                     _tarifaMenoresController,
-                                onUpdate: () {},
+                                onUpdate: () {
+                                  if (withAutocalculation) setState(() {});
+                                },
                                 isEditing: tarifaPadre == null,
+                                applyAutoCalculation: withAutocalculation,
+                                autoCalculation: () => _autoCalculation(),
                               ),
-                              // if (isTariffPadre)
-                              //   CustomWidgets.checkBoxWithDescription(
-                              //     context,
-                              //     title: "Propagar cambios",
-                              //     description:
-                              //         "Esta funcion permite propagar los\nsiguientes cambios hacia todos las\ntarifas base que se asocien a esta Tarifa.",
-                              //     value: applyPropageChange,
-                              //     compact: true,
-                              //     onChanged: (p0) =>
-                              //         setState(() => applyPropageChange = p0!),
-                              //   ),
+                              if (tarifaPadre == null)
+                                CustomWidgets.checkBoxWithDescription(
+                                  context,
+                                  title: "Autocálculo",
+                                  activeColor: DesktopColors.azulCielo,
+                                  description:
+                                      "Esta opción permite la calculación automatica de la\ntarifas TPLE y CPLE.",
+                                  value: withAutocalculation,
+                                  compact: true,
+                                  onChanged: (p0) {
+                                    setState(() => withAutocalculation = p0!);
+                                    if (withAutocalculation) {
+                                      _autoCalculation();
+                                      String saveTariffAdult3 =
+                                          Utility.calculateRate(
+                                        TextEditingController(
+                                            text:
+                                                (saveTariff?.tarifaAdulto1a2 ??
+                                                        0)
+                                                    .toString()),
+                                        TextEditingController(
+                                            text: (saveTariff
+                                                        ?.tarifaPaxAdicional ??
+                                                    0)
+                                                .toString()),
+                                        1,
+                                        applyRound: false,
+                                      );
+
+                                      String saveTariffAdult4 =
+                                          Utility.calculateRate(
+                                        TextEditingController(
+                                            text:
+                                                (saveTariff?.tarifaAdulto1a2 ??
+                                                        0)
+                                                    .toString()),
+                                        TextEditingController(
+                                            text: (saveTariff
+                                                        ?.tarifaPaxAdicional ??
+                                                    0)
+                                                .toString()),
+                                        2,
+                                        applyRound: false,
+                                      );
+                                      saveTariff?.tarifaAdulto3 =
+                                          double.tryParse(saveTariffAdult3);
+                                      saveTariff?.tarifaAdulto4 =
+                                          double.tryParse(saveTariffAdult4);
+
+                                      setState(() {});
+                                    }
+                                  },
+                                ),
+                              if (isTariffPadre)
+                                CustomWidgets.checkBoxWithDescription(
+                                  context,
+                                  title: "Propagar cambios",
+                                  description:
+                                      "Esta funcion permite propagar los siguientes cambios\nhacia todos las tarifas base que se asocien a esta Tarifa.",
+                                  value: applyPropageChange,
+                                  compact: true,
+                                  onChanged: (p0) =>
+                                      setState(() => applyPropageChange = p0!),
+                                ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: insideSnackBar(
@@ -740,6 +802,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   TarifaBaseInt tarifaBase =
                                       TarifaBaseInt(id: selectBaseTariff?.id);
                                   tarifaBase.code = selectBaseTariff?.code;
+                                  tarifaBase.withAuto = withAutocalculation;
                                   tarifaBase.nombre =
                                       _nombreTarifaController.text;
                                   tarifaBase.descIntegrado = double.tryParse(
@@ -763,7 +826,11 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     String messageResponse =
                                         selectBaseTariff?.id != null
                                             ? await TarifaService()
-                                                .updateBaseTariff(tarifaBase)
+                                                .updateBaseTariff(
+                                                tarifaBase,
+                                                propageChanges:
+                                                    applyPropageChange,
+                                              )
                                             : await TarifaService()
                                                 .saveBaseTariff(tarifaBase);
 
@@ -817,11 +884,14 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     selectBaseTariff = baseTariff;
     selectCategory = categorias.first;
     selectTarifaPadre = baseTariff?.tarifaPadre?.nombre ?? 'Ninguna';
+    applyPropageChange = true;
+    withAutocalculation = baseTariff?.withAuto ?? false;
 
     if (selectBaseTariff != null) {
       _updateDataInput(selectBaseTariff);
     } else {
       applyUpgrades = false;
+      withAutocalculation = true;
       upgradeCateg = null;
       upgradeMenor = null;
       upGradePaxAdic = null;
@@ -979,5 +1049,22 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
         iconData: Icons.delete,
       ),
     );
+  }
+
+  void _autoCalculation() {
+    if (withAutocalculation) {
+      _tarifaAdultoTPLController.text = Utility.calculateRate(
+        _tarifaAdultoSingleController,
+        _tarifaPaxAdicionalController,
+        1,
+        applyRound: false,
+      );
+      _tarifaAdultoCPLController.text = Utility.calculateRate(
+        _tarifaAdultoSingleController,
+        _tarifaPaxAdicionalController,
+        2,
+        applyRound: false,
+      );
+    }
   }
 }

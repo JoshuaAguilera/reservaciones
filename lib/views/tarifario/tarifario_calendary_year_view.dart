@@ -68,7 +68,7 @@ class _TarifarioCalendaryYearViewState
                             widget.currentMonth.year, (index % 12) + 1, 1);
 
                         return SizedBox(
-                          height: 380,
+                          height: 370,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

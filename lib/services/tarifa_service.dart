@@ -486,30 +486,35 @@ class TarifaService extends BaseService {
     }
   }
 
-  Future<String> updateBaseTariff(TarifaBaseInt tarifaBase) async {
+  Future<String> updateBaseTariff(TarifaBaseInt tarifaBase,
+      {bool propageChanges = false}) async {
     String response = '';
 
     try {
       final database = AppDatabase();
       final tarifaBaseDao = TarifaBaseDao(database);
       final tarifaDao = TarifaDao(database);
+      Tarifa? saveTariff;
 
       List<Tarifa> tarifasRegister =
           tarifaBase.tarifas?.map((element) => element.copyWith()).toList() ??
               [];
       await database.transaction(
         () async {
+          TarifaBaseData tarifaBaseNueva = TarifaBaseData(
+            id: tarifaBase.id!,
+            descIntegrado: tarifaBase.descIntegrado,
+            nombre: tarifaBase.nombre,
+            tarifaPadreId: tarifaBase.tarifaPadre?.id,
+            upgradeCategoria: tarifaBase.upgradeCategoria,
+            upgradeMenor: tarifaBase.upgradeMenor,
+            upgradePaxAdic: tarifaBase.upgradePaxAdic,
+            tarifaOrigenId: tarifaBase.tarifaOrigenId,
+            withAuto: tarifaBase.withAuto,
+          );
+
           await tarifaBaseDao.updateBaseTariff(
-            baseTariff: TarifaBaseData(
-              id: tarifaBase.id!,
-              descIntegrado: tarifaBase.descIntegrado,
-              nombre: tarifaBase.nombre,
-              tarifaPadreId: tarifaBase.tarifaPadre?.id,
-              upgradeCategoria: tarifaBase.upgradeCategoria,
-              upgradeMenor: tarifaBase.upgradeMenor,
-              upgradePaxAdic: tarifaBase.upgradePaxAdic,
-              tarifaOrigenId: tarifaBase.tarifaOrigenId,
-            ),
+            baseTariff: tarifaBaseNueva,
             code: tarifaBase.code!,
             id: tarifaBase.id!,
           );
@@ -529,15 +534,28 @@ class TarifaService extends BaseService {
                 (secondTariff?.tarifaMenores7a12 ?? 0) +
                     (tarifaBase.upgradeMenor ?? 0);
 
+            saveTariff = Tarifa();
+            saveTariff?.tarifaAdulto1a2 = tariffAdultUpgrade;
+            saveTariff?.tarifaAdulto3 =
+                tariffAdultUpgrade + tariffPaxAdicUpgrade;
+            saveTariff?.tarifaAdulto4 =
+                tariffAdultUpgrade + (tariffPaxAdicUpgrade * 2);
+            saveTariff?.tarifaMenores7a12 = tariffMinorsUpgrade;
+            saveTariff?.tarifaPaxAdicional = tariffPaxAdicUpgrade;
+            saveTariff?.categoria = tipoHabitacion.last;
+            saveTariff?.tarifaBaseId = tarifaBase.id;
+            saveTariff?.id = tarifasRegister
+                .firstWhere(
+                    (element) => element.categoria == tipoHabitacion.last)
+                .id;
+
             await tarifaDao.updateForBaseTariff(
               tarifaData: TarifaCompanion(
-                tarifaAdultoSGLoDBL: Value(tariffAdultUpgrade),
-                tarifaPaxAdicional: Value(tariffPaxAdicUpgrade),
-                tarifaMenores7a12: Value(tariffMinorsUpgrade),
-                tarifaAdultoCPLE:
-                    Value(tariffAdultUpgrade + (tariffPaxAdicUpgrade * 2)),
-                tarifaAdultoTPL:
-                    Value(tariffAdultUpgrade + tariffPaxAdicUpgrade),
+                tarifaAdultoSGLoDBL: Value(saveTariff?.tarifaAdulto1a2),
+                tarifaPaxAdicional: Value(saveTariff?.tarifaPaxAdicional),
+                tarifaMenores7a12: Value(saveTariff?.tarifaMenores7a12),
+                tarifaAdultoCPLE: Value(saveTariff?.tarifaAdulto3),
+                tarifaAdultoTPL: Value(saveTariff?.tarifaAdulto4),
               ),
               baseTariffId: tarifaBase.id!,
               id: tarifasRegister
@@ -561,6 +579,17 @@ class TarifaService extends BaseService {
               ),
               baseTariffId: tarifaBase.id!,
               id: element.id ?? 0,
+            );
+          }
+
+          if (propageChanges) {
+            if (saveTariff != null) {
+              tarifasRegister.add(saveTariff!);
+            }
+
+            await tarifaBaseDao.propageChangesTariff(
+              baseTariff: tarifaBaseNueva,
+              tarifasBase: tarifasRegister,
             );
           }
         },
