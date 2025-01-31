@@ -415,7 +415,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
                   child: Buttons.commonButton(
                     onPressed: () => showDialogEditQuote(habitacion),
-                    text: "Cambiar",
+                    text: "Editar",
                     sizeText: 11.5,
                     isBold: true,
                     withRoundedBorder: true,
@@ -444,7 +444,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 ),
               if (MediaQuery.of(context).size.width <= 1490 && !typeQuote)
                 Tooltip(
-                  message: "Cambiar",
+                  message: "Editar",
                   child: IconButton(
                     onPressed: () => showDialogEditQuote(habitacion),
                     icon: Icon(

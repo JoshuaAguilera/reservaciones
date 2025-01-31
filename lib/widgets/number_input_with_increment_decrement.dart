@@ -53,7 +53,7 @@ class _NumberInputWithIncrementDecrementState
         border: Border.all(color: widget.colorText ?? Colors.black38),
       ),
       constraints: const BoxConstraints(
-        minWidth: 40,
+        minWidth: 5,
         maxWidth: 40,
         minHeight: 10.0,
         maxHeight: 100.0,

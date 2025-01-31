@@ -14,6 +14,7 @@ import '../providers/tarifario_provider.dart';
 import '../utils/helpers/desktop_colors.dart';
 import '../utils/shared_preferences/preferences.dart';
 import 'dialogs.dart';
+import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
 import '../utils/helpers/utility.dart';
 
@@ -44,6 +45,7 @@ class HabitacionItemRow extends StatefulWidget {
 
 class _HabitacionItemRowState extends State<HabitacionItemRow> {
   bool selected = false;
+  double target = 1;
 
   void showDeleteDialog() {
     showDialog(
@@ -56,6 +58,7 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
         funtionMain: () {
           setState(() {
             selected = !selected;
+            target = 0;
           });
           Future.delayed(Durations.extralong2, widget.onPressedDelete);
         },
@@ -73,54 +76,27 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
   Widget build(BuildContext context) {
     return Container(
       child: !widget.isTable
-          ? selected
-              ? _ListTileCotizacion(
-                  index: widget.index,
-                  habitacion: widget.habitacion,
-                  onPressedDelete: null,
-                  onPressedEdit: null,
-                  onPressedDuplicate: null,
-                  esDetalle: widget.esDetalle,
-                  sideController: widget.sideController,
-                )
-                  .animate()
-                  .fadeOut()
-                  .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
-              : _ListTileCotizacion(
-                  index: widget.index,
-                  habitacion: widget.habitacion,
-                  onPressedDelete: () => showDeleteDialog(),
-                  onPressedEdit: widget.onPressedEdit,
-                  onPressedDuplicate: widget.onPressedDuplicate,
-                  esDetalle: widget.esDetalle,
-                  sideController: widget.sideController,
-                )
-          : selected
-              ? _TableRowCotizacion(
-                  index: widget.index,
-                  habitacion: widget.habitacion,
-                  onPressedDelete: null,
-                  onPressedEdit: null,
-                  onPressedDuplicate: null,
-                  esDetalle: widget.esDetalle,
-                  sideController: widget.sideController,
-                )
-                  .animate()
-                  .fadeOut()
-                  .slideY(begin: -0.2, delay: const Duration(milliseconds: 200))
-              : _TableRowCotizacion(
-                  index: widget.index,
-                  habitacion: widget.habitacion,
-                  onPressedDelete: () => showDeleteDialog(),
-                  onPressedEdit: widget.onPressedEdit,
-                  esDetalle: widget.esDetalle,
-                  sideController: widget.sideController,
-                  onPressedDuplicate: widget.onPressedDuplicate,
-                ),
-    )
-        .animate()
-        .fadeIn()
-        .slideY(begin: -0.2, delay: const Duration(milliseconds: 200));
+          ? _ListTileCotizacion(
+              index: widget.index,
+              habitacion: widget.habitacion,
+              onPressedDelete: selected ? null : () => showDeleteDialog(),
+              onPressedEdit: selected ? null : widget.onPressedEdit,
+              onPressedDuplicate: selected ? null : widget.onPressedDuplicate,
+              esDetalle: widget.esDetalle,
+              sideController: widget.sideController,
+            )
+          : _TableRowCotizacion(
+              index: widget.index,
+              habitacion: widget.habitacion,
+              onPressedDelete: selected ? null : () => showDeleteDialog(),
+              onPressedEdit: selected ? null : widget.onPressedEdit,
+              onPressedDuplicate: selected ? null : widget.onPressedDuplicate,
+              esDetalle: widget.esDetalle,
+              sideController: widget.sideController,
+            ),
+    ).animate(target: target).fadeIn().slideY(
+        begin: target < 1 ? 0.1 : -0.2,
+        delay: const Duration(milliseconds: 200));
   }
 }
 
@@ -252,25 +228,76 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         size: 12,
                       ),
                     if (screenWidthWithSideBar > 1250)
-                      TextStyles.standardText(
-                        text: widget.habitacion.adultos!.toString(),
-                        aling: TextAlign.center,
-                        color: colorText,
-                        size: 12,
+                      // TextStyles.standardText(
+                      //   text: widget.habitacion.adultos!.toString(),
+                      //   aling: TextAlign.center,
+                      //   color: colorText,
+                      //   size: 12,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: NumberInputWithIncrementDecrement(
+                          onChanged: (p0) => setState(() =>
+                              widget.habitacion.adultos = int.tryParse(p0)),
+                          initialValue: widget.habitacion.adultos!.toString(),
+                          minimalValue: 1,
+                          maxValue: (4 -
+                              (int.tryParse(
+                                      "${widget.habitacion.menores7a12}") ??
+                                  0) -
+                              (int.tryParse(
+                                      "${widget.habitacion.menores0a6}") ??
+                                  0)),
+                          colorText: colorText,
+                        ),
                       ),
                     if (screenWidthWithSideBar > 1450)
-                      TextStyles.standardText(
-                        text: widget.habitacion.menores0a6!.toString(),
-                        aling: TextAlign.center,
-                        color: colorText,
-                        size: 12,
+                      // TextStyles.standardText(
+                      //   text: widget.habitacion.menores0a6!.toString(),
+                      //   aling: TextAlign.center,
+                      //   color: colorText,
+                      //   size: 12,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: NumberInputWithIncrementDecrement(
+                          onChanged: (p0) => setState(() =>
+                              widget.habitacion.menores0a6 = int.tryParse(p0)),
+                          initialValue:
+                              widget.habitacion.menores0a6!.toString(),
+                          minimalValue: 0,
+                          maxValue: (4 -
+                              (int.tryParse(
+                                      "${widget.habitacion.menores7a12}") ??
+                                  0) -
+                              (int.tryParse("${widget.habitacion.adultos}") ??
+                                  0)),
+                          colorText: colorText,
+                        ),
                       ),
                     if (screenWidthWithSideBar > 1350)
-                      TextStyles.standardText(
-                        text: widget.habitacion.menores7a12!.toString(),
-                        aling: TextAlign.center,
-                        color: colorText,
-                        size: 12,
+                      // TextStyles.standardText(
+                      //   text: widget.habitacion.menores7a12!.toString(),
+                      //   aling: TextAlign.center,
+                      //   color: colorText,
+                      //   size: 12,
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: NumberInputWithIncrementDecrement(
+                          onChanged: (p0) => setState(() =>
+                              widget.habitacion.menores7a12 = int.tryParse(p0)),
+                          initialValue:
+                              (widget.habitacion.menores7a12 ?? 0).toString(),
+                          minimalValue: 0,
+                          maxValue: (4 -
+                              (int.tryParse("${widget.habitacion.adultos}") ??
+                                  0) -
+                              (int.tryParse(
+                                      "${widget.habitacion.menores0a6}") ??
+                                  0)),
+                          colorText: colorText,
+                        ),
                       ),
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(

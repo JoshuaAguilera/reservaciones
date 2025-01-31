@@ -1043,6 +1043,36 @@ class Utility {
     }
   }
 
+
+  //V2 Found rates
+
+   static List<RegistroTarifa?> revisedTariffDay2(
+      DateTime daySelect, List<RegistroTarifa> list) {
+    List<RegistroTarifa>? first;
+
+    if (list.any((element) => element.periodos!.any((element) =>
+        ((daySelect.compareTo(element.fechaInicial!) == 0 &&
+                daySelect.compareTo(element.fechaFinal!) == 0) &&
+            element.fechaInicial!.isSameDate(element.fechaFinal!))))) {
+      return list
+          .where((element) => element.periodos!.any((element) =>
+              ((daySelect.compareTo(element.fechaInicial!) == 0 &&
+                      daySelect.compareTo(element.fechaFinal!) == 0) &&
+                  element.fechaInicial!.isSameDate(element.fechaFinal!))))
+          .toList();
+    }
+
+    first = list
+        .where((element) => showTariffNow(daySelect, element.periodos))
+        .toList();
+
+    if (first.isEmpty) {
+      return [];
+    } else {
+      return first.map((e) => e.copyWith()).toList();
+    }
+  }
+
   static List<Periodo> getPeriodsRegister(List<PeriodoData>? periods) {
     List<Periodo> periodos = [];
 
