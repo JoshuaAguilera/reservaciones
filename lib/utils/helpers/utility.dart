@@ -90,13 +90,6 @@ class Utility {
     return date;
   }
 
-  static String getNextDay(String text) {
-    return DateTime.parse(text)
-        .add(const Duration(days: 1))
-        .toIso8601String()
-        .substring(0, 10);
-  }
-
   static String getNextMonth(String text) {
     return DateTime.parse(text)
         .add(const Duration(days: 30))
@@ -612,7 +605,7 @@ class Utility {
     double tarifaNum = double.parse(tarifa.isEmpty ? '0' : tarifa);
     double promocionNUM = promocion ?? 0;
 
-    double descuento = (tarifaNum / 100) * (promocionNUM);
+    double descuento = formatNumberRound((tarifaNum * 0.01) * (promocionNUM));
 
     subtotal = tarifaNum - descuento;
 
@@ -624,7 +617,8 @@ class Utility {
       }
     } else {
       if (rounded) {
-        return (onlyDiscount ? descuento : subtotal).roundToDouble();
+        return formatNumberRound(onlyDiscount ? descuento : subtotal)
+            .roundToDouble();
       } else {
         return onlyDiscount ? descuento : subtotal;
       }
@@ -1043,10 +1037,9 @@ class Utility {
     }
   }
 
-
   //V2 Found rates
 
-   static List<RegistroTarifa?> revisedTariffDay2(
+  static List<RegistroTarifa?> revisedTariffDay2(
       DateTime daySelect, List<RegistroTarifa> list) {
     List<RegistroTarifa>? first;
 
@@ -1177,13 +1170,9 @@ class Utility {
     double tariffAdult = 0;
     double tariffChildren = 0;
 
-    if (nowRegister == null) {
-      return 0;
-    }
+    if (nowRegister == null) return 0;
 
-    if (nowRegister.tarifas == null) {
-      return 0;
-    }
+    if (nowRegister.tarifas == null) return 0;
 
     TarifaData? nowTarifa = nowRegister.tarifas!
         .where((element) => element.categoria == habitacion.categoria)
@@ -1254,12 +1243,14 @@ class Utility {
         tariffChildren.toString(),
         descuento,
         returnDouble: true,
+        rounded: false,
         onlyDiscount: true,
       );
       tariffAdult = calculatePromotion(
         tariffAdult.toString(),
         descuento,
         returnDouble: true,
+        rounded: false,
         onlyDiscount: true,
       );
     }
@@ -1556,43 +1547,60 @@ class Utility {
         double subtotal = 0;
         if (groupQuote && element.tarifaGrupal != null) {
           if (onlyFirstCategory) {
-            double subtotalCategory = calculateTotalTariffRoom(
-              RegistroTarifa(
-                temporadas: element.tarifaGrupal?.temporadas,
-                tarifas: element.tarifaGrupal?.tarifas,
-              ),
-              element,
-              element.tarifaXDia!.length,
-              getTotalRoom: true,
-              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
-              onlyTariffVR: true,
-              onlyDiscount: true,
-              isGroupTariff: true,
-              withDiscount: false,
-            );
+            // double subtotalCategory = calculateTotalTariffRoom(
+            //   RegistroTarifa(
+            //     temporadas: element.tarifaGrupal?.temporadas,
+            //     tarifas: element.tarifaGrupal?.tarifas,
+            //   ),
+            //   element,
+            //   element.tarifaXDia!.length,
+            //   getTotalRoom: true,
+            //   descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+            //   onlyTariffVR: true,
+            //   onlyDiscount: true,
+            //   isGroupTariff: true,
+            //   withDiscount: false,
+            // );
 
-            subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+            double subtotalCategory = calculateDiscountTotal(
+              [element.tarifaGrupal ?? TarifaXDia()],
+              element,
+              element.tarifaXDia?.length ?? 0,
+              onlyTariffVR: true,
+              typeQuote: true,
+            );
+            subtotal += (subtotalCategory) * element.count;
           }
 
           if (onlySecoundCategory) {
-            double subtotalCategory = calculateTotalTariffRoom(
-              RegistroTarifa(
-                temporadas: element.tarifaGrupal?.temporadas,
-                tarifas: element.tarifaGrupal?.tarifas,
-              ),
+            // double subtotalCategory = calculateTotalTariffRoom(
+            //   RegistroTarifa(
+            //     temporadas: element.tarifaGrupal?.temporadas,
+            //     tarifas: element.tarifaGrupal?.tarifas,
+            //   ),
+            //   element,
+            //   element.tarifaXDia!.length,
+            //   getTotalRoom: true,
+            //   descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+            //   onlyTariffVPM: true,
+            //   onlyDiscount: true,
+            //   isGroupTariff: true,
+            //   withDiscount: false,
+            // );
+
+            //Volver a checar la paridad de los totales, ahora es correcto pero no es exacto,
+            //De ser necesario cambia a modo de redondeo solo para aquellas tarifas definidas y no
+            //modificadas
+
+            double subtotalCategory = calculateDiscountTotal(
+              [element.tarifaGrupal ?? TarifaXDia()],
               element,
-              element.tarifaXDia!.length,
-              getTotalRoom: true,
-              descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
+              element.tarifaXDia?.length ?? 0,
               onlyTariffVPM: true,
-              onlyDiscount: true,
-              isGroupTariff: true,
-              withDiscount: false,
+              typeQuote: true,
             );
 
-            subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+            subtotal += (subtotalCategory) * element.count;
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1801,12 +1809,12 @@ class Utility {
     bool onlyChildren = false,
     bool onlyTariffVR = false,
     bool onlyTariffVPM = false,
-    bool applyRoundFormat = false,
   }) {
     double total = 0;
 
     for (var element in tarifasFiltradas) {
       TarifaData? selectTarifa = element.tarifa;
+      bool applyRound = !(element.modificado ?? false);
 
       if (onlyTariffVR) {
         selectTarifa = element.tarifas
@@ -1825,18 +1833,20 @@ class Utility {
           case 1 || 2:
             double adult1o2 = selectTarifa?.tarifaAdultoSGLoDBL ?? 0;
             total +=
-                (applyRoundFormat ? formatNumberRound(adult1o2) : adult1o2) *
+                (applyRound ? formatNumberRound(adult1o2).round() : adult1o2) *
                     element.numDays;
 
           case 3:
-            total += (applyRoundFormat
-                    ? formatNumberRound((selectTarifa?.tarifaAdultoTPL ?? 0))
+            total += (applyRound
+                    ? (formatNumberRound((selectTarifa?.tarifaAdultoTPL ?? 0))
+                        .round())
                     : (selectTarifa?.tarifaAdultoTPL ?? 0)) *
                 element.numDays;
 
           case 4:
-            total += (applyRoundFormat
-                    ? formatNumberRound((selectTarifa?.tarifaAdultoCPLE ?? 0))
+            total += (applyRound
+                    ? (formatNumberRound((selectTarifa?.tarifaAdultoCPLE ?? 0))
+                        .round())
                     : (selectTarifa?.tarifaAdultoCPLE ?? 0)) *
                 element.numDays;
 
@@ -1846,8 +1856,9 @@ class Utility {
       }
 
       if (onlyChildren) {
-        total += ((applyRoundFormat
-                    ? formatNumberRound((selectTarifa?.tarifaMenores7a12 ?? 0))
+        total += ((applyRound
+                    ? (formatNumberRound((selectTarifa?.tarifaMenores7a12 ?? 0))
+                        .round())
                     : (selectTarifa?.tarifaMenores7a12 ?? 0)) *
                 element.numDays) *
             (habitacion.menores7a12 ?? 0);

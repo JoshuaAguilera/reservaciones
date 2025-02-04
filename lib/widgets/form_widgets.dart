@@ -382,13 +382,13 @@ class FormWidgets {
           }),
         SizedBox(
           width: widthInput,
-          height: 40,
+          height: 50,
           child: NumberInputWithIncrementDecrement(
             onChanged: onChanged,
             initialValue: initialValue,
             minimalValue: 1,
-            sizeIcons: 14,
-            height: 10,
+            sizeIcons: 18,
+            height: 6,
             focused: true,
             colorText: colorText,
             maxValue: 106,

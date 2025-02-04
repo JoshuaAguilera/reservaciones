@@ -55,7 +55,7 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: SizedBox(
-        height: 420,
+        height: 480,
         width: 450,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +77,6 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: SizedBox(
                         width: 450,
-                        height: null,
                         child: SingleChildScrollView(
                           child: Form(
                             key: _formKeyPolitics,
@@ -89,9 +88,9 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
                                   widthInput: 70,
                                   sizeText: 13.3,
                                   nameField:
-                                      "Intervalo de Aplicación de Habitaciones\nde Cortesía",
+                                      "Intervalo de Aplicación para Habitaciones\nde Cortesía",
                                   description:
-                                      "Determina el numero de habitaciones valido\npara aplicar una habitación gratis para\ncotizaciones grupales.",
+                                      "Determina el número de habitaciones valido\npara aplicar una habitación gratis para\ncotizaciones grupales.",
                                   initialValue: intervaloHabitacion.toString(),
                                   onChanged: (p0) => intervaloHabitacion =
                                       p0.isEmpty ? 1 : int.parse(p0),
@@ -105,7 +104,7 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
                                   widthInput: 70,
                                   sizeText: 13.3,
                                   nameField:
-                                      "Limite de Habitaciones para Cotización\nGrupal",
+                                      "Limite de Habitaciones para Cotizaciones\nIndividuales",
                                   description:
                                       "Especifica el número máximo de habitaciones\npara una cotización individual. Más de este\nnúmero será considerado una cotización grupal.",
                                   initialValue:

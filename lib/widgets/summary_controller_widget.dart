@@ -190,7 +190,6 @@ class _SummaryControllerWidgetState
                                           messageNotFound: "Sin tarifas",
                                           total: Utility.calculateTariffTotals(
                                             tarifasFiltradas,
-                                            applyRoundFormat: true,
                                             habitacionProvider,
                                             onlyAdults: true,
                                             onlyTariffVR:
@@ -253,7 +252,6 @@ class _SummaryControllerWidgetState
                                             tarifasFiltradas,
                                             habitacionProvider,
                                             onlyChildren: true,
-                                            applyRoundFormat: true,
                                             onlyTariffVR:
                                                 habitacionProvider.categoria ==
                                                     tipoHabitacion.first,
@@ -324,7 +322,6 @@ class _SummaryControllerWidgetState
                                         habitacionProvider,
                                         onlyChildren: true,
                                         onlyAdults: true,
-                                        applyRoundFormat: true,
                                         onlyTariffVR:
                                             habitacionProvider.categoria ==
                                                 tipoHabitacion.first,
@@ -683,24 +680,14 @@ class _SummaryControllerWidgetState
                         nameItem:
                             "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
                         count: typeQuote
-                            ? -(Utility.calculateTotalTariffRoom(
-                                  RegistroTarifa(
-                                    temporadas:
-                                        element.tarifaGrupal?.temporadas,
-                                    tarifas: element.tarifaGrupal?.tarifas,
-                                  ),
-                                  element,
-                                  element.tarifaXDia!.length,
-                                  getTotalRoom: true,
-                                  descuentoProvisional: element
-                                      .tarifaGrupal?.descuentoProvisional,
-                                  onlyTariffVR: isVR,
-                                  onlyTariffVPM: !isVR,
-                                  onlyDiscount: true,
-                                  isGroupTariff: true,
-                                  withDiscount: false,
-                                ) *
-                                element.tarifaXDia!.length)
+                            ? -(Utility.calculateDiscountTotal(
+                                [element.tarifaGrupal ?? TarifaXDia()],
+                                element,
+                                element.tarifaXDia?.length ?? 0,
+                                typeQuote: typeQuote,
+                                onlyTariffVR: isVR,
+                                onlyTariffVPM: !isVR,
+                              ))
                             : -((isVR
                                     ? element.descuentoVR
                                     : element.descuentoVPM) ??
@@ -713,7 +700,7 @@ class _SummaryControllerWidgetState
                         .toList())
                       CustomWidgets.itemListCount(
                         nameItem:
-                            "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Free Room)",
+                            "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Cortesía)",
                         count: typeQuote
                             ? -(Utility.calculateTotalTariffRoom(
                                   RegistroTarifa(
@@ -734,6 +721,7 @@ class _SummaryControllerWidgetState
                             : -((isVR ? element.totalVR : element.totalVPM) ??
                                 0),
                         context: context,
+                        color: Colors.green[300],
                         sizeText: 11.5,
                         onChanged: ((widget.saveRooms ?? habitaciones)
                                     .where((element) => !element.isFree)
@@ -825,20 +813,24 @@ class _SummaryControllerWidgetState
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: Divider(color: Theme.of(context).primaryColor),
               ),
-              CustomWidgets.itemListCount(
-                nameItem: "Total:",
-                count: Utility.calculateTotalRooms(
-                  (widget.saveRooms ?? rooms),
-                  onlyTotal: true,
-                  onlyFirstCategory: isVR,
-                  onlySecoundCategory: !isVR,
-                  groupQuote: typeQuote,
-                  useSeasonCash: useSeasonCash,
+              //Hay totales q no cuadran XD CHECALO CON UNA HABITACION DE CORTESIA Y 2 HABITACIONES
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                child: CustomWidgets.itemListCount(
+                  nameItem: "Total:",
+                  count: Utility.calculateTotalRooms(
+                    (widget.saveRooms ?? habitaciones),
+                    onlyTotal: true,
+                    onlyFirstCategory: isVR,
+                    onlySecoundCategory: !isVR,
+                    groupQuote: typeQuote,
+                    useSeasonCash: useSeasonCash,
+                  ),
+                  context: context,
+                  isBold: true,
+                  sizeText: 14,
+                  height: 40,
                 ),
-                context: context,
-                isBold: true,
-                sizeText: 14,
-                height: 40,
               ),
             ],
           ),
