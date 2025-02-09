@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class GestorImagenes extends ConsumerStatefulWidget {
 
 class _GestorImagenesState extends ConsumerState<GestorImagenes> {
   bool isUpdatingImage = false;
-  final CarouselController _controller = CarouselController();
+  //final CarouselController _controller = CarouselController();
   File? imagen;
   File? pathImage;
   double height = 250;
@@ -138,6 +137,12 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                             height: height * 0.60,
                             width: height * 0.60,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Image(
+                              image:
+                                  const AssetImage("assets/image/usuario.png"),
+                              height: height * 0.60,
+                              width: height * 0.60,
+                            ),
                           ),
                         ),
                       ),
@@ -175,37 +180,38 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
               children: [
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 20),
-                    child: (widget.imagenes == null)
-                        ? Stack(
-                            children: [
-                              const Center(
-                                child: Image(
-                                    image: AssetImage(
-                                        'assets/images/box_article_icon.png'),
-                                    width: 120),
-                              ),
-                              Center(
-                                child: Opacity(
-                                  opacity: 0.7,
-                                  child: IconButton(
-                                      padding: const EdgeInsets.all(0),
-                                      iconSize: 100,
-                                      onPressed: () {
-                                        setState(() {
-                                          isUpdatingImage = true;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                        Icons.add_photo_alternate,
-                                        size: 120,
-                                        color: Colors.blueGrey,
-                                      )),
+                      padding: const EdgeInsets.only(top: 15, bottom: 20),
+                      child: (widget.imagenes == null)
+                          ? Stack(
+                              children: [
+                                const Center(
+                                  child: Image(
+                                      image: AssetImage(
+                                          'assets/images/box_article_icon.png'),
+                                      width: 120),
                                 ),
-                              )
-                            ],
-                          )
-                        : CarouselSlider.builder(
+                                Center(
+                                  child: Opacity(
+                                    opacity: 0.7,
+                                    child: IconButton(
+                                        padding: const EdgeInsets.all(0),
+                                        iconSize: 100,
+                                        onPressed: () {
+                                          setState(() {
+                                            isUpdatingImage = true;
+                                          });
+                                        },
+                                        icon: const Icon(
+                                          Icons.add_photo_alternate,
+                                          size: 120,
+                                          color: Colors.blueGrey,
+                                        )),
+                                  ),
+                                )
+                              ],
+                            )
+                          : const SizedBox()
+                      /*CarouselSlider.builder(
                             itemCount: widget.imagenes!.length +
                                 ((widget.isSingleImage &&
                                         widget.imagenes!.length > 0)
@@ -302,7 +308,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                               },
                             ),
                           ),
-                  ),
+                          */
+                      ),
                 ),
                 if (widget.imagenes != null && !widget.isSingleImage)
                   Positioned(
@@ -317,8 +324,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                             children:
                                 widget.imagenes!.asMap().entries.map((entry) {
                               return GestureDetector(
-                                onTap: () =>
-                                    _controller.animateToPage(entry.key),
+                                onTap: () {},
+                                //=> _controller.animateToPage(entry.key),
                                 child: Container(
                                   width: 12.0,
                                   height: 12.0,
@@ -339,8 +346,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                           ),
                           if (widget.imagenes != null)
                             GestureDetector(
-                              onTap: () => _controller
-                                  .animateToPage(widget.imagenes!.length),
+                              onTap:
+                                  () {}, //=> _controller.animateToPage(widget.imagenes!.length),
                               child: Icon(
                                 Icons.add,
                                 size: 16,

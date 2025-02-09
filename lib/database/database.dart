@@ -190,6 +190,8 @@ class AppDatabase extends _$AppDatabase {
       );
     }
 
+    query.orderBy([OrderingTerm.desc(cotizacion.fecha)]);
+
     final result = await query.get();
 
     final list = result.map((row) {

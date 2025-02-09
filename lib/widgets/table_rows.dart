@@ -44,6 +44,7 @@ class TableRows {
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
       useCashSeason: useCashSeason,
+      applyRoundFormat: !(tarifaXDia.modificado ?? false),
     );
 
     double tarifaMenores = Utility.calculateTotalTariffRoom(
@@ -54,6 +55,7 @@ class TableRows {
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
       useCashSeason: useCashSeason,
+      applyRoundFormat: !(tarifaXDia.modificado ?? false),
     );
 
     void showDialogManagerTariff() {

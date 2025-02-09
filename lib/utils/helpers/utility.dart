@@ -62,6 +62,10 @@ class Utility {
   }
 
   static String formatterNumber(double number) {
+    // if (diseableRound) {
+    //   return "\$${formatNumberRound(number, fractionDigits: 2).toStringAsFixed(2)}";
+    // }
+
     return NumberFormat.simpleCurrency(locale: 'EN-us', decimalDigits: 2)
         .format(number);
   }
@@ -625,11 +629,11 @@ class Utility {
     }
   }
 
-  static double formatNumberRound(double number) {
+  static double formatNumberRound(double number, {int fractionDigits = 7}) {
     if (number > 0) {
-      return double.parse(number.toStringAsFixed(7));
+      return double.parse(number.toStringAsFixed(fractionDigits));
     } else if (number < 0) {
-      return double.parse(number.toStringAsFixed(7));
+      return double.parse(number.toStringAsFixed(fractionDigits));
     } else {
       return 0.0;
     }
@@ -1204,38 +1208,48 @@ class Utility {
       descuento = descuentoProvisional ?? 0;
     }
 
-    tariffChildren = applyRoundFormat
-        ? formatNumberRound((nowTarifa?.tarifaMenores7a12 ?? 0)) *
-            habitacion.menores7a12!
-        : (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
+    // tariffChildren = applyRoundFormat
+    //     ? (formatNumberRound(nowTarifa?.tarifaMenores7a12 ?? 0)
+    //             .roundToDouble()) *
+    //         habitacion.menores7a12!
+    //     : (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
+
+    tariffChildren =
+        (nowTarifa?.tarifaMenores7a12 ?? 0) * habitacion.menores7a12!;
 
     switch (habitacion.adultos) {
       case 1 || 2:
         double adult1o2 = (nowTarifa?.tarifaAdultoSGLoDBL ?? 0);
-        tariffAdult = applyRoundFormat ? formatNumberRound(adult1o2) : adult1o2;
+        tariffAdult = adult1o2;
       case 3:
         double adult3 = (nowTarifa?.tarifaAdultoTPL ?? 0);
-        tariffAdult = applyRoundFormat ? formatNumberRound(adult3) : adult3;
+        tariffAdult = adult3;
       case 4:
         double adult4 = (nowTarifa?.tarifaAdultoCPLE ?? 0);
-        tariffAdult = applyRoundFormat ? formatNumberRound(adult4) : adult4;
+        tariffAdult = adult4;
       default:
         double paxAdic = (nowTarifa?.tarifaPaxAdicional ?? 0);
-        tariffAdult = applyRoundFormat ? formatNumberRound(paxAdic) : paxAdic;
+        tariffAdult = paxAdic;
     }
 
+    // tariffAdult = applyRoundFormat
+    //     ? formatNumberRound(tariffAdult).roundToDouble()
+    //     : tariffAdult;
+
     if (withDiscount) {
-      tariffChildren = (calculatePromotion(
+      tariffChildren = calculatePromotion(
         tariffChildren.toString(),
         descuento,
         returnDouble: true,
-      ));
+        rounded: applyRoundFormat,
+      );
 
-      tariffAdult = (calculatePromotion(
+      tariffAdult = calculatePromotion(
         tariffAdult.toString(),
         descuento,
         returnDouble: true,
-      ));
+        rounded: applyRoundFormat,
+      );
     }
 
     if (onlyDiscount) {
@@ -1243,26 +1257,31 @@ class Utility {
         tariffChildren.toString(),
         descuento,
         returnDouble: true,
-        rounded: false,
+        rounded: applyRoundFormat,
         onlyDiscount: true,
       );
       tariffAdult = calculatePromotion(
         tariffAdult.toString(),
         descuento,
         returnDouble: true,
-        rounded: false,
+        rounded: applyRoundFormat,
         onlyDiscount: true,
       );
     }
 
     if (getTotalRoom) {
-      return (tariffChildren + tariffAdult);
+      return formatNumberRound(tariffChildren).roundToDouble() +
+          formatNumberRound(tariffAdult).roundToDouble();
     }
 
     if (isCalculateChildren) {
-      return tariffChildren;
+      return applyRoundFormat
+          ? formatNumberRound(tariffChildren).roundToDouble()
+          : tariffChildren;
     } else {
-      return tariffAdult;
+      return applyRoundFormat
+          ? formatNumberRound(tariffAdult).roundToDouble()
+          : tariffAdult;
     }
   }
 
@@ -1488,6 +1507,8 @@ class Utility {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
+          bool applyRound = !(element.tarifaGrupal?.modificado ?? false);
+
           if (onlyFirstCategory) {
             double subtotalCategory = calculateTotalTariffRoom(
               RegistroTarifa(
@@ -1501,6 +1522,7 @@ class Utility {
               onlyTariffVR: true,
               isGroupTariff: true,
               withDiscount: false,
+              applyRoundFormat: applyRound,
             );
 
             subtotal +=
@@ -1520,6 +1542,7 @@ class Utility {
               onlyTariffVPM: true,
               isGroupTariff: true,
               withDiscount: false,
+              applyRoundFormat: applyRound,
             );
 
             subtotal +=
@@ -1546,6 +1569,8 @@ class Utility {
       if (onlyDiscount) {
         double subtotal = 0;
         if (groupQuote && element.tarifaGrupal != null) {
+          bool applyRound = !(element.tarifaGrupal?.modificado ?? false);
+
           if (onlyFirstCategory) {
             // double subtotalCategory = calculateTotalTariffRoom(
             //   RegistroTarifa(
@@ -1568,6 +1593,7 @@ class Utility {
               element.tarifaXDia?.length ?? 0,
               onlyTariffVR: true,
               typeQuote: true,
+              applyRoundFormatt: applyRound,
             );
             subtotal += (subtotalCategory) * element.count;
           }
@@ -1598,6 +1624,7 @@ class Utility {
               element.tarifaXDia?.length ?? 0,
               onlyTariffVPM: true,
               typeQuote: true,
+              applyRoundFormatt: applyRound,
             );
 
             subtotal += (subtotalCategory) * element.count;
@@ -1624,6 +1651,8 @@ class Utility {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
+          bool applyRound = !(element.tarifaGrupal?.modificado ?? false);
+
           if (onlyFirstCategory) {
             double subtotalCategory = calculateTotalTariffRoom(
               RegistroTarifa(
@@ -1637,6 +1666,7 @@ class Utility {
               onlyTariffVR: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal +=
@@ -1656,6 +1686,7 @@ class Utility {
               onlyTariffVPM: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal +=
@@ -1685,6 +1716,8 @@ class Utility {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
+          bool applyRound = !(element.tarifaGrupal?.modificado ?? false);
+
           if (onlyFirstCategory) {
             double subtotalCategory = calculateTotalTariffRoom(
               RegistroTarifa(
@@ -1698,6 +1731,7 @@ class Utility {
               onlyTariffVR: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal += (subtotalCategory * element.tarifaXDia!.length);
@@ -1716,6 +1750,7 @@ class Utility {
               onlyTariffVPM: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal += (subtotalCategory * element.tarifaXDia!.length);
@@ -1745,6 +1780,8 @@ class Utility {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
+          bool applyRound = !(element.tarifaGrupal?.modificado ?? false);
+
           if (onlyFirstCategory) {
             double subtotalCategory = calculateTotalTariffRoom(
               RegistroTarifa(
@@ -1758,6 +1795,7 @@ class Utility {
               onlyTariffVR: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal += (subtotalCategory * element.tarifaXDia!.length);
@@ -1776,6 +1814,7 @@ class Utility {
               onlyTariffVPM: true,
               withDiscount: true,
               isGroupTariff: true,
+              applyRoundFormat: applyRound,
             );
 
             subtotal += (subtotalCategory * element.tarifaXDia!.length);
@@ -1887,7 +1926,7 @@ class Utility {
         onlyTariffVPM: onlyTariffVPM,
         onlyTariffVR: onlyTariffVR,
         typeQuote: typeQuote,
-        applyRoundFormatt: applyRoundFormatt,
+        applyRoundFormatt: !(element.modificado ?? false) || applyRoundFormatt,
       );
     }
 
@@ -1924,6 +1963,7 @@ class Utility {
       onlyTariffVR: onlyTariffVR,
       isGroupTariff: typeQuote,
       useCashSeason: useCashTariff,
+      // applyRoundFormat: applyRoundFormatt,
     );
     double totalChildren = Utility.calculateTotalTariffRoom(
       element.tarifa == null
@@ -1945,30 +1985,40 @@ class Utility {
       isCalculateChildren: true,
       isGroupTariff: typeQuote,
       useCashSeason: useCashTariff,
+      // applyRoundFormat: applyRoundFormatt,
     );
 
-    double total = totalChildren + totalAdults;
+    double totalR = totalChildren + totalAdults;
 
-    if (element.temporadaSelect != null) {
-      discount = total -
-          calculatePromotion(
-            total.toString(),
-            (element.temporadaSelect?.porcentajePromocion ?? 0),
-            returnDouble: true,
-          );
-    } else {
-      discount = total -
-          calculatePromotion(
-            total.toString(),
-            (element.descuentoProvisional ?? 0),
-            returnDouble: true,
-            rounded: false,
-          );
-    }
+    double descuento = element.temporadaSelect?.porcentajePromocion ??
+        element.descuentoProvisional ??
+        0;
+
+    double discountAdult = calculatePromotion(
+      totalAdults.toString(),
+      descuento,
+      returnDouble: true,
+      rounded: applyRoundFormatt,
+    );
+
+    double discountChildren = calculatePromotion(
+      totalChildren.toString(),
+      descuento,
+      returnDouble: true,
+      rounded: applyRoundFormatt,
+    );
+
+    discount = discountAdult + discountChildren;
+
+    discount = (applyRoundFormatt
+            ? formatNumberRound(totalR).roundToDouble()
+            : totalR) -
+        discount;
 
     if (onlyDiscountUnitary) return (discount) + 0.0;
 
     return (discount * element.numDays) + 0.0;
+    // return (discount * (habitacion.tarifaXDia?.length ?? 0)) + 0.0;
   }
 
   static String intToRoman(int num) {

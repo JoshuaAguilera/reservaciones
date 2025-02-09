@@ -630,17 +630,83 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                             const EdgeInsets.only(right: 15),
                                         child: Buttons.commonButton(
                                           onPressed: () {
+                                            List<TarifaXDia> preTarifasVacias =
+                                                alternativeTariffInd;
+
+                                            bool isVoidTariff = (applyFreeTariff ||
+                                                habitacionProvider.tarifaXDia!
+                                                    .any((element) =>
+                                                        element.code!.contains(
+                                                            "Unknow") ||
+                                                        element.code!.contains(
+                                                            "tariffFree")));
+
+                                            if (isVoidTariff) {
+                                              for (var element
+                                                  in preTarifasVacias) {
+                                                if (habitacionProvider
+                                                        .tarifaXDia ==
+                                                    null) {
+                                                  continue;
+                                                }
+
+                                                if (element.code ==
+                                                    (habitacionProvider
+                                                            .tarifaXDia
+                                                            ?.first
+                                                            .code ??
+                                                        '')) {
+                                                  TarifaXDia _tariff =
+                                                      habitacionProvider
+                                                          .tarifaXDia!.first;
+
+                                                  element.categoria =
+                                                      _tariff.categoria;
+                                                  element.code = _tariff.code;
+                                                  element.color = _tariff.color;
+                                                  element.folioRoom =
+                                                      _tariff.folioRoom;
+                                                  element.descuentoProvisional =
+                                                      _tariff
+                                                          .descuentoProvisional;
+                                                  element.numDays =
+                                                      _tariff.numDays;
+                                                  element.id = _tariff.id;
+                                                  element.subCode =
+                                                      _tariff.subCode;
+                                                  element.tarifa = _tariff
+                                                      .tarifa
+                                                      ?.copyWith();
+                                                  element.tarifas = _tariff
+                                                      .tarifas
+                                                      ?.map((e) => e.copyWith())
+                                                      .toList();
+                                                  element.modificado =
+                                                      _tariff.modificado;
+                                                  element.nombreTariff =
+                                                      _tariff.nombreTariff;
+                                                  element.periodo =
+                                                      _tariff.periodo;
+                                                  element.tarifasBase =
+                                                      _tariff.tarifasBase;
+                                                  element.tarifasEfectivo =
+                                                      _tariff.tarifasEfectivo;
+                                                  element.tariffCode =
+                                                      _tariff.tariffCode;
+                                                  element.temporadaSelect =
+                                                      _tariff.temporadaSelect;
+                                                  element.temporadas =
+                                                      _tariff.temporadas;
+                                                }
+                                              }
+                                            }
+
                                             List<TarifaXDia> tarifasFiltradas =
                                                 Utility.getUniqueTariffs(
-                                              (applyFreeTariff ||
-                                                      habitacionProvider
-                                                          .tarifaXDia!
-                                                          .any((element) =>
-                                                              element.code!
-                                                                  .contains(
-                                                                      "Unknow")))
-                                                  ? habitacionProvider
-                                                      .tarifaXDia!
+                                              isVoidTariff
+                                                  // ? habitacionProvider
+                                                  //     .tarifaXDia!
+                                                  ? preTarifasVacias
                                                   : alternativeTariffInd.isEmpty
                                                       ? recoveryTariffs
                                                       : alternativeTariffInd,
@@ -1208,14 +1274,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
       },
     ).then(
       (value) {
-        if (value == null) return;
-        List<TarifaXDia?> list = value;
+        // if (value == null) return;
+        List<TarifaXDia?> list = value ?? [];
         if (list.isEmpty) {
           TarifaXDia? tarifaGrupal = tarifasFiltradas
               .reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
           if (withoutAction &&
-              tarifaGrupal.code == alternativeGrupTariff!.code) {
+              tarifaGrupal.code == (alternativeGrupTariff?.code ?? '')) {
             return;
           }
 

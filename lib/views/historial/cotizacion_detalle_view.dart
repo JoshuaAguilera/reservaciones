@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
@@ -14,6 +15,7 @@ import '../../utils/helpers/desktop_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
 import '../../widgets/text_styles.dart';
+import '../../widgets/textformfield_custom.dart';
 import '../generacion_cotizaciones/pdf_cotizacion_view.dart';
 
 class CotizacionDetalleView extends ConsumerStatefulWidget {
@@ -92,73 +94,108 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               ),
                               const SizedBox(height: 8),
                               Card(
-                                elevation: 7,
-                                color: cotizacion.esGrupo!
-                                    ? (cotizacion.esConcretado ?? false)
-                                        ? DesktopColors.resGrupal
-                                        : DesktopColors.cotGrupal
-                                    : (cotizacion.esConcretado ?? false)
-                                        ? DesktopColors.resIndiv
-                                        : DesktopColors.cotIndiv,
+                                elevation: 6,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
+                                  padding: const EdgeInsets.all(14.0),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      TextStyles.TextAsociative(
-                                        "Nombre: ",
-                                        cotizacion.nombreHuesped ?? '',
-                                        size: 13,
-                                        color: colorText,
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: TextStyles.titleText(
+                                          text: "Datos del huesped",
+                                          textAlign: TextAlign.start,
+                                          color: Theme.of(context).dividerColor,
+                                        ),
                                       ),
-                                      // TextStyles.TextAsociative(
-                                      //   "Fecha de Registro: ",
-                                      //   cotizacion.fecha ?? '',
-                                      //   size: 13,
-                                      //   color: colorText,
-                                      // ),
-                                      // TextStyles.TextAsociative(
-                                      //   "Fecha de Vigencia: ",
-                                      //   cotizacion.fechaLimite ?? '',
-                                      //   size: 13,
-                                      //   color: colorText,
-                                      // ),
-
-                                      TextStyles.TextAsociative("Fecha: ",
-                                          "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fecha!))} ${cotizacion.fecha?.substring(11, 16)}",
-                                          size: 13, color: colorText),
-
-                                      TextStyles.TextAsociative("Vigencia: ",
-                                          "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
-                                          size: 13, color: colorText),
-                                      if ((cotizacion.correoElectronico ?? '')
-                                          .isNotEmpty)
-                                        TextStyles.TextAsociative(
-                                          "Correo electronico: ",
-                                          cotizacion.correoElectronico ?? '',
-                                          size: 13,
-                                          color: colorText,
+                                      const SizedBox(height: 15),
+                                      TextFormFieldCustom
+                                          .textFormFieldwithBorder(
+                                        name: "Nombre completo",
+                                        blocked: true,
+                                        readOnly: true,
+                                        initialValue:
+                                            cotizacion.nombreHuesped ?? '',
+                                      ),
+                                      if (cotizacion.correoElectronico ==
+                                              null &&
+                                          cotizacion.numeroTelefonico == null)
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: TextFormFieldCustom
+                                                  .textFormFieldwithBorder(
+                                                name:
+                                                    "Numero Telefonico (Contacto o WhatsApp)",
+                                                initialValue: cotizacion
+                                                        .numeroTelefonico ??
+                                                    '',
+                                                blocked: true,
+                                                readOnly: true,
+                                                enabled: (cotizacion
+                                                            .numeroTelefonico ??
+                                                        '')
+                                                    .isNotEmpty,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: TextFormFieldCustom
+                                                  .textFormFieldwithBorder(
+                                                name: "Correo electronico",
+                                                initialValue: cotizacion
+                                                        .correoElectronico ??
+                                                    '',
+                                                blocked: true,
+                                                readOnly: true,
+                                                enabled: (cotizacion
+                                                            .correoElectronico ??
+                                                        '')
+                                                    .isNotEmpty,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      if ((cotizacion.numeroTelefonico ?? '')
-                                          .isNotEmpty)
-                                        TextStyles.TextAsociative(
-                                          "Telefono: ",
-                                          cotizacion.numeroTelefonico ?? '',
-                                          size: 13,
-                                          color: colorText,
-                                        ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormFieldCustom
+                                                .textFormFieldwithBorder(
+                                              name: "Fecha de registro",
+                                              initialValue:
+                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fecha!))} ${cotizacion.fecha?.substring(11, 16)}",
+                                              blocked: true,
+                                              readOnly: true,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: TextFormFieldCustom
+                                                .textFormFieldwithBorder(
+                                              name: "Fecha de vigencia",
+                                              initialValue:
+                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
+                                              blocked: true,
+                                              readOnly: true,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
+                              ).animate().fadeIn(duration: 250.ms),
                               const SizedBox(height: 12),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Divider(color: colorElement),
                               ),
                               TextStyles.titleText(
-                                text: "Cotizaciones",
+                                text: "Habitaciones cotizadas",
                                 color: colorElement,
                               ),
                               const SizedBox(height: 12),

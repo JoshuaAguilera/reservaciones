@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class CarouselWidget extends StatefulWidget {
@@ -10,13 +9,13 @@ class CarouselWidget extends StatefulWidget {
 
 class _CarouselWithIndicatorState extends State<CarouselWidget> {
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+  //final CarouselController _controller = CarouselController();
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
-        CarouselSlider(
+       /* CarouselSlider(
           items: imageSliders,
           carouselController: _controller,
           options: CarouselOptions(
@@ -28,12 +27,12 @@ class _CarouselWithIndicatorState extends State<CarouselWidget> {
                   _current = index;
                 });
               }),
-        ),
+        ),*/
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: imgDefault.asMap().entries.map((entry) {
             return GestureDetector(
-              onTap: () => _controller.animateToPage(entry.key),
+              onTap: () {},//=> _controller.animateToPage(entry.key),
               child: Container(
                 width: 12.0,
                 height: 12.0,

@@ -149,40 +149,45 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       Future.delayed(
                         Durations.medium1,
                         () {
-                          int count = quotesAboutExpire.length;
+                          if (mounted) {
+                            int count = quotesAboutExpire.length;
 
-                          if (count > 0) {
-                            Notificacion newNotification = Notificacion(
-                              id: 0,
-                              level: "alert",
-                              icon: HeroIcons.calendar,
-                              content:
-                                  "Tiene${count > 1 ? "s" : ""} ${count > 1 ? count : "una"} cotizacion${count > 1 ? "es" : ""} que esta${count > 1 ? "n" : ""} a punto de dejar de ser vigentes.",
-                              title: "Cotizaciones por Vencer",
-                            );
+                            if (count > 0) {
+                              Notificacion newNotification = Notificacion(
+                                id: 0,
+                                level: "alert",
+                                icon: HeroIcons.calendar,
+                                content:
+                                    "Tiene${count > 1 ? "s" : ""} ${count > 1 ? count : "una"} cotizacion${count > 1 ? "es" : ""} que esta${count > 1 ? "n" : ""} a punto de dejar de ser vigentes.",
+                                title: "Cotizaciones por Vencer",
+                              );
 
-                            if (!notificaciones
-                                .any((element) => element.id == 0)) {
+                              if (!notificaciones
+                                  .any((element) => element.id == 0)) {
+                                ref
+                                    .read(userViewProvider.notifier)
+                                    .update((state) => false);
+                                ref
+                                    .watch(
+                                        NotificacionProvider.provider.notifier)
+                                    .addItem(newNotification);
+                              } else {
+                                ref
+                                    .watch(
+                                        NotificacionProvider.provider.notifier)
+                                    .editItem(newNotification);
+                              }
+                            } else {
                               ref
                                   .read(userViewProvider.notifier)
                                   .update((state) => false);
-                              ref
-                                  .watch(NotificacionProvider.provider.notifier)
-                                  .addItem(newNotification);
-                            } else {
-                              ref
-                                  .watch(NotificacionProvider.provider.notifier)
-                                  .editItem(newNotification);
-                            }
-                          } else {
-                            ref
-                                .read(userViewProvider.notifier)
-                                .update((state) => false);
-                            if (notificaciones
-                                .any((element) => element.id == 0)) {
-                              ref
-                                  .watch(NotificacionProvider.provider.notifier)
-                                  .remove(0);
+                              if (notificaciones
+                                  .any((element) => element.id == 0)) {
+                                ref
+                                    .watch(
+                                        NotificacionProvider.provider.notifier)
+                                    .remove(0);
+                              }
                             }
                           }
                         },

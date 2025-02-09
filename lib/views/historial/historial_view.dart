@@ -253,6 +253,13 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 nameItem: "Res. Individual",
                                 colorItem: DesktopColors.resIndiv,
                               ),
+                              const SizedBox(width: 5),
+                              CustomWidgets.itemColorIndicator(
+                                context,
+                                screenWidth: screenWidth,
+                                nameItem: "No Concretada",
+                                colorItem: DesktopColors.cotNoConcr,
+                              ),
                             ],
                           ),
                         )

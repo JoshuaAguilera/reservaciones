@@ -104,8 +104,13 @@ class _ManagerTariffDayWidgetState
     baseTariffs = widget.tarifaXDia.tarifasBase;
     isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
     colorTariff = widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure;
-    isEditing = (widget.tarifaXDia.modificado ?? false) ||
-        ((isUnknow || isFreeTariff) && (widget.tarifaXDia.modificado ?? false));
+    isEditing = isFreeTariff
+        ? true
+        : (isUnknow)
+            ? (widget.tarifaXDia.tariffCode == null)
+                ? true
+                : (widget.tarifaXDia.modificado ?? false)
+            : (widget.tarifaXDia.modificado ?? false);
     canBeReset = (widget.tarifaXDia.tarifasBase ?? List.empty()).isNotEmpty;
 
     applyTariffData();
@@ -456,7 +461,9 @@ class _ManagerTariffDayWidgetState
                                     if (widget.tarifaXDia.tariffCode != null) {
                                       _insertTariffForm(null);
                                     }
-                                    isEditing = true;
+                                    if (isUnknow || isFreeTariff) {
+                                      isEditing = true;
+                                    }
                                     canBeReset = false;
                                     _descuentoController.text = (widget
                                                 .tarifaXDia
@@ -1241,7 +1248,7 @@ class _ManagerTariffDayWidgetState
   }
 
   double calculateTariffMenor(int menores) =>
-      menores * (double.tryParse(_tarifaAdultoController.text) ?? 0);
+      menores * (double.tryParse(_tarifaMenoresController.text) ?? 0);
 
   double calculateDiscount(double total) {
     double discount = 0;

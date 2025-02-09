@@ -184,18 +184,18 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
               if (!isLoadingDoc)
                 IconButton(
                   onPressed: () async {
-                    if (Preferences.phone.isEmpty) {
-                      showSnackBar(
-                        type: "alert",
-                        context: context,
-                        iconCustom: CupertinoIcons.tray_fill,
-                        duration: 4.seconds,
-                        title: "Número no registrada",
-                        message:
-                            "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
-                      );
-                      return;
-                    }
+                    // if (Preferences.phone.isEmpty) {
+                    //   showSnackBar(
+                    //     type: "alert",
+                    //     context: context,
+                    //     iconCustom: CupertinoIcons.tray_fill,
+                    //     duration: 4.seconds,
+                    //     title: "Número no registrado",
+                    //     message:
+                    //         "Se requiere de un número telefonico para enviar este comprobante por WhatsApp.",
+                    //   );
+                    //   return;
+                    // }
 
                     await _sendMessage();
                   },

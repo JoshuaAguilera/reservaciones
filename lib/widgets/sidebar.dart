@@ -163,6 +163,20 @@ class _SideBarState extends ConsumerState<SideBar> {
                                       fit: BoxFit.cover,
                                       width: 45,
                                       height: 45,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        width: 45,
+                                        height: 45,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white60,
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                'assets/image/usuario.png'),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -246,6 +260,19 @@ class _SideBarState extends ConsumerState<SideBar> {
                                 fit: BoxFit.cover,
                                 width: 30,
                                 height: 30,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white60,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/image/usuario.png'),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           )

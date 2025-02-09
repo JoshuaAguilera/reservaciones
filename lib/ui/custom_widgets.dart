@@ -852,7 +852,7 @@ class CustomWidgets {
     required Color? colorItem,
   }) {
     return Tooltip(
-      message: screenWidth > 1000 ? '' : nameItem,
+      message: screenWidth > 1300 ? '' : nameItem,
       child: Row(
         children: [
           Icon(
@@ -860,8 +860,8 @@ class CustomWidgets {
             color: colorItem,
             size: 26,
           ),
-          if (screenWidth > 1000)
-            Container(
+          if (screenWidth > 1300)
+            SizedBox(
               width: screenWidth * 0.07,
               child: TextStyles.standardText(
                 text: "  $nameItem",
@@ -897,9 +897,10 @@ class CustomWidgets {
           aling: TextAlign.center,
           color: color != null
               ? useWhiteForeground(color)
-                  ? Utility.darken(color, -0.40)
+                  ? Utility.darken(
+                      color, brightness == Brightness.light ? -0.40 : -0.35)
                   : Utility.darken(
-                      color, brightness == Brightness.light ? 0.15 : -0.15)
+                      color, brightness == Brightness.light ? 0.15 : 0.22)
               : Utility.darken(
                   Utility.getColorTypeUser(rol, isText: true) ??
                       DesktopColors.grisPalido,

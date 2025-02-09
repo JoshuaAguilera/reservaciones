@@ -478,7 +478,8 @@ class ItemRows {
           decoration: isSelect
               ? null
               : BoxDecoration(
-                  border: Border.all(color: colorCard),
+                  border: Border.all(
+                      color: isSelect ? colorCard : Colors.transparent),
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
                 ),
           child: Padding(
@@ -497,8 +498,8 @@ class ItemRows {
                           initDate: initDate!, lastDate: lastDate!),
                   color: useWhiteForeground(
                           isSelect ? colorCard : backgroundColor ?? colorCard)
-                      ? Colors.white
-                      : Colors.black,
+                      ? Utility.darken(colorCard, -0.05)
+                      : Utility.darken(colorCard, 0.225),
                   size: sizeText ?? 13,
                 ),
                 if (withDeleteButton)

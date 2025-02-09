@@ -210,28 +210,29 @@ class _SummaryControllerWidgetState
                                                         ? '(Mod)'
                                                         : '',
                                                 count: Utility
-                                                        .calculateTotalTariffRoom(
-                                                      element.tarifa == null
-                                                          ? null
-                                                          : RegistroTarifa(
-                                                              tarifas: element
-                                                                  .tarifas,
-                                                              temporadas: element
-                                                                      .temporadas ??
-                                                                  (element.temporadaSelect !=
-                                                                          null
-                                                                      ? [
-                                                                          element
-                                                                              .temporadaSelect!
-                                                                        ]
-                                                                      : []),
-                                                            ),
-                                                      habitacionProvider,
-                                                      widget.numDays,
-                                                      withDiscount: false,
-                                                      applyRoundFormat: true,
-                                                    ) *
-                                                    element.numDays,
+                                                    .calculateTotalTariffRoom(
+                                                  element.tarifa == null
+                                                      ? null
+                                                      : RegistroTarifa(
+                                                          tarifas:
+                                                              element.tarifas,
+                                                          temporadas: element
+                                                                  .temporadas ??
+                                                              (element.temporadaSelect !=
+                                                                      null
+                                                                  ? [
+                                                                      element
+                                                                          .temporadaSelect!
+                                                                    ]
+                                                                  : []),
+                                                        ),
+                                                  habitacionProvider,
+                                                  widget.numDays,
+                                                  withDiscount: false,
+                                                  applyRoundFormat:
+                                                      !(element.modificado ??
+                                                          false),
+                                                ),
                                                 context: context,
                                                 sizeText: 11.5,
                                                 color: element.color,
@@ -270,29 +271,30 @@ class _SummaryControllerWidgetState
                                                         ? '(Mod)'
                                                         : '',
                                                 count: Utility
-                                                        .calculateTotalTariffRoom(
-                                                      element.tarifa == null
-                                                          ? null
-                                                          : RegistroTarifa(
-                                                              tarifas: element
-                                                                  .tarifas,
-                                                              temporadas: element
-                                                                      .temporadas ??
-                                                                  (element.temporadaSelect !=
-                                                                          null
-                                                                      ? [
-                                                                          element
-                                                                              .temporadaSelect!
-                                                                        ]
-                                                                      : []),
-                                                            ),
-                                                      habitacionProvider,
-                                                      widget.numDays,
-                                                      applyRoundFormat: true,
-                                                      withDiscount: false,
-                                                      isCalculateChildren: true,
-                                                    ) *
-                                                    element.numDays,
+                                                    .calculateTotalTariffRoom(
+                                                  element.tarifa == null
+                                                      ? null
+                                                      : RegistroTarifa(
+                                                          tarifas:
+                                                              element.tarifas,
+                                                          temporadas: element
+                                                                  .temporadas ??
+                                                              (element.temporadaSelect !=
+                                                                      null
+                                                                  ? [
+                                                                      element
+                                                                          .temporadaSelect!
+                                                                    ]
+                                                                  : []),
+                                                        ),
+                                                  habitacionProvider,
+                                                  widget.numDays,
+                                                  applyRoundFormat:
+                                                      !(element.modificado ??
+                                                          false),
+                                                  withDiscount: false,
+                                                  isCalculateChildren: true,
+                                                ),
                                                 context: context,
                                                 sizeText: 11.5,
                                                 color: element.color,
@@ -363,16 +365,17 @@ class _SummaryControllerWidgetState
                                                   ? '(Mod)'
                                                   : '',
                                               count: -(Utility
-                                                      .calculateDiscountXTariff(
-                                                    element,
-                                                    habitacionProvider,
-                                                    widget.numDays,
-                                                    onlyDiscountUnitary: true,
-                                                    typeQuote: typeQuote,
-                                                    useCashTariff:
-                                                        useCashSeason,
-                                                  )) *
-                                                  element.numDays,
+                                                  .calculateDiscountXTariff(
+                                                element,
+                                                habitacionProvider,
+                                                widget.numDays,
+                                                onlyDiscountUnitary: true,
+                                                typeQuote: typeQuote,
+                                                useCashTariff: useCashSeason,
+                                                applyRoundFormatt:
+                                                    !(element.modificado ??
+                                                        false),
+                                              )),
                                               context: context,
                                               sizeText: 11.5,
                                               color: element.color,
@@ -643,6 +646,9 @@ class _SummaryControllerWidgetState
                                   onlyTariffVPM: !isVR,
                                   isGroupTariff: true,
                                   withDiscount: false,
+                                  applyRoundFormat:
+                                      !(element.tarifaGrupal?.modificado ??
+                                          false),
                                 ) *
                                 element.tarifaXDia!.length)
                             : (isVR
@@ -678,16 +684,19 @@ class _SummaryControllerWidgetState
                         .toList())
                       CustomWidgets.itemListCount(
                         nameItem:
-                            "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1} (Desc.)",
+                            "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1} (${element.tarifaGrupal?.temporadaSelect?.porcentajePromocion ?? element.tarifaGrupal?.descuentoProvisional ?? 0}%)",
                         count: typeQuote
-                            ? -(Utility.calculateDiscountTotal(
+                            ? -Utility.calculateDiscountTotal(
                                 [element.tarifaGrupal ?? TarifaXDia()],
                                 element,
                                 element.tarifaXDia?.length ?? 0,
                                 typeQuote: typeQuote,
                                 onlyTariffVR: isVR,
                                 onlyTariffVPM: !isVR,
-                              ))
+                                applyRoundFormatt:
+                                    !(element.tarifaGrupal?.modificado ??
+                                        false),
+                              )
                             : -((isVR
                                     ? element.descuentoVR
                                     : element.descuentoVPM) ??
@@ -716,6 +725,9 @@ class _SummaryControllerWidgetState
                                   onlyTariffVR: isVR,
                                   onlyTariffVPM: !isVR,
                                   isGroupTariff: true,
+                                  applyRoundFormat:
+                                      !(element.tarifaGrupal?.modificado ??
+                                          false),
                                 ) *
                                 element.tarifaXDia!.length)
                             : -((isVR ? element.totalVR : element.totalVPM) ??
@@ -813,7 +825,6 @@ class _SummaryControllerWidgetState
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: Divider(color: Theme.of(context).primaryColor),
               ),
-              //Hay totales q no cuadran XD CHECALO CON UNA HABITACION DE CORTESIA Y 2 HABITACIONES
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: CustomWidgets.itemListCount(

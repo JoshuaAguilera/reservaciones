@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -44,6 +45,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
   bool isSaving = false;
   bool isEditable = false;
   bool showMessage = false;
+  bool withNumber = false;
   String typeMessage = "info";
   String snackMessage = "Mensaje copiado en el portapapeles.";
   final _formKeyMessage = GlobalKey<FormState>();
@@ -52,6 +54,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
   void initState() {
     _messageController.text = widget.message;
     _newNumberController = TextEditingController(text: widget.numberContact);
+    withNumber = Preferences.phone.isNotEmpty;
     super.initState();
   }
 
@@ -108,7 +111,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: SizedBox(
-        height: widget.numberContact.isEmpty ? 580 : 500,
+        height: (widget.numberContact.isEmpty && withNumber) ? 580 : 500,
         width: 400,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,10 +120,11 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const TitlePage(
+                    TitlePage(
                       icons: Bootstrap.whatsapp,
                       isDialog: true,
-                      title: "Enviar Mensaje de WhatsApp",
+                      title:
+                          "${withNumber ? "Enviar " : ""}Mensaje de WhatsApp",
                       sizeSubtitle: 10,
                       subtitle:
                           "Revisa o modifica el mensaje predefinido para cliente.",
@@ -207,7 +211,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                         ],
                       ),
                     ),
-                    if (widget.numberContact.isEmpty)
+                    if (widget.numberContact.isEmpty && withNumber)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: Form(
@@ -233,11 +237,11 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
               child: Row(
-                mainAxisAlignment: widget.numberContact.isEmpty
+                mainAxisAlignment: (widget.numberContact.isEmpty && withNumber)
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.end,
                 children: [
-                  if (widget.numberContact.isEmpty)
+                  if (widget.numberContact.isEmpty && withNumber)
                     Buttons.commonButton(
                       text: "Guardar y enviar",
                       isLoading: isSaving,
@@ -300,14 +304,16 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                               : DesktopColors.azulUltClaro,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Buttons.commonButton(
-                        text: "Enviar por Web",
-                        isLoading: inProcess,
-                        sizeText: 12.5,
-                        onPressed:
-                            isSaving ? null : () async => await _sendMessage(),
-                      ),
+                      if (withNumber) const SizedBox(width: 8),
+                      if (withNumber)
+                        Buttons.commonButton(
+                          text: "Enviar por Web",
+                          isLoading: inProcess,
+                          sizeText: 12.5,
+                          onPressed: isSaving
+                              ? null
+                              : () async => await _sendMessage(),
+                        ),
                     ],
                   ),
                 ],

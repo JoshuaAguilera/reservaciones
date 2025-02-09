@@ -197,6 +197,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               .firstOrNull;
         }
 
+        selectTariff?.numDays = item.tarifaXDia?.length ?? 0;
+
         item.tarifaGrupal = selectTariff;
         continue;
       }
@@ -214,6 +216,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               .inDays,
           isGroup: true,
         );
+
+        tarifaGrupo.numDays = item.tarifaXDia?.length ?? 0;
 
         item.tarifaGrupal = tarifaGrupo;
       }

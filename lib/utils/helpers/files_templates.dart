@@ -384,6 +384,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -393,6 +394,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -402,6 +404,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -411,6 +414,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -426,6 +430,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -435,6 +440,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -444,6 +450,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -453,6 +460,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
+                rounded: !(habitacion.tarifaXDia?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -641,6 +649,7 @@ class FilesTemplate {
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
         useCashSeason: habitacion.useCashSeason ?? false,
+        applyRoundFormat: !(habitacion.tarifaXDia?[i].modificado ?? false),
       );
 
       double totalMenores = Utility.calculateTotalTariffRoom(
@@ -654,6 +663,7 @@ class FilesTemplate {
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
         isCalculateChildren: true,
         useCashSeason: habitacion.useCashSeason ?? false,
+        applyRoundFormat: !(habitacion.tarifaXDia?[i].modificado ?? false),
       );
 
       DateTime now = DateTime.parse(habitacion.fechaCheckIn!);

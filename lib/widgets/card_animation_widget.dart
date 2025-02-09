@@ -51,7 +51,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         ? null
         : RegistroTarifa(
             tarifas: (widget.tarifaXDia.tarifas != null ||
-                    widget.tarifaXDia.tarifas!.isNotEmpty)
+                    (widget.tarifaXDia.tarifas ?? []).isNotEmpty)
                 ? widget.tarifaXDia.tarifas
                 : [widget.tarifaXDia.tarifa!],
             temporadas: (widget.tarifaXDia.temporadaSelect != null
@@ -150,7 +150,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildFront(Habitacion habitacion, bool typeQuote) {
     final useCashSeason = ref.watch(useCashSeasonRoomProvider);
-
+    
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
@@ -159,6 +159,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
       isGroupTariff: typeQuote,
       useCashSeason: useCashSeason,
+      applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
     );
 
     double totalMenores = Utility.calculateTotalTariffRoom(
@@ -169,6 +170,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
       isCalculateChildren: true,
       isGroupTariff: typeQuote,
       useCashSeason: useCashSeason,
+      applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
     );
 
     bool showToolTip = (MediaQuery.of(context).size.width >
@@ -197,28 +199,27 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           (1510 - (widget.sideController.extended ? 50 : 175)))
                         _messageAsociate(
                           title: "Adul: ",
-                          subtitle: widget.tarifaXDia.tarifa == null
-                              ? "\$0.00"
-                              : Utility.formatterNumber(totalAdulto),
+                          count: widget.tarifaXDia.tarifa == null
+                              ? 0
+                              : totalAdulto,
                           isTooltip: true,
                         ),
                       if (MediaQuery.of(context).size.width <
                           (1610 - (widget.sideController.extended ? 50 : 175)))
                         _messageAsociate(
                           title: "Men 7-12: ",
-                          subtitle: widget.tarifaXDia.tarifa == null
-                              ? "\$0.00"
-                              : Utility.formatterNumber(totalMenores),
+                          count: widget.tarifaXDia.tarifa == null
+                              ? 0
+                              : totalMenores,
                           isTooltip: true,
                         ),
                       if (MediaQuery.of(context).size.width <
                           (1720 - (widget.sideController.extended ? 100 : 200)))
                         _messageAsociate(
                           title: "Total: ",
-                          subtitle: widget.tarifaXDia.tarifa == null
-                              ? "\$0.00"
-                              : Utility.formatterNumber(
-                                  totalAdulto + totalMenores),
+                          count: widget.tarifaXDia.tarifa == null
+                              ? 0
+                              : (totalMenores + totalAdulto),
                           isTooltip: true,
                         ),
                     ],
@@ -256,28 +257,24 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   if (MediaQuery.of(context).size.width >
                       (1510 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
-                        title: "Adul: ",
-                        subtitle: Utility.formatterNumber(
-                            widget.tarifaXDia.tarifa == null
-                                ? 0
-                                : totalAdulto)),
+                      title: "Adul: ",
+                      count: widget.tarifaXDia.tarifa == null ? 0 : totalAdulto,
+                    ),
                   if (MediaQuery.of(context).size.width >
                       (1610 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
-                        title: "Men 7-12: ",
-                        subtitle: Utility.formatterNumber(
-                            widget.tarifaXDia.tarifa == null
-                                ? 0
-                                : totalMenores)),
+                      title: "Men 7-12: ",
+                      count:
+                          widget.tarifaXDia.tarifa == null ? 0 : totalMenores,
+                    ),
                   if (MediaQuery.of(context).size.width > 1710)
                     const SizedBox(height: 10),
                   if (showToolTip)
                     _messageAsociate(
                       title: "Total: ",
-                      subtitle: Utility.formatterNumber(
-                          widget.tarifaXDia.tarifa == null
-                              ? 0
-                              : (totalMenores + totalAdulto)),
+                      count: widget.tarifaXDia.tarifa == null
+                          ? 0
+                          : (totalMenores + totalAdulto),
                     ),
                 ],
               ),
@@ -290,12 +287,14 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _messageAsociate({
     required String title,
-    required String subtitle,
+    required double count,
     bool isTooltip = false,
   }) {
     return TextStyles.TextAsociative(
       title,
-      subtitle,
+      Utility.formatterNumber(
+        count,
+      ),
       boldInversed: true,
       size: 11,
       color: isTooltip

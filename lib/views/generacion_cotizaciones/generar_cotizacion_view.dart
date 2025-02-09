@@ -148,7 +148,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       );
     }
 
-    if (!(Preferences.rol == 'RECEPCION')) {
+    // if (!(Preferences.rol == 'RECEPCION')) {
       ref.listen<bool>(typeQuoteProvider, (previous, next) {
         if (next) {
           _showConfigurationTariffGroup(firstView: true);
@@ -156,7 +156,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
         }
       });
-    }
+    // }
 
     Future saveQuoteBD({int? limitDay}) async {
       int id = await CotizacionService().createCotizacion(
