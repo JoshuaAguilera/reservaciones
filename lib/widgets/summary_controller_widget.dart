@@ -498,13 +498,16 @@ class _SummaryControllerWidgetState
               Padding(
                 padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                 child: Row(
+                  spacing: 10,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
+                      flex: 3,
                       child: SizedBox(
                         height: 35,
                         child: Buttons.commonButton(
-                          sizeText: 15,
+                          sizeText: 12.5,
+                          compact: true,
                           text: (widget.finishQuote)
                               ? "Nueva Cotización"
                               : (widget.calculateRoom)
@@ -527,12 +530,13 @@ class _SummaryControllerWidgetState
                       ),
                     ),
                     if (widget.showCancel)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
+                      Expanded(
+                        flex: 2,
                         child: SizedBox(
                           height: 35,
                           child: Buttons.commonButton(
-                            sizeText: 15,
+                            sizeText: 12.5,
+                            compact: true,
                             text: "Cancelar",
                             color:
                                 Utility.darken(DesktopColors.cerulean, -0.05),

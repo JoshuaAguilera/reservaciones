@@ -10,12 +10,16 @@ final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filter = ref.watch(filterReport);
+  final date = ref.watch(dateReport);
+
   final list = Utility.getCotizacionQuotes(
-      cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
-        Utility.calculatePeriodReport(filter),
-        DateTime.now(),
-      ),
-      filter: filter);
+    cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
+      Utility.calculatePeriodReport(filter, date),
+      Utility.calculatePeriodReport(filter, date, addTime: true),
+    ),
+    filter: filter,
+    date: date,
+  );
   return list;
 });
 
@@ -47,4 +51,8 @@ final changeProvider = StateProvider<int>((ref) {
 
 final filterReport = StateProvider<String>((ref) {
   return "Semanal";
+});
+
+final dateReport = StateProvider<DateTime>((ref) {
+  return DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
 });

@@ -23,6 +23,7 @@ class GeneradorDocService extends BaseService {
     required List<Habitacion> habitaciones,
     required Cotizacion cotizacion,
     bool themeDefault = false,
+    bool isDirect = false,
   }) async {
     //PDF generation
     final pdf = pw.Document();
@@ -247,8 +248,13 @@ class GeneradorDocService extends BaseService {
           pw.Text(FilesTemplate.StructureDoc(60), style: styleLigth),
           pw.SizedBox(height: 10),
           pw.Text(FilesTemplate.StructureDoc(61), style: styleLigth),
-          pw.Text("${Preferences.firstName} ${Preferences.lastName}",
-              style: styleLigth),
+          if (isDirect)
+            pw.Text("${Preferences.firstName} ${Preferences.lastName}",
+                style: styleLigth)
+          else
+            pw.Text(
+                "${cotizacion.autor?.nombre ?? ''} ${cotizacion.autor?.apellido ?? ''}",
+                style: styleLigth),
         ],
         footer: (context) {
           return FilesTemplate.footerPage(
@@ -263,6 +269,7 @@ class GeneradorDocService extends BaseService {
   Future<pw.Document> generarComprobanteCotizacionGrupal({
     required List<Habitacion> habitaciones,
     required Cotizacion cotizacion,
+    bool isDirect = false,
   }) async {
     //PDF generation
     final pdf = pw.Document();
@@ -556,8 +563,13 @@ class GeneradorDocService extends BaseService {
           pw.Text(FilesTemplate.StructureDoc(60), style: styleLigth),
           pw.SizedBox(height: 10),
           pw.Text(FilesTemplate.StructureDoc(61), style: styleLigth),
-          pw.Text("${Preferences.firstName} ${Preferences.lastName}",
-              style: styleLigth),
+          if (isDirect)
+            pw.Text("${Preferences.firstName} ${Preferences.lastName}",
+                style: styleLigth)
+          else
+            pw.Text(
+                "${cotizacion.autor?.nombre ?? ''} ${cotizacion.autor?.apellido ?? ''}",
+                style: styleLigth),
           pw.SizedBox(height: 48),
           pw.Padding(
             padding: const pw.EdgeInsets.only(left: -70),

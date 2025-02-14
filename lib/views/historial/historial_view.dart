@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +15,7 @@ import 'package:generador_formato/ui/textformfield_style.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../providers/cotizacion_provider.dart';
@@ -58,6 +62,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     final isEmpty = ref.watch(isEmptyProvider);
     var filter = ref.watch(filtroProvider);
     final usuario = ref.watch(userProvider);
+    var showFilter = ref.watch(showFilterProvider);
 
     void _searchQuote({String? text}) {
       ref
@@ -68,8 +73,25 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
     if (!startFlow) {
       if (!isEmpty) {
-        Future.delayed(100.ms,
-            () => ref.read(isEmptyProvider.notifier).update((state) => true));
+        Future.delayed(100.ms, () {
+          if (mounted) {
+            return ref.read(isEmptyProvider.notifier).update((state) => true);
+          }
+        });
+      }
+      if (!showFilter.first) {
+        Future.delayed(
+          100.ms,
+          () {
+            if (mounted) {
+              return ref.read(showFilterProvider.notifier).update(
+                    (state) => [
+                      ...[true, false, false, false, false, false]
+                    ],
+                  );
+            }
+          },
+        );
       }
       startFlow = true;
     }
@@ -106,8 +128,19 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
       }
     }
 
+    void _updateShowFilter(int index) {
+      int length = showFilter.where((element) => element).toList().length;
+
+      if (length == 1 && showFilter[index]) return;
+
+      showFilter.fillRange(0, showFilter.length, false);
+
+      showFilter[index] = !showFilter[index];
+      ref.read(showFilterProvider.notifier).update((state) => [...showFilter]);
+    }
+
     return PopScope(
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, proccess) {
         ref.read(isEmptyProvider.notifier).update((state) => true);
       },
       child: Scaffold(
@@ -225,40 +258,56 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         SizedBox(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
+                            spacing: 5,
                             children: [
+                              CustomWidgets.itemColorIndicator(
+                                context,
+                                screenWidth: screenWidth,
+                                nameItem: "Todos",
+                                icons: Iconsax.layer_outline,
+                                colorItem: DesktopColors.cotGrupal,
+                                isSelected: showFilter[0],
+                                onPreseed: () => _updateShowFilter(0),
+                              ),
                               CustomWidgets.itemColorIndicator(
                                 context,
                                 screenWidth: screenWidth,
                                 nameItem: "Cot. Grupal",
                                 colorItem: DesktopColors.cotGrupal,
+                                isSelected: showFilter[1],
+                                onPreseed: () => _updateShowFilter(1),
                               ),
-                              const SizedBox(width: 5),
                               CustomWidgets.itemColorIndicator(
                                 context,
                                 nameItem: "Cot. Individual",
                                 screenWidth: screenWidth,
                                 colorItem: DesktopColors.cotIndiv,
+                                isSelected: showFilter[2],
+                                onPreseed: () => _updateShowFilter(2),
                               ),
-                              const SizedBox(width: 5),
                               CustomWidgets.itemColorIndicator(
                                 context,
                                 screenWidth: screenWidth,
                                 nameItem: "Res. Grupal",
                                 colorItem: DesktopColors.resGrupal,
+                                isSelected: showFilter[3],
+                                onPreseed: () => _updateShowFilter(3),
                               ),
-                              const SizedBox(width: 5),
                               CustomWidgets.itemColorIndicator(
                                 context,
                                 screenWidth: screenWidth,
                                 nameItem: "Res. Individual",
                                 colorItem: DesktopColors.resIndiv,
+                                isSelected: showFilter[4],
+                                onPreseed: () => _updateShowFilter(4),
                               ),
-                              const SizedBox(width: 5),
                               CustomWidgets.itemColorIndicator(
                                 context,
                                 screenWidth: screenWidth,
                                 nameItem: "No Concretada",
                                 colorItem: DesktopColors.cotNoConcr,
+                                isSelected: showFilter[5],
+                                onPreseed: () => _updateShowFilter(5),
                               ),
                             ],
                           ),
@@ -302,21 +351,28 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
                                     if (!mounted) return;
 
-                                    Cotizacion newComprobante = Cotizacion(
-                                      nombreHuesped: list[index].nombreHuesped,
-                                      esGrupo: list[index].esGrupo,
-                                      correoElectronico:
-                                          list[index].correoElectrico,
-                                      numeroTelefonico:
-                                          list[index].numeroTelefonico,
-                                      fecha: list[index].fecha.toString(),
-                                      fechaLimite:
-                                          list[index].fechaLimite.toString(),
-                                      folioPrincipal:
-                                          list[index].folioPrincipal,
-                                      habitaciones: respHabitaciones,
-                                      id: list[index].id,
+                                    UsuarioData autor = UsuarioData.fromJson(
+                                      jsonDecode(list[index].username ?? '{}'),
                                     );
+
+                                    Cotizacion newComprobante = Cotizacion(
+                                        nombreHuesped:
+                                            list[index].nombreHuesped,
+                                        esGrupo: list[index].esGrupo,
+                                        esConcretado: list[index].esConcretado,
+                                        responsableId: autor.id,
+                                        correoElectronico:
+                                            list[index].correoElectrico,
+                                        numeroTelefonico:
+                                            list[index].numeroTelefonico,
+                                        fecha: list[index].fecha.toString(),
+                                        fechaLimite:
+                                            list[index].fechaLimite.toString(),
+                                        folioPrincipal:
+                                            list[index].folioPrincipal,
+                                        habitaciones: respHabitaciones,
+                                        id: list[index].id,
+                                        autor: autor);
 
                                     ref
                                         .read(

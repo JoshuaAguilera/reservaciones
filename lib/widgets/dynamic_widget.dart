@@ -125,15 +125,6 @@ class dynamicWidget {
                                       : Colors.black,
                                 ),
                               ),
-                              /*
-                            Icon(
-                              Icons.assignment_late_outlined,
-                              color: useWhiteForeground(tarifa.color!)
-                                  ? Colors.white
-                                  : Colors.black,
-                            )
-                            */
-
                               if (compact)
                                 Expanded(
                                   child: TextStyles.standardText(

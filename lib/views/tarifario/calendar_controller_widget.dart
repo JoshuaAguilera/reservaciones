@@ -308,6 +308,9 @@ class _ControllerCalendarWidgetState
                                                               ((element.forCash ??
                                                                       false) ==
                                                                   false))
+                                                          .toList()
+                                                          .map((e) =>
+                                                              e.copyWith())
                                                           .toList() ??
                                                       List<Temporada>.empty());
                                               ref
@@ -321,6 +324,9 @@ class _ControllerCalendarWidgetState
                                                               element
                                                                   .forGroup ??
                                                               false)
+                                                          .toList()
+                                                          .map((e) =>
+                                                              e.copyWith())
                                                           .toList() ??
                                                       List<Temporada>.empty());
 
@@ -334,13 +340,16 @@ class _ControllerCalendarWidgetState
                                                           ?.where((element) =>
                                                               element.forCash ??
                                                               false)
+                                                          .toList()
+                                                          .map((e) =>
+                                                              e.copyWith())
                                                           .toList() ??
                                                       List<Temporada>.empty());
                                               ref
                                                   .read(editTarifaProvider
                                                       .notifier)
-                                                  .update(
-                                                      (state) => list[index]);
+                                                  .update((state) =>
+                                                      list[index].copyWith());
 
                                               widget.onCreated!.call();
                                             },
@@ -782,7 +791,7 @@ class _ControllerCalendarWidgetState
         itemCount: 12,
         itemBuilder: (context, index) {
           return Card(
-            color: (((DateTime.now().year- 1) + index) == (widget.yearNow))
+            color: (((DateTime.now().year - 1) + index) == (widget.yearNow))
                 ? DesktopColors.ceruleanOscure
                 : DesktopColors.cerulean,
             elevation: 10,

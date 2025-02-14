@@ -126,9 +126,10 @@ class Utility {
   static List<ReporteCotizacion> getCotizacionQuotes({
     List<CotizacionData>? cotizaciones,
     required String filter,
+    required DateTime date,
   }) {
     List<ReporteCotizacion> listCot = [];
-    DateTime now = DateTime.now();
+    DateTime now = date;
 
     switch (filter) {
       case "Semanal":
@@ -137,8 +138,8 @@ class Utility {
             ReporteCotizacion quoteDay = ReporteCotizacion(
               numCotizacionesGrupales: 0,
               numCotizacionesIndividual: 0,
-              numCotizacionesGrupalesPreventa: 0,
-              numCotizacionesIndividualPreventa: 0,
+              numReservacionesGrupales: 0,
+              numReservacionesIndividual: 0,
             );
 
             if (cotizaciones != null) {
@@ -148,9 +149,17 @@ class Utility {
 
               for (var element in quotesInd) {
                 if (element.esGrupo!) {
-                  quoteDay.numCotizacionesGrupales++;
+                  if (element.esConcretado ?? false) {
+                    quoteDay.numReservacionesGrupales++;
+                  } else {
+                    quoteDay.numCotizacionesGrupales++;
+                  }
                 } else {
-                  quoteDay.numCotizacionesIndividual++;
+                  if (element.esConcretado ?? false) {
+                    quoteDay.numReservacionesIndividual++;
+                  } else {
+                    quoteDay.numCotizacionesIndividual++;
+                  }
                 }
               }
             }
@@ -167,8 +176,8 @@ class Utility {
           ReporteCotizacion quoteDay = ReporteCotizacion(
             numCotizacionesGrupales: 0,
             numCotizacionesIndividual: 0,
-            numCotizacionesGrupalesPreventa: 0,
-            numCotizacionesIndividualPreventa: 0,
+            numReservacionesGrupales: 0,
+            numReservacionesIndividual: 0,
           );
 
           if (cotizaciones != null) {
@@ -178,11 +187,18 @@ class Utility {
 
             for (var element in quotes) {
               if (element.esGrupo!) {
-                quoteDay.numCotizacionesGrupales++;
+                if (element.esConcretado ?? false) {
+                  quoteDay.numReservacionesGrupales++;
+                } else {
+                  quoteDay.numCotizacionesGrupales++;
+                }
               } else {
-                quoteDay.numCotizacionesIndividual++;
+                if (element.esConcretado ?? false) {
+                  quoteDay.numReservacionesIndividual++;
+                } else {
+                  quoteDay.numCotizacionesIndividual++;
+                }
               }
-              // }
             }
           }
 
@@ -195,8 +211,8 @@ class Utility {
           ReporteCotizacion quoteDay = ReporteCotizacion(
             numCotizacionesGrupales: 0,
             numCotizacionesIndividual: 0,
-            numCotizacionesGrupalesPreventa: 0,
-            numCotizacionesIndividualPreventa: 0,
+            numReservacionesGrupales: 0,
+            numReservacionesIndividual: 0,
           );
 
           if (cotizaciones != null) {
@@ -206,11 +222,18 @@ class Utility {
 
             for (var element in quotes) {
               if (element.esGrupo!) {
-                quoteDay.numCotizacionesGrupales++;
+                if (element.esConcretado ?? false) {
+                  quoteDay.numReservacionesGrupales++;
+                } else {
+                  quoteDay.numCotizacionesGrupales++;
+                }
               } else {
-                quoteDay.numCotizacionesIndividual++;
+                if (element.esConcretado ?? false) {
+                  quoteDay.numReservacionesIndividual++;
+                } else {
+                  quoteDay.numCotizacionesIndividual++;
+                }
               }
-              // }
             }
           }
 
@@ -256,6 +279,14 @@ class Utility {
         NumeroCotizacion(tipoCotizacion: "Cotizaciones no concretadas");
 
     for (var element in respIndToday ?? List<CotizacionData>.empty()) {
+      if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
+              1 &&
+          !(element.esConcretado ?? false)) {
+        cotizacionesNoConcretadas.numCotizaciones++;
+
+        continue;
+      }
+
       if (element.esGrupo ?? false) {
         if (element.esConcretado ?? false) {
           reservacionesGrupales.numCotizaciones++;
@@ -268,11 +299,6 @@ class Utility {
         } else {
           cotizacionesIndividuales.numCotizaciones++;
         }
-      }
-
-      if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
-          1) {
-        cotizacionesNoConcretadas.numCotizaciones++;
       }
     }
 
@@ -444,26 +470,42 @@ class Utility {
     }
   }
 
-  static DateTime calculatePeriodReport(String filter) {
-    DateTime initPeriod = DateTime.now();
-    DateTime selectPeriod = DateTime.now();
+  static DateTime calculatePeriodReport(
+    String filter,
+    DateTime date, {
+    bool addTime = false,
+  }) {
+    DateTime initPeriod = date;
+    DateTime selectPeriod = date;
 
     switch (filter) {
       case "Semanal":
         int numDay = initPeriod.weekday;
-        selectPeriod = initPeriod.subtract(Duration(days: numDay - 1));
+        selectPeriod = addTime
+            ? DateTime(
+                initPeriod.add(const Duration(days: 6)).year,
+                initPeriod.add(const Duration(days: 6)).month,
+                initPeriod.add(const Duration(days: 6)).day,
+                23,
+                59,
+                59,
+              )
+            : initPeriod.subtract(Duration(days: numDay - 1));
         break;
       case "Mensual":
-        selectPeriod = initPeriod.subtract(Duration(days: initPeriod.day));
+        selectPeriod = addTime
+            ? DateTime(initPeriod.year, (initPeriod.month + 1), 0, 23, 59, 59)
+            : DateTime(initPeriod.year, initPeriod.month, 1);
         break;
       case "Anual":
-        selectPeriod = DateTime(initPeriod.year, 1, 1);
+        selectPeriod = addTime
+            ? DateTime((initPeriod.year + 1), 1, 0, 23, 59, 59)
+            : DateTime(initPeriod.year, 1, 1);
         break;
       default:
     }
 
-    initPeriod =
-        DateTime(selectPeriod.year, selectPeriod.month, selectPeriod.day);
+    initPeriod = selectPeriod;
 
     return initPeriod;
   }
@@ -700,14 +742,14 @@ class Utility {
 
     if (initDate.isSameDate(lastDate)) {
       periodo =
-          "${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+          "${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}${(DateTime.now().year != initDate.year ? " ${initDate.year}" : "")}";
     } else if (initDate.month == lastDate.month &&
         initDate.year == lastDate.year) {
       periodo =
-          "${initDate.day} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+          "${initDate.day} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}${(DateTime.now().year != initDate.year ? " ${initDate.year}" : "")}";
     } else if (initDate.year == lastDate.year) {
       periodo =
-          "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, compact ? 3 : null)} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}";
+          "${initDate.day} ${DateFormat('MMMM').format(initDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(initDate).substring(1, compact ? 3 : null)} - ${lastDate.day} ${DateFormat('MMMM').format(lastDate).substring(0, 1).toUpperCase() + DateFormat('MMMM').format(lastDate).substring(1, compact ? 3 : null)}${(DateTime.now().year != initDate.year ? " ${initDate.year}" : "")}";
     } else {
       periodo = compact
           ? "${initDate.day}/${initDate.month}/${initDate.year.toString().substring(2)} - ${lastDate.day}/${lastDate.month}/${lastDate.year.toString().substring(2)}"

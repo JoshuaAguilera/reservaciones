@@ -850,25 +850,50 @@ class CustomWidgets {
     required double screenWidth,
     required String nameItem,
     required Color? colorItem,
+    bool isSelected = false,
+    void Function()? onPreseed,
+    IconData? icons,
   }) {
     return Tooltip(
-      message: screenWidth > 1300 ? '' : nameItem,
-      child: Row(
-        children: [
-          Icon(
-            Icons.circle,
-            color: colorItem,
-            size: 26,
-          ),
-          if (screenWidth > 1300)
-            SizedBox(
-              width: screenWidth * 0.07,
-              child: TextStyles.standardText(
-                text: "  $nameItem",
-                color: Theme.of(context).primaryColor,
-              ),
-            )
-        ],
+      message: (screenWidth > 1540 && icons == null) ? '' : nameItem,
+      child: InkWell(
+        onTap: () {
+          if (onPreseed != null) onPreseed.call();
+        },
+        child: Container(
+          decoration: !isSelected
+              ? null
+              : BoxDecoration(
+                  color: DesktopColors.cerulean.withValues(alpha: 0.15),
+                  border: Border.all(color: DesktopColors.cerulean),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8),
+                  ),
+                ),
+          padding: icons != null
+              ? const EdgeInsets.symmetric(horizontal: 4, vertical: 2)
+              : const EdgeInsets.all(4),
+          child: icons != null
+              ? Icon(icons, size: 24)
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      color: colorItem,
+                      size: 20,
+                    ),
+                    if (screenWidth > 1540)
+                      SizedBox(
+                        width: 120,
+                        child: TextStyles.standardText(
+                          text: "  $nameItem",
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      )
+                  ],
+                ),
+        ),
       ),
     );
   }

@@ -7,7 +7,9 @@ import 'package:sidebarx/sidebarx.dart';
 import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
+import '../../ui/progress_indicator.dart';
 import '../../widgets/dynamic_widget.dart';
+import '../../widgets/text_styles.dart';
 
 class TarifarioChecklistView extends ConsumerStatefulWidget {
   const TarifarioChecklistView({
@@ -33,6 +35,7 @@ class _TarifarioChecklistViewState
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     return Padding(
       padding: EdgeInsets.only(top: 5),
@@ -45,21 +48,45 @@ class _TarifarioChecklistViewState
                 return listTarifasProvider.when(
                   data: (list) {
                     if (list.isNotEmpty) {
-                      return SizedBox(
-                        height: screenHeight - 160,
-                        child: ListView.builder(
-                          itemCount: list.length,
-                          shrinkWrap: false,
-                          itemBuilder: (context, index) {
-                            return ItemRows.tarifaCheckListItemRow(
-                              registro: list[index],
-                              screenWidth: screenWidth,
-                              onEdit: (register) =>
-                                  widget.onEdit!.call(register),
-                              onDelete: (register) =>
-                                  widget.onDelete!.call(register),
-                            );
-                          },
+                      return tarifasBase.when(
+                        data: (tarifasB) {
+                          return SizedBox(
+                            height: screenHeight - 160,
+                            child: ListView.builder(
+                              itemCount: list.length,
+                              shrinkWrap: false,
+                              itemBuilder: (context, index) {
+                                return ItemRows.tarifaCheckListItemRow(
+                                  registro: list[index],
+                                  tarifaBase: tarifasB
+                                          .where((elementInt) =>
+                                              elementInt.id ==
+                                              list[index]
+                                                  .tarifas!
+                                                  .first
+                                                  .tarifaPadreId)
+                                          .firstOrNull
+                                          ?.nombre ??
+                                      '',
+                                  screenWidth: screenWidth,
+                                  onEdit: (register) =>
+                                      widget.onEdit!.call(register),
+                                  onDelete: (register) =>
+                                      widget.onDelete!.call(register),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        error: (error, stackTrace) => const SizedBox(),
+                        loading: () => ProgressIndicatorCustom(
+                          screenHight: screenHeight,
+                          typeLoading: "progressiveDots",
+                          message: TextStyles.standardText(
+                            text: "Cargando Tarifas Base",
+                            aling: TextAlign.center,
+                            size: 11,
+                          ),
                         ),
                       );
                     }

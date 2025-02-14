@@ -10,6 +10,7 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
 import 'package:generador_formato/widgets/card_animation_widget.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../utils/helpers/desktop_colors.dart';
@@ -195,11 +196,20 @@ class ItemRows {
     );
   }
 
-  static Widget tarifaCheckListItemRow(
-      {required RegistroTarifa registro,
-      required double screenWidth,
-      required void Function(RegistroTarifa)? onEdit,
-      required void Function(RegistroTarifa)? onDelete}) {
+  static Widget tarifaCheckListItemRow({
+    required RegistroTarifa registro,
+    required double screenWidth,
+    required void Function(RegistroTarifa)? onEdit,
+    required void Function(RegistroTarifa)? onDelete,
+    required String tarifaBase,
+  }) {
+    Color? colorText = useWhiteForeground(registro.color!)
+        ? Utility.darken(registro.color!, -0.4)
+        : Utility.darken(registro.color!, 0.4);
+    Color? colorIcon = useWhiteForeground(registro.color!)
+        ? Utility.darken(registro.color!, -0.45)
+        : Utility.darken(registro.color!, 0.45);
+
     return SizedBox(
       width: 170,
       child: Card(
@@ -214,15 +224,13 @@ class ItemRows {
                 TextStyles.standardText(
                   text: registro.nombre ?? '',
                   isBold: true,
-                  color: useWhiteForeground(registro.color!)
-                      ? Colors.white
-                      : Colors.black,
+                  color: colorText,
                 ),
-                TextStyles.standardText(
-                  text: Utility.defineStatusTariff(registro.periodos),
-                  color: useWhiteForeground(registro.color!)
-                      ? Colors.white
-                      : Colors.black,
+                TextStyles.TextAsociative(
+                  "Estatus:  ",
+                  Utility.defineStatusTariff(registro.periodos),
+                  color: colorText,
+                  boldInversed: true,
                 ),
               ],
             ),
@@ -232,11 +240,9 @@ class ItemRows {
                   onPressed: () => onEdit!.call(registro),
                   tooltip: "Editar",
                   icon: Icon(
-                    Icons.edit,
+                    Iconsax.edit_outline,
                     size: 30,
-                    color: useWhiteForeground(registro.color!)
-                        ? const Color.fromARGB(255, 211, 211, 211)
-                        : const Color.fromARGB(255, 52, 52, 52),
+                    color: colorIcon,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -246,105 +252,116 @@ class ItemRows {
                   icon: Icon(
                     CupertinoIcons.delete,
                     size: 30,
-                    color: useWhiteForeground(registro.color!)
-                        ? const Color.fromARGB(255, 211, 211, 211)
-                        : const Color.fromARGB(255, 52, 52, 52),
+                    color: colorIcon,
                   ),
                 ),
               ],
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            subtitle: Wrap(
+              spacing: 20,
               children: [
                 TextStyles.TextAsociative(
                   "Fecha de registro: ",
                   Utility.getCompleteDate(data: registro.fechaRegistro),
-                  color: useWhiteForeground(registro.color!)
-                      ? Colors.white
-                      : Colors.black,
+                  color: colorText,
                   size: 13,
                   boldInversed: true,
                 ),
-                Wrap(
-                  spacing: 15,
-                  runSpacing: 10,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextStyles.standardText(
-                            text: "Tarifas Vista Reserva:",
-                            color: useWhiteForeground(registro.color!)
-                                ? Colors.white
-                                : Colors.black),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          spacing: 7,
-                          runSpacing: 5,
-                          children: [
-                            tariffIndItemRow(
-                                "SGL/DBL",
-                                registro.tarifas!.first.tarifaAdultoSGLoDBL!,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "TPL",
-                                registro.tarifas!.first.tarifaAdultoTPL,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "CPLE",
-                                registro.tarifas!.first.tarifaAdultoCPLE,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "MEN 7-12",
-                                registro.tarifas!.first.tarifaMenores7a12!,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "PAX ADIC",
-                                registro.tarifas!.first.tarifaPaxAdicional!,
-                                registro.color!),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextStyles.standardText(
-                            text: "Tarifas Vista Parcial al Mar:",
-                            color: useWhiteForeground(registro.color!)
-                                ? Colors.white
-                                : Colors.black),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          spacing: 7,
-                          runSpacing: 5,
-                          children: [
-                            tariffIndItemRow(
-                                "SGL/DBL",
-                                registro.tarifas![1].tarifaAdultoSGLoDBL!,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "TPL",
-                                registro.tarifas![1].tarifaAdultoTPL,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "CPLE",
-                                registro.tarifas![1].tarifaAdultoCPLE,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "MEN 7-12",
-                                registro.tarifas![1].tarifaMenores7a12!,
-                                registro.color!),
-                            tariffIndItemRow(
-                                "PAX ADIC",
-                                registro.tarifas![1].tarifaPaxAdicional!,
-                                registro.color!),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                TextStyles.TextAsociative(
+                  "Tarifa base: ",
+                  tarifaBase,
+                  color: colorText,
+                  size: 13,
+                  boldInversed: true,
                 ),
+
+                TextStyles.TextAsociative(
+                  "Dias de aplicación: ",
+                  "${(registro.periodos?.first.enLunes ?? false) ? "L " : ""}${(registro.periodos?.first.enMartes ?? false) ? "Ma " : ""}${(registro.periodos?.first.enMiercoles ?? false) ? "Mi " : ""}${(registro.periodos?.first.enJueves ?? false) ? "J " : ""}${(registro.periodos?.first.enViernes ?? false) ? "V " : ""}${(registro.periodos?.first.enSabado ?? false) ? "S " : ""}${(registro.periodos?.first.enDomingo ?? false) ? "D " : ""}",
+                  color: colorText,
+                  size: 13,
+                  boldInversed: true,
+                ),
+                // Wrap(
+                //   spacing: 15,
+                //   runSpacing: 10,
+                //   children: [
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         TextStyles.standardText(
+                //             text: "Tarifas Vista Reserva:",
+                //             color: useWhiteForeground(registro.color!)
+                //                 ? Colors.white
+                //                 : Colors.black),
+                //         const SizedBox(height: 4),
+                //         Wrap(
+                //           spacing: 7,
+                //           runSpacing: 5,
+                //           children: [
+                //             tariffIndItemRow(
+                //                 "SGL/DBL",
+                //                 registro.tarifas!.first.tarifaAdultoSGLoDBL!,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "TPL",
+                //                 registro.tarifas!.first.tarifaAdultoTPL,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "CPLE",
+                //                 registro.tarifas!.first.tarifaAdultoCPLE,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "MEN 7-12",
+                //                 registro.tarifas!.first.tarifaMenores7a12!,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "PAX ADIC",
+                //                 registro.tarifas!.first.tarifaPaxAdicional!,
+                //                 registro.color!),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         TextStyles.standardText(
+                //             text: "Tarifas Vista Parcial al Mar:",
+                //             color: useWhiteForeground(registro.color!)
+                //                 ? Colors.white
+                //                 : Colors.black),
+                //         const SizedBox(height: 4),
+                //         Wrap(
+                //           spacing: 7,
+                //           runSpacing: 5,
+                //           children: [
+                //             tariffIndItemRow(
+                //                 "SGL/DBL",
+                //                 registro.tarifas![1].tarifaAdultoSGLoDBL!,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "TPL",
+                //                 registro.tarifas![1].tarifaAdultoTPL,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "CPLE",
+                //                 registro.tarifas![1].tarifaAdultoCPLE,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "MEN 7-12",
+                //                 registro.tarifas![1].tarifaMenores7a12!,
+                //                 registro.color!),
+                //             tariffIndItemRow(
+                //                 "PAX ADIC",
+                //                 registro.tarifas![1].tarifaPaxAdicional!,
+                //                 registro.color!),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -468,9 +485,10 @@ class ItemRows {
     bool isSelect = true,
     Color? backgroundColor,
     double? sizeText,
+    double width = 170,
   }) {
     return SizedBox(
-      width: withOutWidth ? null : 170,
+      width: withOutWidth ? null : width,
       height: withDeleteButton ? null : 38,
       child: Card(
         color: isSelect ? colorCard : Colors.transparent,
@@ -486,6 +504,7 @@ class ItemRows {
             padding:
                 EdgeInsets.symmetric(horizontal: !withDeleteButton ? 6 : 0),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: withDeleteButton
                   ? MainAxisAlignment.spaceBetween
                   : MainAxisAlignment.center,
@@ -498,7 +517,9 @@ class ItemRows {
                           initDate: initDate!, lastDate: lastDate!),
                   color: useWhiteForeground(
                           isSelect ? colorCard : backgroundColor ?? colorCard)
-                      ? Utility.darken(colorCard, -0.05)
+                      ? isSelect
+                          ? Utility.darken(colorCard, -0.4)
+                          : colorCard
                       : Utility.darken(colorCard, 0.225),
                   size: sizeText ?? 13,
                 ),
@@ -513,9 +534,13 @@ class ItemRows {
                       icon: Icon(
                         Icons.close,
                         size: 25,
-                        color: useWhiteForeground(colorCard)
-                            ? Colors.white
-                            : Colors.black,
+                        color: useWhiteForeground(isSelect
+                                ? colorCard
+                                : backgroundColor ?? colorCard)
+                            ? isSelect
+                                ? Utility.darken(colorCard, -0.42)
+                                : colorCard
+                            : Utility.darken(colorCard, 0.3),
                       ),
                     ),
                   ),

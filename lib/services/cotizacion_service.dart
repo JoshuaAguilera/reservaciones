@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
@@ -108,8 +110,8 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<List<CotizacionData>> getCotizacionesLocales(
-      String search, int pag, String filtro, bool empty, String periodo) async {
+  Future<List<CotizacionData>> getCotizacionesLocales(String search, int pag,
+      String filtro, bool empty, String periodo, List<bool> showFilter) async {
     final database = AppDatabase();
     int? selectUser = (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null;
 
@@ -117,7 +119,9 @@ class CotizacionService extends BaseService {
       List<CotizacionData> comprobantes = [];
       if (empty) {
         comprobantes = await database.getQuotesFiltered(
-            userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
+          userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
+          showFilter: showFilter,
+        );
       } else {
         if (periodo.isNotEmpty) {
           DateTime initTime = DateTime.parse(periodo.substring(0, 10));
@@ -127,6 +131,7 @@ class CotizacionService extends BaseService {
             lastTime: lastTime,
             search: search,
             userId: selectUser,
+            showFilter: showFilter,
           );
         } else {
           switch (filtro) {
@@ -134,12 +139,14 @@ class CotizacionService extends BaseService {
               comprobantes = await database.getQuotesFiltered(
                 search: search,
                 userId: selectUser,
+                showFilter: showFilter,
               );
               break;
             case 'Hace un dia':
               comprobantes = await database.getQuotesFiltered(
                 userId: selectUser,
                 search: search,
+                showFilter: showFilter,
                 inLastDay: true,
               );
               break;
@@ -147,6 +154,7 @@ class CotizacionService extends BaseService {
               comprobantes = await database.getQuotesFiltered(
                 userId: selectUser,
                 search: search,
+                showFilter: showFilter,
                 inLastWeek: true,
               );
               break;
@@ -154,6 +162,7 @@ class CotizacionService extends BaseService {
               comprobantes = await database.getQuotesFiltered(
                 userId: selectUser,
                 search: search,
+                showFilter: showFilter,
                 inLastMonth: true,
               );
               break;
@@ -163,6 +172,7 @@ class CotizacionService extends BaseService {
       }
 
       await database.close();
+
       return comprobantes;
     } catch (e) {
       print(e);
@@ -213,7 +223,7 @@ class CotizacionService extends BaseService {
           nombreHuesped: element.quote.nombreHuesped,
           numeroTelefonico: element.quote.numeroTelefonico,
           usuarioID: element.quote.usuarioID,
-          username: element.user!.username,
+          username: jsonEncode(element.user),
           fechaLimite: element.quote.fechaLimite,
         );
 

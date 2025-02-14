@@ -181,8 +181,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           ? tariffVPM!.tarifaAdultoTPL!.toString()
           : Utility.calculateRate(
               adults1_2VPMController, paxAdicVPMController, 1);
-      adults4VPMController.text = tariffRV?.tarifaAdultoCPLE != null
-          ? tariffRV!.tarifaAdultoCPLE!.toString()
+      adults4VPMController.text = tariffVPM?.tarifaAdultoCPLE != null
+          ? tariffVPM!.tarifaAdultoCPLE!.toString()
           : Utility.calculateRate(
               adults1_2VPMController, paxAdicVPMController, 2);
       minors7_12VPMController.text =
@@ -407,6 +407,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                                   colorCard: colorTarifa,
                                                   initDate:
                                                       element.fechaInicial!,
+                                                  withOutWidth: true,
                                                   lastDate: element.fechaFinal!,
                                                   onRemove: () {
                                                     periodos.remove(element);

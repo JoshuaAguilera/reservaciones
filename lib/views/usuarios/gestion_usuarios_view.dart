@@ -91,38 +91,41 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       ],
                     ),
                   ),
-                  Buttons.commonButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (contextBL) {
-                          return EditUserDialog(
-                            onInsert: (p0) async {
-                              if (!await AuthService().saveUsers(p0)) {
+                  SizedBox(
+                    width: 180,
+                    child: Buttons.commonButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (contextBL) {
+                            return EditUserDialog(
+                              onInsert: (p0) async {
+                                if (!await AuthService().saveUsers(p0)) {
+                                  showSnackBar(
+                                      context: context,
+                                      title: "Error al crear nuevo usuario",
+                                      message:
+                                          "Se presento un problema al registrar un nuevo usuario.",
+                                      type: "danger");
+                                  return;
+                                }
                                 showSnackBar(
                                     context: context,
-                                    title: "Error al crear nuevo usuario",
+                                    title: "Usuario creado correctamente",
                                     message:
-                                        "Se presento un problema al registrar un nuevo usuario.",
-                                    type: "danger");
-                                return;
-                              }
-                              showSnackBar(
-                                  context: context,
-                                  title: "Usuario creado correctamente",
-                                  message:
-                                      "Se creo el nuevo usuario: ${p0!.username}",
-                                  type: "success");
-                              ref
-                                  .read(changeUsersProvider.notifier)
-                                  .update((state) => UniqueKey().hashCode);
-                            },
-                          );
-                        },
-                      );
-                    },
-                    text: "Agregar usuario",
-                    color: DesktopColors.cerulean,
+                                        "Se creo el nuevo usuario: ${p0!.username}",
+                                    type: "success");
+                                ref
+                                    .read(changeUsersProvider.notifier)
+                                    .update((state) => UniqueKey().hashCode);
+                              },
+                            );
+                          },
+                        );
+                      },
+                      text: "Agregar usuario",
+                      color: DesktopColors.cerulean,
+                    ),
                   )
                 ],
               ).animate().fadeIn(delay: 200.ms),

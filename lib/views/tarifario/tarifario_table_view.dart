@@ -49,20 +49,35 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
             ),
             columnWidths: {
               0: const FractionColumnWidth(0.05),
-              1: const FractionColumnWidth(0.1),
-              2: const FractionColumnWidth(.18),
+              1: screenWidth > 1050
+                  ? const FractionColumnWidth(.1)
+                  : const FractionColumnWidth(0.28),
+              2: screenWidth > 1050
+                  ? const FractionColumnWidth(.18)
+                  : screenWidth > 950
+                      ? const FractionColumnWidth(.3)
+                      : const FractionColumnWidth(.47),
               3: (screenWidth > 1525)
                   ? const FractionColumnWidth(0.1)
                   : screenWidth > 1150
-                      ? const FractionColumnWidth(.38)
-                      : const FractionColumnWidth(.51),
+                      ? const FractionColumnWidth(.23)
+                      : screenWidth > 1050
+                          ? const FractionColumnWidth(.3)
+                          : const FractionColumnWidth(.2),
               4: (screenWidth > 1525)
-                  ? const FractionColumnWidth(.32)
-                  : const FractionColumnWidth(.16),
+                  ? const FractionColumnWidth(.18)
+                  : screenWidth > 1150
+                      ? const FractionColumnWidth(.18)
+                      : screenWidth > 1050
+                          ? const FractionColumnWidth(.22)
+                          : const FractionColumnWidth(.17),
               5: (screenWidth > 1525)
+                  ? const FractionColumnWidth(.14)
+                  : const FractionColumnWidth(.15),
+              6: (screenWidth > 1525)
                   ? const FractionColumnWidth(0.12)
                   : const FractionColumnWidth(0.11),
-              if (screenWidth > 1675) 6: const FractionColumnWidth(0.1),
+              if (screenWidth > 1675) 7: const FractionColumnWidth(0.1),
             },
             children: [
               TableRow(
@@ -86,16 +101,17 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                       ],
                     ),
                   ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: TextStyles.standardText(
-                          text: "Fecha de registro",
-                          isBold: true,
-                          color: Theme.of(context).primaryColor,
-                          size: 14),
+                  if (screenWidth > 1050)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: TextStyles.standardText(
+                            text: "Fecha de registro",
+                            isBold: true,
+                            color: Theme.of(context).primaryColor,
+                            size: 14),
+                      ),
                     ),
-                  ),
                   Center(
                     child: TextStyles.standardText(
                         text: "Nombre",
@@ -119,6 +135,14 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         size: 14),
                   ),
                   if (screenWidth > 1150)
+                    Center(
+                      child: TextStyles.standardText(
+                          text: "Temporadas",
+                          isBold: true,
+                          color: Theme.of(context).primaryColor,
+                          size: 14),
+                    ),
+                  if (screenWidth > 950)
                     Center(
                       child: TextStyles.standardText(
                           text: "Tarifa Base",
@@ -159,21 +183,40 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                                         TableCellVerticalAlignment.middle,
                                     columnWidths: {
                                       0: const FractionColumnWidth(0.05),
-                                      1: const FractionColumnWidth(0.1),
-                                      2: const FractionColumnWidth(.18),
+                                      1: screenWidth > 1050
+                                          ? const FractionColumnWidth(.1)
+                                          : const FractionColumnWidth(0.28),
+                                      2: screenWidth > 1050
+                                          ? const FractionColumnWidth(.18)
+                                          : screenWidth > 950
+                                              ? const FractionColumnWidth(.3)
+                                              : const FractionColumnWidth(.47),
                                       3: (screenWidth > 1525)
                                           ? const FractionColumnWidth(0.1)
                                           : screenWidth > 1150
-                                              ? const FractionColumnWidth(.38)
-                                              : const FractionColumnWidth(.51),
+                                              ? const FractionColumnWidth(.23)
+                                              : screenWidth > 1050
+                                                  ? const FractionColumnWidth(
+                                                      .3)
+                                                  : const FractionColumnWidth(
+                                                      .2),
                                       4: (screenWidth > 1525)
-                                          ? const FractionColumnWidth(.32)
-                                          : const FractionColumnWidth(.16),
+                                          ? const FractionColumnWidth(.18)
+                                          : screenWidth > 1150
+                                              ? const FractionColumnWidth(.18)
+                                              : screenWidth > 1050
+                                                  ? const FractionColumnWidth(
+                                                      .22)
+                                                  : const FractionColumnWidth(
+                                                      .17),
                                       5: (screenWidth > 1525)
+                                          ? const FractionColumnWidth(.14)
+                                          : const FractionColumnWidth(.15),
+                                      6: (screenWidth > 1525)
                                           ? const FractionColumnWidth(0.12)
                                           : const FractionColumnWidth(0.11),
                                       if (screenWidth > 1675)
-                                        6: const FractionColumnWidth(0.1),
+                                        7: const FractionColumnWidth(0.1),
                                     },
                                     children: [
                                       TableRows.tableRowTarifario(

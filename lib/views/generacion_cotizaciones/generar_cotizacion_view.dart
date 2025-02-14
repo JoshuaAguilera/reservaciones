@@ -149,13 +149,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     }
 
     // if (!(Preferences.rol == 'RECEPCION')) {
-      ref.listen<bool>(typeQuoteProvider, (previous, next) {
-        if (next) {
-          _showConfigurationTariffGroup(firstView: true);
-        } else {
-          ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
-        }
-      });
+    ref.listen<bool>(typeQuoteProvider, (previous, next) {
+      if (next) {
+        _showConfigurationTariffGroup(firstView: true);
+      } else {
+        ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
+      }
+    });
     // }
 
     Future saveQuoteBD({int? limitDay}) async {
@@ -665,13 +665,16 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                 color: Colors.white,
               ),
               if (withButton)
-                Buttons.commonButton(
-                  onPressed: () {
-                    if (onPressedButton == null) return;
-                    onPressedButton.call();
-                  },
-                  color: Utility.darken(color!, 0.15),
-                  text: "Gestionar tarifas",
+                SizedBox(
+                  width: 200,
+                  child: Buttons.commonButton(
+                    onPressed: () {
+                      if (onPressedButton == null) return;
+                      onPressedButton.call();
+                    },
+                    color: Utility.darken(color!, 0.15),
+                    text: "Gestionar tarifas",
+                  ),
                 ),
               if (withSwithCashTariff)
                 FormWidgets.inputSwitch(

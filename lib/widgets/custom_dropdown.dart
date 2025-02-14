@@ -32,7 +32,7 @@ class CustomDropdown {
 
     return StatefulBuilder(
       builder: (context, setState) {
-        return Container(
+        return SizedBox(
           height: compact ? compactHeight : null,
           width: compact ? compactWidth : null,
           child: Tooltip(
@@ -62,7 +62,7 @@ class CustomDropdown {
                             ? null
                             : Transform.translate(
                                 offset: Offset(0, dyCompact),
-                                child: const Icon(Icons.arrow_drop_down),
+                                child: const Icon(Iconsax.arrow_down_1_outline, size: 20),
                               ),
                     inputDecorationTheme: !compact
                         ? null

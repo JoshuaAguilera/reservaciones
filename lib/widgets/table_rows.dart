@@ -196,16 +196,17 @@ class TableRows {
             ),
           ),
         ),
-        Center(
-          child: TextStyles.standardText(
-            text: element.fechaRegistro!
-                .toIso8601String()
-                .substring(0, 10)
-                .replaceAll('-', '/'),
-            color: Theme.of(context).primaryColor,
-            size: 12,
+        if (screenWidth > 1050)
+          Center(
+            child: TextStyles.standardText(
+              text: element.fechaRegistro!
+                  .toIso8601String()
+                  .substring(0, 10)
+                  .replaceAll('-', '/'),
+              color: Theme.of(context).primaryColor,
+              size: 12,
+            ),
           ),
-        ),
         Center(
           child: TextStyles.standardText(
             text: element.nombre ?? '',
@@ -249,6 +250,41 @@ class TableRows {
           ),
         ),
         if (screenWidth > 1150)
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Container(
+              height: 35,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
+              child: ListView.builder(
+                itemCount: element.temporadas?.length,
+                physics: const AlwaysScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) => Tooltip(
+                  textAlign: TextAlign.center,
+                  message:
+                      "Estancia Min: ${element.temporadas?[index].estanciaMinima ?? 0}\n"
+                      "Descuento: ${element.temporadas?[index].porcentajePromocion ?? 0}%",
+                  child: ItemRows.filterItemRow(
+                    withDeleteButton: false,
+                    colorCard: (element.temporadas?[index].forGroup ?? false)
+                        ? DesktopColors.cotGrupal
+                        : (element.temporadas?[index].forCash ?? false)
+                            ? DesktopColors.cashSeason
+                            : DesktopColors.cotIndiv,
+                    title: element.temporadas?[index].nombre ?? '',
+                    sizeText: 12,
+                    withOutWidth: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (screenWidth > 950)
           Center(
             child: TextStyles.standardText(
               text: tarifasBase
@@ -263,6 +299,7 @@ class TableRows {
           ),
         Center(
           child: Row(
+            spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
@@ -270,21 +307,19 @@ class TableRows {
                 tooltip: "Editar",
                 icon: Icon(
                   Iconsax.edit_outline,
-                  size: 30,
+                  size: 28,
                   color: DesktopColors.turquezaOscure,
                 ),
               ),
-              const SizedBox(width: 10),
               IconButton(
                 onPressed: () => onDelete!.call(element),
                 tooltip: "Eliminar",
                 icon: Icon(
                   CupertinoIcons.delete,
-                  size: 30,
+                  size: 28,
                   color: DesktopColors.ceruleanOscure,
                 ),
               ),
-              const SizedBox(width: 10),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 
 class Cotizacion {
@@ -13,6 +14,7 @@ class Cotizacion {
   bool? esGrupo;
   bool? esConcretado;
   List<Habitacion>? habitaciones;
+  UsuarioData? autor;
 
   Cotizacion({
     this.id,
@@ -27,6 +29,7 @@ class Cotizacion {
     this.responsableId,
     this.tipo,
     this.esConcretado,
+    this.autor,
   });
 
   Cotizacion CopyWith({
@@ -41,6 +44,7 @@ class Cotizacion {
     bool? esGrupo,
     bool? esConcretado,
     List<Habitacion>? habitaciones,
+    UsuarioData? autor,
   }) =>
       Cotizacion(
         id: id ?? this.id,
@@ -55,5 +59,6 @@ class Cotizacion {
         esConcretado: esConcretado ?? this.esConcretado,
         habitaciones: habitaciones ?? this.habitaciones,
         fechaLimite: fechaLimite ?? this.fechaLimite,
+        autor: autor ?? this.autor,
       );
 }

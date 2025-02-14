@@ -329,6 +329,11 @@ class _SideBarState extends ConsumerState<SideBar> {
                       .read(saveTariffPolityProvider.notifier)
                       .update((state) => null);
                   ref.read(filterReport.notifier).update((state) => "Semanal");
+                  ref.read(dateReport.notifier).update(
+                        (state) => DateTime.now().subtract(
+                          Duration(days: DateTime.now().weekday - 1),
+                        ),
+                      );
                   ref
                       .read(useCashSeasonProvider.notifier)
                       .update((state) => false);

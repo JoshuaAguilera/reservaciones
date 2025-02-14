@@ -13,7 +13,6 @@ import '../models/tarifa_x_dia_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
 import '../utils/helpers/desktop_colors.dart';
-import '../utils/shared_preferences/preferences.dart';
 import 'dialogs.dart';
 import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
@@ -179,15 +178,18 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     }
 
     void _recalculateTotals() {
-      widget.habitacion.totalRealVR = _getTotalRoom(withDiscount: false);
-      widget.habitacion.totalRealVPM =
-          _getTotalRoom(withDiscount: false, onlyTariffVR: false);
-      widget.habitacion.totalVR = _getTotalRoom();
-      widget.habitacion.totalVPM = _getTotalRoom(onlyTariffVR: false);
+      widget.habitacion.totalRealVR =
+          _getTotalRoom(room: widget.habitacion, withDiscount: false);
+      widget.habitacion.totalRealVPM = _getTotalRoom(
+          room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
+      widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
+      widget.habitacion.totalVPM =
+          _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
 
-      widget.habitacion.descuentoVR = _getTotalRoom(onlyDiscount: true);
-      widget.habitacion.descuentoVPM =
-          _getTotalRoom(onlyTariffVR: false, onlyDiscount: true);
+      widget.habitacion.descuentoVR =
+          _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
+      widget.habitacion.descuentoVPM = _getTotalRoom(
+          room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
 
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -344,8 +346,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(
                         text:
-                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVR ?? 0) : (typeQuote) ? _getTotalRoomGroup(withDiscount: false) : (widget.habitacion.totalRealVR ?? 0))}"
-                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVPM ?? 0) : typeQuote ? _getTotalRoomGroup(withDiscount: false, onlyTariffVR: false) : (widget.habitacion.totalRealVPM ?? 0))}",
+                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVR ?? 0) : (typeQuote) ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false) : (widget.habitacion.totalRealVR ?? 0))}"
+                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false, onlyTariffVR: false) : (widget.habitacion.totalRealVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
                         size: 11,
@@ -353,8 +355,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     if (screenWidthWithSideBar > 1550)
                       TextStyles.standardText(
                         text:
-                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVR ?? 0) : typeQuote ? _getTotalRoomGroup() : (widget.habitacion.totalVR ?? 0))}"
-                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVPM ?? 0) : typeQuote ? _getTotalRoomGroup(onlyTariffVR: false) : (widget.habitacion.totalVPM ?? 0))}",
+                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVR ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion) : (widget.habitacion.totalVR ?? 0))}"
+                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, onlyTariffVR: false) : (widget.habitacion.totalVPM ?? 0))}",
                         aling: TextAlign.center,
                         color: colorText,
                         size: 11,
@@ -419,64 +421,67 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
       ),
     );
   }
+}
 
-  double _getTotalRoomGroup(
-      {bool onlyTariffVR = true, bool withDiscount = true}) {
-    double totalGroup = Utility.calculateTotalTariffRoom(
-      RegistroTarifa(
-        temporadas: widget.habitacion.tarifaGrupal?.temporadas,
-        tarifas: widget.habitacion.tarifaGrupal?.tarifas,
-      ),
-      widget.habitacion,
-      widget.habitacion.tarifaXDia!.length,
-      getTotalRoom: true,
-      descuentoProvisional:
-          widget.habitacion.tarifaGrupal?.descuentoProvisional,
-      onlyTariffVR: onlyTariffVR,
-      onlyTariffVPM: !onlyTariffVR,
-      isGroupTariff: true,
-      withDiscount: withDiscount,
-      applyRoundFormat: !(widget.habitacion.tarifaGrupal?.modificado ?? false),
-    );
+double _getTotalRoomGroup({
+  required Habitacion room,
+  bool onlyTariffVR = true,
+  bool withDiscount = true,
+}) {
+  double totalGroup = Utility.calculateTotalTariffRoom(
+    RegistroTarifa(
+      temporadas: room.tarifaGrupal?.temporadas,
+      tarifas: room.tarifaGrupal?.tarifas,
+    ),
+    room,
+    room.tarifaXDia!.length,
+    getTotalRoom: true,
+    descuentoProvisional: room.tarifaGrupal?.descuentoProvisional,
+    onlyTariffVR: onlyTariffVR,
+    onlyTariffVPM: !onlyTariffVR,
+    isGroupTariff: true,
+    withDiscount: withDiscount,
+    applyRoundFormat: !(room.tarifaGrupal?.modificado ?? false),
+  );
 
-    return (totalGroup * widget.habitacion.tarifaXDia!.length);
-  }
+  return (totalGroup * room.tarifaXDia!.length);
+}
 
-  double _getTotalRoom({
-    bool onlyTariffVR = true,
-    bool withDiscount = true,
-    bool onlyDiscount = false,
-  }) {
-    List<TarifaXDia> tarifasFiltradas =
-        Utility.getUniqueTariffs(widget.habitacion.tarifaXDia ?? []);
+double _getTotalRoom({
+  required Habitacion room,
+  bool onlyTariffVR = true,
+  bool withDiscount = true,
+  bool onlyDiscount = false,
+}) {
+  List<TarifaXDia> tarifasFiltradas =
+      Utility.getUniqueTariffs(room.tarifaXDia ?? []);
 
-    double discount = !withDiscount
-        ? 0
-        : Utility.calculateDiscountTotal(
-            tarifasFiltradas,
-            widget.habitacion,
-            widget.habitacion.tarifaXDia?.length ?? 0,
-            typeQuote: false,
-            onlyTariffVR: onlyTariffVR,
-            onlyTariffVPM: !onlyTariffVR,
-          );
-
-    if (onlyDiscount) {
-      return discount;
-    }
-
-    double total = Utility.calculateTariffTotals(
+  double discount = !withDiscount
+      ? 0
+      : Utility.calculateDiscountTotal(
           tarifasFiltradas,
-          widget.habitacion,
-          onlyChildren: true,
-          onlyAdults: true,
+          room,
+          room.tarifaXDia?.length ?? 0,
+          typeQuote: false,
           onlyTariffVR: onlyTariffVR,
           onlyTariffVPM: !onlyTariffVR,
-        ) -
-        (discount);
+        );
 
-    return total;
+  if (onlyDiscount) {
+    return discount;
   }
+
+  double total = Utility.calculateTariffTotals(
+        tarifasFiltradas,
+        room,
+        onlyChildren: true,
+        onlyAdults: true,
+        onlyTariffVR: onlyTariffVR,
+        onlyTariffVPM: !onlyTariffVR,
+      ) -
+      (discount);
+
+  return total;
 }
 
 class _ListTileCotizacion extends ConsumerStatefulWidget {
@@ -508,6 +513,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    final typeQuote = ref.watch(typeQuoteProvider);
 
     Color colorCard = brightness == Brightness.light
         ? const Color.fromARGB(255, 243, 243, 243)
@@ -554,6 +560,25 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
       }
     }
 
+    void _recalculateTotals() {
+      widget.habitacion.totalRealVR =
+          _getTotalRoom(room: widget.habitacion, withDiscount: false);
+      widget.habitacion.totalRealVPM = _getTotalRoom(
+          room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
+      widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
+      widget.habitacion.totalVPM =
+          _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
+
+      widget.habitacion.descuentoVR =
+          _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
+      widget.habitacion.descuentoVPM = _getTotalRoom(
+          room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
+
+      ref
+          .read(detectChangeRoomProvider.notifier)
+          .update((state) => UniqueKey().hashCode);
+    }
+
     return Card(
       elevation: 5,
       color: colorCard,
@@ -566,66 +591,177 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
           sizeSubtitle: 12,
         ),
         visualDensity: VisualDensity.standard,
-        title: TextStyles.standardText(
-          text: "${widget.habitacion.categoria}",
-          isBold: true,
+        title: TextStyles.TextAsociative(
+          (screenWidthWithSideBar < 1100) ? "Fechas: " : "Fechas de estancia: ",
+          Utility.getStringPeriod(
+              initDate: DateTime.parse(widget.habitacion.fechaCheckIn!),
+              lastDate: DateTime.parse(widget.habitacion.fechaCheckOut!)),
           color: colorText,
+          size: 13.5,
         ),
-        subtitle: Wrap(
-          spacing: 12,
-          runSpacing: 5,
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 5,
           children: [
-            TextStyles.TextAsociative(
-              (screenWidthWithSideBar < 1100)
-                  ? "Fechas: "
-                  : "Fechas de estancia: ",
-              Utility.getStringPeriod(
-                  initDate: DateTime.parse(widget.habitacion.fechaCheckIn!),
-                  lastDate: DateTime.parse(widget.habitacion.fechaCheckOut!)),
-              //"${widget.habitacion.fechaCheckIn} a ${widget.habitacion.fechaCheckOut}",
-              color: colorText,
-            ),
-            // TextStyles.TextAsociative(
-            //   "Tarifa real: ",
-            //   Utility.formatterNumber(widget.habitacion.totalRealVR ?? 0),
-            //   color: colorText,
-            // ),
-            // TextStyles.TextAsociative(
-            //   (screenWidthWithSideBar < 1100)
-            //       ? "Tarifa desc: "
-            //       : "Tarifa descontada: ",
-            //   Utility.formatterNumber(-(widget.habitacion.descuentoVR ?? 0)),
-            //   color: colorText,
-            // ),
-            TextStyles.TextAsociative(
-              (screenWidthWithSideBar < 1100)
-                  ? "Tarifa VR:"
-                  : "Tarifa Vista Reserva: ",
-              Utility.formatterNumber(widget.habitacion.totalVR ?? 0),
-              color: colorText,
-            ),
-            TextStyles.TextAsociative(
-              (screenWidthWithSideBar < 1100)
-                  ? "Tarifa VPM:"
-                  : "Tarifa Vista Parcial Mar: ",
-              Utility.formatterNumber(widget.habitacion.totalVPM ?? 0),
-              color: colorText,
+            const SizedBox(height: 2.5),
+            Wrap(
+              spacing: 12,
+              runSpacing: 5,
+              children: [
+                TextStyles.TextAsociative(
+                  (screenWidthWithSideBar < 1100)
+                      ? "Tarifa VR: "
+                      : "Tarifa Vista Reserva: ",
+                  Utility.formatterNumber(widget.esDetalle
+                      ? (widget.habitacion.totalVR ?? 0)
+                      : typeQuote
+                          ? _getTotalRoomGroup(room: widget.habitacion)
+                          : (widget.habitacion.totalVR ?? 0)),
+                  color: colorText,
+                ),
+                TextStyles.TextAsociative(
+                  (screenWidthWithSideBar < 1100)
+                      ? "Tarifa VPM: "
+                      : "Tarifa Vista Parcial Mar: ",
+                  Utility.formatterNumber(widget.esDetalle
+                      ? (widget.habitacion.totalVPM ?? 0)
+                      : typeQuote
+                          ? _getTotalRoomGroup(
+                              room: widget.habitacion, onlyTariffVR: false)
+                          : (widget.habitacion.totalVPM ?? 0)),
+                  color: colorText,
+                ),
+              ],
             ),
             Wrap(
               spacing: 15,
+              runSpacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                TextStyles.TextAsociative(
-                    'Menores 0-6: ', "${widget.habitacion.menores0a6}",
-                    color: colorText),
-                TextStyles.TextAsociative(
-                    'Menores 7-12: ', "${widget.habitacion.menores7a12}",
-                    color: colorText),
-                TextStyles.TextAsociative(
-                    'Adultos: ', "${widget.habitacion.adultos}",
-                    color: colorText),
+                SizedBox(
+                  width: widget.esDetalle ? 30 : 145,
+                  height: widget.esDetalle ? 15 : 30,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextStyles.TextAsociative(
+                        (screenWidthWithSideBar < 900) ? 'Ad: ' : 'Adultos:',
+                        "${widget.esDetalle ? widget.habitacion.adultos : ""}",
+                        color: colorText,
+                        boldInversed: widget.esDetalle,
+                      ),
+                      if (!widget.esDetalle)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: NumberInputWithIncrementDecrement(
+                            onChanged: (p0) {
+                              widget.habitacion.adultos = int.tryParse(p0);
+                              _recalculateTotals();
+                              setState(() {});
+                            },
+                            initialValue: widget.habitacion.adultos!.toString(),
+                            minimalValue: 1,
+                            height: 6,
+                            sizeIcons: 20,
+                            maxValue: (4 -
+                                (widget.habitacion.menores7a12 ?? 0) -
+                                (widget.habitacion.menores0a6 ?? 0)),
+                            colorText: colorText,
+                            inHorizontal: true,
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: widget.esDetalle ? 40 : 175,
+                  height: widget.esDetalle ? 15 : 30,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextStyles.TextAsociative(
+                        (screenWidthWithSideBar < 900)
+                            ? '0-6: '
+                            : 'Menores 0-6:',
+                        "${widget.esDetalle ? widget.habitacion.menores0a6 : ""}",
+                        color: colorText,
+                        boldInversed: widget.esDetalle,
+                      ),
+                      if (!widget.esDetalle)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: SizedBox(
+                            child: NumberInputWithIncrementDecrement(
+                              onChanged: (p0) {
+                                widget.habitacion.menores0a6 = int.tryParse(p0);
+                                _recalculateTotals();
+                                setState(() {});
+                              },
+                              initialValue:
+                                  widget.habitacion.menores0a6!.toString(),
+                              minimalValue: 0,
+                              height: 6,
+                              sizeIcons: 20,
+                              maxValue: (4 -
+                                  (widget.habitacion.menores7a12 ?? 0) -
+                                  (widget.habitacion.adultos ?? 0)),
+                              colorText: colorText,
+                              inHorizontal: true,
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: widget.esDetalle ? 40 : 180,
+                  height: widget.esDetalle ? 15 : 30,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextStyles.TextAsociative(
+                        (screenWidthWithSideBar < 900)
+                            ? '7-12: '
+                            : 'Menores 7-12:',
+                        "${widget.esDetalle ? widget.habitacion.menores7a12 : ""}",
+                        color: colorText,
+                        boldInversed: widget.esDetalle,
+                      ),
+                      if (!widget.esDetalle)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: NumberInputWithIncrementDecrement(
+                            onChanged: (p0) {
+                              widget.habitacion.menores7a12 = int.tryParse(p0);
+                              _recalculateTotals();
+                              setState(() {});
+                            },
+                            initialValue:
+                                (widget.habitacion.menores7a12 ?? 0).toString(),
+                            minimalValue: 0,
+                            height: 6,
+                            sizeIcons: 18,
+                            maxValue: (4 -
+                                (widget.habitacion.adultos ?? 0) -
+                                (widget.habitacion.menores0a6 ?? 0)),
+                            colorText: colorText,
+                            inHorizontal: true,
+                          ),
+                        )
+                    ],
+                  ),
+                ),
               ],
             ),
-            if (screenWidthWithSideBar < 1100)
+            if (widget.esDetalle)
+              TextStyles.TextAsociative(
+                'Cantidad:',
+                " ${widget.habitacion.count} Rooms",
+                color: colorText,
+                boldInversed: true,
+              ),
+            const SizedBox(height: 5),
+            if (screenWidthWithSideBar < 1100 && !(widget.esDetalle))
               politicaTarifaProvider.when(
                 data: (data) => optionsListTile(
                   colorText: colorText,

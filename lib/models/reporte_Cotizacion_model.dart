@@ -2,14 +2,14 @@ class ReporteCotizacion {
   String? dia;
   int numCotizacionesIndividual;
   int numCotizacionesGrupales;
-  int numCotizacionesIndividualPreventa;
-  int numCotizacionesGrupalesPreventa;
+  int numReservacionesIndividual;
+  int numReservacionesGrupales;
 
   ReporteCotizacion({
     this.dia,
     required this.numCotizacionesIndividual,
     required this.numCotizacionesGrupales,
-    required this.numCotizacionesGrupalesPreventa,
-    required this.numCotizacionesIndividualPreventa,
+    required this.numReservacionesGrupales,
+    required this.numReservacionesIndividual,
   });
 }

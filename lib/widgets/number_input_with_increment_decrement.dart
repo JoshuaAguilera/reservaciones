@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class NumberInputWithIncrementDecrement extends StatefulWidget {
   final void Function(String) onChanged;
@@ -12,6 +14,8 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
   final double? height;
   final bool focused;
   final Color? colorText;
+  final bool inHorizontal;
+  final double maxHeight;
 
   const NumberInputWithIncrementDecrement({
     super.key,
@@ -25,6 +29,8 @@ class NumberInputWithIncrementDecrement extends StatefulWidget {
     this.height,
     this.focused = false,
     this.colorText,
+    this.inHorizontal = false,
+    this.maxHeight = 100,
   });
 
   @override
@@ -46,20 +52,46 @@ class _NumberInputWithIncrementDecrementState
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: widget.inHorizontal ? null : const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: widget.colorText ?? Colors.black38),
       ),
-      constraints: const BoxConstraints(
+      constraints: BoxConstraints(
         minWidth: 5,
-        maxWidth: 40,
+        maxWidth: widget.inHorizontal ? 80 : 40,
         minHeight: 10.0,
-        maxHeight: 100.0,
+        maxHeight: widget.maxHeight,
       ),
       child: Row(
         children: <Widget>[
+          if (widget.inHorizontal)
+            SizedBox(
+              height: 38,
+              width: 20,
+              child: InkWell(
+                child: Icon(
+                  Iconsax.arrow_left_1_outline,
+                  size: widget.sizeIcons ?? 18.0,
+                ),
+                onTap: () {
+                  int currentValue = int.parse(_controller.text);
+                  setState(() {
+                    currentValue--;
+                    _controller.text =
+                        (currentValue > (widget.minimalValue ?? 0)
+                                ? currentValue
+                                : widget.minimalValue ?? 0)
+                            .toString(); // decrementing value
+                    widget.onChanged.call(_controller.text);
+                    if (widget.onDecrement != null) {
+                      widget.onDecrement!.call(currentValue);
+                    }
+                  });
+                },
+              ),
+            ),
           Expanded(
             flex: 1,
             child: SizedBox(
@@ -103,68 +135,97 @@ class _NumberInputWithIncrementDecrementState
               ),
             ),
           ),
-          SizedBox(
-            height: 38.0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 0.5,
+          if (widget.inHorizontal)
+            SizedBox(
+              height: 38,
+              width: 20,
+              child: InkWell(
+                child: Icon(
+                  Iconsax.arrow_right_4_outline,
+                  size: widget.sizeIcons ?? 18.0,
+                ),
+                onTap: () {
+                  int currentValue = int.parse(_controller.text);
+                  setState(() {
+                    currentValue++;
+                    _controller.text = widget.maxValue != null
+                        ? _controller.text =
+                            (currentValue < (widget.maxValue!)
+                                    ? currentValue
+                                    : widget.maxValue)
+                                .toString()
+                        : (currentValue).toString(); // incrementing value
+                    widget.onChanged.call(_controller.text);
+                    if (widget.onIncrement != null) {
+                      widget.onIncrement!.call(currentValue);
+                    }
+                  });
+                },
+              ),
+            ),
+          if (!widget.inHorizontal)
+            SizedBox(
+              height: 38.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 0.5,
+                        ),
                       ),
                     ),
+                    child: InkWell(
+                      child: Icon(
+                        Iconsax.arrow_up_2_outline,
+                        size: widget.sizeIcons ?? 18.0,
+                      ),
+                      onTap: () {
+                        int currentValue = int.parse(_controller.text);
+                        setState(() {
+                          currentValue++;
+                          _controller.text = widget.maxValue != null
+                              ? _controller.text =
+                                  (currentValue < (widget.maxValue!)
+                                          ? currentValue
+                                          : widget.maxValue)
+                                      .toString()
+                              : (currentValue).toString(); // incrementing value
+                          widget.onChanged.call(_controller.text);
+                          if (widget.onIncrement != null) {
+                            widget.onIncrement!.call(currentValue);
+                          }
+                        });
+                      },
+                    ),
                   ),
-                  child: InkWell(
+                  InkWell(
                     child: Icon(
-                      Icons.arrow_drop_up,
+                      Iconsax.arrow_down_1_outline,
                       size: widget.sizeIcons ?? 18.0,
                     ),
                     onTap: () {
                       int currentValue = int.parse(_controller.text);
                       setState(() {
-                        currentValue++;
-                        _controller.text = widget.maxValue != null
-                            ? _controller.text =
-                                (currentValue < (widget.maxValue!)
-                                        ? currentValue
-                                        : widget.maxValue)
-                                    .toString()
-                            : (currentValue).toString(); // incrementing value
+                        currentValue--;
+                        _controller.text =
+                            (currentValue > (widget.minimalValue ?? 0)
+                                    ? currentValue
+                                    : widget.minimalValue ?? 0)
+                                .toString(); // decrementing value
                         widget.onChanged.call(_controller.text);
-                        if (widget.onIncrement != null) {
-                          widget.onIncrement!.call(currentValue);
+                        if (widget.onDecrement != null) {
+                          widget.onDecrement!.call(currentValue);
                         }
                       });
                     },
                   ),
-                ),
-                InkWell(
-                  child: Icon(
-                    Icons.arrow_drop_down,
-                    size: widget.sizeIcons ?? 18.0,
-                  ),
-                  onTap: () {
-                    int currentValue = int.parse(_controller.text);
-                    setState(() {
-                      currentValue--;
-                      _controller.text =
-                          (currentValue > (widget.minimalValue ?? 0)
-                                  ? currentValue
-                                  : widget.minimalValue ?? 0)
-                              .toString(); // decrementing value
-                      widget.onChanged.call(_controller.text);
-                      if (widget.onDecrement != null) {
-                        widget.onDecrement!.call(currentValue);
-                      }
-                    });
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

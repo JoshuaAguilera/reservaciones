@@ -560,8 +560,12 @@ class _ManagerTariffGroupDialogState
     if (indexSeason != -1) {
       Future.delayed(
         Durations.short2,
-        () => _scrollController.animateTo((indexSeason + 0.0) * 50,
-            curve: Curves.easeIn, duration: Durations.medium1),
+        () {
+          if (mounted) {
+            return _scrollController.animateTo((indexSeason + 0.0) * 50,
+                curve: Curves.easeIn, duration: Durations.medium1);
+          }
+        },
       );
     }
 

@@ -382,11 +382,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Buttons.commonButton(
-                      text: "Guardar",
-                      isLoading: inProcess,
-                      sizeText: 12.5,
-                      onPressed: () => saveFunction(context, setState),
+                    SizedBox(
+                      width: 100,
+                      child: Buttons.commonButton(
+                        text: "Guardar",
+                        isLoading: inProcess,
+                        sizeText: 12.5,
+                        onPressed: () => saveFunction(context, setState),
+                      ),
                     ),
                   ],
                 ),

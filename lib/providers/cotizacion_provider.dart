@@ -18,6 +18,9 @@ final periodoProvider = StateProvider<String>((ref) => '');
 
 final isEmptyProvider = StateProvider<bool>((ref) => false);
 
+final showFilterProvider = StateProvider<List<bool>>(
+    (ref) => [true, false, false, false, false, false]);
+
 final searchProvider = StateProvider<String>((ref) => '');
 
 final paginaProvider = StateProvider<int>((ref) => 1);
@@ -33,6 +36,7 @@ final receiptQuoteQueryProvider =
   final search = ref.watch(searchProvider);
   final pag = ref.watch(paginaProvider);
   final filter = ref.watch(filtroProvider);
+  final showFilter = ref.watch(showFilterProvider);
 
   final detectChanged = ref.watch(changeHistoryProvider);
 
@@ -42,7 +46,9 @@ final receiptQuoteQueryProvider =
     filter,
     empty,
     period,
+    showFilter,
   );
+
   return list;
 });
 

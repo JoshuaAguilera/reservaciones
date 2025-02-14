@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
@@ -40,38 +42,56 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   Color? colorIconDelete;
   Color? colorItem;
   bool isInvalid = false;
+  bool isConcrete = false;
+  bool isGroup = false;
 
   @override
   void initState() {
     super.initState();
-    isInvalid = DateTime.now()
-            .compareTo(widget.cotizacion.fechaLimite ?? DateTime.now()) ==
-        1;
+    isConcrete = (widget.cotizacion.esConcretado ?? false);
+    isGroup = (widget.cotizacion.esGrupo ?? false);
+    isInvalid = !isConcrete &&
+        (DateTime.now()
+                .compareTo(widget.cotizacion.fechaLimite ?? DateTime.now()) ==
+            1);
+
     colorText = isInvalid
         ? Colors.white
-        : !widget.cotizacion.esGrupo!
-            ? DesktopColors.azulUltClaro
+        : !isGroup
+            ? isConcrete
+                ? DesktopColors.prussianBlue
+                : DesktopColors.azulUltClaro
             : DesktopColors.prussianBlue;
     colorTextIndice = isInvalid
         ? Colors.white
-        : !widget.cotizacion.esGrupo!
-            ? DesktopColors.azulUltClaro
+        : !isGroup
+            ? isConcrete
+                ? DesktopColors.prussianBlue
+                : DesktopColors.azulUltClaro
             : DesktopColors.prussianBlue;
     colorIconDelete = isInvalid
         ? Colors.white
-        : !widget.cotizacion.esGrupo!
-            ? DesktopColors.azulCielo
+        : !isGroup
+            ? isConcrete
+                ? DesktopColors.ceruleanOscure
+                : DesktopColors.azulCielo
             : DesktopColors.ceruleanOscure;
     colorIconDetail = isInvalid
         ? Colors.white
-        : !widget.cotizacion.esGrupo!
-            ? DesktopColors.azulClaro
+        : !isGroup
+            ? isConcrete
+                ? DesktopColors.ceruleanOscure
+                : DesktopColors.azulClaro
             : DesktopColors.ceruleanOscure;
     colorItem = isInvalid
         ? DesktopColors.cotNoConcr
-        : widget.cotizacion.esGrupo!
-            ? DesktopColors.cotGrupal
-            : DesktopColors.cotIndiv;
+        : isGroup
+            ? (widget.cotizacion.esConcretado ?? false)
+                ? DesktopColors.resGrupal
+                : DesktopColors.cotGrupal
+            : (widget.cotizacion.esConcretado ?? false)
+                ? DesktopColors.resIndiv
+                : DesktopColors.cotIndiv;
   }
 
   @override
@@ -109,13 +129,10 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
               TextStyles.TextAsociative("Fecha: ",
                   "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha?.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
-
-              TextStyles.TextAsociative("Vigencia: ",
-                  "${Utility.getCompleteDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
-                  size: widget.isQuery ? 11 : 12, color: colorTextIndice),
-              // TextStyles.TextAsociative("Tarifa: ",
-              //     Utility.formatterNumber(widget.cotizacion.rateDay),
-              //     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
+              if (!isConcrete)
+                TextStyles.TextAsociative("Vigencia: ",
+                    "${Utility.getCompleteDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
+                    size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               if ((widget.cotizacion.correoElectrico ?? '').isNotEmpty)
                 TextStyles.TextAsociative(
                     "Correo: ", widget.cotizacion.correoElectrico ?? '',
@@ -130,7 +147,12 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                 CustomWidgets.buildItemGraphics(
                   icon: CupertinoIcons.person_alt_circle,
                   color: colorText!,
-                  label: widget.cotizacion.username ?? 'Not found',
+                  label: widget.cotizacion.username != null
+                      ? UsuarioData.fromJson(jsonDecode(
+                                  widget.cotizacion.username ?? "{}"))
+                              .username ??
+                          ''
+                      : 'Not Found',
                   fontSize: 11.5,
                   iconSize: 16,
                 ),

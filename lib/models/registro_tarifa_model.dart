@@ -58,9 +58,12 @@ class RegistroTarifa {
         nombre: nombre ?? this.nombre,
         color: color ?? this.color,
         fechaRegistro: fechaRegistro ?? this.fechaRegistro,
-        periodos: periodos ?? this.periodos,
-        temporadas: temporadas ?? this.temporadas,
-        tarifas: tarifas ?? this.tarifas,
+        periodos: periodos?.map((e) => e.copyWith()).toList() ??
+            this.periodos?.map((e) => e.copyWith()).toList(),
+        temporadas: temporadas?.map((e) => e.copyWith()).toList() ??
+            this.temporadas?.map((e) => e.copyWith()).toList(),
+        tarifas: tarifas?.map((e) => e.copyWith()).toList() ??
+            this.tarifas?.map((e) => e.copyWith()).toList(),
         userId: userId ?? this.userId,
         numDays: numDays ?? this.numDays,
       );

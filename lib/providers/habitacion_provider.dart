@@ -236,13 +236,19 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   Future<pw.Document> generarComprobante(
       Cotizacion cotizacion, bool typeQuote) async {
     if (!typeQuote) {
-      return pdfPrinc = await GeneradorDocService()
-          .generarComprobanteCotizacionIndividual(
-              habitaciones: state, cotizacion: cotizacion);
+      return pdfPrinc =
+          await GeneradorDocService().generarComprobanteCotizacionIndividual(
+        habitaciones: state,
+        cotizacion: cotizacion,
+        isDirect: true,
+      );
     } else {
-      return pdfPrinc = await GeneradorDocService()
-          .generarComprobanteCotizacionGrupal(
-              habitaciones: state, cotizacion: cotizacion);
+      return pdfPrinc =
+          await GeneradorDocService().generarComprobanteCotizacionGrupal(
+        habitaciones: state,
+        cotizacion: cotizacion,
+        isDirect: true,
+      );
     }
   }
 

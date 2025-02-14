@@ -81,17 +81,12 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                           showSaveButton: false,
                           context: context,
                           title:
-                              "Detalles de cotización - ${cotizacion.folioPrincipal}",
+                              "Detalles de ${(cotizacion.esConcretado ?? false) ? "Reservación" : "Cotización"} - ${cotizacion.folioPrincipal}",
                         ),
                         if (!isLoading)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 5),
-                              TextStyles.titleText(
-                                text: "Datos del huesped",
-                                color: colorElement,
-                              ),
                               const SizedBox(height: 8),
                               Card(
                                 elevation: 6,
@@ -176,9 +171,15 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                           Expanded(
                                             child: TextFormFieldCustom
                                                 .textFormFieldwithBorder(
-                                              name: "Fecha de vigencia",
-                                              initialValue:
-                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
+                                              name: (cotizacion.esConcretado ??
+                                                      false)
+                                                  ? "Responsable"
+                                                  : "Fecha de vigencia",
+                                              initialValue: (cotizacion
+                                                          .esConcretado ??
+                                                      false)
+                                                  ? "${"${cotizacion.autor?.nombre} "} ${cotizacion.autor?.apellido ?? ''}"
+                                                  : "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
@@ -195,7 +196,8 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                 child: Divider(color: colorElement),
                               ),
                               TextStyles.titleText(
-                                text: "Habitaciones cotizadas",
+                                text:
+                                    "Habitaciones ${(cotizacion.esConcretado ?? false) ? "reservadas" : "cotizadas"}",
                                 color: colorElement,
                               ),
                               const SizedBox(height: 12),
@@ -332,20 +334,22 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                           setState(() => isLoading = true);
 
                                           if (cotizacion.esGrupo!) {
-                                            comprobantePDF = await GeneradorDocService()
-                                                .generarComprobanteCotizacionGrupal(
-                                                    habitaciones: cotizacion
-                                                            .habitaciones ??
-                                                        List<
-                                                            Habitacion>.empty(),
-                                                    cotizacion: cotizacion);
+                                            comprobantePDF =
+                                                await GeneradorDocService()
+                                                    .generarComprobanteCotizacionGrupal(
+                                              habitaciones:
+                                                  cotizacion.habitaciones ??
+                                                      List<Habitacion>.empty(),
+                                              cotizacion: cotizacion,
+                                            );
                                           } else {
                                             comprobantePDF =
                                                 await GeneradorDocService()
                                                     .generarComprobanteCotizacionIndividual(
-                                                        habitaciones: cotizacion
-                                                            .habitaciones!,
-                                                        cotizacion: cotizacion);
+                                              habitaciones:
+                                                  cotizacion.habitaciones!,
+                                              cotizacion: cotizacion,
+                                            );
                                           }
 
                                           Future.delayed(

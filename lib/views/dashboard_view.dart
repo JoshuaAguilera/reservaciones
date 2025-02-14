@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/database/tables/cotizaciones_table.dart';
 import 'package:generador_formato/models/notificacion_model.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
 import 'package:generador_formato/ui/custom_widgets.dart';
@@ -56,6 +55,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     double screenWidth = MediaQuery.of(context).size.width;
     final notificaciones = ref.watch(NotificacionProvider.provider);
     final typePeriod = ref.watch(filterReport);
+    final selectTime = ref.watch(dateReport);
     final reportesSync = ref.watch(reporteCotizacionesIndProvider(''));
     final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
     final ultimasCotizacionesSync = ref.watch(ultimaCotizacionesProvider(''));
@@ -70,8 +70,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             : 12;
 
     DateTime _getStartOfWeek() {
-      final now = DateTime.now();
-      return now.subtract(Duration(days: now.weekday - 1));
+      return selectTime.subtract(Duration(days: selectTime.weekday - 1));
     }
 
     DateTime _getEndOfWeek() {
@@ -87,17 +86,46 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             _getStartOfWeek(),
             _getEndOfWeek(),
           );
-          break;
         case "Mensual":
-          period = monthNames[DateTime.now().month - 1];
-          break;
+          period = "${monthNames[selectTime.month - 1]} ${selectTime.year}";
         case "Anual":
-          period = DateTime.now().year.toString();
+          period = selectTime.year.toString();
         default:
           period = "Unknow";
       }
 
       return period;
+    }
+
+    void _changeDateView({bool isAfter = false}) {
+      switch (typePeriod) {
+        case "Semanal":
+          if (!isAfter) {
+            ref.read(dateReport.notifier).update(
+                (state) => selectTime.subtract(const Duration(days: 7)));
+          } else {
+            ref
+                .read(dateReport.notifier)
+                .update((state) => selectTime.add(const Duration(days: 7)));
+          }
+        case "Mensual":
+          if (!isAfter) {
+            ref.read(dateReport.notifier).update((state) => DateTime(
+                selectTime.year, (selectTime.month - 1), selectTime.day));
+          } else {
+            ref.read(dateReport.notifier).update((state) => DateTime(
+                selectTime.year, (selectTime.month + 1), selectTime.day));
+          }
+        case "Anual":
+          if (!isAfter) {
+            ref.read(dateReport.notifier).update((state) => DateTime(
+                (selectTime.year - 1), selectTime.month, selectTime.day));
+          } else {
+            ref.read(dateReport.notifier).update((state) => DateTime(
+                (selectTime.year + 1), selectTime.month, selectTime.day));
+          }
+        default:
+      }
     }
 
     Widget _countQuotes(bool isCompact, {bool modeHorizontal = false}) {
@@ -150,6 +178,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         Durations.medium1,
                         () {
                           if (mounted) {
+                            ref.read(dateReport.notifier).update(
+                                  (state) => DateTime.now().subtract(Duration(
+                                      days: DateTime.now().weekday - 1)),
+                                );
+
                             int count = quotesAboutExpire.length;
 
                             if (count > 0) {
@@ -328,20 +361,39 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               MainAxisAlignment.end,
                                           children: [
                                             Expanded(
-                                              child: TextStyles.standardText(
-                                                text: _getPeriodReportSelect(),
+                                              child: Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Iconsax
+                                                          .arrow_left_1_outline,
+                                                    ),
+                                                    onPressed: () =>
+                                                        _changeDateView(),
+                                                  ),
+                                                  TextStyles.standardText(
+                                                    text:
+                                                        _getPeriodReportSelect(),
+                                                  ),
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Iconsax
+                                                          .arrow_right_4_outline,
+                                                    ),
+                                                    onPressed: () =>
+                                                        _changeDateView(
+                                                            isAfter: true),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                             const SizedBox(width: 10),
                                             CustomDropdown.dropdownMenuCustom(
                                               fontSize: 12,
                                               initialSelection: typePeriod,
-                                              onSelected: (String? value) =>
-                                                  setState(
-                                                () => ref
-                                                    .read(filterReport.notifier)
-                                                    .update((state) => value!),
-                                              ),
+                                              onSelected: (String? value) => ref
+                                                  .read(filterReport.notifier)
+                                                  .update((state) => value!),
                                               elements: filtrosRegistro,
                                               screenWidth: null,
                                               compact: true,
@@ -449,7 +501,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                           datum.dia,
                                                   yValueMapper:
                                                       (datum, index) => datum
-                                                          .numCotizacionesGrupalesPreventa,
+                                                          .numReservacionesGrupales,
                                                   name:
                                                       "Reservaciones grupales",
                                                 ),
@@ -463,7 +515,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                           datum.dia,
                                                   yValueMapper:
                                                       (datum, index) => datum
-                                                          .numCotizacionesIndividualPreventa,
+                                                          .numReservacionesIndividual,
                                                   name:
                                                       "Reservaciones individuales",
                                                 ),
@@ -489,16 +541,20 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                     );
                                   },
                                   error: (error, stackTrace) {
-                                    return TextStyles.standardText(
-                                      text: "No se han encontrado resultados",
-                                      color: Theme.of(context).primaryColor,
+                                    return SizedBox(
+                                      height: 450,
+                                      child: TextStyles.standardText(
+                                        text: "No se han encontrado resultados",
+                                        color: Theme.of(context).primaryColor,
+                                      ),
                                     );
                                   },
                                   loading: () {
                                     return SizedBox(
                                       height: 450,
                                       child: ProgressIndicatorCustom(
-                                          screenHight: 450),
+                                        screenHight: 450,
+                                      ),
                                     );
                                   },
                                 )
@@ -658,8 +714,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       )
                                     ],
                                   ),
-                                ).animate().fadeIn(
-                                    delay: const Duration(milliseconds: 750)),
+                                ),
                                 cotizacionesDiariasSync.when(
                                   data: (list) {
                                     if (!Utility.foundQuotes(list)) {
@@ -743,7 +798,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 ),
                               ],
                             ),
-                          ),
+                          ).animate().fadeIn(
+                                delay: const Duration(
+                                  milliseconds: 550,
+                                ),
+                              ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(

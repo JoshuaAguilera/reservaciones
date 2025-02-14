@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
@@ -135,7 +136,7 @@ class AppDatabase extends _$AppDatabase {
         nombreHuesped: element.quote.nombreHuesped,
         numeroTelefonico: element.quote.numeroTelefonico,
         usuarioID: element.quote.usuarioID,
-        username: element.user!.username,
+        username: jsonEncode(element.user),
       );
 
       quotes.add(data);
@@ -152,6 +153,7 @@ class AppDatabase extends _$AppDatabase {
     bool inLastDay = false,
     bool inLastWeek = false,
     bool inLastMonth = false,
+    required List<bool> showFilter,
     // bool inLastYear = false,
   }) async {
     final query = select(cotizacion)
@@ -190,6 +192,49 @@ class AppDatabase extends _$AppDatabase {
       );
     }
 
+    Expression<bool> implementFilter = const Variable(true);
+
+    if (showFilter[1]) {
+      implementFilter = cotizacion.esGrupo.equals(true) &
+          cotizacion.esConcretado.equals(false) &
+          cotizacion.fechaLimite.isBiggerThan(
+            Variable(
+              DateTime.now(),
+            ),
+          );
+    }
+
+    if (showFilter[2]) {
+      implementFilter = cotizacion.esGrupo.equals(false) &
+          cotizacion.esConcretado.equals(false) &
+          cotizacion.fechaLimite.isBiggerThan(
+            Variable(
+              DateTime.now(),
+            ),
+          );
+    }
+
+    if (showFilter[3]) {
+      implementFilter = cotizacion.esGrupo.equals(true) &
+          cotizacion.esConcretado.equals(true);
+    }
+
+    if (showFilter[4]) {
+      implementFilter = cotizacion.esGrupo.equals(false) &
+          cotizacion.esConcretado.equals(true);
+    }
+
+    if (showFilter[5]) {
+      implementFilter = cotizacion.esConcretado.equals(false) &
+          cotizacion.fechaLimite.isSmallerThan(
+            Variable(
+              DateTime.now(),
+            ),
+          );
+    }
+
+    query.where(implementFilter);
+
     query.orderBy([OrderingTerm.desc(cotizacion.fecha)]);
 
     final result = await query.get();
@@ -215,7 +260,7 @@ class AppDatabase extends _$AppDatabase {
         nombreHuesped: element.quote.nombreHuesped,
         numeroTelefonico: element.quote.numeroTelefonico,
         usuarioID: element.quote.usuarioID,
-        username: element.user!.username,
+        username: jsonEncode(element.user),
       );
 
       quotes.add(data);
@@ -298,7 +343,7 @@ class AppDatabase extends _$AppDatabase {
         nombreHuesped: element.quote.nombreHuesped,
         numeroTelefonico: element.quote.numeroTelefonico,
         usuarioID: element.quote.usuarioID,
-        username: element.user!.username,
+        username: jsonEncode(element.user),
       );
 
       quotes.add(data);

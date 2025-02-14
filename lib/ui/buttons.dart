@@ -105,6 +105,7 @@ class Buttons {
     double? elevation,
     Color? colorBorder,
     double? spaceBetween,
+    bool compact = false,
   }) {
     return Tooltip(
       margin: const EdgeInsets.only(top: 10),
@@ -150,19 +151,22 @@ class Buttons {
               if (child != null)
                 Expanded(child: child)
               else
-                !isBold
-                    ? TextStyles.standardText(
-                        text: !isLoading ? text : "Espere",
-                        aling: TextAlign.center,
-                        size: sizeText,
-                        color: colorText,
-                      )
-                    : TextStyles.buttonTextStyle(
-                        text: !isLoading ? text : "Espere",
-                        aling: TextAlign.center,
-                        size: sizeText,
-                        color: colorText,
-                      ),
+                Expanded(
+                  flex: compact ? 1 : 0,
+                  child: !isBold
+                      ? TextStyles.standardText(
+                          text: !isLoading ? text : "Espere",
+                          aling: TextAlign.center,
+                          size: sizeText,
+                          color: colorText,
+                        )
+                      : TextStyles.buttonTextStyle(
+                          text: !isLoading ? text : "Espere",
+                          aling: TextAlign.center,
+                          size: sizeText,
+                          color: colorText,
+                        ),
+                ),
             ],
           ),
         ),
