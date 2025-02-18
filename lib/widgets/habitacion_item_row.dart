@@ -133,7 +133,9 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     // final useCashSeason = ref.watch(useCashSeasonProvider);
 
     Color colorCard = brightness == Brightness.light
-        ? const Color.fromARGB(255, 243, 243, 243)
+        ? widget.esDetalle
+            ? Colors.white
+            : const Color.fromARGB(255, 243, 243, 243)
         : DesktopColors.grisSemiPalido;
     Color colorText = Theme.of(context).primaryColor;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -206,19 +208,25 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               columnWidths: {
-                0: const FractionColumnWidth(0.1),
+                0: const FractionColumnWidth(0.075),
                 if (screenWidthWithSideBar < 1250 &&
-                    screenWidthWithSideBar > 950)
-                  1: const FractionColumnWidth(0.35),
+                    screenWidthWithSideBar > 1000)
+                  1: const FractionColumnWidth(0.13),
+                if (screenWidthWithSideBar > 1250)
+                  1: const FractionColumnWidth(0.12),
                 if (screenWidthWithSideBar < 1550 &&
-                    screenWidthWithSideBar > 1250)
-                  2: const FractionColumnWidth(0.1),
+                    screenWidthWithSideBar > 1300)
+                  2: const FractionColumnWidth(0.2),
                 if (screenWidthWithSideBar < 1550 &&
-                    screenWidthWithSideBar > 1350)
-                  3: const FractionColumnWidth(0.1),
+                    screenWidthWithSideBar > 1400)
+                  3: const FractionColumnWidth(0.2),
                 if (screenWidthWithSideBar < 1550 &&
-                    screenWidthWithSideBar > 1450)
-                  4: const FractionColumnWidth(0.1),
+                    screenWidthWithSideBar > 1500)
+                  4: const FractionColumnWidth(0.2),
+                if (screenWidthWithSideBar < 1200)
+                  4: const FractionColumnWidth(0.3),
+                if (screenWidthWithSideBar < 1300)
+                  5: const FractionColumnWidth(0.25)
               },
               border: const TableBorder(
                   horizontalInside: BorderSide(color: Colors.black87)),
@@ -244,7 +252,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         color: colorText,
                         size: 12,
                       ),
-                    if (screenWidthWithSideBar > 1250)
+                    if (screenWidthWithSideBar > 1000)
                       widget.esDetalle
                           ? TextStyles.standardText(
                               text: (widget.habitacion.adultos ?? 0).toString(),
@@ -276,7 +284,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                                 ),
                               ),
                             ),
-                    if (screenWidthWithSideBar > 1450)
+                    if (screenWidthWithSideBar > 1200)
                       widget.esDetalle
                           ? TextStyles.standardText(
                               text: (widget.habitacion.menores0a6 ?? 0)
@@ -309,7 +317,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                                 ),
                               ),
                             ),
-                    if (screenWidthWithSideBar > 1350)
+                    if (screenWidthWithSideBar > 1100)
                       widget.esDetalle
                           ? TextStyles.standardText(
                               text: (widget.habitacion.menores7a12 ?? 0)

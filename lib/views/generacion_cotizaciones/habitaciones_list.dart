@@ -82,6 +82,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                 else
                   Buttons.iconButtonCard(
                     icon: Iconsax.add_square_outline,
+                    backgroundColor: DesktopColors.prussianWhiteBlue,
                     tooltip: "Agregar habitacion",
                     onPressed: () => widget.newRoom!.call(),
                   ),
@@ -102,19 +103,25 @@ class _HabitacionesListState extends State<HabitacionesList> {
                     ),
                   ),
                   columnWidths: {
-                    0: const FractionColumnWidth(0.1),
+                    0: const FractionColumnWidth(0.075),
                     if (screenWidthWithSideBar < 1250 &&
-                        screenWidthWithSideBar > 950)
-                      1: const FractionColumnWidth(0.35),
+                        screenWidthWithSideBar > 1000)
+                      1: const FractionColumnWidth(0.13),
+                    if (screenWidthWithSideBar > 1250)
+                      1: const FractionColumnWidth(0.12),
                     if (screenWidthWithSideBar < 1550 &&
-                        screenWidthWithSideBar > 1250)
-                      2: const FractionColumnWidth(0.1),
+                        screenWidthWithSideBar > 1300)
+                      2: const FractionColumnWidth(0.2),
                     if (screenWidthWithSideBar < 1550 &&
-                        screenWidthWithSideBar > 1350)
-                      3: const FractionColumnWidth(0.1),
+                        screenWidthWithSideBar > 1400)
+                      3: const FractionColumnWidth(0.2),
                     if (screenWidthWithSideBar < 1550 &&
-                        screenWidthWithSideBar > 1450)
-                      4: const FractionColumnWidth(0.1),
+                        screenWidthWithSideBar > 1500)
+                      4: const FractionColumnWidth(0.2),
+                    if (screenWidthWithSideBar < 1200)
+                      4: const FractionColumnWidth(0.3),
+                    if (screenWidthWithSideBar < 1300)
+                      5: const FractionColumnWidth(0.25),
                   },
                   children: [
                     TableRow(
@@ -123,9 +130,9 @@ class _HabitacionesListState extends State<HabitacionesList> {
                           "#",
                           if (screenWidthWithSideBar > 950)
                             "Fechas de estancia",
-                          if (screenWidthWithSideBar > 1250) "Adultos",
-                          if (screenWidthWithSideBar > 1450) "Menores 0-6",
-                          if (screenWidthWithSideBar > 1350) "Menores 7-12",
+                          if (screenWidthWithSideBar > 1000) "Adultos",
+                          if (screenWidthWithSideBar > 1200) "Menores 0-6",
+                          if (screenWidthWithSideBar > 1100) "Menores 7-12",
                           if (screenWidthWithSideBar > 1700) "Tarifa Real",
                           if (screenWidthWithSideBar > 1550) "Tarifa Total",
                           "Opciones",
@@ -134,7 +141,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                             text: item,
                             aling: TextAlign.center,
                             color: Theme.of(context).primaryColor,
-                            overClip: true,
+                            overClip: false,
                             size: 11.5,
                           ),
                       ],

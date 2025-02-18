@@ -87,6 +87,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
         context: context,
         builder: (context) => Dialogs.customAlertDialog(
           context: context,
+          otherButton: true,
           title: "Eliminar tarifa",
           contentText:
               "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",

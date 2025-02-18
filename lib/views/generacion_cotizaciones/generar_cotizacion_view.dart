@@ -12,7 +12,6 @@ import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/ui/progress_indicator.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';

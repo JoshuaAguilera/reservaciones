@@ -109,7 +109,9 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                 children: [
                   TextFormFieldCustom.textFormFieldwithBorder(
                     name: "Nueva Contraseña",
+                    isPassword: true,
                     controller: passwordMailNewController,
+                    passwordVisible: true,
                     validator: (p0) {
                       if (p0 == null || p0!.isEmpty || p0.length < 4) {
                         return "La contraseña debe de tener al menos 4 caracteres*";
@@ -119,6 +121,8 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                   ),
                   TextFormFieldCustom.textFormFieldwithBorder(
                     name: "Confirmar Contraseña",
+                    isPassword: true,
+                    passwordVisible: true,
                     controller: passwordMailConfirmController,
                     validator: (p0) {
                       if (passwordMailNewController.text.length > 0) {

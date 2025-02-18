@@ -44,6 +44,8 @@ final changeTariffPolicyProvider = StateProvider<int>((ref) => 0);
 final selectedModeViewProvider =
     StateProvider<List<bool>>((ref) => <bool>[true, false, false]);
 
+final dateTarifferProvider = StateProvider<DateTime>((ref) => DateTime.now());    
+
 final temporadasIndividualesProvider = StateProvider<List<Temporada>>(
   (ref) => [
     Temporada(nombre: "DIRECTO", editable: false),

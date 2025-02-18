@@ -86,6 +86,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
             ),
             build: (format) => widget.comprobantePDF.save().then(
               (value) {
+                if (!isLoadingDoc) return value;
                 Future.delayed(
                   Durations.short4,
                   () {

@@ -156,7 +156,7 @@ class ItemRows {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.edit, color: DesktopColors.mentaOscure),
+                Icon(Iconsax.edit_outline, color: DesktopColors.mentaOscure),
                 TextStyles.standardText(
                     text: "Editar", color: Theme.of(context).primaryColor)
               ],
@@ -178,6 +178,8 @@ class ItemRows {
                   },
                   nameButtonCancel: "Cancelar",
                   withButtonCancel: true,
+                  withLoadingProcess: true,
+                  otherButton: true,
                   iconData: Icons.delete,
                 ),
               );
@@ -185,7 +187,7 @@ class ItemRows {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.delete, color: DesktopColors.cerulean),
+                Icon(CupertinoIcons.delete, color: DesktopColors.cerulean),
                 TextStyles.standardText(
                     text: "Eliminar", color: Theme.of(context).primaryColor)
               ],

@@ -230,7 +230,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                           icon: const Icon(
                                               HeroIcons.square_3_stack_3d),
                                           isExpanded: true,
-                                          value: widget.usuario?.rol ?? rol,
+                                          value: rol,
                                           items: [
                                             for (var item in roles)
                                               DropdownMenuItem(

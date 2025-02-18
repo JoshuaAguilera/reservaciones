@@ -172,7 +172,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             fontFamily: "poppins_regular",
                             height: 1),
                         decoration: TextFormFieldStyle.decorationFieldSearch(
-                          label: "Buscar",
+                          label: "Buscar por nombre de huésped",
                           controller: _searchController,
                           function: () {
                             if (_searchController.text.isNotEmpty) {

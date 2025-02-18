@@ -167,7 +167,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             .difference(DateTime.now())
                             .inDays;
 
-                        if (difference <= 2 && difference >= 0) {
+                        if (difference <= 2 &&
+                            difference >= 0 &&
+                            (element.esConcretado ?? false)) {
                           return true;
                         }
 
@@ -355,51 +357,45 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           size: sizeTitles,
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Iconsax
-                                                          .arrow_left_1_outline,
-                                                    ),
-                                                    onPressed: () =>
-                                                        _changeDateView(),
-                                                  ),
-                                                  TextStyles.standardText(
-                                                    text:
-                                                        _getPeriodReportSelect(),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Iconsax
-                                                          .arrow_right_4_outline,
-                                                    ),
-                                                    onPressed: () =>
-                                                        _changeDateView(
-                                                            isAfter: true),
-                                                  ),
-                                                ],
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        spacing: 10,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Iconsax.arrow_left_1_outline,
+                                                ),
+                                                onPressed: () =>
+                                                    _changeDateView(),
                                               ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            CustomDropdown.dropdownMenuCustom(
-                                              fontSize: 12,
-                                              initialSelection: typePeriod,
-                                              onSelected: (String? value) => ref
-                                                  .read(filterReport.notifier)
-                                                  .update((state) => value!),
-                                              elements: filtrosRegistro,
-                                              screenWidth: null,
-                                              compact: true,
-                                            ),
-                                          ],
-                                        ),
+                                              TextStyles.standardText(
+                                                text: _getPeriodReportSelect(),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Iconsax.arrow_right_4_outline,
+                                                ),
+                                                onPressed: () =>
+                                                    _changeDateView(
+                                                        isAfter: true),
+                                              ),
+                                            ],
+                                          ),
+                                          CustomDropdown.dropdownMenuCustom(
+                                            fontSize: 12,
+                                            initialSelection: typePeriod,
+                                            onSelected: (String? value) => ref
+                                                .read(filterReport.notifier)
+                                                .update((state) => value!),
+                                            elements: filtrosRegistro,
+                                            screenWidth: null,
+                                            compact: true,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

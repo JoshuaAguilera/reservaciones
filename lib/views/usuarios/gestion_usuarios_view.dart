@@ -16,7 +16,6 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
 import '../../ui/textformfield_style.dart';
-import '../../utils/helpers/utility.dart';
 import '../../widgets/text_styles.dart';
 
 class GestionUsuariosView extends ConsumerStatefulWidget {
@@ -93,6 +92,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                   ),
                   SizedBox(
                     width: 180,
+                    height: 37,
                     child: Buttons.commonButton(
                       onPressed: () {
                         showDialog(
@@ -124,7 +124,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                         );
                       },
                       text: "Agregar usuario",
-                      color: DesktopColors.cerulean,
+                      color: DesktopColors.prussianWhiteBlue,
                     ),
                   )
                 ],
@@ -175,10 +175,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                   ],
                 ),
               ).animate().fadeIn(delay: 350.ms),
-              if (!Utility.isResizable(
-                      extended: widget.sideController.extended,
-                      context: context) &&
-                  _selectedMode.first)
+              if (_selectedMode.first)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
                   child: Table(

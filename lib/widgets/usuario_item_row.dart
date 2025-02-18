@@ -12,7 +12,6 @@ import '../services/auth_service.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
 import '../utils/encrypt/encrypter.dart';
-import '../utils/helpers/utility.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 import 'textformfield_custom.dart';
@@ -124,34 +123,24 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
 
     return Container(
       child: !widget.isTable
-          ? selected
-              ? _ListTileUser(
-                  usuario: widget.usuario,
-                  onPressedDelete: null,
-                  onPressedEdit: null,
-                  sideController: widget.sideController,
-                )
-              : _ListTileUser(
-                  usuario: widget.usuario,
-                  onPressedDelete: () => showDeleteDialog(widget.usuario),
-                  onPressedEdit: () =>
-                      showUpdateDialog(widget.usuario, brightness),
-                  sideController: widget.sideController,
-                )
-          : selected
-              ? _TableRowUser(
-                  usuario: widget.usuario,
-                  onPressedDelete: null,
-                  onPressedEdit: null,
-                  sideController: widget.sideController,
-                )
-              : _TableRowUser(
-                  usuario: widget.usuario,
-                  onPressedDelete: () => showDeleteDialog(widget.usuario),
-                  onPressedEdit: () =>
-                      showUpdateDialog(widget.usuario, brightness),
-                  sideController: widget.sideController,
-                ),
+          ? _ListTileUser(
+              usuario: widget.usuario,
+              onPressedDelete:
+                  selected ? null : () => showDeleteDialog(widget.usuario),
+              onPressedEdit: selected
+                  ? null
+                  : () => showUpdateDialog(widget.usuario, brightness),
+              sideController: widget.sideController,
+            )
+          : _TableRowUser(
+              usuario: widget.usuario,
+              onPressedDelete:
+                  selected ? null : () => showDeleteDialog(widget.usuario),
+              onPressedEdit: selected
+                  ? null
+                  : () => showUpdateDialog(widget.usuario, brightness),
+              sideController: widget.sideController,
+            ),
     ).animate().slideY().fadeIn(
         begin: -0.2, delay: Duration(milliseconds: 200 + (35 * widget.index)));
   }
@@ -164,7 +153,6 @@ class _TableRowUser extends ConsumerStatefulWidget {
   final SidebarXController sideController;
 
   const _TableRowUser({
-    super.key,
     required this.usuario,
     required this.onPressedDelete,
     required this.onPressedEdit,
@@ -292,7 +280,6 @@ class _ListTileUser extends ConsumerStatefulWidget {
   final SidebarXController sideController;
 
   const _ListTileUser({
-    super.key,
     required this.usuario,
     required this.onPressedDelete,
     required this.onPressedEdit,
@@ -315,6 +302,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
     return Card(
       elevation: 5,
       child: ListTile(
+        titleAlignment: ListTileTitleAlignment.top,
         leading: TextStyles.TextSpecial(
           day: widget.usuario.id,
           colorTitle: colorText,
@@ -326,7 +314,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
         title: TextStyles.titleText(
           text: widget.usuario.username ?? '',
           color: colorText,
-          size: 14,
+          size: 15,
         ),
         subtitle: Opacity(
           opacity: 0.8,
@@ -345,67 +333,40 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
                           : "Rol de usuario:   ",
                       color: colorText,
                     ),
-                    Container(
+                    SizedBox(
                       width: 150,
-                      decoration: BoxDecoration(
-                        color: Utility.getColorTypeUser(widget.usuario.rol!,
-                            alpha: 100),
-                        border: Border.all(
-                          color: Utility.getColorTypeUser(widget.usuario.rol!)!,
-                          width: 1.5,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: TextStyles.standardText(
-                          text: widget.usuario.rol!,
-                          aling: TextAlign.center,
-                          color: Utility.darken(
-                              Utility.getColorTypeUser(widget.usuario.rol!)!,
-                              brightness == Brightness.light ? 0.1 : -0.1),
-                          overClip: true,
-                          isBold: true,
-                        ),
-                      ),
-                    ).animate(
-                      onPlay: (controller) => controller.repeat(),
-                      effects: [
-                        if (widget.usuario.rol == "SUPERADMIN" ||
-                            widget.usuario.rol == "ADMIN")
-                          ShimmerEffect(
-                            delay: 2.5.seconds,
-                            duration: 750.ms,
-                            color: Colors.white,
-                          ),
-                      ],
-                    )
+                      child: CustomWidgets.itemMedal(
+                          (widget.usuario.rol ?? ''), brightness),
+                    ),
                   ],
                 ),
               ),
               TextStyles.TextAsociative(
                 (screenWidthWithSideBar < 1100)
-                    ? "Nombre: "
-                    : "Nombre Completo: ",
+                    ? "Nombre:  "
+                    : "Nombre Completo:  ",
                 "${widget.usuario.nombre ?? ''} ${widget.usuario.apellido ?? '-'}",
                 color: colorText,
+                boldInversed: true,
               ),
-              TextStyles.TextAsociative(
-                (screenWidthWithSideBar < 1100)
-                    ? "Correo: "
-                    : "Correo electronico: ",
-                widget.usuario.correoElectronico ?? '-',
-                color: colorText,
-              ),
-              TextStyles.TextAsociative(
-                (screenWidthWithSideBar < 1100)
-                    ? "Número: "
-                    : "Número telefonico: ",
-                widget.usuario.telefono ?? '-',
-                color: colorText,
-              ),
+              if ((widget.usuario.correoElectronico ?? '').isNotEmpty)
+                TextStyles.TextAsociative(
+                  (screenWidthWithSideBar < 1100)
+                      ? "Correo: "
+                      : "Correo electronico: ",
+                  widget.usuario.correoElectronico ?? '-',
+                  color: colorText,
+                  boldInversed: true,
+                ),
+              if ((widget.usuario.telefono ?? '').isNotEmpty)
+                TextStyles.TextAsociative(
+                  (screenWidthWithSideBar < 1100)
+                      ? "Número: "
+                      : "Número telefonico: ",
+                  widget.usuario.telefono ?? '-',
+                  color: colorText,
+                  boldInversed: true,
+                ),
             ],
           ),
         ),

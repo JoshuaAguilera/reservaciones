@@ -81,6 +81,7 @@ class _ControllerCalendarWidgetState
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifasProvider = ref.watch(allTarifaProvider(""));
+    final dateTariffer = ref.watch(dateTarifferProvider);
 
     return SizedBox(
       width: screenWidth > 875
@@ -198,6 +199,7 @@ class _ControllerCalendarWidgetState
                           height: 390,
                           child: Column(
                             children: [
+                              // _buildHeaderMonth(),
                               _buildHeaderWeek(),
                               const Divider(height: 5),
                               _buildWeeks(),

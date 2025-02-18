@@ -325,51 +325,54 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                   spacing: 10,
                                   runSpacing: 5,
                                   children: [
-                                    SizedBox(
-                                      width: 230,
-                                      height: 40,
-                                      child: Buttons.commonButton(
-                                        text: "Generar comprobante PDF",
-                                        onPressed: () async {
-                                          setState(() => isLoading = true);
+                                    if (!(cotizacion.esConcretado ?? false))
+                                      if (!(DateTime.now().compareTo( DateTime.tryParse(cotizacion.fechaLimite ?? '') ?? DateTime.now()) == 1))
+                                        SizedBox(
+                                          width: 230,
+                                          height: 40,
+                                          child: Buttons.commonButton(
+                                            text: "Generar comprobante PDF",
+                                            onPressed: () async {
+                                              setState(() => isLoading = true);
 
-                                          if (cotizacion.esGrupo!) {
-                                            comprobantePDF =
-                                                await GeneradorDocService()
-                                                    .generarComprobanteCotizacionGrupal(
-                                              habitaciones:
-                                                  cotizacion.habitaciones ??
+                                              if (cotizacion.esGrupo ?? false) {
+                                                comprobantePDF =
+                                                    await GeneradorDocService()
+                                                        .generarComprobanteCotizacionGrupal(
+                                                  habitaciones: cotizacion
+                                                          .habitaciones ??
                                                       List<Habitacion>.empty(),
-                                              cotizacion: cotizacion,
-                                            );
-                                          } else {
-                                            comprobantePDF =
-                                                await GeneradorDocService()
-                                                    .generarComprobanteCotizacionIndividual(
-                                              habitaciones:
-                                                  cotizacion.habitaciones!,
-                                              cotizacion: cotizacion,
-                                            );
-                                          }
+                                                  cotizacion: cotizacion,
+                                                );
+                                              } else {
+                                                comprobantePDF =
+                                                    await GeneradorDocService()
+                                                        .generarComprobanteCotizacionIndividual(
+                                                  habitaciones:
+                                                      cotizacion.habitaciones!,
+                                                  cotizacion: cotizacion,
+                                                );
+                                              }
 
-                                          Future.delayed(
-                                            Durations.long2,
-                                            () =>
-                                                setState(() => isFinish = true),
-                                          );
-                                        },
+                                              Future.delayed(
+                                                Durations.long2,
+                                                () => setState(
+                                                    () => isFinish = true),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                    if (!(cotizacion.esConcretado ?? false))
+                                      SizedBox(
+                                        width: 230,
+                                        height: 40,
+                                        child: Buttons.commonButton(
+                                          text: "Crear Reservación",
+                                          onPressed: null,
+                                          tooltipText:
+                                              "Función aun no disponible",
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 230,
-                                      height: 40,
-                                      child: Buttons.commonButton(
-                                        text: "Concretar cotización",
-                                        onPressed: null,
-                                        tooltipText:
-                                            "Función aun no disponible",
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
