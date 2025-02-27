@@ -21,6 +21,7 @@ import '../../services/tarifa_service.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/show_snackbar.dart';
 import '../../ui/title_page.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/dialogs.dart';
 import 'tarifario_calendary_view.dart';
 
@@ -38,7 +39,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   bool targetForm = false;
   bool showForm = true;
   bool inMenu = false;
-  int yearNow = DateTime.now().year;
   int intervaloHab = 1;
   int limitCotGrup = 1;
 
@@ -261,7 +261,10 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                                 onCreate.call();
                               },
                               text: "Crear tarifa",
-                            ).animate(target: !targetForm ? 1 : 0).fadeIn(),
+                            ).animate(target: !targetForm ? 1 : 0).fadeIn(
+                                  duration:
+                                      Settings.applyAnimations ? null : 0.ms,
+                                ),
                           ),
                         ],
                       ),
@@ -281,9 +284,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                             modesVisual: [],
                             onChanged: (p0, p1) {
                               selectedModeCalendar[p0] = p0 == p1;
-                              if (selectedModeCalendar[0]) {
-                                yearNow = DateTime.now().year;
-                              }
+                              // if (selectedModeCalendar[0]) {
+                              //   yearNow = DateTime.now().year;
+                              // }
                               setState(() {});
                             },
                             arrayStrings: filtrosRegistro,
@@ -327,8 +330,18 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                             ),
                           )
                               .animate(target: target ? 1 : 0)
-                              .slideX(begin: -0.2, duration: 550.ms)
-                              .fadeIn(delay: !target ? 0.ms : 400.ms),
+                              .slideX(
+                                begin: -0.2,
+                                duration:
+                                    Settings.applyAnimations ? 550.ms : 0.ms,
+                              )
+                              .fadeIn(
+                                delay: !Settings.applyAnimations
+                                    ? 0.ms
+                                    : (!target ? 0.ms : 400.ms),
+                                duration:
+                                    Settings.applyAnimations ? null : 0.ms,
+                              ),
                       ],
                     ),
                   SizedBox(
@@ -352,7 +365,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                   viewWeek: selectedModeCalendar[0],
                   viewMonth: selectedModeCalendar[1],
                   viewYear: selectedModeCalendar[2],
-                  yearNow: yearNow,
                   targetForm: targetForm,
                   showForm: showForm,
                   onCreate: () => onCreate.call(),
@@ -368,9 +380,6 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                     Future.delayed(Durations.extralong1,
                         () => setState(() => showForm = !showForm));
                   },
-                  increaseYear: () => setState(() => yearNow++),
-                  reduceYear: () => setState(() => yearNow--),
-                  setYear: (p0) => setState(() => yearNow = p0),
                 ),
               if (modeViewProvider[1])
                 TarifarioTableView(
@@ -388,7 +397,9 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           ),
         ),
       ),
-    ).animate(target: targetForm ? 0 : 1).fadeIn();
+    ).animate(target: targetForm ? 0 : 1).fadeIn(
+          duration: Settings.applyAnimations ? null : 0.ms,
+        );
   }
 
   void Function()? onCreate({bool isUpdating = false}) {

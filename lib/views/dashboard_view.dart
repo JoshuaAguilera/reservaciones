@@ -24,6 +24,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../providers/usuario_provider.dart';
+import '../utils/shared_preferences/settings.dart';
 import '../widgets/cotizacion_item_row.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/text_styles.dart';
@@ -168,7 +169,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             .inDays;
 
                         if (difference <= 2 &&
-                            difference >= 0 &&
+                            difference > 0 &&
                             (element.esConcretado ?? false)) {
                           return true;
                         }
@@ -271,7 +272,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           ),
         ),
       ).animate().fadeIn(
-            delay: Duration(milliseconds: isCompact ? 250 : 500),
+            delay: Duration(
+              milliseconds: !Settings.applyAnimations
+                  ? 0
+                  : isCompact
+                      ? 250
+                      : 500,
+            ),
           );
     }
 
@@ -322,7 +329,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     ],
                   )
                 ],
-              ).animate().fadeIn(),
+              ).animate().fadeIn(
+                    duration: Settings.applyAnimations
+                        ? null
+                        : const Duration(milliseconds: 0),
+                  ),
               const SizedBox(height: 5),
               if (!isLoading)
                 Center(
@@ -557,7 +568,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               ],
                             ),
                           ),
-                        ).animate().fadeIn(delay: 100.ms),
+                        ).animate().fadeIn(
+                              delay: !Settings.applyAnimations ? null : 100.ms,
+                              duration: Settings.applyAnimations
+                                  ? null
+                                  : const Duration(milliseconds: 0),
+                            ),
                       ),
                       if (isSmallDash) const SizedBox(width: 10),
                       if (isSmallDash)
@@ -674,12 +690,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   enableTooltip: true,
                                                   dataLabelSettings:
                                                       const DataLabelSettings(
-                                                          isVisible: true,
-                                                          showZeroValue: false,
-                                                          textStyle: TextStyle(
-                                                              fontFamily:
-                                                                  "poppins_regular",
-                                                              fontSize: 11)),
+                                                    isVisible: true,
+                                                    showZeroValue: false,
+                                                    textStyle: TextStyle(
+                                                      fontFamily:
+                                                          "poppins_regular",
+                                                      fontSize: 11,
+                                                    ),
+                                                  ),
                                                 )
                                               else
                                                 DoughnutSeries<NumeroCotizacion,
@@ -725,7 +743,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 Theme.of(context).primaryColor,
                                             aling: TextAlign.center,
                                           ),
-                                        ).animate().fadeIn(delay: 350.ms),
+                                        ).animate().fadeIn(
+                                              delay: !Settings.applyAnimations
+                                                  ? null
+                                                  : 350.ms,
+                                              duration: Settings.applyAnimations
+                                                  ? null
+                                                  : const Duration(
+                                                      milliseconds: 0),
+                                            ),
                                       );
                                     } else {
                                       return const SizedBox();
@@ -795,9 +821,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               ],
                             ),
                           ).animate().fadeIn(
-                                delay: const Duration(
-                                  milliseconds: 550,
-                                ),
+                                delay:
+                                    !Settings.applyAnimations ? null : 550.ms,
+                                duration: Settings.applyAnimations
+                                    ? null
+                                    : const Duration(milliseconds: 0),
                               ),
                         ),
                         const SizedBox(width: 10),
@@ -868,10 +896,24 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 CustomWidgets.messageNotResult(
                                                     context: context),
                                           )
-                                              .animate(delay: 1250.ms)
+                                              .animate(
+                                                delay: !Settings.applyAnimations
+                                                    ? null
+                                                    : 1250.ms,
+                                              )
                                               .slide(
-                                                  begin: const Offset(0, 0.05))
-                                              .fadeIn();
+                                                begin: const Offset(0, 0.05),
+                                                duration:
+                                                    Settings.applyAnimations
+                                                        ? null
+                                                        : 0.ms,
+                                              )
+                                              .fadeIn(
+                                                duration:
+                                                    Settings.applyAnimations
+                                                        ? null
+                                                        : 0.ms,
+                                              );
                                         } else {
                                           return SizedBox(
                                             width: screenWidth,
@@ -891,9 +933,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               },
                                             ),
                                           ).animate().fadeIn(
-                                                delay: const Duration(
-                                                  milliseconds: 1250,
-                                                ),
+                                                delay: !Settings.applyAnimations
+                                                    ? null
+                                                    : 1250.ms,
+                                                duration:
+                                                    Settings.applyAnimations
+                                                        ? null
+                                                        : 0.ms,
                                               );
                                         }
                                       },
@@ -913,7 +959,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                 ),
                               ),
                             ).animate().fadeIn(
-                                delay: const Duration(milliseconds: 1050)),
+                                  delay: !Settings.applyAnimations
+                                      ? null
+                                      : 1050.ms,
+                                  duration:
+                                      Settings.applyAnimations ? null : 0.ms,
+                                ),
                           ),
                         ),
                       ],

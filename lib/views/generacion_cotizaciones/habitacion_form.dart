@@ -27,6 +27,7 @@ import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/number_input_with_increment_decrement.dart';
 import '../../widgets/text_styles.dart';
@@ -885,7 +886,10 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   ),
                                 const SizedBox(height: 15),
                               ],
-                            ).animate(target: target).fadeIn(duration: 400.ms);
+                            ).animate(target: target).fadeIn(
+                                  duration:
+                                      Settings.applyAnimations ? 400.ms : 0.ms,
+                                );
                           },
                           error: (error, stackTrace) => SizedBox(
                             height: 150,
@@ -1073,7 +1077,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           500.ms, () => widget.sideController.selectIndex(1));
                     }
                   },
-                ).animate(target: target).fadeIn(duration: 800.ms);
+                ).animate(target: target).fadeIn(
+                      duration: Settings.applyAnimations ? 800.ms : 0.ms,
+                    );
               },
               error: (error, stackTrace) => const SizedBox(),
               loading: () => const SizedBox(),

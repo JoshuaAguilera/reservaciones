@@ -8,6 +8,7 @@ import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/text_styles.dart';
 
@@ -122,6 +123,8 @@ class _TarifarioChecklistViewState
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 750.ms);
+    ).animate().fadeIn(
+          duration: Settings.applyAnimations ? 750.ms : 0.ms,
+        );
   }
 }

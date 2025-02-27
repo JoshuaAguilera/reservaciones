@@ -32,6 +32,7 @@ class TarifaService extends BaseService {
                     TarifaBaseCompanion.insert(
                       code: Value(codeBase),
                       descIntegrado: Value(tarifaBase.descIntegrado),
+                      withAuto: Value(tarifaBase.withAuto),
                       nombre: Value(tarifaBase.nombre),
                       tarifaPadreId: Value(tarifaBase.tarifaPadre?.id),
                       tarifaOrigenId: Value(tarifaBase.tarifaOrigenId),

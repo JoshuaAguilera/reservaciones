@@ -60,8 +60,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
   @override
   void initState() {
-    _selectNewBaseTariff(widget.tarifasBase.firstOrNull);
-    _updateTarifasPadre(widget.tarifasBase.firstOrNull);
+    _selectNewBaseTariff(null);
 
     super.initState();
   }
@@ -99,7 +98,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     }
   }
 
-  Widget _textFieldData(double? data, String name) {
+  Widget _textFieldData(
+      double? data, String name, void Function(String)? onChanged) {
     return Expanded(
       child: SizedBox(
         height: 33,
@@ -109,9 +109,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
           initialValue: data?.toString(),
           marginBottom: 0,
           isNumeric: true,
-          onChanged: (p0) {
-            data = double.parse(p0.isEmpty ? "0" : p0);
-          },
+          onChanged: onChanged,
         ),
       ),
     );
@@ -170,6 +168,12 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                       size: 17,
                     ),
                     const SizedBox(height: 15),
+                    _buildStepItem(
+                      "Nueva Tarifa",
+                      null,
+                      isNew: true,
+                    ),
+                    Divider(),
                     SingleChildScrollView(
                       child: Column(
                         children: [
@@ -178,11 +182,6 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                               element.nombre ?? '',
                               element,
                             ),
-                          _buildStepItem(
-                            "Nueva Tarifa",
-                            null,
-                            isNew: true,
-                          ),
                         ],
                       ),
                     ),
@@ -216,9 +215,9 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                 overClip: true,
                                 size: 12,
                               ),
-                              if (widget.tarifasBase.length > 1)
+                              if (tarifasBaseTags.length > 1)
                                 const SizedBox(height: 12),
-                              if (widget.tarifasBase.length > 1)
+                              if (tarifasBaseTags.length > 1)
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
@@ -280,7 +279,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               TextStyles.standardText(
-                                                text: "Dividendo:",
+                                                text: "Divisor:",
                                               ),
                                               const SizedBox(width: 10),
                                               SizedBox(
@@ -518,12 +517,25 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     Row(
                                       children: [
                                         _textFieldData(
-                                            upgradeCateg, "Categoria"),
-                                        const SizedBox(width: 10),
-                                        _textFieldData(upgradeMenor, "Menor"),
+                                          upgradeCateg,
+                                          "Categoria",
+                                          (p0) => upgradeCateg = double.parse(
+                                              p0.isEmpty ? "0" : p0),
+                                        ),
                                         const SizedBox(width: 10),
                                         _textFieldData(
-                                            upGradePaxAdic, "Pax Adic"),
+                                          upgradeMenor,
+                                          "Menor",
+                                          (p0) => upgradeMenor = double.parse(
+                                              p0.isEmpty ? "0" : p0),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        _textFieldData(
+                                          upGradePaxAdic,
+                                          "Pax Adic",
+                                          (p0) => upGradePaxAdic = double.parse(
+                                              p0.isEmpty ? "0" : p0),
+                                        ),
                                       ],
                                     ),
                                   ],

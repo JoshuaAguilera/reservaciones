@@ -28,6 +28,7 @@ import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/form_widgets.dart';
 import '../../widgets/text_styles.dart';
@@ -803,7 +804,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           ),
         ),
       ),
-    ).animate(target: target).fadeIn();
+    ).animate(target: target).fadeIn(
+          duration: Settings.applyAnimations ? null : 0.ms,
+        );
   }
 
   bool evaluatedDates(

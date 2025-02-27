@@ -14,6 +14,7 @@ import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/desktop_colors.dart';
 import '../../services/generador_doc_service.dart';
 import '../../ui/progress_indicator.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/text_styles.dart';
 import '../../widgets/textformfield_custom.dart';
 import '../generacion_cotizaciones/pdf_cotizacion_view.dart';
@@ -189,7 +190,11 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                     ],
                                   ),
                                 ),
-                              ).animate().fadeIn(duration: 250.ms),
+                              ).animate().fadeIn(
+                                    duration: Settings.applyAnimations
+                                        ? 250.ms
+                                        : 0.ms,
+                                  ),
                               const SizedBox(height: 12),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
@@ -326,7 +331,12 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                   runSpacing: 5,
                                   children: [
                                     if (!(cotizacion.esConcretado ?? false))
-                                      if (!(DateTime.now().compareTo( DateTime.tryParse(cotizacion.fechaLimite ?? '') ?? DateTime.now()) == 1))
+                                      if (!(DateTime.now().compareTo(
+                                              DateTime.tryParse(
+                                                      cotizacion.fechaLimite ??
+                                                          '') ??
+                                                  DateTime.now()) ==
+                                          1))
                                         SizedBox(
                                           width: 230,
                                           height: 40,

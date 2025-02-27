@@ -43,6 +43,17 @@ class _TitlePageState extends State<TitlePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                if (widget.icons != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 15, 5),
+                    child: Icon(
+                      widget.icons ?? CupertinoIcons.person,
+                      size: 32,
+                      color: brightness == Brightness.light
+                          ? Colors.black87
+                          : Colors.white,
+                    ),
+                  ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

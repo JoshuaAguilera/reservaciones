@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/widgets/day_info_item_row.dart';
 
 import '../database/database.dart';
@@ -190,13 +191,19 @@ class dynamicWidget {
           ),
         )
             .animate(
-                target: target,
-                delay: !compact
-                    ? !alreadyLoading
-                        ? 1750.ms
-                        : 350.ms
-                    : 2000.ms)
-            .scaleX(alignment: Alignment.centerLeft));
+              target: target,
+              delay: !Settings.applyAnimations
+                  ? null
+                  : (!compact
+                      ? !alreadyLoading
+                          ? 1750.ms
+                          : 350.ms
+                      : 2000.ms),
+            )
+            .scaleX(
+              alignment: Alignment.centerLeft,
+              duration: Settings.applyAnimations ? null : 0.ms,
+            ));
       } else {
         isRepeat = false;
         cards.add(SizedBox(width: sectionDay));

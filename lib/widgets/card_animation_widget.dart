@@ -11,6 +11,7 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/ui/buttons.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -114,7 +115,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 800),
+        duration: !Settings.applyAnimations
+            ? const Duration(milliseconds: 0)
+            : const Duration(milliseconds: 800),
         transitionBuilder: __transitionBuilder,
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
         switchInCurve: Curves.easeInBack,
@@ -150,7 +153,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildFront(Habitacion habitacion, bool typeQuote) {
     final useCashSeason = ref.watch(useCashSeasonRoomProvider);
-    
+
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,

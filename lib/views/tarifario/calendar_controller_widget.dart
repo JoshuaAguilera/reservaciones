@@ -6,6 +6,7 @@ import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/temporada_model.dart';
@@ -30,14 +31,6 @@ class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool viewMonth;
   final bool viewYear;
   final PageController pageMonthController;
-  final PageController pageWeekController;
-  final void Function(int)? onChangePageWeekController;
-  final int yearNow;
-  final void Function()? reduceYear;
-  final void Function()? increaseYear;
-  final void Function(int)? setYear;
-  final void Function(int)? onPreviewPage;
-  final void Function(int)? onNextPage;
   final void Function()? onCreated;
 
   const CalendarControllerWidget({
@@ -55,14 +48,6 @@ class CalendarControllerWidget extends ConsumerStatefulWidget {
     required this.viewMonth,
     required this.viewYear,
     required this.pageMonthController,
-    required this.pageWeekController,
-    required this.onChangePageWeekController,
-    required this.yearNow,
-    required this.reduceYear,
-    required this.increaseYear,
-    required this.setYear,
-    required this.onPreviewPage,
-    required this.onNextPage,
     required this.onCreated,
   });
 
@@ -73,8 +58,6 @@ class CalendarControllerWidget extends ConsumerStatefulWidget {
 
 class _ControllerCalendarWidgetState
     extends ConsumerState<CalendarControllerWidget> {
-  DateTime _currentMonth = DateTime.now();
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -82,6 +65,7 @@ class _ControllerCalendarWidgetState
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifasProvider = ref.watch(allTarifaProvider(""));
     final dateTariffer = ref.watch(dateTarifferProvider);
+    final pageWeek = ref.watch(pageWeekControllerProvider);
 
     return SizedBox(
       width: screenWidth > 875
@@ -133,26 +117,16 @@ class _ControllerCalendarWidgetState
                       ),
                       if (widget.viewYear)
                         SizedBox(
-                          height: 320,
                           width: 300,
                           child: Column(
                             children: [
-                              const Divider(height: 5),
-                              Expanded(
-                                child: PageView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: 10,
-                                  itemBuilder: (context, pageIndex) {
-                                    return _buildYear();
-                                  },
-                                ),
-                              ),
+                              _buildHeaderMonth(dateTariffer),
                               SizedBox(
                                 height: 5,
                                 width: double.infinity,
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-                                  controller: widget.pageWeekController,
+                                  controller: pageWeek,
                                   itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
                                     return const SizedBox();
@@ -168,14 +142,14 @@ class _ControllerCalendarWidgetState
                           width: 300,
                           child: Column(
                             children: [
-                              _buildHeaderMonth(),
+                              _buildHeaderMonth(dateTariffer),
                               const Divider(height: 5),
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: 10,
                                   itemBuilder: (context, pageIndex) {
-                                    return _buildMonth();
+                                    return _buildMonth(dateTariffer);
                                   },
                                 ),
                               ),
@@ -184,7 +158,7 @@ class _ControllerCalendarWidgetState
                                 width: double.infinity,
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-                                  controller: widget.pageWeekController,
+                                  controller: pageWeek,
                                   itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
                                     return const SizedBox();
@@ -196,29 +170,33 @@ class _ControllerCalendarWidgetState
                         ),
                       if (widget.viewWeek)
                         SizedBox(
-                          height: 390,
+                          height: 420,
                           child: Column(
                             children: [
-                              // _buildHeaderMonth(),
-                              _buildHeaderWeek(),
+                              _buildHeaderMonth(dateTariffer,
+                                  verticalPadding: 0),
+                              _buildHeaderWeek(dateTariffer, pageWeek),
                               const Divider(height: 5),
                               _buildWeeks(),
                               Expanded(
                                 child: PageView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
-                                  controller: widget.pageWeekController,
+                                  controller: pageWeek,
                                   onPageChanged: (index) {
-                                    setState(() {
-                                      _currentMonth = DateTime(
-                                          _currentMonth.year, index + 1, 1);
-                                    });
+                                    ref
+                                        .watch(dateTarifferProvider.notifier)
+                                        .update(
+                                          (state) => DateTime(
+                                            dateTariffer.year,
+                                            index + 1,
+                                            1,
+                                          ),
+                                        );
                                   },
                                   itemCount: 12 * 12,
                                   itemBuilder: (context, pageIndex) {
-                                    DateTime month = DateTime(
-                                        _currentMonth.year,
-                                        (pageIndex % 12) + 1,
-                                        1);
+                                    DateTime month = DateTime(dateTariffer.year,
+                                        (pageIndex % 12) + 1, 1);
                                     return buildCalendarMonth(
                                         month,
                                         widget.initDayWeek
@@ -285,7 +263,14 @@ class _ControllerCalendarWidgetState
                                     return SizedBox(
                                       width: screenWidth,
                                       height: Utility.limitHeightList(
-                                          list.length, 6, 300),
+                                        list.length,
+                                        6,
+                                        widget.viewWeek
+                                            ? 255
+                                            : widget.viewYear
+                                                ? 620
+                                                : 300,
+                                      ),
                                       child: ListView.builder(
                                         itemCount: list.length,
                                         padding:
@@ -470,7 +455,11 @@ class _ControllerCalendarWidgetState
       ),
     )
         .animate(
-            delay: !widget.startFlow ? 1200.ms : 0.ms,
+            delay: !Settings.applyAnimations
+                ? null
+                : !widget.startFlow
+                    ? 1200.ms
+                    : 0.ms,
             onComplete: (controller) => setState(() {
                   widget.onStartflow!.call(true);
                 }),
@@ -479,13 +468,26 @@ class _ControllerCalendarWidgetState
                 : !widget.target
                     ? 1
                     : 0)
-        .slideX(begin: -0.2, duration: 550.ms)
-        .fadeIn(delay: widget.target ? 0.ms : 400.ms);
+        .slideX(
+          begin: -0.2,
+          duration: Settings.applyAnimations ? 550.ms : 0.ms,
+        )
+        .fadeIn(
+          delay: !Settings.applyAnimations
+              ? null
+              : widget.target
+                  ? 0.ms
+                  : 400.ms,
+          duration: Settings.applyAnimations ? null : 0.ms,
+        );
   }
 
-  Widget _buildHeaderWeek() {
-    bool isLastMonthOfYear = _currentMonth.month == 12;
-    bool isFirstMonthOfYear = _currentMonth.month == 1;
+  Widget _buildHeaderWeek(
+    DateTime dateTariffer,
+    PageController pageWeek,
+  ) {
+    bool isLastMonthOfYear = dateTariffer.month == 12;
+    bool isFirstMonthOfYear = dateTariffer.month == 1;
     Intl.defaultLocale = "es_ES";
 
     return Padding(
@@ -497,8 +499,15 @@ class _ControllerCalendarWidgetState
             IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               onPressed: () {
-                if (widget.pageWeekController.page! > 0) {
-                  widget.onPreviewPage!.call(_currentMonth.month - 2);
+                if (pageWeek.page! > 0) {
+                  pageWeek.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+
+                  ref.watch(pageWeekControllerProvider.notifier).update(
+                      (state) =>
+                          PageController(initialPage: dateTariffer.month - 2));
                 }
               },
             )
@@ -506,10 +515,10 @@ class _ControllerCalendarWidgetState
             const SizedBox(width: 36),
           TextStyles.titleText(
             text: DateFormat('MMMM')
-                    .format(_currentMonth)
+                    .format(dateTariffer)
                     .substring(0, 1)
                     .toUpperCase() +
-                DateFormat('MMMM').format(_currentMonth).substring(1),
+                DateFormat('MMMM').format(dateTariffer).substring(1),
             color: Theme.of(context).primaryColor,
             size: 16,
           ),
@@ -518,7 +527,14 @@ class _ControllerCalendarWidgetState
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
                 if (!isLastMonthOfYear) {
-                  widget.onNextPage!.call(_currentMonth.month);
+                  pageWeek.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+
+                  ref.watch(pageWeekControllerProvider.notifier).update(
+                      (state) =>
+                          PageController(initialPage: dateTariffer.month));
                 }
               },
             )
@@ -529,33 +545,75 @@ class _ControllerCalendarWidgetState
     );
   }
 
-  Widget _buildHeaderMonth() {
+  Widget _buildHeaderMonth(DateTime dateTariffer,
+      {double verticalPadding = 8.0}) {
     Intl.defaultLocale = "es_ES";
     int yearNowStatic = DateTime.now().year - 1;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if ((widget.yearNow) > yearNowStatic)
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () {
-                widget.reduceYear!.call();
-              },
-            )
-          else
-            const SizedBox(width: 36),
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () {
+              ref.watch(monthNotifierProvider.notifier).disguice();
+
+              ref.watch(pageWeekControllerProvider.notifier).update(
+                    (state) => PageController(
+                      initialPage:
+                          ref.watch(pageWeekControllerProvider).initialPage,
+                    ),
+                  );
+
+              Future.delayed(
+                Durations.medium4,
+                () {
+                  ref.watch(dateTarifferProvider.notifier).update(
+                        (state) => DateTime(
+                          dateTariffer.year - 1,
+                          dateTariffer.month,
+                          dateTariffer.day,
+                        ),
+                      );
+                },
+              );
+
+              ref.watch(monthNotifierProvider.notifier).reveal();
+            },
+          ),
           TextStyles.titleText(
-              text: widget.yearNow.toString(),
+              text: dateTariffer.year.toString(),
               color: Theme.of(context).primaryColor,
               size: 16),
-          if (widget.yearNow < (yearNowStatic + 11))
+          if (dateTariffer.year < (yearNowStatic + 11))
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios_rounded),
               onPressed: () {
-                widget.increaseYear!.call();
+                ref.watch(monthNotifierProvider.notifier).disguice();
+
+                ref.watch(pageWeekControllerProvider.notifier).update(
+                      (state) => PageController(
+                        initialPage:
+                            ref.watch(pageWeekControllerProvider).initialPage,
+                      ),
+                    );
+
+                Future.delayed(
+                  Durations.medium4,
+                  () {
+                    ref.watch(dateTarifferProvider.notifier).update(
+                          (state) => DateTime(
+                            dateTariffer.year + 1,
+                            dateTariffer.month,
+                            dateTariffer.day,
+                          ),
+                        );
+                  },
+                );
+
+                ref.watch(monthNotifierProvider.notifier).reveal();
               },
             )
           else
@@ -752,7 +810,7 @@ class _ControllerCalendarWidgetState
     );
   }
 
-  Widget _buildMonth() {
+  Widget _buildMonth(DateTime dateTariffer) {
     return GridView.builder(
         padding: EdgeInsets.zero,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -760,50 +818,28 @@ class _ControllerCalendarWidgetState
         itemCount: 12,
         itemBuilder: (context, index) {
           return Card(
-            color: (index == (_currentMonth.month - 1))
+            color: (index == (dateTariffer.month - 1))
                 ? DesktopColors.ceruleanOscure
                 : DesktopColors.cerulean,
             elevation: 10,
             child: InkWell(
               onTap: () {
-                if ((_currentMonth.month - 1) == index) return;
+                if ((dateTariffer.month - 1) == index) return;
 
-                widget.onChangePageWeekController!.call(index);
+                ref.watch(monthNotifierProvider.notifier).disguice();
 
-                setState(() =>
-                    _currentMonth = DateTime(_currentMonth.year, index + 1, 1));
+                ref.watch(pageWeekControllerProvider.notifier).update(
+                      (state) => PageController(initialPage: index),
+                    );
+
+                ref.watch(dateTarifferProvider.notifier).update(
+                    (state) => DateTime(dateTariffer.year, index + 1, 1));
+
+                ref.watch(monthNotifierProvider.notifier).reveal();
               },
               child: Center(
                 child: TextStyles.standardText(
                   text: monthNames[index],
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  Widget _buildYear() {
-    return GridView.builder(
-        key: UniqueKey(),
-        padding: EdgeInsets.zero,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, childAspectRatio: 1.3),
-        itemCount: 12,
-        itemBuilder: (context, index) {
-          return Card(
-            color: (((DateTime.now().year - 1) + index) == (widget.yearNow))
-                ? DesktopColors.ceruleanOscure
-                : DesktopColors.cerulean,
-            elevation: 10,
-            child: InkWell(
-              onTap: () {
-                widget.setYear!.call((DateTime.now().year - 1) + (index));
-              },
-              child: Center(
-                child: TextStyles.standardText(
-                  text: "${(DateTime.now().year - 1) + index}",
                   color: Colors.white,
                 ),
               ),

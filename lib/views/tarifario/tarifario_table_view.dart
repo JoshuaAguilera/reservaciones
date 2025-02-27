@@ -9,6 +9,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
@@ -282,6 +283,6 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 750.ms);
+    ).animate().fadeIn(duration: Settings.applyAnimations ? 750.ms : 0.ms,);
   }
 }

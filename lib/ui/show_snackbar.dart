@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/widgets/text_styles.dart';
 
 void showSnackBar({
@@ -54,12 +55,14 @@ void showSnackBar({
           ),
         ),
       ).animate(
-        effects: [
-          if (type == "alert" || type == "danger")
-            const ShakeEffect(offset: Offset(5, 0), rotation: 0),
-          if (type == "info") const FlipEffect(),
-          if (type == "success") ShimmerEffect(delay: 150.ms),
-        ],
+        effects: !Settings.applyAnimations
+            ? []
+            : [
+                if (type == "alert" || type == "danger")
+                  const ShakeEffect(offset: Offset(5, 0), rotation: 0),
+                if (type == "info") const FlipEffect(),
+                if (type == "success") ShimmerEffect(delay: 150.ms),
+              ],
       ),
       duration: duration ?? 3000.ms,
     ),

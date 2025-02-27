@@ -12,6 +12,7 @@ import '../services/auth_service.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
 import '../utils/encrypt/encrypter.dart';
+import '../utils/shared_preferences/settings.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 import 'textformfield_custom.dart';
@@ -142,7 +143,10 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
               sideController: widget.sideController,
             ),
     ).animate().slideY().fadeIn(
-        begin: -0.2, delay: Duration(milliseconds: 200 + (35 * widget.index)));
+          begin: -0.2,
+          delay:
+              !Settings.applyAnimations ? null : (200 + (35 * widget.index)).ms,
+        );
   }
 }
 

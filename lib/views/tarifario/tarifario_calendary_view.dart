@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_month_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_week_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_calendary_year_view.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
+
+import '../../providers/tarifario_provider.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
   const TarifarioCalendaryView({
@@ -17,10 +18,6 @@ class TarifarioCalendaryView extends ConsumerStatefulWidget {
     required this.viewWeek,
     required this.viewMonth,
     required this.viewYear,
-    required this.yearNow,
-    required this.reduceYear,
-    required this.increaseYear,
-    required this.setYear,
     required this.targetForm,
     required this.showForm,
     required this.onTargetForm,
@@ -34,12 +31,8 @@ class TarifarioCalendaryView extends ConsumerStatefulWidget {
   final bool viewWeek;
   final bool viewMonth;
   final bool viewYear;
-  final int yearNow;
   final bool targetForm;
   final bool showForm;
-  final void Function()? reduceYear;
-  final void Function()? increaseYear;
-  final void Function(int)? setYear;
   final void Function()? onTargetForm;
   final void Function()? onCreate;
 
@@ -72,13 +65,9 @@ class _TarifarioCalendaryViewState
   DateTime initWeekMonth = DateTime.now();
   bool selectedcurrentyear = false;
   bool startFlow = false;
-  PageController pageWeekController =
-      PageController(initialPage: DateTime.now().month - 1);
   final PageController pageMonthController = PageController(initialPage: 0);
   final DateTime _currentMonth = DateTime.now();
   double targetMonth = 1;
-  bool showMonth = true;
-  bool showMonthDelay = false;
   bool changeDate = false;
   bool changeMonth = false;
 
@@ -90,6 +79,7 @@ class _TarifarioCalendaryViewState
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    //Trata de unificarlo mi chavo
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
@@ -102,28 +92,11 @@ class _TarifarioCalendaryViewState
                   TarifarioCalendaryYearView(
                     currentMonth: _currentMonth,
                     sideController: widget.sideController,
-                    yearNow: widget.yearNow,
                   ),
                 if (widget.viewMonth)
                   TarifarioCalendaryMonthView(
                     sideController: widget.sideController,
-                    initWeekMonth: initWeekMonth,
-                    showMonth: showMonth,
-                    showMonthDelay: showMonthDelay,
-                    targetMonth: targetMonth,
-                    initDayWeek: initDayWeek,
                     initDayWeekGraphics: initDayWeekGraphics,
-                    yearNow: widget.yearNow,
-                    pageWeekController: pageWeekController,
-                    refreshDate: (pageIndex) {
-                      if (!changeMonth) {
-                        Future.delayed(
-                            Durations.medium1,
-                            () => setState(() => initWeekMonth = DateTime(
-                                widget.yearNow, (pageIndex % 12) + 1, 1)));
-                        changeMonth = true;
-                      }
-                    },
                   ),
                 if (widget.viewWeek)
                   TarifarioCalendaryWeekView(
@@ -146,9 +119,6 @@ class _TarifarioCalendaryViewState
                       viewMonth: widget.viewMonth,
                       viewYear: widget.viewYear,
                       pageMonthController: pageMonthController,
-                      pageWeekController: pageWeekController,
-                      yearNow: widget.yearNow,
-                      setYear: widget.setYear,
                       onChangeDate: (p0) => setState(
                         () {
                           initDayWeek = p0;
@@ -158,144 +128,6 @@ class _TarifarioCalendaryViewState
                           }
                         },
                       ),
-                      increaseYear: () {
-                        setState(() => targetMonth = 0);
-
-                        Future.delayed(
-                          550.ms,
-                          () => setState(() {
-                            showMonth = false;
-                            showMonthDelay = false;
-                          }),
-                        );
-
-                        widget.increaseYear!.call();
-
-                        Future.delayed(
-                            Durations.long4,
-                            () => setState(() => initWeekMonth = DateTime(
-                                widget.yearNow,
-                                (pageWeekController.initialPage.toInt() % 12) +
-                                    1,
-                                1)));
-
-                        Future.delayed(
-                          650.ms,
-                          () => setState(
-                            () {
-                              showMonth = true;
-                              targetMonth = 1;
-                            },
-                          ),
-                        );
-
-                        Future.delayed(
-                          850.ms,
-                          () => setState(() => showMonthDelay = true),
-                        );
-                      },
-                      reduceYear: () {
-                        setState(() => targetMonth = 0);
-
-                        Future.delayed(
-                          550.ms,
-                          () => setState(() {
-                            showMonth = false;
-                            showMonthDelay = false;
-                          }),
-                        );
-
-                        widget.reduceYear!.call();
-
-                        Future.delayed(
-                            Durations.long4,
-                            () => setState(() => initWeekMonth = DateTime(
-                                widget.yearNow,
-                                (pageWeekController.initialPage.toInt() % 12) +
-                                    1,
-                                1)));
-
-                        Future.delayed(
-                          650.ms,
-                          () => setState(
-                            () {
-                              showMonth = true;
-                              targetMonth = 1;
-                            },
-                          ),
-                        );
-
-                        Future.delayed(
-                          850.ms,
-                          () => setState(() => showMonthDelay = true),
-                        );
-                      },
-                      onChangePageWeekController: (p0) {
-                        setState(() => targetMonth = 0);
-
-                        Future.delayed(
-                          550.ms,
-                          () => setState(() {
-                            showMonth = false;
-                            showMonthDelay = false;
-                          }),
-                        );
-
-                        Future.delayed(
-                            600.ms,
-                            () => setState(() => pageWeekController =
-                                PageController(initialPage: p0)));
-
-                        Future.delayed(
-                          650.ms,
-                          () => setState(
-                            () {
-                              showMonth = true;
-                              targetMonth = 1;
-                            },
-                          ),
-                        );
-
-                        Future.delayed(
-                            Durations.long4,
-                            () => setState(() => initWeekMonth =
-                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
-
-                        Future.delayed(
-                          850.ms,
-                          () => setState(() => showMonthDelay = true),
-                        );
-                      },
-                      onPreviewPage: (p0) {
-                        setState(() {
-                          pageWeekController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-
-                          pageWeekController = PageController(initialPage: p0);
-                        });
-
-                        Future.delayed(
-                            Durations.long4,
-                            () => setState(() => initWeekMonth =
-                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
-                      },
-                      onNextPage: (p0) {
-                        setState(() {
-                          pageWeekController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-
-                          pageWeekController = PageController(initialPage: p0);
-                        });
-
-                        Future.delayed(
-                            Durations.long4,
-                            () => setState(() => initWeekMonth =
-                                DateTime(widget.yearNow, (p0 % 12) + 1, 1)));
-                      },
                       onStartflow: (p0) => setState(() => startFlow = p0),
                       onCreated: () => widget.onCreate!.call(),
                     ),

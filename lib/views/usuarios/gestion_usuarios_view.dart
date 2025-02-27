@@ -16,6 +16,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/progress_indicator.dart';
 import '../../ui/textformfield_style.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/text_styles.dart';
 
 class GestionUsuariosView extends ConsumerStatefulWidget {
@@ -128,12 +129,17 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                     ),
                   )
                 ],
-              ).animate().fadeIn(delay: 200.ms),
+              ).animate().fadeIn(
+                    delay: !Settings.applyAnimations ? null : 200.ms,
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
               Divider(
                 color: brightness == Brightness.light
                     ? Colors.black
                     : Colors.white,
-              ).animate().fadeIn(),
+              ).animate().fadeIn(
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Row(
@@ -174,7 +180,10 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                     )
                   ],
                 ),
-              ).animate().fadeIn(delay: 350.ms),
+              ).animate().fadeIn(
+                    delay: !Settings.applyAnimations ? null : 350.ms,
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
               if (_selectedMode.first)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
@@ -217,10 +226,15 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       ),
                     ),
                   ),
-                ).animate().fadeIn(delay: 300.ms),
+                ).animate().fadeIn(
+                      delay: !Settings.applyAnimations ? null : 300.ms,
+                      duration: Settings.applyAnimations ? null : 0.ms,
+                    ),
               Divider(color: Theme.of(context).primaryColorLight)
                   .animate()
-                  .fadeIn(),
+                  .fadeIn(
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(2, 10, 2, 5),
                 child: usuariosProvider.when(
@@ -236,9 +250,15 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                               message:
                                   "No se encontraron usuarios\n registrados",
                             )
-                                .animate(delay: 450.ms)
+                                .animate(
+                                    delay: !Settings.applyAnimations
+                                        ? null
+                                        : 450.ms)
                                 .slide(begin: const Offset(0, 0.1))
-                                .fadeIn(),
+                                .fadeIn(
+                                  duration:
+                                      Settings.applyAnimations ? null : 0.ms,
+                                ),
                           ),
                         if (list.isNotEmpty)
                           SizedBox(

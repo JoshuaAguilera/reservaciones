@@ -18,6 +18,7 @@ import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../../models/periodo_model.dart';
 import '../../providers/cotizacion_provider.dart';
 import '../../providers/dahsboard_provider.dart';
 import '../../providers/usuario_provider.dart';
@@ -25,8 +26,10 @@ import '../../services/cotizacion_service.dart';
 import '../../ui/buttons.dart';
 import '../../ui/custom_widgets.dart';
 import '../../ui/show_snackbar.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/cotizacion_item_row.dart';
 import '../../widgets/text_styles.dart';
+import '../tarifario/dialogs/period_calendar_dialog.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
   const HistorialView({super.key, required this.sideController});
@@ -38,8 +41,6 @@ class HistorialView extends ConsumerStatefulWidget {
 }
 
 class _HistorialViewState extends ConsumerState<HistorialView> {
-  DateTime initDate = DateTime.now();
-  DateTime lastDate = DateTime.now().add(const Duration(days: 1));
   final TextEditingController _searchController =
       TextEditingController(text: "");
   bool startFlow = false;
@@ -63,6 +64,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     var filter = ref.watch(filtroProvider);
     final usuario = ref.watch(userProvider);
     var showFilter = ref.watch(showFilterProvider);
+    var periodFilter = ref.watch(periodoProvider);
 
     void _searchQuote({String? text}) {
       ref
@@ -184,7 +186,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                       );
                     }),
                   ),
-                ).animate().fadeIn(delay: 50.ms),
+                ).animate().fadeIn(
+                      delay: !Settings.applyAnimations ? null : 50.ms,
+                      duration: Settings.applyAnimations ? null : 0.ms,
+                    ),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 15),
@@ -207,6 +212,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                     child: SelectableButton(
                                       selected: filter == filtros[index],
                                       onPressed: () {
+                                        String initFilter = filter;
                                         filter = filtros[index];
 
                                         ref
@@ -216,19 +222,35 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                           if (filter == "Personalizado") {
                                             showDialog(
                                               context: context,
-                                              builder: (context) {
-                                                return Dialogs.filterDateDialog(
-                                                  context: context,
-                                                  funtionMain: () {},
-                                                );
-                                              },
+                                              builder: (context) =>
+                                                  PeriodCalendarDialog(
+                                                colorTariff:
+                                                    DesktopColors.primaryColor,
+                                                initYear: 2024,
+                                                title: "Filtrar por fechas",
+                                                description:
+                                                    "Seleccione un periodo de tiempo:",
+                                              ),
                                             ).then(
                                               (value) {
                                                 if (value != null) {
+                                                  Periodo newPeriod =
+                                                      value as Periodo;
                                                   ref
                                                       .read(periodoProvider
                                                           .notifier)
-                                                      .update((state) => value);
+                                                      .update(
+                                                        (state) => newPeriod,
+                                                      );
+
+                                                  ref
+                                                      .read(filtroProvider
+                                                          .notifier)
+                                                      .update((state) =>
+                                                          filtros[index]);
+                                                } else {
+                                                  filter = initFilter;
+                                                  setState(() {});
                                                 }
                                               },
                                             );
@@ -239,7 +261,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                                     (state) => filtros[index]);
                                             ref
                                                 .read(periodoProvider.notifier)
-                                                .update((state) => "");
+                                                .update((state) => null);
                                           }
                                         });
 
@@ -247,7 +269,19 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                             .read(isEmptyProvider.notifier)
                                             .update((state) => false);
                                       },
-                                      child: Text(filtros[index]),
+                                      child: (filtros[index] ==
+                                                  "Personalizado" &&
+                                              filter == filtros[index] &&
+                                              periodFilter != null)
+                                          ? Text(Utility.getStringPeriod(
+                                              initDate:
+                                                  periodFilter.fechaInicial ??
+                                                      DateTime.now(),
+                                              lastDate:
+                                                  periodFilter.fechaFinal ??
+                                                      DateTime.now(),
+                                            ))
+                                          : Text(filtros[index]),
                                     ),
                                   );
                                 },
@@ -314,7 +348,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                         )
                       ],
                     ),
-                  ).animate().fadeIn(delay: 150.ms),
+                  ).animate().fadeIn(
+                        delay: !Settings.applyAnimations ? null : 150.ms,
+                        duration: Settings.applyAnimations ? null : 0.ms,
+                      ),
                 ),
                 receiptQuoteQuery.when(
                   data: (list) {
@@ -326,9 +363,16 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                               context: context,
                             ),
                           )
-                            .animate(delay: 250.ms)
-                            .slide(begin: const Offset(0, 0.05))
-                            .fadeIn()
+                            .animate(
+                              delay: !Settings.applyAnimations ? null : 250.ms,
+                            )
+                            .slide(
+                              begin: const Offset(0, 0.05),
+                              duration: Settings.applyAnimations ? null : 0.ms,
+                            )
+                            .fadeIn(
+                              duration: Settings.applyAnimations ? null : 0.ms,
+                            )
                         : SizedBox(
                             width: screenWidth,
                             height: Utility.limitHeightList(
@@ -411,7 +455,11 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                 );
                               },
                             ),
-                          ).animate().fadeIn(delay: 300.ms, duration: 500.ms);
+                          ).animate().fadeIn(
+                              delay: !Settings.applyAnimations ? null : 300.ms,
+                              duration:
+                                  Settings.applyAnimations ? 500.ms : 0.ms,
+                            );
                   },
                   error: (error, stackTrace) {
                     return SizedBox(

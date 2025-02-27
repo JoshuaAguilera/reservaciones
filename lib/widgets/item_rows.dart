@@ -14,6 +14,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../utils/helpers/desktop_colors.dart';
+import '../utils/shared_preferences/settings.dart';
 import 'dialogs.dart';
 import 'text_styles.dart';
 
@@ -108,9 +109,24 @@ class ItemRows {
                                   colorTitle: Colors.amber)
                               .animate(
                                   onPlay: (controller) => controller.repeat())
-                              .shimmer(delay: 1800.ms, duration: 1200.ms)
-                              .shake(hz: 4, curve: Curves.easeInOutCubic)
-                              .then(delay: 600.ms)
+                              .shimmer(
+                                delay:
+                                    !Settings.applyAnimations ? null : 1800.ms,
+                                duration:
+                                    Settings.applyAnimations ? 1200.ms : 0.ms,
+                              )
+                              .shake(
+                                hz: 4,
+                                curve: Curves.easeInOutCubic,
+                                duration:
+                                    Settings.applyAnimations ? null : 0.ms,
+                              )
+                              .then(
+                                delay:
+                                    !Settings.applyAnimations ? null : 600.ms,
+                                duration:
+                                    Settings.applyAnimations ? null : 0.ms,
+                              )
                           : TextStyles.TextSpecial(day: day, subtitle: ""),
                     ),
                   ],
@@ -450,9 +466,10 @@ class ItemRows {
                 ? DesktopColors.prussianBlue
                 : DesktopColors.azulClaro,
           )
-              .animate(delay: 200.ms * index)
-              .fadeIn(duration: 400.ms)
-              .scale(duration: 500.ms),
+              .animate(
+                  delay: !Settings.applyAnimations ? null : (200.ms * index))
+              .fadeIn(duration: !Settings.applyAnimations ? 0.ms : 400.ms)
+              .scale(duration: !Settings.applyAnimations ? 0.ms : 500.ms),
           const SizedBox(height: 5),
           RotatedBox(
             quarterTurns: withOutDay ? 0 : 1,
@@ -461,7 +478,12 @@ class ItemRows {
               width: withOutDay ? 100 : 12,
               child: const Divider(),
             ),
-          ).animate(delay: 220.ms * index).fadeIn(),
+          )
+              .animate(
+                  delay: !Settings.applyAnimations ? null : (220.ms * index))
+              .fadeIn(
+                duration: Settings.applyAnimations ? null : 0.ms,
+              ),
           if (select)
             Padding(
               padding: EdgeInsets.only(top: withOutDay ? 0 : 3),
@@ -470,7 +492,15 @@ class ItemRows {
                 color: Colors.amber,
                 size: withOutDay ? 35 : 7.5,
               ),
-            ).animate(delay: 220.ms * index).fadeIn().scale(duration: 500.ms),
+            )
+                .animate(
+                    delay: !Settings.applyAnimations ? null : (220.ms * index))
+                .fadeIn(
+                  duration: Settings.applyAnimations ? null : 0.ms,
+                )
+                .scale(
+                  duration: Settings.applyAnimations ? 500.ms : 0.ms,
+                ),
         ],
       ),
     );

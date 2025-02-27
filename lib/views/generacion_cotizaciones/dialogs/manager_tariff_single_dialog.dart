@@ -18,7 +18,7 @@ import 'package:generador_formato/ui/title_page.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:generador_formato/utils/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/widgets/custom_dropdown.dart';
 import 'package:generador_formato/widgets/dialogs.dart';
 import 'package:generador_formato/widgets/form_tariff_widget.dart';
@@ -649,7 +649,7 @@ class _ManagerTariffDayWidgetState
                         onPressed: () {
                           if (!isEditing) {
                             bool showAlertDialog =
-                                Preferences.showAlertTariffModified;
+                                Settings.showAlertTariffModified;
 
                             if (!showAlertDialog) {
                               isEditing = true;
@@ -692,8 +692,7 @@ class _ManagerTariffDayWidgetState
                                           value: !showAlertDialog,
                                           onChanged: (p0) {
                                             showAlertDialog = !p0!;
-                                            Preferences
-                                                    .showAlertTariffModified =
+                                            Settings.showAlertTariffModified =
                                                 showAlertDialog;
                                             snapshot(() {});
                                           },

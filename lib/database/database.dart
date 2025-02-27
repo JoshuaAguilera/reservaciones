@@ -7,6 +7,7 @@ import 'package:generador_formato/database/dao/tarifa_rack_dao.dart';
 import 'package:generador_formato/database/tables/images_table.dart';
 import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
+import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
@@ -655,13 +656,13 @@ LazyDatabase _openConnection() {
       // put the database file, called db.sqlite here, into the documents folder
       // for your app.
 
-      //Location BD for release version (commit in developer)
+      //Location BD for release version
       final dbFolder = "/";
-      final file = File(p.join(dbFolder, 'dbReservaciones.sqlite'));
+      //Location BD for beta version
+      final dbFolderBeta = await getApplicationDocumentsDirectory();
 
-      //Location BD for beta version (commit then to generate release)
-      // final dbFolder = await getApplicationDocumentsDirectory();
-      // final file = File(p.join(dbFolder.path, 'dbReservaciones.sqlite'));
+      final file = File(p.join(
+          inDevelop ? dbFolderBeta.path : dbFolder, 'dbReservaciones.sqlite'));
 
       // Also work around limitations on old Android versions
       if (Platform.isAndroid) {

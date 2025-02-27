@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/init_database.dart';
 import 'package:generador_formato/ui/themes.dart';
+import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   //Compatibily Windows scale
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.init();
+  await Settings.init();
   await windowManager.ensureInitialized();
   if (Platform.isWindows) {
     WindowManager.instance.setMinimumSize(const Size(700, 420));
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
     final isPlatformDark =
         WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
     final initTheme =
-        Preferences.modeDark ? Themes().darkMode() : Themes().lightMode();
+        Settings.modeDark ? Themes().darkMode() : Themes().lightMode();
 
     return ThemeProvider(
       initTheme: initTheme,

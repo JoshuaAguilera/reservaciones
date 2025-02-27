@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/prefijo_telefonico_model.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
@@ -110,8 +111,14 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<List<CotizacionData>> getCotizacionesLocales(String search, int pag,
-      String filtro, bool empty, String periodo, List<bool> showFilter) async {
+  Future<List<CotizacionData>> getCotizacionesLocales(
+    String search,
+    int pag,
+    String filtro,
+    bool empty,
+    Periodo? periodo,
+    List<bool> showFilter,
+  ) async {
     final database = AppDatabase();
     int? selectUser = (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null;
 
@@ -123,12 +130,10 @@ class CotizacionService extends BaseService {
           showFilter: showFilter,
         );
       } else {
-        if (periodo.isNotEmpty) {
-          DateTime initTime = DateTime.parse(periodo.substring(0, 10));
-          DateTime lastTime = DateTime.parse(periodo.substring(10, 20));
+        if (periodo != null) {
           comprobantes = await database.getQuotesFiltered(
-            initTime: initTime,
-            lastTime: lastTime,
+            initTime: periodo.fechaInicial!,
+            lastTime: periodo.fechaFinal!,
             search: search,
             userId: selectUser,
             showFilter: showFilter,

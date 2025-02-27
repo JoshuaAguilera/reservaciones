@@ -14,7 +14,6 @@ class PeriodItemRow extends StatefulWidget {
     this.compact = false,
     this.target = 1,
     this.alreadyLoading = false,
-    this.showMonth = false,
     this.isntWeek = true,
   }) : super(key: key);
 
@@ -25,7 +24,6 @@ class PeriodItemRow extends StatefulWidget {
   final bool compact;
   final double target;
   final bool alreadyLoading;
-  final bool showMonth;
   final bool isntWeek;
 
   @override
@@ -54,7 +52,6 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         target: widget.target,
         alreadyLoading: widget.alreadyLoading,
         isntWeek: widget.isntWeek,
-        // showMonth: widget.showMonth,
       ),
     );
   }

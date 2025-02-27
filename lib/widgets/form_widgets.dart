@@ -188,6 +188,7 @@ class FormWidgets {
     required bool value,
     bool isModeDark = false,
     Color? activeColor,
+     Color? inactiveColor,
     void Function(bool)? onChanged,
     bool bloked = false,
     bool compact = false,
@@ -212,7 +213,7 @@ class FormWidgets {
                 child: Switch(
                   value: value,
                   activeColor: activeColor ?? Colors.white,
-                  inactiveTrackColor: !isModeDark ? null : Colors.blue[200],
+                  inactiveTrackColor: !isModeDark ? null : inactiveColor ?? Colors.blue[200],
                   inactiveThumbColor: !isModeDark
                       ? null
                       : value

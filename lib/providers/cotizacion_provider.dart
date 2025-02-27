@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
+import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/utils/helpers/constants.dart';
 
 import '../database/database.dart';
@@ -14,7 +15,7 @@ final uniqueFolioProvider =
 final cotizacionDetalleProvider =
     StateProvider<Cotizacion>((ref) => Cotizacion());
 
-final periodoProvider = StateProvider<String>((ref) => '');
+final periodoProvider = StateProvider<Periodo?>((ref) => null);
 
 final isEmptyProvider = StateProvider<bool>((ref) => false);
 

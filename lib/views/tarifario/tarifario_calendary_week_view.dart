@@ -9,6 +9,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/item_rows.dart';
 import '../../widgets/period_item_row.dart';
 
@@ -41,6 +42,7 @@ class _TarifarioCalendaryWeekViewState
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final dateTariffer = ref.watch(dateTarifferProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     if (!alreadyLoading) {
@@ -90,7 +92,10 @@ class _TarifarioCalendaryWeekViewState
                       ],
                     ),
                   ],
-                ).animate().fadeIn(duration: 1800.ms, begin: -.6),
+                ).animate().fadeIn(
+                      duration: Settings.applyAnimations ? 1800.ms : 0.ms,
+                      begin: -.6,
+                    ),
               ),
             ),
           ),

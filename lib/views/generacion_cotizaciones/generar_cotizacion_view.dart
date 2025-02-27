@@ -32,6 +32,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
 import '../../ui/show_snackbar.dart';
 import '../../utils/helpers/constants.dart';
+import '../../utils/shared_preferences/settings.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
   final SidebarXController sideController;
@@ -258,9 +259,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             title: "Generar cotización",
                             subtitle:
                                 "Proporcione un presupuesto detallado y claro a los clientes interesados en hacer una reservación",
-                          )
-                              .animate(target: targetHabitaciones)
-                              .fadeIn(duration: 250.ms),
+                          ).animate(target: targetHabitaciones).fadeIn(
+                                duration:
+                                    Settings.applyAnimations ? 250.ms : 0.ms,
+                              ),
                           if (!isLoading && !isFinish)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,9 +294,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                             _showConfigurationTariffGroup();
                                           },
                                         ),
-                                )
-                                    .animate(target: targetHabitaciones)
-                                    .fadeIn(duration: 350.ms),
+                                ).animate(target: targetHabitaciones).fadeIn(
+                                      duration: Settings.applyAnimations
+                                          ? 350.ms
+                                          : 0.ms,
+                                    ),
                                 const SizedBox(height: 8),
                                 Card(
                                   elevation: 6,
@@ -398,9 +402,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       ],
                                     ),
                                   ),
-                                )
-                                    .animate(target: targetHabitaciones)
-                                    .fadeIn(duration: 250.ms),
+                                ).animate(target: targetHabitaciones).fadeIn(
+                                      duration: Settings.applyAnimations
+                                          ? 250.ms
+                                          : 0.ms,
+                                    ),
                                 const SizedBox(height: 10),
                                 SizedBox(
                                   child: HabitacionesList(
@@ -534,9 +540,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         .where((element) => !element.isFree)
                                         .toList(),
                                   ),
-                                )
-                                    .animate(target: targetHabitaciones)
-                                    .fadeIn(duration: 450.ms),
+                                ).animate(target: targetHabitaciones).fadeIn(
+                                      duration: Settings.applyAnimations
+                                          ? 450.ms
+                                          : 0.ms,
+                                    ),
                                 const SizedBox(height: 12),
                               ],
                             ),
@@ -626,9 +634,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             );
                             setState(() => isLoading = false);
                           },
-                  )
-                      .animate(target: targetHabitaciones)
-                      .fadeIn(duration: 450.ms),
+                  ).animate(target: targetHabitaciones).fadeIn(
+                        duration: Settings.applyAnimations ? 450.ms : 0.ms,
+                      ),
                 ],
               ),
             ],
@@ -691,6 +699,16 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           ),
         ),
       ),
-    ).animate(autoPlay: true, delay: 450.ms).fadeIn(duration: 200.ms).flip();
+    )
+        .animate(
+          autoPlay: true,
+          delay: !Settings.applyAnimations ? null : 450.ms,
+        )
+        .fadeIn(
+          duration: Settings.applyAnimations ? 200.ms : 0.ms,
+        )
+        .flip(
+          duration: Settings.applyAnimations ? null : 0.ms,
+        );
   }
 }

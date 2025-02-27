@@ -25,6 +25,7 @@ class PeriodCalendarDialog extends StatefulWidget {
     this.initDate,
     this.lastDate,
     this.withLimit = false,
+    this.initYear,
   }) : super(key: key);
 
   final Color colorTariff;
@@ -33,6 +34,7 @@ class PeriodCalendarDialog extends StatefulWidget {
   final DateTime? initDate;
   final DateTime? lastDate;
   final bool withLimit;
+  final int? initYear;
 
   @override
   State<PeriodCalendarDialog> createState() => _PeriodCalendarDialogState();
@@ -60,8 +62,11 @@ class _PeriodCalendarDialogState extends State<PeriodCalendarDialog> {
       initialDateSelected: widget.initDate,
       initialFocusDate: widget.initDate,
       endDateSelected: widget.lastDate,
-      minDate:
-          widget.withLimit ? DateTime.now() : DateTime(DateTime.now().year),
+      minDate: widget.withLimit
+          ? DateTime.now()
+          : (widget.initYear != null)
+              ? DateTime(widget.initYear!)
+              : DateTime(DateTime.now().year),
       maxDate: DateTime(DateTime.now().year + 2).subtract(
         const Duration(days: 1),
       ),

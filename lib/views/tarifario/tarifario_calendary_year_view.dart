@@ -11,6 +11,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/utility.dart';
 import '../../utils/helpers/desktop_colors.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/day_info_item_row.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/text_styles.dart';
@@ -20,12 +21,10 @@ class TarifarioCalendaryYearView extends ConsumerStatefulWidget {
     super.key,
     required this.currentMonth,
     required this.sideController,
-    required this.yearNow,
   });
 
   final DateTime currentMonth;
   final SidebarXController sideController;
-  final int yearNow;
 
   @override
   _TarifarioCalendaryYearViewState createState() =>
@@ -40,6 +39,7 @@ class _TarifarioCalendaryYearViewState
     double screenWidth = MediaQuery.of(context).size.width;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final dateTariffer = ref.watch(dateTarifferProvider);
 
     return SizedBox(
       height: screenHeight - 160,
@@ -64,8 +64,8 @@ class _TarifarioCalendaryYearViewState
                       ),
                       itemCount: 12,
                       itemBuilder: (context, index) {
-                        DateTime month = DateTime(
-                            widget.currentMonth.year, (index % 12) + 1, 1);
+                        DateTime month =
+                            DateTime(dateTariffer.year, (index % 12) + 1, 1);
 
                         return SizedBox(
                           height: 370,
@@ -78,14 +78,18 @@ class _TarifarioCalendaryYearViewState
                               Expanded(
                                 child: Card(
                                     elevation: 5,
-                                    child: buildCalendarYear(month, list)),
+                                    child: buildCalendarYear(
+                                        month, list, dateTariffer)),
                               ),
                             ],
                           ),
                         );
                       },
                     ),
-                  ).animate(target: 1).fadeIn(duration: 1800.ms, begin: -.6);
+                  ).animate(target: 1).fadeIn(
+                        duration: Settings.applyAnimations ? 1800.ms : 0.ms,
+                        begin: -.6,
+                      );
                 },
                 error: (error, stackTrace) => const SizedBox(),
                 loading: () => const SizedBox(),
@@ -113,13 +117,14 @@ class _TarifarioCalendaryYearViewState
     );
   }
 
-  Widget buildCalendarYear(DateTime month, List<RegistroTarifa> list) {
-    int daysInMonth = DateTime(widget.yearNow, month.month + 1, 0).day;
-    DateTime firstDayOfMonth = DateTime(widget.yearNow, month.month, 1);
+  Widget buildCalendarYear(
+      DateTime month, List<RegistroTarifa> list, DateTime dateTariffer) {
+    int daysInMonth = DateTime(dateTariffer.year, month.month + 1, 0).day;
+    DateTime firstDayOfMonth = DateTime(dateTariffer.year, month.month, 1);
     int weekdayOfFirstDay = firstDayOfMonth.weekday;
 
     int lastDayOfMonth =
-        7 - DateTime(widget.yearNow, month.month + 1, 0).weekday;
+        7 - DateTime(dateTariffer.year, month.month + 1, 0).weekday;
 
     return GridView.builder(
       padding: EdgeInsets.zero,
@@ -132,11 +137,11 @@ class _TarifarioCalendaryYearViewState
         } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
           // Displaying the current month's days
           DateTime date = DateTime(
-              widget.yearNow, month.month, index - weekdayOfFirstDay + 2);
+              dateTariffer.year, month.month, index - weekdayOfFirstDay + 2);
           int text = date.day;
 
           RegistroTarifa? tariffNow = Utility.revisedTariffDay(
-              DateTime(widget.yearNow, month.month, text), list);
+              DateTime(dateTariffer.year, month.month, text), list);
 
           return InkWell(
             onTap: () {},
@@ -165,7 +170,7 @@ class _TarifarioCalendaryYearViewState
                     child: DayInfoItemRow(
                       key: UniqueKey(),
                       tarifa: tariffNow,
-                      yearNow: widget.yearNow,
+                      yearNow: dateTariffer.year,
                       day: text,
                       month: month,
                       child: Card(

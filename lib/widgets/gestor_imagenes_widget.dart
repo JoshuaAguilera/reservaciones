@@ -17,6 +17,7 @@ import '../database/database.dart';
 import '../services/auth_service.dart';
 import '../ui/show_snackbar.dart';
 import '../utils/helpers/desktop_colors.dart';
+import '../utils/shared_preferences/settings.dart';
 
 class GestorImagenes extends ConsumerStatefulWidget {
   const GestorImagenes({
@@ -567,8 +568,14 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
               ],
             )
                 .animate()
-                .fadeIn()
-                .slideY(begin: -0.1, delay: const Duration(milliseconds: 200)),
+                .fadeIn(
+                  duration: Settings.applyAnimations ? null : 0.ms,
+                )
+                .slideY(
+                  begin: -0.1,
+                  delay: !Settings.applyAnimations ? null : 200.ms,
+                  duration: Settings.applyAnimations ? null : 0.ms,
+                ),
         ],
       ),
     );

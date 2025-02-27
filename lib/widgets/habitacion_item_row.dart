@@ -13,6 +13,7 @@ import '../models/tarifa_x_dia_model.dart';
 import '../providers/habitacion_provider.dart';
 import '../providers/tarifario_provider.dart';
 import '../utils/helpers/desktop_colors.dart';
+import '../utils/shared_preferences/settings.dart';
 import 'dialogs.dart';
 import 'number_input_with_increment_decrement.dart';
 import 'text_styles.dart';
@@ -94,9 +95,16 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
               esDetalle: widget.esDetalle,
               sideController: widget.sideController,
             ),
-    ).animate(target: target).fadeIn().slideY(
-        begin: target < 1 ? 0.15 : -0.15,
-        delay: const Duration(milliseconds: 200));
+    )
+        .animate(target: target)
+        .fadeIn(
+          duration: Settings.applyAnimations ? null : 0.ms,
+        )
+        .slideY(
+          begin: target < 1 ? 0.15 : -0.15,
+          delay: !Settings.applyAnimations ? null : 200.ms,
+          duration: Settings.applyAnimations ? null : 0.ms,
+        );
   }
 }
 

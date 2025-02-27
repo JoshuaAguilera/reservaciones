@@ -9,6 +9,7 @@ import '../../providers/tarifario_provider.dart';
 import '../../ui/custom_widgets.dart';
 import '../../utils/helpers/constants.dart';
 import '../../utils/helpers/utility.dart';
+import '../../utils/shared_preferences/settings.dart';
 import '../../widgets/dynamic_widget.dart';
 import '../../widgets/item_rows.dart';
 import '../../widgets/period_item_row.dart';
@@ -18,27 +19,11 @@ class TarifarioCalendaryMonthView extends ConsumerStatefulWidget {
   const TarifarioCalendaryMonthView({
     super.key,
     required this.sideController,
-    required this.initWeekMonth,
     required this.initDayWeekGraphics,
-    required this.initDayWeek,
-    required this.refreshDate,
-    required this.yearNow,
-    required this.showMonth,
-    required this.pageWeekController,
-    required this.targetMonth,
-    required this.showMonthDelay,
   });
 
   final SidebarXController sideController;
-  final DateTime initWeekMonth;
   final DateTime initDayWeekGraphics;
-  final DateTime initDayWeek;
-  final void Function(int)? refreshDate;
-  final int yearNow;
-  final bool showMonth;
-  final PageController pageWeekController;
-  final double targetMonth;
-  final bool showMonthDelay;
 
   @override
   _TarifarioCalendaryMonthViewState createState() =>
@@ -52,6 +37,9 @@ class _TarifarioCalendaryMonthViewState
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
     final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final dateTariffer = ref.watch(dateTarifferProvider);
+    final pageWeek = ref.watch(pageWeekControllerProvider);
+    final monthController = ref.watch(monthNotifierProvider);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -93,7 +81,7 @@ class _TarifarioCalendaryMonthViewState
                       },
                     ),
                   ),
-                  if (widget.showMonth)
+                  if (monthController.showCalendar)
                     Positioned(
                       top: 65,
                       child: Padding(
@@ -114,29 +102,24 @@ class _TarifarioCalendaryMonthViewState
                           height: 129 * 6.55,
                           child: PageView.builder(
                             physics: const NeverScrollableScrollPhysics(),
-                            controller: widget.pageWeekController,
+                            controller: pageWeek,
                             itemCount: 12 * 12,
                             itemBuilder: (context, pageIndex) {
                               DateTime month = DateTime(
-                                  widget.yearNow, (pageIndex % 12) + 1, 1);
+                                  dateTariffer.year, (pageIndex % 12) + 1, 1);
 
-                              if (widget.refreshDate != null) {
-                                widget.refreshDate!.call(pageIndex);
-                              }
-
-                              return buildCalendar(
-                                month,
-                                widget.initDayWeek.subtract(
-                                  const Duration(
-                                    days: 1,
-                                  ),
-                                ),
-                              );
+                              return buildCalendar(month);
                             },
-                          ).animate(target: widget.targetMonth).fadeIn(
-                              duration:
-                                  widget.targetMonth == 0 ? 500.ms : 1200.ms,
-                              begin: -.6),
+                          )
+                              .animate(target: monthController.targetCalendar)
+                              .fadeIn(
+                                duration: !Settings.applyAnimations
+                                    ? 0.ms
+                                    : monthController.targetCalendar == 0
+                                        ? 500.ms
+                                        : 1200.ms,
+                                begin: -.6,
+                              ),
                         ),
                       ),
                     ),
@@ -177,7 +160,7 @@ class _TarifarioCalendaryMonthViewState
                       child: Column(
                         children: [
                           for (var i = 0;
-                              i < Utility.getWeeksMonth(widget.initWeekMonth);
+                              i < Utility.getWeeksMonth(dateTariffer);
                               i++)
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -212,18 +195,15 @@ class _TarifarioCalendaryMonthViewState
                                             if (Utility.showTariffByWeek(
                                                     list[index].periodos,
                                                     Utility.getInitsWeekMonth(
-                                                        widget.initWeekMonth,
-                                                        i)) &&
+                                                        dateTariffer, i)) &&
                                                 list[index].isSelected!) {
                                               return PeriodItemRow(
-                                                target: widget.targetMonth,
-                                                showMonth:
-                                                    widget.showMonthDelay,
+                                                target: monthController
+                                                    .targetCalendar,
                                                 compact: true,
                                                 weekNow:
                                                     Utility.getInitsWeekMonth(
-                                                        widget.initWeekMonth,
-                                                        i),
+                                                        dateTariffer, i),
                                                 tarifa: list[index],
                                                 lenghtDays: 1,
                                                 lenghtSideBar: (widget
@@ -259,7 +239,7 @@ class _TarifarioCalendaryMonthViewState
     );
   }
 
-  Widget buildCalendar(DateTime month, DateTime initDayWeek) {
+  Widget buildCalendar(DateTime month) {
     int daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     DateTime firstDayOfMonth = DateTime(month.year, month.month, 1);
     int weekdayOfFirstDay = firstDayOfMonth.weekday;
@@ -303,7 +283,10 @@ class _TarifarioCalendaryMonthViewState
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: 50.ms * index),
+            ).animate().fadeIn(
+                  delay: !Settings.applyAnimations ? 0.ms : (50.ms * index),
+                  duration: Settings.applyAnimations ? null : 0.ms,
+                ),
           );
         } else if (index < daysInMonth + weekdayOfFirstDay - 1) {
           DateTime date =
@@ -342,7 +325,10 @@ class _TarifarioCalendaryMonthViewState
                 ],
               ),
             ),
-          ).animate().fadeIn(delay: 50.ms * index);
+          ).animate().fadeIn(
+                delay: !Settings.applyAnimations ? 0.ms : (50.ms * index),
+                duration: Settings.applyAnimations ? null : 0.ms,
+              );
         } else {
           return Opacity(
             opacity: 0.25,
@@ -364,7 +350,10 @@ class _TarifarioCalendaryMonthViewState
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: 50.ms * index),
+            ).animate().fadeIn(
+                  delay: !Settings.applyAnimations ? 0.ms : (50.ms * index),
+                  duration: Settings.applyAnimations ? null : 0.ms,
+                ),
           );
         }
       },

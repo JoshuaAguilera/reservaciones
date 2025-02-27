@@ -18,6 +18,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../ui/custom_widgets.dart';
 import '../ui/show_snackbar.dart';
 import '../ui/title_page.dart';
+import '../utils/shared_preferences/settings.dart';
 import '../widgets/text_styles.dart';
 
 class PerfilView extends ConsumerStatefulWidget {
@@ -110,7 +111,10 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                               setState(() => isSaving = false);
                             },
                       text: "Guardar"),
-                ).animate().fadeIn(delay: 150.ms),
+                ).animate().fadeIn(
+                    delay: !Settings.applyAnimations ? null : 150.ms,
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             child: SingleChildScrollView(
@@ -124,7 +128,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                     title: "Perfil",
                     subtitle:
                         "Gestiona y personaliza la información de tu cuenta",
-                  ).animate().fadeIn(),
+                  ).animate().fadeIn(
+                        duration: Settings.applyAnimations ? null : 0.ms,
+                      ),
                   const SizedBox(height: 5),
                   Form(
                     key: _formKey,
@@ -237,7 +243,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 ],
                               ),
                             ),
-                          ).animate().fadeIn(delay: 350.ms),
+                          ).animate().fadeIn(
+                                delay:
+                                    !Settings.applyAnimations ? null : 350.ms,
+                                duration:
+                                    Settings.applyAnimations ? null : 0.ms,
+                              ),
                         ),
                         SizedBox(
                           width: screenWidth < 800
@@ -348,7 +359,12 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                 ],
                               ),
                             ),
-                          ).animate().fadeIn(delay: 550.ms),
+                          ).animate().fadeIn(
+                                delay:
+                                    !Settings.applyAnimations ? null : 550.ms,
+                                duration:
+                                    Settings.applyAnimations ? null : 0.ms,
+                              ),
                         ),
                       ],
                     ),

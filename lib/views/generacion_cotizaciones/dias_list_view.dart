@@ -13,6 +13,7 @@ import 'package:generador_formato/widgets/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../ui/progress_indicator.dart';
+import '../../utils/shared_preferences/settings.dart';
 
 class DiasListView extends ConsumerStatefulWidget {
   const DiasListView({
@@ -201,8 +202,14 @@ class _DiasListState extends ConsumerState<DiasListView> {
                     ],
                   )
                       .animate()
-                      .slideY(begin: 2, duration: 500.ms)
-                      .fadeIn(delay: 400.ms),
+                      .slideY(
+                        begin: 2,
+                        duration: Settings.applyAnimations ? 500.ms : 0.ms,
+                      )
+                      .fadeIn(
+                        delay: !Settings.applyAnimations ? null : 400.ms,
+                        duration: Settings.applyAnimations ? null : 0.ms,
+                      ),
                 ),
               ),
             if (widget.isTable)
@@ -271,7 +278,9 @@ class _DiasListState extends ConsumerState<DiasListView> {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(duration: 700.ms),
+              ).animate().fadeIn(
+                    duration: Settings.applyAnimations ? 700.ms : 0.ms,
+                  ),
             if (widget.isCheckList)
               SizedBox(
                 height: Utility.limitHeightList(
@@ -291,7 +300,15 @@ class _DiasListState extends ConsumerState<DiasListView> {
                     },
                   ),
                 ),
-              ).animate().shimmer(delay: 500.ms).fadeIn(),
+              )
+                  .animate()
+                  .shimmer(
+                    delay: !Settings.applyAnimations ? null : 500.ms,
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  )
+                  .fadeIn(
+                    duration: Settings.applyAnimations ? null : 0.ms,
+                  ),
           ],
         ),
         error: (error, stackTrace) =>

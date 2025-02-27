@@ -20,16 +20,13 @@ class SendQuoteService extends BaseService {
     String messageSent = "";
     String passMail = EncrypterTool.decryptData(passwordMail, null);
 
-    // String username = 'sys2@coralbluehuatulco.mx';
-    // String password = 'Sys2024CB';
-
     final smtpServer = SmtpServer(
-      "mail.coralbluehuatulco.mx",
+      mailServer,
       username: mail,
       password: passMail,
-      port: 465,
-      ssl: true,
-      //ignoreBadCertificate: true,
+      port: portSMTP,
+      ssl: applySSL,
+      ignoreBadCertificate: ignoreBadCertificate,
     );
 
     try {

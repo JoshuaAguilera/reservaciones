@@ -8,6 +8,7 @@ import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
 import '../ui/buttons.dart';
 import '../utils/helpers/desktop_colors.dart';
+import '../utils/shared_preferences/settings.dart';
 import 'text_styles.dart';
 import 'textformfield_custom.dart';
 
@@ -88,7 +89,10 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     : DesktopColors.azulUltClaro,
               ),
             ),
-          ).animate(target: canChangedKeyMail ? 0 : 1).fadeIn(delay: 300.ms),
+          ).animate(target: canChangedKeyMail ? 0 : 1).fadeIn(
+                delay: !Settings.applyAnimations ? null : 300.ms,
+                duration: Settings.applyAnimations ? null : 0.ms,
+              ),
         ),
       SizedBox(
         height: cancelChangedKeyMail ? null : 0,
@@ -242,9 +246,9 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
               ],
             )
           ],
-        )
-            .animate(target: cancelChangedKeyMail ? 1 : 0)
-            .fadeIn(duration: 500.ms),
+        ).animate(target: cancelChangedKeyMail ? 1 : 0).fadeIn(
+              duration: Settings.applyAnimations ? 500.ms : 0.ms,
+            ),
       ),
     ]);
   }
