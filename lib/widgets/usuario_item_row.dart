@@ -77,8 +77,9 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
         context: context,
-        title: "Eliminar tarifa",
-        contentText: "¿Desea eliminar el siguiente usuario: ${user.username}?",
+        title: "Eliminar Usuario",
+        contentText:
+            "¿Desea eliminar permanentemente el siguiente\nusuario del sistema: ${user.username}?",
         nameButtonMain: "Aceptar",
         nameButtonCancel: "Cancelar",
         withButtonCancel: true,
@@ -142,10 +143,16 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
                   : () => showUpdateDialog(widget.usuario, brightness),
               sideController: widget.sideController,
             ),
-    ).animate().slideY().fadeIn(
+    )
+        .animate()
+        .slideY(
+          duration: Settings.applyAnimations ? null : 0.ms,
+        )
+        .fadeIn(
           begin: -0.2,
           delay:
               !Settings.applyAnimations ? null : (200 + (35 * widget.index)).ms,
+          duration: Settings.applyAnimations ? null : 0.ms,
         );
   }
 }
@@ -322,60 +329,63 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
         ),
         subtitle: Opacity(
           opacity: 0.8,
-          child: Wrap(
-            spacing: 16,
-            runSpacing: 5,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              SizedBox(
-                width: 260,
-                child: Row(
-                  children: [
-                    TextStyles.standardText(
-                      text: (screenWidthWithSideBar < 1100)
-                          ? "Rol:   "
-                          : "Rol de usuario:   ",
-                      color: colorText,
-                    ),
-                    SizedBox(
-                      width: 150,
-                      child: CustomWidgets.itemMedal(
-                          (widget.usuario.rol ?? ''), brightness),
-                    ),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                SizedBox(
+                  width: 260,
+                  child: Row(
+                    children: [
+                      TextStyles.standardText(
+                        text: (screenWidthWithSideBar < 1100)
+                            ? "Rol:   "
+                            : "Rol de usuario:   ",
+                        color: colorText,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: CustomWidgets.itemMedal(
+                            (widget.usuario.rol ?? ''), brightness),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              TextStyles.TextAsociative(
-                (screenWidthWithSideBar < 1100)
-                    ? "Nombre:  "
-                    : "Nombre Completo:  ",
-                "${widget.usuario.nombre ?? ''} ${widget.usuario.apellido ?? '-'}",
-                color: colorText,
-                boldInversed: true,
-              ),
-              if ((widget.usuario.correoElectronico ?? '').isNotEmpty)
                 TextStyles.TextAsociative(
                   (screenWidthWithSideBar < 1100)
-                      ? "Correo: "
-                      : "Correo electronico: ",
-                  widget.usuario.correoElectronico ?? '-',
+                      ? "Nombre:  "
+                      : "Nombre Completo:  ",
+                  "${widget.usuario.nombre ?? ''} ${widget.usuario.apellido ?? '-'}",
                   color: colorText,
                   boldInversed: true,
                 ),
-              if ((widget.usuario.telefono ?? '').isNotEmpty)
-                TextStyles.TextAsociative(
-                  (screenWidthWithSideBar < 1100)
-                      ? "Número: "
-                      : "Número telefonico: ",
-                  widget.usuario.telefono ?? '-',
-                  color: colorText,
-                  boldInversed: true,
-                ),
-            ],
+                if ((widget.usuario.correoElectronico ?? '').isNotEmpty)
+                  TextStyles.TextAsociative(
+                    (screenWidthWithSideBar < 1100)
+                        ? "Correo: "
+                        : "Correo electronico: ",
+                    widget.usuario.correoElectronico ?? '-',
+                    color: colorText,
+                    boldInversed: true,
+                  ),
+                if ((widget.usuario.telefono ?? '').isNotEmpty)
+                  TextStyles.TextAsociative(
+                    (screenWidthWithSideBar < 1100)
+                        ? "Número: "
+                        : "Número telefonico: ",
+                    widget.usuario.telefono ?? '-',
+                    color: colorText,
+                    boldInversed: true,
+                  ),
+              ],
+            ),
           ),
         ),
         trailing: optionsListTile(Theme.of(context).primaryColor),
-        isThreeLine: true,
+        // isThreeLine: true,
       ),
     );
   }

@@ -125,7 +125,6 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                         );
                       },
                       text: "Agregar usuario",
-                      color: DesktopColors.prussianWhiteBlue,
                     ),
                   )
                 ],
