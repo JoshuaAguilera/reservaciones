@@ -139,7 +139,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                         ])
                           TextStyles.standardText(
                             text: item,
-                            aling: TextAlign.center,
+                            aliGN: TextAlign.center,
                             color: Theme.of(context).primaryColor,
                             overClip: false,
                             size: 11.5,

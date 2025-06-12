@@ -97,7 +97,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                           isBold: true,
                           color: Theme.of(context).primaryColor,
                           size: 14,
-                          aling: TextAlign.center,
+                          aliGN: TextAlign.center,
                         ),
                       ],
                     ),
@@ -242,7 +242,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                           typeLoading: "progressiveDots",
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
-                            aling: TextAlign.center,
+                            aliGN: TextAlign.center,
                             size: 11,
                           ),
                         ),
@@ -276,7 +276,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
               typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Buscando Tarifario",
-                aling: TextAlign.center,
+                aliGN: TextAlign.center,
                 size: 11,
               ),
             ),

@@ -694,7 +694,7 @@ class FilesTemplate {
 
     try {
       String contenidoHtml = await rootBundle.loadString(
-          "assets/file/${!(cotizacion.esGrupo ?? false) ? "quote_send_mail" : "quote_send_mail_group"}.html");
+          "assets/file/${!(cotizacion.esGrupo ?? false) ? "xsx" : "quote_send_mail_group"}.html");
       String preMailHTML = "";
 
       if (!(cotizacion.esGrupo ?? false)) {

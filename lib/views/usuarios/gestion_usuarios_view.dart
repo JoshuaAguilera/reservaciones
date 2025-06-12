@@ -211,7 +211,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                           ])
                             TextStyles.standardText(
                                 text: element,
-                                aling: TextAlign.center,
+                                aliGN: TextAlign.center,
                                 color: Theme.of(context).primaryColor,
                                 isBold: true,
                                 overClip: true),
@@ -298,7 +298,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       screenHight: 320,
                       message: TextStyles.standardText(
                         text: "Buscando usuarios",
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         size: 11,
                       ),
                     );

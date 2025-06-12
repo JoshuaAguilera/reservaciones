@@ -70,7 +70,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
               typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Cargando comprobante",
-                aling: TextAlign.center,
+                aliGN: TextAlign.center,
                 size: 11,
                 color: Colors.white,
               ),

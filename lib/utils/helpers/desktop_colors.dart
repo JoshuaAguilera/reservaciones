@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DesktopColors {
   //Colors Widget
-  static Color cardColor = Color.fromARGB(255, 66, 66, 66);
+  static Color cardColor = Color.fromARGB(255, 47, 42, 51);
 
   //Colors App
   static Color cerulean = Color.fromARGB(255, 0, 125, 167);

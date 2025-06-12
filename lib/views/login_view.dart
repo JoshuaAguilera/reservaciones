@@ -64,25 +64,25 @@ class _LoginViewState extends ConsumerState<LoginView> {
           height: screenHeight,
           width: screenWidth,
           decoration: BoxDecoration(
-              image: DecorationImage(
-            image: brightness == Brightness.light
-                ? const AssetImage("assets/image/background_1.png")
-                : const AssetImage("assets/image/background_2.png"),
-            fit: BoxFit.cover,
+            // image: DecorationImage(
+            //   image: brightness == Brightness.light
+            //       ? const AssetImage("assets/image/background_1.png")
+            //       : const AssetImage("assets/image/background_2.png"),
+            //   fit: BoxFit.cover,
+            // ),
+            gradient: LinearGradient(
+              colors: [
+                brightness == Brightness.light
+                    ? Colors.white
+                    : Utility.darken(DesktopColors.canvasColor, 0.15),
+                brightness == Brightness.light
+                    ? DesktopColors.cerulean
+                    : DesktopColors.canvasColor,
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
-              // gradient: LinearGradient(
-              //   colors: [
-              //     brightness == Brightness.light
-              //         ? Colors.white
-              //         : DesktopColors.grisSemiPalido,
-              //     brightness == Brightness.light
-              //         ? DesktopColors.cerulean
-              //         : DesktopColors.grisPalido
-              //   ],
-              //   begin: Alignment.bottomCenter,
-              //   end: Alignment.topCenter,
-              // ),
-              ),
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
@@ -102,6 +102,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       ? const Color.fromARGB(255, 242, 242, 242)
                       : DesktopColors.cardColor,
                   elevation: 6,
+                  shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(80)),
+                  ),
                   child: Row(
                     mainAxisAlignment: (screenWidth > 700)
                         ? MainAxisAlignment.spaceBetween
@@ -122,10 +125,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 width: 255,
                                 child: Stack(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       child: Image(
                                         image: AssetImage(
-                                            "assets/image/${brightness == Brightness.light ? "logo_login_light" : "logo_login_dark"}.png"),
+                                            "assets/image/large_logo.png"),
                                       ),
                                     ),
                                     Positioned(
@@ -301,8 +304,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                           width: 350,
                           decoration: const BoxDecoration(
                               borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(5),
-                                  topRight: Radius.circular(5)),
+                                bottomRight: Radius.circular(40),
+                                topRight: Radius.circular(40),
+                              ),
                               image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: AssetImage("assets/image/lobby.jpg"),

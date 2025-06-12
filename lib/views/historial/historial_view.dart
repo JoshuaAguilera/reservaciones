@@ -474,7 +474,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                       typeLoading: "progressiveDots",
                       message: TextStyles.standardText(
                         text: "Buscando cotizaciones",
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         size: 11,
                       ),
                     );

@@ -134,7 +134,7 @@ class dynamicWidget {
                                     color: useWhiteForeground(tarifa.color!)
                                         ? Colors.white
                                         : Colors.black,
-                                    aling: TextAlign.right,
+                                    aliGN: TextAlign.right,
                                   ),
                                 ),
                             ],

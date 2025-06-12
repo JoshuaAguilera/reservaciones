@@ -379,7 +379,7 @@ class TableRows {
                       element.porcentajePromocion,
                     ),
           color: Theme.of(context).primaryColor,
-          aling: TextAlign.center,
+          aliGN: TextAlign.center,
         )),
         Center(
             child: TextStyles.standardText(
@@ -397,7 +397,7 @@ class TableRows {
                       element.porcentajePromocion,
                     ),
           color: Theme.of(context).primaryColor,
-          aling: TextAlign.center,
+          aliGN: TextAlign.center,
         )),
         Center(
           child: TextStyles.standardText(
@@ -415,7 +415,7 @@ class TableRows {
                         element.porcentajePromocion,
                       ),
             color: Theme.of(context).primaryColor,
-            aling: TextAlign.center,
+            aliGN: TextAlign.center,
           ),
         ),
         Center(
@@ -434,7 +434,7 @@ class TableRows {
                         element.porcentajePromocion,
                       ),
             color: Theme.of(context).primaryColor,
-            aling: TextAlign.center,
+            aliGN: TextAlign.center,
           ),
         ),
         Center(
@@ -452,14 +452,14 @@ class TableRows {
                         element.porcentajePromocion,
                       ),
             color: Theme.of(context).primaryColor,
-            aling: TextAlign.center,
+            aliGN: TextAlign.center,
           ),
         ),
         Center(
           child: TextStyles.standardText(
             text: "GRATIS",
             color: Theme.of(context).primaryColor,
-            aling: TextAlign.center,
+            aliGN: TextAlign.center,
           ),
         ),
       ],

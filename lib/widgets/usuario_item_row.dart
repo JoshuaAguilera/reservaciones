@@ -198,7 +198,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
             children: [
               TextStyles.standardText(
                 text: widget.usuario.id.toString(),
-                aling: TextAlign.center,
+                aliGN: TextAlign.center,
                 color: Theme.of(context).primaryColor,
                 overClip: true,
               ),
@@ -208,7 +208,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
               ),
               TextStyles.standardText(
                 text: widget.usuario.username ?? '',
-                aling: TextAlign.center,
+                aliGN: TextAlign.center,
                 color: Theme.of(context).primaryColor,
                 overClip: true,
               ),
@@ -217,7 +217,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
                   text: widget.usuario.correoElectronico?.isNotEmpty == true
                       ? widget.usuario.correoElectronico!
                       : '-',
-                  aling: TextAlign.center,
+                  aliGN: TextAlign.center,
                   color: Theme.of(context).primaryColor,
                   overClip: true,
                 ),
@@ -226,7 +226,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
                   text: widget.usuario.telefono?.isNotEmpty == true
                       ? widget.usuario.telefono!
                       : '-',
-                  aling: TextAlign.center,
+                  aliGN: TextAlign.center,
                   color: Theme.of(context).primaryColor,
                   overClip: true,
                 ),

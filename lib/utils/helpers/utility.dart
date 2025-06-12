@@ -62,10 +62,6 @@ class Utility {
   }
 
   static String formatterNumber(double number) {
-    // if (diseableRound) {
-    //   return "\$${formatNumberRound(number, fractionDigits: 2).toStringAsFixed(2)}";
-    // }
-
     return NumberFormat.simpleCurrency(locale: 'EN-us', decimalDigits: 2)
         .format(number);
   }

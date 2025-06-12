@@ -443,7 +443,7 @@ class _ControllerCalendarWidgetState
                                 data: DateTime.now(), onlyNameDate: true)
                             .replaceAll(r' ', ''),
                         color: Theme.of(context).dividerColor,
-                        aling: TextAlign.end,
+                        aliGN: TextAlign.end,
                       ),
                     ),
                   ],

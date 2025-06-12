@@ -85,7 +85,7 @@ class _TarifarioChecklistViewState
                           typeLoading: "progressiveDots",
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
-                            aling: TextAlign.center,
+                            aliGN: TextAlign.center,
                             size: 11,
                           ),
                         ),

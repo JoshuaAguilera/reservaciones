@@ -123,7 +123,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                           const SizedBox(
                             child: Image(
                               image: AssetImage(
-                                  "assets/image/logo_login_dark.png"),
+                                  "assets/image/large_logo.png"),
                               width: 180,
                             ),
                           ),

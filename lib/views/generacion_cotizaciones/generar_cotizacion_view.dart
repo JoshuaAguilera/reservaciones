@@ -553,7 +553,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               screenHight: screenHeight,
                               message: TextStyles.standardText(
                                 text: "Generando comprobante de\ncotización",
-                                aling: TextAlign.center,
+                                aliGN: TextAlign.center,
                                 size: 11,
                               ),
                             ),

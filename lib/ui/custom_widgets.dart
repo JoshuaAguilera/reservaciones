@@ -231,7 +231,7 @@ class CustomWidgets {
                               icons: HeroIcons.clipboard_document_list,
                               child: TextStyles.standardText(
                                   text: "Administrar Tarifa",
-                                  aling: TextAlign.center),
+                                  aliGN: TextAlign.center),
                               onPressed: () {
                                 showDialog(
                                   context: context,
@@ -307,7 +307,7 @@ class CustomWidgets {
               text: message,
               size: sizeMessage,
               color: Theme.of(context).primaryColor,
-              aling: TextAlign.center,
+              aliGN: TextAlign.center,
             ),
           ],
         ),
@@ -548,7 +548,7 @@ class CustomWidgets {
               color: Theme.of(context).primaryColor,
               size: 10,
               overClip: true,
-              aling: TextAlign.justify),
+              aliGN: TextAlign.justify),
         if (!compact) const SizedBox(height: 30),
       ],
     );
@@ -919,7 +919,7 @@ class CustomWidgets {
         padding: const EdgeInsets.all(5.0),
         child: TextStyles.standardText(
           text: rol,
-          aling: TextAlign.center,
+          aliGN: TextAlign.center,
           color: color != null
               ? useWhiteForeground(color)
                   ? Utility.darken(

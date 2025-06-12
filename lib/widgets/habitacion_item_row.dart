@@ -243,7 +243,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                   children: [
                     TextStyles.standardText(
                       text: (widget.index + 1).toString(),
-                      aling: TextAlign.center,
+                      aliGN: TextAlign.center,
                       overClip: true,
                       color: colorText,
                       size: 12,
@@ -256,7 +256,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                           lastDate:
                               DateTime.parse(widget.habitacion.fechaCheckOut!),
                         ),
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         color: colorText,
                         size: 12,
                       ),
@@ -264,7 +264,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       widget.esDetalle
                           ? TextStyles.standardText(
                               text: (widget.habitacion.adultos ?? 0).toString(),
-                              aling: TextAlign.center,
+                              aliGN: TextAlign.center,
                               color: colorText,
                               size: 12,
                             )
@@ -297,7 +297,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                           ? TextStyles.standardText(
                               text: (widget.habitacion.menores0a6 ?? 0)
                                   .toString(),
-                              aling: TextAlign.center,
+                              aliGN: TextAlign.center,
                               color: colorText,
                               size: 12,
                             )
@@ -330,7 +330,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                           ? TextStyles.standardText(
                               text: (widget.habitacion.menores7a12 ?? 0)
                                   .toString(),
-                              aling: TextAlign.center,
+                              aliGN: TextAlign.center,
                               color: colorText,
                               size: 12,
                             )
@@ -364,7 +364,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         text:
                             "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVR ?? 0) : (typeQuote) ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false) : (widget.habitacion.totalRealVR ?? 0))}"
                             "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false, onlyTariffVR: false) : (widget.habitacion.totalRealVPM ?? 0))}",
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         color: colorText,
                         size: 11,
                       ),
@@ -373,7 +373,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         text:
                             "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVR ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion) : (widget.habitacion.totalVR ?? 0))}"
                             "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, onlyTariffVR: false) : (widget.habitacion.totalVPM ?? 0))}",
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         color: colorText,
                         size: 11,
                       ),
@@ -423,7 +423,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     else
                       TextStyles.standardText(
                         text: "${widget.habitacion.count} Room(s)",
-                        aling: TextAlign.center,
+                        aliGN: TextAlign.center,
                         color: colorText,
                         size: 12,
                         isBold: true,

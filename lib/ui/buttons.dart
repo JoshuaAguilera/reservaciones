@@ -145,7 +145,9 @@ class Buttons {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 ),
               if (isLoading) const SizedBox(width: 10),
               if (child != null)
@@ -156,7 +158,7 @@ class Buttons {
                   child: !isBold
                       ? TextStyles.standardText(
                           text: !isLoading ? text : "Espere",
-                          aling: TextAlign.center,
+                          aliGN: TextAlign.center,
                           size: sizeText,
                           color: colorText,
                         )

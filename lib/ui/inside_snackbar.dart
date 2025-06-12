@@ -23,7 +23,7 @@ Widget insideSnackBar({
             text: message,
             size: 10,
             color: Colors.white,
-            aling: TextAlign.center,
+            aliGN: TextAlign.center,
             overClip: true,
           ),
         ),

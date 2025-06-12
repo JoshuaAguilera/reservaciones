@@ -9,13 +9,13 @@ import 'package:pdf/widgets.dart' as pw;
 class TextStyles {
   static Text standardText(
       {required String text,
-      TextAlign aling = TextAlign.left,
+      TextAlign aliGN = TextAlign.left,
       bool overClip = false,
       double size = 13,
       bool isBold = false,
       Color? color}) {
     return Text(text,
-        textAlign: aling,
+        textAlign: aliGN,
         style: styleStandar(
             size: size, isBold: isBold, overClip: overClip, color: color));
   }

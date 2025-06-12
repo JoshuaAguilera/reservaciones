@@ -493,14 +493,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       TableRow(children: [
                                                         TextStyles.standardText(
                                                             text: "Adultos",
-                                                            aling: TextAlign
+                                                            aliGN: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)
                                                                 .primaryColor),
                                                         TextStyles.standardText(
                                                             text: "Menores 0-6",
-                                                            aling: TextAlign
+                                                            aliGN: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)
@@ -508,7 +508,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         TextStyles.standardText(
                                                             text:
                                                                 "Menores 7-12",
-                                                            aling: TextAlign
+                                                            aliGN: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)

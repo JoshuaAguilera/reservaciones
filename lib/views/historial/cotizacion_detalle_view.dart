@@ -257,7 +257,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                             ])
                                               TextStyles.standardText(
                                                 text: item,
-                                                aling: TextAlign.center,
+                                                aliGN: TextAlign.center,
                                                 color: Theme.of(context)
                                                     .primaryColor,
                                                 overClip: true,
@@ -393,7 +393,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                             screenHight: screenHight,
                             message: TextStyles.standardText(
                               text: "Generando comprante PDF",
-                              aling: TextAlign.center,
+                              aliGN: TextAlign.center,
                               size: 11,
                               color: Theme.of(context).primaryColor,
                             ),

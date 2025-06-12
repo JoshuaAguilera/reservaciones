@@ -741,7 +741,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             size: 11,
                                             color:
                                                 Theme.of(context).primaryColor,
-                                            aling: TextAlign.center,
+                                            aliGN: TextAlign.center,
                                           ),
                                         ).animate().fadeIn(
                                               delay: !Settings.applyAnimations
