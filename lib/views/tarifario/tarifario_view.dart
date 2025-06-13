@@ -4,9 +4,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/views/tarifario/dialogs/manager_base_tariff_dialog.dart';
 import 'package:generador_formato/views/tarifario/dialogs/politics_tarifario_dialog.dart';
 import 'package:generador_formato/views/tarifario/tarifario_checklist_view.dart';
@@ -18,11 +18,11 @@ import '../../models/registro_tarifa_model.dart';
 import '../../providers/cotizacion_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/tarifa_service.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/show_snackbar.dart';
-import '../../ui/title_page.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/show_snackbar.dart';
+import '../../res/ui/title_page.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/dialogs.dart';
+import '../../utils/widgets/dialogs.dart';
 import 'tarifario_calendary_view.dart';
 
 class TarifarioView extends ConsumerStatefulWidget {

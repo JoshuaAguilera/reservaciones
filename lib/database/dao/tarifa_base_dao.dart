@@ -4,7 +4,7 @@ import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 import 'package:generador_formato/database/tables/tarifa_table.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart' as tf;
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 
 import 'tarifa_dao.dart';
 part 'tarifa_base_dao.g.dart';

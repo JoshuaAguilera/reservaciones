@@ -13,26 +13,26 @@ import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/show_snackbar.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:generador_formato/views/tarifario/dialogs/period_calendar_dialog.dart';
-import 'package:generador_formato/widgets/form_tariff_widget.dart';
-import 'package:generador_formato/widgets/item_rows.dart';
+import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
+import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../database/database.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/progress_indicator.dart';
-import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/progress_indicator.dart';
+import '../../res/helpers/constants.dart';
+import '../../res/helpers/utility.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/custom_dropdown.dart';
-import '../../widgets/form_widgets.dart';
-import '../../widgets/text_styles.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../utils/widgets/custom_dropdown.dart';
+import '../../utils/widgets/form_widgets.dart';
+import '../../res/ui/text_styles.dart';
+import '../../utils/widgets/textformfield_custom.dart';
 
 class TarifarioFormView extends ConsumerStatefulWidget {
   const TarifarioFormView({Key? key, required this.sideController})

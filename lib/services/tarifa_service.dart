@@ -11,8 +11,8 @@ import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/services/base_service.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 
 import '../database/database.dart';
 

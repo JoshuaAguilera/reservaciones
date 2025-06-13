@@ -4,19 +4,19 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/widgets/habitacion_item_row.dart';
-import 'package:generador_formato/widgets/summary_controller_widget.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/custom_widgets.dart';
+import 'package:generador_formato/utils/widgets/habitacion_item_row.dart';
+import 'package:generador_formato/utils/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
-import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/desktop_colors.dart';
+import '../../res/helpers/utility.dart';
+import '../../res/helpers/desktop_colors.dart';
 import '../../services/generador_doc_service.dart';
-import '../../ui/progress_indicator.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/text_styles.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../res/ui/text_styles.dart';
+import '../../utils/widgets/textformfield_custom.dart';
 import '../generacion_cotizaciones/pdf_cotizacion_view.dart';
 
 class CotizacionDetalleView extends ConsumerStatefulWidget {
@@ -257,7 +257,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                             ])
                                               TextStyles.standardText(
                                                 text: item,
-                                                aliGN: TextAlign.center,
+                                                align: TextAlign.center,
                                                 color: Theme.of(context)
                                                     .primaryColor,
                                                 overClip: true,
@@ -393,7 +393,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                             screenHight: screenHight,
                             message: TextStyles.standardText(
                               text: "Generando comprante PDF",
-                              aliGN: TextAlign.center,
+                              align: TextAlign.center,
                               size: 11,
                               color: Theme.of(context).primaryColor,
                             ),

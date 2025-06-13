@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/views/clientes/clientes_view.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.dart';
 import 'package:generador_formato/views/tarifario/tarifario_form_view.dart';
 import 'package:generador_formato/views/tarifario/tarifario_view.dart';
@@ -46,6 +47,8 @@ class _MenuViewState extends State<MenuView> {
             return TarifarioView(sideController: widget.controller);
           case 5:
             return GestionUsuariosView(sideController: widget.controller);
+          case 6:
+            return const ClientesView();
           case 99:
             return PerfilView(sideController: widget.controller);
           case 12:

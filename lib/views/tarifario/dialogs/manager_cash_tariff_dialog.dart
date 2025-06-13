@@ -5,15 +5,15 @@ import 'package:generador_formato/models/temporada_model.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../models/tarifa_model.dart';
-import '../../../ui/buttons.dart';
-import '../../../ui/inside_snackbar.dart';
-import '../../../ui/title_page.dart';
-import '../../../utils/helpers/constants.dart';
-import '../../../utils/helpers/utility.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/form_tariff_widget.dart';
-import '../../../widgets/select_buttons_widget.dart';
-import '../../../widgets/text_styles.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/inside_snackbar.dart';
+import '../../../res/ui/title_page.dart';
+import '../../../res/helpers/constants.dart';
+import '../../../res/helpers/utility.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../utils/widgets/form_tariff_widget.dart';
+import '../../../utils/widgets/select_buttons_widget.dart';
+import '../../../res/ui/text_styles.dart';
 
 class ManagerCashTariffDialog extends StatefulWidget {
   const ManagerCashTariffDialog({super.key, required this.temporada});

@@ -7,19 +7,19 @@ import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/auth_service.dart';
-import 'package:generador_formato/ui/buttons.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/widgets/change_password_widget.dart';
-import 'package:generador_formato/widgets/gestor_imagenes_widget.dart';
-import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:generador_formato/utils/widgets/change_password_widget.dart';
+import 'package:generador_formato/utils/widgets/gestor_imagenes_widget.dart';
+import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../ui/custom_widgets.dart';
-import '../ui/show_snackbar.dart';
-import '../ui/title_page.dart';
+import '../res/ui/custom_widgets.dart';
+import '../res/ui/show_snackbar.dart';
+import '../res/ui/title_page.dart';
 import '../utils/shared_preferences/settings.dart';
-import '../widgets/text_styles.dart';
+import '../res/ui/text_styles.dart';
 
 class PerfilView extends ConsumerStatefulWidget {
   const PerfilView({super.key, required this.sideController});

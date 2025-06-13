@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/container_section.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/container_section.dart';
+import 'package:generador_formato/res/ui/show_snackbar.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class ConfigSMTPView extends StatefulWidget {
@@ -128,7 +128,7 @@ class _ConfigSMTPViewState extends State<ConfigSMTPView> {
           TextStyles.standardText(text: title),
           SizedBox(
             width: 220,
-            child: FormWidgets.textFormFieldResizable(
+            child: FormWidgets.textFormField(
               name: label,
               isNumeric: isNumeric,
               initialValue: value,

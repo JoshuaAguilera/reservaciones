@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/files_templates.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/files_templates.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 

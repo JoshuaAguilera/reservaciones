@@ -5,7 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 
 import '../database/database.dart';
-import '../utils/helpers/desktop_colors.dart';
+import '../res/helpers/desktop_colors.dart';
 
 List<TarifaData> tarifasDataFromJson(String str) =>
     List<TarifaData>.from(json.decode(str).map((x) => TarifaData.fromJson(x)));

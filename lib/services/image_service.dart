@@ -5,7 +5,7 @@ import 'package:generador_formato/models/imagen_model.dart';
 import 'package:generador_formato/services/base_service.dart';
 
 import '../database/database.dart';
-import '../utils/helpers/utility.dart';
+import '../res/helpers/utility.dart';
 import '../utils/shared_preferences/preferences.dart';
 
 class ImageService extends BaseService {

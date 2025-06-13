@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/ui/title_page.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/res/ui/title_page.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/services/habitacion_service.dart';
-import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/ui/textformfield_style.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
-import 'package:generador_formato/widgets/dialogs.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
+import 'package:generador_formato/res/ui/textformfield_style.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
+import 'package:generador_formato/utils/widgets/dialogs.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -23,12 +23,12 @@ import '../../providers/cotizacion_provider.dart';
 import '../../providers/dahsboard_provider.dart';
 import '../../providers/usuario_provider.dart';
 import '../../services/cotizacion_service.dart';
-import '../../ui/buttons.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/show_snackbar.dart';
+import '../../res/ui/buttons.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/show_snackbar.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/cotizacion_item_row.dart';
-import '../../widgets/text_styles.dart';
+import '../../utils/widgets/cotizacion_item_row.dart';
+import '../../res/ui/text_styles.dart';
 import '../tarifario/dialogs/period_calendar_dialog.dart';
 
 class HistorialView extends ConsumerStatefulWidget {
@@ -474,7 +474,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                       typeLoading: "progressiveDots",
                       message: TextStyles.standardText(
                         text: "Buscando cotizaciones",
-                        aliGN: TextAlign.center,
+                        align: TextAlign.center,
                         size: 11,
                       ),
                     );

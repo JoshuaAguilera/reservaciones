@@ -9,7 +9,7 @@ import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/send_mail_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/send_message_dialog.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -18,9 +18,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/cotizacion_provider.dart';
 import '../../services/send_quote_service.dart';
-import '../../ui/progress_indicator.dart';
-import '../../ui/show_snackbar.dart';
-import '../../utils/helpers/desktop_colors.dart';
+import '../../res/ui/progress_indicator.dart';
+import '../../res/ui/show_snackbar.dart';
+import '../../res/helpers/desktop_colors.dart';
 
 class PdfCotizacionView extends ConsumerStatefulWidget {
   const PdfCotizacionView({
@@ -70,7 +70,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
               typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Cargando comprobante",
-                aliGN: TextAlign.center,
+                align: TextAlign.center,
                 size: 11,
                 color: Colors.white,
               ),

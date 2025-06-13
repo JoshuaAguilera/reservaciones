@@ -2,7 +2,7 @@ import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 
-import '../utils/helpers/utility.dart';
+import '../res/helpers/utility.dart';
 import 'base_service.dart';
 
 class HabitacionService extends BaseService {

@@ -2,16 +2,16 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/widgets/dynamic_widget.dart';
+import 'package:generador_formato/utils/widgets/dynamic_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/constants.dart';
+import '../../res/helpers/utility.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/item_rows.dart';
-import '../../widgets/period_item_row.dart';
+import '../../utils/widgets/item_rows.dart';
+import '../../utils/widgets/period_item_row.dart';
 
 class TarifarioCalendaryWeekView extends ConsumerStatefulWidget {
   const TarifarioCalendaryWeekView({

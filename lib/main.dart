@@ -5,13 +5,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/init_database.dart';
-import 'package:generador_formato/ui/themes.dart';
+import 'package:generador_formato/res/ui/themes.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:generador_formato/views/login_view.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:generador_formato/utils/helpers/custom_scroll_behavior.dart';
+import 'package:generador_formato/res/helpers/custom_scroll_behavior.dart';
 
 import 'utils/shared_preferences/preferences.dart';
 

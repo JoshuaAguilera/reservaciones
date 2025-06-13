@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/desktop_colors.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/desktop_colors.dart';
 
 class PreferenciasConfigView extends StatefulWidget {
   @override

@@ -2,12 +2,12 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/ui/container_section.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/container_section.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:icons_plus/icons_plus.dart';
-import '../../ui/themes.dart';
-import '../../widgets/form_widgets.dart';
+import '../../res/ui/themes.dart';
+import '../../utils/widgets/form_widgets.dart';
 
 class ConfigGeneralView extends StatefulWidget {
   const ConfigGeneralView({super.key});

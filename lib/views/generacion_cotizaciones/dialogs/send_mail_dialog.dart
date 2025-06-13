@@ -2,14 +2,14 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/services/cotizacion_service.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../../ui/buttons.dart';
-import '../../../ui/title_page.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/text_styles.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/title_page.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../res/ui/text_styles.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class SendMailDialog extends StatefulWidget {
   const SendMailDialog(

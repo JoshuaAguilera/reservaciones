@@ -9,25 +9,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/notificacion_model.dart';
 import 'package:generador_formato/providers/dahsboard_provider.dart';
-import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/custom_widgets.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import 'package:generador_formato/providers/notificacion_provider.dart';
-import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/widgets/item_rows.dart';
-import 'package:generador_formato/widgets/notification_widget.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
+import 'package:generador_formato/utils/widgets/item_rows.dart';
+import 'package:generador_formato/utils/widgets/notification_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../providers/usuario_provider.dart';
 import '../utils/shared_preferences/settings.dart';
-import '../widgets/cotizacion_item_row.dart';
-import '../widgets/custom_dropdown.dart';
-import '../widgets/text_styles.dart';
+import '../utils/widgets/cotizacion_item_row.dart';
+import '../utils/widgets/custom_dropdown.dart';
+import '../res/ui/text_styles.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key, required this.sideController});
@@ -741,7 +741,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             size: 11,
                                             color:
                                                 Theme.of(context).primaryColor,
-                                            aliGN: TextAlign.center,
+                                            align: TextAlign.center,
                                           ),
                                         ).animate().fadeIn(
                                               delay: !Settings.applyAnimations

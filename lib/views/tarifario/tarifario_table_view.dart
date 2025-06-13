@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/widgets/table_rows.dart';
+import 'package:generador_formato/utils/widgets/table_rows.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/progress_indicator.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/text_styles.dart';
+import '../../res/ui/text_styles.dart';
 
 class TarifarioTableView extends ConsumerStatefulWidget {
   const TarifarioTableView({
@@ -97,7 +97,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                           isBold: true,
                           color: Theme.of(context).primaryColor,
                           size: 14,
-                          aliGN: TextAlign.center,
+                          align: TextAlign.center,
                         ),
                       ],
                     ),
@@ -242,7 +242,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                           typeLoading: "progressiveDots",
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
-                            aliGN: TextAlign.center,
+                            align: TextAlign.center,
                             size: 11,
                           ),
                         ),
@@ -276,7 +276,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
               typeLoading: "progressiveDots",
               message: TextStyles.standardText(
                 text: "Buscando Tarifario",
-                aliGN: TextAlign.center,
+                align: TextAlign.center,
                 size: 11,
               ),
             ),

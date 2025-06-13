@@ -5,22 +5,22 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/title_page.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_group_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/pdf_cotizacion_view.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
-import 'package:generador_formato/widgets/summary_controller_widget.dart';
-import 'package:generador_formato/widgets/custom_dropdown.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
-import 'package:generador_formato/widgets/textformfield_custom.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
+import 'package:generador_formato/utils/widgets/summary_controller_widget.dart';
+import 'package:generador_formato/utils/widgets/custom_dropdown.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
+import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -30,8 +30,8 @@ import '../../providers/dahsboard_provider.dart';
 import '../../providers/notificacion_provider.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../services/cotizacion_service.dart';
-import '../../ui/show_snackbar.dart';
-import '../../utils/helpers/constants.dart';
+import '../../res/ui/show_snackbar.dart';
+import '../../res/helpers/constants.dart';
 import '../../utils/shared_preferences/settings.dart';
 
 class GenerarCotizacionView extends ConsumerStatefulWidget {
@@ -553,7 +553,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               screenHight: screenHeight,
                               message: TextStyles.standardText(
                                 text: "Generando comprobante de\ncotización",
-                                aliGN: TextAlign.center,
+                                align: TextAlign.center,
                                 size: 11,
                               ),
                             ),

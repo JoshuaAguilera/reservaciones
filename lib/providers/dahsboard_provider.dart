@@ -4,7 +4,7 @@ import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 import '../database/database.dart';
 import '../models/numero_cotizacion_model.dart';
 import '../services/cotizacion_service.dart';
-import '../utils/helpers/utility.dart';
+import '../res/helpers/utility.dart';
 
 final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {

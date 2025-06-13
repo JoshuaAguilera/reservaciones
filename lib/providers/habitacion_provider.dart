@@ -7,7 +7,7 @@ import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../models/registro_tarifa_model.dart';
-import '../utils/helpers/utility.dart';
+import '../res/helpers/utility.dart';
 import 'tarifario_provider.dart';
 
 class HabitacionProvider extends Notifier<List<Habitacion>> {

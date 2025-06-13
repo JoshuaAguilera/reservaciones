@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/ui/title_page.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/res/ui/title_page.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/views/configuracion/config_SMTP_view.dart';
 import 'package:generador_formato/views/configuracion/config_formato_group_view.dart';
 import 'package:generador_formato/views/configuracion/config_general_view.dart';
@@ -9,7 +9,7 @@ import 'package:generador_formato/views/configuracion/help_resource_view.dart';
 import 'package:generador_formato/views/configuracion/preferencias_config_view.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../ui/buttons.dart';
+import '../../res/ui/buttons.dart';
 import '../../utils/shared_preferences/settings.dart';
 import 'config_formato_ind_view.dart';
 

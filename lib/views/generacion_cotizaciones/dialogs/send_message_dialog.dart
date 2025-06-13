@@ -5,18 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
 import '../../../services/cotizacion_service.dart';
 import '../../../services/send_quote_service.dart';
-import '../../../ui/buttons.dart';
-import '../../../ui/inside_snackbar.dart';
-import '../../../ui/title_page.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/text_styles.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/inside_snackbar.dart';
+import '../../../res/ui/title_page.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../res/ui/text_styles.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class SendMessageDialog extends StatefulWidget {
   const SendMessageDialog({

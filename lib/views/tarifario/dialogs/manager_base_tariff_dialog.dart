@@ -4,21 +4,21 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
-import 'package:generador_formato/ui/inside_snackbar.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
+import 'package:generador_formato/res/ui/inside_snackbar.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../../ui/buttons.dart';
-import '../../../ui/custom_widgets.dart';
-import '../../../ui/show_snackbar.dart';
-import '../../../utils/helpers/utility.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/custom_dropdown.dart';
-import '../../../widgets/dialogs.dart';
-import '../../../widgets/form_tariff_widget.dart';
-import '../../../widgets/text_styles.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/custom_widgets.dart';
+import '../../../res/ui/show_snackbar.dart';
+import '../../../res/helpers/utility.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../utils/widgets/custom_dropdown.dart';
+import '../../../utils/widgets/dialogs.dart';
+import '../../../utils/widgets/form_tariff_widget.dart';
+import '../../../res/ui/text_styles.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class ManagerBaseTariffDialog extends StatefulWidget {
   const ManagerBaseTariffDialog({super.key, required this.tarifasBase});
@@ -285,8 +285,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                               SizedBox(
                                                 height: 35,
                                                 width: 80,
-                                                child: FormWidgets
-                                                    .textFormFieldResizable(
+                                                child:
+                                                    FormWidgets.textFormField(
                                                   name: "",
                                                   msgError: "",
                                                   enabled: tarifaPadre != null,
@@ -326,7 +326,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                               const SizedBox(height: 12),
                               SizedBox(
                                   height: 35,
-                                  child: FormWidgets.textFormFieldResizable(
+                                  child: FormWidgets.textFormField(
                                     name: "Nombre Tarifa Base",
                                     filled: true,
                                     msgError: "",

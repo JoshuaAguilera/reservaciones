@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/widgets/check_listtile_tariff_widget.dart';
-import 'package:generador_formato/widgets/item_rows.dart';
-import 'package:generador_formato/widgets/table_rows.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/utils/widgets/check_listtile_tariff_widget.dart';
+import 'package:generador_formato/utils/widgets/item_rows.dart';
+import 'package:generador_formato/utils/widgets/table_rows.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../ui/progress_indicator.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
 
 class DiasListView extends ConsumerStatefulWidget {

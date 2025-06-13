@@ -11,26 +11,26 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/ui/inside_snackbar.dart';
-import 'package:generador_formato/ui/title_page.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/custom_widgets.dart';
+import 'package:generador_formato/res/ui/inside_snackbar.dart';
+import 'package:generador_formato/res/ui/title_page.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/widgets/custom_dropdown.dart';
-import 'package:generador_formato/widgets/dialogs.dart';
-import 'package:generador_formato/widgets/form_tariff_widget.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
-import 'package:generador_formato/widgets/textformfield_custom.dart';
+import 'package:generador_formato/utils/widgets/custom_dropdown.dart';
+import 'package:generador_formato/utils/widgets/dialogs.dart';
+import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
+import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart' as acd;
 
 import '../../../models/tarifa_model.dart';
 import '../../../providers/tarifario_provider.dart';
-import '../../../ui/progress_indicator.dart';
-import '../../../widgets/select_buttons_widget.dart';
+import '../../../res/ui/progress_indicator.dart';
+import '../../../utils/widgets/select_buttons_widget.dart';
 
 class ManagerTariffSingleDialog extends ConsumerStatefulWidget {
   const ManagerTariffSingleDialog({

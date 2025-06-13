@@ -8,13 +8,13 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/utility.dart';
-import '../../utils/helpers/desktop_colors.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/utility.dart';
+import '../../res/helpers/desktop_colors.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/day_info_item_row.dart';
-import '../../widgets/dynamic_widget.dart';
-import '../../widgets/text_styles.dart';
+import '../../utils/widgets/day_info_item_row.dart';
+import '../../utils/widgets/dynamic_widget.dart';
+import '../../res/ui/text_styles.dart';
 
 class TarifarioCalendaryYearView extends ConsumerStatefulWidget {
   const TarifarioCalendaryYearView({

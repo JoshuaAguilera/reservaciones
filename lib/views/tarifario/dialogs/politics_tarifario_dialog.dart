@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../../../services/tarifa_service.dart';
-import '../../../ui/buttons.dart';
-import '../../../ui/show_snackbar.dart';
-import '../../../ui/title_page.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../utils/helpers/utility.dart';
-import '../../../widgets/form_widgets.dart';
-import '../../../widgets/text_styles.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/show_snackbar.dart';
+import '../../../res/ui/title_page.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../res/helpers/utility.dart';
+import '../../../utils/widgets/form_widgets.dart';
+import '../../../res/ui/text_styles.dart';
 
 class PoliticsTarifarioDialog extends StatefulWidget {
   const PoliticsTarifarioDialog({Key? key, required this.policy})

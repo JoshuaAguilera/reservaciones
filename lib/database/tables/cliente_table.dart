@@ -1,0 +1,17 @@
+import 'package:drift/drift.dart';
+
+class Cliente extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get nombre => text().nullable()();
+  TextColumn get apellido => text().nullable()();
+  TextColumn get numeroTelefonico => text().nullable()();
+  TextColumn get correoElectrico => text().nullable()();
+  TextColumn get nacionalidad =>
+      text().withDefault(const Variable("Mexicana"))();
+  TextColumn get estado => text().nullable()();
+  TextColumn get ciudad => text().nullable()();
+  TextColumn get cp => text().nullable()();
+  TextColumn get notas => text().nullable()();
+  BoolColumn get conCotizacion =>
+      boolean().withDefault(const Variable(false))();
+}

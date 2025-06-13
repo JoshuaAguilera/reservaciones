@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/ui/container_section.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/ui/container_section.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/helpers/desktop_colors.dart';
+import '../../res/helpers/desktop_colors.dart';
 
 class HelpResourseView extends StatefulWidget {
   const HelpResourseView({Key? key}) : super(key: key);

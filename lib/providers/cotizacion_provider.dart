@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/periodo_model.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
 
 import '../database/database.dart';
 import '../services/cotizacion_service.dart';

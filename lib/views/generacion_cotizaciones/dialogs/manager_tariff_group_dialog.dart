@@ -5,18 +5,18 @@ import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
-import 'package:generador_formato/widgets/form_tariff_widget.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
+import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 
 import '../../../models/tarifa_x_dia_model.dart';
 import '../../../providers/habitacion_provider.dart';
-import '../../../widgets/custom_dropdown.dart';
-import '../../../widgets/item_rows.dart';
-import '../../../widgets/select_buttons_widget.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../utils/widgets/custom_dropdown.dart';
+import '../../../utils/widgets/item_rows.dart';
+import '../../../utils/widgets/select_buttons_widget.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class ManagerTariffGroupDialog extends ConsumerStatefulWidget {
   const ManagerTariffGroupDialog({super.key, this.tarifasHabitacion});

@@ -5,19 +5,19 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/usuario_provider.dart';
 import 'package:generador_formato/services/auth_service.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/buttons.dart';
+import 'package:generador_formato/res/ui/show_snackbar.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/views/usuarios/dialogs/edit_user_dialog.dart';
-import 'package:generador_formato/widgets/usuario_item_row.dart';
+import 'package:generador_formato/utils/widgets/usuario_item_row.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../ui/custom_widgets.dart';
-import '../../ui/progress_indicator.dart';
-import '../../ui/textformfield_style.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/progress_indicator.dart';
+import '../../res/ui/textformfield_style.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/text_styles.dart';
+import '../../res/ui/text_styles.dart';
 
 class GestionUsuariosView extends ConsumerStatefulWidget {
   const GestionUsuariosView({super.key, required this.sideController});
@@ -211,7 +211,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                           ])
                             TextStyles.standardText(
                                 text: element,
-                                aliGN: TextAlign.center,
+                                align: TextAlign.center,
                                 color: Theme.of(context).primaryColor,
                                 isBold: true,
                                 overClip: true),
@@ -298,7 +298,7 @@ class _GestionUsuariosViewState extends ConsumerState<GestionUsuariosView> {
                       screenHight: 320,
                       message: TextStyles.standardText(
                         text: "Buscando usuarios",
-                        aliGN: TextAlign.center,
+                        align: TextAlign.center,
                         size: 11,
                       ),
                     );

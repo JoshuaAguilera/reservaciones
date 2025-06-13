@@ -2,19 +2,19 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/periodo_model.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
 
-import '../../../ui/buttons.dart';
-import '../../../ui/inside_snackbar.dart';
-import '../../../ui/title_page.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/text_styles.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/inside_snackbar.dart';
+import '../../../res/ui/title_page.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../res/ui/text_styles.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class PeriodCalendarDialog extends StatefulWidget {
   const PeriodCalendarDialog({

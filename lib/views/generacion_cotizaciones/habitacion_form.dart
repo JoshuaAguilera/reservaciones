@@ -8,13 +8,13 @@ import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/providers/cotizacion_provider.dart';
 import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/ui/show_snackbar.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/ui/show_snackbar.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dias_list_view.dart';
-import 'package:generador_formato/widgets/form_widgets.dart';
-import 'package:generador_formato/widgets/select_buttons_widget.dart';
-import 'package:generador_formato/widgets/summary_controller_widget.dart';
+import 'package:generador_formato/utils/widgets/form_widgets.dart';
+import 'package:generador_formato/utils/widgets/select_buttons_widget.dart';
+import 'package:generador_formato/utils/widgets/summary_controller_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
@@ -23,15 +23,15 @@ import '../../models/registro_tarifa_model.dart';
 import '../../models/temporada_model.dart';
 import '../../providers/tarifario_provider.dart';
 import '../../providers/usuario_provider.dart';
-import '../../ui/buttons.dart';
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
+import '../../res/ui/buttons.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/constants.dart';
+import '../../res/helpers/utility.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/dynamic_widget.dart';
-import '../../widgets/number_input_with_increment_decrement.dart';
-import '../../widgets/text_styles.dart';
-import '../../widgets/textformfield_custom.dart';
+import '../../utils/widgets/dynamic_widget.dart';
+import '../../utils/widgets/number_input_with_increment_decrement.dart';
+import '../../res/ui/text_styles.dart';
+import '../../utils/widgets/textformfield_custom.dart';
 import '../tarifario/dialogs/period_calendar_dialog.dart';
 import 'dialogs/manager_tariff_group_dialog.dart';
 
@@ -493,14 +493,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       TableRow(children: [
                                                         TextStyles.standardText(
                                                             text: "Adultos",
-                                                            aliGN: TextAlign
+                                                            align: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)
                                                                 .primaryColor),
                                                         TextStyles.standardText(
                                                             text: "Menores 0-6",
-                                                            aliGN: TextAlign
+                                                            align: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)
@@ -508,7 +508,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                         TextStyles.standardText(
                                                             text:
                                                                 "Menores 7-12",
-                                                            aliGN: TextAlign
+                                                            align: TextAlign
                                                                 .center,
                                                             color: Theme.of(
                                                                     context)

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/widgets/item_rows.dart';
+import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/registro_tarifa_model.dart';
 import '../../providers/tarifario_provider.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/progress_indicator.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/dynamic_widget.dart';
-import '../../widgets/text_styles.dart';
+import '../../utils/widgets/dynamic_widget.dart';
+import '../../res/ui/text_styles.dart';
 
 class TarifarioChecklistView extends ConsumerStatefulWidget {
   const TarifarioChecklistView({
@@ -85,7 +85,7 @@ class _TarifarioChecklistViewState
                           typeLoading: "progressiveDots",
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
-                            aliGN: TextAlign.center,
+                            align: TextAlign.center,
                             size: 11,
                           ),
                         ),

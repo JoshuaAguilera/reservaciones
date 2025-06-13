@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/configuracion_provider.dart';
-import 'package:generador_formato/ui/custom_widgets.dart';
-import 'package:generador_formato/ui/progress_indicator.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/ui/custom_widgets.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:printing/printing.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
-import '../../ui/buttons.dart';
-import '../../utils/helpers/desktop_colors.dart';
-import '../../widgets/carousel_widget.dart';
-import '../../widgets/form_widgets.dart';
+import '../../res/ui/buttons.dart';
+import '../../res/helpers/desktop_colors.dart';
+import '../../utils/widgets/carousel_widget.dart';
+import '../../utils/widgets/form_widgets.dart';
 
 class ConfigFormatoGroupView extends ConsumerStatefulWidget {
   const ConfigFormatoGroupView({super.key, required this.sideController});

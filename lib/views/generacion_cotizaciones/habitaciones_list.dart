@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../ui/buttons.dart';
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/utility.dart';
-import '../../widgets/habitacion_item_row.dart';
-import '../../widgets/text_styles.dart';
+import '../../res/ui/buttons.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/utility.dart';
+import '../../utils/widgets/habitacion_item_row.dart';
+import '../../res/ui/text_styles.dart';
 
 class HabitacionesList extends StatefulWidget {
   const HabitacionesList({
@@ -139,7 +139,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                         ])
                           TextStyles.standardText(
                             text: item,
-                            aliGN: TextAlign.center,
+                            align: TextAlign.center,
                             color: Theme.of(context).primaryColor,
                             overClip: false,
                             size: 11.5,

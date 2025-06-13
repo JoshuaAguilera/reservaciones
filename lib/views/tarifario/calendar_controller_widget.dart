@@ -4,18 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/providers/tarifario_provider.dart';
 import 'package:generador_formato/services/tarifa_service.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
+import 'package:generador_formato/res/helpers/constants.dart';
+import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/temporada_model.dart';
-import '../../ui/custom_widgets.dart';
-import '../../ui/progress_indicator.dart';
-import '../../ui/show_snackbar.dart';
-import '../../utils/helpers/utility.dart';
-import '../../widgets/item_rows.dart';
-import '../../widgets/text_styles.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/progress_indicator.dart';
+import '../../res/ui/show_snackbar.dart';
+import '../../res/helpers/utility.dart';
+import '../../utils/widgets/item_rows.dart';
+import '../../res/ui/text_styles.dart';
 
 class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool target;
@@ -443,7 +443,7 @@ class _ControllerCalendarWidgetState
                                 data: DateTime.now(), onlyNameDate: true)
                             .replaceAll(r' ', ''),
                         color: Theme.of(context).dividerColor,
-                        aliGN: TextAlign.end,
+                        align: TextAlign.end,
                       ),
                     ),
                   ],

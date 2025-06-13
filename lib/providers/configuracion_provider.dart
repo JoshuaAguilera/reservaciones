@@ -4,7 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../models/cotizacion_model.dart';
 import '../models/habitacion_model.dart';
 import '../services/generador_doc_service.dart';
-import '../utils/helpers/constants.dart';
+import '../res/helpers/constants.dart';
 
 final documentQuoteIndProvider =
     FutureProvider.family<pw.Document, String>((ref, arg) async {

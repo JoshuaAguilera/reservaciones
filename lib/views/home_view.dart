@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/providers/home_provider.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
+import 'package:generador_formato/res/helpers/utility.dart';
+import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../widgets/sidebar.dart';
-import '../utils/helpers/desktop_colors.dart';
+import '../utils/widgets/sidebar.dart';
+import '../res/helpers/desktop_colors.dart';
 import 'menu_view.dart';
 
 class HomeView extends ConsumerStatefulWidget {

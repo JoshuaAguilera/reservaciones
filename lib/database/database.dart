@@ -1,27 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:drift/native.dart';
-import 'package:generador_formato/database/dao/tarifa_base_dao.dart';
-import 'package:generador_formato/database/dao/tarifa_dao.dart';
-import 'package:generador_formato/database/dao/tarifa_rack_dao.dart';
-import 'package:generador_formato/database/tables/images_table.dart';
-import 'package:generador_formato/database/tables/tarifa_base_table.dart';
-import 'package:generador_formato/database/tables/temporada_tarifa_table.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
 import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
+import '../res/helpers/constants.dart';
+import 'dao/tarifa_base_dao.dart';
+import 'dao/tarifa_dao.dart';
+import 'dao/tarifa_rack_dao.dart';
+import 'tables/cliente_table.dart';
 import 'tables/habitacion_table.dart';
-import 'tables/cotizaciones_table.dart';
+import 'tables/cotizacion_table.dart';
+import 'tables/images_table.dart';
 import 'tables/periodo_table.dart';
 import 'tables/politicas_table.dart';
+import 'tables/tarifa_base_table.dart';
 import 'tables/tarifa_rack_table.dart';
 import 'tables/tarifa_table.dart';
 import 'tables/tarifa_x_dia_table.dart';
 import 'tables/temporada_table.dart';
+import 'tables/temporada_tarifa_table.dart';
 import 'tables/user_activity_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
@@ -41,6 +42,7 @@ part 'database.g.dart';
 //     ImagesTable,
 //     TemporadaTarifa,
 //     TarifaBase,
+//     Cliente,
 //   ],
 //   daos: [
 //     TarifaBaseDao,
@@ -86,6 +88,7 @@ class SeasonTariff {
     ImagesTable,
     TemporadaTarifa,
     TarifaBase,
+    Cliente,
   ],
   daos: [
     TarifaBaseDao,

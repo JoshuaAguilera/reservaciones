@@ -2,24 +2,25 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/providers/dahsboard_provider.dart';
-import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/providers/tarifario_provider.dart';
-import 'package:generador_formato/providers/usuario_provider.dart';
-import 'package:generador_formato/services/image_service.dart';
-import 'package:generador_formato/ui/buttons.dart';
-import 'package:generador_formato/utils/helpers/constants.dart';
-import 'package:generador_formato/utils/helpers/desktop_colors.dart';
-import 'package:generador_formato/services/auth_service.dart';
-import 'package:generador_formato/utils/helpers/utility.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/views/home_view.dart';
-import 'package:generador_formato/widgets/text_styles.dart';
 
 import '../database/database.dart';
 import '../models/imagen_model.dart';
 import '../providers/cotizacion_provider.dart';
-import '../ui/show_snackbar.dart';
+import '../providers/dahsboard_provider.dart';
+import '../providers/habitacion_provider.dart';
+import '../providers/tarifario_provider.dart';
+import '../providers/usuario_provider.dart';
+import '../res/helpers/constants.dart';
+import '../res/helpers/desktop_colors.dart';
+import '../res/helpers/utility.dart';
+import '../res/ui/buttons.dart';
+import '../res/ui/show_snackbar.dart';
+import '../res/ui/text_styles.dart';
+import '../services/auth_service.dart';
+import '../services/image_service.dart';
+import '../utils/shared_preferences/preferences.dart';
+import '../utils/widgets/form_widgets.dart';
+import 'home_view.dart';
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -49,277 +50,153 @@ class _LoginViewState extends ConsumerState<LoginView> {
     Color colorText = brightness == Brightness.light
         ? DesktopColors.prussianBlue
         : Colors.white;
-    Color colorTextField = brightness == Brightness.light
-        ? Colors.black54
-        : const Color.fromARGB(255, 188, 188, 188);
-    Color colorLabel = brightness == Brightness.light
-        ? Colors.black54
-        : DesktopColors.grisPalido;
-    Color colorTextValue =
-        brightness == Brightness.light ? Colors.black87 : DesktopColors.white;
 
-    return Stack(
-      children: [
-        Container(
-          height: screenHeight,
-          width: screenWidth,
-          decoration: BoxDecoration(
-            // image: DecorationImage(
-            //   image: brightness == Brightness.light
-            //       ? const AssetImage("assets/image/background_1.png")
-            //       : const AssetImage("assets/image/background_2.png"),
-            //   fit: BoxFit.cover,
-            // ),
-            gradient: LinearGradient(
-              colors: [
-                brightness == Brightness.light
-                    ? Colors.white
-                    : Utility.darken(DesktopColors.canvasColor, 0.15),
-                brightness == Brightness.light
-                    ? DesktopColors.cerulean
-                    : DesktopColors.canvasColor,
-              ],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-            ),
+    return Scaffold(
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              brightness == Brightness.light
+                  ? Colors.white
+                  : Utility.darken(DesktopColors.canvasColor, 0.15),
+              brightness == Brightness.light
+                  ? DesktopColors.cerulean
+                  : DesktopColors.canvasColor,
+            ],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
           ),
         ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth > 500
-                    ? screenWidth > 700
-                        ? 0
-                        : 55
-                    : 20),
-            child: Center(
-              child: SizedBox(
-                width: 700,
-                height: screenWidth > 350 ? 450 : 390,
-                child: Card(
-                  color: brightness == Brightness.light
-                      ? const Color.fromARGB(255, 242, 242, 242)
-                      : DesktopColors.cardColor,
-                  elevation: 6,
-                  shape: const ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(80)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: (screenWidth > 700)
-                        ? MainAxisAlignment.spaceBetween
-                        : MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth > 500 ? 36.0 : 12,
-                            vertical: screenHeight > 500 ? 25 : 25),
-                        child: Form(
-                          key: _formKeyLogin,
-                          child: Column(
-                            crossAxisAlignment: (screenWidth > 700)
-                                ? CrossAxisAlignment.start
-                                : CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 255,
-                                child: Stack(
-                                  children: [
-                                    const SizedBox(
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/image/large_logo.png"),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: TextStyles.standardText(
-                                        text: "Versión $version",
-                                        size: 11,
-                                        color: colorText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextStyles.titleText(
-                                text: "Iniciar sesión",
-                                color: colorText,
-                                size: screenWidth > 350 ? 18 : 15,
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 180,
-                                  maxWidth: screenWidth > 350 ? 270 : 200,
-                                  minHeight: 70.0,
-                                  maxHeight: 100.0,
-                                ),
-                                child: TextFormField(
-                                  enabled: !isLoading,
-                                  onFieldSubmitted: (value) async {
-                                    await submitData(brightness);
-                                  },
-                                  controller: userNameController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Ingrese usuario';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 9),
-                                    filled: true,
-                                    fillColor: Colors.white.withOpacity(0.1),
-                                    disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Utility.darken(
-                                            colorTextField, -0.05),
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: colorTextField),
-                                    ),
-                                    labelText: "Usuario",
-                                    labelStyle: TextStyles.styleStandar(
-                                      color: colorLabel,
-                                    ),
-                                    floatingLabelStyle: TextStyles.styleStandar(
-                                      color: isLoading
-                                          ? colorTextField
-                                          : Colors.blueAccent,
-                                      size: 13,
-                                    ),
-                                  ),
-                                  style: TextStyle(
-                                    fontFamily: "poppins_regular",
-                                    fontSize: 13,
-                                    color: colorTextValue,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 45,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 180,
-                                  maxWidth: screenWidth > 350 ? 270 : 200,
-                                  minHeight: 70.0,
-                                  maxHeight: 100.0,
-                                ),
-                                child: TextFormField(
-                                  enabled: !isLoading,
-                                  onFieldSubmitted: (value) async {
-                                    await submitData(brightness);
-                                  },
-                                  controller: passwordController,
-                                  obscureText: passwordVisible,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Ingrese contraseña';
-                                    }
-                                    return null;
-                                  },
-                                  style: TextStyle(
-                                    fontFamily: "poppins_regular",
-                                    fontSize: 13,
-                                    color: colorTextValue,
-                                  ),
-                                  decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 9),
-                                    filled: true,
-                                    fillColor: Colors.white.withOpacity(0.1),
-                                    disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Utility.darken(
-                                            colorTextField, -0.05),
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: colorTextField),
-                                    ),
-                                    labelStyle: TextStyles.styleStandar(
-                                      color: colorLabel,
-                                    ),
-                                    floatingLabelStyle: TextStyles.styleStandar(
-                                      color: isLoading
-                                          ? colorTextField
-                                          : Colors.blueAccent,
-                                      size: 13,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        passwordVisible
-                                            ? CupertinoIcons.eye_solid
-                                            : CupertinoIcons.eye_slash_fill,
-                                        color: colorText,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          passwordVisible = !passwordVisible;
-                                        });
-                                      },
-                                    ),
-                                    labelText: "Contraseña",
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              SizedBox(
-                                  width: 120,
-                                  height: screenWidth > 350 ? 40 : 35,
-                                  child: Buttons.commonButton(
-                                    isLoading: isLoading,
-                                    text: "Ingresar",
-                                    color: brightness != Brightness.light
-                                        ? isLoading
-                                            ? DesktopColors.prussianBlue
-                                            : DesktopColors.cerulean
-                                        : isLoading
-                                            ? DesktopColors.cerulean
-                                            : DesktopColors.prussianBlue,
-                                    onPressed: () async =>
-                                        await submitData(brightness),
-                                  ))
-                            ],
-                          ),
-                        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                Center(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: screenWidth > 350 ? 450 : 390,
+                      maxWidth: screenWidth < 700 ? 450 : 700,
+                    ),
+                    child: Card(
+                      elevation: 6,
+                      shape: const ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(80)),
                       ),
-                      if (screenWidth > 700)
-                        // if (screenHeight > 400)
-                        Container(
-                          width: 350,
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(40),
-                                topRight: Radius.circular(40),
+                      child: Row(
+                        mainAxisAlignment: (screenWidth > 700)
+                            ? MainAxisAlignment.spaceBetween
+                            : MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth > 500 ? 36.0 : 12,
+                                  vertical: screenHeight > 500 ? 25 : 25),
+                              child: Form(
+                                key: _formKeyLogin,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: (screenWidth > 700)
+                                        ? CrossAxisAlignment.start
+                                        : CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    spacing: 20,
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          SizedBox(
+                                            child: Image(
+                                              image: AssetImage(brightness ==
+                                                      Brightness.light
+                                                  ? "assets/image/large_black_logo.png"
+                                                  : "assets/image/large_logo.png"),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: TextStyles.standardText(
+                                              text: "Versión $version",
+                                              size: 11,
+                                              color: colorText,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      TextStyles.mediumText(
+                                        text: "Iniciar sesión",
+                                        color: colorText,
+                                        size: screenWidth > 350 ? 20 : 15,
+                                      ),
+                                      FormWidgets.textFormField(
+                                        name: "Usuario",
+                                        enabled: !isLoading,
+                                        onFieldSubmitted: (value) async {
+                                          await submitData(brightness);
+                                        },
+                                        controller: userNameController,
+                                      ),
+                                      FormWidgets.textFormField(
+                                        name: "Contraseña",
+                                        controller: passwordController,
+                                        enabled: !isLoading,
+                                        isPassword: true,
+                                        onFieldSubmitted: (value) async {
+                                          await submitData(brightness);
+                                        },
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Buttons.buttonPrimary(
+                                          isLoading: isLoading,
+                                          text: "  Ingresar  ",
+                                          compact: true,
+                                          backgroundColor: brightness !=
+                                                  Brightness.light
+                                              ? isLoading
+                                                  ? DesktopColors.prussianBlue
+                                                  : DesktopColors.cerulean
+                                              : isLoading
+                                                  ? DesktopColors.cerulean
+                                                  : DesktopColors.prussianBlue,
+                                          onPressed: () async =>
+                                              await submitData(brightness),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage("assets/image/lobby.jpg"),
-                              )),
-                        )
-                    ],
+                            ),
+                          ),
+                          if (screenWidth > 700)
+                            // if (screenHeight > 400)
+                            Container(
+                              width: 350,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(34),
+                                  topRight: Radius.circular(34),
+                                ),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage("assets/image/lobby.jpg"),
+                                ),
+                              ),
+                            )
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
+              ],
+            );
+          },
         ),
-      ],
+      ),
     );
   }
 

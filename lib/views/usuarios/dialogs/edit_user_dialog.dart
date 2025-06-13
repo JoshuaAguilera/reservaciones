@@ -2,20 +2,20 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/ui/title_page.dart';
+import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
 import '../../../services/auth_service.dart';
-import '../../../ui/buttons.dart';
-import '../../../ui/custom_widgets.dart';
-import '../../../ui/inside_snackbar.dart';
+import '../../../res/ui/buttons.dart';
+import '../../../res/ui/custom_widgets.dart';
+import '../../../res/ui/inside_snackbar.dart';
 import '../../../utils/encrypt/encrypter.dart';
-import '../../../utils/helpers/constants.dart';
-import '../../../utils/helpers/desktop_colors.dart';
-import '../../../widgets/change_password_widget.dart';
-import '../../../widgets/text_styles.dart';
-import '../../../widgets/textformfield_custom.dart';
+import '../../../res/helpers/constants.dart';
+import '../../../res/helpers/desktop_colors.dart';
+import '../../../utils/widgets/change_password_widget.dart';
+import '../../../res/ui/text_styles.dart';
+import '../../../utils/widgets/textformfield_custom.dart';
 
 class EditUserDialog extends StatefulWidget {
   const EditUserDialog({

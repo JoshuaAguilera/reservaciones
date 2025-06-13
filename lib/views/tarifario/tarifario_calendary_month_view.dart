@@ -6,14 +6,14 @@ import 'package:generador_formato/views/tarifario/calendar_controller_widget.dar
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../providers/tarifario_provider.dart';
-import '../../ui/custom_widgets.dart';
-import '../../utils/helpers/constants.dart';
-import '../../utils/helpers/utility.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/helpers/constants.dart';
+import '../../res/helpers/utility.dart';
 import '../../utils/shared_preferences/settings.dart';
-import '../../widgets/dynamic_widget.dart';
-import '../../widgets/item_rows.dart';
-import '../../widgets/period_item_row.dart';
-import '../../widgets/text_styles.dart';
+import '../../utils/widgets/dynamic_widget.dart';
+import '../../utils/widgets/item_rows.dart';
+import '../../utils/widgets/period_item_row.dart';
+import '../../res/ui/text_styles.dart';
 
 class TarifarioCalendaryMonthView extends ConsumerStatefulWidget {
   const TarifarioCalendaryMonthView({
