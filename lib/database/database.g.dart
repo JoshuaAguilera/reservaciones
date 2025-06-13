@@ -3,12 +3,12 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $ImagesTableTable extends ImagesTable
-    with TableInfo<$ImagesTableTable, ImagesTableData> {
+class $ImageTableTable extends ImageTable
+    with TableInfo<$ImageTableTable, ImageTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ImagesTableTable(this.attachedDatabase, [this._alias]);
+  $ImageTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -35,9 +35,9 @@ class $ImagesTableTable extends ImagesTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'images_table';
+  static const String $name = 'image_table';
   @override
-  VerificationContext validateIntegrity(Insertable<ImagesTableData> instance,
+  VerificationContext validateIntegrity(Insertable<ImageTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -58,9 +58,9 @@ class $ImagesTableTable extends ImagesTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ImagesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ImageTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ImagesTableData(
+    return ImageTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -71,16 +71,16 @@ class $ImagesTableTable extends ImagesTable
   }
 
   @override
-  $ImagesTableTable createAlias(String alias) {
-    return $ImagesTableTable(attachedDatabase, alias);
+  $ImageTableTable createAlias(String alias) {
+    return $ImageTableTable(attachedDatabase, alias);
   }
 }
 
-class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
+class ImageTableData extends DataClass implements Insertable<ImageTableData> {
   final int id;
   final String? code;
   final String? urlImage;
-  const ImagesTableData({required this.id, this.code, this.urlImage});
+  const ImageTableData({required this.id, this.code, this.urlImage});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -94,8 +94,8 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
     return map;
   }
 
-  ImagesTableCompanion toCompanion(bool nullToAbsent) {
-    return ImagesTableCompanion(
+  ImageTableCompanion toCompanion(bool nullToAbsent) {
+    return ImageTableCompanion(
       id: Value(id),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       urlImage: urlImage == null && nullToAbsent
@@ -104,10 +104,10 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
     );
   }
 
-  factory ImagesTableData.fromJson(Map<String, dynamic> json,
+  factory ImageTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ImagesTableData(
+    return ImageTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String?>(json['code']),
       urlImage: serializer.fromJson<String?>(json['urlImage']),
@@ -123,17 +123,17 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
     };
   }
 
-  ImagesTableData copyWith(
+  ImageTableData copyWith(
           {int? id,
           Value<String?> code = const Value.absent(),
           Value<String?> urlImage = const Value.absent()}) =>
-      ImagesTableData(
+      ImageTableData(
         id: id ?? this.id,
         code: code.present ? code.value : this.code,
         urlImage: urlImage.present ? urlImage.value : this.urlImage,
       );
-  ImagesTableData copyWithCompanion(ImagesTableCompanion data) {
-    return ImagesTableData(
+  ImageTableData copyWithCompanion(ImageTableCompanion data) {
+    return ImageTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       urlImage: data.urlImage.present ? data.urlImage.value : this.urlImage,
@@ -142,7 +142,7 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
 
   @override
   String toString() {
-    return (StringBuffer('ImagesTableData(')
+    return (StringBuffer('ImageTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('urlImage: $urlImage')
@@ -155,27 +155,27 @@ class ImagesTableData extends DataClass implements Insertable<ImagesTableData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ImagesTableData &&
+      (other is ImageTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.urlImage == this.urlImage);
 }
 
-class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
+class ImageTableCompanion extends UpdateCompanion<ImageTableData> {
   final Value<int> id;
   final Value<String?> code;
   final Value<String?> urlImage;
-  const ImagesTableCompanion({
+  const ImageTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.urlImage = const Value.absent(),
   });
-  ImagesTableCompanion.insert({
+  ImageTableCompanion.insert({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.urlImage = const Value.absent(),
   });
-  static Insertable<ImagesTableData> custom({
+  static Insertable<ImageTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<String>? urlImage,
@@ -187,9 +187,9 @@ class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
     });
   }
 
-  ImagesTableCompanion copyWith(
+  ImageTableCompanion copyWith(
       {Value<int>? id, Value<String?>? code, Value<String?>? urlImage}) {
-    return ImagesTableCompanion(
+    return ImageTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       urlImage: urlImage ?? this.urlImage,
@@ -213,7 +213,7 @@ class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
 
   @override
   String toString() {
-    return (StringBuffer('ImagesTableCompanion(')
+    return (StringBuffer('ImageTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('urlImage: $urlImage')
@@ -222,11 +222,12 @@ class ImagesTableCompanion extends UpdateCompanion<ImagesTableData> {
   }
 }
 
-class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
+class $UsuarioTableTable extends UsuarioTable
+    with TableInfo<$UsuarioTableTable, UsuarioTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $UsuarioTable(this.attachedDatabase, [this._alias]);
+  $UsuarioTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -309,7 +310,7 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES images_table (id)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES image_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -330,9 +331,9 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'usuario';
+  static const String $name = 'usuario_table';
   @override
-  VerificationContext validateIntegrity(Insertable<UsuarioData> instance,
+  VerificationContext validateIntegrity(Insertable<UsuarioTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -401,9 +402,9 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  UsuarioData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  UsuarioTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UsuarioData(
+    return UsuarioTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       username: attachedDatabase.typeMapping
@@ -434,12 +435,13 @@ class $UsuarioTable extends Usuario with TableInfo<$UsuarioTable, UsuarioData> {
   }
 
   @override
-  $UsuarioTable createAlias(String alias) {
-    return $UsuarioTable(attachedDatabase, alias);
+  $UsuarioTableTable createAlias(String alias) {
+    return $UsuarioTableTable(attachedDatabase, alias);
   }
 }
 
-class UsuarioData extends DataClass implements Insertable<UsuarioData> {
+class UsuarioTableData extends DataClass
+    implements Insertable<UsuarioTableData> {
   final int id;
   final String? username;
   final String? password;
@@ -453,7 +455,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   final String? apellido;
   final int? numCotizaciones;
   final int? imageId;
-  const UsuarioData(
+  const UsuarioTableData(
       {required this.id,
       this.username,
       this.password,
@@ -510,8 +512,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     return map;
   }
 
-  UsuarioCompanion toCompanion(bool nullToAbsent) {
-    return UsuarioCompanion(
+  UsuarioTableCompanion toCompanion(bool nullToAbsent) {
+    return UsuarioTableCompanion(
       id: Value(id),
       username: username == null && nullToAbsent
           ? const Value.absent()
@@ -548,10 +550,10 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     );
   }
 
-  factory UsuarioData.fromJson(Map<String, dynamic> json,
+  factory UsuarioTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return UsuarioData(
+    return UsuarioTableData(
       id: serializer.fromJson<int>(json['id']),
       username: serializer.fromJson<String?>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
@@ -588,7 +590,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
     };
   }
 
-  UsuarioData copyWith(
+  UsuarioTableData copyWith(
           {int? id,
           Value<String?> username = const Value.absent(),
           Value<String?> password = const Value.absent(),
@@ -602,7 +604,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           Value<String?> apellido = const Value.absent(),
           Value<int?> numCotizaciones = const Value.absent(),
           Value<int?> imageId = const Value.absent()}) =>
-      UsuarioData(
+      UsuarioTableData(
         id: id ?? this.id,
         username: username.present ? username.value : this.username,
         password: password.present ? password.value : this.password,
@@ -624,8 +626,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
             : this.numCotizaciones,
         imageId: imageId.present ? imageId.value : this.imageId,
       );
-  UsuarioData copyWithCompanion(UsuarioCompanion data) {
-    return UsuarioData(
+  UsuarioTableData copyWithCompanion(UsuarioTableCompanion data) {
+    return UsuarioTableData(
       id: data.id.present ? data.id.value : this.id,
       username: data.username.present ? data.username.value : this.username,
       password: data.password.present ? data.password.value : this.password,
@@ -652,7 +654,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
 
   @override
   String toString() {
-    return (StringBuffer('UsuarioData(')
+    return (StringBuffer('UsuarioTableData(')
           ..write('id: $id, ')
           ..write('username: $username, ')
           ..write('password: $password, ')
@@ -688,7 +690,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is UsuarioData &&
+      (other is UsuarioTableData &&
           other.id == this.id &&
           other.username == this.username &&
           other.password == this.password &&
@@ -704,7 +706,7 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
           other.imageId == this.imageId);
 }
 
-class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
+class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
   final Value<int> id;
   final Value<String?> username;
   final Value<String?> password;
@@ -718,7 +720,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   final Value<String?> apellido;
   final Value<int?> numCotizaciones;
   final Value<int?> imageId;
-  const UsuarioCompanion({
+  const UsuarioTableCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
@@ -733,7 +735,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.numCotizaciones = const Value.absent(),
     this.imageId = const Value.absent(),
   });
-  UsuarioCompanion.insert({
+  UsuarioTableCompanion.insert({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
@@ -748,7 +750,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     this.numCotizaciones = const Value.absent(),
     this.imageId = const Value.absent(),
   });
-  static Insertable<UsuarioData> custom({
+  static Insertable<UsuarioTableData> custom({
     Expression<int>? id,
     Expression<String>? username,
     Expression<String>? password,
@@ -780,7 +782,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
     });
   }
 
-  UsuarioCompanion copyWith(
+  UsuarioTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? username,
       Value<String?>? password,
@@ -794,7 +796,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
       Value<String?>? apellido,
       Value<int?>? numCotizaciones,
       Value<int?>? imageId}) {
-    return UsuarioCompanion(
+    return UsuarioTableCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
       password: password ?? this.password,
@@ -858,7 +860,7 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
 
   @override
   String toString() {
-    return (StringBuffer('UsuarioCompanion(')
+    return (StringBuffer('UsuarioTableCompanion(')
           ..write('id: $id, ')
           ..write('username: $username, ')
           ..write('password: $password, ')
@@ -877,12 +879,563 @@ class UsuarioCompanion extends UpdateCompanion<UsuarioData> {
   }
 }
 
-class $CotizacionTable extends Cotizacion
-    with TableInfo<$CotizacionTable, CotizacionData> {
+class $ClienteTableTable extends ClienteTable
+    with TableInfo<$ClienteTableTable, ClienteTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $CotizacionTable(this.attachedDatabase, [this._alias]);
+  $ClienteTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
+      'nombre', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _apellidoMeta =
+      const VerificationMeta('apellido');
+  @override
+  late final GeneratedColumn<String> apellido = GeneratedColumn<String>(
+      'apellido', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _numeroTelefonicoMeta =
+      const VerificationMeta('numeroTelefonico');
+  @override
+  late final GeneratedColumn<String> numeroTelefonico = GeneratedColumn<String>(
+      'numero_telefonico', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _correoElectricoMeta =
+      const VerificationMeta('correoElectrico');
+  @override
+  late final GeneratedColumn<String> correoElectrico = GeneratedColumn<String>(
+      'correo_electrico', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nacionalidadMeta =
+      const VerificationMeta('nacionalidad');
+  @override
+  late final GeneratedColumn<String> nacionalidad = GeneratedColumn<String>(
+      'nacionalidad', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Variable("Mexicana"));
+  static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<String> estado = GeneratedColumn<String>(
+      'estado', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _ciudadMeta = const VerificationMeta('ciudad');
+  @override
+  late final GeneratedColumn<String> ciudad = GeneratedColumn<String>(
+      'ciudad', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cpMeta = const VerificationMeta('cp');
+  @override
+  late final GeneratedColumn<String> cp = GeneratedColumn<String>(
+      'cp', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _notasMeta = const VerificationMeta('notas');
+  @override
+  late final GeneratedColumn<String> notas = GeneratedColumn<String>(
+      'notas', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _conCotizacionMeta =
+      const VerificationMeta('conCotizacion');
+  @override
+  late final GeneratedColumn<bool> conCotizacion = GeneratedColumn<bool>(
+      'con_cotizacion', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("con_cotizacion" IN (0, 1))'),
+      defaultValue: const Variable(false));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        nombre,
+        apellido,
+        numeroTelefonico,
+        correoElectrico,
+        nacionalidad,
+        estado,
+        ciudad,
+        cp,
+        notas,
+        conCotizacion
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cliente_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<ClienteTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('apellido')) {
+      context.handle(_apellidoMeta,
+          apellido.isAcceptableOrUnknown(data['apellido']!, _apellidoMeta));
+    }
+    if (data.containsKey('numero_telefonico')) {
+      context.handle(
+          _numeroTelefonicoMeta,
+          numeroTelefonico.isAcceptableOrUnknown(
+              data['numero_telefonico']!, _numeroTelefonicoMeta));
+    }
+    if (data.containsKey('correo_electrico')) {
+      context.handle(
+          _correoElectricoMeta,
+          correoElectrico.isAcceptableOrUnknown(
+              data['correo_electrico']!, _correoElectricoMeta));
+    }
+    if (data.containsKey('nacionalidad')) {
+      context.handle(
+          _nacionalidadMeta,
+          nacionalidad.isAcceptableOrUnknown(
+              data['nacionalidad']!, _nacionalidadMeta));
+    }
+    if (data.containsKey('estado')) {
+      context.handle(_estadoMeta,
+          estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta));
+    }
+    if (data.containsKey('ciudad')) {
+      context.handle(_ciudadMeta,
+          ciudad.isAcceptableOrUnknown(data['ciudad']!, _ciudadMeta));
+    }
+    if (data.containsKey('cp')) {
+      context.handle(_cpMeta, cp.isAcceptableOrUnknown(data['cp']!, _cpMeta));
+    }
+    if (data.containsKey('notas')) {
+      context.handle(
+          _notasMeta, notas.isAcceptableOrUnknown(data['notas']!, _notasMeta));
+    }
+    if (data.containsKey('con_cotizacion')) {
+      context.handle(
+          _conCotizacionMeta,
+          conCotizacion.isAcceptableOrUnknown(
+              data['con_cotizacion']!, _conCotizacionMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ClienteTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ClienteTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      nombre: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
+      apellido: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
+      numeroTelefonico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}numero_telefonico']),
+      correoElectrico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
+      nacionalidad: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nacionalidad'])!,
+      estado: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}estado']),
+      ciudad: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}ciudad']),
+      cp: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cp']),
+      notas: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notas']),
+      conCotizacion: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}con_cotizacion'])!,
+    );
+  }
+
+  @override
+  $ClienteTableTable createAlias(String alias) {
+    return $ClienteTableTable(attachedDatabase, alias);
+  }
+}
+
+class ClienteTableData extends DataClass
+    implements Insertable<ClienteTableData> {
+  final int id;
+  final String? nombre;
+  final String? apellido;
+  final String? numeroTelefonico;
+  final String? correoElectrico;
+  final String nacionalidad;
+  final String? estado;
+  final String? ciudad;
+  final String? cp;
+  final String? notas;
+  final bool conCotizacion;
+  const ClienteTableData(
+      {required this.id,
+      this.nombre,
+      this.apellido,
+      this.numeroTelefonico,
+      this.correoElectrico,
+      required this.nacionalidad,
+      this.estado,
+      this.ciudad,
+      this.cp,
+      this.notas,
+      required this.conCotizacion});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String>(nombre);
+    }
+    if (!nullToAbsent || apellido != null) {
+      map['apellido'] = Variable<String>(apellido);
+    }
+    if (!nullToAbsent || numeroTelefonico != null) {
+      map['numero_telefonico'] = Variable<String>(numeroTelefonico);
+    }
+    if (!nullToAbsent || correoElectrico != null) {
+      map['correo_electrico'] = Variable<String>(correoElectrico);
+    }
+    map['nacionalidad'] = Variable<String>(nacionalidad);
+    if (!nullToAbsent || estado != null) {
+      map['estado'] = Variable<String>(estado);
+    }
+    if (!nullToAbsent || ciudad != null) {
+      map['ciudad'] = Variable<String>(ciudad);
+    }
+    if (!nullToAbsent || cp != null) {
+      map['cp'] = Variable<String>(cp);
+    }
+    if (!nullToAbsent || notas != null) {
+      map['notas'] = Variable<String>(notas);
+    }
+    map['con_cotizacion'] = Variable<bool>(conCotizacion);
+    return map;
+  }
+
+  ClienteTableCompanion toCompanion(bool nullToAbsent) {
+    return ClienteTableCompanion(
+      id: Value(id),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      apellido: apellido == null && nullToAbsent
+          ? const Value.absent()
+          : Value(apellido),
+      numeroTelefonico: numeroTelefonico == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numeroTelefonico),
+      correoElectrico: correoElectrico == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correoElectrico),
+      nacionalidad: Value(nacionalidad),
+      estado:
+          estado == null && nullToAbsent ? const Value.absent() : Value(estado),
+      ciudad:
+          ciudad == null && nullToAbsent ? const Value.absent() : Value(ciudad),
+      cp: cp == null && nullToAbsent ? const Value.absent() : Value(cp),
+      notas:
+          notas == null && nullToAbsent ? const Value.absent() : Value(notas),
+      conCotizacion: Value(conCotizacion),
+    );
+  }
+
+  factory ClienteTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ClienteTableData(
+      id: serializer.fromJson<int>(json['id']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      apellido: serializer.fromJson<String?>(json['apellido']),
+      numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
+      correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
+      nacionalidad: serializer.fromJson<String>(json['nacionalidad']),
+      estado: serializer.fromJson<String?>(json['estado']),
+      ciudad: serializer.fromJson<String?>(json['ciudad']),
+      cp: serializer.fromJson<String?>(json['cp']),
+      notas: serializer.fromJson<String?>(json['notas']),
+      conCotizacion: serializer.fromJson<bool>(json['conCotizacion']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'nombre': serializer.toJson<String?>(nombre),
+      'apellido': serializer.toJson<String?>(apellido),
+      'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
+      'correoElectrico': serializer.toJson<String?>(correoElectrico),
+      'nacionalidad': serializer.toJson<String>(nacionalidad),
+      'estado': serializer.toJson<String?>(estado),
+      'ciudad': serializer.toJson<String?>(ciudad),
+      'cp': serializer.toJson<String?>(cp),
+      'notas': serializer.toJson<String?>(notas),
+      'conCotizacion': serializer.toJson<bool>(conCotizacion),
+    };
+  }
+
+  ClienteTableData copyWith(
+          {int? id,
+          Value<String?> nombre = const Value.absent(),
+          Value<String?> apellido = const Value.absent(),
+          Value<String?> numeroTelefonico = const Value.absent(),
+          Value<String?> correoElectrico = const Value.absent(),
+          String? nacionalidad,
+          Value<String?> estado = const Value.absent(),
+          Value<String?> ciudad = const Value.absent(),
+          Value<String?> cp = const Value.absent(),
+          Value<String?> notas = const Value.absent(),
+          bool? conCotizacion}) =>
+      ClienteTableData(
+        id: id ?? this.id,
+        nombre: nombre.present ? nombre.value : this.nombre,
+        apellido: apellido.present ? apellido.value : this.apellido,
+        numeroTelefonico: numeroTelefonico.present
+            ? numeroTelefonico.value
+            : this.numeroTelefonico,
+        correoElectrico: correoElectrico.present
+            ? correoElectrico.value
+            : this.correoElectrico,
+        nacionalidad: nacionalidad ?? this.nacionalidad,
+        estado: estado.present ? estado.value : this.estado,
+        ciudad: ciudad.present ? ciudad.value : this.ciudad,
+        cp: cp.present ? cp.value : this.cp,
+        notas: notas.present ? notas.value : this.notas,
+        conCotizacion: conCotizacion ?? this.conCotizacion,
+      );
+  ClienteTableData copyWithCompanion(ClienteTableCompanion data) {
+    return ClienteTableData(
+      id: data.id.present ? data.id.value : this.id,
+      nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      apellido: data.apellido.present ? data.apellido.value : this.apellido,
+      numeroTelefonico: data.numeroTelefonico.present
+          ? data.numeroTelefonico.value
+          : this.numeroTelefonico,
+      correoElectrico: data.correoElectrico.present
+          ? data.correoElectrico.value
+          : this.correoElectrico,
+      nacionalidad: data.nacionalidad.present
+          ? data.nacionalidad.value
+          : this.nacionalidad,
+      estado: data.estado.present ? data.estado.value : this.estado,
+      ciudad: data.ciudad.present ? data.ciudad.value : this.ciudad,
+      cp: data.cp.present ? data.cp.value : this.cp,
+      notas: data.notas.present ? data.notas.value : this.notas,
+      conCotizacion: data.conCotizacion.present
+          ? data.conCotizacion.value
+          : this.conCotizacion,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClienteTableData(')
+          ..write('id: $id, ')
+          ..write('nombre: $nombre, ')
+          ..write('apellido: $apellido, ')
+          ..write('numeroTelefonico: $numeroTelefonico, ')
+          ..write('correoElectrico: $correoElectrico, ')
+          ..write('nacionalidad: $nacionalidad, ')
+          ..write('estado: $estado, ')
+          ..write('ciudad: $ciudad, ')
+          ..write('cp: $cp, ')
+          ..write('notas: $notas, ')
+          ..write('conCotizacion: $conCotizacion')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, nombre, apellido, numeroTelefonico,
+      correoElectrico, nacionalidad, estado, ciudad, cp, notas, conCotizacion);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ClienteTableData &&
+          other.id == this.id &&
+          other.nombre == this.nombre &&
+          other.apellido == this.apellido &&
+          other.numeroTelefonico == this.numeroTelefonico &&
+          other.correoElectrico == this.correoElectrico &&
+          other.nacionalidad == this.nacionalidad &&
+          other.estado == this.estado &&
+          other.ciudad == this.ciudad &&
+          other.cp == this.cp &&
+          other.notas == this.notas &&
+          other.conCotizacion == this.conCotizacion);
+}
+
+class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
+  final Value<int> id;
+  final Value<String?> nombre;
+  final Value<String?> apellido;
+  final Value<String?> numeroTelefonico;
+  final Value<String?> correoElectrico;
+  final Value<String> nacionalidad;
+  final Value<String?> estado;
+  final Value<String?> ciudad;
+  final Value<String?> cp;
+  final Value<String?> notas;
+  final Value<bool> conCotizacion;
+  const ClienteTableCompanion({
+    this.id = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.apellido = const Value.absent(),
+    this.numeroTelefonico = const Value.absent(),
+    this.correoElectrico = const Value.absent(),
+    this.nacionalidad = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.ciudad = const Value.absent(),
+    this.cp = const Value.absent(),
+    this.notas = const Value.absent(),
+    this.conCotizacion = const Value.absent(),
+  });
+  ClienteTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.apellido = const Value.absent(),
+    this.numeroTelefonico = const Value.absent(),
+    this.correoElectrico = const Value.absent(),
+    this.nacionalidad = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.ciudad = const Value.absent(),
+    this.cp = const Value.absent(),
+    this.notas = const Value.absent(),
+    this.conCotizacion = const Value.absent(),
+  });
+  static Insertable<ClienteTableData> custom({
+    Expression<int>? id,
+    Expression<String>? nombre,
+    Expression<String>? apellido,
+    Expression<String>? numeroTelefonico,
+    Expression<String>? correoElectrico,
+    Expression<String>? nacionalidad,
+    Expression<String>? estado,
+    Expression<String>? ciudad,
+    Expression<String>? cp,
+    Expression<String>? notas,
+    Expression<bool>? conCotizacion,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (nombre != null) 'nombre': nombre,
+      if (apellido != null) 'apellido': apellido,
+      if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
+      if (correoElectrico != null) 'correo_electrico': correoElectrico,
+      if (nacionalidad != null) 'nacionalidad': nacionalidad,
+      if (estado != null) 'estado': estado,
+      if (ciudad != null) 'ciudad': ciudad,
+      if (cp != null) 'cp': cp,
+      if (notas != null) 'notas': notas,
+      if (conCotizacion != null) 'con_cotizacion': conCotizacion,
+    });
+  }
+
+  ClienteTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String?>? nombre,
+      Value<String?>? apellido,
+      Value<String?>? numeroTelefonico,
+      Value<String?>? correoElectrico,
+      Value<String>? nacionalidad,
+      Value<String?>? estado,
+      Value<String?>? ciudad,
+      Value<String?>? cp,
+      Value<String?>? notas,
+      Value<bool>? conCotizacion}) {
+    return ClienteTableCompanion(
+      id: id ?? this.id,
+      nombre: nombre ?? this.nombre,
+      apellido: apellido ?? this.apellido,
+      numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
+      correoElectrico: correoElectrico ?? this.correoElectrico,
+      nacionalidad: nacionalidad ?? this.nacionalidad,
+      estado: estado ?? this.estado,
+      ciudad: ciudad ?? this.ciudad,
+      cp: cp ?? this.cp,
+      notas: notas ?? this.notas,
+      conCotizacion: conCotizacion ?? this.conCotizacion,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (apellido.present) {
+      map['apellido'] = Variable<String>(apellido.value);
+    }
+    if (numeroTelefonico.present) {
+      map['numero_telefonico'] = Variable<String>(numeroTelefonico.value);
+    }
+    if (correoElectrico.present) {
+      map['correo_electrico'] = Variable<String>(correoElectrico.value);
+    }
+    if (nacionalidad.present) {
+      map['nacionalidad'] = Variable<String>(nacionalidad.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<String>(estado.value);
+    }
+    if (ciudad.present) {
+      map['ciudad'] = Variable<String>(ciudad.value);
+    }
+    if (cp.present) {
+      map['cp'] = Variable<String>(cp.value);
+    }
+    if (notas.present) {
+      map['notas'] = Variable<String>(notas.value);
+    }
+    if (conCotizacion.present) {
+      map['con_cotizacion'] = Variable<bool>(conCotizacion.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClienteTableCompanion(')
+          ..write('id: $id, ')
+          ..write('nombre: $nombre, ')
+          ..write('apellido: $apellido, ')
+          ..write('numeroTelefonico: $numeroTelefonico, ')
+          ..write('correoElectrico: $correoElectrico, ')
+          ..write('nacionalidad: $nacionalidad, ')
+          ..write('estado: $estado, ')
+          ..write('ciudad: $ciudad, ')
+          ..write('cp: $cp, ')
+          ..write('notas: $notas, ')
+          ..write('conCotizacion: $conCotizacion')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CotizacionTableTable extends CotizacionTable
+    with TableInfo<$CotizacionTableTable, CotizacionTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CotizacionTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -897,24 +1450,6 @@ class $CotizacionTable extends Cotizacion
   @override
   late final GeneratedColumn<String> folioPrincipal = GeneratedColumn<String>(
       'folio_principal', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _nombreHuespedMeta =
-      const VerificationMeta('nombreHuesped');
-  @override
-  late final GeneratedColumn<String> nombreHuesped = GeneratedColumn<String>(
-      'nombre_huesped', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _numeroTelefonicoMeta =
-      const VerificationMeta('numeroTelefonico');
-  @override
-  late final GeneratedColumn<String> numeroTelefonico = GeneratedColumn<String>(
-      'numero_telefonico', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _correoElectricoMeta =
-      const VerificationMeta('correoElectrico');
-  @override
-  late final GeneratedColumn<String> correoElectrico = GeneratedColumn<String>(
-      'correo_electrico', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
   @override
@@ -959,7 +1494,16 @@ class $CotizacionTable extends Cotizacion
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+  static const VerificationMeta _clienteIDMeta =
+      const VerificationMeta('clienteID');
+  @override
+  late final GeneratedColumn<int> clienteID = GeneratedColumn<int>(
+      'cliente_i_d', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES cliente_table (id)'));
   static const VerificationMeta _usernameMeta =
       const VerificationMeta('username');
   @override
@@ -970,24 +1514,23 @@ class $CotizacionTable extends Cotizacion
   List<GeneratedColumn> get $columns => [
         id,
         folioPrincipal,
-        nombreHuesped,
-        numeroTelefonico,
-        correoElectrico,
         fecha,
         fechaLimite,
         esGrupo,
         esConcretado,
         habitaciones,
         usuarioID,
+        clienteID,
         username
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'cotizacion';
+  static const String $name = 'cotizacion_table';
   @override
-  VerificationContext validateIntegrity(Insertable<CotizacionData> instance,
+  VerificationContext validateIntegrity(
+      Insertable<CotizacionTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -999,24 +1542,6 @@ class $CotizacionTable extends Cotizacion
           _folioPrincipalMeta,
           folioPrincipal.isAcceptableOrUnknown(
               data['folio_principal']!, _folioPrincipalMeta));
-    }
-    if (data.containsKey('nombre_huesped')) {
-      context.handle(
-          _nombreHuespedMeta,
-          nombreHuesped.isAcceptableOrUnknown(
-              data['nombre_huesped']!, _nombreHuespedMeta));
-    }
-    if (data.containsKey('numero_telefonico')) {
-      context.handle(
-          _numeroTelefonicoMeta,
-          numeroTelefonico.isAcceptableOrUnknown(
-              data['numero_telefonico']!, _numeroTelefonicoMeta));
-    }
-    if (data.containsKey('correo_electrico')) {
-      context.handle(
-          _correoElectricoMeta,
-          correoElectrico.isAcceptableOrUnknown(
-              data['correo_electrico']!, _correoElectricoMeta));
     }
     if (data.containsKey('fecha')) {
       context.handle(
@@ -1050,6 +1575,12 @@ class $CotizacionTable extends Cotizacion
           usuarioID.isAcceptableOrUnknown(
               data['usuario_i_d']!, _usuarioIDMeta));
     }
+    if (data.containsKey('cliente_i_d')) {
+      context.handle(
+          _clienteIDMeta,
+          clienteID.isAcceptableOrUnknown(
+              data['cliente_i_d']!, _clienteIDMeta));
+    }
     if (data.containsKey('username')) {
       context.handle(_usernameMeta,
           username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
@@ -1060,19 +1591,13 @@ class $CotizacionTable extends Cotizacion
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  CotizacionData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  CotizacionTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return CotizacionData(
+    return CotizacionTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       folioPrincipal: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}folio_principal']),
-      nombreHuesped: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}nombre_huesped']),
-      numeroTelefonico: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}numero_telefonico']),
-      correoElectrico: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
       fecha: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       fechaLimite: attachedDatabase.typeMapping
@@ -1085,42 +1610,41 @@ class $CotizacionTable extends Cotizacion
           .read(DriftSqlType.string, data['${effectivePrefix}habitaciones']),
       usuarioID: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
+      clienteID: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}cliente_i_d']),
       username: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}username']),
     );
   }
 
   @override
-  $CotizacionTable createAlias(String alias) {
-    return $CotizacionTable(attachedDatabase, alias);
+  $CotizacionTableTable createAlias(String alias) {
+    return $CotizacionTableTable(attachedDatabase, alias);
   }
 }
 
-class CotizacionData extends DataClass implements Insertable<CotizacionData> {
+class CotizacionTableData extends DataClass
+    implements Insertable<CotizacionTableData> {
   final int id;
   final String? folioPrincipal;
-  final String? nombreHuesped;
-  final String? numeroTelefonico;
-  final String? correoElectrico;
   final DateTime? fecha;
   final DateTime? fechaLimite;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
   final int? usuarioID;
+  final int? clienteID;
   final String? username;
-  const CotizacionData(
+  const CotizacionTableData(
       {required this.id,
       this.folioPrincipal,
-      this.nombreHuesped,
-      this.numeroTelefonico,
-      this.correoElectrico,
       this.fecha,
       this.fechaLimite,
       this.esGrupo,
       this.esConcretado,
       this.habitaciones,
       this.usuarioID,
+      this.clienteID,
       this.username});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1128,15 +1652,6 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || folioPrincipal != null) {
       map['folio_principal'] = Variable<String>(folioPrincipal);
-    }
-    if (!nullToAbsent || nombreHuesped != null) {
-      map['nombre_huesped'] = Variable<String>(nombreHuesped);
-    }
-    if (!nullToAbsent || numeroTelefonico != null) {
-      map['numero_telefonico'] = Variable<String>(numeroTelefonico);
-    }
-    if (!nullToAbsent || correoElectrico != null) {
-      map['correo_electrico'] = Variable<String>(correoElectrico);
     }
     if (!nullToAbsent || fecha != null) {
       map['fecha'] = Variable<DateTime>(fecha);
@@ -1156,27 +1671,21 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     if (!nullToAbsent || usuarioID != null) {
       map['usuario_i_d'] = Variable<int>(usuarioID);
     }
+    if (!nullToAbsent || clienteID != null) {
+      map['cliente_i_d'] = Variable<int>(clienteID);
+    }
     if (!nullToAbsent || username != null) {
       map['username'] = Variable<String>(username);
     }
     return map;
   }
 
-  CotizacionCompanion toCompanion(bool nullToAbsent) {
-    return CotizacionCompanion(
+  CotizacionTableCompanion toCompanion(bool nullToAbsent) {
+    return CotizacionTableCompanion(
       id: Value(id),
       folioPrincipal: folioPrincipal == null && nullToAbsent
           ? const Value.absent()
           : Value(folioPrincipal),
-      nombreHuesped: nombreHuesped == null && nullToAbsent
-          ? const Value.absent()
-          : Value(nombreHuesped),
-      numeroTelefonico: numeroTelefonico == null && nullToAbsent
-          ? const Value.absent()
-          : Value(numeroTelefonico),
-      correoElectrico: correoElectrico == null && nullToAbsent
-          ? const Value.absent()
-          : Value(correoElectrico),
       fecha:
           fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       fechaLimite: fechaLimite == null && nullToAbsent
@@ -1194,27 +1703,28 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
       usuarioID: usuarioID == null && nullToAbsent
           ? const Value.absent()
           : Value(usuarioID),
+      clienteID: clienteID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clienteID),
       username: username == null && nullToAbsent
           ? const Value.absent()
           : Value(username),
     );
   }
 
-  factory CotizacionData.fromJson(Map<String, dynamic> json,
+  factory CotizacionTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return CotizacionData(
+    return CotizacionTableData(
       id: serializer.fromJson<int>(json['id']),
       folioPrincipal: serializer.fromJson<String?>(json['folioPrincipal']),
-      nombreHuesped: serializer.fromJson<String?>(json['nombreHuesped']),
-      numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
-      correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
       fechaLimite: serializer.fromJson<DateTime?>(json['fechaLimite']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
       usuarioID: serializer.fromJson<int?>(json['usuarioID']),
+      clienteID: serializer.fromJson<int?>(json['clienteID']),
       username: serializer.fromJson<String?>(json['username']),
     );
   }
@@ -1224,44 +1734,32 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'folioPrincipal': serializer.toJson<String?>(folioPrincipal),
-      'nombreHuesped': serializer.toJson<String?>(nombreHuesped),
-      'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
-      'correoElectrico': serializer.toJson<String?>(correoElectrico),
       'fecha': serializer.toJson<DateTime?>(fecha),
       'fechaLimite': serializer.toJson<DateTime?>(fechaLimite),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
       'usuarioID': serializer.toJson<int?>(usuarioID),
+      'clienteID': serializer.toJson<int?>(clienteID),
       'username': serializer.toJson<String?>(username),
     };
   }
 
-  CotizacionData copyWith(
+  CotizacionTableData copyWith(
           {int? id,
           Value<String?> folioPrincipal = const Value.absent(),
-          Value<String?> nombreHuesped = const Value.absent(),
-          Value<String?> numeroTelefonico = const Value.absent(),
-          Value<String?> correoElectrico = const Value.absent(),
           Value<DateTime?> fecha = const Value.absent(),
           Value<DateTime?> fechaLimite = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
           Value<String?> habitaciones = const Value.absent(),
           Value<int?> usuarioID = const Value.absent(),
+          Value<int?> clienteID = const Value.absent(),
           Value<String?> username = const Value.absent()}) =>
-      CotizacionData(
+      CotizacionTableData(
         id: id ?? this.id,
         folioPrincipal:
             folioPrincipal.present ? folioPrincipal.value : this.folioPrincipal,
-        nombreHuesped:
-            nombreHuesped.present ? nombreHuesped.value : this.nombreHuesped,
-        numeroTelefonico: numeroTelefonico.present
-            ? numeroTelefonico.value
-            : this.numeroTelefonico,
-        correoElectrico: correoElectrico.present
-            ? correoElectrico.value
-            : this.correoElectrico,
         fecha: fecha.present ? fecha.value : this.fecha,
         fechaLimite: fechaLimite.present ? fechaLimite.value : this.fechaLimite,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
@@ -1270,23 +1768,15 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
         habitaciones:
             habitaciones.present ? habitaciones.value : this.habitaciones,
         usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
+        clienteID: clienteID.present ? clienteID.value : this.clienteID,
         username: username.present ? username.value : this.username,
       );
-  CotizacionData copyWithCompanion(CotizacionCompanion data) {
-    return CotizacionData(
+  CotizacionTableData copyWithCompanion(CotizacionTableCompanion data) {
+    return CotizacionTableData(
       id: data.id.present ? data.id.value : this.id,
       folioPrincipal: data.folioPrincipal.present
           ? data.folioPrincipal.value
           : this.folioPrincipal,
-      nombreHuesped: data.nombreHuesped.present
-          ? data.nombreHuesped.value
-          : this.nombreHuesped,
-      numeroTelefonico: data.numeroTelefonico.present
-          ? data.numeroTelefonico.value
-          : this.numeroTelefonico,
-      correoElectrico: data.correoElectrico.present
-          ? data.correoElectrico.value
-          : this.correoElectrico,
       fecha: data.fecha.present ? data.fecha.value : this.fecha,
       fechaLimite:
           data.fechaLimite.present ? data.fechaLimite.value : this.fechaLimite,
@@ -1298,157 +1788,129 @@ class CotizacionData extends DataClass implements Insertable<CotizacionData> {
           ? data.habitaciones.value
           : this.habitaciones,
       usuarioID: data.usuarioID.present ? data.usuarioID.value : this.usuarioID,
+      clienteID: data.clienteID.present ? data.clienteID.value : this.clienteID,
       username: data.username.present ? data.username.value : this.username,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('CotizacionData(')
+    return (StringBuffer('CotizacionTableData(')
           ..write('id: $id, ')
           ..write('folioPrincipal: $folioPrincipal, ')
-          ..write('nombreHuesped: $nombreHuesped, ')
-          ..write('numeroTelefonico: $numeroTelefonico, ')
-          ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
           ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
           ..write('usuarioID: $usuarioID, ')
+          ..write('clienteID: $clienteID, ')
           ..write('username: $username')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      folioPrincipal,
-      nombreHuesped,
-      numeroTelefonico,
-      correoElectrico,
-      fecha,
-      fechaLimite,
-      esGrupo,
-      esConcretado,
-      habitaciones,
-      usuarioID,
-      username);
+  int get hashCode => Object.hash(id, folioPrincipal, fecha, fechaLimite,
+      esGrupo, esConcretado, habitaciones, usuarioID, clienteID, username);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is CotizacionData &&
+      (other is CotizacionTableData &&
           other.id == this.id &&
           other.folioPrincipal == this.folioPrincipal &&
-          other.nombreHuesped == this.nombreHuesped &&
-          other.numeroTelefonico == this.numeroTelefonico &&
-          other.correoElectrico == this.correoElectrico &&
           other.fecha == this.fecha &&
           other.fechaLimite == this.fechaLimite &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
           other.habitaciones == this.habitaciones &&
           other.usuarioID == this.usuarioID &&
+          other.clienteID == this.clienteID &&
           other.username == this.username);
 }
 
-class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
+class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
   final Value<int> id;
   final Value<String?> folioPrincipal;
-  final Value<String?> nombreHuesped;
-  final Value<String?> numeroTelefonico;
-  final Value<String?> correoElectrico;
   final Value<DateTime?> fecha;
   final Value<DateTime?> fechaLimite;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
   final Value<int?> usuarioID;
+  final Value<int?> clienteID;
   final Value<String?> username;
-  const CotizacionCompanion({
+  const CotizacionTableCompanion({
     this.id = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
-    this.nombreHuesped = const Value.absent(),
-    this.numeroTelefonico = const Value.absent(),
-    this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
     this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
     this.usuarioID = const Value.absent(),
+    this.clienteID = const Value.absent(),
     this.username = const Value.absent(),
   });
-  CotizacionCompanion.insert({
+  CotizacionTableCompanion.insert({
     this.id = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
-    this.nombreHuesped = const Value.absent(),
-    this.numeroTelefonico = const Value.absent(),
-    this.correoElectrico = const Value.absent(),
     this.fecha = const Value.absent(),
     this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
     this.usuarioID = const Value.absent(),
+    this.clienteID = const Value.absent(),
     this.username = const Value.absent(),
   });
-  static Insertable<CotizacionData> custom({
+  static Insertable<CotizacionTableData> custom({
     Expression<int>? id,
     Expression<String>? folioPrincipal,
-    Expression<String>? nombreHuesped,
-    Expression<String>? numeroTelefonico,
-    Expression<String>? correoElectrico,
     Expression<DateTime>? fecha,
     Expression<DateTime>? fechaLimite,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
     Expression<String>? habitaciones,
     Expression<int>? usuarioID,
+    Expression<int>? clienteID,
     Expression<String>? username,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (folioPrincipal != null) 'folio_principal': folioPrincipal,
-      if (nombreHuesped != null) 'nombre_huesped': nombreHuesped,
-      if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
-      if (correoElectrico != null) 'correo_electrico': correoElectrico,
       if (fecha != null) 'fecha': fecha,
       if (fechaLimite != null) 'fecha_limite': fechaLimite,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
       if (habitaciones != null) 'habitaciones': habitaciones,
       if (usuarioID != null) 'usuario_i_d': usuarioID,
+      if (clienteID != null) 'cliente_i_d': clienteID,
       if (username != null) 'username': username,
     });
   }
 
-  CotizacionCompanion copyWith(
+  CotizacionTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? folioPrincipal,
-      Value<String?>? nombreHuesped,
-      Value<String?>? numeroTelefonico,
-      Value<String?>? correoElectrico,
       Value<DateTime?>? fecha,
       Value<DateTime?>? fechaLimite,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
       Value<String?>? habitaciones,
       Value<int?>? usuarioID,
+      Value<int?>? clienteID,
       Value<String?>? username}) {
-    return CotizacionCompanion(
+    return CotizacionTableCompanion(
       id: id ?? this.id,
       folioPrincipal: folioPrincipal ?? this.folioPrincipal,
-      nombreHuesped: nombreHuesped ?? this.nombreHuesped,
-      numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
-      correoElectrico: correoElectrico ?? this.correoElectrico,
       fecha: fecha ?? this.fecha,
       fechaLimite: fechaLimite ?? this.fechaLimite,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
       habitaciones: habitaciones ?? this.habitaciones,
       usuarioID: usuarioID ?? this.usuarioID,
+      clienteID: clienteID ?? this.clienteID,
       username: username ?? this.username,
     );
   }
@@ -1461,15 +1923,6 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     }
     if (folioPrincipal.present) {
       map['folio_principal'] = Variable<String>(folioPrincipal.value);
-    }
-    if (nombreHuesped.present) {
-      map['nombre_huesped'] = Variable<String>(nombreHuesped.value);
-    }
-    if (numeroTelefonico.present) {
-      map['numero_telefonico'] = Variable<String>(numeroTelefonico.value);
-    }
-    if (correoElectrico.present) {
-      map['correo_electrico'] = Variable<String>(correoElectrico.value);
     }
     if (fecha.present) {
       map['fecha'] = Variable<DateTime>(fecha.value);
@@ -1489,6 +1942,9 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
     if (usuarioID.present) {
       map['usuario_i_d'] = Variable<int>(usuarioID.value);
     }
+    if (clienteID.present) {
+      map['cliente_i_d'] = Variable<int>(clienteID.value);
+    }
     if (username.present) {
       map['username'] = Variable<String>(username.value);
     }
@@ -1497,30 +1953,28 @@ class CotizacionCompanion extends UpdateCompanion<CotizacionData> {
 
   @override
   String toString() {
-    return (StringBuffer('CotizacionCompanion(')
+    return (StringBuffer('CotizacionTableCompanion(')
           ..write('id: $id, ')
           ..write('folioPrincipal: $folioPrincipal, ')
-          ..write('nombreHuesped: $nombreHuesped, ')
-          ..write('numeroTelefonico: $numeroTelefonico, ')
-          ..write('correoElectrico: $correoElectrico, ')
           ..write('fecha: $fecha, ')
           ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
           ..write('usuarioID: $usuarioID, ')
+          ..write('clienteID: $clienteID, ')
           ..write('username: $username')
           ..write(')'))
         .toString();
   }
 }
 
-class $HabitacionTable extends Habitacion
-    with TableInfo<$HabitacionTable, HabitacionData> {
+class $HabitacionTableTable extends HabitacionTable
+    with TableInfo<$HabitacionTableTable, HabitacionTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $HabitacionTable(this.attachedDatabase, [this._alias]);
+  $HabitacionTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1632,9 +2086,10 @@ class $HabitacionTable extends Habitacion
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'habitacion';
+  static const String $name = 'habitacion_table';
   @override
-  VerificationContext validateIntegrity(Insertable<HabitacionData> instance,
+  VerificationContext validateIntegrity(
+      Insertable<HabitacionTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -1717,9 +2172,9 @@ class $HabitacionTable extends Habitacion
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  HabitacionData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  HabitacionTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HabitacionData(
+    return HabitacionTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       folioHabitacion: attachedDatabase.typeMapping.read(
@@ -1752,12 +2207,13 @@ class $HabitacionTable extends Habitacion
   }
 
   @override
-  $HabitacionTable createAlias(String alias) {
-    return $HabitacionTable(attachedDatabase, alias);
+  $HabitacionTableTable createAlias(String alias) {
+    return $HabitacionTableTable(attachedDatabase, alias);
   }
 }
 
-class HabitacionData extends DataClass implements Insertable<HabitacionData> {
+class HabitacionTableData extends DataClass
+    implements Insertable<HabitacionTableData> {
   final int id;
   final String? folioHabitacion;
   final String? folioCotizacion;
@@ -1772,7 +2228,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   final bool? isFree;
   final bool? useCashSeason;
   final String? tarifaXDia;
-  const HabitacionData(
+  const HabitacionTableData(
       {required this.id,
       this.folioHabitacion,
       this.folioCotizacion,
@@ -1831,8 +2287,8 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     return map;
   }
 
-  HabitacionCompanion toCompanion(bool nullToAbsent) {
-    return HabitacionCompanion(
+  HabitacionTableCompanion toCompanion(bool nullToAbsent) {
+    return HabitacionTableCompanion(
       id: Value(id),
       folioHabitacion: folioHabitacion == null && nullToAbsent
           ? const Value.absent()
@@ -1872,10 +2328,10 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     );
   }
 
-  factory HabitacionData.fromJson(Map<String, dynamic> json,
+  factory HabitacionTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HabitacionData(
+    return HabitacionTableData(
       id: serializer.fromJson<int>(json['id']),
       folioHabitacion: serializer.fromJson<String?>(json['folioHabitacion']),
       folioCotizacion: serializer.fromJson<String?>(json['folioCotizacion']),
@@ -1913,7 +2369,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
     };
   }
 
-  HabitacionData copyWith(
+  HabitacionTableData copyWith(
           {int? id,
           Value<String?> folioHabitacion = const Value.absent(),
           Value<String?> folioCotizacion = const Value.absent(),
@@ -1928,7 +2384,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           Value<bool?> isFree = const Value.absent(),
           Value<bool?> useCashSeason = const Value.absent(),
           Value<String?> tarifaXDia = const Value.absent()}) =>
-      HabitacionData(
+      HabitacionTableData(
         id: id ?? this.id,
         folioHabitacion: folioHabitacion.present
             ? folioHabitacion.value
@@ -1951,8 +2407,8 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
             useCashSeason.present ? useCashSeason.value : this.useCashSeason,
         tarifaXDia: tarifaXDia.present ? tarifaXDia.value : this.tarifaXDia,
       );
-  HabitacionData copyWithCompanion(HabitacionCompanion data) {
-    return HabitacionData(
+  HabitacionTableData copyWithCompanion(HabitacionTableCompanion data) {
+    return HabitacionTableData(
       id: data.id.present ? data.id.value : this.id,
       folioHabitacion: data.folioHabitacion.present
           ? data.folioHabitacion.value
@@ -1985,7 +2441,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
 
   @override
   String toString() {
-    return (StringBuffer('HabitacionData(')
+    return (StringBuffer('HabitacionTableData(')
           ..write('id: $id, ')
           ..write('folioHabitacion: $folioHabitacion, ')
           ..write('folioCotizacion: $folioCotizacion, ')
@@ -2023,7 +2479,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is HabitacionData &&
+      (other is HabitacionTableData &&
           other.id == this.id &&
           other.folioHabitacion == this.folioHabitacion &&
           other.folioCotizacion == this.folioCotizacion &&
@@ -2040,7 +2496,7 @@ class HabitacionData extends DataClass implements Insertable<HabitacionData> {
           other.tarifaXDia == this.tarifaXDia);
 }
 
-class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
+class HabitacionTableCompanion extends UpdateCompanion<HabitacionTableData> {
   final Value<int> id;
   final Value<String?> folioHabitacion;
   final Value<String?> folioCotizacion;
@@ -2055,7 +2511,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
   final Value<bool?> isFree;
   final Value<bool?> useCashSeason;
   final Value<String?> tarifaXDia;
-  const HabitacionCompanion({
+  const HabitacionTableCompanion({
     this.id = const Value.absent(),
     this.folioHabitacion = const Value.absent(),
     this.folioCotizacion = const Value.absent(),
@@ -2071,7 +2527,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.useCashSeason = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
   });
-  HabitacionCompanion.insert({
+  HabitacionTableCompanion.insert({
     this.id = const Value.absent(),
     this.folioHabitacion = const Value.absent(),
     this.folioCotizacion = const Value.absent(),
@@ -2087,7 +2543,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     this.useCashSeason = const Value.absent(),
     this.tarifaXDia = const Value.absent(),
   }) : fecha = Value(fecha);
-  static Insertable<HabitacionData> custom({
+  static Insertable<HabitacionTableData> custom({
     Expression<int>? id,
     Expression<String>? folioHabitacion,
     Expression<String>? folioCotizacion,
@@ -2121,7 +2577,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
     });
   }
 
-  HabitacionCompanion copyWith(
+  HabitacionTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? folioHabitacion,
       Value<String?>? folioCotizacion,
@@ -2136,7 +2592,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
       Value<bool?>? isFree,
       Value<bool?>? useCashSeason,
       Value<String?>? tarifaXDia}) {
-    return HabitacionCompanion(
+    return HabitacionTableCompanion(
       id: id ?? this.id,
       folioHabitacion: folioHabitacion ?? this.folioHabitacion,
       folioCotizacion: folioCotizacion ?? this.folioCotizacion,
@@ -2204,7 +2660,7 @@ class HabitacionCompanion extends UpdateCompanion<HabitacionData> {
 
   @override
   String toString() {
-    return (StringBuffer('HabitacionCompanion(')
+    return (StringBuffer('HabitacionTableCompanion(')
           ..write('id: $id, ')
           ..write('folioHabitacion: $folioHabitacion, ')
           ..write('folioCotizacion: $folioCotizacion, ')
@@ -2927,11 +3383,12 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
   }
 }
 
-class $PeriodoTable extends Periodo with TableInfo<$PeriodoTable, PeriodoData> {
+class $PeriodoTableTable extends PeriodoTable
+    with TableInfo<$PeriodoTableTable, PeriodoTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $PeriodoTable(this.attachedDatabase, [this._alias]);
+  $PeriodoTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -3045,9 +3502,9 @@ class $PeriodoTable extends Periodo with TableInfo<$PeriodoTable, PeriodoData> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'periodo';
+  static const String $name = 'periodo_table';
   @override
-  VerificationContext validateIntegrity(Insertable<PeriodoData> instance,
+  VerificationContext validateIntegrity(Insertable<PeriodoTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -3112,9 +3569,9 @@ class $PeriodoTable extends Periodo with TableInfo<$PeriodoTable, PeriodoData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  PeriodoData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  PeriodoTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PeriodoData(
+    return PeriodoTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -3143,12 +3600,13 @@ class $PeriodoTable extends Periodo with TableInfo<$PeriodoTable, PeriodoData> {
   }
 
   @override
-  $PeriodoTable createAlias(String alias) {
-    return $PeriodoTable(attachedDatabase, alias);
+  $PeriodoTableTable createAlias(String alias) {
+    return $PeriodoTableTable(attachedDatabase, alias);
   }
 }
 
-class PeriodoData extends DataClass implements Insertable<PeriodoData> {
+class PeriodoTableData extends DataClass
+    implements Insertable<PeriodoTableData> {
   final int id;
   final String code;
   final DateTime? fecha;
@@ -3161,7 +3619,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
   final bool? enViernes;
   final bool? enSabado;
   final bool? enDomingo;
-  const PeriodoData(
+  const PeriodoTableData(
       {required this.id,
       required this.code,
       this.fecha,
@@ -3212,8 +3670,8 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
     return map;
   }
 
-  PeriodoCompanion toCompanion(bool nullToAbsent) {
-    return PeriodoCompanion(
+  PeriodoTableCompanion toCompanion(bool nullToAbsent) {
+    return PeriodoTableCompanion(
       id: Value(id),
       code: Value(code),
       fecha:
@@ -3248,10 +3706,10 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
     );
   }
 
-  factory PeriodoData.fromJson(Map<String, dynamic> json,
+  factory PeriodoTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PeriodoData(
+    return PeriodoTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
@@ -3285,7 +3743,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
     };
   }
 
-  PeriodoData copyWith(
+  PeriodoTableData copyWith(
           {int? id,
           String? code,
           Value<DateTime?> fecha = const Value.absent(),
@@ -3298,7 +3756,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
           Value<bool?> enViernes = const Value.absent(),
           Value<bool?> enSabado = const Value.absent(),
           Value<bool?> enDomingo = const Value.absent()}) =>
-      PeriodoData(
+      PeriodoTableData(
         id: id ?? this.id,
         code: code ?? this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
@@ -3313,8 +3771,8 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
         enSabado: enSabado.present ? enSabado.value : this.enSabado,
         enDomingo: enDomingo.present ? enDomingo.value : this.enDomingo,
       );
-  PeriodoData copyWithCompanion(PeriodoCompanion data) {
-    return PeriodoData(
+  PeriodoTableData copyWithCompanion(PeriodoTableCompanion data) {
+    return PeriodoTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       fecha: data.fecha.present ? data.fecha.value : this.fecha,
@@ -3336,7 +3794,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
 
   @override
   String toString() {
-    return (StringBuffer('PeriodoData(')
+    return (StringBuffer('PeriodoTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -3359,7 +3817,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PeriodoData &&
+      (other is PeriodoTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.fecha == this.fecha &&
@@ -3374,7 +3832,7 @@ class PeriodoData extends DataClass implements Insertable<PeriodoData> {
           other.enDomingo == this.enDomingo);
 }
 
-class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
+class PeriodoTableCompanion extends UpdateCompanion<PeriodoTableData> {
   final Value<int> id;
   final Value<String> code;
   final Value<DateTime?> fecha;
@@ -3387,7 +3845,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
   final Value<bool?> enViernes;
   final Value<bool?> enSabado;
   final Value<bool?> enDomingo;
-  const PeriodoCompanion({
+  const PeriodoTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -3401,7 +3859,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
     this.enSabado = const Value.absent(),
     this.enDomingo = const Value.absent(),
   });
-  PeriodoCompanion.insert({
+  PeriodoTableCompanion.insert({
     this.id = const Value.absent(),
     required String code,
     this.fecha = const Value.absent(),
@@ -3415,7 +3873,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
     this.enSabado = const Value.absent(),
     this.enDomingo = const Value.absent(),
   }) : code = Value(code);
-  static Insertable<PeriodoData> custom({
+  static Insertable<PeriodoTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<DateTime>? fecha,
@@ -3445,7 +3903,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
     });
   }
 
-  PeriodoCompanion copyWith(
+  PeriodoTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? code,
       Value<DateTime?>? fecha,
@@ -3458,7 +3916,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
       Value<bool?>? enViernes,
       Value<bool?>? enSabado,
       Value<bool?>? enDomingo}) {
-    return PeriodoCompanion(
+    return PeriodoTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       fecha: fecha ?? this.fecha,
@@ -3518,7 +3976,7 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
 
   @override
   String toString() {
-    return (StringBuffer('PeriodoCompanion(')
+    return (StringBuffer('PeriodoTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -3536,12 +3994,12 @@ class PeriodoCompanion extends UpdateCompanion<PeriodoData> {
   }
 }
 
-class $TemporadaTable extends Temporada
-    with TableInfo<$TemporadaTable, TemporadaData> {
+class $TemporadaTableTable extends TemporadaTable
+    with TableInfo<$TemporadaTableTable, TemporadaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TemporadaTable(this.attachedDatabase, [this._alias]);
+  $TemporadaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -3618,9 +4076,9 @@ class $TemporadaTable extends Temporada
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'temporada';
+  static const String $name = 'temporada_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TemporadaData> instance,
+  VerificationContext validateIntegrity(Insertable<TemporadaTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -3675,9 +4133,9 @@ class $TemporadaTable extends Temporada
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TemporadaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TemporadaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TemporadaData(
+    return TemporadaTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -3700,12 +4158,13 @@ class $TemporadaTable extends Temporada
   }
 
   @override
-  $TemporadaTable createAlias(String alias) {
-    return $TemporadaTable(attachedDatabase, alias);
+  $TemporadaTableTable createAlias(String alias) {
+    return $TemporadaTableTable(attachedDatabase, alias);
   }
 }
 
-class TemporadaData extends DataClass implements Insertable<TemporadaData> {
+class TemporadaTableData extends DataClass
+    implements Insertable<TemporadaTableData> {
   final int id;
   final String code;
   final String nombre;
@@ -3715,7 +4174,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   final String? codeTarifa;
   final bool? forGroup;
   final bool? forCash;
-  const TemporadaData(
+  const TemporadaTableData(
       {required this.id,
       required this.code,
       required this.nombre,
@@ -3752,8 +4211,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     return map;
   }
 
-  TemporadaCompanion toCompanion(bool nullToAbsent) {
-    return TemporadaCompanion(
+  TemporadaTableCompanion toCompanion(bool nullToAbsent) {
+    return TemporadaTableCompanion(
       id: Value(id),
       code: Value(code),
       nombre: Value(nombre),
@@ -3777,10 +4236,10 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     );
   }
 
-  factory TemporadaData.fromJson(Map<String, dynamic> json,
+  factory TemporadaTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TemporadaData(
+    return TemporadaTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String>(json['code']),
       nombre: serializer.fromJson<String>(json['nombre']),
@@ -3809,7 +4268,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
     };
   }
 
-  TemporadaData copyWith(
+  TemporadaTableData copyWith(
           {int? id,
           String? code,
           String? nombre,
@@ -3819,7 +4278,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           Value<String?> codeTarifa = const Value.absent(),
           Value<bool?> forGroup = const Value.absent(),
           Value<bool?> forCash = const Value.absent()}) =>
-      TemporadaData(
+      TemporadaTableData(
         id: id ?? this.id,
         code: code ?? this.code,
         nombre: nombre ?? this.nombre,
@@ -3833,8 +4292,8 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
         forGroup: forGroup.present ? forGroup.value : this.forGroup,
         forCash: forCash.present ? forCash.value : this.forCash,
       );
-  TemporadaData copyWithCompanion(TemporadaCompanion data) {
-    return TemporadaData(
+  TemporadaTableData copyWithCompanion(TemporadaTableCompanion data) {
+    return TemporadaTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
@@ -3854,7 +4313,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TemporadaData(')
+    return (StringBuffer('TemporadaTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
@@ -3874,7 +4333,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TemporadaData &&
+      (other is TemporadaTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.nombre == this.nombre &&
@@ -3886,7 +4345,7 @@ class TemporadaData extends DataClass implements Insertable<TemporadaData> {
           other.forCash == this.forCash);
 }
 
-class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
+class TemporadaTableCompanion extends UpdateCompanion<TemporadaTableData> {
   final Value<int> id;
   final Value<String> code;
   final Value<String> nombre;
@@ -3896,7 +4355,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   final Value<String?> codeTarifa;
   final Value<bool?> forGroup;
   final Value<bool?> forCash;
-  const TemporadaCompanion({
+  const TemporadaTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.nombre = const Value.absent(),
@@ -3907,7 +4366,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.forGroup = const Value.absent(),
     this.forCash = const Value.absent(),
   });
-  TemporadaCompanion.insert({
+  TemporadaTableCompanion.insert({
     this.id = const Value.absent(),
     required String code,
     required String nombre,
@@ -3919,7 +4378,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     this.forCash = const Value.absent(),
   })  : code = Value(code),
         nombre = Value(nombre);
-  static Insertable<TemporadaData> custom({
+  static Insertable<TemporadaTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<String>? nombre,
@@ -3944,7 +4403,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
     });
   }
 
-  TemporadaCompanion copyWith(
+  TemporadaTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? code,
       Value<String>? nombre,
@@ -3954,7 +4413,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
       Value<String?>? codeTarifa,
       Value<bool?>? forGroup,
       Value<bool?>? forCash}) {
-    return TemporadaCompanion(
+    return TemporadaTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       nombre: nombre ?? this.nombre,
@@ -4002,7 +4461,7 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TemporadaCompanion(')
+    return (StringBuffer('TemporadaTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
@@ -4017,12 +4476,12 @@ class TemporadaCompanion extends UpdateCompanion<TemporadaData> {
   }
 }
 
-class $TarifaBaseTable extends TarifaBase
-    with TableInfo<$TarifaBaseTable, TarifaBaseData> {
+class $TarifaBaseTableTable extends TarifaBaseTable
+    with TableInfo<$TarifaBaseTableTable, TarifaBaseTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TarifaBaseTable(this.attachedDatabase, [this._alias]);
+  $TarifaBaseTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -4082,8 +4541,8 @@ class $TarifaBaseTable extends TarifaBase
       'tarifa_padre_id', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES tarifa_base_table (id)'));
   static const VerificationMeta _tarifaOrigenIdMeta =
       const VerificationMeta('tarifaOrigenId');
   @override
@@ -4091,8 +4550,8 @@ class $TarifaBaseTable extends TarifaBase
       'tarifa_origen_id', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES tarifa_base_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -4110,9 +4569,10 @@ class $TarifaBaseTable extends TarifaBase
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tarifa_base';
+  static const String $name = 'tarifa_base_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TarifaBaseData> instance,
+  VerificationContext validateIntegrity(
+      Insertable<TarifaBaseTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -4173,9 +4633,9 @@ class $TarifaBaseTable extends TarifaBase
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TarifaBaseData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TarifaBaseTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TarifaBaseData(
+    return TarifaBaseTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -4200,12 +4660,13 @@ class $TarifaBaseTable extends TarifaBase
   }
 
   @override
-  $TarifaBaseTable createAlias(String alias) {
-    return $TarifaBaseTable(attachedDatabase, alias);
+  $TarifaBaseTableTable createAlias(String alias) {
+    return $TarifaBaseTableTable(attachedDatabase, alias);
   }
 }
 
-class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
+class TarifaBaseTableData extends DataClass
+    implements Insertable<TarifaBaseTableData> {
   final int id;
   final String? code;
   final String? nombre;
@@ -4216,7 +4677,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
   final double? upgradePaxAdic;
   final int? tarifaPadreId;
   final int? tarifaOrigenId;
-  const TarifaBaseData(
+  const TarifaBaseTableData(
       {required this.id,
       this.code,
       this.nombre,
@@ -4261,8 +4722,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
     return map;
   }
 
-  TarifaBaseCompanion toCompanion(bool nullToAbsent) {
-    return TarifaBaseCompanion(
+  TarifaBaseTableCompanion toCompanion(bool nullToAbsent) {
+    return TarifaBaseTableCompanion(
       id: Value(id),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       nombre:
@@ -4291,10 +4752,10 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
     );
   }
 
-  factory TarifaBaseData.fromJson(Map<String, dynamic> json,
+  factory TarifaBaseTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TarifaBaseData(
+    return TarifaBaseTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String?>(json['code']),
       nombre: serializer.fromJson<String?>(json['nombre']),
@@ -4324,7 +4785,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
     };
   }
 
-  TarifaBaseData copyWith(
+  TarifaBaseTableData copyWith(
           {int? id,
           Value<String?> code = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
@@ -4335,7 +4796,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           Value<double?> upgradePaxAdic = const Value.absent(),
           Value<int?> tarifaPadreId = const Value.absent(),
           Value<int?> tarifaOrigenId = const Value.absent()}) =>
-      TarifaBaseData(
+      TarifaBaseTableData(
         id: id ?? this.id,
         code: code.present ? code.value : this.code,
         nombre: nombre.present ? nombre.value : this.nombre,
@@ -4354,8 +4815,8 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
         tarifaOrigenId:
             tarifaOrigenId.present ? tarifaOrigenId.value : this.tarifaOrigenId,
       );
-  TarifaBaseData copyWithCompanion(TarifaBaseCompanion data) {
-    return TarifaBaseData(
+  TarifaBaseTableData copyWithCompanion(TarifaBaseTableCompanion data) {
+    return TarifaBaseTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
@@ -4383,7 +4844,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaBaseData(')
+    return (StringBuffer('TarifaBaseTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
@@ -4413,7 +4874,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TarifaBaseData &&
+      (other is TarifaBaseTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.nombre == this.nombre &&
@@ -4426,7 +4887,7 @@ class TarifaBaseData extends DataClass implements Insertable<TarifaBaseData> {
           other.tarifaOrigenId == this.tarifaOrigenId);
 }
 
-class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
+class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
   final Value<int> id;
   final Value<String?> code;
   final Value<String?> nombre;
@@ -4437,7 +4898,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
   final Value<double?> upgradePaxAdic;
   final Value<int?> tarifaPadreId;
   final Value<int?> tarifaOrigenId;
-  const TarifaBaseCompanion({
+  const TarifaBaseTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.nombre = const Value.absent(),
@@ -4449,7 +4910,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.tarifaPadreId = const Value.absent(),
     this.tarifaOrigenId = const Value.absent(),
   });
-  TarifaBaseCompanion.insert({
+  TarifaBaseTableCompanion.insert({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.nombre = const Value.absent(),
@@ -4461,7 +4922,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     this.tarifaPadreId = const Value.absent(),
     this.tarifaOrigenId = const Value.absent(),
   });
-  static Insertable<TarifaBaseData> custom({
+  static Insertable<TarifaBaseTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<String>? nombre,
@@ -4487,7 +4948,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
     });
   }
 
-  TarifaBaseCompanion copyWith(
+  TarifaBaseTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? code,
       Value<String?>? nombre,
@@ -4498,7 +4959,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
       Value<double?>? upgradePaxAdic,
       Value<int?>? tarifaPadreId,
       Value<int?>? tarifaOrigenId}) {
-    return TarifaBaseCompanion(
+    return TarifaBaseTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       nombre: nombre ?? this.nombre,
@@ -4550,7 +5011,7 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaBaseCompanion(')
+    return (StringBuffer('TarifaBaseTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('nombre: $nombre, ')
@@ -4566,11 +5027,12 @@ class TarifaBaseCompanion extends UpdateCompanion<TarifaBaseData> {
   }
 }
 
-class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
+class $TarifaTableTable extends TarifaTable
+    with TableInfo<$TarifaTableTable, TarifaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TarifaTable(this.attachedDatabase, [this._alias]);
+  $TarifaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -4633,8 +5095,8 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
       'tarifa_padre_id', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_base (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES tarifa_base_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -4652,9 +5114,9 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tarifa';
+  static const String $name = 'tarifa_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TarifaData> instance,
+  VerificationContext validateIntegrity(Insertable<TarifaTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -4715,9 +5177,9 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TarifaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TarifaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TarifaData(
+    return TarifaTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -4743,12 +5205,12 @@ class $TarifaTable extends Tarifa with TableInfo<$TarifaTable, TarifaData> {
   }
 
   @override
-  $TarifaTable createAlias(String alias) {
-    return $TarifaTable(attachedDatabase, alias);
+  $TarifaTableTable createAlias(String alias) {
+    return $TarifaTableTable(attachedDatabase, alias);
   }
 }
 
-class TarifaData extends DataClass implements Insertable<TarifaData> {
+class TarifaTableData extends DataClass implements Insertable<TarifaTableData> {
   final int id;
   final String? code;
   final DateTime? fecha;
@@ -4759,7 +5221,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   final double? tarifaMenores7a12;
   final double? tarifaPaxAdicional;
   final int? tarifaPadreId;
-  const TarifaData(
+  const TarifaTableData(
       {required this.id,
       this.code,
       this.fecha,
@@ -4804,8 +5266,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     return map;
   }
 
-  TarifaCompanion toCompanion(bool nullToAbsent) {
-    return TarifaCompanion(
+  TarifaTableCompanion toCompanion(bool nullToAbsent) {
+    return TarifaTableCompanion(
       id: Value(id),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       fecha:
@@ -4834,10 +5296,10 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     );
   }
 
-  factory TarifaData.fromJson(Map<String, dynamic> json,
+  factory TarifaTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TarifaData(
+    return TarifaTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String?>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
@@ -4870,7 +5332,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
     };
   }
 
-  TarifaData copyWith(
+  TarifaTableData copyWith(
           {int? id,
           Value<String?> code = const Value.absent(),
           Value<DateTime?> fecha = const Value.absent(),
@@ -4881,7 +5343,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           Value<double?> tarifaMenores7a12 = const Value.absent(),
           Value<double?> tarifaPaxAdicional = const Value.absent(),
           Value<int?> tarifaPadreId = const Value.absent()}) =>
-      TarifaData(
+      TarifaTableData(
         id: id ?? this.id,
         code: code.present ? code.value : this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
@@ -4904,8 +5366,8 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
         tarifaPadreId:
             tarifaPadreId.present ? tarifaPadreId.value : this.tarifaPadreId,
       );
-  TarifaData copyWithCompanion(TarifaCompanion data) {
-    return TarifaData(
+  TarifaTableData copyWithCompanion(TarifaTableCompanion data) {
+    return TarifaTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       fecha: data.fecha.present ? data.fecha.value : this.fecha,
@@ -4933,7 +5395,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaData(')
+    return (StringBuffer('TarifaTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -4963,7 +5425,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TarifaData &&
+      (other is TarifaTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.fecha == this.fecha &&
@@ -4976,7 +5438,7 @@ class TarifaData extends DataClass implements Insertable<TarifaData> {
           other.tarifaPadreId == this.tarifaPadreId);
 }
 
-class TarifaCompanion extends UpdateCompanion<TarifaData> {
+class TarifaTableCompanion extends UpdateCompanion<TarifaTableData> {
   final Value<int> id;
   final Value<String?> code;
   final Value<DateTime?> fecha;
@@ -4987,7 +5449,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
   final Value<double?> tarifaMenores7a12;
   final Value<double?> tarifaPaxAdicional;
   final Value<int?> tarifaPadreId;
-  const TarifaCompanion({
+  const TarifaTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -4999,7 +5461,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.tarifaPaxAdicional = const Value.absent(),
     this.tarifaPadreId = const Value.absent(),
   });
-  TarifaCompanion.insert({
+  TarifaTableCompanion.insert({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -5011,7 +5473,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     this.tarifaPaxAdicional = const Value.absent(),
     this.tarifaPadreId = const Value.absent(),
   });
-  static Insertable<TarifaData> custom({
+  static Insertable<TarifaTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<DateTime>? fecha,
@@ -5039,7 +5501,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
     });
   }
 
-  TarifaCompanion copyWith(
+  TarifaTableCompanion copyWith(
       {Value<int>? id,
       Value<String?>? code,
       Value<DateTime?>? fecha,
@@ -5050,7 +5512,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
       Value<double?>? tarifaMenores7a12,
       Value<double?>? tarifaPaxAdicional,
       Value<int?>? tarifaPadreId}) {
-    return TarifaCompanion(
+    return TarifaTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       fecha: fecha ?? this.fecha,
@@ -5103,7 +5565,7 @@ class TarifaCompanion extends UpdateCompanion<TarifaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaCompanion(')
+    return (StringBuffer('TarifaTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -5162,7 +5624,7 @@ class $UserActivityTable extends UserActivity
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario (id)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
   @override
   List<GeneratedColumn> get $columns =>
       [id, fecha, name, category, status, userId];
@@ -5456,12 +5918,12 @@ class UserActivityCompanion extends UpdateCompanion<UserActivityData> {
   }
 }
 
-class $TarifaRackTable extends TarifaRack
-    with TableInfo<$TarifaRackTable, TarifaRackData> {
+class $TarifaRackTableTable extends TarifaRackTable
+    with TableInfo<$TarifaRackTableTable, TarifaRackTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TarifaRackTable(this.attachedDatabase, [this._alias]);
+  $TarifaRackTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -5526,9 +5988,10 @@ class $TarifaRackTable extends TarifaRack
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tarifa_rack';
+  static const String $name = 'tarifa_rack_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TarifaRackData> instance,
+  VerificationContext validateIntegrity(
+      Insertable<TarifaRackTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -5579,9 +6042,9 @@ class $TarifaRackTable extends TarifaRack
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TarifaRackData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TarifaRackTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TarifaRackData(
+    return TarifaRackTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       code: attachedDatabase.typeMapping
@@ -5602,12 +6065,13 @@ class $TarifaRackTable extends TarifaRack
   }
 
   @override
-  $TarifaRackTable createAlias(String alias) {
-    return $TarifaRackTable(attachedDatabase, alias);
+  $TarifaRackTableTable createAlias(String alias) {
+    return $TarifaRackTableTable(attachedDatabase, alias);
   }
 }
 
-class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
+class TarifaRackTableData extends DataClass
+    implements Insertable<TarifaRackTableData> {
   final int id;
   final String code;
   final DateTime? fecha;
@@ -5616,7 +6080,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
   final String? codeTemporada;
   final String? codePeriodo;
   final int? usuarioId;
-  const TarifaRackData(
+  const TarifaRackTableData(
       {required this.id,
       required this.code,
       this.fecha,
@@ -5651,8 +6115,8 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
     return map;
   }
 
-  TarifaRackCompanion toCompanion(bool nullToAbsent) {
-    return TarifaRackCompanion(
+  TarifaRackTableCompanion toCompanion(bool nullToAbsent) {
+    return TarifaRackTableCompanion(
       id: Value(id),
       code: Value(code),
       fecha:
@@ -5675,10 +6139,10 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
     );
   }
 
-  factory TarifaRackData.fromJson(Map<String, dynamic> json,
+  factory TarifaRackTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TarifaRackData(
+    return TarifaRackTableData(
       id: serializer.fromJson<int>(json['id']),
       code: serializer.fromJson<String>(json['code']),
       fecha: serializer.fromJson<DateTime?>(json['fecha']),
@@ -5705,7 +6169,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
     };
   }
 
-  TarifaRackData copyWith(
+  TarifaRackTableData copyWith(
           {int? id,
           String? code,
           Value<DateTime?> fecha = const Value.absent(),
@@ -5714,7 +6178,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
           Value<String?> codeTemporada = const Value.absent(),
           Value<String?> codePeriodo = const Value.absent(),
           Value<int?> usuarioId = const Value.absent()}) =>
-      TarifaRackData(
+      TarifaRackTableData(
         id: id ?? this.id,
         code: code ?? this.code,
         fecha: fecha.present ? fecha.value : this.fecha,
@@ -5727,8 +6191,8 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
         codePeriodo: codePeriodo.present ? codePeriodo.value : this.codePeriodo,
         usuarioId: usuarioId.present ? usuarioId.value : this.usuarioId,
       );
-  TarifaRackData copyWithCompanion(TarifaRackCompanion data) {
-    return TarifaRackData(
+  TarifaRackTableData copyWithCompanion(TarifaRackTableCompanion data) {
+    return TarifaRackTableData(
       id: data.id.present ? data.id.value : this.id,
       code: data.code.present ? data.code.value : this.code,
       fecha: data.fecha.present ? data.fecha.value : this.fecha,
@@ -5748,7 +6212,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaRackData(')
+    return (StringBuffer('TarifaRackTableData(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -5767,7 +6231,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TarifaRackData &&
+      (other is TarifaRackTableData &&
           other.id == this.id &&
           other.code == this.code &&
           other.fecha == this.fecha &&
@@ -5778,7 +6242,7 @@ class TarifaRackData extends DataClass implements Insertable<TarifaRackData> {
           other.usuarioId == this.usuarioId);
 }
 
-class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
+class TarifaRackTableCompanion extends UpdateCompanion<TarifaRackTableData> {
   final Value<int> id;
   final Value<String> code;
   final Value<DateTime?> fecha;
@@ -5787,7 +6251,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
   final Value<String?> codeTemporada;
   final Value<String?> codePeriodo;
   final Value<int?> usuarioId;
-  const TarifaRackCompanion({
+  const TarifaRackTableCompanion({
     this.id = const Value.absent(),
     this.code = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -5797,7 +6261,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
     this.codePeriodo = const Value.absent(),
     this.usuarioId = const Value.absent(),
   });
-  TarifaRackCompanion.insert({
+  TarifaRackTableCompanion.insert({
     this.id = const Value.absent(),
     required String code,
     this.fecha = const Value.absent(),
@@ -5807,7 +6271,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
     this.codePeriodo = const Value.absent(),
     this.usuarioId = const Value.absent(),
   }) : code = Value(code);
-  static Insertable<TarifaRackData> custom({
+  static Insertable<TarifaRackTableData> custom({
     Expression<int>? id,
     Expression<String>? code,
     Expression<DateTime>? fecha,
@@ -5830,7 +6294,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
     });
   }
 
-  TarifaRackCompanion copyWith(
+  TarifaRackTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? code,
       Value<DateTime?>? fecha,
@@ -5839,7 +6303,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
       Value<String?>? codeTemporada,
       Value<String?>? codePeriodo,
       Value<int?>? usuarioId}) {
-    return TarifaRackCompanion(
+    return TarifaRackTableCompanion(
       id: id ?? this.id,
       code: code ?? this.code,
       fecha: fecha ?? this.fecha,
@@ -5883,7 +6347,7 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
 
   @override
   String toString() {
-    return (StringBuffer('TarifaRackCompanion(')
+    return (StringBuffer('TarifaRackTableCompanion(')
           ..write('id: $id, ')
           ..write('code: $code, ')
           ..write('fecha: $fecha, ')
@@ -5897,12 +6361,12 @@ class TarifaRackCompanion extends UpdateCompanion<TarifaRackData> {
   }
 }
 
-class $PoliticasTable extends Politicas
-    with TableInfo<$PoliticasTable, Politica> {
+class $PoliticaTableTable extends PoliticaTable
+    with TableInfo<$PoliticaTableTable, PoliticaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $PoliticasTable(this.attachedDatabase, [this._alias]);
+  $PoliticaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -5955,9 +6419,9 @@ class $PoliticasTable extends Politicas
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'politicas';
+  static const String $name = 'politica_table';
   @override
-  VerificationContext validateIntegrity(Insertable<Politica> instance,
+  VerificationContext validateIntegrity(Insertable<PoliticaTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -6002,9 +6466,9 @@ class $PoliticasTable extends Politicas
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Politica map(Map<String, dynamic> data, {String? tablePrefix}) {
+  PoliticaTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Politica(
+    return PoliticaTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       fechaActualizacion: attachedDatabase.typeMapping.read(
@@ -6023,19 +6487,20 @@ class $PoliticasTable extends Politicas
   }
 
   @override
-  $PoliticasTable createAlias(String alias) {
-    return $PoliticasTable(attachedDatabase, alias);
+  $PoliticaTableTable createAlias(String alias) {
+    return $PoliticaTableTable(attachedDatabase, alias);
   }
 }
 
-class Politica extends DataClass implements Insertable<Politica> {
+class PoliticaTableData extends DataClass
+    implements Insertable<PoliticaTableData> {
   final int id;
   final DateTime? fechaActualizacion;
   final int? intervaloHabitacionGratuita;
   final int? limiteHabitacionCotizacion;
   final int? diasVigenciaCotInd;
   final int? diasVigenciaCotGroup;
-  const Politica(
+  const PoliticaTableData(
       {required this.id,
       this.fechaActualizacion,
       this.intervaloHabitacionGratuita,
@@ -6066,8 +6531,8 @@ class Politica extends DataClass implements Insertable<Politica> {
     return map;
   }
 
-  PoliticasCompanion toCompanion(bool nullToAbsent) {
-    return PoliticasCompanion(
+  PoliticaTableCompanion toCompanion(bool nullToAbsent) {
+    return PoliticaTableCompanion(
       id: Value(id),
       fechaActualizacion: fechaActualizacion == null && nullToAbsent
           ? const Value.absent()
@@ -6089,10 +6554,10 @@ class Politica extends DataClass implements Insertable<Politica> {
     );
   }
 
-  factory Politica.fromJson(Map<String, dynamic> json,
+  factory PoliticaTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Politica(
+    return PoliticaTableData(
       id: serializer.fromJson<int>(json['id']),
       fechaActualizacion:
           serializer.fromJson<DateTime?>(json['fechaActualizacion']),
@@ -6120,14 +6585,14 @@ class Politica extends DataClass implements Insertable<Politica> {
     };
   }
 
-  Politica copyWith(
+  PoliticaTableData copyWith(
           {int? id,
           Value<DateTime?> fechaActualizacion = const Value.absent(),
           Value<int?> intervaloHabitacionGratuita = const Value.absent(),
           Value<int?> limiteHabitacionCotizacion = const Value.absent(),
           Value<int?> diasVigenciaCotInd = const Value.absent(),
           Value<int?> diasVigenciaCotGroup = const Value.absent()}) =>
-      Politica(
+      PoliticaTableData(
         id: id ?? this.id,
         fechaActualizacion: fechaActualizacion.present
             ? fechaActualizacion.value
@@ -6145,8 +6610,8 @@ class Politica extends DataClass implements Insertable<Politica> {
             ? diasVigenciaCotGroup.value
             : this.diasVigenciaCotGroup,
       );
-  Politica copyWithCompanion(PoliticasCompanion data) {
-    return Politica(
+  PoliticaTableData copyWithCompanion(PoliticaTableCompanion data) {
+    return PoliticaTableData(
       id: data.id.present ? data.id.value : this.id,
       fechaActualizacion: data.fechaActualizacion.present
           ? data.fechaActualizacion.value
@@ -6168,7 +6633,7 @@ class Politica extends DataClass implements Insertable<Politica> {
 
   @override
   String toString() {
-    return (StringBuffer('Politica(')
+    return (StringBuffer('PoliticaTableData(')
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
@@ -6190,7 +6655,7 @@ class Politica extends DataClass implements Insertable<Politica> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Politica &&
+      (other is PoliticaTableData &&
           other.id == this.id &&
           other.fechaActualizacion == this.fechaActualizacion &&
           other.intervaloHabitacionGratuita ==
@@ -6200,14 +6665,14 @@ class Politica extends DataClass implements Insertable<Politica> {
           other.diasVigenciaCotGroup == this.diasVigenciaCotGroup);
 }
 
-class PoliticasCompanion extends UpdateCompanion<Politica> {
+class PoliticaTableCompanion extends UpdateCompanion<PoliticaTableData> {
   final Value<int> id;
   final Value<DateTime?> fechaActualizacion;
   final Value<int?> intervaloHabitacionGratuita;
   final Value<int?> limiteHabitacionCotizacion;
   final Value<int?> diasVigenciaCotInd;
   final Value<int?> diasVigenciaCotGroup;
-  const PoliticasCompanion({
+  const PoliticaTableCompanion({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
@@ -6215,7 +6680,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
     this.diasVigenciaCotInd = const Value.absent(),
     this.diasVigenciaCotGroup = const Value.absent(),
   });
-  PoliticasCompanion.insert({
+  PoliticaTableCompanion.insert({
     this.id = const Value.absent(),
     this.fechaActualizacion = const Value.absent(),
     this.intervaloHabitacionGratuita = const Value.absent(),
@@ -6223,7 +6688,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
     this.diasVigenciaCotInd = const Value.absent(),
     this.diasVigenciaCotGroup = const Value.absent(),
   });
-  static Insertable<Politica> custom({
+  static Insertable<PoliticaTableData> custom({
     Expression<int>? id,
     Expression<DateTime>? fechaActualizacion,
     Expression<int>? intervaloHabitacionGratuita,
@@ -6245,14 +6710,14 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
     });
   }
 
-  PoliticasCompanion copyWith(
+  PoliticaTableCompanion copyWith(
       {Value<int>? id,
       Value<DateTime?>? fechaActualizacion,
       Value<int?>? intervaloHabitacionGratuita,
       Value<int?>? limiteHabitacionCotizacion,
       Value<int?>? diasVigenciaCotInd,
       Value<int?>? diasVigenciaCotGroup}) {
-    return PoliticasCompanion(
+    return PoliticaTableCompanion(
       id: id ?? this.id,
       fechaActualizacion: fechaActualizacion ?? this.fechaActualizacion,
       intervaloHabitacionGratuita:
@@ -6293,7 +6758,7 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
 
   @override
   String toString() {
-    return (StringBuffer('PoliticasCompanion(')
+    return (StringBuffer('PoliticaTableCompanion(')
           ..write('id: $id, ')
           ..write('fechaActualizacion: $fechaActualizacion, ')
           ..write('intervaloHabitacionGratuita: $intervaloHabitacionGratuita, ')
@@ -6305,12 +6770,12 @@ class PoliticasCompanion extends UpdateCompanion<Politica> {
   }
 }
 
-class $TemporadaTarifaTable extends TemporadaTarifa
-    with TableInfo<$TemporadaTarifaTable, TemporadaTarifaData> {
+class $TemporadaTarifaTableTable extends TemporadaTarifaTable
+    with TableInfo<$TemporadaTarifaTableTable, TemporadaTarifaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TemporadaTarifaTable(this.attachedDatabase, [this._alias]);
+  $TemporadaTarifaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -6327,8 +6792,8 @@ class $TemporadaTarifaTable extends TemporadaTarifa
       'temporada_id', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES temporada (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES temporada_table (id)'));
   static const VerificationMeta _TarifaIdMeta =
       const VerificationMeta('TarifaId');
   @override
@@ -6337,17 +6802,17 @@ class $TemporadaTarifaTable extends TemporadaTarifa
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES tarifa (id)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_table (id)'));
   @override
   List<GeneratedColumn> get $columns => [id, temporadaId, TarifaId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'temporada_tarifa';
+  static const String $name = 'temporada_tarifa_table';
   @override
   VerificationContext validateIntegrity(
-      Insertable<TemporadaTarifaData> instance,
+      Insertable<TemporadaTarifaTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -6370,9 +6835,10 @@ class $TemporadaTarifaTable extends TemporadaTarifa
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TemporadaTarifaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TemporadaTarifaTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TemporadaTarifaData(
+    return TemporadaTarifaTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       temporadaId: attachedDatabase.typeMapping
@@ -6383,17 +6849,17 @@ class $TemporadaTarifaTable extends TemporadaTarifa
   }
 
   @override
-  $TemporadaTarifaTable createAlias(String alias) {
-    return $TemporadaTarifaTable(attachedDatabase, alias);
+  $TemporadaTarifaTableTable createAlias(String alias) {
+    return $TemporadaTarifaTableTable(attachedDatabase, alias);
   }
 }
 
-class TemporadaTarifaData extends DataClass
-    implements Insertable<TemporadaTarifaData> {
+class TemporadaTarifaTableData extends DataClass
+    implements Insertable<TemporadaTarifaTableData> {
   final int id;
   final int? temporadaId;
   final int? TarifaId;
-  const TemporadaTarifaData(
+  const TemporadaTarifaTableData(
       {required this.id, this.temporadaId, this.TarifaId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6408,8 +6874,8 @@ class TemporadaTarifaData extends DataClass
     return map;
   }
 
-  TemporadaTarifaCompanion toCompanion(bool nullToAbsent) {
-    return TemporadaTarifaCompanion(
+  TemporadaTarifaTableCompanion toCompanion(bool nullToAbsent) {
+    return TemporadaTarifaTableCompanion(
       id: Value(id),
       temporadaId: temporadaId == null && nullToAbsent
           ? const Value.absent()
@@ -6420,10 +6886,10 @@ class TemporadaTarifaData extends DataClass
     );
   }
 
-  factory TemporadaTarifaData.fromJson(Map<String, dynamic> json,
+  factory TemporadaTarifaTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TemporadaTarifaData(
+    return TemporadaTarifaTableData(
       id: serializer.fromJson<int>(json['id']),
       temporadaId: serializer.fromJson<int?>(json['temporadaId']),
       TarifaId: serializer.fromJson<int?>(json['TarifaId']),
@@ -6439,17 +6905,18 @@ class TemporadaTarifaData extends DataClass
     };
   }
 
-  TemporadaTarifaData copyWith(
+  TemporadaTarifaTableData copyWith(
           {int? id,
           Value<int?> temporadaId = const Value.absent(),
           Value<int?> TarifaId = const Value.absent()}) =>
-      TemporadaTarifaData(
+      TemporadaTarifaTableData(
         id: id ?? this.id,
         temporadaId: temporadaId.present ? temporadaId.value : this.temporadaId,
         TarifaId: TarifaId.present ? TarifaId.value : this.TarifaId,
       );
-  TemporadaTarifaData copyWithCompanion(TemporadaTarifaCompanion data) {
-    return TemporadaTarifaData(
+  TemporadaTarifaTableData copyWithCompanion(
+      TemporadaTarifaTableCompanion data) {
+    return TemporadaTarifaTableData(
       id: data.id.present ? data.id.value : this.id,
       temporadaId:
           data.temporadaId.present ? data.temporadaId.value : this.temporadaId,
@@ -6459,7 +6926,7 @@ class TemporadaTarifaData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('TemporadaTarifaData(')
+    return (StringBuffer('TemporadaTarifaTableData(')
           ..write('id: $id, ')
           ..write('temporadaId: $temporadaId, ')
           ..write('TarifaId: $TarifaId')
@@ -6472,27 +6939,28 @@ class TemporadaTarifaData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TemporadaTarifaData &&
+      (other is TemporadaTarifaTableData &&
           other.id == this.id &&
           other.temporadaId == this.temporadaId &&
           other.TarifaId == this.TarifaId);
 }
 
-class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
+class TemporadaTarifaTableCompanion
+    extends UpdateCompanion<TemporadaTarifaTableData> {
   final Value<int> id;
   final Value<int?> temporadaId;
   final Value<int?> TarifaId;
-  const TemporadaTarifaCompanion({
+  const TemporadaTarifaTableCompanion({
     this.id = const Value.absent(),
     this.temporadaId = const Value.absent(),
     this.TarifaId = const Value.absent(),
   });
-  TemporadaTarifaCompanion.insert({
+  TemporadaTarifaTableCompanion.insert({
     this.id = const Value.absent(),
     this.temporadaId = const Value.absent(),
     this.TarifaId = const Value.absent(),
   });
-  static Insertable<TemporadaTarifaData> custom({
+  static Insertable<TemporadaTarifaTableData> custom({
     Expression<int>? id,
     Expression<int>? temporadaId,
     Expression<int>? TarifaId,
@@ -6504,9 +6972,9 @@ class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
     });
   }
 
-  TemporadaTarifaCompanion copyWith(
+  TemporadaTarifaTableCompanion copyWith(
       {Value<int>? id, Value<int?>? temporadaId, Value<int?>? TarifaId}) {
-    return TemporadaTarifaCompanion(
+    return TemporadaTarifaTableCompanion(
       id: id ?? this.id,
       temporadaId: temporadaId ?? this.temporadaId,
       TarifaId: TarifaId ?? this.TarifaId,
@@ -6530,7 +6998,7 @@ class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
 
   @override
   String toString() {
-    return (StringBuffer('TemporadaTarifaCompanion(')
+    return (StringBuffer('TemporadaTarifaTableCompanion(')
           ..write('id: $id, ')
           ..write('temporadaId: $temporadaId, ')
           ..write('TarifaId: $TarifaId')
@@ -6542,21 +7010,26 @@ class TemporadaTarifaCompanion extends UpdateCompanion<TemporadaTarifaData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $ImagesTableTable imagesTable = $ImagesTableTable(this);
-  late final $UsuarioTable usuario = $UsuarioTable(this);
-  late final $CotizacionTable cotizacion = $CotizacionTable(this);
-  late final $HabitacionTable habitacion = $HabitacionTable(this);
+  late final $ImageTableTable imageTable = $ImageTableTable(this);
+  late final $UsuarioTableTable usuarioTable = $UsuarioTableTable(this);
+  late final $ClienteTableTable clienteTable = $ClienteTableTable(this);
+  late final $CotizacionTableTable cotizacionTable =
+      $CotizacionTableTable(this);
+  late final $HabitacionTableTable habitacionTable =
+      $HabitacionTableTable(this);
   late final $TarifaXDiaTableTable tarifaXDiaTable =
       $TarifaXDiaTableTable(this);
-  late final $PeriodoTable periodo = $PeriodoTable(this);
-  late final $TemporadaTable temporada = $TemporadaTable(this);
-  late final $TarifaBaseTable tarifaBase = $TarifaBaseTable(this);
-  late final $TarifaTable tarifa = $TarifaTable(this);
+  late final $PeriodoTableTable periodoTable = $PeriodoTableTable(this);
+  late final $TemporadaTableTable temporadaTable = $TemporadaTableTable(this);
+  late final $TarifaBaseTableTable tarifaBaseTable =
+      $TarifaBaseTableTable(this);
+  late final $TarifaTableTable tarifaTable = $TarifaTableTable(this);
   late final $UserActivityTable userActivity = $UserActivityTable(this);
-  late final $TarifaRackTable tarifaRack = $TarifaRackTable(this);
-  late final $PoliticasTable politicas = $PoliticasTable(this);
-  late final $TemporadaTarifaTable temporadaTarifa =
-      $TemporadaTarifaTable(this);
+  late final $TarifaRackTableTable tarifaRackTable =
+      $TarifaRackTableTable(this);
+  late final $PoliticaTableTable politicaTable = $PoliticaTableTable(this);
+  late final $TemporadaTarifaTableTable temporadaTarifaTable =
+      $TemporadaTarifaTableTable(this);
   late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
   late final TarifaDao tarifaDao = TarifaDao(this as AppDatabase);
   late final TarifaRackDao tarifaRackDao = TarifaRackDao(this as AppDatabase);
@@ -6565,57 +7038,56 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-        imagesTable,
-        usuario,
-        cotizacion,
-        habitacion,
+        imageTable,
+        usuarioTable,
+        clienteTable,
+        cotizacionTable,
+        habitacionTable,
         tarifaXDiaTable,
-        periodo,
-        temporada,
-        tarifaBase,
-        tarifa,
+        periodoTable,
+        temporadaTable,
+        tarifaBaseTable,
+        tarifaTable,
         userActivity,
-        tarifaRack,
-        politicas,
-        temporadaTarifa
+        tarifaRackTable,
+        politicaTable,
+        temporadaTarifaTable
       ];
 }
 
-typedef $$ImagesTableTableCreateCompanionBuilder = ImagesTableCompanion
-    Function({
+typedef $$ImageTableTableCreateCompanionBuilder = ImageTableCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> urlImage,
 });
-typedef $$ImagesTableTableUpdateCompanionBuilder = ImagesTableCompanion
-    Function({
+typedef $$ImageTableTableUpdateCompanionBuilder = ImageTableCompanion Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> urlImage,
 });
 
-class $$ImagesTableTableTableManager extends RootTableManager<
+class $$ImageTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $ImagesTableTable,
-    ImagesTableData,
-    $$ImagesTableTableFilterComposer,
-    $$ImagesTableTableOrderingComposer,
-    $$ImagesTableTableCreateCompanionBuilder,
-    $$ImagesTableTableUpdateCompanionBuilder> {
-  $$ImagesTableTableTableManager(_$AppDatabase db, $ImagesTableTable table)
+    $ImageTableTable,
+    ImageTableData,
+    $$ImageTableTableFilterComposer,
+    $$ImageTableTableOrderingComposer,
+    $$ImageTableTableCreateCompanionBuilder,
+    $$ImageTableTableUpdateCompanionBuilder> {
+  $$ImageTableTableTableManager(_$AppDatabase db, $ImageTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$ImagesTableTableFilterComposer(ComposerState(db, table)),
+              $$ImageTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$ImagesTableTableOrderingComposer(ComposerState(db, table)),
+              $$ImageTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
             Value<String?> urlImage = const Value.absent(),
           }) =>
-              ImagesTableCompanion(
+              ImageTableCompanion(
             id: id,
             code: code,
             urlImage: urlImage,
@@ -6625,7 +7097,7 @@ class $$ImagesTableTableTableManager extends RootTableManager<
             Value<String?> code = const Value.absent(),
             Value<String?> urlImage = const Value.absent(),
           }) =>
-              ImagesTableCompanion.insert(
+              ImageTableCompanion.insert(
             id: id,
             code: code,
             urlImage: urlImage,
@@ -6633,9 +7105,9 @@ class $$ImagesTableTableTableManager extends RootTableManager<
         ));
 }
 
-class $$ImagesTableTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $ImagesTableTable> {
-  $$ImagesTableTableFilterComposer(super.$state);
+class $$ImageTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ImageTableTable> {
+  $$ImageTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -6651,23 +7123,23 @@ class $$ImagesTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ComposableFilter usuarioRefs(
-      ComposableFilter Function($$UsuarioTableFilterComposer f) f) {
-    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+  ComposableFilter usuarioTableRefs(
+      ComposableFilter Function($$UsuarioTableTableFilterComposer f) f) {
+    final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.usuario,
+        referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.imageId,
-        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableTableFilterComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
 
-class $$ImagesTableTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $ImagesTableTable> {
-  $$ImagesTableTableOrderingComposer(super.$state);
+class $$ImageTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ImageTableTable> {
+  $$ImageTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -6684,7 +7156,8 @@ class $$ImagesTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$UsuarioTableCreateCompanionBuilder = UsuarioCompanion Function({
+typedef $$UsuarioTableTableCreateCompanionBuilder = UsuarioTableCompanion
+    Function({
   Value<int> id,
   Value<String?> username,
   Value<String?> password,
@@ -6699,7 +7172,8 @@ typedef $$UsuarioTableCreateCompanionBuilder = UsuarioCompanion Function({
   Value<int?> numCotizaciones,
   Value<int?> imageId,
 });
-typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
+typedef $$UsuarioTableTableUpdateCompanionBuilder = UsuarioTableCompanion
+    Function({
   Value<int> id,
   Value<String?> username,
   Value<String?> password,
@@ -6715,22 +7189,22 @@ typedef $$UsuarioTableUpdateCompanionBuilder = UsuarioCompanion Function({
   Value<int?> imageId,
 });
 
-class $$UsuarioTableTableManager extends RootTableManager<
+class $$UsuarioTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $UsuarioTable,
-    UsuarioData,
-    $$UsuarioTableFilterComposer,
-    $$UsuarioTableOrderingComposer,
-    $$UsuarioTableCreateCompanionBuilder,
-    $$UsuarioTableUpdateCompanionBuilder> {
-  $$UsuarioTableTableManager(_$AppDatabase db, $UsuarioTable table)
+    $UsuarioTableTable,
+    UsuarioTableData,
+    $$UsuarioTableTableFilterComposer,
+    $$UsuarioTableTableOrderingComposer,
+    $$UsuarioTableTableCreateCompanionBuilder,
+    $$UsuarioTableTableUpdateCompanionBuilder> {
+  $$UsuarioTableTableTableManager(_$AppDatabase db, $UsuarioTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$UsuarioTableFilterComposer(ComposerState(db, table)),
+              $$UsuarioTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$UsuarioTableOrderingComposer(ComposerState(db, table)),
+              $$UsuarioTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
@@ -6746,7 +7220,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<int?> numCotizaciones = const Value.absent(),
             Value<int?> imageId = const Value.absent(),
           }) =>
-              UsuarioCompanion(
+              UsuarioTableCompanion(
             id: id,
             username: username,
             password: password,
@@ -6776,7 +7250,7 @@ class $$UsuarioTableTableManager extends RootTableManager<
             Value<int?> numCotizaciones = const Value.absent(),
             Value<int?> imageId = const Value.absent(),
           }) =>
-              UsuarioCompanion.insert(
+              UsuarioTableCompanion.insert(
             id: id,
             username: username,
             password: password,
@@ -6794,9 +7268,9 @@ class $$UsuarioTableTableManager extends RootTableManager<
         ));
 }
 
-class $$UsuarioTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $UsuarioTable> {
-  $$UsuarioTableFilterComposer(super.$state);
+class $$UsuarioTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $UsuarioTableTable> {
+  $$UsuarioTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -6857,28 +7331,29 @@ class $$UsuarioTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$ImagesTableTableFilterComposer get imageId {
-    final $$ImagesTableTableFilterComposer composer = $state.composerBuilder(
+  $$ImageTableTableFilterComposer get imageId {
+    final $$ImageTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.imageId,
-        referencedTable: $state.db.imagesTable,
+        referencedTable: $state.db.imageTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$ImagesTableTableFilterComposer(ComposerState($state.db,
-                $state.db.imagesTable, joinBuilder, parentComposers)));
+            $$ImageTableTableFilterComposer(ComposerState($state.db,
+                $state.db.imageTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  ComposableFilter cotizacionRefs(
-      ComposableFilter Function($$CotizacionTableFilterComposer f) f) {
-    final $$CotizacionTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.cotizacion,
-        getReferencedColumn: (t) => t.usuarioID,
-        builder: (joinBuilder, parentComposers) =>
-            $$CotizacionTableFilterComposer(ComposerState($state.db,
-                $state.db.cotizacion, joinBuilder, parentComposers)));
+  ComposableFilter cotizacionTableRefs(
+      ComposableFilter Function($$CotizacionTableTableFilterComposer f) f) {
+    final $$CotizacionTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.cotizacionTable,
+            getReferencedColumn: (t) => t.usuarioID,
+            builder: (joinBuilder, parentComposers) =>
+                $$CotizacionTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 
@@ -6896,9 +7371,9 @@ class $$UsuarioTableFilterComposer
   }
 }
 
-class $$UsuarioTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $UsuarioTable> {
-  $$UsuarioTableOrderingComposer(super.$state);
+class $$UsuarioTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $UsuarioTableTable> {
+  $$UsuarioTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -6959,138 +7434,134 @@ class $$UsuarioTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$ImagesTableTableOrderingComposer get imageId {
-    final $$ImagesTableTableOrderingComposer composer = $state.composerBuilder(
+  $$ImageTableTableOrderingComposer get imageId {
+    final $$ImageTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.imageId,
-        referencedTable: $state.db.imagesTable,
+        referencedTable: $state.db.imageTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$ImagesTableTableOrderingComposer(ComposerState($state.db,
-                $state.db.imagesTable, joinBuilder, parentComposers)));
+            $$ImageTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.imageTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-typedef $$CotizacionTableCreateCompanionBuilder = CotizacionCompanion Function({
+typedef $$ClienteTableTableCreateCompanionBuilder = ClienteTableCompanion
+    Function({
   Value<int> id,
-  Value<String?> folioPrincipal,
-  Value<String?> nombreHuesped,
+  Value<String?> nombre,
+  Value<String?> apellido,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  Value<DateTime?> fecha,
-  Value<DateTime?> fechaLimite,
-  Value<bool?> esGrupo,
-  Value<bool?> esConcretado,
-  Value<String?> habitaciones,
-  Value<int?> usuarioID,
-  Value<String?> username,
+  Value<String> nacionalidad,
+  Value<String?> estado,
+  Value<String?> ciudad,
+  Value<String?> cp,
+  Value<String?> notas,
+  Value<bool> conCotizacion,
 });
-typedef $$CotizacionTableUpdateCompanionBuilder = CotizacionCompanion Function({
+typedef $$ClienteTableTableUpdateCompanionBuilder = ClienteTableCompanion
+    Function({
   Value<int> id,
-  Value<String?> folioPrincipal,
-  Value<String?> nombreHuesped,
+  Value<String?> nombre,
+  Value<String?> apellido,
   Value<String?> numeroTelefonico,
   Value<String?> correoElectrico,
-  Value<DateTime?> fecha,
-  Value<DateTime?> fechaLimite,
-  Value<bool?> esGrupo,
-  Value<bool?> esConcretado,
-  Value<String?> habitaciones,
-  Value<int?> usuarioID,
-  Value<String?> username,
+  Value<String> nacionalidad,
+  Value<String?> estado,
+  Value<String?> ciudad,
+  Value<String?> cp,
+  Value<String?> notas,
+  Value<bool> conCotizacion,
 });
 
-class $$CotizacionTableTableManager extends RootTableManager<
+class $$ClienteTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $CotizacionTable,
-    CotizacionData,
-    $$CotizacionTableFilterComposer,
-    $$CotizacionTableOrderingComposer,
-    $$CotizacionTableCreateCompanionBuilder,
-    $$CotizacionTableUpdateCompanionBuilder> {
-  $$CotizacionTableTableManager(_$AppDatabase db, $CotizacionTable table)
+    $ClienteTableTable,
+    ClienteTableData,
+    $$ClienteTableTableFilterComposer,
+    $$ClienteTableTableOrderingComposer,
+    $$ClienteTableTableCreateCompanionBuilder,
+    $$ClienteTableTableUpdateCompanionBuilder> {
+  $$ClienteTableTableTableManager(_$AppDatabase db, $ClienteTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$CotizacionTableFilterComposer(ComposerState(db, table)),
+              $$ClienteTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$CotizacionTableOrderingComposer(ComposerState(db, table)),
+              $$ClienteTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String?> folioPrincipal = const Value.absent(),
-            Value<String?> nombreHuesped = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<String?> apellido = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            Value<DateTime?> fecha = const Value.absent(),
-            Value<DateTime?> fechaLimite = const Value.absent(),
-            Value<bool?> esGrupo = const Value.absent(),
-            Value<bool?> esConcretado = const Value.absent(),
-            Value<String?> habitaciones = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
-            Value<String?> username = const Value.absent(),
+            Value<String> nacionalidad = const Value.absent(),
+            Value<String?> estado = const Value.absent(),
+            Value<String?> ciudad = const Value.absent(),
+            Value<String?> cp = const Value.absent(),
+            Value<String?> notas = const Value.absent(),
+            Value<bool> conCotizacion = const Value.absent(),
           }) =>
-              CotizacionCompanion(
+              ClienteTableCompanion(
             id: id,
-            folioPrincipal: folioPrincipal,
-            nombreHuesped: nombreHuesped,
+            nombre: nombre,
+            apellido: apellido,
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
-            fecha: fecha,
-            fechaLimite: fechaLimite,
-            esGrupo: esGrupo,
-            esConcretado: esConcretado,
-            habitaciones: habitaciones,
-            usuarioID: usuarioID,
-            username: username,
+            nacionalidad: nacionalidad,
+            estado: estado,
+            ciudad: ciudad,
+            cp: cp,
+            notas: notas,
+            conCotizacion: conCotizacion,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String?> folioPrincipal = const Value.absent(),
-            Value<String?> nombreHuesped = const Value.absent(),
+            Value<String?> nombre = const Value.absent(),
+            Value<String?> apellido = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
             Value<String?> correoElectrico = const Value.absent(),
-            Value<DateTime?> fecha = const Value.absent(),
-            Value<DateTime?> fechaLimite = const Value.absent(),
-            Value<bool?> esGrupo = const Value.absent(),
-            Value<bool?> esConcretado = const Value.absent(),
-            Value<String?> habitaciones = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
-            Value<String?> username = const Value.absent(),
+            Value<String> nacionalidad = const Value.absent(),
+            Value<String?> estado = const Value.absent(),
+            Value<String?> ciudad = const Value.absent(),
+            Value<String?> cp = const Value.absent(),
+            Value<String?> notas = const Value.absent(),
+            Value<bool> conCotizacion = const Value.absent(),
           }) =>
-              CotizacionCompanion.insert(
+              ClienteTableCompanion.insert(
             id: id,
-            folioPrincipal: folioPrincipal,
-            nombreHuesped: nombreHuesped,
+            nombre: nombre,
+            apellido: apellido,
             numeroTelefonico: numeroTelefonico,
             correoElectrico: correoElectrico,
-            fecha: fecha,
-            fechaLimite: fechaLimite,
-            esGrupo: esGrupo,
-            esConcretado: esConcretado,
-            habitaciones: habitaciones,
-            usuarioID: usuarioID,
-            username: username,
+            nacionalidad: nacionalidad,
+            estado: estado,
+            ciudad: ciudad,
+            cp: cp,
+            notas: notas,
+            conCotizacion: conCotizacion,
           ),
         ));
 }
 
-class $$CotizacionTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $CotizacionTable> {
-  $$CotizacionTableFilterComposer(super.$state);
+class $$ClienteTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ClienteTableTable> {
+  $$ClienteTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get folioPrincipal => $state.composableBuilder(
-      column: $state.table.folioPrincipal,
+  ColumnFilters<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get nombreHuesped => $state.composableBuilder(
-      column: $state.table.nombreHuesped,
+  ColumnFilters<String> get apellido => $state.composableBuilder(
+      column: $state.table.apellido,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7101,6 +7572,218 @@ class $$CotizacionTableFilterComposer
 
   ColumnFilters<String> get correoElectrico => $state.composableBuilder(
       column: $state.table.correoElectrico,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nacionalidad => $state.composableBuilder(
+      column: $state.table.nacionalidad,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get estado => $state.composableBuilder(
+      column: $state.table.estado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get ciudad => $state.composableBuilder(
+      column: $state.table.ciudad,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get cp => $state.composableBuilder(
+      column: $state.table.cp,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get notas => $state.composableBuilder(
+      column: $state.table.notas,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get conCotizacion => $state.composableBuilder(
+      column: $state.table.conCotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter cotizacionTableRefs(
+      ComposableFilter Function($$CotizacionTableTableFilterComposer f) f) {
+    final $$CotizacionTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.cotizacionTable,
+            getReferencedColumn: (t) => t.clienteID,
+            builder: (joinBuilder, parentComposers) =>
+                $$CotizacionTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ClienteTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ClienteTableTable> {
+  $$ClienteTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nombre => $state.composableBuilder(
+      column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get apellido => $state.composableBuilder(
+      column: $state.table.apellido,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get numeroTelefonico => $state.composableBuilder(
+      column: $state.table.numeroTelefonico,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get correoElectrico => $state.composableBuilder(
+      column: $state.table.correoElectrico,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nacionalidad => $state.composableBuilder(
+      column: $state.table.nacionalidad,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get estado => $state.composableBuilder(
+      column: $state.table.estado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get ciudad => $state.composableBuilder(
+      column: $state.table.ciudad,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get cp => $state.composableBuilder(
+      column: $state.table.cp,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get notas => $state.composableBuilder(
+      column: $state.table.notas,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get conCotizacion => $state.composableBuilder(
+      column: $state.table.conCotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$CotizacionTableTableCreateCompanionBuilder = CotizacionTableCompanion
+    Function({
+  Value<int> id,
+  Value<String?> folioPrincipal,
+  Value<DateTime?> fecha,
+  Value<DateTime?> fechaLimite,
+  Value<bool?> esGrupo,
+  Value<bool?> esConcretado,
+  Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<int?> clienteID,
+  Value<String?> username,
+});
+typedef $$CotizacionTableTableUpdateCompanionBuilder = CotizacionTableCompanion
+    Function({
+  Value<int> id,
+  Value<String?> folioPrincipal,
+  Value<DateTime?> fecha,
+  Value<DateTime?> fechaLimite,
+  Value<bool?> esGrupo,
+  Value<bool?> esConcretado,
+  Value<String?> habitaciones,
+  Value<int?> usuarioID,
+  Value<int?> clienteID,
+  Value<String?> username,
+});
+
+class $$CotizacionTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CotizacionTableTable,
+    CotizacionTableData,
+    $$CotizacionTableTableFilterComposer,
+    $$CotizacionTableTableOrderingComposer,
+    $$CotizacionTableTableCreateCompanionBuilder,
+    $$CotizacionTableTableUpdateCompanionBuilder> {
+  $$CotizacionTableTableTableManager(
+      _$AppDatabase db, $CotizacionTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$CotizacionTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CotizacionTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> folioPrincipal = const Value.absent(),
+            Value<DateTime?> fecha = const Value.absent(),
+            Value<DateTime?> fechaLimite = const Value.absent(),
+            Value<bool?> esGrupo = const Value.absent(),
+            Value<bool?> esConcretado = const Value.absent(),
+            Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<int?> clienteID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
+          }) =>
+              CotizacionTableCompanion(
+            id: id,
+            folioPrincipal: folioPrincipal,
+            fecha: fecha,
+            fechaLimite: fechaLimite,
+            esGrupo: esGrupo,
+            esConcretado: esConcretado,
+            habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            clienteID: clienteID,
+            username: username,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> folioPrincipal = const Value.absent(),
+            Value<DateTime?> fecha = const Value.absent(),
+            Value<DateTime?> fechaLimite = const Value.absent(),
+            Value<bool?> esGrupo = const Value.absent(),
+            Value<bool?> esConcretado = const Value.absent(),
+            Value<String?> habitaciones = const Value.absent(),
+            Value<int?> usuarioID = const Value.absent(),
+            Value<int?> clienteID = const Value.absent(),
+            Value<String?> username = const Value.absent(),
+          }) =>
+              CotizacionTableCompanion.insert(
+            id: id,
+            folioPrincipal: folioPrincipal,
+            fecha: fecha,
+            fechaLimite: fechaLimite,
+            esGrupo: esGrupo,
+            esConcretado: esConcretado,
+            habitaciones: habitaciones,
+            usuarioID: usuarioID,
+            clienteID: clienteID,
+            username: username,
+          ),
+        ));
+}
+
+class $$CotizacionTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $CotizacionTableTable> {
+  $$CotizacionTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get folioPrincipal => $state.composableBuilder(
+      column: $state.table.folioPrincipal,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7134,22 +7817,34 @@ class $$CotizacionTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableFilterComposer get usuarioID {
-    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+  $$UsuarioTableTableFilterComposer get usuarioID {
+    final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.usuarioID,
-        referencedTable: $state.db.usuario,
+        referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableTableFilterComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableFilterComposer get clienteID {
+    final $$ClienteTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.clienteID,
+        referencedTable: $state.db.clienteTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ClienteTableTableFilterComposer(ComposerState($state.db,
+                $state.db.clienteTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-class $$CotizacionTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $CotizacionTable> {
-  $$CotizacionTableOrderingComposer(super.$state);
+class $$CotizacionTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $CotizacionTableTable> {
+  $$CotizacionTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -7157,21 +7852,6 @@ class $$CotizacionTableOrderingComposer
 
   ColumnOrderings<String> get folioPrincipal => $state.composableBuilder(
       column: $state.table.folioPrincipal,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get nombreHuesped => $state.composableBuilder(
-      column: $state.table.nombreHuesped,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get numeroTelefonico => $state.composableBuilder(
-      column: $state.table.numeroTelefonico,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get correoElectrico => $state.composableBuilder(
-      column: $state.table.correoElectrico,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7205,20 +7885,33 @@ class $$CotizacionTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableOrderingComposer get usuarioID {
-    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+  $$UsuarioTableTableOrderingComposer get usuarioID {
+    final $$UsuarioTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.usuarioID,
-        referencedTable: $state.db.usuario,
+        referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$UsuarioTableOrderingComposer(ComposerState(
-                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+            $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableOrderingComposer get clienteID {
+    final $$ClienteTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.clienteID,
+        referencedTable: $state.db.clienteTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ClienteTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.clienteTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-typedef $$HabitacionTableCreateCompanionBuilder = HabitacionCompanion Function({
+typedef $$HabitacionTableTableCreateCompanionBuilder = HabitacionTableCompanion
+    Function({
   Value<int> id,
   Value<String?> folioHabitacion,
   Value<String?> folioCotizacion,
@@ -7234,7 +7927,8 @@ typedef $$HabitacionTableCreateCompanionBuilder = HabitacionCompanion Function({
   Value<bool?> useCashSeason,
   Value<String?> tarifaXDia,
 });
-typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
+typedef $$HabitacionTableTableUpdateCompanionBuilder = HabitacionTableCompanion
+    Function({
   Value<int> id,
   Value<String?> folioHabitacion,
   Value<String?> folioCotizacion,
@@ -7251,22 +7945,23 @@ typedef $$HabitacionTableUpdateCompanionBuilder = HabitacionCompanion Function({
   Value<String?> tarifaXDia,
 });
 
-class $$HabitacionTableTableManager extends RootTableManager<
+class $$HabitacionTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $HabitacionTable,
-    HabitacionData,
-    $$HabitacionTableFilterComposer,
-    $$HabitacionTableOrderingComposer,
-    $$HabitacionTableCreateCompanionBuilder,
-    $$HabitacionTableUpdateCompanionBuilder> {
-  $$HabitacionTableTableManager(_$AppDatabase db, $HabitacionTable table)
+    $HabitacionTableTable,
+    HabitacionTableData,
+    $$HabitacionTableTableFilterComposer,
+    $$HabitacionTableTableOrderingComposer,
+    $$HabitacionTableTableCreateCompanionBuilder,
+    $$HabitacionTableTableUpdateCompanionBuilder> {
+  $$HabitacionTableTableTableManager(
+      _$AppDatabase db, $HabitacionTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$HabitacionTableFilterComposer(ComposerState(db, table)),
+              $$HabitacionTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$HabitacionTableOrderingComposer(ComposerState(db, table)),
+              $$HabitacionTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> folioHabitacion = const Value.absent(),
@@ -7283,7 +7978,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<bool?> useCashSeason = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
           }) =>
-              HabitacionCompanion(
+              HabitacionTableCompanion(
             id: id,
             folioHabitacion: folioHabitacion,
             folioCotizacion: folioCotizacion,
@@ -7315,7 +8010,7 @@ class $$HabitacionTableTableManager extends RootTableManager<
             Value<bool?> useCashSeason = const Value.absent(),
             Value<String?> tarifaXDia = const Value.absent(),
           }) =>
-              HabitacionCompanion.insert(
+              HabitacionTableCompanion.insert(
             id: id,
             folioHabitacion: folioHabitacion,
             folioCotizacion: folioCotizacion,
@@ -7334,9 +8029,9 @@ class $$HabitacionTableTableManager extends RootTableManager<
         ));
 }
 
-class $$HabitacionTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $HabitacionTable> {
-  $$HabitacionTableFilterComposer(super.$state);
+class $$HabitacionTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $HabitacionTableTable> {
+  $$HabitacionTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -7408,9 +8103,9 @@ class $$HabitacionTableFilterComposer
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$HabitacionTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $HabitacionTable> {
-  $$HabitacionTableOrderingComposer(super.$state);
+class $$HabitacionTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $HabitacionTableTable> {
+  $$HabitacionTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -7735,7 +8430,8 @@ class $$TarifaXDiaTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PeriodoTableCreateCompanionBuilder = PeriodoCompanion Function({
+typedef $$PeriodoTableTableCreateCompanionBuilder = PeriodoTableCompanion
+    Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -7749,7 +8445,8 @@ typedef $$PeriodoTableCreateCompanionBuilder = PeriodoCompanion Function({
   Value<bool?> enSabado,
   Value<bool?> enDomingo,
 });
-typedef $$PeriodoTableUpdateCompanionBuilder = PeriodoCompanion Function({
+typedef $$PeriodoTableTableUpdateCompanionBuilder = PeriodoTableCompanion
+    Function({
   Value<int> id,
   Value<String> code,
   Value<DateTime?> fecha,
@@ -7764,22 +8461,22 @@ typedef $$PeriodoTableUpdateCompanionBuilder = PeriodoCompanion Function({
   Value<bool?> enDomingo,
 });
 
-class $$PeriodoTableTableManager extends RootTableManager<
+class $$PeriodoTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $PeriodoTable,
-    PeriodoData,
-    $$PeriodoTableFilterComposer,
-    $$PeriodoTableOrderingComposer,
-    $$PeriodoTableCreateCompanionBuilder,
-    $$PeriodoTableUpdateCompanionBuilder> {
-  $$PeriodoTableTableManager(_$AppDatabase db, $PeriodoTable table)
+    $PeriodoTableTable,
+    PeriodoTableData,
+    $$PeriodoTableTableFilterComposer,
+    $$PeriodoTableTableOrderingComposer,
+    $$PeriodoTableTableCreateCompanionBuilder,
+    $$PeriodoTableTableUpdateCompanionBuilder> {
+  $$PeriodoTableTableTableManager(_$AppDatabase db, $PeriodoTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$PeriodoTableFilterComposer(ComposerState(db, table)),
+              $$PeriodoTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$PeriodoTableOrderingComposer(ComposerState(db, table)),
+              $$PeriodoTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
@@ -7794,7 +8491,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
             Value<bool?> enSabado = const Value.absent(),
             Value<bool?> enDomingo = const Value.absent(),
           }) =>
-              PeriodoCompanion(
+              PeriodoTableCompanion(
             id: id,
             code: code,
             fecha: fecha,
@@ -7822,7 +8519,7 @@ class $$PeriodoTableTableManager extends RootTableManager<
             Value<bool?> enSabado = const Value.absent(),
             Value<bool?> enDomingo = const Value.absent(),
           }) =>
-              PeriodoCompanion.insert(
+              PeriodoTableCompanion.insert(
             id: id,
             code: code,
             fecha: fecha,
@@ -7839,9 +8536,9 @@ class $$PeriodoTableTableManager extends RootTableManager<
         ));
 }
 
-class $$PeriodoTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $PeriodoTable> {
-  $$PeriodoTableFilterComposer(super.$state);
+class $$PeriodoTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $PeriodoTableTable> {
+  $$PeriodoTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -7903,9 +8600,9 @@ class $$PeriodoTableFilterComposer
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$PeriodoTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $PeriodoTable> {
-  $$PeriodoTableOrderingComposer(super.$state);
+class $$PeriodoTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $PeriodoTableTable> {
+  $$PeriodoTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -7967,7 +8664,8 @@ class $$PeriodoTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TemporadaTableCreateCompanionBuilder = TemporadaCompanion Function({
+typedef $$TemporadaTableTableCreateCompanionBuilder = TemporadaTableCompanion
+    Function({
   Value<int> id,
   required String code,
   required String nombre,
@@ -7978,7 +8676,8 @@ typedef $$TemporadaTableCreateCompanionBuilder = TemporadaCompanion Function({
   Value<bool?> forGroup,
   Value<bool?> forCash,
 });
-typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
+typedef $$TemporadaTableTableUpdateCompanionBuilder = TemporadaTableCompanion
+    Function({
   Value<int> id,
   Value<String> code,
   Value<String> nombre,
@@ -7990,22 +8689,23 @@ typedef $$TemporadaTableUpdateCompanionBuilder = TemporadaCompanion Function({
   Value<bool?> forCash,
 });
 
-class $$TemporadaTableTableManager extends RootTableManager<
+class $$TemporadaTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TemporadaTable,
-    TemporadaData,
-    $$TemporadaTableFilterComposer,
-    $$TemporadaTableOrderingComposer,
-    $$TemporadaTableCreateCompanionBuilder,
-    $$TemporadaTableUpdateCompanionBuilder> {
-  $$TemporadaTableTableManager(_$AppDatabase db, $TemporadaTable table)
+    $TemporadaTableTable,
+    TemporadaTableData,
+    $$TemporadaTableTableFilterComposer,
+    $$TemporadaTableTableOrderingComposer,
+    $$TemporadaTableTableCreateCompanionBuilder,
+    $$TemporadaTableTableUpdateCompanionBuilder> {
+  $$TemporadaTableTableTableManager(
+      _$AppDatabase db, $TemporadaTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$TemporadaTableFilterComposer(ComposerState(db, table)),
+              $$TemporadaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$TemporadaTableOrderingComposer(ComposerState(db, table)),
+              $$TemporadaTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
@@ -8017,7 +8717,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<bool?> forGroup = const Value.absent(),
             Value<bool?> forCash = const Value.absent(),
           }) =>
-              TemporadaCompanion(
+              TemporadaTableCompanion(
             id: id,
             code: code,
             nombre: nombre,
@@ -8039,7 +8739,7 @@ class $$TemporadaTableTableManager extends RootTableManager<
             Value<bool?> forGroup = const Value.absent(),
             Value<bool?> forCash = const Value.absent(),
           }) =>
-              TemporadaCompanion.insert(
+              TemporadaTableCompanion.insert(
             id: id,
             code: code,
             nombre: nombre,
@@ -8053,9 +8753,9 @@ class $$TemporadaTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TemporadaTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TemporadaTable> {
-  $$TemporadaTableFilterComposer(super.$state);
+class $$TemporadaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TemporadaTableTable> {
+  $$TemporadaTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8101,24 +8801,28 @@ class $$TemporadaTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ComposableFilter temporadaTarifaRefs(
-      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
-    final $$TemporadaTarifaTableFilterComposer composer =
+  ComposableFilter temporadaTarifaTableRefs(
+      ComposableFilter Function($$TemporadaTarifaTableTableFilterComposer f)
+          f) {
+    final $$TemporadaTarifaTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
             getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.temporadaTarifa,
+            referencedTable: $state.db.temporadaTarifaTable,
             getReferencedColumn: (t) => t.temporadaId,
             builder: (joinBuilder, parentComposers) =>
-                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
-                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+                $$TemporadaTarifaTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.temporadaTarifaTable,
+                    joinBuilder,
+                    parentComposers)));
     return f(composer);
   }
 }
 
-class $$TemporadaTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TemporadaTable> {
-  $$TemporadaTableOrderingComposer(super.$state);
+class $$TemporadaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TemporadaTableTable> {
+  $$TemporadaTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8165,7 +8869,8 @@ class $$TemporadaTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
+typedef $$TarifaBaseTableTableCreateCompanionBuilder = TarifaBaseTableCompanion
+    Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> nombre,
@@ -8177,7 +8882,8 @@ typedef $$TarifaBaseTableCreateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int?> tarifaPadreId,
   Value<int?> tarifaOrigenId,
 });
-typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
+typedef $$TarifaBaseTableTableUpdateCompanionBuilder = TarifaBaseTableCompanion
+    Function({
   Value<int> id,
   Value<String?> code,
   Value<String?> nombre,
@@ -8190,22 +8896,23 @@ typedef $$TarifaBaseTableUpdateCompanionBuilder = TarifaBaseCompanion Function({
   Value<int?> tarifaOrigenId,
 });
 
-class $$TarifaBaseTableTableManager extends RootTableManager<
+class $$TarifaBaseTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TarifaBaseTable,
-    TarifaBaseData,
-    $$TarifaBaseTableFilterComposer,
-    $$TarifaBaseTableOrderingComposer,
-    $$TarifaBaseTableCreateCompanionBuilder,
-    $$TarifaBaseTableUpdateCompanionBuilder> {
-  $$TarifaBaseTableTableManager(_$AppDatabase db, $TarifaBaseTable table)
+    $TarifaBaseTableTable,
+    TarifaBaseTableData,
+    $$TarifaBaseTableTableFilterComposer,
+    $$TarifaBaseTableTableOrderingComposer,
+    $$TarifaBaseTableTableCreateCompanionBuilder,
+    $$TarifaBaseTableTableUpdateCompanionBuilder> {
+  $$TarifaBaseTableTableTableManager(
+      _$AppDatabase db, $TarifaBaseTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$TarifaBaseTableFilterComposer(ComposerState(db, table)),
+              $$TarifaBaseTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$TarifaBaseTableOrderingComposer(ComposerState(db, table)),
+              $$TarifaBaseTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
@@ -8218,7 +8925,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<int?> tarifaPadreId = const Value.absent(),
             Value<int?> tarifaOrigenId = const Value.absent(),
           }) =>
-              TarifaBaseCompanion(
+              TarifaBaseTableCompanion(
             id: id,
             code: code,
             nombre: nombre,
@@ -8242,7 +8949,7 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
             Value<int?> tarifaPadreId = const Value.absent(),
             Value<int?> tarifaOrigenId = const Value.absent(),
           }) =>
-              TarifaBaseCompanion.insert(
+              TarifaBaseTableCompanion.insert(
             id: id,
             code: code,
             nombre: nombre,
@@ -8257,9 +8964,9 @@ class $$TarifaBaseTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TarifaBaseTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TarifaBaseTable> {
-  $$TarifaBaseTableFilterComposer(super.$state);
+class $$TarifaBaseTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaBaseTableTable> {
+  $$TarifaBaseTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8300,47 +9007,49 @@ class $$TarifaBaseTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$TarifaBaseTableFilterComposer get tarifaPadreId {
-    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaPadreId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableFilterComposer get tarifaPadreId {
+    final $$TarifaBaseTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaPadreId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  $$TarifaBaseTableFilterComposer get tarifaOrigenId {
-    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaOrigenId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableFilterComposer get tarifaOrigenId {
+    final $$TarifaBaseTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaOrigenId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  ComposableFilter tarifaRefs(
-      ComposableFilter Function($$TarifaTableFilterComposer f) f) {
-    final $$TarifaTableFilterComposer composer = $state.composerBuilder(
+  ComposableFilter tarifaTableRefs(
+      ComposableFilter Function($$TarifaTableTableFilterComposer f) f) {
+    final $$TarifaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.id,
-        referencedTable: $state.db.tarifa,
+        referencedTable: $state.db.tarifaTable,
         getReferencedColumn: (t) => t.tarifaPadreId,
-        builder: (joinBuilder, parentComposers) => $$TarifaTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaTable, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
 
-class $$TarifaBaseTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TarifaBaseTable> {
-  $$TarifaBaseTableOrderingComposer(super.$state);
+class $$TarifaBaseTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaBaseTableTable> {
+  $$TarifaBaseTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8381,32 +9090,35 @@ class $$TarifaBaseTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$TarifaBaseTableOrderingComposer get tarifaPadreId {
-    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaPadreId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableOrderingComposer get tarifaPadreId {
+    final $$TarifaBaseTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaPadreId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  $$TarifaBaseTableOrderingComposer get tarifaOrigenId {
-    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaOrigenId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableOrderingComposer get tarifaOrigenId {
+    final $$TarifaBaseTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaOrigenId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-typedef $$TarifaTableCreateCompanionBuilder = TarifaCompanion Function({
+typedef $$TarifaTableTableCreateCompanionBuilder = TarifaTableCompanion
+    Function({
   Value<int> id,
   Value<String?> code,
   Value<DateTime?> fecha,
@@ -8418,7 +9130,8 @@ typedef $$TarifaTableCreateCompanionBuilder = TarifaCompanion Function({
   Value<double?> tarifaPaxAdicional,
   Value<int?> tarifaPadreId,
 });
-typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
+typedef $$TarifaTableTableUpdateCompanionBuilder = TarifaTableCompanion
+    Function({
   Value<int> id,
   Value<String?> code,
   Value<DateTime?> fecha,
@@ -8431,22 +9144,22 @@ typedef $$TarifaTableUpdateCompanionBuilder = TarifaCompanion Function({
   Value<int?> tarifaPadreId,
 });
 
-class $$TarifaTableTableManager extends RootTableManager<
+class $$TarifaTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TarifaTable,
-    TarifaData,
-    $$TarifaTableFilterComposer,
-    $$TarifaTableOrderingComposer,
-    $$TarifaTableCreateCompanionBuilder,
-    $$TarifaTableUpdateCompanionBuilder> {
-  $$TarifaTableTableManager(_$AppDatabase db, $TarifaTable table)
+    $TarifaTableTable,
+    TarifaTableData,
+    $$TarifaTableTableFilterComposer,
+    $$TarifaTableTableOrderingComposer,
+    $$TarifaTableTableCreateCompanionBuilder,
+    $$TarifaTableTableUpdateCompanionBuilder> {
+  $$TarifaTableTableTableManager(_$AppDatabase db, $TarifaTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$TarifaTableFilterComposer(ComposerState(db, table)),
+              $$TarifaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$TarifaTableOrderingComposer(ComposerState(db, table)),
+              $$TarifaTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> code = const Value.absent(),
@@ -8459,7 +9172,7 @@ class $$TarifaTableTableManager extends RootTableManager<
             Value<double?> tarifaPaxAdicional = const Value.absent(),
             Value<int?> tarifaPadreId = const Value.absent(),
           }) =>
-              TarifaCompanion(
+              TarifaTableCompanion(
             id: id,
             code: code,
             fecha: fecha,
@@ -8483,7 +9196,7 @@ class $$TarifaTableTableManager extends RootTableManager<
             Value<double?> tarifaPaxAdicional = const Value.absent(),
             Value<int?> tarifaPadreId = const Value.absent(),
           }) =>
-              TarifaCompanion.insert(
+              TarifaTableCompanion.insert(
             id: id,
             code: code,
             fecha: fecha,
@@ -8498,9 +9211,9 @@ class $$TarifaTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TarifaTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TarifaTable> {
-  $$TarifaTableFilterComposer(super.$state);
+class $$TarifaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaTableTable> {
+  $$TarifaTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8546,36 +9259,41 @@ class $$TarifaTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$TarifaBaseTableFilterComposer get tarifaPadreId {
-    final $$TarifaBaseTableFilterComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaPadreId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableFilterComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableFilterComposer get tarifaPadreId {
+    final $$TarifaBaseTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaPadreId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  ComposableFilter temporadaTarifaRefs(
-      ComposableFilter Function($$TemporadaTarifaTableFilterComposer f) f) {
-    final $$TemporadaTarifaTableFilterComposer composer =
+  ComposableFilter temporadaTarifaTableRefs(
+      ComposableFilter Function($$TemporadaTarifaTableTableFilterComposer f)
+          f) {
+    final $$TemporadaTarifaTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
             getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.temporadaTarifa,
+            referencedTable: $state.db.temporadaTarifaTable,
             getReferencedColumn: (t) => t.TarifaId,
             builder: (joinBuilder, parentComposers) =>
-                $$TemporadaTarifaTableFilterComposer(ComposerState($state.db,
-                    $state.db.temporadaTarifa, joinBuilder, parentComposers)));
+                $$TemporadaTarifaTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.temporadaTarifaTable,
+                    joinBuilder,
+                    parentComposers)));
     return f(composer);
   }
 }
 
-class $$TarifaTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TarifaTable> {
-  $$TarifaTableOrderingComposer(super.$state);
+class $$TarifaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaTableTable> {
+  $$TarifaTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8621,15 +9339,16 @@ class $$TarifaTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$TarifaBaseTableOrderingComposer get tarifaPadreId {
-    final $$TarifaBaseTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.tarifaPadreId,
-        referencedTable: $state.db.tarifaBase,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TarifaBaseTableOrderingComposer(ComposerState($state.db,
-                $state.db.tarifaBase, joinBuilder, parentComposers)));
+  $$TarifaBaseTableTableOrderingComposer get tarifaPadreId {
+    final $$TarifaBaseTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaPadreId,
+            referencedTable: $state.db.tarifaBaseTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaBaseTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -8732,15 +9451,15 @@ class $$UserActivityTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableFilterComposer get userId {
-    final $$UsuarioTableFilterComposer composer = $state.composerBuilder(
+  $$UsuarioTableTableFilterComposer get userId {
+    final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.userId,
-        referencedTable: $state.db.usuario,
+        referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) => $$UsuarioTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableTableFilterComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -8773,20 +9492,21 @@ class $$UserActivityTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableOrderingComposer get userId {
-    final $$UsuarioTableOrderingComposer composer = $state.composerBuilder(
+  $$UsuarioTableTableOrderingComposer get userId {
+    final $$UsuarioTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.userId,
-        referencedTable: $state.db.usuario,
+        referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$UsuarioTableOrderingComposer(ComposerState(
-                $state.db, $state.db.usuario, joinBuilder, parentComposers)));
+            $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-typedef $$TarifaRackTableCreateCompanionBuilder = TarifaRackCompanion Function({
+typedef $$TarifaRackTableTableCreateCompanionBuilder = TarifaRackTableCompanion
+    Function({
   Value<int> id,
   required String code,
   Value<DateTime?> fecha,
@@ -8796,7 +9516,8 @@ typedef $$TarifaRackTableCreateCompanionBuilder = TarifaRackCompanion Function({
   Value<String?> codePeriodo,
   Value<int?> usuarioId,
 });
-typedef $$TarifaRackTableUpdateCompanionBuilder = TarifaRackCompanion Function({
+typedef $$TarifaRackTableTableUpdateCompanionBuilder = TarifaRackTableCompanion
+    Function({
   Value<int> id,
   Value<String> code,
   Value<DateTime?> fecha,
@@ -8807,22 +9528,23 @@ typedef $$TarifaRackTableUpdateCompanionBuilder = TarifaRackCompanion Function({
   Value<int?> usuarioId,
 });
 
-class $$TarifaRackTableTableManager extends RootTableManager<
+class $$TarifaRackTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TarifaRackTable,
-    TarifaRackData,
-    $$TarifaRackTableFilterComposer,
-    $$TarifaRackTableOrderingComposer,
-    $$TarifaRackTableCreateCompanionBuilder,
-    $$TarifaRackTableUpdateCompanionBuilder> {
-  $$TarifaRackTableTableManager(_$AppDatabase db, $TarifaRackTable table)
+    $TarifaRackTableTable,
+    TarifaRackTableData,
+    $$TarifaRackTableTableFilterComposer,
+    $$TarifaRackTableTableOrderingComposer,
+    $$TarifaRackTableTableCreateCompanionBuilder,
+    $$TarifaRackTableTableUpdateCompanionBuilder> {
+  $$TarifaRackTableTableTableManager(
+      _$AppDatabase db, $TarifaRackTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$TarifaRackTableFilterComposer(ComposerState(db, table)),
+              $$TarifaRackTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$TarifaRackTableOrderingComposer(ComposerState(db, table)),
+              $$TarifaRackTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> code = const Value.absent(),
@@ -8833,7 +9555,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             Value<String?> codePeriodo = const Value.absent(),
             Value<int?> usuarioId = const Value.absent(),
           }) =>
-              TarifaRackCompanion(
+              TarifaRackTableCompanion(
             id: id,
             code: code,
             fecha: fecha,
@@ -8853,7 +9575,7 @@ class $$TarifaRackTableTableManager extends RootTableManager<
             Value<String?> codePeriodo = const Value.absent(),
             Value<int?> usuarioId = const Value.absent(),
           }) =>
-              TarifaRackCompanion.insert(
+              TarifaRackTableCompanion.insert(
             id: id,
             code: code,
             fecha: fecha,
@@ -8866,9 +9588,9 @@ class $$TarifaRackTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TarifaRackTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TarifaRackTable> {
-  $$TarifaRackTableFilterComposer(super.$state);
+class $$TarifaRackTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TarifaRackTableTable> {
+  $$TarifaRackTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8910,9 +9632,9 @@ class $$TarifaRackTableFilterComposer
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$TarifaRackTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TarifaRackTable> {
-  $$TarifaRackTableOrderingComposer(super.$state);
+class $$TarifaRackTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TarifaRackTableTable> {
+  $$TarifaRackTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -8954,7 +9676,8 @@ class $$TarifaRackTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$PoliticasTableCreateCompanionBuilder = PoliticasCompanion Function({
+typedef $$PoliticaTableTableCreateCompanionBuilder = PoliticaTableCompanion
+    Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
@@ -8962,7 +9685,8 @@ typedef $$PoliticasTableCreateCompanionBuilder = PoliticasCompanion Function({
   Value<int?> diasVigenciaCotInd,
   Value<int?> diasVigenciaCotGroup,
 });
-typedef $$PoliticasTableUpdateCompanionBuilder = PoliticasCompanion Function({
+typedef $$PoliticaTableTableUpdateCompanionBuilder = PoliticaTableCompanion
+    Function({
   Value<int> id,
   Value<DateTime?> fechaActualizacion,
   Value<int?> intervaloHabitacionGratuita,
@@ -8971,22 +9695,22 @@ typedef $$PoliticasTableUpdateCompanionBuilder = PoliticasCompanion Function({
   Value<int?> diasVigenciaCotGroup,
 });
 
-class $$PoliticasTableTableManager extends RootTableManager<
+class $$PoliticaTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $PoliticasTable,
-    Politica,
-    $$PoliticasTableFilterComposer,
-    $$PoliticasTableOrderingComposer,
-    $$PoliticasTableCreateCompanionBuilder,
-    $$PoliticasTableUpdateCompanionBuilder> {
-  $$PoliticasTableTableManager(_$AppDatabase db, $PoliticasTable table)
+    $PoliticaTableTable,
+    PoliticaTableData,
+    $$PoliticaTableTableFilterComposer,
+    $$PoliticaTableTableOrderingComposer,
+    $$PoliticaTableTableCreateCompanionBuilder,
+    $$PoliticaTableTableUpdateCompanionBuilder> {
+  $$PoliticaTableTableTableManager(_$AppDatabase db, $PoliticaTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           filteringComposer:
-              $$PoliticasTableFilterComposer(ComposerState(db, table)),
+              $$PoliticaTableTableFilterComposer(ComposerState(db, table)),
           orderingComposer:
-              $$PoliticasTableOrderingComposer(ComposerState(db, table)),
+              $$PoliticaTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<DateTime?> fechaActualizacion = const Value.absent(),
@@ -8995,7 +9719,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
             Value<int?> diasVigenciaCotInd = const Value.absent(),
             Value<int?> diasVigenciaCotGroup = const Value.absent(),
           }) =>
-              PoliticasCompanion(
+              PoliticaTableCompanion(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
@@ -9011,7 +9735,7 @@ class $$PoliticasTableTableManager extends RootTableManager<
             Value<int?> diasVigenciaCotInd = const Value.absent(),
             Value<int?> diasVigenciaCotGroup = const Value.absent(),
           }) =>
-              PoliticasCompanion.insert(
+              PoliticaTableCompanion.insert(
             id: id,
             fechaActualizacion: fechaActualizacion,
             intervaloHabitacionGratuita: intervaloHabitacionGratuita,
@@ -9022,9 +9746,9 @@ class $$PoliticasTableTableManager extends RootTableManager<
         ));
 }
 
-class $$PoliticasTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $PoliticasTable> {
-  $$PoliticasTableFilterComposer(super.$state);
+class $$PoliticaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $PoliticaTableTable> {
+  $$PoliticaTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -9057,9 +9781,9 @@ class $$PoliticasTableFilterComposer
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $$PoliticasTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $PoliticasTable> {
-  $$PoliticasTableOrderingComposer(super.$state);
+class $$PoliticaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $PoliticaTableTable> {
+  $$PoliticaTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
@@ -9093,42 +9817,42 @@ class $$PoliticasTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$TemporadaTarifaTableCreateCompanionBuilder = TemporadaTarifaCompanion
-    Function({
+typedef $$TemporadaTarifaTableTableCreateCompanionBuilder
+    = TemporadaTarifaTableCompanion Function({
   Value<int> id,
   Value<int?> temporadaId,
   Value<int?> TarifaId,
 });
-typedef $$TemporadaTarifaTableUpdateCompanionBuilder = TemporadaTarifaCompanion
-    Function({
+typedef $$TemporadaTarifaTableTableUpdateCompanionBuilder
+    = TemporadaTarifaTableCompanion Function({
   Value<int> id,
   Value<int?> temporadaId,
   Value<int?> TarifaId,
 });
 
-class $$TemporadaTarifaTableTableManager extends RootTableManager<
+class $$TemporadaTarifaTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $TemporadaTarifaTable,
-    TemporadaTarifaData,
-    $$TemporadaTarifaTableFilterComposer,
-    $$TemporadaTarifaTableOrderingComposer,
-    $$TemporadaTarifaTableCreateCompanionBuilder,
-    $$TemporadaTarifaTableUpdateCompanionBuilder> {
-  $$TemporadaTarifaTableTableManager(
-      _$AppDatabase db, $TemporadaTarifaTable table)
+    $TemporadaTarifaTableTable,
+    TemporadaTarifaTableData,
+    $$TemporadaTarifaTableTableFilterComposer,
+    $$TemporadaTarifaTableTableOrderingComposer,
+    $$TemporadaTarifaTableTableCreateCompanionBuilder,
+    $$TemporadaTarifaTableTableUpdateCompanionBuilder> {
+  $$TemporadaTarifaTableTableTableManager(
+      _$AppDatabase db, $TemporadaTarifaTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$TemporadaTarifaTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$TemporadaTarifaTableOrderingComposer(ComposerState(db, table)),
+          filteringComposer: $$TemporadaTarifaTableTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$TemporadaTarifaTableTableOrderingComposer(
+              ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int?> temporadaId = const Value.absent(),
             Value<int?> TarifaId = const Value.absent(),
           }) =>
-              TemporadaTarifaCompanion(
+              TemporadaTarifaTableCompanion(
             id: id,
             temporadaId: temporadaId,
             TarifaId: TarifaId,
@@ -9138,7 +9862,7 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
             Value<int?> temporadaId = const Value.absent(),
             Value<int?> TarifaId = const Value.absent(),
           }) =>
-              TemporadaTarifaCompanion.insert(
+              TemporadaTarifaTableCompanion.insert(
             id: id,
             temporadaId: temporadaId,
             TarifaId: TarifaId,
@@ -9146,68 +9870,69 @@ class $$TemporadaTarifaTableTableManager extends RootTableManager<
         ));
 }
 
-class $$TemporadaTarifaTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $TemporadaTarifaTable> {
-  $$TemporadaTarifaTableFilterComposer(super.$state);
+class $$TemporadaTarifaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TemporadaTarifaTableTable> {
+  $$TemporadaTarifaTableTableFilterComposer(super.$state);
   ColumnFilters<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$TemporadaTableFilterComposer get temporadaId {
-    final $$TemporadaTableFilterComposer composer = $state.composerBuilder(
+  $$TemporadaTableTableFilterComposer get temporadaId {
+    final $$TemporadaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.temporadaId,
-        referencedTable: $state.db.temporada,
+        referencedTable: $state.db.temporadaTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$TemporadaTableFilterComposer(ComposerState(
-                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+            $$TemporadaTableTableFilterComposer(ComposerState($state.db,
+                $state.db.temporadaTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  $$TarifaTableFilterComposer get TarifaId {
-    final $$TarifaTableFilterComposer composer = $state.composerBuilder(
+  $$TarifaTableTableFilterComposer get TarifaId {
+    final $$TarifaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.TarifaId,
-        referencedTable: $state.db.tarifa,
+        referencedTable: $state.db.tarifaTable,
         getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) => $$TarifaTableFilterComposer(
-            ComposerState(
-                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
 
-class $$TemporadaTarifaTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $TemporadaTarifaTable> {
-  $$TemporadaTarifaTableOrderingComposer(super.$state);
+class $$TemporadaTarifaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TemporadaTarifaTableTable> {
+  $$TemporadaTarifaTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$TemporadaTableOrderingComposer get temporadaId {
-    final $$TemporadaTableOrderingComposer composer = $state.composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.temporadaId,
-        referencedTable: $state.db.temporada,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder, parentComposers) =>
-            $$TemporadaTableOrderingComposer(ComposerState(
-                $state.db, $state.db.temporada, joinBuilder, parentComposers)));
+  $$TemporadaTableTableOrderingComposer get temporadaId {
+    final $$TemporadaTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.temporadaId,
+            referencedTable: $state.db.temporadaTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TemporadaTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.temporadaTable, joinBuilder, parentComposers)));
     return composer;
   }
 
-  $$TarifaTableOrderingComposer get TarifaId {
-    final $$TarifaTableOrderingComposer composer = $state.composerBuilder(
+  $$TarifaTableTableOrderingComposer get TarifaId {
+    final $$TarifaTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.TarifaId,
-        referencedTable: $state.db.tarifa,
+        referencedTable: $state.db.tarifaTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
-            $$TarifaTableOrderingComposer(ComposerState(
-                $state.db, $state.db.tarifa, joinBuilder, parentComposers)));
+            $$TarifaTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.tarifaTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -9215,30 +9940,32 @@ class $$TemporadaTarifaTableOrderingComposer
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$ImagesTableTableTableManager get imagesTable =>
-      $$ImagesTableTableTableManager(_db, _db.imagesTable);
-  $$UsuarioTableTableManager get usuario =>
-      $$UsuarioTableTableManager(_db, _db.usuario);
-  $$CotizacionTableTableManager get cotizacion =>
-      $$CotizacionTableTableManager(_db, _db.cotizacion);
-  $$HabitacionTableTableManager get habitacion =>
-      $$HabitacionTableTableManager(_db, _db.habitacion);
+  $$ImageTableTableTableManager get imageTable =>
+      $$ImageTableTableTableManager(_db, _db.imageTable);
+  $$UsuarioTableTableTableManager get usuarioTable =>
+      $$UsuarioTableTableTableManager(_db, _db.usuarioTable);
+  $$ClienteTableTableTableManager get clienteTable =>
+      $$ClienteTableTableTableManager(_db, _db.clienteTable);
+  $$CotizacionTableTableTableManager get cotizacionTable =>
+      $$CotizacionTableTableTableManager(_db, _db.cotizacionTable);
+  $$HabitacionTableTableTableManager get habitacionTable =>
+      $$HabitacionTableTableTableManager(_db, _db.habitacionTable);
   $$TarifaXDiaTableTableTableManager get tarifaXDiaTable =>
       $$TarifaXDiaTableTableTableManager(_db, _db.tarifaXDiaTable);
-  $$PeriodoTableTableManager get periodo =>
-      $$PeriodoTableTableManager(_db, _db.periodo);
-  $$TemporadaTableTableManager get temporada =>
-      $$TemporadaTableTableManager(_db, _db.temporada);
-  $$TarifaBaseTableTableManager get tarifaBase =>
-      $$TarifaBaseTableTableManager(_db, _db.tarifaBase);
-  $$TarifaTableTableManager get tarifa =>
-      $$TarifaTableTableManager(_db, _db.tarifa);
+  $$PeriodoTableTableTableManager get periodoTable =>
+      $$PeriodoTableTableTableManager(_db, _db.periodoTable);
+  $$TemporadaTableTableTableManager get temporadaTable =>
+      $$TemporadaTableTableTableManager(_db, _db.temporadaTable);
+  $$TarifaBaseTableTableTableManager get tarifaBaseTable =>
+      $$TarifaBaseTableTableTableManager(_db, _db.tarifaBaseTable);
+  $$TarifaTableTableTableManager get tarifaTable =>
+      $$TarifaTableTableTableManager(_db, _db.tarifaTable);
   $$UserActivityTableTableManager get userActivity =>
       $$UserActivityTableTableManager(_db, _db.userActivity);
-  $$TarifaRackTableTableManager get tarifaRack =>
-      $$TarifaRackTableTableManager(_db, _db.tarifaRack);
-  $$PoliticasTableTableManager get politicas =>
-      $$PoliticasTableTableManager(_db, _db.politicas);
-  $$TemporadaTarifaTableTableManager get temporadaTarifa =>
-      $$TemporadaTarifaTableTableManager(_db, _db.temporadaTarifa);
+  $$TarifaRackTableTableTableManager get tarifaRackTable =>
+      $$TarifaRackTableTableTableManager(_db, _db.tarifaRackTable);
+  $$PoliticaTableTableTableManager get politicaTable =>
+      $$PoliticaTableTableTableManager(_db, _db.politicaTable);
+  $$TemporadaTarifaTableTableTableManager get temporadaTarifaTable =>
+      $$TemporadaTarifaTableTableTableManager(_db, _db.temporadaTarifaTable);
 }

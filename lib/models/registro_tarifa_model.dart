@@ -13,9 +13,9 @@ class RegistroTarifa {
   Color? color;
   DateTime? fechaRegistro;
   int? userId;
-  List<PeriodoData>? periodos;
+  List<PeriodoTableData>? periodos;
   List<Temporada>? temporadas;
-  List<TarifaData>? tarifas;
+  List<TarifaTableData>? tarifas;
   int numDays;
 
   RegistroTarifa({
@@ -44,9 +44,9 @@ class RegistroTarifa {
     Color? color,
     DateTime? fechaRegistro,
     int? userId,
-    List<PeriodoData>? periodos,
+    List<PeriodoTableData>? periodos,
     List<Temporada>? temporadas,
-    List<TarifaData>? tarifas,
+    List<TarifaTableData>? tarifas,
     int? numDays,
   }) =>
       RegistroTarifa(

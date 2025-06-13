@@ -7,10 +7,10 @@ class InitDatabase {
   static Future<void> iniciarBD() async {
     final db = AppDatabase();
 
-    List<UsuarioData> allUsers = await db.select(db.usuario).get();
+    List<UsuarioTableData> allUsers = await db.select(db.usuarioTable).get();
     if (allUsers.isEmpty) {
-      await db.into(db.usuario).insert(
-            UsuarioCompanion.insert(
+      await db.into(db.usuarioTable).insert(
+            UsuarioTableCompanion.insert(
               username: const Value('admin'),
               password: Value(EncrypterTool.encryptData("12345678", null)),
               rol: const Value("SUPERADMIN"),

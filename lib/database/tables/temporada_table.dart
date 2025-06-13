@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Temporada extends Table {
+class TemporadaTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get code => text()();
   TextColumn get nombre => text()();

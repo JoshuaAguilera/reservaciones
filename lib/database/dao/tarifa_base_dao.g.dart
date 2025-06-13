@@ -4,6 +4,6 @@ part of 'tarifa_base_dao.dart';
 
 // ignore_for_file: type=lint
 mixin _$TarifaBaseDaoMixin on DatabaseAccessor<AppDatabase> {
-  $TarifaBaseTable get tarifaBase => attachedDatabase.tarifaBase;
-  $TarifaTable get tarifa => attachedDatabase.tarifa;
+  $TarifaBaseTableTable get tarifaBaseTable => attachedDatabase.tarifaBaseTable;
+  $TarifaTableTable get tarifaTable => attachedDatabase.tarifaTable;
 }

@@ -5,15 +5,16 @@ import '../tables/tarifa_table.dart';
 
 part 'tarifa_dao.g.dart';
 
-@DriftAccessor(tables: [Tarifa])
+@DriftAccessor(tables: [TarifaTable])
 class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
   TarifaDao(AppDatabase db) : super(db);
 
   Future<List<tf.Tarifa>> getTarifasByCode(String code) async {
     List<tf.Tarifa> tarifas = [];
 
-    List<TarifaData> response =
-        await (select(tarifa)..where((tbl) => tbl.code.equals(code))).get();
+    List<TarifaTableData> response = await (select(tarifaTable)
+          ..where((tbl) => tbl.code.equals(code)))
+        .get();
 
     for (var element in response) {
       tf.Tarifa tariff = tf.Tarifa(id: element.id);
@@ -33,24 +34,26 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
   }
 
   Future<int> updateForBaseTariff({
-    required TarifaCompanion tarifaData,
+    required TarifaTableCompanion tarifaData,
     required int baseTariffId,
     required int id,
   }) {
-    return (update(tarifa)
+    return (update(tarifaTable)
           ..where((tbl) => tbl.tarifaPadreId.equals(baseTariffId))
           ..where((tbl) => tbl.id.equals(id)))
         .write(tarifaData);
   }
 
   Future<int> removeBaseTariff(int tarifaBaseId) {
-    return (update(tarifa)..where((t) => t.tarifaPadreId.equals(tarifaBaseId)))
+    return (update(tarifaTable)
+          ..where((t) => t.tarifaPadreId.equals(tarifaBaseId)))
         .write(
-      const TarifaCompanion(tarifaPadreId: Value(null)),
+      const TarifaTableCompanion(tarifaPadreId: Value(null)),
     );
   }
 
   Future<int> deleteByCode(String codeRackTariff) {
-    return (delete(tarifa)..where((t) => t.code.equals(codeRackTariff))).go();
+    return (delete(tarifaTable)..where((t) => t.code.equals(codeRackTariff)))
+        .go();
   }
 }

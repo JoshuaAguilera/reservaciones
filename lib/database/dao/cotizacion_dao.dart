@@ -1,21 +1,22 @@
 import 'package:drift/drift.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/database/tables/tarifa_base_table.dart';
-import 'package:generador_formato/database/tables/tarifa_table.dart';
-import 'package:generador_formato/models/tarifa_base_model.dart';
-import 'package:generador_formato/models/tarifa_model.dart' as tf;
-import 'package:generador_formato/res/helpers/utility.dart';
 
+import '../database.dart';
+import '../tables/cliente_table.dart';
+import '../tables/cotizacion_table.dart';
+import '../tables/usuario_table.dart';
 import 'tarifa_dao.dart';
-part 'tarifa_base_dao.g.dart';
 
-@DriftAccessor(tables: [TarifaBaseTable, TarifaTable])
-class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
-    with _$TarifaBaseDaoMixin {
-  TarifaBaseDao(AppDatabase db) : super(db);
+part 'cotizacion_dao.g.dart';
 
-  Future<List<TarifaBaseInt>> getBaseTariffComplement(
-      {int? tarifaBaseId, int? tarifaPadreId}) async {
+@DriftAccessor(tables: [CotizacionTable, ClienteTable, UsuarioTable])
+class CotizacionDao extends DatabaseAccessor<AppDatabase>
+    with _$CotizacionDaoMixin {
+  CotizacionDao(AppDatabase db) : super(db);
+
+  Future<List<CotizacionTable>> getBaseTariffComplement({
+    String? cliente,
+    int? userId,
+  }) async {
     final query = customSelect(
       '''
       SELECT 
@@ -50,7 +51,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
           : tarifaPadreId != null
               ? [Variable<int>(tarifaPadreId)]
               : [],
-      readsFrom: {tarifaBaseTable, tarifaTable},
+      readsFrom: {tarifaBase, tarifa},
     );
 
     final rows = await query.get();
@@ -128,17 +129,17 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> updateBaseTariff(
-      {required TarifaBaseTableData baseTariff,
+      {required TarifaBaseData baseTariff,
       required int id,
       required String code}) {
-    return (update(tarifaBaseTable)
+    return (update(tarifaBase)
           ..where((tbl) => tbl.code.equals(code))
           ..where((tbl) => tbl.id.equals(id)))
         .write(baseTariff);
   }
 
   Future<int> propageChangesTariff(
-      {required TarifaBaseTableData baseTariff,
+      {required TarifaBaseData baseTariff,
       required List<tf.Tarifa> tarifasBase}) async {
     int tarifaId = baseTariff.id;
     final tarifaDao = TarifaDao(db);
@@ -172,7 +173,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
               (selectTariff.tarifaMenores7a12 ?? 0) / divisor);
 
           await tarifaDao.updateForBaseTariff(
-            tarifaData: TarifaTableCompanion(
+            tarifaData: TarifaCompanion(
               tarifaAdultoCPLE: Value(element.tarifaAdulto4),
               tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
               tarifaAdultoTPL: Value(element.tarifaAdulto3),
@@ -185,7 +186,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
         }
 
         await propageChangesTariff(
-          baseTariff: TarifaBaseTableData(
+          baseTariff: TarifaBaseData(
               id: tarifaBase.id!, descIntegrado: tarifaBase.descIntegrado),
           tarifasBase: tarifaBase.tarifas ?? List<tf.Tarifa>.empty(),
         );
@@ -198,20 +199,20 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> removeOrigenTarifaId({required int? origenId}) {
-    return (update(tarifaBaseTable)
+    return (update(tarifaBase)
           ..where((tbl) => tbl.tarifaOrigenId.equals(origenId!)))
         .write(
-      const TarifaBaseTableCompanion(
+      const TarifaBaseCompanion(
         tarifaOrigenId: Value(null),
       ),
     );
   }
 
   Future<int> removePadreTarifaId({required int? padreId}) {
-    return (update(tarifaBaseTable)
+    return (update(tarifaBase)
           ..where((tbl) => tbl.tarifaPadreId.equals(padreId!)))
         .write(
-      const TarifaBaseTableCompanion(
+      const TarifaBaseCompanion(
         tarifaPadreId: Value(null),
         tarifaOrigenId: Value(null),
         descIntegrado: Value(null),
@@ -223,8 +224,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
     removePadreTarifaId(padreId: tarifaBaseSelect.id);
     removeOrigenTarifaId(origenId: tarifaBaseSelect.id);
 
-    return (delete(tarifaBaseTable)
-          ..where((t) => t.id.equals(tarifaBaseSelect.id!)))
+    return (delete(tarifaBase)..where((t) => t.id.equals(tarifaBaseSelect.id!)))
         .go();
   }
 }

@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class TarifaBase extends Table {
+class TarifaBaseTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get code => text().nullable()();
   TextColumn get nombre => text().nullable()();
@@ -9,6 +9,6 @@ class TarifaBase extends Table {
   RealColumn get upgradeCategoria => real().nullable()();
   RealColumn get upgradeMenor => real().nullable()();
   RealColumn get upgradePaxAdic => real().nullable()();
-  IntColumn get tarifaPadreId => integer().nullable().references(TarifaBase, #id)();
-  IntColumn get tarifaOrigenId => integer().nullable().references(TarifaBase, #id)();
+  IntColumn get tarifaPadreId => integer().nullable().references(TarifaBaseTable, #id)();
+  IntColumn get tarifaOrigenId => integer().nullable().references(TarifaBaseTable, #id)();
 }

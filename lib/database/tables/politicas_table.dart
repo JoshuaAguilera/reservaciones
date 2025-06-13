@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Politicas extends Table {
+class PoliticaTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get fechaActualizacion => dateTime().nullable()();
   IntColumn get intervaloHabitacionGratuita => integer().nullable()();

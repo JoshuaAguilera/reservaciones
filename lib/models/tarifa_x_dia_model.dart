@@ -7,14 +7,15 @@ import 'package:generador_formato/models/temporada_model.dart';
 import '../database/database.dart';
 import '../res/helpers/desktop_colors.dart';
 
-List<TarifaData> tarifasDataFromJson(String str) =>
-    List<TarifaData>.from(json.decode(str).map((x) => TarifaData.fromJson(x)));
+List<TarifaTableData> tarifasDataFromJson(String str) =>
+    List<TarifaTableData>.from(
+        json.decode(str).map((x) => TarifaTableData.fromJson(x)));
 
-String tarifasDataToJson(List<TarifaData> data) =>
+String tarifasDataToJson(List<TarifaTableData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<TarifaData> listTarifasDataFromJson(List<dynamic> list) =>
-    List<TarifaData>.from(list.map((x) => TarifaData.fromJson(x)));
+List<TarifaTableData> listTarifasDataFromJson(List<dynamic> list) =>
+    List<TarifaTableData>.from(list.map((x) => TarifaTableData.fromJson(x)));
 
 class TarifaXDia {
   int? id;
@@ -29,13 +30,13 @@ class TarifaXDia {
   DateTime? fecha;
   String? nombreTariff;
   Color? color;
-  TarifaData? tarifa;
+  TarifaTableData? tarifa;
   Temporada? temporadaSelect;
-  PeriodoData? periodo;
+  PeriodoTableData? periodo;
   List<Temporada>? temporadas;
-  List<TarifaData>? tarifas;
-  List<TarifaData>? tarifasBase;
-  List<TarifaData>? tarifasEfectivo;
+  List<TarifaTableData>? tarifas;
+  List<TarifaTableData>? tarifasBase;
+  List<TarifaTableData>? tarifasEfectivo;
   int numDays;
 
   TarifaXDia({
@@ -72,15 +73,15 @@ class TarifaXDia {
     String? subCode,
     double? descuentoProvisional,
     String? nombreTarif,
-    PeriodoData? periodo,
-    TarifaData? tarifa,
+    PeriodoTableData? periodo,
+    TarifaTableData? tarifa,
     Temporada? temporadaSelect,
     List<Temporada>? temporadas,
     bool? modificado,
     String? categoria,
-    List<TarifaData>? tarifas,
-    List<TarifaData>? tarifasBase,
-    List<TarifaData>? tarifasEfectivo,
+    List<TarifaTableData>? tarifas,
+    List<TarifaTableData>? tarifasBase,
+    List<TarifaTableData>? tarifasEfectivo,
     int? numDays,
   }) =>
       TarifaXDia(
@@ -143,13 +144,13 @@ class TarifaXDia {
       tarifas: json['tarifas'] != null
           ? json['tarifas'] != '[]'
               ? listTarifasDataFromJson(json['tarifas'])
-              : List<TarifaData>.empty()
-          : List<TarifaData>.empty(),
+              : List<TarifaTableData>.empty()
+          : List<TarifaTableData>.empty(),
       tarifasBase: json['tarifasBase'] != null
           ? json['tarifasBase'] != '[]'
               ? listTarifasDataFromJson(json['tarifasBase'])
-              : List<TarifaData>.empty()
-          : List<TarifaData>.empty(),
+              : List<TarifaTableData>.empty()
+          : List<TarifaTableData>.empty(),
       numDays: json['numDays'],
       categoria: json['categoria'],
       descuentoProvisional: json['descuentoProvisional'],
@@ -158,11 +159,11 @@ class TarifaXDia {
       modificado: json['modificado'],
       nombreTariff: json['nombreTarif'],
       periodo: json['periodo'] != null
-          ? PeriodoData.fromJson(json['periodo'])
+          ? PeriodoTableData.fromJson(json['periodo'])
           : null,
       subCode: json['subCode'],
       tarifa:
-          json['tarifa'] != null ? TarifaData.fromJson(json['tarifa']) : null,
+          json['tarifa'] != null ? TarifaTableData.fromJson(json['tarifa']) : null,
       temporadaSelect: json['temporadaSelect'] != null
           ? Temporada.fromJson(json['temporadaSelect'])
           : null,

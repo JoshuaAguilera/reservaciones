@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Habitacion extends Table {
+class HabitacionTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get folioHabitacion => text().nullable()();
   TextColumn get folioCotizacion => text().nullable()();

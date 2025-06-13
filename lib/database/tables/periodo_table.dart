@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Periodo extends Table {
+class PeriodoTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get code => text()();
   DateTimeColumn get fecha => dateTime().nullable()();

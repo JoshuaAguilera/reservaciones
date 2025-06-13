@@ -7,5 +7,5 @@ class UserActivity extends Table {
   TextColumn get name => text().nullable()();
   TextColumn get category => text().nullable()();
   IntColumn get status => integer().nullable()();
-  IntColumn get userId => integer().nullable().references(Usuario, #id)();
+  IntColumn get userId => integer().nullable().references(UsuarioTable, #id)();
 }

@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Cliente extends Table {
+class ClienteTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get nombre => text().nullable()();
   TextColumn get apellido => text().nullable()();

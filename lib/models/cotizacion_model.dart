@@ -14,7 +14,8 @@ class Cotizacion {
   bool? esGrupo;
   bool? esConcretado;
   List<Habitacion>? habitaciones;
-  UsuarioData? autor;
+  UsuarioTableData? autor;
+  ClienteTableData? cliente;
 
   Cotizacion({
     this.id,
@@ -30,6 +31,7 @@ class Cotizacion {
     this.tipo,
     this.esConcretado,
     this.autor,
+    this.cliente,
   });
 
   Cotizacion CopyWith({
@@ -44,7 +46,8 @@ class Cotizacion {
     bool? esGrupo,
     bool? esConcretado,
     List<Habitacion>? habitaciones,
-    UsuarioData? autor,
+    UsuarioTableData? autor,
+    ClienteTableData? cliente,
   }) =>
       Cotizacion(
         id: id ?? this.id,
@@ -60,5 +63,6 @@ class Cotizacion {
         habitaciones: habitaciones ?? this.habitaciones,
         fechaLimite: fechaLimite ?? this.fechaLimite,
         autor: autor ?? this.autor,
+        cliente: cliente,
       );
 }

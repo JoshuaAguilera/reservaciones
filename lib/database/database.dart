@@ -29,20 +29,20 @@ part 'database.g.dart';
 
 // @DriftDatabase(
 //   tables: [
-//     Usuario,
-//     Cotizacion,
-//     Habitacion,
+//     UsuarioTable,
+//     CotizacionTable,
+//     HabitacionTable,
 //     TarifaXDiaTable,
-//     Periodo,
-//     Temporada,
-//     Tarifa,
+//     PeriodoTable,
+//     TemporadaTable,
+//     TarifaTable,
 //     UserActivity,
-//     TarifaRack,
-//     Politicas,
-//     ImagesTable,
-//     TemporadaTarifa,
-//     TarifaBase,
-//     Cliente,
+//     TarifaRackTable,
+//     PoliticaTable,
+//     ImageTable,
+//     TemporadaTarifaTable,
+//     TarifaBaseTable,
+//     ClienteTable,
 //   ],
 //   daos: [
 //     TarifaBaseDao,
@@ -70,25 +70,25 @@ class SeasonTariff {
   SeasonTariff(this.season, this.tariff);
 
   final TemporadaData season;
-  final Tarifa? tariff;
+  final TarifaTable? tariff;
 }
 
 @DriftDatabase(
   tables: [
-    Usuario,
-    Cotizacion,
-    Habitacion,
+    UsuarioTable,
+    CotizacionTable,
+    HabitacionTable,
     TarifaXDiaTable,
-    Periodo,
-    Temporada,
-    Tarifa,
+    PeriodoTable,
+    TemporadaTable,
+    TarifaTable,
     UserActivity,
-    TarifaRack,
-    Politicas,
-    ImagesTable,
-    TemporadaTarifa,
-    TarifaBase,
-    Cliente,
+    TarifaRackTable,
+    PoliticaTable,
+    ImageTable,
+    TemporadaTarifaTable,
+    TarifaBaseTable,
+    ClienteTable,
   ],
   daos: [
     TarifaBaseDao,
@@ -132,13 +132,10 @@ class AppDatabase extends _$AppDatabase {
       CotizacionData data = CotizacionData(
         id: element.quote.id,
         fecha: element.quote.fecha,
-        correoElectrico: element.quote.correoElectrico,
         esConcretado: element.quote.esConcretado,
         esGrupo: element.quote.esGrupo,
         folioPrincipal: element.quote.folioPrincipal,
         habitaciones: element.quote.habitaciones,
-        nombreHuesped: element.quote.nombreHuesped,
-        numeroTelefonico: element.quote.numeroTelefonico,
         usuarioID: element.quote.usuarioID,
         username: jsonEncode(element.user),
       );
