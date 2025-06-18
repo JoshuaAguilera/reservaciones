@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/models/periodo_model.dart';
-import 'package:generador_formato/res/helpers/constants.dart';
 
 import '../database/database.dart';
+import '../models/cotizacion_model.dart';
+import '../models/periodo_model.dart';
+import '../res/helpers/constants.dart';
 import '../services/cotizacion_service.dart';
 
 final cotizacionProvider = StateProvider<Cotizacion>((ref) => Cotizacion());
@@ -31,7 +31,7 @@ final filtroProvider = StateProvider<String>((ref) => filtros.first);
 final changeHistoryProvider = StateProvider<int>((ref) => 0);
 
 final receiptQuoteQueryProvider =
-    FutureProvider.family<List<CotizacionData>, String>((ref, arg) async {
+    FutureProvider.family<List<CotizacionTableData>, String>((ref, arg) async {
   final period = ref.watch(periodoProvider);
   final empty = ref.watch(isEmptyProvider);
   final search = ref.watch(searchProvider);
@@ -53,4 +53,6 @@ final receiptQuoteQueryProvider =
   return list;
 });
 
-final saveTariffPolityProvider = StateProvider<Politica?>((ref) => null);
+final saveTariffPolityProvider = StateProvider<PoliticaTableData?>((ref) {
+  return null;
+});

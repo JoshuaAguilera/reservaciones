@@ -1,68 +1,64 @@
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
+import 'cliente_model.dart';
+import 'habitacion_model.dart';
+import 'usuario_model.dart';
 
 class Cotizacion {
   int? id;
+  String? cotId;
   String? folioPrincipal;
-  String? nombreHuesped;
-  String? numeroTelefonico;
-  String? correoElectronico;
-  String? tipo;
-  String? fecha;
-  int? responsableId;
-  String? fechaLimite;
+  DateTime? createAt;
+  DateTime? fechaLimite;
   bool? esGrupo;
   bool? esConcretado;
   List<Habitacion>? habitaciones;
-  UsuarioTableData? autor;
-  ClienteTableData? cliente;
+  Usuario? creadoPor;
+  Usuario? cerradoPor;
+  Cliente? cliente;
+  String? comentarios;
+  Cotizacion? cotizacionOrigenId;
 
   Cotizacion({
     this.id,
+    this.cotId,
     this.esGrupo,
-    this.nombreHuesped,
-    this.numeroTelefonico,
-    this.correoElectronico,
-    this.fecha,
+    this.createAt,
     this.fechaLimite,
     this.folioPrincipal,
     this.habitaciones,
-    this.responsableId,
-    this.tipo,
+    this.creadoPor,
+    this.cerradoPor,
     this.esConcretado,
-    this.autor,
+    this.comentarios,
     this.cliente,
+    this.cotizacionOrigenId,
   });
 
   Cotizacion CopyWith({
     int? id,
+    String? cotId,
     String? folioPrincipal,
-    String? nombreHuesped,
-    String? numeroTelefonico,
-    String? correoElectronico,
-    String? tipo,
-    String? fecha,
-    int? responsableId,
+    DateTime? fecha,
+    DateTime? fechaLimite,
     bool? esGrupo,
     bool? esConcretado,
     List<Habitacion>? habitaciones,
-    UsuarioTableData? autor,
-    ClienteTableData? cliente,
+    Usuario? creadoPor,
+    Usuario? cerradoPor,
+    Cliente? cliente,
+    String? comentarios,
+    Cotizacion? cotizacionOrigenId,
   }) =>
       Cotizacion(
         id: id ?? this.id,
+        cotId: cotId ?? this.cotId,
         folioPrincipal: folioPrincipal ?? this.folioPrincipal,
-        nombreHuesped: nombreHuesped ?? this.nombreHuesped,
-        numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
-        correoElectronico: correoElectronico ?? this.correoElectronico,
-        tipo: tipo ?? this.tipo,
-        fecha: fecha ?? this.fecha,
-        responsableId: responsableId ?? this.responsableId,
+        createAt: fecha ?? this.createAt,
         esGrupo: esGrupo ?? this.esGrupo,
         esConcretado: esConcretado ?? this.esConcretado,
         habitaciones: habitaciones ?? this.habitaciones,
         fechaLimite: fechaLimite ?? this.fechaLimite,
-        autor: autor ?? this.autor,
+        creadoPor: creadoPor ?? this.creadoPor,
+        cerradoPor: cerradoPor ?? this.cerradoPor,
         cliente: cliente,
       );
 }

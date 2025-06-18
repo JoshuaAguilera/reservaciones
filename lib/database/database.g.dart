@@ -254,23 +254,20 @@ class $UsuarioTableTable extends UsuarioTable
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
       'rol', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  static const VerificationMeta _estatusMeta =
+      const VerificationMeta('estatus');
   @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-      'status', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> estatus = GeneratedColumn<String>(
+      'estatus', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Variable("registrado"));
   static const VerificationMeta _correoElectronicoMeta =
       const VerificationMeta('correoElectronico');
   @override
   late final GeneratedColumn<String> correoElectronico =
       GeneratedColumn<String>('correo_electronico', aliasedName, true,
           type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _passwordCorreoMeta =
-      const VerificationMeta('passwordCorreo');
-  @override
-  late final GeneratedColumn<String> passwordCorreo = GeneratedColumn<String>(
-      'password_correo', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _telefonoMeta =
       const VerificationMeta('telefono');
   @override
@@ -294,14 +291,6 @@ class $UsuarioTableTable extends UsuarioTable
   late final GeneratedColumn<String> apellido = GeneratedColumn<String>(
       'apellido', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _numCotizacionesMeta =
-      const VerificationMeta('numCotizaciones');
-  @override
-  late final GeneratedColumn<int> numCotizaciones = GeneratedColumn<int>(
-      'num_cotizaciones', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
   static const VerificationMeta _imageIdMeta =
       const VerificationMeta('imageId');
   @override
@@ -311,21 +300,28 @@ class $UsuarioTableTable extends UsuarioTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES image_table (id)'));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         username,
         password,
         rol,
-        status,
+        estatus,
         correoElectronico,
-        passwordCorreo,
         telefono,
         fechaNacimiento,
         nombre,
         apellido,
-        numCotizaciones,
-        imageId
+        imageId,
+        createdAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -352,21 +348,15 @@ class $UsuarioTableTable extends UsuarioTable
       context.handle(
           _rolMeta, rol.isAcceptableOrUnknown(data['rol']!, _rolMeta));
     }
-    if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    if (data.containsKey('estatus')) {
+      context.handle(_estatusMeta,
+          estatus.isAcceptableOrUnknown(data['estatus']!, _estatusMeta));
     }
     if (data.containsKey('correo_electronico')) {
       context.handle(
           _correoElectronicoMeta,
           correoElectronico.isAcceptableOrUnknown(
               data['correo_electronico']!, _correoElectronicoMeta));
-    }
-    if (data.containsKey('password_correo')) {
-      context.handle(
-          _passwordCorreoMeta,
-          passwordCorreo.isAcceptableOrUnknown(
-              data['password_correo']!, _passwordCorreoMeta));
     }
     if (data.containsKey('telefono')) {
       context.handle(_telefonoMeta,
@@ -386,15 +376,13 @@ class $UsuarioTableTable extends UsuarioTable
       context.handle(_apellidoMeta,
           apellido.isAcceptableOrUnknown(data['apellido']!, _apellidoMeta));
     }
-    if (data.containsKey('num_cotizaciones')) {
-      context.handle(
-          _numCotizacionesMeta,
-          numCotizaciones.isAcceptableOrUnknown(
-              data['num_cotizaciones']!, _numCotizacionesMeta));
-    }
     if (data.containsKey('image_id')) {
       context.handle(_imageIdMeta,
           imageId.isAcceptableOrUnknown(data['image_id']!, _imageIdMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     return context;
   }
@@ -413,12 +401,10 @@ class $UsuarioTableTable extends UsuarioTable
           .read(DriftSqlType.string, data['${effectivePrefix}password']),
       rol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rol']),
-      status: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status']),
+      estatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}estatus']),
       correoElectronico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}correo_electronico']),
-      passwordCorreo: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}password_correo']),
       telefono: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}telefono']),
       fechaNacimiento: attachedDatabase.typeMapping.read(
@@ -427,10 +413,10 @@ class $UsuarioTableTable extends UsuarioTable
           .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
       apellido: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
-      numCotizaciones: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}num_cotizaciones']),
       imageId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}image_id']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
   }
 
@@ -446,29 +432,27 @@ class UsuarioTableData extends DataClass
   final String? username;
   final String? password;
   final String? rol;
-  final String? status;
+  final String? estatus;
   final String? correoElectronico;
-  final String? passwordCorreo;
   final String? telefono;
   final String? fechaNacimiento;
   final String? nombre;
   final String? apellido;
-  final int? numCotizaciones;
   final int? imageId;
+  final DateTime? createdAt;
   const UsuarioTableData(
       {required this.id,
       this.username,
       this.password,
       this.rol,
-      this.status,
+      this.estatus,
       this.correoElectronico,
-      this.passwordCorreo,
       this.telefono,
       this.fechaNacimiento,
       this.nombre,
       this.apellido,
-      this.numCotizaciones,
-      this.imageId});
+      this.imageId,
+      this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -482,14 +466,11 @@ class UsuarioTableData extends DataClass
     if (!nullToAbsent || rol != null) {
       map['rol'] = Variable<String>(rol);
     }
-    if (!nullToAbsent || status != null) {
-      map['status'] = Variable<String>(status);
+    if (!nullToAbsent || estatus != null) {
+      map['estatus'] = Variable<String>(estatus);
     }
     if (!nullToAbsent || correoElectronico != null) {
       map['correo_electronico'] = Variable<String>(correoElectronico);
-    }
-    if (!nullToAbsent || passwordCorreo != null) {
-      map['password_correo'] = Variable<String>(passwordCorreo);
     }
     if (!nullToAbsent || telefono != null) {
       map['telefono'] = Variable<String>(telefono);
@@ -503,11 +484,11 @@ class UsuarioTableData extends DataClass
     if (!nullToAbsent || apellido != null) {
       map['apellido'] = Variable<String>(apellido);
     }
-    if (!nullToAbsent || numCotizaciones != null) {
-      map['num_cotizaciones'] = Variable<int>(numCotizaciones);
-    }
     if (!nullToAbsent || imageId != null) {
       map['image_id'] = Variable<int>(imageId);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
     }
     return map;
   }
@@ -522,14 +503,12 @@ class UsuarioTableData extends DataClass
           ? const Value.absent()
           : Value(password),
       rol: rol == null && nullToAbsent ? const Value.absent() : Value(rol),
-      status:
-          status == null && nullToAbsent ? const Value.absent() : Value(status),
+      estatus: estatus == null && nullToAbsent
+          ? const Value.absent()
+          : Value(estatus),
       correoElectronico: correoElectronico == null && nullToAbsent
           ? const Value.absent()
           : Value(correoElectronico),
-      passwordCorreo: passwordCorreo == null && nullToAbsent
-          ? const Value.absent()
-          : Value(passwordCorreo),
       telefono: telefono == null && nullToAbsent
           ? const Value.absent()
           : Value(telefono),
@@ -541,12 +520,12 @@ class UsuarioTableData extends DataClass
       apellido: apellido == null && nullToAbsent
           ? const Value.absent()
           : Value(apellido),
-      numCotizaciones: numCotizaciones == null && nullToAbsent
-          ? const Value.absent()
-          : Value(numCotizaciones),
       imageId: imageId == null && nullToAbsent
           ? const Value.absent()
           : Value(imageId),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -558,16 +537,15 @@ class UsuarioTableData extends DataClass
       username: serializer.fromJson<String?>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
       rol: serializer.fromJson<String?>(json['rol']),
-      status: serializer.fromJson<String?>(json['status']),
+      estatus: serializer.fromJson<String?>(json['estatus']),
       correoElectronico:
           serializer.fromJson<String?>(json['correoElectronico']),
-      passwordCorreo: serializer.fromJson<String?>(json['passwordCorreo']),
       telefono: serializer.fromJson<String?>(json['telefono']),
       fechaNacimiento: serializer.fromJson<String?>(json['fechaNacimiento']),
       nombre: serializer.fromJson<String?>(json['nombre']),
       apellido: serializer.fromJson<String?>(json['apellido']),
-      numCotizaciones: serializer.fromJson<int?>(json['numCotizaciones']),
       imageId: serializer.fromJson<int?>(json['imageId']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -578,15 +556,14 @@ class UsuarioTableData extends DataClass
       'username': serializer.toJson<String?>(username),
       'password': serializer.toJson<String?>(password),
       'rol': serializer.toJson<String?>(rol),
-      'status': serializer.toJson<String?>(status),
+      'estatus': serializer.toJson<String?>(estatus),
       'correoElectronico': serializer.toJson<String?>(correoElectronico),
-      'passwordCorreo': serializer.toJson<String?>(passwordCorreo),
       'telefono': serializer.toJson<String?>(telefono),
       'fechaNacimiento': serializer.toJson<String?>(fechaNacimiento),
       'nombre': serializer.toJson<String?>(nombre),
       'apellido': serializer.toJson<String?>(apellido),
-      'numCotizaciones': serializer.toJson<int?>(numCotizaciones),
       'imageId': serializer.toJson<int?>(imageId),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
@@ -595,36 +572,31 @@ class UsuarioTableData extends DataClass
           Value<String?> username = const Value.absent(),
           Value<String?> password = const Value.absent(),
           Value<String?> rol = const Value.absent(),
-          Value<String?> status = const Value.absent(),
+          Value<String?> estatus = const Value.absent(),
           Value<String?> correoElectronico = const Value.absent(),
-          Value<String?> passwordCorreo = const Value.absent(),
           Value<String?> telefono = const Value.absent(),
           Value<String?> fechaNacimiento = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
           Value<String?> apellido = const Value.absent(),
-          Value<int?> numCotizaciones = const Value.absent(),
-          Value<int?> imageId = const Value.absent()}) =>
+          Value<int?> imageId = const Value.absent(),
+          Value<DateTime?> createdAt = const Value.absent()}) =>
       UsuarioTableData(
         id: id ?? this.id,
         username: username.present ? username.value : this.username,
         password: password.present ? password.value : this.password,
         rol: rol.present ? rol.value : this.rol,
-        status: status.present ? status.value : this.status,
+        estatus: estatus.present ? estatus.value : this.estatus,
         correoElectronico: correoElectronico.present
             ? correoElectronico.value
             : this.correoElectronico,
-        passwordCorreo:
-            passwordCorreo.present ? passwordCorreo.value : this.passwordCorreo,
         telefono: telefono.present ? telefono.value : this.telefono,
         fechaNacimiento: fechaNacimiento.present
             ? fechaNacimiento.value
             : this.fechaNacimiento,
         nombre: nombre.present ? nombre.value : this.nombre,
         apellido: apellido.present ? apellido.value : this.apellido,
-        numCotizaciones: numCotizaciones.present
-            ? numCotizaciones.value
-            : this.numCotizaciones,
         imageId: imageId.present ? imageId.value : this.imageId,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   UsuarioTableData copyWithCompanion(UsuarioTableCompanion data) {
     return UsuarioTableData(
@@ -632,23 +604,18 @@ class UsuarioTableData extends DataClass
       username: data.username.present ? data.username.value : this.username,
       password: data.password.present ? data.password.value : this.password,
       rol: data.rol.present ? data.rol.value : this.rol,
-      status: data.status.present ? data.status.value : this.status,
+      estatus: data.estatus.present ? data.estatus.value : this.estatus,
       correoElectronico: data.correoElectronico.present
           ? data.correoElectronico.value
           : this.correoElectronico,
-      passwordCorreo: data.passwordCorreo.present
-          ? data.passwordCorreo.value
-          : this.passwordCorreo,
       telefono: data.telefono.present ? data.telefono.value : this.telefono,
       fechaNacimiento: data.fechaNacimiento.present
           ? data.fechaNacimiento.value
           : this.fechaNacimiento,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
       apellido: data.apellido.present ? data.apellido.value : this.apellido,
-      numCotizaciones: data.numCotizaciones.present
-          ? data.numCotizaciones.value
-          : this.numCotizaciones,
       imageId: data.imageId.present ? data.imageId.value : this.imageId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -659,15 +626,14 @@ class UsuarioTableData extends DataClass
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
-          ..write('status: $status, ')
+          ..write('estatus: $estatus, ')
           ..write('correoElectronico: $correoElectronico, ')
-          ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones, ')
-          ..write('imageId: $imageId')
+          ..write('imageId: $imageId, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -678,15 +644,14 @@ class UsuarioTableData extends DataClass
       username,
       password,
       rol,
-      status,
+      estatus,
       correoElectronico,
-      passwordCorreo,
       telefono,
       fechaNacimiento,
       nombre,
       apellido,
-      numCotizaciones,
-      imageId);
+      imageId,
+      createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -695,15 +660,14 @@ class UsuarioTableData extends DataClass
           other.username == this.username &&
           other.password == this.password &&
           other.rol == this.rol &&
-          other.status == this.status &&
+          other.estatus == this.estatus &&
           other.correoElectronico == this.correoElectronico &&
-          other.passwordCorreo == this.passwordCorreo &&
           other.telefono == this.telefono &&
           other.fechaNacimiento == this.fechaNacimiento &&
           other.nombre == this.nombre &&
           other.apellido == this.apellido &&
-          other.numCotizaciones == this.numCotizaciones &&
-          other.imageId == this.imageId);
+          other.imageId == this.imageId &&
+          other.createdAt == this.createdAt);
 }
 
 class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
@@ -711,74 +675,69 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
   final Value<String?> username;
   final Value<String?> password;
   final Value<String?> rol;
-  final Value<String?> status;
+  final Value<String?> estatus;
   final Value<String?> correoElectronico;
-  final Value<String?> passwordCorreo;
   final Value<String?> telefono;
   final Value<String?> fechaNacimiento;
   final Value<String?> nombre;
   final Value<String?> apellido;
-  final Value<int?> numCotizaciones;
   final Value<int?> imageId;
+  final Value<DateTime?> createdAt;
   const UsuarioTableCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
-    this.status = const Value.absent(),
+    this.estatus = const Value.absent(),
     this.correoElectronico = const Value.absent(),
-    this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
     this.fechaNacimiento = const Value.absent(),
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
-    this.numCotizaciones = const Value.absent(),
     this.imageId = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   UsuarioTableCompanion.insert({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.rol = const Value.absent(),
-    this.status = const Value.absent(),
+    this.estatus = const Value.absent(),
     this.correoElectronico = const Value.absent(),
-    this.passwordCorreo = const Value.absent(),
     this.telefono = const Value.absent(),
     this.fechaNacimiento = const Value.absent(),
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
-    this.numCotizaciones = const Value.absent(),
     this.imageId = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   static Insertable<UsuarioTableData> custom({
     Expression<int>? id,
     Expression<String>? username,
     Expression<String>? password,
     Expression<String>? rol,
-    Expression<String>? status,
+    Expression<String>? estatus,
     Expression<String>? correoElectronico,
-    Expression<String>? passwordCorreo,
     Expression<String>? telefono,
     Expression<String>? fechaNacimiento,
     Expression<String>? nombre,
     Expression<String>? apellido,
-    Expression<int>? numCotizaciones,
     Expression<int>? imageId,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (username != null) 'username': username,
       if (password != null) 'password': password,
       if (rol != null) 'rol': rol,
-      if (status != null) 'status': status,
+      if (estatus != null) 'estatus': estatus,
       if (correoElectronico != null) 'correo_electronico': correoElectronico,
-      if (passwordCorreo != null) 'password_correo': passwordCorreo,
       if (telefono != null) 'telefono': telefono,
       if (fechaNacimiento != null) 'fecha_nacimiento': fechaNacimiento,
       if (nombre != null) 'nombre': nombre,
       if (apellido != null) 'apellido': apellido,
-      if (numCotizaciones != null) 'num_cotizaciones': numCotizaciones,
       if (imageId != null) 'image_id': imageId,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
@@ -787,29 +746,27 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
       Value<String?>? username,
       Value<String?>? password,
       Value<String?>? rol,
-      Value<String?>? status,
+      Value<String?>? estatus,
       Value<String?>? correoElectronico,
-      Value<String?>? passwordCorreo,
       Value<String?>? telefono,
       Value<String?>? fechaNacimiento,
       Value<String?>? nombre,
       Value<String?>? apellido,
-      Value<int?>? numCotizaciones,
-      Value<int?>? imageId}) {
+      Value<int?>? imageId,
+      Value<DateTime?>? createdAt}) {
     return UsuarioTableCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
       password: password ?? this.password,
       rol: rol ?? this.rol,
-      status: status ?? this.status,
+      estatus: estatus ?? this.estatus,
       correoElectronico: correoElectronico ?? this.correoElectronico,
-      passwordCorreo: passwordCorreo ?? this.passwordCorreo,
       telefono: telefono ?? this.telefono,
       fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
       nombre: nombre ?? this.nombre,
       apellido: apellido ?? this.apellido,
-      numCotizaciones: numCotizaciones ?? this.numCotizaciones,
       imageId: imageId ?? this.imageId,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -828,14 +785,11 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
     if (rol.present) {
       map['rol'] = Variable<String>(rol.value);
     }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
+    if (estatus.present) {
+      map['estatus'] = Variable<String>(estatus.value);
     }
     if (correoElectronico.present) {
       map['correo_electronico'] = Variable<String>(correoElectronico.value);
-    }
-    if (passwordCorreo.present) {
-      map['password_correo'] = Variable<String>(passwordCorreo.value);
     }
     if (telefono.present) {
       map['telefono'] = Variable<String>(telefono.value);
@@ -849,11 +803,11 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
     if (apellido.present) {
       map['apellido'] = Variable<String>(apellido.value);
     }
-    if (numCotizaciones.present) {
-      map['num_cotizaciones'] = Variable<int>(numCotizaciones.value);
-    }
     if (imageId.present) {
       map['image_id'] = Variable<int>(imageId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     return map;
   }
@@ -865,15 +819,14 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
           ..write('username: $username, ')
           ..write('password: $password, ')
           ..write('rol: $rol, ')
-          ..write('status: $status, ')
+          ..write('estatus: $estatus, ')
           ..write('correoElectronico: $correoElectronico, ')
-          ..write('passwordCorreo: $passwordCorreo, ')
           ..write('telefono: $telefono, ')
           ..write('fechaNacimiento: $fechaNacimiento, ')
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
-          ..write('numCotizaciones: $numCotizaciones, ')
-          ..write('imageId: $imageId')
+          ..write('imageId: $imageId, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -911,17 +864,17 @@ class $ClienteTableTable extends ClienteTable
   late final GeneratedColumn<String> numeroTelefonico = GeneratedColumn<String>(
       'numero_telefonico', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _correoElectricoMeta =
-      const VerificationMeta('correoElectrico');
+  static const VerificationMeta _correoElectronicoMeta =
+      const VerificationMeta('correoElectronico');
   @override
-  late final GeneratedColumn<String> correoElectrico = GeneratedColumn<String>(
-      'correo_electrico', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> correoElectronico =
+      GeneratedColumn<String>('correo_electronico', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _nacionalidadMeta =
       const VerificationMeta('nacionalidad');
   @override
   late final GeneratedColumn<String> nacionalidad = GeneratedColumn<String>(
-      'nacionalidad', aliasedName, false,
+      'nacionalidad', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Variable("Mexicana"));
@@ -945,29 +898,27 @@ class $ClienteTableTable extends ClienteTable
   late final GeneratedColumn<String> notas = GeneratedColumn<String>(
       'notas', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _conCotizacionMeta =
-      const VerificationMeta('conCotizacion');
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
   @override
-  late final GeneratedColumn<bool> conCotizacion = GeneratedColumn<bool>(
-      'con_cotizacion', aliasedName, false,
-      type: DriftSqlType.bool,
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
       requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("con_cotizacion" IN (0, 1))'),
-      defaultValue: const Variable(false));
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         nombre,
         apellido,
         numeroTelefonico,
-        correoElectrico,
+        correoElectronico,
         nacionalidad,
         estado,
         ciudad,
         cp,
         notas,
-        conCotizacion
+        createdAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -996,11 +947,11 @@ class $ClienteTableTable extends ClienteTable
           numeroTelefonico.isAcceptableOrUnknown(
               data['numero_telefonico']!, _numeroTelefonicoMeta));
     }
-    if (data.containsKey('correo_electrico')) {
+    if (data.containsKey('correo_electronico')) {
       context.handle(
-          _correoElectricoMeta,
-          correoElectrico.isAcceptableOrUnknown(
-              data['correo_electrico']!, _correoElectricoMeta));
+          _correoElectronicoMeta,
+          correoElectronico.isAcceptableOrUnknown(
+              data['correo_electronico']!, _correoElectronicoMeta));
     }
     if (data.containsKey('nacionalidad')) {
       context.handle(
@@ -1023,11 +974,9 @@ class $ClienteTableTable extends ClienteTable
       context.handle(
           _notasMeta, notas.isAcceptableOrUnknown(data['notas']!, _notasMeta));
     }
-    if (data.containsKey('con_cotizacion')) {
-      context.handle(
-          _conCotizacionMeta,
-          conCotizacion.isAcceptableOrUnknown(
-              data['con_cotizacion']!, _conCotizacionMeta));
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     return context;
   }
@@ -1046,10 +995,10 @@ class $ClienteTableTable extends ClienteTable
           .read(DriftSqlType.string, data['${effectivePrefix}apellido']),
       numeroTelefonico: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}numero_telefonico']),
-      correoElectrico: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}correo_electrico']),
+      correoElectronico: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}correo_electronico']),
       nacionalidad: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}nacionalidad'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}nacionalidad']),
       estado: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}estado']),
       ciudad: attachedDatabase.typeMapping
@@ -1058,8 +1007,8 @@ class $ClienteTableTable extends ClienteTable
           .read(DriftSqlType.string, data['${effectivePrefix}cp']),
       notas: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notas']),
-      conCotizacion: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}con_cotizacion'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
   }
 
@@ -1075,25 +1024,25 @@ class ClienteTableData extends DataClass
   final String? nombre;
   final String? apellido;
   final String? numeroTelefonico;
-  final String? correoElectrico;
-  final String nacionalidad;
+  final String? correoElectronico;
+  final String? nacionalidad;
   final String? estado;
   final String? ciudad;
   final String? cp;
   final String? notas;
-  final bool conCotizacion;
+  final DateTime? createdAt;
   const ClienteTableData(
       {required this.id,
       this.nombre,
       this.apellido,
       this.numeroTelefonico,
-      this.correoElectrico,
-      required this.nacionalidad,
+      this.correoElectronico,
+      this.nacionalidad,
       this.estado,
       this.ciudad,
       this.cp,
       this.notas,
-      required this.conCotizacion});
+      this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1107,10 +1056,12 @@ class ClienteTableData extends DataClass
     if (!nullToAbsent || numeroTelefonico != null) {
       map['numero_telefonico'] = Variable<String>(numeroTelefonico);
     }
-    if (!nullToAbsent || correoElectrico != null) {
-      map['correo_electrico'] = Variable<String>(correoElectrico);
+    if (!nullToAbsent || correoElectronico != null) {
+      map['correo_electronico'] = Variable<String>(correoElectronico);
     }
-    map['nacionalidad'] = Variable<String>(nacionalidad);
+    if (!nullToAbsent || nacionalidad != null) {
+      map['nacionalidad'] = Variable<String>(nacionalidad);
+    }
     if (!nullToAbsent || estado != null) {
       map['estado'] = Variable<String>(estado);
     }
@@ -1123,7 +1074,9 @@ class ClienteTableData extends DataClass
     if (!nullToAbsent || notas != null) {
       map['notas'] = Variable<String>(notas);
     }
-    map['con_cotizacion'] = Variable<bool>(conCotizacion);
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
     return map;
   }
 
@@ -1138,10 +1091,12 @@ class ClienteTableData extends DataClass
       numeroTelefonico: numeroTelefonico == null && nullToAbsent
           ? const Value.absent()
           : Value(numeroTelefonico),
-      correoElectrico: correoElectrico == null && nullToAbsent
+      correoElectronico: correoElectronico == null && nullToAbsent
           ? const Value.absent()
-          : Value(correoElectrico),
-      nacionalidad: Value(nacionalidad),
+          : Value(correoElectronico),
+      nacionalidad: nacionalidad == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nacionalidad),
       estado:
           estado == null && nullToAbsent ? const Value.absent() : Value(estado),
       ciudad:
@@ -1149,7 +1104,9 @@ class ClienteTableData extends DataClass
       cp: cp == null && nullToAbsent ? const Value.absent() : Value(cp),
       notas:
           notas == null && nullToAbsent ? const Value.absent() : Value(notas),
-      conCotizacion: Value(conCotizacion),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -1161,13 +1118,14 @@ class ClienteTableData extends DataClass
       nombre: serializer.fromJson<String?>(json['nombre']),
       apellido: serializer.fromJson<String?>(json['apellido']),
       numeroTelefonico: serializer.fromJson<String?>(json['numeroTelefonico']),
-      correoElectrico: serializer.fromJson<String?>(json['correoElectrico']),
-      nacionalidad: serializer.fromJson<String>(json['nacionalidad']),
+      correoElectronico:
+          serializer.fromJson<String?>(json['correoElectronico']),
+      nacionalidad: serializer.fromJson<String?>(json['nacionalidad']),
       estado: serializer.fromJson<String?>(json['estado']),
       ciudad: serializer.fromJson<String?>(json['ciudad']),
       cp: serializer.fromJson<String?>(json['cp']),
       notas: serializer.fromJson<String?>(json['notas']),
-      conCotizacion: serializer.fromJson<bool>(json['conCotizacion']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -1178,13 +1136,13 @@ class ClienteTableData extends DataClass
       'nombre': serializer.toJson<String?>(nombre),
       'apellido': serializer.toJson<String?>(apellido),
       'numeroTelefonico': serializer.toJson<String?>(numeroTelefonico),
-      'correoElectrico': serializer.toJson<String?>(correoElectrico),
-      'nacionalidad': serializer.toJson<String>(nacionalidad),
+      'correoElectronico': serializer.toJson<String?>(correoElectronico),
+      'nacionalidad': serializer.toJson<String?>(nacionalidad),
       'estado': serializer.toJson<String?>(estado),
       'ciudad': serializer.toJson<String?>(ciudad),
       'cp': serializer.toJson<String?>(cp),
       'notas': serializer.toJson<String?>(notas),
-      'conCotizacion': serializer.toJson<bool>(conCotizacion),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
@@ -1193,13 +1151,13 @@ class ClienteTableData extends DataClass
           Value<String?> nombre = const Value.absent(),
           Value<String?> apellido = const Value.absent(),
           Value<String?> numeroTelefonico = const Value.absent(),
-          Value<String?> correoElectrico = const Value.absent(),
-          String? nacionalidad,
+          Value<String?> correoElectronico = const Value.absent(),
+          Value<String?> nacionalidad = const Value.absent(),
           Value<String?> estado = const Value.absent(),
           Value<String?> ciudad = const Value.absent(),
           Value<String?> cp = const Value.absent(),
           Value<String?> notas = const Value.absent(),
-          bool? conCotizacion}) =>
+          Value<DateTime?> createdAt = const Value.absent()}) =>
       ClienteTableData(
         id: id ?? this.id,
         nombre: nombre.present ? nombre.value : this.nombre,
@@ -1207,15 +1165,16 @@ class ClienteTableData extends DataClass
         numeroTelefonico: numeroTelefonico.present
             ? numeroTelefonico.value
             : this.numeroTelefonico,
-        correoElectrico: correoElectrico.present
-            ? correoElectrico.value
-            : this.correoElectrico,
-        nacionalidad: nacionalidad ?? this.nacionalidad,
+        correoElectronico: correoElectronico.present
+            ? correoElectronico.value
+            : this.correoElectronico,
+        nacionalidad:
+            nacionalidad.present ? nacionalidad.value : this.nacionalidad,
         estado: estado.present ? estado.value : this.estado,
         ciudad: ciudad.present ? ciudad.value : this.ciudad,
         cp: cp.present ? cp.value : this.cp,
         notas: notas.present ? notas.value : this.notas,
-        conCotizacion: conCotizacion ?? this.conCotizacion,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   ClienteTableData copyWithCompanion(ClienteTableCompanion data) {
     return ClienteTableData(
@@ -1225,9 +1184,9 @@ class ClienteTableData extends DataClass
       numeroTelefonico: data.numeroTelefonico.present
           ? data.numeroTelefonico.value
           : this.numeroTelefonico,
-      correoElectrico: data.correoElectrico.present
-          ? data.correoElectrico.value
-          : this.correoElectrico,
+      correoElectronico: data.correoElectronico.present
+          ? data.correoElectronico.value
+          : this.correoElectronico,
       nacionalidad: data.nacionalidad.present
           ? data.nacionalidad.value
           : this.nacionalidad,
@@ -1235,9 +1194,7 @@ class ClienteTableData extends DataClass
       ciudad: data.ciudad.present ? data.ciudad.value : this.ciudad,
       cp: data.cp.present ? data.cp.value : this.cp,
       notas: data.notas.present ? data.notas.value : this.notas,
-      conCotizacion: data.conCotizacion.present
-          ? data.conCotizacion.value
-          : this.conCotizacion,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -1248,20 +1205,20 @@ class ClienteTableData extends DataClass
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
           ..write('numeroTelefonico: $numeroTelefonico, ')
-          ..write('correoElectrico: $correoElectrico, ')
+          ..write('correoElectronico: $correoElectronico, ')
           ..write('nacionalidad: $nacionalidad, ')
           ..write('estado: $estado, ')
           ..write('ciudad: $ciudad, ')
           ..write('cp: $cp, ')
           ..write('notas: $notas, ')
-          ..write('conCotizacion: $conCotizacion')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, nombre, apellido, numeroTelefonico,
-      correoElectrico, nacionalidad, estado, ciudad, cp, notas, conCotizacion);
+      correoElectronico, nacionalidad, estado, ciudad, cp, notas, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1270,13 +1227,13 @@ class ClienteTableData extends DataClass
           other.nombre == this.nombre &&
           other.apellido == this.apellido &&
           other.numeroTelefonico == this.numeroTelefonico &&
-          other.correoElectrico == this.correoElectrico &&
+          other.correoElectronico == this.correoElectronico &&
           other.nacionalidad == this.nacionalidad &&
           other.estado == this.estado &&
           other.ciudad == this.ciudad &&
           other.cp == this.cp &&
           other.notas == this.notas &&
-          other.conCotizacion == this.conCotizacion);
+          other.createdAt == this.createdAt);
 }
 
 class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
@@ -1284,64 +1241,64 @@ class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
   final Value<String?> nombre;
   final Value<String?> apellido;
   final Value<String?> numeroTelefonico;
-  final Value<String?> correoElectrico;
-  final Value<String> nacionalidad;
+  final Value<String?> correoElectronico;
+  final Value<String?> nacionalidad;
   final Value<String?> estado;
   final Value<String?> ciudad;
   final Value<String?> cp;
   final Value<String?> notas;
-  final Value<bool> conCotizacion;
+  final Value<DateTime?> createdAt;
   const ClienteTableCompanion({
     this.id = const Value.absent(),
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numeroTelefonico = const Value.absent(),
-    this.correoElectrico = const Value.absent(),
+    this.correoElectronico = const Value.absent(),
     this.nacionalidad = const Value.absent(),
     this.estado = const Value.absent(),
     this.ciudad = const Value.absent(),
     this.cp = const Value.absent(),
     this.notas = const Value.absent(),
-    this.conCotizacion = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   ClienteTableCompanion.insert({
     this.id = const Value.absent(),
     this.nombre = const Value.absent(),
     this.apellido = const Value.absent(),
     this.numeroTelefonico = const Value.absent(),
-    this.correoElectrico = const Value.absent(),
+    this.correoElectronico = const Value.absent(),
     this.nacionalidad = const Value.absent(),
     this.estado = const Value.absent(),
     this.ciudad = const Value.absent(),
     this.cp = const Value.absent(),
     this.notas = const Value.absent(),
-    this.conCotizacion = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   static Insertable<ClienteTableData> custom({
     Expression<int>? id,
     Expression<String>? nombre,
     Expression<String>? apellido,
     Expression<String>? numeroTelefonico,
-    Expression<String>? correoElectrico,
+    Expression<String>? correoElectronico,
     Expression<String>? nacionalidad,
     Expression<String>? estado,
     Expression<String>? ciudad,
     Expression<String>? cp,
     Expression<String>? notas,
-    Expression<bool>? conCotizacion,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (nombre != null) 'nombre': nombre,
       if (apellido != null) 'apellido': apellido,
       if (numeroTelefonico != null) 'numero_telefonico': numeroTelefonico,
-      if (correoElectrico != null) 'correo_electrico': correoElectrico,
+      if (correoElectronico != null) 'correo_electronico': correoElectronico,
       if (nacionalidad != null) 'nacionalidad': nacionalidad,
       if (estado != null) 'estado': estado,
       if (ciudad != null) 'ciudad': ciudad,
       if (cp != null) 'cp': cp,
       if (notas != null) 'notas': notas,
-      if (conCotizacion != null) 'con_cotizacion': conCotizacion,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
@@ -1350,25 +1307,25 @@ class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
       Value<String?>? nombre,
       Value<String?>? apellido,
       Value<String?>? numeroTelefonico,
-      Value<String?>? correoElectrico,
-      Value<String>? nacionalidad,
+      Value<String?>? correoElectronico,
+      Value<String?>? nacionalidad,
       Value<String?>? estado,
       Value<String?>? ciudad,
       Value<String?>? cp,
       Value<String?>? notas,
-      Value<bool>? conCotizacion}) {
+      Value<DateTime?>? createdAt}) {
     return ClienteTableCompanion(
       id: id ?? this.id,
       nombre: nombre ?? this.nombre,
       apellido: apellido ?? this.apellido,
       numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
-      correoElectrico: correoElectrico ?? this.correoElectrico,
+      correoElectronico: correoElectronico ?? this.correoElectronico,
       nacionalidad: nacionalidad ?? this.nacionalidad,
       estado: estado ?? this.estado,
       ciudad: ciudad ?? this.ciudad,
       cp: cp ?? this.cp,
       notas: notas ?? this.notas,
-      conCotizacion: conCotizacion ?? this.conCotizacion,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -1387,8 +1344,8 @@ class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
     if (numeroTelefonico.present) {
       map['numero_telefonico'] = Variable<String>(numeroTelefonico.value);
     }
-    if (correoElectrico.present) {
-      map['correo_electrico'] = Variable<String>(correoElectrico.value);
+    if (correoElectronico.present) {
+      map['correo_electronico'] = Variable<String>(correoElectronico.value);
     }
     if (nacionalidad.present) {
       map['nacionalidad'] = Variable<String>(nacionalidad.value);
@@ -1405,8 +1362,8 @@ class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
     if (notas.present) {
       map['notas'] = Variable<String>(notas.value);
     }
-    if (conCotizacion.present) {
-      map['con_cotizacion'] = Variable<bool>(conCotizacion.value);
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     return map;
   }
@@ -1418,13 +1375,13 @@ class ClienteTableCompanion extends UpdateCompanion<ClienteTableData> {
           ..write('nombre: $nombre, ')
           ..write('apellido: $apellido, ')
           ..write('numeroTelefonico: $numeroTelefonico, ')
-          ..write('correoElectrico: $correoElectrico, ')
+          ..write('correoElectronico: $correoElectronico, ')
           ..write('nacionalidad: $nacionalidad, ')
           ..write('estado: $estado, ')
           ..write('ciudad: $ciudad, ')
           ..write('cp: $cp, ')
           ..write('notas: $notas, ')
-          ..write('conCotizacion: $conCotizacion')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -1445,17 +1402,17 @@ class $CotizacionTableTable extends CotizacionTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _cotIdMeta = const VerificationMeta('cotId');
+  @override
+  late final GeneratedColumn<String> cotId = GeneratedColumn<String>(
+      'cot_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _folioPrincipalMeta =
       const VerificationMeta('folioPrincipal');
   @override
   late final GeneratedColumn<String> folioPrincipal = GeneratedColumn<String>(
       'folio_principal', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
-  @override
-  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
-      'fecha', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _fechaLimiteMeta =
       const VerificationMeta('fechaLimite');
   @override
@@ -1486,42 +1443,71 @@ class $CotizacionTableTable extends CotizacionTable
   late final GeneratedColumn<String> habitaciones = GeneratedColumn<String>(
       'habitaciones', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _usuarioIDMeta =
-      const VerificationMeta('usuarioID');
+  static const VerificationMeta _creadoPorMeta =
+      const VerificationMeta('creadoPor');
   @override
-  late final GeneratedColumn<int> usuarioID = GeneratedColumn<int>(
-      'usuario_i_d', aliasedName, true,
+  late final GeneratedColumn<int> creadoPor = GeneratedColumn<int>(
+      'creado_por', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
-  static const VerificationMeta _clienteIDMeta =
-      const VerificationMeta('clienteID');
+  static const VerificationMeta _cerradoPorMeta =
+      const VerificationMeta('cerradoPor');
   @override
-  late final GeneratedColumn<int> clienteID = GeneratedColumn<int>(
-      'cliente_i_d', aliasedName, true,
+  late final GeneratedColumn<int> cerradoPor = GeneratedColumn<int>(
+      'cerrado_por', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+  static const VerificationMeta _clienteMeta =
+      const VerificationMeta('cliente');
+  @override
+  late final GeneratedColumn<int> cliente = GeneratedColumn<int>(
+      'cliente', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES cliente_table (id)'));
-  static const VerificationMeta _usernameMeta =
-      const VerificationMeta('username');
+  static const VerificationMeta _comentariosMeta =
+      const VerificationMeta('comentarios');
   @override
-  late final GeneratedColumn<String> username = GeneratedColumn<String>(
-      'username', aliasedName, true,
+  late final GeneratedColumn<String> comentarios = GeneratedColumn<String>(
+      'comentarios', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cotizacionOriginalMeta =
+      const VerificationMeta('cotizacionOriginal');
+  @override
+  late final GeneratedColumn<int> cotizacionOriginal = GeneratedColumn<int>(
+      'cotizacion_original', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES cliente_table (id)'));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        cotId,
         folioPrincipal,
-        fecha,
         fechaLimite,
         esGrupo,
         esConcretado,
         habitaciones,
-        usuarioID,
-        clienteID,
-        username
+        creadoPor,
+        cerradoPor,
+        cliente,
+        comentarios,
+        cotizacionOriginal,
+        createdAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1537,15 +1523,15 @@ class $CotizacionTableTable extends CotizacionTable
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
+    if (data.containsKey('cot_id')) {
+      context.handle(
+          _cotIdMeta, cotId.isAcceptableOrUnknown(data['cot_id']!, _cotIdMeta));
+    }
     if (data.containsKey('folio_principal')) {
       context.handle(
           _folioPrincipalMeta,
           folioPrincipal.isAcceptableOrUnknown(
               data['folio_principal']!, _folioPrincipalMeta));
-    }
-    if (data.containsKey('fecha')) {
-      context.handle(
-          _fechaMeta, fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta));
     }
     if (data.containsKey('fecha_limite')) {
       context.handle(
@@ -1569,21 +1555,35 @@ class $CotizacionTableTable extends CotizacionTable
           habitaciones.isAcceptableOrUnknown(
               data['habitaciones']!, _habitacionesMeta));
     }
-    if (data.containsKey('usuario_i_d')) {
-      context.handle(
-          _usuarioIDMeta,
-          usuarioID.isAcceptableOrUnknown(
-              data['usuario_i_d']!, _usuarioIDMeta));
+    if (data.containsKey('creado_por')) {
+      context.handle(_creadoPorMeta,
+          creadoPor.isAcceptableOrUnknown(data['creado_por']!, _creadoPorMeta));
     }
-    if (data.containsKey('cliente_i_d')) {
+    if (data.containsKey('cerrado_por')) {
       context.handle(
-          _clienteIDMeta,
-          clienteID.isAcceptableOrUnknown(
-              data['cliente_i_d']!, _clienteIDMeta));
+          _cerradoPorMeta,
+          cerradoPor.isAcceptableOrUnknown(
+              data['cerrado_por']!, _cerradoPorMeta));
     }
-    if (data.containsKey('username')) {
-      context.handle(_usernameMeta,
-          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
+    if (data.containsKey('cliente')) {
+      context.handle(_clienteMeta,
+          cliente.isAcceptableOrUnknown(data['cliente']!, _clienteMeta));
+    }
+    if (data.containsKey('comentarios')) {
+      context.handle(
+          _comentariosMeta,
+          comentarios.isAcceptableOrUnknown(
+              data['comentarios']!, _comentariosMeta));
+    }
+    if (data.containsKey('cotizacion_original')) {
+      context.handle(
+          _cotizacionOriginalMeta,
+          cotizacionOriginal.isAcceptableOrUnknown(
+              data['cotizacion_original']!, _cotizacionOriginalMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     return context;
   }
@@ -1596,10 +1596,10 @@ class $CotizacionTableTable extends CotizacionTable
     return CotizacionTableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      cotId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cot_id']),
       folioPrincipal: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}folio_principal']),
-      fecha: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha']),
       fechaLimite: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha_limite']),
       esGrupo: attachedDatabase.typeMapping
@@ -1608,12 +1608,18 @@ class $CotizacionTableTable extends CotizacionTable
           .read(DriftSqlType.bool, data['${effectivePrefix}es_concretado']),
       habitaciones: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}habitaciones']),
-      usuarioID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}usuario_i_d']),
-      clienteID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}cliente_i_d']),
-      username: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}username']),
+      creadoPor: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}creado_por']),
+      cerradoPor: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}cerrado_por']),
+      cliente: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}cliente']),
+      comentarios: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}comentarios']),
+      cotizacionOriginal: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}cotizacion_original']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
   }
 
@@ -1626,35 +1632,41 @@ class $CotizacionTableTable extends CotizacionTable
 class CotizacionTableData extends DataClass
     implements Insertable<CotizacionTableData> {
   final int id;
+  final String? cotId;
   final String? folioPrincipal;
-  final DateTime? fecha;
   final DateTime? fechaLimite;
   final bool? esGrupo;
   final bool? esConcretado;
   final String? habitaciones;
-  final int? usuarioID;
-  final int? clienteID;
-  final String? username;
+  final int? creadoPor;
+  final int? cerradoPor;
+  final int? cliente;
+  final String? comentarios;
+  final int? cotizacionOriginal;
+  final DateTime? createdAt;
   const CotizacionTableData(
       {required this.id,
+      this.cotId,
       this.folioPrincipal,
-      this.fecha,
       this.fechaLimite,
       this.esGrupo,
       this.esConcretado,
       this.habitaciones,
-      this.usuarioID,
-      this.clienteID,
-      this.username});
+      this.creadoPor,
+      this.cerradoPor,
+      this.cliente,
+      this.comentarios,
+      this.cotizacionOriginal,
+      this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    if (!nullToAbsent || cotId != null) {
+      map['cot_id'] = Variable<String>(cotId);
+    }
     if (!nullToAbsent || folioPrincipal != null) {
       map['folio_principal'] = Variable<String>(folioPrincipal);
-    }
-    if (!nullToAbsent || fecha != null) {
-      map['fecha'] = Variable<DateTime>(fecha);
     }
     if (!nullToAbsent || fechaLimite != null) {
       map['fecha_limite'] = Variable<DateTime>(fechaLimite);
@@ -1668,14 +1680,23 @@ class CotizacionTableData extends DataClass
     if (!nullToAbsent || habitaciones != null) {
       map['habitaciones'] = Variable<String>(habitaciones);
     }
-    if (!nullToAbsent || usuarioID != null) {
-      map['usuario_i_d'] = Variable<int>(usuarioID);
+    if (!nullToAbsent || creadoPor != null) {
+      map['creado_por'] = Variable<int>(creadoPor);
     }
-    if (!nullToAbsent || clienteID != null) {
-      map['cliente_i_d'] = Variable<int>(clienteID);
+    if (!nullToAbsent || cerradoPor != null) {
+      map['cerrado_por'] = Variable<int>(cerradoPor);
     }
-    if (!nullToAbsent || username != null) {
-      map['username'] = Variable<String>(username);
+    if (!nullToAbsent || cliente != null) {
+      map['cliente'] = Variable<int>(cliente);
+    }
+    if (!nullToAbsent || comentarios != null) {
+      map['comentarios'] = Variable<String>(comentarios);
+    }
+    if (!nullToAbsent || cotizacionOriginal != null) {
+      map['cotizacion_original'] = Variable<int>(cotizacionOriginal);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
     }
     return map;
   }
@@ -1683,11 +1704,11 @@ class CotizacionTableData extends DataClass
   CotizacionTableCompanion toCompanion(bool nullToAbsent) {
     return CotizacionTableCompanion(
       id: Value(id),
+      cotId:
+          cotId == null && nullToAbsent ? const Value.absent() : Value(cotId),
       folioPrincipal: folioPrincipal == null && nullToAbsent
           ? const Value.absent()
           : Value(folioPrincipal),
-      fecha:
-          fecha == null && nullToAbsent ? const Value.absent() : Value(fecha),
       fechaLimite: fechaLimite == null && nullToAbsent
           ? const Value.absent()
           : Value(fechaLimite),
@@ -1700,15 +1721,24 @@ class CotizacionTableData extends DataClass
       habitaciones: habitaciones == null && nullToAbsent
           ? const Value.absent()
           : Value(habitaciones),
-      usuarioID: usuarioID == null && nullToAbsent
+      creadoPor: creadoPor == null && nullToAbsent
           ? const Value.absent()
-          : Value(usuarioID),
-      clienteID: clienteID == null && nullToAbsent
+          : Value(creadoPor),
+      cerradoPor: cerradoPor == null && nullToAbsent
           ? const Value.absent()
-          : Value(clienteID),
-      username: username == null && nullToAbsent
+          : Value(cerradoPor),
+      cliente: cliente == null && nullToAbsent
           ? const Value.absent()
-          : Value(username),
+          : Value(cliente),
+      comentarios: comentarios == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comentarios),
+      cotizacionOriginal: cotizacionOriginal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cotizacionOriginal),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -1717,15 +1747,18 @@ class CotizacionTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CotizacionTableData(
       id: serializer.fromJson<int>(json['id']),
+      cotId: serializer.fromJson<String?>(json['cotId']),
       folioPrincipal: serializer.fromJson<String?>(json['folioPrincipal']),
-      fecha: serializer.fromJson<DateTime?>(json['fecha']),
       fechaLimite: serializer.fromJson<DateTime?>(json['fechaLimite']),
       esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
       esConcretado: serializer.fromJson<bool?>(json['esConcretado']),
       habitaciones: serializer.fromJson<String?>(json['habitaciones']),
-      usuarioID: serializer.fromJson<int?>(json['usuarioID']),
-      clienteID: serializer.fromJson<int?>(json['clienteID']),
-      username: serializer.fromJson<String?>(json['username']),
+      creadoPor: serializer.fromJson<int?>(json['creadoPor']),
+      cerradoPor: serializer.fromJson<int?>(json['cerradoPor']),
+      cliente: serializer.fromJson<int?>(json['cliente']),
+      comentarios: serializer.fromJson<String?>(json['comentarios']),
+      cotizacionOriginal: serializer.fromJson<int?>(json['cotizacionOriginal']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -1733,51 +1766,62 @@ class CotizacionTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'cotId': serializer.toJson<String?>(cotId),
       'folioPrincipal': serializer.toJson<String?>(folioPrincipal),
-      'fecha': serializer.toJson<DateTime?>(fecha),
       'fechaLimite': serializer.toJson<DateTime?>(fechaLimite),
       'esGrupo': serializer.toJson<bool?>(esGrupo),
       'esConcretado': serializer.toJson<bool?>(esConcretado),
       'habitaciones': serializer.toJson<String?>(habitaciones),
-      'usuarioID': serializer.toJson<int?>(usuarioID),
-      'clienteID': serializer.toJson<int?>(clienteID),
-      'username': serializer.toJson<String?>(username),
+      'creadoPor': serializer.toJson<int?>(creadoPor),
+      'cerradoPor': serializer.toJson<int?>(cerradoPor),
+      'cliente': serializer.toJson<int?>(cliente),
+      'comentarios': serializer.toJson<String?>(comentarios),
+      'cotizacionOriginal': serializer.toJson<int?>(cotizacionOriginal),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
   CotizacionTableData copyWith(
           {int? id,
+          Value<String?> cotId = const Value.absent(),
           Value<String?> folioPrincipal = const Value.absent(),
-          Value<DateTime?> fecha = const Value.absent(),
           Value<DateTime?> fechaLimite = const Value.absent(),
           Value<bool?> esGrupo = const Value.absent(),
           Value<bool?> esConcretado = const Value.absent(),
           Value<String?> habitaciones = const Value.absent(),
-          Value<int?> usuarioID = const Value.absent(),
-          Value<int?> clienteID = const Value.absent(),
-          Value<String?> username = const Value.absent()}) =>
+          Value<int?> creadoPor = const Value.absent(),
+          Value<int?> cerradoPor = const Value.absent(),
+          Value<int?> cliente = const Value.absent(),
+          Value<String?> comentarios = const Value.absent(),
+          Value<int?> cotizacionOriginal = const Value.absent(),
+          Value<DateTime?> createdAt = const Value.absent()}) =>
       CotizacionTableData(
         id: id ?? this.id,
+        cotId: cotId.present ? cotId.value : this.cotId,
         folioPrincipal:
             folioPrincipal.present ? folioPrincipal.value : this.folioPrincipal,
-        fecha: fecha.present ? fecha.value : this.fecha,
         fechaLimite: fechaLimite.present ? fechaLimite.value : this.fechaLimite,
         esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
         esConcretado:
             esConcretado.present ? esConcretado.value : this.esConcretado,
         habitaciones:
             habitaciones.present ? habitaciones.value : this.habitaciones,
-        usuarioID: usuarioID.present ? usuarioID.value : this.usuarioID,
-        clienteID: clienteID.present ? clienteID.value : this.clienteID,
-        username: username.present ? username.value : this.username,
+        creadoPor: creadoPor.present ? creadoPor.value : this.creadoPor,
+        cerradoPor: cerradoPor.present ? cerradoPor.value : this.cerradoPor,
+        cliente: cliente.present ? cliente.value : this.cliente,
+        comentarios: comentarios.present ? comentarios.value : this.comentarios,
+        cotizacionOriginal: cotizacionOriginal.present
+            ? cotizacionOriginal.value
+            : this.cotizacionOriginal,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   CotizacionTableData copyWithCompanion(CotizacionTableCompanion data) {
     return CotizacionTableData(
       id: data.id.present ? data.id.value : this.id,
+      cotId: data.cotId.present ? data.cotId.value : this.cotId,
       folioPrincipal: data.folioPrincipal.present
           ? data.folioPrincipal.value
           : this.folioPrincipal,
-      fecha: data.fecha.present ? data.fecha.value : this.fecha,
       fechaLimite:
           data.fechaLimite.present ? data.fechaLimite.value : this.fechaLimite,
       esGrupo: data.esGrupo.present ? data.esGrupo.value : this.esGrupo,
@@ -1787,9 +1831,16 @@ class CotizacionTableData extends DataClass
       habitaciones: data.habitaciones.present
           ? data.habitaciones.value
           : this.habitaciones,
-      usuarioID: data.usuarioID.present ? data.usuarioID.value : this.usuarioID,
-      clienteID: data.clienteID.present ? data.clienteID.value : this.clienteID,
-      username: data.username.present ? data.username.value : this.username,
+      creadoPor: data.creadoPor.present ? data.creadoPor.value : this.creadoPor,
+      cerradoPor:
+          data.cerradoPor.present ? data.cerradoPor.value : this.cerradoPor,
+      cliente: data.cliente.present ? data.cliente.value : this.cliente,
+      comentarios:
+          data.comentarios.present ? data.comentarios.value : this.comentarios,
+      cotizacionOriginal: data.cotizacionOriginal.present
+          ? data.cotizacionOriginal.value
+          : this.cotizacionOriginal,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -1797,121 +1848,160 @@ class CotizacionTableData extends DataClass
   String toString() {
     return (StringBuffer('CotizacionTableData(')
           ..write('id: $id, ')
+          ..write('cotId: $cotId, ')
           ..write('folioPrincipal: $folioPrincipal, ')
-          ..write('fecha: $fecha, ')
           ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
-          ..write('usuarioID: $usuarioID, ')
-          ..write('clienteID: $clienteID, ')
-          ..write('username: $username')
+          ..write('creadoPor: $creadoPor, ')
+          ..write('cerradoPor: $cerradoPor, ')
+          ..write('cliente: $cliente, ')
+          ..write('comentarios: $comentarios, ')
+          ..write('cotizacionOriginal: $cotizacionOriginal, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, folioPrincipal, fecha, fechaLimite,
-      esGrupo, esConcretado, habitaciones, usuarioID, clienteID, username);
+  int get hashCode => Object.hash(
+      id,
+      cotId,
+      folioPrincipal,
+      fechaLimite,
+      esGrupo,
+      esConcretado,
+      habitaciones,
+      creadoPor,
+      cerradoPor,
+      cliente,
+      comentarios,
+      cotizacionOriginal,
+      createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CotizacionTableData &&
           other.id == this.id &&
+          other.cotId == this.cotId &&
           other.folioPrincipal == this.folioPrincipal &&
-          other.fecha == this.fecha &&
           other.fechaLimite == this.fechaLimite &&
           other.esGrupo == this.esGrupo &&
           other.esConcretado == this.esConcretado &&
           other.habitaciones == this.habitaciones &&
-          other.usuarioID == this.usuarioID &&
-          other.clienteID == this.clienteID &&
-          other.username == this.username);
+          other.creadoPor == this.creadoPor &&
+          other.cerradoPor == this.cerradoPor &&
+          other.cliente == this.cliente &&
+          other.comentarios == this.comentarios &&
+          other.cotizacionOriginal == this.cotizacionOriginal &&
+          other.createdAt == this.createdAt);
 }
 
 class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
   final Value<int> id;
+  final Value<String?> cotId;
   final Value<String?> folioPrincipal;
-  final Value<DateTime?> fecha;
   final Value<DateTime?> fechaLimite;
   final Value<bool?> esGrupo;
   final Value<bool?> esConcretado;
   final Value<String?> habitaciones;
-  final Value<int?> usuarioID;
-  final Value<int?> clienteID;
-  final Value<String?> username;
+  final Value<int?> creadoPor;
+  final Value<int?> cerradoPor;
+  final Value<int?> cliente;
+  final Value<String?> comentarios;
+  final Value<int?> cotizacionOriginal;
+  final Value<DateTime?> createdAt;
   const CotizacionTableCompanion({
     this.id = const Value.absent(),
+    this.cotId = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
-    this.fecha = const Value.absent(),
     this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
-    this.usuarioID = const Value.absent(),
-    this.clienteID = const Value.absent(),
-    this.username = const Value.absent(),
+    this.creadoPor = const Value.absent(),
+    this.cerradoPor = const Value.absent(),
+    this.cliente = const Value.absent(),
+    this.comentarios = const Value.absent(),
+    this.cotizacionOriginal = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   CotizacionTableCompanion.insert({
     this.id = const Value.absent(),
+    this.cotId = const Value.absent(),
     this.folioPrincipal = const Value.absent(),
-    this.fecha = const Value.absent(),
     this.fechaLimite = const Value.absent(),
     this.esGrupo = const Value.absent(),
     this.esConcretado = const Value.absent(),
     this.habitaciones = const Value.absent(),
-    this.usuarioID = const Value.absent(),
-    this.clienteID = const Value.absent(),
-    this.username = const Value.absent(),
+    this.creadoPor = const Value.absent(),
+    this.cerradoPor = const Value.absent(),
+    this.cliente = const Value.absent(),
+    this.comentarios = const Value.absent(),
+    this.cotizacionOriginal = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   static Insertable<CotizacionTableData> custom({
     Expression<int>? id,
+    Expression<String>? cotId,
     Expression<String>? folioPrincipal,
-    Expression<DateTime>? fecha,
     Expression<DateTime>? fechaLimite,
     Expression<bool>? esGrupo,
     Expression<bool>? esConcretado,
     Expression<String>? habitaciones,
-    Expression<int>? usuarioID,
-    Expression<int>? clienteID,
-    Expression<String>? username,
+    Expression<int>? creadoPor,
+    Expression<int>? cerradoPor,
+    Expression<int>? cliente,
+    Expression<String>? comentarios,
+    Expression<int>? cotizacionOriginal,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (cotId != null) 'cot_id': cotId,
       if (folioPrincipal != null) 'folio_principal': folioPrincipal,
-      if (fecha != null) 'fecha': fecha,
       if (fechaLimite != null) 'fecha_limite': fechaLimite,
       if (esGrupo != null) 'es_grupo': esGrupo,
       if (esConcretado != null) 'es_concretado': esConcretado,
       if (habitaciones != null) 'habitaciones': habitaciones,
-      if (usuarioID != null) 'usuario_i_d': usuarioID,
-      if (clienteID != null) 'cliente_i_d': clienteID,
-      if (username != null) 'username': username,
+      if (creadoPor != null) 'creado_por': creadoPor,
+      if (cerradoPor != null) 'cerrado_por': cerradoPor,
+      if (cliente != null) 'cliente': cliente,
+      if (comentarios != null) 'comentarios': comentarios,
+      if (cotizacionOriginal != null) 'cotizacion_original': cotizacionOriginal,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
   CotizacionTableCompanion copyWith(
       {Value<int>? id,
+      Value<String?>? cotId,
       Value<String?>? folioPrincipal,
-      Value<DateTime?>? fecha,
       Value<DateTime?>? fechaLimite,
       Value<bool?>? esGrupo,
       Value<bool?>? esConcretado,
       Value<String?>? habitaciones,
-      Value<int?>? usuarioID,
-      Value<int?>? clienteID,
-      Value<String?>? username}) {
+      Value<int?>? creadoPor,
+      Value<int?>? cerradoPor,
+      Value<int?>? cliente,
+      Value<String?>? comentarios,
+      Value<int?>? cotizacionOriginal,
+      Value<DateTime?>? createdAt}) {
     return CotizacionTableCompanion(
       id: id ?? this.id,
+      cotId: cotId ?? this.cotId,
       folioPrincipal: folioPrincipal ?? this.folioPrincipal,
-      fecha: fecha ?? this.fecha,
       fechaLimite: fechaLimite ?? this.fechaLimite,
       esGrupo: esGrupo ?? this.esGrupo,
       esConcretado: esConcretado ?? this.esConcretado,
       habitaciones: habitaciones ?? this.habitaciones,
-      usuarioID: usuarioID ?? this.usuarioID,
-      clienteID: clienteID ?? this.clienteID,
-      username: username ?? this.username,
+      creadoPor: creadoPor ?? this.creadoPor,
+      cerradoPor: cerradoPor ?? this.cerradoPor,
+      cliente: cliente ?? this.cliente,
+      comentarios: comentarios ?? this.comentarios,
+      cotizacionOriginal: cotizacionOriginal ?? this.cotizacionOriginal,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -1921,11 +2011,11 @@ class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (cotId.present) {
+      map['cot_id'] = Variable<String>(cotId.value);
+    }
     if (folioPrincipal.present) {
       map['folio_principal'] = Variable<String>(folioPrincipal.value);
-    }
-    if (fecha.present) {
-      map['fecha'] = Variable<DateTime>(fecha.value);
     }
     if (fechaLimite.present) {
       map['fecha_limite'] = Variable<DateTime>(fechaLimite.value);
@@ -1939,14 +2029,23 @@ class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
     if (habitaciones.present) {
       map['habitaciones'] = Variable<String>(habitaciones.value);
     }
-    if (usuarioID.present) {
-      map['usuario_i_d'] = Variable<int>(usuarioID.value);
+    if (creadoPor.present) {
+      map['creado_por'] = Variable<int>(creadoPor.value);
     }
-    if (clienteID.present) {
-      map['cliente_i_d'] = Variable<int>(clienteID.value);
+    if (cerradoPor.present) {
+      map['cerrado_por'] = Variable<int>(cerradoPor.value);
     }
-    if (username.present) {
-      map['username'] = Variable<String>(username.value);
+    if (cliente.present) {
+      map['cliente'] = Variable<int>(cliente.value);
+    }
+    if (comentarios.present) {
+      map['comentarios'] = Variable<String>(comentarios.value);
+    }
+    if (cotizacionOriginal.present) {
+      map['cotizacion_original'] = Variable<int>(cotizacionOriginal.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     return map;
   }
@@ -1955,15 +2054,18 @@ class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
   String toString() {
     return (StringBuffer('CotizacionTableCompanion(')
           ..write('id: $id, ')
+          ..write('cotId: $cotId, ')
           ..write('folioPrincipal: $folioPrincipal, ')
-          ..write('fecha: $fecha, ')
           ..write('fechaLimite: $fechaLimite, ')
           ..write('esGrupo: $esGrupo, ')
           ..write('esConcretado: $esConcretado, ')
           ..write('habitaciones: $habitaciones, ')
-          ..write('usuarioID: $usuarioID, ')
-          ..write('clienteID: $clienteID, ')
-          ..write('username: $username')
+          ..write('creadoPor: $creadoPor, ')
+          ..write('cerradoPor: $cerradoPor, ')
+          ..write('cliente: $cliente, ')
+          ..write('comentarios: $comentarios, ')
+          ..write('cotizacionOriginal: $cotizacionOriginal, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -7033,6 +7135,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
   late final TarifaDao tarifaDao = TarifaDao(this as AppDatabase);
   late final TarifaRackDao tarifaRackDao = TarifaRackDao(this as AppDatabase);
+  late final CotizacionDao cotizacionDao = CotizacionDao(this as AppDatabase);
+  late final UsuarioDao usuarioDao = UsuarioDao(this as AppDatabase);
+  late final ClienteDao clienteDao = ClienteDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7162,15 +7267,14 @@ typedef $$UsuarioTableTableCreateCompanionBuilder = UsuarioTableCompanion
   Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
-  Value<String?> status,
+  Value<String?> estatus,
   Value<String?> correoElectronico,
-  Value<String?> passwordCorreo,
   Value<String?> telefono,
   Value<String?> fechaNacimiento,
   Value<String?> nombre,
   Value<String?> apellido,
-  Value<int?> numCotizaciones,
   Value<int?> imageId,
+  Value<DateTime?> createdAt,
 });
 typedef $$UsuarioTableTableUpdateCompanionBuilder = UsuarioTableCompanion
     Function({
@@ -7178,15 +7282,14 @@ typedef $$UsuarioTableTableUpdateCompanionBuilder = UsuarioTableCompanion
   Value<String?> username,
   Value<String?> password,
   Value<String?> rol,
-  Value<String?> status,
+  Value<String?> estatus,
   Value<String?> correoElectronico,
-  Value<String?> passwordCorreo,
   Value<String?> telefono,
   Value<String?> fechaNacimiento,
   Value<String?> nombre,
   Value<String?> apellido,
-  Value<int?> numCotizaciones,
   Value<int?> imageId,
+  Value<DateTime?> createdAt,
 });
 
 class $$UsuarioTableTableTableManager extends RootTableManager<
@@ -7210,60 +7313,56 @@ class $$UsuarioTableTableTableManager extends RootTableManager<
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
-            Value<String?> status = const Value.absent(),
+            Value<String?> estatus = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
-            Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
             Value<String?> fechaNacimiento = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
-            Value<int?> numCotizaciones = const Value.absent(),
             Value<int?> imageId = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               UsuarioTableCompanion(
             id: id,
             username: username,
             password: password,
             rol: rol,
-            status: status,
+            estatus: estatus,
             correoElectronico: correoElectronico,
-            passwordCorreo: passwordCorreo,
             telefono: telefono,
             fechaNacimiento: fechaNacimiento,
             nombre: nombre,
             apellido: apellido,
-            numCotizaciones: numCotizaciones,
             imageId: imageId,
+            createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
             Value<String?> rol = const Value.absent(),
-            Value<String?> status = const Value.absent(),
+            Value<String?> estatus = const Value.absent(),
             Value<String?> correoElectronico = const Value.absent(),
-            Value<String?> passwordCorreo = const Value.absent(),
             Value<String?> telefono = const Value.absent(),
             Value<String?> fechaNacimiento = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
-            Value<int?> numCotizaciones = const Value.absent(),
             Value<int?> imageId = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               UsuarioTableCompanion.insert(
             id: id,
             username: username,
             password: password,
             rol: rol,
-            status: status,
+            estatus: estatus,
             correoElectronico: correoElectronico,
-            passwordCorreo: passwordCorreo,
             telefono: telefono,
             fechaNacimiento: fechaNacimiento,
             nombre: nombre,
             apellido: apellido,
-            numCotizaciones: numCotizaciones,
             imageId: imageId,
+            createdAt: createdAt,
           ),
         ));
 }
@@ -7291,18 +7390,13 @@ class $$UsuarioTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get status => $state.composableBuilder(
-      column: $state.table.status,
+  ColumnFilters<String> get estatus => $state.composableBuilder(
+      column: $state.table.estatus,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnFilters<String> get correoElectronico => $state.composableBuilder(
       column: $state.table.correoElectronico,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ColumnFilters<String> get passwordCorreo => $state.composableBuilder(
-      column: $state.table.passwordCorreo,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7326,8 +7420,8 @@ class $$UsuarioTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get numCotizaciones => $state.composableBuilder(
-      column: $state.table.numCotizaciones,
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7341,20 +7435,6 @@ class $$UsuarioTableTableFilterComposer
             $$ImageTableTableFilterComposer(ComposerState($state.db,
                 $state.db.imageTable, joinBuilder, parentComposers)));
     return composer;
-  }
-
-  ComposableFilter cotizacionTableRefs(
-      ComposableFilter Function($$CotizacionTableTableFilterComposer f) f) {
-    final $$CotizacionTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.usuarioID,
-            builder: (joinBuilder, parentComposers) =>
-                $$CotizacionTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
-    return f(composer);
   }
 
   ComposableFilter userActivityRefs(
@@ -7394,18 +7474,13 @@ class $$UsuarioTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get status => $state.composableBuilder(
-      column: $state.table.status,
+  ColumnOrderings<String> get estatus => $state.composableBuilder(
+      column: $state.table.estatus,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
   ColumnOrderings<String> get correoElectronico => $state.composableBuilder(
       column: $state.table.correoElectronico,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
-  ColumnOrderings<String> get passwordCorreo => $state.composableBuilder(
-      column: $state.table.passwordCorreo,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7429,8 +7504,8 @@ class $$UsuarioTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get numCotizaciones => $state.composableBuilder(
-      column: $state.table.numCotizaciones,
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7453,13 +7528,13 @@ typedef $$ClienteTableTableCreateCompanionBuilder = ClienteTableCompanion
   Value<String?> nombre,
   Value<String?> apellido,
   Value<String?> numeroTelefonico,
-  Value<String?> correoElectrico,
-  Value<String> nacionalidad,
+  Value<String?> correoElectronico,
+  Value<String?> nacionalidad,
   Value<String?> estado,
   Value<String?> ciudad,
   Value<String?> cp,
   Value<String?> notas,
-  Value<bool> conCotizacion,
+  Value<DateTime?> createdAt,
 });
 typedef $$ClienteTableTableUpdateCompanionBuilder = ClienteTableCompanion
     Function({
@@ -7467,13 +7542,13 @@ typedef $$ClienteTableTableUpdateCompanionBuilder = ClienteTableCompanion
   Value<String?> nombre,
   Value<String?> apellido,
   Value<String?> numeroTelefonico,
-  Value<String?> correoElectrico,
-  Value<String> nacionalidad,
+  Value<String?> correoElectronico,
+  Value<String?> nacionalidad,
   Value<String?> estado,
   Value<String?> ciudad,
   Value<String?> cp,
   Value<String?> notas,
-  Value<bool> conCotizacion,
+  Value<DateTime?> createdAt,
 });
 
 class $$ClienteTableTableTableManager extends RootTableManager<
@@ -7497,52 +7572,52 @@ class $$ClienteTableTableTableManager extends RootTableManager<
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
-            Value<String?> correoElectrico = const Value.absent(),
-            Value<String> nacionalidad = const Value.absent(),
+            Value<String?> correoElectronico = const Value.absent(),
+            Value<String?> nacionalidad = const Value.absent(),
             Value<String?> estado = const Value.absent(),
             Value<String?> ciudad = const Value.absent(),
             Value<String?> cp = const Value.absent(),
             Value<String?> notas = const Value.absent(),
-            Value<bool> conCotizacion = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               ClienteTableCompanion(
             id: id,
             nombre: nombre,
             apellido: apellido,
             numeroTelefonico: numeroTelefonico,
-            correoElectrico: correoElectrico,
+            correoElectronico: correoElectronico,
             nacionalidad: nacionalidad,
             estado: estado,
             ciudad: ciudad,
             cp: cp,
             notas: notas,
-            conCotizacion: conCotizacion,
+            createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
             Value<String?> apellido = const Value.absent(),
             Value<String?> numeroTelefonico = const Value.absent(),
-            Value<String?> correoElectrico = const Value.absent(),
-            Value<String> nacionalidad = const Value.absent(),
+            Value<String?> correoElectronico = const Value.absent(),
+            Value<String?> nacionalidad = const Value.absent(),
             Value<String?> estado = const Value.absent(),
             Value<String?> ciudad = const Value.absent(),
             Value<String?> cp = const Value.absent(),
             Value<String?> notas = const Value.absent(),
-            Value<bool> conCotizacion = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               ClienteTableCompanion.insert(
             id: id,
             nombre: nombre,
             apellido: apellido,
             numeroTelefonico: numeroTelefonico,
-            correoElectrico: correoElectrico,
+            correoElectronico: correoElectronico,
             nacionalidad: nacionalidad,
             estado: estado,
             ciudad: ciudad,
             cp: cp,
             notas: notas,
-            conCotizacion: conCotizacion,
+            createdAt: createdAt,
           ),
         ));
 }
@@ -7570,8 +7645,8 @@ class $$ClienteTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get correoElectrico => $state.composableBuilder(
-      column: $state.table.correoElectrico,
+  ColumnFilters<String> get correoElectronico => $state.composableBuilder(
+      column: $state.table.correoElectronico,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7600,24 +7675,10 @@ class $$ClienteTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<bool> get conCotizacion => $state.composableBuilder(
-      column: $state.table.conCotizacion,
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
-
-  ComposableFilter cotizacionTableRefs(
-      ComposableFilter Function($$CotizacionTableTableFilterComposer f) f) {
-    final $$CotizacionTableTableFilterComposer composer =
-        $state.composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.clienteID,
-            builder: (joinBuilder, parentComposers) =>
-                $$CotizacionTableTableFilterComposer(ComposerState($state.db,
-                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
-    return f(composer);
-  }
 }
 
 class $$ClienteTableTableOrderingComposer
@@ -7643,8 +7704,8 @@ class $$ClienteTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get correoElectrico => $state.composableBuilder(
-      column: $state.table.correoElectrico,
+  ColumnOrderings<String> get correoElectronico => $state.composableBuilder(
+      column: $state.table.correoElectronico,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7673,8 +7734,8 @@ class $$ClienteTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get conCotizacion => $state.composableBuilder(
-      column: $state.table.conCotizacion,
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
@@ -7682,28 +7743,34 @@ class $$ClienteTableTableOrderingComposer
 typedef $$CotizacionTableTableCreateCompanionBuilder = CotizacionTableCompanion
     Function({
   Value<int> id,
+  Value<String?> cotId,
   Value<String?> folioPrincipal,
-  Value<DateTime?> fecha,
   Value<DateTime?> fechaLimite,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
-  Value<int?> usuarioID,
-  Value<int?> clienteID,
-  Value<String?> username,
+  Value<int?> creadoPor,
+  Value<int?> cerradoPor,
+  Value<int?> cliente,
+  Value<String?> comentarios,
+  Value<int?> cotizacionOriginal,
+  Value<DateTime?> createdAt,
 });
 typedef $$CotizacionTableTableUpdateCompanionBuilder = CotizacionTableCompanion
     Function({
   Value<int> id,
+  Value<String?> cotId,
   Value<String?> folioPrincipal,
-  Value<DateTime?> fecha,
   Value<DateTime?> fechaLimite,
   Value<bool?> esGrupo,
   Value<bool?> esConcretado,
   Value<String?> habitaciones,
-  Value<int?> usuarioID,
-  Value<int?> clienteID,
-  Value<String?> username,
+  Value<int?> creadoPor,
+  Value<int?> cerradoPor,
+  Value<int?> cliente,
+  Value<String?> comentarios,
+  Value<int?> cotizacionOriginal,
+  Value<DateTime?> createdAt,
 });
 
 class $$CotizacionTableTableTableManager extends RootTableManager<
@@ -7725,51 +7792,63 @@ class $$CotizacionTableTableTableManager extends RootTableManager<
               $$CotizacionTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
+            Value<String?> cotId = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
-            Value<DateTime?> fecha = const Value.absent(),
             Value<DateTime?> fechaLimite = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
-            Value<int?> clienteID = const Value.absent(),
-            Value<String?> username = const Value.absent(),
+            Value<int?> creadoPor = const Value.absent(),
+            Value<int?> cerradoPor = const Value.absent(),
+            Value<int?> cliente = const Value.absent(),
+            Value<String?> comentarios = const Value.absent(),
+            Value<int?> cotizacionOriginal = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               CotizacionTableCompanion(
             id: id,
+            cotId: cotId,
             folioPrincipal: folioPrincipal,
-            fecha: fecha,
             fechaLimite: fechaLimite,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
-            usuarioID: usuarioID,
-            clienteID: clienteID,
-            username: username,
+            creadoPor: creadoPor,
+            cerradoPor: cerradoPor,
+            cliente: cliente,
+            comentarios: comentarios,
+            cotizacionOriginal: cotizacionOriginal,
+            createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
+            Value<String?> cotId = const Value.absent(),
             Value<String?> folioPrincipal = const Value.absent(),
-            Value<DateTime?> fecha = const Value.absent(),
             Value<DateTime?> fechaLimite = const Value.absent(),
             Value<bool?> esGrupo = const Value.absent(),
             Value<bool?> esConcretado = const Value.absent(),
             Value<String?> habitaciones = const Value.absent(),
-            Value<int?> usuarioID = const Value.absent(),
-            Value<int?> clienteID = const Value.absent(),
-            Value<String?> username = const Value.absent(),
+            Value<int?> creadoPor = const Value.absent(),
+            Value<int?> cerradoPor = const Value.absent(),
+            Value<int?> cliente = const Value.absent(),
+            Value<String?> comentarios = const Value.absent(),
+            Value<int?> cotizacionOriginal = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               CotizacionTableCompanion.insert(
             id: id,
+            cotId: cotId,
             folioPrincipal: folioPrincipal,
-            fecha: fecha,
             fechaLimite: fechaLimite,
             esGrupo: esGrupo,
             esConcretado: esConcretado,
             habitaciones: habitaciones,
-            usuarioID: usuarioID,
-            clienteID: clienteID,
-            username: username,
+            creadoPor: creadoPor,
+            cerradoPor: cerradoPor,
+            cliente: cliente,
+            comentarios: comentarios,
+            cotizacionOriginal: cotizacionOriginal,
+            createdAt: createdAt,
           ),
         ));
 }
@@ -7782,13 +7861,13 @@ class $$CotizacionTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get folioPrincipal => $state.composableBuilder(
-      column: $state.table.folioPrincipal,
+  ColumnFilters<String> get cotId => $state.composableBuilder(
+      column: $state.table.cotId,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<DateTime> get fecha => $state.composableBuilder(
-      column: $state.table.fecha,
+  ColumnFilters<String> get folioPrincipal => $state.composableBuilder(
+      column: $state.table.folioPrincipal,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -7812,15 +7891,20 @@ class $$CotizacionTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get username => $state.composableBuilder(
-      column: $state.table.username,
+  ColumnFilters<String> get comentarios => $state.composableBuilder(
+      column: $state.table.comentarios,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableTableFilterComposer get usuarioID {
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableTableFilterComposer get creadoPor {
     final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.usuarioID,
+        getCurrentColumn: (t) => t.creadoPor,
         referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -7829,10 +7913,34 @@ class $$CotizacionTableTableFilterComposer
     return composer;
   }
 
-  $$ClienteTableTableFilterComposer get clienteID {
+  $$UsuarioTableTableFilterComposer get cerradoPor {
+    final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.cerradoPor,
+        referencedTable: $state.db.usuarioTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableTableFilterComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableFilterComposer get cliente {
     final $$ClienteTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.clienteID,
+        getCurrentColumn: (t) => t.cliente,
+        referencedTable: $state.db.clienteTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ClienteTableTableFilterComposer(ComposerState($state.db,
+                $state.db.clienteTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableFilterComposer get cotizacionOriginal {
+    final $$ClienteTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.cotizacionOriginal,
         referencedTable: $state.db.clienteTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -7850,13 +7958,13 @@ class $$CotizacionTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get folioPrincipal => $state.composableBuilder(
-      column: $state.table.folioPrincipal,
+  ColumnOrderings<String> get cotId => $state.composableBuilder(
+      column: $state.table.cotId,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<DateTime> get fecha => $state.composableBuilder(
-      column: $state.table.fecha,
+  ColumnOrderings<String> get folioPrincipal => $state.composableBuilder(
+      column: $state.table.folioPrincipal,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -7880,15 +7988,20 @@ class $$CotizacionTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get username => $state.composableBuilder(
-      column: $state.table.username,
+  ColumnOrderings<String> get comentarios => $state.composableBuilder(
+      column: $state.table.comentarios,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  $$UsuarioTableTableOrderingComposer get usuarioID {
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$UsuarioTableTableOrderingComposer get creadoPor {
     final $$UsuarioTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.usuarioID,
+        getCurrentColumn: (t) => t.creadoPor,
         referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>
@@ -7897,10 +8010,34 @@ class $$CotizacionTableTableOrderingComposer
     return composer;
   }
 
-  $$ClienteTableTableOrderingComposer get clienteID {
+  $$UsuarioTableTableOrderingComposer get cerradoPor {
+    final $$UsuarioTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.cerradoPor,
+        referencedTable: $state.db.usuarioTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.usuarioTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableOrderingComposer get cliente {
     final $$ClienteTableTableOrderingComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.clienteID,
+        getCurrentColumn: (t) => t.cliente,
+        referencedTable: $state.db.clienteTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ClienteTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.clienteTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ClienteTableTableOrderingComposer get cotizacionOriginal {
+    final $$ClienteTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.cotizacionOriginal,
         referencedTable: $state.db.clienteTable,
         getReferencedColumn: (t) => t.id,
         builder: (joinBuilder, parentComposers) =>

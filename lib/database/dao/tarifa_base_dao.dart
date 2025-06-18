@@ -32,7 +32,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
         p.id AS tarifaId, 
         p.code AS tarifaCode,
         p.fecha AS tarifaFecha,
-        p.categoria AS tarifaCategoria,
+        p.categoria AS tarifaCategoriclia,
         p.tarifa_adulto_s_g_lo_d_b_l AS tarifaAdultoSGLoDBL,
         p.tarifa_adulto_t_p_l AS tarifaAdultoTPL,
         P.tarifa_adulto_c_p_l_e AS tarifaAdultoCPLE,

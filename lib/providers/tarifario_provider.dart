@@ -29,7 +29,7 @@ final listTarifaProvider = FutureProvider.family<List<RegistroTarifa>, String>(
   },
 );
 
-final tariffPolicyProvider = FutureProvider.family<Politica?, String>(
+final tariffPolicyProvider = FutureProvider.family<PoliticaTableData?, String>(
   (ref, arg) async {
     final detectChanged = ref.watch(changeTariffPolicyProvider);
     final list = await TarifaService().getTariffPolicy();

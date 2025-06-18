@@ -1,17 +1,22 @@
 import 'package:drift/drift.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/services/base_service.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
+import '../database/dao/usuario_dao.dart';
+import '../database/database.dart';
 import '../utils/encrypt/encrypter.dart';
+import '../utils/shared_preferences/preferences.dart';
+import 'base_service.dart';
 
 class AuthService extends BaseService {
   Future<bool> foundUserName(String userName, [int? userId]) async {
-    List<UsuarioData> users = [];
+    List<UsuarioTableData> users = [];
 
     try {
       final db = AppDatabase();
-      users = await db.getUsuariosByUsername(userName, userId);
+      final usuarioDao = UsuarioDao(db);
+      users = await usuarioDao.getList(
+        nombre: userName,
+        id: userId,
+      );
       db.close();
     } catch (e) {
       print(e);
@@ -20,7 +25,7 @@ class AuthService extends BaseService {
   }
 
   Future<bool> loginUser(String userName, String password) async {
-    List<UsuarioData> users = [];
+    List<UsuarioTableData> users = [];
 
     try {
       final db = AppDatabase();
@@ -33,13 +38,12 @@ class AuthService extends BaseService {
     return users.isNotEmpty;
   }
 
-  Future<UsuarioData> savePerfil(String user, String password) async {
+  Future<UsuarioTableData> savePerfil(String user, String password) async {
     final db = AppDatabase();
-    List<UsuarioData> users =
+    List<UsuarioTableData> users =
         await db.loginUser(user, EncrypterTool.encryptData(password, null));
 
     Preferences.mail = users.first.correoElectronico ?? '';
-    Preferences.passwordMail = users.first.passwordCorreo ?? '';
     Preferences.phone = users.first.telefono ?? '';
     Preferences.rol = users.first.rol ?? '';
     Preferences.username = users.first.username ?? '';
@@ -49,19 +53,19 @@ class AuthService extends BaseService {
     Preferences.firstName = users.first.nombre ?? '';
     Preferences.lastName = users.first.apellido ?? '';
     Preferences.birthDate = users.first.fechaNacimiento ?? '';
-    Preferences.numberQuotes = users.first.numCotizaciones ?? 0;
 
     db.close();
 
     return users.first;
   }
 
-  Future<bool> deleteUser(UsuarioData user) async {
+  Future<bool> deleteUser(UsuarioTableData user) async {
     bool success = false;
 
     try {
       final db = AppDatabase();
-      int response = await db.deleteUsuario(user);
+      final usuarioDao = UsuarioDao(db);
+      int response = await usuarioDao.delet3(user.id);
       success = response == 1;
       db.close();
     } catch (e) {
@@ -71,13 +75,14 @@ class AuthService extends BaseService {
     return success;
   }
 
-  Future<bool> updateUser(UsuarioData user) async {
+  Future<bool> updateUser(UsuarioTableData user) async {
     bool success = false;
 
     try {
       final db = AppDatabase();
-      int response = await db.updateUsuario(user);
-      success = response != 1;
+      final usuarioDao = UsuarioDao(db);
+      bool response = await usuarioDao.updat3(user);
+      success = response;
       db.close();
     } catch (e) {
       print(e);
@@ -92,24 +97,13 @@ class AuthService extends BaseService {
 
     try {
       final db = AppDatabase();
-      int response = await db.updatePasswordUser(userId, username, newPassword);
-      success = response != 1;
-      db.close();
-    } catch (e) {
-      print(e);
-    }
-
-    return success;
-  }
-
-  Future<bool> updatePasswordMail(
-      int userId, String username, String newPassword) async {
-    bool success = false;
-
-    try {
-      final db = AppDatabase();
-      int response = await db.updatePasswordMail(userId, username, newPassword);
-      success = response != 1;
+      final usuarioDao = UsuarioDao(db);
+      bool response = await usuarioDao.updat3(UsuarioTableData(
+        id: userId,
+        username: username,
+        password: newPassword,
+      ));
+      success = response;
       db.close();
     } catch (e) {
       print(e);

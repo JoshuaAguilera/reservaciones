@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
 
 import '../database/database.dart';
 import '../models/numero_cotizacion_model.dart';
+import '../models/reporte_Cotizacion_model.dart';
 import '../services/cotizacion_service.dart';
 import '../res/helpers/utility.dart';
 
@@ -32,14 +32,14 @@ final cotizacionesDiariasProvider =
 });
 
 final ultimaCotizacionesProvider =
-    FutureProvider.family<List<CotizacionData>, String>((ref, arg) async {
+    FutureProvider.family<List<CotizacionTableData>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await CotizacionService().getCotizacionesRecientes();
   return list;
 });
 
 final allQuotesProvider =
-    FutureProvider.family<List<CotizacionData>, String>((ref, arg) async {
+    FutureProvider.family<List<CotizacionTableData>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await CotizacionService().getCotizaciones();
   return list;

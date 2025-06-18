@@ -244,10 +244,10 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<List<CotizacionData>> getCotizacionesActuales() async {
+  Future<List<CotizacionTableData>> getCotizacionesActuales() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getCotizacionesHoy(
+      List<CotizacionTableData> resp = await dataBase.getCotizacionesHoy(
           (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
@@ -258,10 +258,10 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<List<CotizacionData>> getCotizaciones() async {
+  Future<List<CotizacionTableData>> getCotizaciones() async {
     final dataBase = AppDatabase();
     try {
-      List<CotizacionData> resp = await dataBase.getHistorialCotizaciones(
+      List<CotizacionTableData> resp = await dataBase.getHistorialCotizaciones(
           (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null);
 
       await dataBase.close();
@@ -272,7 +272,7 @@ class CotizacionService extends BaseService {
     }
   }
 
-  Future<bool> updateCotizacion(CotizacionData data) async {
+  Future<bool> updateCotizacion(CotizacionTableData data) async {
     final database = AppDatabase();
 
     try {

@@ -409,7 +409,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                             list[index].correoElectrico,
                                         numeroTelefonico:
                                             list[index].numeroTelefonico,
-                                        fecha: list[index].fecha.toString(),
+                                        createAt: list[index].fecha.toString(),
                                         fechaLimite:
                                             list[index].fechaLimite.toString(),
                                         folioPrincipal:

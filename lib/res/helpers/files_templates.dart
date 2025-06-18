@@ -364,11 +364,11 @@ class FilesTemplate {
             habitacion.tarifaXDia?.first.temporadaSelect?.porcentajePromocion ??
             0;
 
-    TarifaData? tariffVR = habitacion.tarifaXDia?.first.tarifas
+    TarifaTableData? tariffVR = habitacion.tarifaXDia?.first.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
 
-    TarifaData? tariffVPM = habitacion.tarifaXDia?.first.tarifas
+    TarifaTableData? tariffVPM = habitacion.tarifaXDia?.first.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.last)
         .firstOrNull;
 
@@ -699,7 +699,7 @@ class FilesTemplate {
 
       if (!(cotizacion.esGrupo ?? false)) {
         preMailHTML = contenidoHtml
-            .replaceAll(r'FNAMECUSTOMER', cotizacion.nombreHuesped ?? '')
+            .replaceAll(r'FNAMECUSTOMER', cotizacion.cliente?.nombre ?? '')
             .replaceAll(r'FFOLIOQUOTE', "${cotizacion.folioPrincipal}");
 
         Map<String, List<Habitacion>> quoteFilters = {};
@@ -757,7 +757,7 @@ class FilesTemplate {
         mailHTML = preMailHTML.replaceAll(r'LISTROOMSINSERT', contentMail);
       } else {
         preMailHTML = contenidoHtml.replaceAll(
-            r'FNAMECUSTOMER', cotizacion.nombreHuesped ?? '');
+            r'FNAMECUSTOMER', cotizacion.cliente?.nombre ?? '');
         mailHTML = preMailHTML;
       }
     } catch (e) {

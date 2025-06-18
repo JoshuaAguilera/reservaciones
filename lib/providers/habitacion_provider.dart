@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/services/generador_doc_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../database/database.dart';
+import '../models/cotizacion_model.dart';
+import '../models/habitacion_model.dart';
 import '../models/registro_tarifa_model.dart';
+import '../models/tarifa_x_dia_model.dart';
 import '../res/helpers/utility.dart';
+import '../services/generador_doc_service.dart';
 import 'tarifario_provider.dart';
 
 class HabitacionProvider extends Notifier<List<Habitacion>> {
@@ -282,17 +282,17 @@ final listRoomProvider = FutureProvider<List<Habitacion>>((ref) async {
   return list;
 });
 
-class TarifasProvisionalesProvider extends StateNotifier<List<TarifaData>> {
+class TarifasProvisionalesProvider
+    extends StateNotifier<List<TarifaTableData>> {
   TarifasProvisionalesProvider() : super([]);
 
-  static final provider =
-      StateNotifierProvider<TarifasProvisionalesProvider, List<TarifaData>>(
-          (ref) => TarifasProvisionalesProvider());
+  static final provider = StateNotifierProvider<TarifasProvisionalesProvider,
+      List<TarifaTableData>>((ref) => TarifasProvisionalesProvider());
 
-  TarifaData _current = const TarifaData(id: 0, code: "");
-  TarifaData get current => _current;
+  TarifaTableData _current = const TarifaTableData(id: 0, code: "");
+  TarifaTableData get current => _current;
 
-  void addItem(TarifaData item) {
+  void addItem(TarifaTableData item) {
     _current = item;
     state = [...state, item];
   }
@@ -302,7 +302,7 @@ class TarifasProvisionalesProvider extends StateNotifier<List<TarifaData>> {
 
   void clear() => state = [];
 
-  void addAll(List<TarifaData> items) {
+  void addAll(List<TarifaTableData> items) {
     state = items;
   }
 }

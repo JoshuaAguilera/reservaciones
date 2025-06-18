@@ -163,7 +163,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                 .textFormFieldwithBorder(
                                               name: "Fecha de registro",
                                               initialValue:
-                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fecha!))} ${cotizacion.fecha?.substring(11, 16)}",
+                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.createAt!))} ${cotizacion.createAt?.substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
