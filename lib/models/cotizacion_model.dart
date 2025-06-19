@@ -6,7 +6,7 @@ class Cotizacion {
   int? id;
   String? cotId;
   String? folioPrincipal;
-  DateTime? createAt;
+  DateTime? createdAt;
   DateTime? fechaLimite;
   bool? esGrupo;
   bool? esConcretado;
@@ -21,7 +21,7 @@ class Cotizacion {
     this.id,
     this.cotId,
     this.esGrupo,
-    this.createAt,
+    this.createdAt,
     this.fechaLimite,
     this.folioPrincipal,
     this.habitaciones,
@@ -52,7 +52,7 @@ class Cotizacion {
         id: id ?? this.id,
         cotId: cotId ?? this.cotId,
         folioPrincipal: folioPrincipal ?? this.folioPrincipal,
-        createAt: fecha ?? this.createAt,
+        createdAt: fecha ?? this.createdAt,
         esGrupo: esGrupo ?? this.esGrupo,
         esConcretado: esConcretado ?? this.esConcretado,
         habitaciones: habitaciones ?? this.habitaciones,

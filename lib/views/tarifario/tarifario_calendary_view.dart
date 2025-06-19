@@ -6,7 +6,7 @@ import 'package:generador_formato/views/tarifario/tarifario_calendary_year_view.
 import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../providers/tarifario_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
 
 class TarifarioCalendaryView extends ConsumerStatefulWidget {
   const TarifarioCalendaryView({

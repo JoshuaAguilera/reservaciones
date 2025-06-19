@@ -15,7 +15,7 @@ import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
-import '../../providers/habitacion_provider.dart';
+import '../../view-models/providers/habitacion_provider.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/ui/text_styles.dart';

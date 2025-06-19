@@ -5,7 +5,7 @@ import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/registro_tarifa_model.dart';
-import '../../providers/tarifario_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';

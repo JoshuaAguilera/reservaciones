@@ -1,7 +1,8 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/view-models/services/auth_service.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
@@ -177,11 +178,17 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     setState(() => isLoading = true);
 
                     if (widget.isPasswordMail) {
-                      if (await AuthService().updatePasswordMail(
-                          widget.userId,
-                          widget.username,
-                          EncrypterTool.encryptData(
-                              passwordMailConfirmController.text, null))) {
+                      String newPassword = EncrypterTool.encryptData(
+                        passwordMailConfirmController.text,
+                        null,
+                      );
+
+                      var userData = UsuarioTableData(
+                        id: widget.userId,
+                        password: newPassword,
+                      );
+
+                      if (await AuthService().updateUser(userData)) {
                         showSnackBar(
                           context: context,
                           title: "Error de actualización",

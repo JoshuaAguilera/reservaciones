@@ -2,7 +2,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/providers/home_provider.dart';
+import 'package:generador_formato/view-models/providers/home_provider.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:sidebarx/sidebarx.dart';

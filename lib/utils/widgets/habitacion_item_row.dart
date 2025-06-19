@@ -10,8 +10,8 @@ import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/registro_tarifa_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
-import '../../providers/habitacion_provider.dart';
-import '../../providers/tarifario_provider.dart';
+import '../../view-models/providers/habitacion_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../shared_preferences/settings.dart';
 import 'dialogs.dart';
@@ -150,7 +150,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
-    void updateList(int value, Politica? politica) {
+    void updateList(int value, PoliticaTableData? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -539,7 +539,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
 
-    void updateList(int value, Politica? politica) {
+    void updateList(int value, PoliticaTableData? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)

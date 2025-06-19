@@ -11,8 +11,8 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/providers/tarifario_provider.dart';
-import 'package:generador_formato/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/providers/tarifario_provider.dart';
+import 'package:generador_formato/view-models/services/tarifa_service.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
@@ -152,7 +152,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       }
       periodos = Utility.getPeriodsRegister(actualTarifa.periodos);
 
-      TarifaData? tariffRV = actualTarifa.tarifas
+      TarifaTableData? tariffRV = actualTarifa.tarifas
           ?.where((element) => element.categoria == tipoHabitacion.first)
           .firstOrNull;
 
@@ -170,7 +170,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       minors7_12VRController.text =
           (tariffRV?.tarifaMenores7a12 ?? 0).toString();
 
-      TarifaData? tariffVPM = actualTarifa.tarifas
+      TarifaTableData? tariffVPM = actualTarifa.tarifas
           ?.where((element) => element.categoria == tipoHabitacion.last)
           .firstOrNull;
 

@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/res/helpers/files_templates.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/src/widgets/document.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../utils/encrypt/encrypter.dart';
+import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../res/helpers/files_templates.dart';
+import '../../res/helpers/utility.dart';
+import '../../utils/encrypt/encrypter.dart';
 import 'base_service.dart';
 
 class SendQuoteService extends BaseService {
@@ -42,7 +42,8 @@ class SendQuoteService extends BaseService {
 
       final message = Message()
         ..from = Address(mail, "$firstName $lastName")
-        ..recipients.add(newMail ?? receiptQuotePresent.correoElectronico)
+        ..recipients
+            .add(newMail ?? receiptQuotePresent.cliente?.correoElectronico)
         ..subject =
             'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'
         ..html =
@@ -71,7 +72,7 @@ class SendQuoteService extends BaseService {
     List<Habitacion> rooms =
         habitaciones.where((element) => !element.isFree).toList();
 
-    var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
+    var message = "*Estimad@ ${comprobante.cliente?.nombre}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
@@ -154,7 +155,7 @@ class SendQuoteService extends BaseService {
   }
 
   Future<String> generateMessageWhatsAppGroup(Cotizacion comprobante) async {
-    var message = "*Estimad@ ${comprobante.nombreHuesped}*," + "\n";
+    var message = "*Estimad@ ${comprobante.cliente?.nombre}*," + "\n";
     message +=
         "Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.";
     message += "\n\n";

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'colors_helpers.dart';
+
 class DesktopColors {
   //Colors Widget
   static Color cardColor = Color.fromARGB(255, 47, 42, 51);
@@ -56,4 +58,11 @@ class DesktopColors {
   //more...
   static Color cashSeason = const Color.fromRGBO(139, 195, 74, 1);
   static Color errorColor = const Color.fromARGB(255, 197, 19, 7);
+
+  //Tarifiko Version 2.0.0
+  static Color colorPrimary1 = HexColor.fromHex("#2c3c46");
+  static Color colorPrimary2 = HexColor.fromHex("#2e8799");
+  static Color colorPrimary3 = HexColor.fromHex("#30addb");
+  static Color colorPrimary4 = HexColor.fromHex("#f05556");
+  static Color colorPrimary5 = HexColor.fromHex("#f2981b");
 }

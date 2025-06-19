@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 
-import '../database/dao/usuario_dao.dart';
-import '../database/database.dart';
-import '../utils/encrypt/encrypter.dart';
-import '../utils/shared_preferences/preferences.dart';
+import '../../database/dao/usuario_dao.dart';
+import '../../database/database.dart';
+import '../../utils/encrypt/encrypter.dart';
+import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
 class AuthService extends BaseService {
@@ -14,7 +14,7 @@ class AuthService extends BaseService {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
       users = await usuarioDao.getList(
-        nombre: userName,
+        username: userName,
         id: userId,
       );
       db.close();
@@ -117,8 +117,10 @@ class AuthService extends BaseService {
 
     try {
       final db = AppDatabase();
-      int response = await db.updateImageUser(userId, username, intId);
-      success = response != 1;
+      final usuarioDao = UsuarioDao(db);
+      UsuarioTableData user = UsuarioTableData(id: userId, imageId: intId);
+      bool response = await usuarioDao.updat3(user);
+      success = response;
       db.close();
     } catch (e) {
       print(e);
@@ -127,15 +129,16 @@ class AuthService extends BaseService {
     return success;
   }
 
-  Future<List<UsuarioData>> getUsers(String search, bool empty) async {
-    List<UsuarioData> users = [];
+  Future<List<UsuarioTableData>> getUsers(String search, bool empty) async {
+    List<UsuarioTableData> users = [];
 
     try {
       final db = AppDatabase();
+      final usuarioDao = UsuarioDao(db);
       if (empty) {
-        users = await db.getListUser(userId);
+        users = await usuarioDao.getList();
       } else {
-        users = await db.getUsersSearch(search, userId);
+        users = await usuarioDao.getList(username: search);
       }
       db.close();
     } catch (e) {
@@ -145,16 +148,16 @@ class AuthService extends BaseService {
     return users;
   }
 
-  Future<bool> saveUsers(UsuarioData? user) async {
+  Future<bool> saveUsers(UsuarioTableData? user) async {
     final database = AppDatabase();
 
     try {
-      await database.into(database.usuario).insert(
-            UsuarioCompanion.insert(
+      await database.into(database.usuarioTable).insert(
+            UsuarioTableCompanion.insert(
               username: Value(user?.username ?? ''),
               password: Value(user?.password ?? ''),
               rol: Value(user?.rol ?? ''),
-              status: const Value("ACTIVO"),
+              estatus: const Value("registrado"),
             ),
           );
       await database.close();

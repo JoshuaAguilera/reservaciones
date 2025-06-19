@@ -10,11 +10,11 @@ import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/services/base_service.dart';
+import 'package:generador_formato/view-models/services/base_service.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 
-import '../database/database.dart';
+import '../../database/database.dart';
 
 class TarifaService extends BaseService {
   Future<String> saveBaseTariff(TarifaBaseInt tarifaBase) async {
@@ -27,9 +27,9 @@ class TarifaService extends BaseService {
 
       await database.transaction(
         () async {
-          TarifaBaseData response =
-              await database.into(database.tarifaBase).insertReturning(
-                    TarifaBaseCompanion.insert(
+          TarifaBaseTableData response =
+              await database.into(database.tarifaBaseTable).insertReturning(
+                    TarifaBaseTableCompanion.insert(
                       code: Value(codeBase),
                       descIntegrado: Value(tarifaBase.descIntegrado),
                       withAuto: Value(tarifaBase.withAuto),
@@ -43,8 +43,8 @@ class TarifaService extends BaseService {
                   );
 
           for (var element in tarifaBase.tarifas!) {
-            await database.into(database.tarifa).insert(
-                  TarifaCompanion.insert(
+            await database.into(database.tarifaTable).insert(
+                  TarifaTableCompanion.insert(
                     code: Value(codeBase),
                     categoria: Value(element.categoria),
                     fecha: Value(now),
@@ -74,8 +74,8 @@ class TarifaService extends BaseService {
                 (secondTariff?.tarifaMenores7a12 ?? 0) +
                     (tarifaBase.upgradeMenor ?? 0);
 
-            await database.into(database.tarifa).insert(
-                  TarifaCompanion.insert(
+            await database.into(database.tarifaTable).insert(
+                  TarifaTableCompanion.insert(
                     code: Value(codeBase),
                     categoria: Value(tipoHabitacion
                         .where((element) =>
@@ -133,8 +133,8 @@ class TarifaService extends BaseService {
       await database.transaction(
         () async {
           for (var element in periodos) {
-            await database.into(database.periodo).insert(
-                  PeriodoCompanion.insert(
+            await database.into(database.periodoTable).insert(
+                  PeriodoTableCompanion.insert(
                     code: codePeriod,
                     fecha: Value(now),
                     fechaFinal: Value(element.fechaFinal),
@@ -151,8 +151,8 @@ class TarifaService extends BaseService {
           }
 
           if (!withBaseTariff) {
-            await database.into(database.tarifa).insert(
-                  TarifaCompanion.insert(
+            await database.into(database.tarifaTable).insert(
+                  TarifaTableCompanion.insert(
                     code: Value(codeTariff),
                     categoria: Value(tarifaVR.categoria),
                     fecha: Value(now),
@@ -163,8 +163,8 @@ class TarifaService extends BaseService {
                     tarifaAdultoTPL: Value(tarifaVR.tarifaAdulto3),
                   ),
                 );
-            await database.into(database.tarifa).insert(
-                  TarifaCompanion.insert(
+            await database.into(database.tarifaTable).insert(
+                  TarifaTableCompanion.insert(
                     code: Value(codeTariff),
                     categoria: Value(tarifaVPM.categoria),
                     fecha: Value(now),
@@ -186,8 +186,8 @@ class TarifaService extends BaseService {
             if (element.forCash ?? false) {
               if ((element.tarifas ?? []).isNotEmpty) {
                 for (var tariff in element.tarifas!) {
-                  await database.into(database.tarifa).insert(
-                        TarifaCompanion.insert(
+                  await database.into(database.tarifaTable).insert(
+                        TarifaTableCompanion.insert(
                           code: Value(codeSeasonCash),
                           categoria: Value(tariff.categoria),
                           fecha: Value(now),
@@ -202,8 +202,8 @@ class TarifaService extends BaseService {
               }
             }
 
-            await database.into(database.temporada).insert(
-                  TemporadaCompanion.insert(
+            await database.into(database.temporadaTable).insert(
+                  TemporadaTableCompanion.insert(
                     code: codeSeason,
                     nombre: element.nombre ?? '',
                     codeTarifa: Value(
@@ -221,8 +221,8 @@ class TarifaService extends BaseService {
                 );
           }
 
-          await database.into(database.tarifaRack).insert(
-                TarifaRackCompanion.insert(
+          await database.into(database.tarifaRackTable).insert(
+                TarifaRackTableCompanion.insert(
                   code: codeRack,
                   fecha: Value(now),
                   codePeriodo: Value(codePeriod),
@@ -274,8 +274,8 @@ class TarifaService extends BaseService {
           }
 
           for (var element in periodos) {
-            await database.into(database.periodo).insert(
-                  PeriodoCompanion.insert(
+            await database.into(database.periodoTable).insert(
+                  PeriodoTableCompanion.insert(
                     code: oldRegister.codePeriod ?? oldRegister.code ?? '',
                     fecha: Value(oldRegister.fechaRegistro),
                     fechaFinal: Value(element.fechaFinal),
@@ -293,8 +293,8 @@ class TarifaService extends BaseService {
 
           if (!withBaseTariff) {
             if (!withPastBaseTariff) {
-              await database.into(database.tarifa).insert(
-                    TarifaCompanion.insert(
+              await database.into(database.tarifaTable).insert(
+                    TarifaTableCompanion.insert(
                       code: Value(codeTariff),
                       categoria: Value(tarifaVR.categoria),
                       fecha: Value(now),
@@ -305,8 +305,8 @@ class TarifaService extends BaseService {
                       tarifaAdultoTPL: Value(tarifaVR.tarifaAdulto3),
                     ),
                   );
-              await database.into(database.tarifa).insert(
-                    TarifaCompanion.insert(
+              await database.into(database.tarifaTable).insert(
+                    TarifaTableCompanion.insert(
                       code: Value(codeTariff),
                       categoria: Value(tarifaVPM.categoria),
                       fecha: Value(now),
@@ -321,7 +321,7 @@ class TarifaService extends BaseService {
               await database.updateTariff(
                 codeTariff: oldRegister.code ?? '',
                 id: oldRegister.tarifas!.first.id,
-                tarifaUpdate: TarifaCompanion(
+                tarifaUpdate: TarifaTableCompanion(
                   tarifaAdultoSGLoDBL: Value(tarifaVR.tarifaAdulto1a2),
                   tarifaMenores7a12: Value(tarifaVR.tarifaMenores7a12),
                   tarifaPaxAdicional: Value(tarifaVR.tarifaPaxAdicional),
@@ -332,7 +332,7 @@ class TarifaService extends BaseService {
               await database.updateTariff(
                 codeTariff: oldRegister.code ?? '',
                 id: oldRegister.tarifas!.last.id,
-                tarifaUpdate: TarifaCompanion(
+                tarifaUpdate: TarifaTableCompanion(
                   tarifaAdultoSGLoDBL: Value(tarifaVPM.tarifaAdulto1a2),
                   tarifaMenores7a12: Value(tarifaVPM.tarifaMenores7a12),
                   tarifaPaxAdicional: Value(tarifaVPM.tarifaPaxAdicional),
@@ -382,7 +382,7 @@ class TarifaService extends BaseService {
                 for (var tarifa in element.tarifas!) {
                   if (tarifa.id != null && tarifa.code != codeTariff) {
                     database.updateTariff(
-                      tarifaUpdate: TarifaCompanion(
+                      tarifaUpdate: TarifaTableCompanion(
                         tarifaAdultoSGLoDBL: Value(tarifa.tarifaAdulto1a2),
                         tarifaAdultoTPL: Value(tarifa.tarifaAdulto3),
                         tarifaAdultoCPLE: Value(tarifa.tarifaAdulto4),
@@ -394,8 +394,8 @@ class TarifaService extends BaseService {
                     );
                   } else {
                     applyNewCashTariff = true;
-                    await database.into(database.tarifa).insert(
-                          TarifaCompanion.insert(
+                    await database.into(database.tarifaTable).insert(
+                          TarifaTableCompanion.insert(
                             code: Value(codeSeasonCash),
                             categoria: Value(tarifa.categoria),
                             fecha: Value(now),
@@ -416,7 +416,7 @@ class TarifaService extends BaseService {
               if (applyNewCashTariff) codeSeasonTariff = codeSeasonCash;
 
               await database.updateSeason(
-                tempUpdate: TemporadaCompanion(
+                tempUpdate: TemporadaTableCompanion(
                   nombre: Value(element.nombre ?? ''),
                   codeTarifa: Value(codeSeasonTariff),
                   estanciaMinima: Value(element.estanciaMinima),
@@ -431,8 +431,8 @@ class TarifaService extends BaseService {
             if (isCash) {
               if ((element.tarifas ?? []).isNotEmpty) {
                 for (var tariff in element.tarifas!) {
-                  await database.into(database.tarifa).insert(
-                        TarifaCompanion.insert(
+                  await database.into(database.tarifaTable).insert(
+                        TarifaTableCompanion.insert(
                           code: Value(codeSeasonCash),
                           categoria: Value(tariff.categoria),
                           fecha: Value(now),
@@ -447,8 +447,8 @@ class TarifaService extends BaseService {
               }
             }
 
-            await database.into(database.temporada).insert(
-                  TemporadaCompanion.insert(
+            await database.into(database.temporadaTable).insert(
+                  TemporadaTableCompanion.insert(
                     code: oldRegister.codeSeason ?? oldRegister.code ?? '',
                     nombre: element.nombre ?? '',
                     codeTarifa: Value(
@@ -467,7 +467,7 @@ class TarifaService extends BaseService {
           }
 
           await database.updateTariffRack(
-            tarifaUpdate: TarifaRackCompanion(
+            tarifaUpdate: TarifaRackTableCompanion(
               colorIdentificacion:
                   Value("#${colorIdentificativo.toHexString()}"),
               nombreRack: Value(name),
@@ -502,7 +502,7 @@ class TarifaService extends BaseService {
               [];
       await database.transaction(
         () async {
-          TarifaBaseData tarifaBaseNueva = TarifaBaseData(
+          TarifaBaseTableData tarifaBaseNueva = TarifaBaseTableData(
             id: tarifaBase.id!,
             descIntegrado: tarifaBase.descIntegrado,
             nombre: tarifaBase.nombre,
@@ -551,7 +551,7 @@ class TarifaService extends BaseService {
                 .id;
 
             await tarifaDao.updateForBaseTariff(
-              tarifaData: TarifaCompanion(
+              tarifaData: TarifaTableCompanion(
                 tarifaAdultoSGLoDBL: Value(saveTariff?.tarifaAdulto1a2),
                 tarifaPaxAdicional: Value(saveTariff?.tarifaPaxAdicional),
                 tarifaMenores7a12: Value(saveTariff?.tarifaMenores7a12),
@@ -571,7 +571,7 @@ class TarifaService extends BaseService {
           }
           for (var element in tarifasRegister) {
             await tarifaDao.updateForBaseTariff(
-              tarifaData: TarifaCompanion(
+              tarifaData: TarifaTableCompanion(
                 tarifaAdultoCPLE: Value(element.tarifaAdulto4),
                 tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
                 tarifaAdultoTPL: Value(element.tarifaAdulto3),
@@ -648,7 +648,7 @@ class TarifaService extends BaseService {
 
   Future<List<RegistroTarifa>> getTarifasBD() async {
     List<RegistroTarifa> tarifasRegistradas = [];
-    List<TarifaRackData> tarifas = [];
+    List<TarifaRackTableData> tarifas = [];
 
     print("Recargando tarifas");
 
@@ -754,12 +754,12 @@ class TarifaService extends BaseService {
     return response;
   }
 
-  Future<Politica?> getTariffPolicy() async {
-    Politica? tariffPolicy;
+  Future<PoliticaTableData?> getTariffPolicy() async {
+    PoliticaTableData? tariffPolicy;
     final db = AppDatabase();
 
     try {
-      List<Politica> resp = await db.getTariffPolicy();
+      List<PoliticaTableData> resp = await db.getTariffPolicy();
       if (resp.isNotEmpty) tariffPolicy = resp.first;
       await db.close();
     } catch (e) {
@@ -770,15 +770,15 @@ class TarifaService extends BaseService {
     return tariffPolicy;
   }
 
-  Future<bool> saveTariffPolicy(Politica? policy) async {
+  Future<bool> saveTariffPolicy(PoliticaTableData? policy) async {
     final database = AppDatabase();
 
     try {
       if (policy?.id != 0) {
         await database.updateTariffPolicy(politica: policy!, id: policy.id);
       } else {
-        await database.into(database.politicas).insert(
-              PoliticasCompanion.insert(
+        await database.into(database.politicaTable).insert(
+              PoliticaTableCompanion.insert(
                 fechaActualizacion: Value(DateTime.now()),
                 intervaloHabitacionGratuita:
                     Value(policy?.intervaloHabitacionGratuita ?? 0),

@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../database/database.dart';
-import '../models/cotizacion_model.dart';
-import '../models/habitacion_model.dart';
-import '../models/registro_tarifa_model.dart';
-import '../models/tarifa_x_dia_model.dart';
-import '../res/helpers/utility.dart';
+import '../../database/database.dart';
+import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_x_dia_model.dart';
+import '../../res/helpers/utility.dart';
 import '../services/generador_doc_service.dart';
 import 'tarifario_provider.dart';
 

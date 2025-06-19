@@ -5,19 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/database.dart';
 import '../models/imagen_model.dart';
-import '../providers/cotizacion_provider.dart';
-import '../providers/dahsboard_provider.dart';
-import '../providers/habitacion_provider.dart';
-import '../providers/tarifario_provider.dart';
-import '../providers/usuario_provider.dart';
+import '../view-models/providers/cotizacion_provider.dart';
+import '../view-models/providers/dahsboard_provider.dart';
+import '../view-models/providers/habitacion_provider.dart';
+import '../view-models/providers/tarifario_provider.dart';
+import '../view-models/providers/usuario_provider.dart';
 import '../res/helpers/constants.dart';
 import '../res/helpers/desktop_colors.dart';
 import '../res/helpers/utility.dart';
 import '../res/ui/buttons.dart';
 import '../res/ui/show_snackbar.dart';
 import '../res/ui/text_styles.dart';
-import '../services/auth_service.dart';
-import '../services/image_service.dart';
+import '../view-models/services/auth_service.dart';
+import '../view-models/services/image_service.dart';
 import '../utils/shared_preferences/preferences.dart';
 import '../utils/widgets/form_widgets.dart';
 import 'home_view.dart';
@@ -229,11 +229,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
       }
 
       if (!context.mounted) return;
-      UsuarioData usuario = await AuthService()
+      UsuarioTableData usuario = await AuthService()
           .savePerfil(userNameController.text, passwordController.text);
 
       if (usuario.imageId != null) {
-        ImagesTableData? imageUser =
+        ImageTableData? imageUser =
             await ImageService().getImageById(usuario.imageId!);
 
         if (imageUser != null) {

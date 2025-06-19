@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/providers/habitacion_provider.dart';
+import 'package:generador_formato/view-models/providers/habitacion_provider.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/utils/widgets/check_listtile_tariff_widget.dart';

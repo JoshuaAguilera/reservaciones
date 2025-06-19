@@ -9,7 +9,7 @@ import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/services/habitacion_service.dart';
+import 'package:generador_formato/view-models/services/habitacion_service.dart';
 import 'package:generador_formato/res/ui/progress_indicator.dart';
 import 'package:generador_formato/res/ui/textformfield_style.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
@@ -19,10 +19,10 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/periodo_model.dart';
-import '../../providers/cotizacion_provider.dart';
-import '../../providers/dahsboard_provider.dart';
-import '../../providers/usuario_provider.dart';
-import '../../services/cotizacion_service.dart';
+import '../../view-models/providers/cotizacion_provider.dart';
+import '../../view-models/providers/dahsboard_provider.dart';
+import '../../view-models/providers/usuario_provider.dart';
+import '../../view-models/services/cotizacion_service.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
@@ -98,9 +98,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
       startFlow = true;
     }
 
-    Future deleteQuote(CotizacionData quote) async {
-      if (await CotizacionService()
-          .eliminarCotizacion(quote.folioPrincipal ?? '')) {
+    Future deleteQuote(String? folio) async {
+      if (await CotizacionService().eliminarCotizacion(folio ?? '')) {
         ref
             .read(changeHistoryProvider.notifier)
             .update((state) => UniqueKey().hashCode);
@@ -115,8 +114,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
           context: context,
           duration: 3.seconds,
           title: "Elimación completada",
-          message:
-              "La cotizacion: ${quote.folioPrincipal} fue eliminada correctamente.",
+          message: "La cotizacion: $folio fue eliminada correctamente.",
         );
       } else {
         if (!mounted) return;
@@ -125,7 +123,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
           context: context,
           duration: 3.seconds,
           title: "Elimación erronea",
-          message: "Error al eliminar la cotizacion: ${quote.folioPrincipal}.",
+          message: "Error al eliminar la cotizacion: $folio.",
         );
       }
     }
@@ -395,28 +393,23 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
                                     if (!mounted) return;
 
-                                    UsuarioData autor = UsuarioData.fromJson(
-                                      jsonDecode(list[index].username ?? '{}'),
+                                    UsuarioTableData autor =
+                                        UsuarioTableData.fromJson(
+                                      jsonDecode(
+                                          list[index].creadoPor?.username ??
+                                              '{}'),
                                     );
 
                                     Cotizacion newComprobante = Cotizacion(
-                                        nombreHuesped:
-                                            list[index].nombreHuesped,
-                                        esGrupo: list[index].esGrupo,
-                                        esConcretado: list[index].esConcretado,
-                                        responsableId: autor.id,
-                                        correoElectronico:
-                                            list[index].correoElectrico,
-                                        numeroTelefonico:
-                                            list[index].numeroTelefonico,
-                                        createAt: list[index].fecha.toString(),
-                                        fechaLimite:
-                                            list[index].fechaLimite.toString(),
-                                        folioPrincipal:
-                                            list[index].folioPrincipal,
-                                        habitaciones: respHabitaciones,
-                                        id: list[index].id,
-                                        autor: autor);
+                                      creadoPor: list[index].creadoPor,
+                                      esGrupo: list[index].esGrupo,
+                                      esConcretado: list[index].esConcretado,
+                                      cliente: list[index].cliente,
+                                      folioPrincipal:
+                                          list[index].folioPrincipal,
+                                      habitaciones: respHabitaciones,
+                                      id: list[index].id,
+                                    );
 
                                     ref
                                         .read(
@@ -438,12 +431,13 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                           context: context,
                                           title: "Eliminar comprobante",
                                           contentText:
-                                              "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].nombreHuesped}?",
+                                              "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].cliente?.nombre}?",
                                           nameButtonMain: "Aceptar",
                                           otherButton: true,
                                           withLoadingProcess: true,
                                           funtionMain: () async {
-                                            await deleteQuote(list[index]);
+                                            await deleteQuote(
+                                                list[index].folioPrincipal);
                                           },
                                           nameButtonCancel: "Cancelar",
                                           withButtonCancel: true,

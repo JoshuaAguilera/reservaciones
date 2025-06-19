@@ -31,7 +31,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     bool inLastWeek = false,
     bool inLastMonth = false,
     bool onlyToday = false,
-    required List<bool> showFilter,
+    List<bool>? showFilter,
   }) async {
     final creadorAlias = alias(db.usuarioTable, 'creador');
     final cerradorAlias = alias(db.usuarioTable, 'cerrador');
@@ -122,48 +122,50 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       );
     }
 
-    Expression<bool> implementFilter = const Variable(true);
+    if (showFilter != null) {
+      Expression<bool> implementFilter = const Variable(true);
 
-    if (showFilter[1]) {
-      implementFilter = db.cotizacionTable.esGrupo.equals(true) &
-          db.cotizacionTable.esConcretado.equals(false) &
-          db.cotizacionTable.fechaLimite.isBiggerThan(
-            Variable(
-              DateTime.now(),
-            ),
-          );
+      if (showFilter[1]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
+            db.cotizacionTable.esConcretado.equals(false) &
+            db.cotizacionTable.fechaLimite.isBiggerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      if (showFilter[2]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
+            db.cotizacionTable.esConcretado.equals(false) &
+            db.cotizacionTable.fechaLimite.isBiggerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      if (showFilter[3]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
+            db.cotizacionTable.esConcretado.equals(true);
+      }
+
+      if (showFilter[4]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
+            db.cotizacionTable.esConcretado.equals(true);
+      }
+
+      if (showFilter[5]) {
+        implementFilter = db.cotizacionTable.esConcretado.equals(false) &
+            db.cotizacionTable.fechaLimite.isSmallerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      query.where(implementFilter);
     }
-
-    if (showFilter[2]) {
-      implementFilter = db.cotizacionTable.esGrupo.equals(false) &
-          db.cotizacionTable.esConcretado.equals(false) &
-          db.cotizacionTable.fechaLimite.isBiggerThan(
-            Variable(
-              DateTime.now(),
-            ),
-          );
-    }
-
-    if (showFilter[3]) {
-      implementFilter = db.cotizacionTable.esGrupo.equals(true) &
-          db.cotizacionTable.esConcretado.equals(true);
-    }
-
-    if (showFilter[4]) {
-      implementFilter = db.cotizacionTable.esGrupo.equals(false) &
-          db.cotizacionTable.esConcretado.equals(true);
-    }
-
-    if (showFilter[5]) {
-      implementFilter = db.cotizacionTable.esConcretado.equals(false) &
-          db.cotizacionTable.fechaLimite.isSmallerThan(
-            Variable(
-              DateTime.now(),
-            ),
-          );
-    }
-
-    query.where(implementFilter);
 
     OrderingTerm orderingTerm;
     switch (sortBy) {
@@ -199,7 +201,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
         esGrupo: cot.esGrupo,
         esConcretado: cot.esConcretado,
         comentarios: cot.comentarios,
-        createAt: cot.createdAt,
+        createdAt: cot.createdAt,
         creadoPor: Usuario.fromJson(creador?.toJson() ?? <String, dynamic>{}),
         cerradoPor: Usuario.fromJson(cerrador?.toJson() ?? <String, dynamic>{}),
         cliente: Cliente.fromJson(cli?.toJson() ?? <String, dynamic>{}),

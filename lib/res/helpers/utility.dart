@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/database/database.dart';
+import 'package:generador_formato/models/cotizacion_model.dart';
 import 'package:generador_formato/models/numero_cotizacion_model.dart';
 import 'package:generador_formato/models/periodo_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
@@ -120,7 +121,7 @@ class Utility {
   }
 
   static List<ReporteCotizacion> getCotizacionQuotes({
-    List<CotizacionData>? cotizaciones,
+    List<Cotizacion>? cotizaciones,
     required String filter,
     required DateTime date,
   }) {
@@ -139,8 +140,8 @@ class Utility {
             );
 
             if (cotizaciones != null) {
-              List<CotizacionData> quotesInd = cotizaciones
-                  .where((element) => element.fecha?.weekday == i)
+              List<Cotizacion> quotesInd = cotizaciones
+                  .where((element) => element.createdAt?.weekday == i)
                   .toList();
 
               for (var element in quotesInd) {
@@ -177,8 +178,8 @@ class Utility {
           );
 
           if (cotizaciones != null) {
-            List<CotizacionData> quotes = cotizaciones
-                .where((element) => element.fecha?.day == i)
+            List<Cotizacion> quotes = cotizaciones
+                .where((element) => element.createdAt?.day == i)
                 .toList();
 
             for (var element in quotes) {
@@ -212,8 +213,8 @@ class Utility {
           );
 
           if (cotizaciones != null) {
-            List<CotizacionData> quotes = cotizaciones
-                .where((element) => element.fecha?.month == i)
+            List<Cotizacion> quotes = cotizaciones
+                .where((element) => element.createdAt?.month == i)
                 .toList();
 
             for (var element in quotes) {
@@ -256,7 +257,7 @@ class Utility {
   }
 
   static List<NumeroCotizacion> getDailyQuotesReport(
-      {List<CotizacionData>? respIndToday}) {
+      {List<Cotizacion>? respIndToday}) {
     List<NumeroCotizacion> cot = [];
 
     NumeroCotizacion cotizacionesGrupales =
@@ -274,7 +275,7 @@ class Utility {
     NumeroCotizacion cotizacionesNoConcretadas =
         NumeroCotizacion(tipoCotizacion: "Cotizaciones no concretadas");
 
-    for (var element in respIndToday ?? List<CotizacionData>.empty()) {
+    for (var element in respIndToday ?? List<Cotizacion>.empty()) {
       if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
               1 &&
           !(element.esConcretado ?? false)) {
@@ -697,7 +698,7 @@ class Utility {
   }
 
   static bool showTariffByWeek(
-      List<PeriodoData>? periodos, DateTime initDayWeekGraphics) {
+      List<PeriodoTableData>? periodos, DateTime initDayWeekGraphics) {
     bool show = false;
 
     for (var element in periodos!) {
@@ -755,9 +756,9 @@ class Utility {
     return periodo;
   }
 
-  static PeriodoData getPeriodNow(
-      DateTime weekNow, List<PeriodoData>? periodos) {
-    PeriodoData dataNow = const PeriodoData(id: 0, code: "###");
+  static PeriodoTableData getPeriodNow(
+      DateTime weekNow, List<PeriodoTableData>? periodos) {
+    PeriodoTableData dataNow = const PeriodoTableData(id: 0, code: "###");
 
     for (var element in periodos!) {
       if ((element.fechaInicial!.compareTo(weekNow) >= 0 &&
@@ -776,11 +777,12 @@ class Utility {
     return dataNow;
   }
 
-  static String definePeriodNow(DateTime weekNow, List<PeriodoData>? periodos,
+  static String definePeriodNow(
+      DateTime weekNow, List<PeriodoTableData>? periodos,
       {bool compact = false}) {
     String periodo = "01 Enero a 14 Marzo";
 
-    PeriodoData periodNow = getPeriodNow(weekNow, periodos);
+    PeriodoTableData periodNow = getPeriodNow(weekNow, periodos);
     periodo = getStringPeriod(
       initDate: periodNow.fechaInicial!,
       lastDate: periodNow.fechaFinal!,
@@ -823,7 +825,7 @@ class Utility {
     return isValid;
   }
 
-  static bool defineApplyDays(PeriodoData nowPeriod, DateTime element) {
+  static bool defineApplyDays(PeriodoTableData nowPeriod, DateTime element) {
     switch (element.weekday) {
       case 1:
         return !nowPeriod.enLunes!;
@@ -845,7 +847,7 @@ class Utility {
   }
 
   static double getExpandedDayWeek(
-      double sectionDay, PeriodoData nowPeriod, DateTime element) {
+      double sectionDay, PeriodoTableData nowPeriod, DateTime element) {
     final int weekday = element.weekday;
 
     if (weekday < 1 || weekday > 7) {
@@ -883,7 +885,7 @@ class Utility {
     return isValid;
   }
 
-  static String defineStatusPeriod(PeriodoData nowPeriod) {
+  static String defineStatusPeriod(PeriodoTableData nowPeriod) {
     String status = "TERMINADA";
     DateTime nowDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -910,7 +912,7 @@ class Utility {
     return status;
   }
 
-  static double calculatePercentagePeriod(PeriodoData nowPeriod) {
+  static double calculatePercentagePeriod(PeriodoTableData nowPeriod) {
     double porcentaje = 0;
     int totalDays = 0;
     int nowTotalDays = 0;
@@ -942,7 +944,7 @@ class Utility {
     return porcentaje;
   }
 
-  static bool getRevisedActually(PeriodoData nowPeriod) {
+  static bool getRevisedActually(PeriodoTableData nowPeriod) {
     bool opacity = false;
 
     DateTime nowDate =
@@ -956,7 +958,7 @@ class Utility {
     return opacity;
   }
 
-  static Widget getIconStatusPeriod(PeriodoData nowPeriod, Color color) {
+  static Widget getIconStatusPeriod(PeriodoTableData nowPeriod, Color color) {
     Widget icon = RotatedBox(
       quarterTurns: 3,
       child: Icon(
@@ -1016,7 +1018,7 @@ class Utility {
     return weeks;
   }
 
-  static bool showTariffNow(DateTime nowDay, List<PeriodoData>? periodos) {
+  static bool showTariffNow(DateTime nowDay, List<PeriodoTableData>? periodos) {
     bool show = false;
 
     if (periodos!.any((element) =>
@@ -1024,7 +1026,7 @@ class Utility {
             (nowDay.compareTo(element.fechaFinal!) <= 0)) ||
         (nowDay.compareTo(element.fechaInicial!) == 0 ||
             nowDay.compareTo(element.fechaFinal!) == 0))) {
-      PeriodoData nowPeriod = periodos.firstWhere((element) =>
+      PeriodoTableData nowPeriod = periodos.firstWhere((element) =>
           (nowDay.compareTo(element.fechaInicial!) >= 0 &&
               (nowDay.compareTo(element.fechaFinal!) <= 0)) ||
           (nowDay.compareTo(element.fechaInicial!) == 0 ||
@@ -1108,7 +1110,7 @@ class Utility {
     }
   }
 
-  static List<Periodo> getPeriodsRegister(List<PeriodoData>? periods) {
+  static List<Periodo> getPeriodsRegister(List<PeriodoTableData>? periods) {
     List<Periodo> periodos = [];
 
     for (var element in periods!) {
@@ -1120,7 +1122,7 @@ class Utility {
     return periodos;
   }
 
-  static String defineStatusTariff(List<PeriodoData>? periodos) {
+  static String defineStatusTariff(List<PeriodoTableData>? periodos) {
     String status = "En proceso";
     int lenght = periodos!.length;
     int count = 0;
@@ -1216,7 +1218,7 @@ class Utility {
 
     if (nowRegister.tarifas == null) return 0;
 
-    TarifaData? nowTarifa = nowRegister.tarifas!
+    TarifaTableData? nowTarifa = nowRegister.tarifas!
         .where((element) => element.categoria == habitacion.categoria)
         .firstOrNull;
 
@@ -1401,7 +1403,8 @@ class Utility {
     return nowSeason;
   }
 
-  static List<Temporada> getTemporadas(List<TemporadaData>? temporadasData) {
+  static List<Temporada> getTemporadas(
+      List<TemporadaTableData>? temporadasData) {
     List<Temporada> temporadas = [];
 
     int count = 0;
@@ -1890,7 +1893,7 @@ class Utility {
     double total = 0;
 
     for (var element in tarifasFiltradas) {
-      TarifaData? selectTarifa = element.tarifa;
+      TarifaTableData? selectTarifa = element.tarifa;
       bool applyRound = !(element.modificado ?? false);
 
       if (onlyTariffVR) {
@@ -2088,12 +2091,12 @@ class Utility {
     return result.toString();
   }
 
-  static List<TemporadaData> getSeasonsForPolitics(
-    List<TemporadaData>? temporadasTarifa, {
-    Politica? politicas,
+  static List<TemporadaTableData> getSeasonsForPolitics(
+    List<TemporadaTableData>? temporadasTarifa, {
+    PoliticaTableData? politicas,
     int rooms = 0,
   }) {
-    List<TemporadaData> temporadas = [];
+    List<TemporadaTableData> temporadas = [];
 
     if (politicas != null) {
       if (rooms >= politicas.limiteHabitacionCotizacion!) {
@@ -2217,13 +2220,13 @@ class Utility {
     return false;
   }
 
-  static List<TarifaData> getTarifasData(List<Tarifa?> list,
+  static List<TarifaTableData> getTarifasData(List<Tarifa?> list,
       {bool withRound = false}) {
-    List<TarifaData> tarifas = [];
+    List<TarifaTableData> tarifas = [];
 
     for (var element in list) {
       if (withRound) {
-        tarifas.add(getRoundTariff(TarifaData(
+        tarifas.add(getRoundTariff(TarifaTableData(
           id: element?.id ?? 0,
           categoria: element?.categoria,
           code: element?.code,
@@ -2236,7 +2239,7 @@ class Utility {
           tarifaPaxAdicional: element?.tarifaPaxAdicional,
         ))!);
       } else {
-        tarifas.add(TarifaData(
+        tarifas.add(TarifaTableData(
           id: element?.id ?? 0,
           categoria: element?.categoria,
           code: element?.code,
@@ -2254,10 +2257,10 @@ class Utility {
     return tarifas;
   }
 
-  static TarifaData? getRoundTariff(TarifaData? tariff) {
-    TarifaData? roundTariff;
+  static TarifaTableData? getRoundTariff(TarifaTableData? tariff) {
+    TarifaTableData? roundTariff;
 
-    roundTariff = TarifaData(
+    roundTariff = TarifaTableData(
       id: tariff?.id ?? 0,
       categoria: tariff?.categoria,
       code: tariff?.code,

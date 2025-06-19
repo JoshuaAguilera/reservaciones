@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
-import 'package:generador_formato/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/services/tarifa_service.dart';
 import 'package:generador_formato/res/ui/inside_snackbar.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/utils/widgets/form_widgets.dart';

@@ -11,7 +11,7 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
 
   // LIST
   Future<List<UsuarioTableData>> getList({
-    String nombre = '',
+    String username = '',
     String correo = '',
     int? id,
     String estatus = 'registrado',
@@ -24,8 +24,8 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   }) {
     final query = select(db.usuarioTable);
 
-    if (nombre.isNotEmpty) {
-      query.where((u) => u.nombre.like('%$nombre%'));
+    if (username.isNotEmpty) {
+      query.where((u) => u.username.like('%$username%'));
     }
 
     if (id != null) {

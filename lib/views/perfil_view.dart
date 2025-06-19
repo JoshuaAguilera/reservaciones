@@ -5,8 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/imagen_model.dart';
-import 'package:generador_formato/providers/usuario_provider.dart';
-import 'package:generador_formato/services/auth_service.dart';
+import 'package:generador_formato/view-models/providers/usuario_provider.dart';
+import 'package:generador_formato/view-models/services/auth_service.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
@@ -410,7 +410,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       return;
     }
 
-    UsuarioData usuario = UsuarioData(
+    UsuarioTableData usuario = UsuarioTableData(
       id: userId,
       username: usernameController.text,
       nombre: firstnameController.text,

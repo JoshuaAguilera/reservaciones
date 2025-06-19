@@ -1,9 +1,9 @@
 import 'package:riverpod/riverpod.dart';
 
-import '../database/database.dart';
-import '../models/imagen_model.dart';
+import '../../database/database.dart';
+import '../../models/imagen_model.dart';
 import '../services/auth_service.dart';
-import '../utils/shared_preferences/preferences.dart';
+import '../../utils/shared_preferences/preferences.dart';
 
 final userProvider = StateProvider<UsuarioTableData>((ref) {
   return const UsuarioTableData(

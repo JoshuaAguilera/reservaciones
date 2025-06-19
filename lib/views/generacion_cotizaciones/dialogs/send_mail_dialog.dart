@@ -1,10 +1,11 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/services/cotizacion_service.dart';
+import 'package:generador_formato/view-models/services/cotizacion_service.dart';
 import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../../models/cliente_model.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/title_page.dart';
 import '../../../res/helpers/desktop_colors.dart';
@@ -147,9 +148,8 @@ class _SendMailDialogState extends State<SendMailDialog> {
                               }
 
                               bool result = await CotizacionService()
-                                  .updateCotizacion(CotizacionData(
+                                  .updateCotizacion(CotizacionTableData(
                                 id: widget.id,
-                                correoElectrico: _mailController.text,
                               ));
 
                               if (!result) {

@@ -1,11 +1,11 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../models/cliente_model.dart';
-import '../models/cotizacion_model.dart';
-import '../models/habitacion_model.dart';
+import '../../models/cliente_model.dart';
+import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
 import '../services/generador_doc_service.dart';
-import '../res/helpers/constants.dart';
+import '../../res/helpers/constants.dart';
 
 final documentQuoteIndProvider =
     FutureProvider.family<pw.Document, String>((ref, arg) async {
@@ -56,7 +56,7 @@ final documentQuoteGroupProvider =
       await GeneradorDocService().generarComprobanteCotizacionGrupal(
     habitaciones: [],
     cotizacion: Cotizacion(
-        createAt: DateTime.now(),
+        createdAt: DateTime.now(),
         cliente: Cliente(
           correoElectronico: "example@email.com",
           numeroTelefonico: "01-800-2020",

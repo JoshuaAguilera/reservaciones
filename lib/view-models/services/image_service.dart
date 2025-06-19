@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:generador_formato/models/imagen_model.dart';
-import 'package:generador_formato/services/base_service.dart';
 
-import '../database/database.dart';
-import '../res/helpers/utility.dart';
-import '../utils/shared_preferences/preferences.dart';
+import '../../database/database.dart';
+import '../../models/imagen_model.dart';
+import '../../res/helpers/utility.dart';
+import '../../utils/shared_preferences/preferences.dart';
+import 'base_service.dart';
 
 class ImageService extends BaseService {
-  Future<ImagesTableData?> getImageById(int imageId) async {
-    List<ImagesTableData> images = [];
+  Future<ImageTableData?> getImageById(int imageId) async {
+    List<ImageTableData> images = [];
 
     try {
       final db = AppDatabase();
@@ -22,14 +22,14 @@ class ImageService extends BaseService {
     return images.firstOrNull;
   }
 
-  Future<ImagesTableData?> saveImage(Imagen? imagen) async {
-    ImagesTableData? response;
+  Future<ImageTableData?> saveImage(Imagen? imagen) async {
+    ImageTableData? response;
     final database = AppDatabase();
 
     try {
-      ImagesTableData? result =
-          await database.into(database.imagesTable).insertReturningOrNull(
-                ImagesTableCompanion.insert(
+      ImageTableData? result =
+          await database.into(database.imageTable).insertReturningOrNull(
+                ImageTableCompanion.insert(
                   code: Value(imagen?.code?.toString()),
                   urlImage: Value(imagen?.urlImagen),
                 ),

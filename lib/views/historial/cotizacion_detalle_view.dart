@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/providers/cotizacion_provider.dart';
+import 'package:generador_formato/view-models/providers/cotizacion_provider.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/widgets/habitacion_item_row.dart';
@@ -12,7 +12,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';
-import '../../services/generador_doc_service.dart';
+import '../../view-models/services/generador_doc_service.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
 import '../../res/ui/text_styles.dart';
@@ -111,11 +111,14 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                         blocked: true,
                                         readOnly: true,
                                         initialValue:
-                                            cotizacion.nombreHuesped ?? '',
+                                            cotizacion.cliente?.nombre ?? '',
                                       ),
-                                      if (cotizacion.correoElectronico ==
+                                      if (cotizacion
+                                                  .cliente?.correoElectronico ==
                                               null &&
-                                          cotizacion.numeroTelefonico == null)
+                                          cotizacion
+                                                  .cliente?.numeroTelefonico ==
+                                              null)
                                         Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -125,13 +128,13 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                   .textFormFieldwithBorder(
                                                 name:
                                                     "Numero Telefonico (Contacto o WhatsApp)",
-                                                initialValue: cotizacion
-                                                        .numeroTelefonico ??
+                                                initialValue: cotizacion.cliente
+                                                        ?.numeroTelefonico ??
                                                     '',
                                                 blocked: true,
                                                 readOnly: true,
-                                                enabled: (cotizacion
-                                                            .numeroTelefonico ??
+                                                enabled: (cotizacion.cliente
+                                                            ?.numeroTelefonico ??
                                                         '')
                                                     .isNotEmpty,
                                               ),
@@ -141,13 +144,13 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                               child: TextFormFieldCustom
                                                   .textFormFieldwithBorder(
                                                 name: "Correo electronico",
-                                                initialValue: cotizacion
-                                                        .correoElectronico ??
+                                                initialValue: cotizacion.cliente
+                                                        ?.correoElectronico ??
                                                     '',
                                                 blocked: true,
                                                 readOnly: true,
-                                                enabled: (cotizacion
-                                                            .correoElectronico ??
+                                                enabled: (cotizacion.cliente
+                                                            ?.correoElectronico ??
                                                         '')
                                                     .isNotEmpty,
                                               ),
@@ -163,7 +166,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                 .textFormFieldwithBorder(
                                               name: "Fecha de registro",
                                               initialValue:
-                                                  "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.createAt!))} ${cotizacion.createAt?.substring(11, 16)}",
+                                                  "${Utility.getCompleteDate(data: cotizacion.createdAt)} ${cotizacion.createdAt?.toString().substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
@@ -179,8 +182,8 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                               initialValue: (cotizacion
                                                           .esConcretado ??
                                                       false)
-                                                  ? "${"${cotizacion.autor?.nombre} "} ${cotizacion.autor?.apellido ?? ''}"
-                                                  : "${Utility.getCompleteDate(data: DateTime.tryParse(cotizacion.fechaLimite!))} ${cotizacion.fechaLimite?.substring(11, 16)}",
+                                                  ? "${"${cotizacion.creadoPor?.nombre} "} ${cotizacion.creadoPor?.apellido ?? ''}"
+                                                  : "${Utility.getCompleteDate(data: cotizacion.fechaLimite!)} ${cotizacion.fechaLimite?.toString().substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
@@ -332,9 +335,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                   children: [
                                     if (!(cotizacion.esConcretado ?? false))
                                       if (!(DateTime.now().compareTo(
-                                              DateTime.tryParse(
-                                                      cotizacion.fechaLimite ??
-                                                          '') ??
+                                              cotizacion.fechaLimite ??
                                                   DateTime.now()) ==
                                           1))
                                         SizedBox(

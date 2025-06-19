@@ -9,8 +9,8 @@ import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/utils/widgets/custom_dropdown.dart';
 import 'package:generador_formato/utils/widgets/dialogs.dart';
 
-import '../../providers/habitacion_provider.dart';
-import '../../providers/tarifario_provider.dart';
+import '../../view-models/providers/habitacion_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';

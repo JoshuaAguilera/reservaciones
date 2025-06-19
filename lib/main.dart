@@ -4,16 +4,16 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/init_database.dart';
-import 'package:generador_formato/res/ui/themes.dart';
-import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/views/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:generador_formato/views/login_view.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:generador_formato/res/helpers/custom_scroll_behavior.dart';
 
+import 'database/init_database.dart';
+import 'res/helpers/custom_scroll_behavior.dart';
+import 'res/ui/themes.dart';
 import 'utils/shared_preferences/preferences.dart';
+import 'utils/shared_preferences/settings.dart';
+import 'views/home_view.dart';
+import 'views/login_view.dart';
 
 Future<void> main() async {
   //Compatibily Windows scale

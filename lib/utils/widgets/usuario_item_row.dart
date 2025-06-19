@@ -8,7 +8,7 @@ import 'package:generador_formato/views/usuarios/dialogs/edit_user_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../services/auth_service.dart';
+import '../../view-models/services/auth_service.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../encrypt/encrypter.dart';
@@ -29,7 +29,7 @@ class UsuarioItemRow extends StatefulWidget {
 
   final void Function()? onUpdateList;
   final bool isTable;
-  final UsuarioData usuario;
+  final UsuarioTableData usuario;
   final SidebarXController sideController;
   final int index;
 
@@ -40,7 +40,7 @@ class UsuarioItemRow extends StatefulWidget {
 class _UsuarioItemRowState extends State<UsuarioItemRow> {
   bool selected = false;
 
-  void showUpdateDialog(UsuarioData user, Brightness brightness) {
+  void showUpdateDialog(UsuarioTableData user, Brightness brightness) {
     showDialog(
       context: context,
       builder: (contextBL) {
@@ -72,7 +72,7 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
     );
   }
 
-  void showDeleteDialog(UsuarioData user) {
+  void showDeleteDialog(UsuarioTableData user) {
     showDialog(
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
@@ -158,7 +158,7 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
 }
 
 class _TableRowUser extends ConsumerStatefulWidget {
-  final UsuarioData usuario;
+  final UsuarioTableData usuario;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final SidebarXController sideController;
@@ -285,7 +285,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
 }
 
 class _ListTileUser extends ConsumerStatefulWidget {
-  final UsuarioData usuario;
+  final UsuarioTableData usuario;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final SidebarXController sideController;

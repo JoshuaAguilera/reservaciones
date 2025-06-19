@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../database/database.dart';
-import '../models/numero_cotizacion_model.dart';
-import '../models/reporte_Cotizacion_model.dart';
+import '../../database/database.dart';
+import '../../models/cotizacion_model.dart';
+import '../../models/numero_cotizacion_model.dart';
+import '../../models/reporte_Cotizacion_model.dart';
 import '../services/cotizacion_service.dart';
-import '../res/helpers/utility.dart';
+import '../../res/helpers/utility.dart';
 
 final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
@@ -32,14 +33,14 @@ final cotizacionesDiariasProvider =
 });
 
 final ultimaCotizacionesProvider =
-    FutureProvider.family<List<CotizacionTableData>, String>((ref, arg) async {
+    FutureProvider.family<List<Cotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await CotizacionService().getCotizacionesRecientes();
   return list;
 });
 
 final allQuotesProvider =
-    FutureProvider.family<List<CotizacionTableData>, String>((ref, arg) async {
+    FutureProvider.family<List<Cotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final list = await CotizacionService().getCotizaciones();
   return list;

@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/imagen_model.dart';
-import 'package:generador_formato/providers/usuario_provider.dart';
-import 'package:generador_formato/services/image_service.dart';
+import 'package:generador_formato/view-models/providers/usuario_provider.dart';
+import 'package:generador_formato/view-models/services/image_service.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../database/database.dart';
-import '../../services/auth_service.dart';
+import '../../view-models/services/auth_service.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../shared_preferences/settings.dart';
@@ -486,7 +486,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                 usuarioId: usuario.id,
                                               );
 
-                                              ImagesTableData? response =
+                                              ImageTableData? response =
                                                   await ImageService()
                                                       .saveImage(newImage);
 

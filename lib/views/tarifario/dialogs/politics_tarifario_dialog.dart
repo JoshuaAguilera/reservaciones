@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:icons_plus/icons_plus.dart';
-import '../../../services/tarifa_service.dart';
+import '../../../view-models/services/tarifa_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/show_snackbar.dart';
 import '../../../res/ui/title_page.dart';
@@ -16,7 +16,7 @@ class PoliticsTarifarioDialog extends StatefulWidget {
   const PoliticsTarifarioDialog({Key? key, required this.policy})
       : super(key: key);
 
-  final Politica? policy;
+  final PoliticaTableData? policy;
 
   @override
   State<PoliticsTarifarioDialog> createState() =>
@@ -181,7 +181,7 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
                     isLoading: inProcess,
                     sizeText: 12.5,
                     onPressed: () async {
-                      Politica savePolicy = Politica(
+                      PoliticaTableData savePolicy = PoliticaTableData(
                         id: widget.policy?.id ?? 0,
                         intervaloHabitacionGratuita: intervaloHabitacion,
                         fechaActualizacion: DateTime.now(),

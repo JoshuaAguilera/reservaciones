@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
-import '../../providers/tarifario_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';

@@ -67,7 +67,7 @@ class dynamicWidget {
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
-    PeriodoData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
+    PeriodoTableData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
 
     for (var element in weekNowSegment) {
       if (Utility.defineApplyDays(nowPeriod, element)) {

@@ -9,12 +9,12 @@ import 'package:sidebarx/sidebarx.dart';
 import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/registro_tarifa_model.dart';
-import '../../providers/cotizacion_provider.dart';
-import '../../providers/dahsboard_provider.dart';
-import '../../providers/habitacion_provider.dart';
-import '../../providers/notificacion_provider.dart';
-import '../../providers/tarifario_provider.dart';
-import '../../providers/usuario_provider.dart';
+import '../../view-models/providers/cotizacion_provider.dart';
+import '../../view-models/providers/dahsboard_provider.dart';
+import '../../view-models/providers/habitacion_provider.dart';
+import '../../view-models/providers/notificacion_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
+import '../../view-models/providers/usuario_provider.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/my_sidebar_x_item.dart';
@@ -363,13 +363,12 @@ class _SideBarState extends ConsumerState<SideBar> {
                       .read(selectedModeViewProvider.notifier)
                       .update((state) => <bool>[true, false, false]);
                   ref.read(userProvider.notifier).update(
-                        (state) => const UsuarioData(
+                        (state) => const UsuarioTableData(
                           id: 0,
                           username: "",
                           password: "",
                           rol: "",
                           correoElectronico: "",
-                          passwordCorreo: "",
                         ),
                       );
 

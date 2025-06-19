@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/providers/configuracion_provider.dart';
+import 'package:generador_formato/view-models/providers/configuracion_provider.dart';
 import 'package:generador_formato/res/ui/custom_widgets.dart';
 import 'package:generador_formato/res/ui/progress_indicator.dart';
 import 'package:generador_formato/res/helpers/constants.dart';

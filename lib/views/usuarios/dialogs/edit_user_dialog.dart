@@ -6,7 +6,7 @@ import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
-import '../../../services/auth_service.dart';
+import '../../../view-models/services/auth_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/custom_widgets.dart';
 import '../../../res/ui/inside_snackbar.dart';
@@ -26,9 +26,9 @@ class EditUserDialog extends StatefulWidget {
     this.onUpdateList,
   }) : super(key: key);
 
-  final UsuarioData? usuario;
-  final void Function(UsuarioData?)? onInsert;
-  final void Function(UsuarioData?)? onUpdate;
+  final UsuarioTableData? usuario;
+  final void Function(UsuarioTableData?)? onInsert;
+  final void Function(UsuarioTableData?)? onUpdate;
   final void Function()? onUpdateList;
 
   @override
@@ -118,15 +118,15 @@ class _EditUserDialogState extends State<EditUserDialog> {
       return;
     }
 
-    UsuarioData user = widget.usuario != null
-        ? UsuarioData(
+    UsuarioTableData user = widget.usuario != null
+        ? UsuarioTableData(
             id: widget.usuario!.id,
             username: nameController.text,
             correoElectronico: mailController.text,
             telefono: numberController.text,
             rol: rol,
           )
-        : UsuarioData(
+        : UsuarioTableData(
             id: 0,
             username: nameController.text,
             password:

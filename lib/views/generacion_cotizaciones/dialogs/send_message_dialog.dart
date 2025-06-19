@@ -9,8 +9,8 @@ import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
-import '../../../services/cotizacion_service.dart';
-import '../../../services/send_quote_service.dart';
+import '../../../view-models/services/cotizacion_service.dart';
+import '../../../view-models/services/send_quote_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/inside_snackbar.dart';
 import '../../../res/ui/title_page.dart';
@@ -257,9 +257,9 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                               setState(() {});
 
                               bool result = await CotizacionService()
-                                  .updateCotizacion(CotizacionData(
+                                  .updateCotizacion(CotizacionTableData(
                                 id: widget.cotizacionId,
-                                numeroTelefonico: _newNumberController.text,
+                                // numeroTelefonico: _newNumberController.text,
                               ));
 
                               if (!result) {

@@ -37,7 +37,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   final _controller = SuperTooltipController();
   GlobalKey _containerKey = GlobalKey();
   TooltipDirection position = TooltipDirection.down;
-  late PeriodoData nowPeriod;
+  late PeriodoTableData nowPeriod;
 
   Future<bool>? _willPopCallback() async {
     if (_controller.isVisible) {

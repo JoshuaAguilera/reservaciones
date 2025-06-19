@@ -6,8 +6,8 @@ import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/providers/cotizacion_provider.dart';
-import 'package:generador_formato/providers/habitacion_provider.dart';
+import 'package:generador_formato/view-models/providers/cotizacion_provider.dart';
+import 'package:generador_formato/view-models/providers/habitacion_provider.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
@@ -21,8 +21,8 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../models/periodo_model.dart';
 import '../../models/registro_tarifa_model.dart';
 import '../../models/temporada_model.dart';
-import '../../providers/tarifario_provider.dart';
-import '../../providers/usuario_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
+import '../../view-models/providers/usuario_provider.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/helpers/constants.dart';
@@ -1112,7 +1112,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   void getTarifasSelect(
     List<RegistroTarifa> list,
     Habitacion habitacion,
-    List<TarifaData> tarifasProvisionales,
+    List<TarifaTableData> tarifasProvisionales,
     double descuentoProvisional, {
     bool onlyCategory = false,
     bool updateToCash = false,
@@ -1366,7 +1366,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     List<RegistroTarifa> list,
     int days,
     String categoria,
-    List<TarifaData> tarifasProvisionales,
+    List<TarifaTableData> tarifasProvisionales,
     double descuentoProvisional,
     bool isGroup,
     bool useCashSeason, {

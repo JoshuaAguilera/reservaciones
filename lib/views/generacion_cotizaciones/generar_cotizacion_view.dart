@@ -8,8 +8,8 @@ import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/providers/cotizacion_provider.dart';
-import 'package:generador_formato/providers/habitacion_provider.dart';
+import 'package:generador_formato/view-models/providers/cotizacion_provider.dart';
+import 'package:generador_formato/view-models/providers/habitacion_provider.dart';
 import 'package:generador_formato/res/ui/progress_indicator.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/views/generacion_cotizaciones/habitaciones_list.dart';
@@ -26,10 +26,10 @@ import 'package:pdf/widgets.dart' as pw;
 
 import '../../models/notificacion_model.dart';
 import '../../models/prefijo_telefonico_model.dart';
-import '../../providers/dahsboard_provider.dart';
-import '../../providers/notificacion_provider.dart';
-import '../../providers/tarifario_provider.dart';
-import '../../services/cotizacion_service.dart';
+import '../../view-models/providers/dahsboard_provider.dart';
+import '../../view-models/providers/notificacion_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
+import '../../view-models/services/cotizacion_service.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/helpers/constants.dart';
 import '../../utils/shared_preferences/settings.dart';
@@ -183,11 +183,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       receiptQuotePresent.id = id;
       receiptQuotePresent.folioPrincipal = folio;
       receiptQuotePresent.esGrupo = typeQuote;
-      receiptQuotePresent.numeroTelefonico =
-          (cotizacion.numeroTelefonico ?? '').isEmpty
-              ? ""
-              : prefijoInit.prefijo.replaceAll("+", "") +
-                  (cotizacion.numeroTelefonico ?? '');
+      // receiptQuotePresent.numeroTelefonico =
+      //     (cotizacion.numeroTelefonico ?? '').isEmpty
+      //         ? ""
+      //         : prefijoInit.prefijo.replaceAll("+", "") +
+      //             (cotizacion.numeroTelefonico ?? '');
       receiptQuotePresent.habitaciones = [];
       for (var element in habitaciones) {
         receiptQuotePresent.habitaciones!.add(element.CopyWith());
@@ -226,7 +226,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
         id: notificaciones.length + 1,
         level: "info",
         content:
-            "Nueva cotización a nombre de ${receiptQuotePresent.nombreHuesped ?? ''} ha sido registrada.",
+            "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombre ?? ''} ha sido registrada.",
         title: "Nueva cotización registrada",
       );
 
@@ -323,11 +323,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           name: "Nombre completo",
                                           msgError: "Campo requerido*",
                                           controller: TextEditingController(
-                                              text: cotizacion.nombreHuesped ??
-                                                  ''),
+                                              text:
+                                                  cotizacion.cliente?.nombre ??
+                                                      ''),
                                           isRequired: true,
                                           onChanged: (p0) =>
-                                              cotizacion.nombreHuesped = p0,
+                                              cotizacion.cliente?.nombre = p0,
                                           onUnfocus: () => setState(() {}),
                                         ),
                                         Row(
@@ -364,15 +365,15 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     "Numero Telefonico (Contacto o WhatsApp)",
                                                 msgError: "Campo requerido*",
                                                 controller: TextEditingController(
-                                                    text: cotizacion
-                                                            .numeroTelefonico ??
+                                                    text: cotizacion.cliente
+                                                            ?.numeroTelefonico ??
                                                         ''),
                                                 isNumeric: true,
                                                 isDecimal: false,
                                                 isRequired: false,
                                                 onChanged: (p0) {
-                                                  cotizacion.numeroTelefonico =
-                                                      p0;
+                                                  cotizacion.cliente
+                                                      ?.numeroTelefonico = p0;
                                                 },
                                                 onUnfocus: () =>
                                                     setState(() {}),
@@ -385,13 +386,13 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 name: "Correo electronico",
                                                 msgError: "Campo requerido*",
                                                 controller: TextEditingController(
-                                                    text: cotizacion
-                                                            .correoElectronico ??
+                                                    text: cotizacion.cliente
+                                                            ?.correoElectronico ??
                                                         ''),
                                                 isRequired: false,
                                                 onChanged: (p0) {
-                                                  cotizacion.correoElectronico =
-                                                      p0;
+                                                  cotizacion.cliente
+                                                      ?.correoElectronico = p0;
                                                 },
                                                 onUnfocus: () =>
                                                     setState(() {}),
@@ -572,9 +573,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
                     showCancel: (habitaciones.isNotEmpty ||
-                        (cotizacion.nombreHuesped?.isNotEmpty ?? false) ||
-                        (cotizacion.correoElectronico?.isNotEmpty ?? false) ||
-                        (cotizacion.numeroTelefonico?.isNotEmpty ?? false)),
+                        (cotizacion.cliente?.nombre?.isNotEmpty ?? false) ||
+                        (cotizacion.cliente?.correoElectronico?.isNotEmpty ??
+                            false) ||
+                        (cotizacion.cliente?.numeroTelefonico?.isNotEmpty ??
+                            false)),
                     onCancel: () {
                       ref
                           .read(cotizacionProvider.notifier)

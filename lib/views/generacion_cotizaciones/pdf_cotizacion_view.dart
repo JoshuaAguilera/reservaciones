@@ -16,8 +16,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../providers/cotizacion_provider.dart';
-import '../../services/send_quote_service.dart';
+import '../../view-models/providers/cotizacion_provider.dart';
+import '../../view-models/services/send_quote_service.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/helpers/desktop_colors.dart';
@@ -46,7 +46,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
 
   @override
   void initState() {
-    selectMail = widget.cotizacion.correoElectronico ?? '';
+    selectMail = widget.cotizacion.cliente?.correoElectronico ?? '';
     isLoadingDoc = true;
     super.initState();
   }
@@ -201,7 +201,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
     setState(() => isSendingEmail = true);
     String messageError = "";
 
-    if ((widget.cotizacion.correoElectronico ?? '').isEmpty &&
+    if ((widget.cotizacion.cliente?.correoElectronico ?? '').isEmpty &&
         newMail == null) {
       showDialogMail(messageError);
       return;
@@ -253,7 +253,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
             selectMail = p0;
 
             if (p1) {
-              widget.cotizacion.correoElectronico = p0;
+              widget.cotizacion.cliente?.correoElectronico = p0;
               ref
                   .read(changeHistoryProvider.notifier)
                   .update((state) => UniqueKey().hashCode);
@@ -323,12 +323,12 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
       context: context,
       builder: (context) => SendMessageDialog(
         message: message,
-        nombreHuesped: widget.cotizacion.nombreHuesped ?? '',
-        numberContact: widget.cotizacion.numeroTelefonico ?? '',
+        nombreHuesped: widget.cotizacion.cliente?.nombre ?? '',
+        numberContact: widget.cotizacion.cliente?.numeroTelefonico ?? '',
         cotizacionId: widget.cotizacion.id ?? 0,
         saveFunction: (p0) {
           print(p0);
-          widget.cotizacion.numeroTelefonico = p0;
+          widget.cotizacion.cliente?.numeroTelefonico = p0;
           setState(() {});
         },
       ),

@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/res/ui/custom_widgets.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
+import '../../models/cotizacion_model.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/utility.dart';
+import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/text_styles.dart';
+import '../shared_preferences/preferences.dart';
 
 class ComprobanteItemRow extends StatefulWidget {
   const ComprobanteItemRow({
@@ -22,7 +23,7 @@ class ComprobanteItemRow extends StatefulWidget {
     this.delay = 0,
   }) : super(key: key);
 
-  final CotizacionData cotizacion;
+  final Cotizacion cotizacion;
   final int index;
   final double screenWidth;
   final void Function()? seeReceipt;
@@ -118,7 +119,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   index: widget.index + 1, color: colorTextIndice),
           title: TextStyles.titleText(
               color: colorText,
-              text: "Huesped: ${widget.cotizacion.nombreHuesped}",
+              text: "Huesped: ${widget.cotizacion.cliente?.nombre}",
               size: widget.isQuery ? 13 : 16),
           subtitle: Wrap(
             spacing: 10,
@@ -127,15 +128,16 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   "Folio: ", widget.cotizacion.folioPrincipal!,
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
-                  "${Utility.getCompleteDate(data: widget.cotizacion.fecha)} ${widget.cotizacion.fecha?.toIso8601String().substring(11, 16)}",
+                  "${Utility.getCompleteDate(data: widget.cotizacion.createdAt)} ${widget.cotizacion.createdAt?.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               if (!isConcrete)
                 TextStyles.TextAsociative("Vigencia: ",
                     "${Utility.getCompleteDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
                     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
-              if ((widget.cotizacion.correoElectrico ?? '').isNotEmpty)
-                TextStyles.TextAsociative(
-                    "Correo: ", widget.cotizacion.correoElectrico ?? '',
+              if ((widget.cotizacion.cliente?.correoElectronico ?? '')
+                  .isNotEmpty)
+                TextStyles.TextAsociative("Correo: ",
+                    widget.cotizacion.cliente?.correoElectronico ?? '',
                     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
             ],
           ),
@@ -147,9 +149,9 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                 CustomWidgets.buildItemGraphics(
                   icon: CupertinoIcons.person_alt_circle,
                   color: colorText!,
-                  label: widget.cotizacion.username != null
-                      ? UsuarioData.fromJson(jsonDecode(
-                                  widget.cotizacion.username ?? "{}"))
+                  label: widget.cotizacion.creadoPor?.username != null
+                      ? UsuarioTableData.fromJson(jsonDecode(
+                                  widget.cotizacion.creadoPor?.nombre ?? "{}"))
                               .username ??
                           ''
                       : 'Not Found',

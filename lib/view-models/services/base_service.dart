@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
-import '../utils/shared_preferences/settings.dart';
+import '../../utils/shared_preferences/preferences.dart';
+import '../../utils/shared_preferences/settings.dart';
 
 class BaseService extends ChangeNotifier {
   var userName = Preferences.username;

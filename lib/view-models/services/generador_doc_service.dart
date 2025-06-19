@@ -1,14 +1,14 @@
 import 'package:flutter/services.dart';
-import 'package:generador_formato/res/helpers/constants.dart';
-import 'package:generador_formato/res/helpers/files_templates.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/models/cotizacion_model.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../res/helpers/constants.dart';
+import '../../res/helpers/files_templates.dart';
+import '../../res/helpers/utility.dart';
+import '../../res/ui/text_styles.dart';
+import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
 class GeneradorDocService extends BaseService {
@@ -151,7 +151,7 @@ class GeneradorDocService extends BaseService {
           ]);
         },
         build: (context) => [
-          pw.Text("ESTIMAD@: ${cotizacion.nombreHuesped}", style: styleBold),
+          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombre}", style: styleBold),
           pw.SizedBox(height: 13),
           pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
           pw.SizedBox(height: 14),
@@ -253,8 +253,9 @@ class GeneradorDocService extends BaseService {
                 style: styleLigth)
           else
             pw.Text(
-                "${cotizacion.autor?.nombre ?? ''} ${cotizacion.autor?.apellido ?? ''}",
-                style: styleLigth),
+              "${cotizacion.creadoPor?.nombre ?? ''} ${cotizacion.creadoPor?.apellido ?? ''}",
+              style: styleLigth,
+            ),
         ],
         footer: (context) {
           return FilesTemplate.footerPage(
@@ -426,25 +427,26 @@ class GeneradorDocService extends BaseService {
         },
         build: (context) => [
           pw.SizedBox(height: 8),
-          pw.Text("ESTIMAD@: ${cotizacion.nombreHuesped}", style: styleBold),
+          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombre}", style: styleBold),
           pw.SizedBox(height: 3),
-          if ((cotizacion.numeroTelefonico ?? '').isNotEmpty)
-            pw.Text("TELÉFONO: ${cotizacion.numeroTelefonico}",
+          if ((cotizacion.cliente?.numeroTelefonico ?? '').isNotEmpty)
+            pw.Text("TELÉFONO: ${cotizacion.cliente?.numeroTelefonico}",
                 style: styleBold),
-          if ((cotizacion.numeroTelefonico ?? '').isNotEmpty)
+          if ((cotizacion.cliente?.numeroTelefonico ?? '').isNotEmpty)
             pw.SizedBox(height: 3),
-          if ((cotizacion.correoElectronico ?? '').isNotEmpty)
+          if ((cotizacion.cliente?.correoElectronico ?? '').isNotEmpty)
             pw.Row(
               children: [
                 pw.Text("CORREO: ", style: styleBold),
                 pw.UrlLink(
-                  child: pw.Text("${cotizacion.correoElectronico}",
+                  child: pw.Text("${cotizacion.cliente?.correoElectronico}",
                       style: styleUrlLink),
-                  destination: "mailto:${cotizacion.correoElectronico}",
+                  destination:
+                      "mailto:${cotizacion.cliente?.correoElectronico}",
                 )
               ],
             ),
-          if ((cotizacion.correoElectronico ?? '').isNotEmpty)
+          if ((cotizacion.cliente?.correoElectronico ?? '').isNotEmpty)
             pw.SizedBox(height: 3),
           pw.Text(
               "FECHAS DE ESTANCIA: ${Utility.getPeriodReservation(habitaciones)}",
@@ -568,8 +570,9 @@ class GeneradorDocService extends BaseService {
                 style: styleLigth)
           else
             pw.Text(
-                "${cotizacion.autor?.nombre ?? ''} ${cotizacion.autor?.apellido ?? ''}",
-                style: styleLigth),
+              "${cotizacion.cerradoPor?.nombre ?? ''} ${cotizacion.creadoPor?.apellido ?? ''}",
+              style: styleLigth,
+            ),
           pw.SizedBox(height: 48),
           pw.Padding(
             padding: const pw.EdgeInsets.only(left: -70),

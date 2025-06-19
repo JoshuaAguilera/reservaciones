@@ -6,24 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/notificacion_model.dart';
-import 'package:generador_formato/providers/dahsboard_provider.dart';
-import 'package:generador_formato/res/ui/custom_widgets.dart';
-import 'package:generador_formato/res/helpers/constants.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/res/helpers/desktop_colors.dart';
-import 'package:generador_formato/models/numero_cotizacion_model.dart';
-import 'package:generador_formato/models/reporte_Cotizacion_model.dart';
-import 'package:generador_formato/providers/notificacion_provider.dart';
-import 'package:generador_formato/res/ui/progress_indicator.dart';
-import 'package:generador_formato/utils/widgets/item_rows.dart';
-import 'package:generador_formato/utils/widgets/notification_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../providers/usuario_provider.dart';
+import '../models/cotizacion_model.dart';
+import '../models/notificacion_model.dart';
+import '../models/numero_cotizacion_model.dart';
+import '../models/reporte_Cotizacion_model.dart';
+import '../res/helpers/constants.dart';
+import '../res/helpers/desktop_colors.dart';
+import '../res/helpers/utility.dart';
+import '../res/ui/custom_widgets.dart';
+import '../res/ui/progress_indicator.dart';
+import '../utils/widgets/item_rows.dart';
+import '../utils/widgets/notification_widget.dart';
+import '../view-model/providers/dahsboard_provider.dart';
+import '../view-models/providers/notificacion_provider.dart';
+import '../view-models/providers/usuario_provider.dart';
 import '../utils/shared_preferences/settings.dart';
 import '../utils/widgets/cotizacion_item_row.dart';
 import '../utils/widgets/custom_dropdown.dart';
@@ -160,7 +160,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       countQuote =
                           Utility.getDailyQuotesReport(respIndToday: list);
 
-                      List<CotizacionData> quotesAboutExpire =
+                      List<Cotizacion> quotesAboutExpire =
                           list.where((element) {
                         if (element.fechaLimite == null) return false;
 
@@ -321,7 +321,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         icon: Icon(
                           Icons.settings,
                           color: brightness == Brightness.light
-                              ? DesktopColors.cerulean
+                              ? DesktopColors.colorPrimary1
                               : DesktopColors.azulUltClaro,
                           size: 26,
                         ),

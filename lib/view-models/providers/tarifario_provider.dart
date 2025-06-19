@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/services/tarifa_service.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../models/tarifa_base_model.dart';
+import '../../models/tarifa_base_model.dart';
 
 final editTarifaProvider =
     StateProvider<RegistroTarifa>((ref) => RegistroTarifa());

@@ -12,7 +12,7 @@ import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/res/ui/text_styles.dart';
 
 import '../../../models/tarifa_x_dia_model.dart';
-import '../../../providers/habitacion_provider.dart';
+import '../../../view-models/providers/habitacion_provider.dart';
 import '../../../utils/widgets/custom_dropdown.dart';
 import '../../../utils/widgets/item_rows.dart';
 import '../../../utils/widgets/select_buttons_widget.dart';
@@ -42,7 +42,7 @@ class _ManagerTariffGroupDialogState
   List<TarifaXDia> roomTariffs = [];
   TarifaXDia? selectTariff;
   String temporadaSelect = '';
-  TarifaData? saveTariffUnknow;
+  TarifaTableData? saveTariffUnknow;
   Temporada? temporadaDataSelect;
   List<String> categorias = ["VISTA A LA RESERVA", "VISTA PARCIAL AL MAR"];
   List<Map<String, Color>> categoriesColor = [
@@ -272,9 +272,9 @@ class _ManagerTariffGroupDialogState
                             selectButton: selectCategory,
                             buttons: categoriesColor,
                             onPressed: (index) {
-                              TarifaData? saveIntTariff;
+                              TarifaTableData? saveIntTariff;
                               if (isUnknow || isFree) {
-                                saveIntTariff = TarifaData(
+                                saveIntTariff = TarifaTableData(
                                   categoria: tipoHabitacion[
                                       categorias.indexOf(selectCategory)],
                                   code: selectTariff?.code ??
@@ -380,7 +380,8 @@ class _ManagerTariffGroupDialogState
 
                                     selectTariff?.tarifas ??= [];
 
-                                    TarifaData _selectTariff = TarifaData(
+                                    TarifaTableData _selectTariff =
+                                        TarifaTableData(
                                       id: 0,
                                       categoria: _selectCategory,
                                       tarifaAdultoCPLE: double.tryParse(
@@ -590,14 +591,15 @@ class _ManagerTariffGroupDialogState
     double? descuentoProvisional,
   }) {
     temporadaSelect = seasonSelect?.nombre ?? 'No aplicar';
-    TarifaData? selectCategoryTariff = ((selectRoom?.useCashSeason ?? false)
-            ? selectTariff?.tarifasBase
-            : selectTariff?.tarifas)
-        ?.where((element) =>
-            element.categoria ==
-            tipoHabitacion[categorias.indexOf(selectCategory)])
-        .toList()
-        .firstOrNull;
+    TarifaTableData? selectCategoryTariff =
+        ((selectRoom?.useCashSeason ?? false)
+                ? selectTariff?.tarifasBase
+                : selectTariff?.tarifas)
+            ?.where((element) =>
+                element.categoria ==
+                tipoHabitacion[categorias.indexOf(selectCategory)])
+            .toList()
+            .firstOrNull;
 
     double descuento = seasonSelect?.porcentajePromocion ??
         descuentoProvisional ??

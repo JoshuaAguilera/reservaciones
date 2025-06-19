@@ -15,9 +15,9 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
-import '../../providers/cotizacion_provider.dart';
-import '../../providers/tarifario_provider.dart';
-import '../../services/tarifa_service.dart';
+import '../../view-models/providers/cotizacion_provider.dart';
+import '../../view-models/providers/tarifario_provider.dart';
+import '../../view-models/services/tarifa_service.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/ui/title_page.dart';
@@ -130,7 +130,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
       );
     }
 
-    void _dialogConfigTariffs(Politica? data) {
+    void _dialogConfigTariffs(PoliticaTableData? data) {
       showDialog(
         context: context,
         builder: (context) => PoliticsTarifarioDialog(policy: data),
@@ -139,7 +139,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
           if (value != null) {
             ref
                 .read(saveTariffPolityProvider.notifier)
-                .update((state) => value as Politica);
+                .update((state) => value as PoliticaTableData);
 
             ref
                 .read(changeTariffPolicyProvider.notifier)

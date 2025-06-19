@@ -9,8 +9,8 @@ import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/providers/habitacion_provider.dart';
-import 'package:generador_formato/providers/usuario_provider.dart';
+import 'package:generador_formato/view-models/providers/habitacion_provider.dart';
+import 'package:generador_formato/view-models/providers/usuario_provider.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/custom_widgets.dart';
 import 'package:generador_formato/res/ui/inside_snackbar.dart';
@@ -28,7 +28,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart' as acd;
 
 import '../../../models/tarifa_model.dart';
-import '../../../providers/tarifario_provider.dart';
+import '../../../view-models/providers/tarifario_provider.dart';
 import '../../../res/ui/progress_indicator.dart';
 import '../../../utils/widgets/select_buttons_widget.dart';
 
@@ -64,7 +64,7 @@ class _ManagerTariffDayWidgetState
     {"VISTA A LA RESERVA": DesktopColors.vistaReserva},
     {"VISTA PARCIAL AL MAR": DesktopColors.vistaParcialMar},
   ];
-  TarifaData? saveTariff;
+  TarifaTableData? saveTariff;
   bool startFlow = false;
 
   Map<String, RegistroTarifa?>? selectItemTariff;
@@ -75,9 +75,9 @@ class _ManagerTariffDayWidgetState
   List<Map<String, RegistroTarifa?>> itemsTariff = [];
   List<Temporada>? seasons;
   Temporada? selectSeason;
-  List<TarifaData>? tariffs;
-  TarifaData? selectTariff;
-  List<TarifaData>? baseTariffs;
+  List<TarifaTableData>? tariffs;
+  TarifaTableData? selectTariff;
+  List<TarifaTableData>? baseTariffs;
 
   List<String> promociones = ["No aplicar"];
   final TextEditingController _tarifaAdultoController =
@@ -128,10 +128,10 @@ class _ManagerTariffDayWidgetState
     }
   }
 
-  void getSaveTariff({List<TarifaData>? selectTarifas}) {
-    TarifaData? detectTarifa = (selectTarifas ??
+  void getSaveTariff({List<TarifaTableData>? selectTarifas}) {
+    TarifaTableData? detectTarifa = (selectTarifas ??
             tariffs ??
-            List<TarifaData>.empty())
+            List<TarifaTableData>.empty())
         .where(
             (element) => element.categoria != (selectTariff?.categoria ?? ""))
         .toList()
@@ -140,7 +140,7 @@ class _ManagerTariffDayWidgetState
     if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
   }
 
-  void _insertTariffForm(TarifaData? tarifa) {
+  void _insertTariffForm(TarifaTableData? tarifa) {
     _tarifaAdultoController.text =
         (tarifa?.tarifaAdultoSGLoDBL ?? '').toString();
     _tarifaAdultoTPLController.text =
@@ -586,7 +586,7 @@ class _ManagerTariffDayWidgetState
                             buttons: categoriesColor,
                             width: 350,
                             onPressed: (index) {
-                              TarifaData? selectTariff =
+                              TarifaTableData? selectTariff =
                                   (isFreeTariff || isUnknow)
                                       ? null
                                       : tariffs
@@ -598,7 +598,7 @@ class _ManagerTariffDayWidgetState
                                           )
                                           .copyWith();
 
-                              TarifaData saveIntTariff = TarifaData(
+                              TarifaTableData saveIntTariff = TarifaTableData(
                                 categoria: tipoHabitacion[
                                     categorias.indexOf(selectCategory)],
                                 code: selectTariff?.code ??
@@ -717,7 +717,7 @@ class _ManagerTariffDayWidgetState
                           bool isModificado =
                               widget.tarifaXDia.modificado ?? false;
 
-                          TarifaData? tariffVG =
+                          TarifaTableData? tariffVG =
                               (isModificado ? baseTariffs : tariffs)
                                   ?.where((element) =>
                                       element.categoria ==
@@ -725,7 +725,7 @@ class _ManagerTariffDayWidgetState
                                           categorias.indexOf(selectCategory)])
                                   .firstOrNull;
 
-                          TarifaData? tariffVPM =
+                          TarifaTableData? tariffVPM =
                               (isModificado ? baseTariffs : tariffs)
                                   ?.where((element) =>
                                       element.categoria !=
@@ -973,7 +973,7 @@ class _ManagerTariffDayWidgetState
                 return;
               }
 
-              TarifaData? newTarifa = selectTariff;
+              TarifaTableData? newTarifa = selectTariff;
 
               if (selectTariff != null &&
                   (saveTariff!.categoria == selectTariff?.categoria)) {
@@ -986,10 +986,11 @@ class _ManagerTariffDayWidgetState
                   tariffs![indexFirstTariff] = selectTariff!;
                 }
 
-                newTarifa = (tariffs ?? List<TarifaData>.empty()).firstWhere(
-                    (element) => element.categoria != saveTariff!.categoria);
+                newTarifa = (tariffs ?? List<TarifaTableData>.empty())
+                    .firstWhere((element) =>
+                        element.categoria != saveTariff!.categoria);
 
-                TarifaData? secondTariff = TarifaData(
+                TarifaTableData? secondTariff = TarifaTableData(
                   id: newTarifa.id,
                   code: newTarifa.code,
                   categoria: newTarifa.categoria,
@@ -1017,7 +1018,7 @@ class _ManagerTariffDayWidgetState
                   _saveTariffNoDefined(selectTariff, secondTariff);
                 }
               } else if (selectTariff != null) {
-                selectTariff = TarifaData(
+                selectTariff = TarifaTableData(
                   id: newTarifa?.id ?? 0,
                   code: newTarifa?.code ?? widget.tarifaXDia.code ?? '',
                   categoria:
@@ -1051,7 +1052,7 @@ class _ManagerTariffDayWidgetState
               }
 
               if (selectTariff == null) {
-                TarifaData newTariff = TarifaData(
+                TarifaTableData newTariff = TarifaTableData(
                   id: newTarifa?.id ?? categorias.indexOf(selectCategory),
                   code: newTarifa?.code ?? '',
                   categoria: tipoHabitacion[categorias.indexOf(selectCategory)],
@@ -1074,7 +1075,7 @@ class _ManagerTariffDayWidgetState
                   saveTariff = selectTariff!.copyWith();
                 }
 
-                TarifaData secondTariff = TarifaData(
+                TarifaTableData secondTariff = TarifaTableData(
                   id: categorias.indexOf(categorias
                       .firstWhere((element) => element != selectCategory)),
                   // code: saveTariff?.code ?? '',
@@ -1300,7 +1301,7 @@ class _ManagerTariffDayWidgetState
           double.tryParse(_tarifaPaxAdicionalController.text)) return true;
 
       if (widget.tarifaXDia.tarifas == null) return false;
-      TarifaData? secondTariff = tariffs
+      TarifaTableData? secondTariff = tariffs
           ?.where((element) => element.categoria == saveTariff!.categoria)
           .firstOrNull;
       if (secondTariff == null) return false;
@@ -1342,7 +1343,7 @@ class _ManagerTariffDayWidgetState
       }
 
       if (tariffs == null) return false;
-      TarifaData? secondTariff = tariffs
+      TarifaTableData? secondTariff = tariffs
           ?.where((element) =>
               element.categoria ==
               tipoHabitacion[categorias.indexOf(selectCategory)])
@@ -1385,7 +1386,8 @@ class _ManagerTariffDayWidgetState
     return isValid;
   }
 
-  void _saveTariffNoDefined(TarifaData? firstTariff, TarifaData? secondTariff) {
+  void _saveTariffNoDefined(
+      TarifaTableData? firstTariff, TarifaTableData? secondTariff) {
     ref
         .read(descuentoProvisionalProvider.notifier)
         .update((state) => double.parse(_descuentoController.text));

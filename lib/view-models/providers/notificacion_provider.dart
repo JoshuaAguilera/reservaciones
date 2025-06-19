@@ -1,6 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 
-import '../models/notificacion_model.dart';
+import '../../models/notificacion_model.dart';
 
 class NotificacionProvider extends StateNotifier<List<Notificacion>> {
   NotificacionProvider() : super([]);

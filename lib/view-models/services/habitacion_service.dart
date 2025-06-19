@@ -1,18 +1,17 @@
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-
-import '../res/helpers/utility.dart';
+import '../../database/database.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/tarifa_x_dia_model.dart';
+import '../../res/helpers/utility.dart';
 import 'base_service.dart';
 
 class HabitacionService extends BaseService {
   List<Habitacion> habitaciones = [];
 
   Future<List<Habitacion>> getHabitacionesByFolio(String folio) async {
-    final database = AppDatabase();
+    final db = AppDatabase();
 
     try {
-      List<HabitacionData> resp = await database.getHabitacionesByFolio(folio);
+      List<HabitacionTableData> resp = await db.getHabitacionesByFolio(folio);
 
       for (var element in resp) {
         habitaciones.add(Habitacion(
@@ -75,20 +74,20 @@ class HabitacionService extends BaseService {
         element.totalVPM = element.totalRealVPM! - element.descuentoVPM!;
       }
 
-      await database.close();
+      await db.close();
       return habitaciones;
     } catch (e) {
       print(e);
-      await database.close();
+      await db.close();
       return List.empty();
     }
   }
 
-  Future<List<HabitacionData>> getHabitacionesIndTimePeriod(
+  Future<List<HabitacionTableData>> getHabitacionesIndTimePeriod(
       DateTime initTime, DateTime lastTime) async {
     final dataBase = AppDatabase();
     try {
-      List<HabitacionData> resp =
+      List<HabitacionTableData> resp =
           await dataBase.getHabitacionesByPeriod(initTime, lastTime);
 
       await dataBase.close();
@@ -98,10 +97,10 @@ class HabitacionService extends BaseService {
     }
   }
 
-  Future<List<HabitacionData>> getHabitacionesActuales() async {
+  Future<List<HabitacionTableData>> getHabitacionesActuales() async {
     final dataBase = AppDatabase();
     try {
-      List<HabitacionData> resp = await dataBase.getHabitacionesHoy();
+      List<HabitacionTableData> resp = await dataBase.getHabitacionesHoy();
 
       await dataBase.close();
       return resp;
@@ -110,10 +109,10 @@ class HabitacionService extends BaseService {
     }
   }
 
-  Future<List<HabitacionData>> getAllHabitaciones() async {
+  Future<List<HabitacionTableData>> getAllHabitaciones() async {
     final dataBase = AppDatabase();
     try {
-      List<HabitacionData> resp = await dataBase.getAllHabitaciones();
+      List<HabitacionTableData> resp = await dataBase.getAllHabitaciones();
 
       await dataBase.close();
       return resp;
