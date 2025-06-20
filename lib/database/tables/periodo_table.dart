@@ -1,16 +1,17 @@
 import 'package:drift/drift.dart';
 
+import '../../res/helpers/general_helpers.dart';
+import 'tarifa_rack_table.dart';
+
 class PeriodoTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text()();
-  DateTimeColumn get fecha => dateTime().nullable()();
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
   DateTimeColumn get fechaInicial => dateTime().nullable()();
   DateTimeColumn get fechaFinal => dateTime().nullable()();
-  BoolColumn get enLunes => boolean().nullable()();
-  BoolColumn get enMartes => boolean().nullable()();
-  BoolColumn get enMiercoles => boolean().nullable()();
-  BoolColumn get enJueves => boolean().nullable()();
-  BoolColumn get enViernes => boolean().nullable()();
-  BoolColumn get enSabado => boolean().nullable()();
-  BoolColumn get enDomingo => boolean().nullable()();
+  TextColumn get diasActivo => text().map(const StringListConverter())();
+  IntColumn get tarifaRackInt =>
+      integer().nullable().references(TarifaRackTable, #id)();
+  TextColumn get tarifaRack => text().nullable()();
 }

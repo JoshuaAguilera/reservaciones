@@ -38,8 +38,8 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
         P.tarifa_adulto_c_p_l_e AS tarifaAdultoCPLE,
         p.tarifa_menores7a12 AS tarifaMenores7a12,
         p.tarifa_pax_adicional AS tarifaPaxAdicional
-      FROM tarifa_base c
-      LEFT JOIN tarifa p 
+      FROM tarifa_base_table c
+      LEFT JOIN tarifa_table p 
         ON c.id = p.tarifa_padre_id
         ${tarifaBaseId != null ? 'WHERE c.id = ?' : ''}
         ${tarifaPadreId != null ? 'WHERE c.tarifa_padre_id = ?' : ''}

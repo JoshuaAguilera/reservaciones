@@ -1,7 +1,11 @@
 import 'package:drift/drift.dart';
 
 class ImageTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text().nullable()();
-  TextColumn get urlImage => text().nullable()();
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
+  TextColumn get nombre => text().nullable()();
+  TextColumn get ruta => text().nullable()();
+  TextColumn get url => text().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
 }

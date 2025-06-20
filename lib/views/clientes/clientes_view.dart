@@ -15,7 +15,7 @@ class ClientesView extends StatelessWidget {
         child: Column(
           children: [
             const TitlePage(
-              title: "Registro de clientes",
+              title: "Registro de Clientes",
               subtitle:
                   "Asegure la información personal de sus clientes para llevar un historico de sus cotizaciones.",
               textOverflow: TextOverflow.clip,

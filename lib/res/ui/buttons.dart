@@ -440,6 +440,7 @@ class Buttons {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(16),
             elevation: elevation ?? 4,
             backgroundColor: color ?? DesktopColors.ceruleanOscure,
             shape: !withRoundedBorder
@@ -454,6 +455,7 @@ class Buttons {
                   ),
           ),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icons != null && !isLoading)
@@ -478,7 +480,7 @@ class Buttons {
               if (child != null)
                 Expanded(child: child)
               else
-                Expanded(
+                Flexible(
                   flex: compact ? 1 : 0,
                   child: !isBold
                       ? TextStyles.standardText(

@@ -6872,7 +6872,7 @@ class PoliticaTableCompanion extends UpdateCompanion<PoliticaTableData> {
   }
 }
 
-class $TemporadaTarifaTableTable extends TemporadaTarifaTable
+class $TemporadaTarifaTableTable extends TarifaTemporadaTable
     with TableInfo<$TemporadaTarifaTableTable, TemporadaTarifaTableData> {
   @override
   final GeneratedDatabase attachedDatabase;

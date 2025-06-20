@@ -116,27 +116,24 @@ class _SideBarState extends ConsumerState<SideBar> {
                     onTap: () {
                       widget._controller.selectIndex(0);
                     },
-                    child: SizedBox(
-                      width: 180,
-                      child: Stack(
-                        children: [
-                          const SizedBox(
-                            child: Image(
-                              image: AssetImage("assets/image/large_logo.png"),
-                              width: 180,
-                            ),
+                    child: Stack(
+                      children: [
+                        const SizedBox(
+                          child: Image(
+                            image: AssetImage("assets/image/large_logo.png"),
+                            width: 180,
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 5,
-                            child: TextStyles.standardText(
-                              text: "Versión $version",
-                              size: 9,
-                              color: Colors.white,
-                            ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 5,
+                          child: TextStyles.standardText(
+                            text: "Versión $version",
+                            size: 9,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   MySidebarXItem(

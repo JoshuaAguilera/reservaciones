@@ -353,37 +353,31 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                   title: "Periodos",
                                   topPadding: 20,
                                 ),
-                                SizedBox(
-                                  width: 190,
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: Buttons.commonButton(
-                                      icons: HeroIcons.calendar_days,
-                                      color: DesktopColors.cerulean,
-                                      text: "Agregar Periodo",
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              PeriodCalendarDialog(
-                                                  colorTariff: colorTarifa),
-                                        ).then(
-                                          (value) {
-                                            if (value != null) {
-                                              Periodo newPeriod =
-                                                  value as Periodo;
-                                              _addPeriod(
-                                                newPeriod.fechaInicial!
-                                                    .toString(),
-                                                newPeriod.fechaFinal!
-                                                    .toString(),
-                                              );
-                                            }
-                                          },
-                                        );
+                                Buttons.commonButton(
+                                  icons: HeroIcons.calendar_days,
+                                  color: DesktopColors.cerulean,
+                                  text: "Agregar Periodo",
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          PeriodCalendarDialog(
+                                              colorTariff: colorTarifa),
+                                    ).then(
+                                      (value) {
+                                        if (value != null) {
+                                          Periodo newPeriod =
+                                              value as Periodo;
+                                          _addPeriod(
+                                            newPeriod.fechaInicial!
+                                                .toString(),
+                                            newPeriod.fechaFinal!
+                                                .toString(),
+                                          );
+                                        }
                                       },
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 ),
                                 Padding(
                                   padding:

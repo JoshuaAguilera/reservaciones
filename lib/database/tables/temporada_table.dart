@@ -1,13 +1,19 @@
 import 'package:drift/drift.dart';
 
+import 'tarifa_rack_table.dart';
+
 class TemporadaTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text()();
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
+  TextColumn get tipo => text()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
   TextColumn get nombre => text()();
-  DateTimeColumn get fecha => dateTime().nullable()();
   IntColumn get estanciaMinima => integer().nullable()();
-  RealColumn get porcentajePromocion => real().nullable()();
-  TextColumn get codeTarifa => text().nullable()();
-  BoolColumn get forGroup => boolean().nullable()();
-  BoolColumn get forCash => boolean().nullable()();
+  RealColumn get descuento => real().nullable()();
+  RealColumn get ocupMin => real().nullable()();
+  RealColumn get ocupMax => real().nullable()();
+  IntColumn get tarifaRackInt =>
+      integer().nullable().references(TarifaRackTable, #id)();
+  TextColumn get tarifaRack => text().nullable()();
 }

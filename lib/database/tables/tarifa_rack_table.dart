@@ -1,12 +1,14 @@
 import 'package:drift/drift.dart';
 
+import 'usuario_table.dart';
+
 class TarifaRackTable extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text()();
-  DateTimeColumn get fecha => dateTime().nullable()();
-  TextColumn get nombreRack => text().nullable()();
-  TextColumn get colorIdentificacion => text().nullable()();
-  TextColumn get codeTemporada => text().nullable()();
-  TextColumn get codePeriodo => text().nullable()();
-  IntColumn get usuarioId => integer().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
+  TextColumn get nombre => text().nullable()();
+  TextColumn get color => text().nullable()();
+  IntColumn get creadoPorInt =>
+      integer().nullable().references(UsuarioTable, #id)();
+  TextColumn get creadoPor => text().nullable()();
 }

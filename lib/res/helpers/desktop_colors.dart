@@ -60,9 +60,9 @@ class DesktopColors {
   static Color errorColor = const Color.fromARGB(255, 197, 19, 7);
 
   //Tarifiko Version 2.0.0
-  static Color colorPrimary1 = HexColor.fromHex("#2c3c46");
-  static Color colorPrimary2 = HexColor.fromHex("#2e8799");
-  static Color colorPrimary3 = HexColor.fromHex("#30addb");
-  static Color colorPrimary4 = HexColor.fromHex("#f05556");
-  static Color colorPrimary5 = HexColor.fromHex("#f2981b");
+  static Color primary1 = HexColor.fromHex("#2c3c46");
+  static Color primary2 = HexColor.fromHex("#2e8799");
+  static Color primary3 = HexColor.fromHex("#30addb");
+  static Color primary4 = HexColor.fromHex("#f05556");
+  static Color primary5 = HexColor.fromHex("#f2981b");
 }

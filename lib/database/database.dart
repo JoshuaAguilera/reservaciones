@@ -13,19 +13,25 @@ import 'dao/tarifa_base_dao.dart';
 import 'dao/tarifa_dao.dart';
 import 'dao/tarifa_rack_dao.dart';
 import 'dao/usuario_dao.dart';
+import 'tables/categoria_table.dart';
 import 'tables/cliente_table.dart';
 import 'tables/habitacion_table.dart';
 import 'tables/cotizacion_table.dart';
 import 'tables/images_table.dart';
 import 'tables/periodo_table.dart';
 import 'tables/politicas_table.dart';
+import 'tables/reservacion_table.dart';
+import 'tables/resumen_habitacion_table.dart';
+import 'tables/rol_table.dart';
 import 'tables/tarifa_base_table.dart';
 import 'tables/tarifa_rack_table.dart';
 import 'tables/tarifa_table.dart';
 import 'tables/tarifa_x_dia_table.dart';
+import 'tables/tarifa_x_habitacion_table.dart';
 import 'tables/temporada_table.dart';
 import 'tables/temporada_tarifa_table.dart';
-import 'tables/user_activity_table.dart';
+import 'tables/notificacion_table.dart';
+import 'tables/tipo_habitacion_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
@@ -66,13 +72,19 @@ part 'database.g.dart';
     PeriodoTable,
     TemporadaTable,
     TarifaTable,
-    UserActivity,
+    NotificacionTable,
     TarifaRackTable,
     PoliticaTable,
     ImageTable,
-    TemporadaTarifaTable,
+    TarifaTemporadaTable,
     TarifaBaseTable,
     ClienteTable,
+    CategoriaTable,
+    ReservacionTable,
+    ResumenHabitacionTable,
+    RolTable,
+    TarifaXHabitacionTable,
+    TipoHabitacionTable,
   ],
   daos: [
     TarifaBaseDao,

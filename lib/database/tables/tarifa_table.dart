@@ -1,16 +1,23 @@
 import 'package:drift/drift.dart';
 import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 
+import 'categoria_table.dart';
+
 class TarifaTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get code => text().nullable()();
-  DateTimeColumn get fecha => dateTime().nullable()();
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
+  IntColumn get categoriaInt =>
+      integer().nullable().references(CategoriaTable, #id)();
   TextColumn get categoria => text().nullable()();
   RealColumn get tarifaAdultoSGLoDBL => real().nullable()();
   RealColumn get tarifaAdultoTPL => real().nullable()();
   RealColumn get tarifaAdultoCPLE => real().nullable()();
   RealColumn get tarifaMenores7a12 => real().nullable()();
+  RealColumn get tarifaMenores0a6 => real().nullable()();
   RealColumn get tarifaPaxAdicional => real().nullable()();
-  IntColumn get tarifaPadreId =>
+  IntColumn get tarifaBaseInt =>
       integer().nullable().references(TarifaBaseTable, #id)();
+  TextColumn get tarifaBase => text().nullable()();
 }

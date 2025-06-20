@@ -21,7 +21,7 @@ import '../res/ui/custom_widgets.dart';
 import '../res/ui/progress_indicator.dart';
 import '../utils/widgets/item_rows.dart';
 import '../utils/widgets/notification_widget.dart';
-import '../view-model/providers/dahsboard_provider.dart';
+import '../view-models/providers/dahsboard_provider.dart';
 import '../view-models/providers/notificacion_provider.dart';
 import '../view-models/providers/usuario_provider.dart';
 import '../utils/shared_preferences/settings.dart';
@@ -321,7 +321,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         icon: Icon(
                           Icons.settings,
                           color: brightness == Brightness.light
-                              ? DesktopColors.colorPrimary1
+                              ? DesktopColors.primary1
                               : DesktopColors.azulUltClaro,
                           size: 26,
                         ),
