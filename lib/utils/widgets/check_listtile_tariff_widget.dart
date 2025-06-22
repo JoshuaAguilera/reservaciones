@@ -39,8 +39,8 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
       context: context,
       builder: (context) => ManagerTariffSingleDialog(
         tarifaXDia: widget.tarifaXDia,
-        numDays: DateTime.parse(widget.habitacion.fechaCheckOut ?? '')
-            .difference(DateTime.parse(widget.habitacion.fechaCheckIn ?? ''))
+        numDays: DateTime.parse(widget.habitacion.checkOut ?? '')
+            .difference(DateTime.parse(widget.habitacion.checkIn ?? ''))
             .inDays,
       ),
     ).then(
@@ -124,7 +124,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXDia!.length,
+                    widget.habitacion.tarifaXHabitacion!.length,
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
                     isGroupTariff: widget.isGroupTariff,
@@ -141,7 +141,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXDia!.length,
+                    widget.habitacion.tarifaXHabitacion!.length,
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
                     isCalculateChildren: true,
@@ -165,7 +165,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXDia!.length,
+                    widget.habitacion.tarifaXHabitacion!.length,
                     descuentoProvisional:
                         widget.tarifaXDia.descuentoProvisional,
                     isGroupTariff: widget.isGroupTariff,

@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 
+import 'resumen_habitacion_model.dart';
+import 'tarifa_x_habitacion_model.dart';
+
 List<TarifaXDia> tarifasXDiaFromJson(String str) =>
     List<TarifaXDia>.from(json.decode(str).map((x) => TarifaXDia.fromJson(x)));
 
@@ -12,138 +15,105 @@ List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
     List<TarifaXDia>.from(list.map((x) => TarifaXDia.fromJson(x)));
 
 class Habitacion {
-  int? id;
-  String? folioCotizacion;
-  String? folioHabitacion;
-  String? categoria;
-  String? fechaCheckIn;
-  String? fechaCheckOut;
-  String? fecha;
+  int? idInt;
+  String? id;
+  int? cotizacionInt;
+  String? cotizacion;
+  DateTime? createdAt;
+  DateTime? checkIn;
+  DateTime? checkOut;
   int? adultos;
   int? menores0a6;
   int? menores7a12;
-  List<TarifaXDia>? tarifaXDia;
-  double? totalRealVR;
-  double? descuentoVR;
-  double? totalVR;
-  double? totalRealVPM;
-  double? descuentoVPM;
-  double? totalVPM;
+  int? paxAdic;
   int count;
-  bool isFree;
-  TarifaXDia? tarifaGrupal;
-  bool? useCashSeason;
+  bool esCortesia;
+  List<TarifaXHabitacion>? tarifaXHabitacion;
+  List<ResumenHabitacion>? resumenes;
 
   Habitacion({
+    this.idInt,
     this.id,
-    this.folioCotizacion,
-    this.categoria,
-    this.fechaCheckIn,
-    this.fechaCheckOut,
-    this.fecha,
-    this.folioHabitacion,
-    this.tarifaXDia,
+    this.cotizacion,
+    this.cotizacionInt,
+    this.checkIn,
+    this.checkOut,
+    this.createdAt,
+    this.tarifaXHabitacion,
     this.adultos,
     this.menores0a6,
     this.menores7a12,
-    this.totalRealVR,
-    this.descuentoVR,
-    this.totalVR,
-    this.totalRealVPM,
-    this.totalVPM,
-    this.descuentoVPM,
     this.count = 1,
-    this.isFree = false,
-    this.tarifaGrupal,
-    this.useCashSeason,
+    this.esCortesia = false,
+    this.paxAdic,
+    this.resumenes,
   });
 
   Habitacion CopyWith({
-    int? id,
-    String? folioHabitacion,
-    String? folioCotizacion,
-    String? categoria,
-    String? fechaCheckIn,
-    String? fechaCheckOut,
-    String? fecha,
+    int? idInt,
+    String? id,
+    int? cotizacionInt,
+    String? cotizacion,
+    DateTime? createdAt,
+    DateTime? fechaCheckIn,
+    DateTime? fechaCheckOut,
     int? adultos,
     int? menores0a6,
     int? menores7a12,
-    List<TarifaXDia>? tarifaXDia,
-    double? totalRealVR,
-    double? descuentoVR,
-    double? totalVR,
-    double? totalRealVPM,
-    double? descuentoVPM,
-    double? totalVPM,
+    int? paxAdic,
     int? count,
-    bool? isFree,
-    TarifaXDia? tarifaGrupal,
-    bool? useCashSeason,
+    bool? esCortesia,
+    List<TarifaXHabitacion>? tarifaXHabitacion,
+    List<ResumenHabitacion>? resumenes,
   }) =>
       Habitacion(
+        idInt: idInt ?? this.idInt,
         id: id ?? this.id,
-        folioHabitacion: folioHabitacion ?? this.folioHabitacion,
-        folioCotizacion: folioCotizacion ?? this.folioCotizacion,
-        categoria: categoria ?? this.categoria,
-        fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
-        fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
-        fecha: fecha ?? this.fecha,
+        cotizacionInt: cotizacionInt ?? this.cotizacionInt,
+        cotizacion: cotizacion ?? this.cotizacion,
+        createdAt: createdAt ?? this.createdAt,
+        checkIn: fechaCheckIn ?? this.checkIn,
+        checkOut: fechaCheckOut ?? this.checkOut,
         adultos: adultos ?? this.adultos,
         menores0a6: menores0a6 ?? this.menores0a6,
         menores7a12: menores7a12 ?? this.menores7a12,
-        tarifaXDia: tarifaXDia ?? this.tarifaXDia,
-        totalRealVR: totalRealVR ?? this.totalRealVR,
-        descuentoVR: descuentoVR ?? this.descuentoVR,
-        totalVR: totalVR ?? this.totalVR,
-        totalRealVPM: totalRealVR ?? this.totalRealVPM,
-        descuentoVPM: descuentoVR ?? this.descuentoVPM,
-        totalVPM: totalVR ?? this.totalVPM,
+        tarifaXHabitacion: tarifaXHabitacion ?? this.tarifaXHabitacion,
         count: count ?? this.count,
-        isFree: isFree ?? this.isFree,
-        tarifaGrupal: tarifaGrupal ?? this.tarifaGrupal,
-        useCashSeason: useCashSeason ?? this.useCashSeason,
+        esCortesia: esCortesia ?? this.esCortesia,
+        resumenes: resumenes ?? this.resumenes,
+        paxAdic: paxAdic ?? this.paxAdic,
       );
 
   Map<String, dynamic> toJson() {
     return {
+      'id_int': idInt,
       'id': id,
-      'folioHabitacion': folioHabitacion,
-      'folioCotizacion': folioCotizacion,
-      'categoria': categoria,
-      'fechaCheckIn': fechaCheckIn,
-      'fechaCheckOut': fechaCheckOut,
-      'fecha': fecha,
+      'cotizacion_int': cotizacionInt,
+      'cotizacion': cotizacion,
+      'check_in': checkIn,
+      'check_out': checkOut,
       'adultos': adultos,
       'menores0a6': menores0a6,
       'menores7a12': menores7a12,
-      'tarifaXDia': tarifaXDia,
-      'totalRealVR': totalRealVR,
-      'descuentoVR': descuentoVR,
-      'totalVR': totalVR,
-      'totalRealVPM': totalRealVPM,
-      'descuentoVPM': descuentoVPM,
-      'totalVPM': totalVPM,
+      'pax_adic': paxAdic,
       'count': count,
-      'isFree': isFree,
-      'tarifaGrupal': tarifaGrupal,
-      'useCashSeason': useCashSeason,
+      'es_cortesia': esCortesia,
     };
   }
 
   factory Habitacion.fromJson(Map<String, dynamic> json) {
     return Habitacion(
+      idInt: json['id_int'],
       id: json['id'],
-      folioHabitacion: json['folioHabitacion'],
-      folioCotizacion: json['folioCotizacion'],
-      categoria: json['categoria'],
-      fechaCheckIn: json['fechaCheckIn'],
-      fechaCheckOut: json['fechaCheckOut'],
-      fecha: json['fecha'],
+      cotizacionInt: json['cotizacion_int'],
+      cotizacion: json['cotizacion'],
+      checkIn: json['fechaCheckIn'],
+      checkOut: json['fechaCheckOut'],
+      createdAt: json['fecha'],
       adultos: json['adultos'],
       menores0a6: json['menores0a6'],
       menores7a12: json['menores7a12'],
-      tarifaXDia: json['tarifaXDia'] != null
+      tarifaXHabitacion: json['tarifaXDia'] != null
           ? json['tarifaXDia'] != '[]'
               ? listTarifasXDiaFromJson(json['tarifaXDia'])
               : List<TarifaXDia>.empty()
@@ -155,7 +125,7 @@ class Habitacion {
       descuentoVPM: json['descuentoVPM'],
       totalVPM: json['totalVPM'],
       count: json['count'],
-      isFree: json['isFree'],
+      esCortesia: json['isFree'],
       tarifaGrupal: json['tarifaGrupal'] == null
           ? null
           : TarifaXDia.fromJson(json['tarifaGrupal']),

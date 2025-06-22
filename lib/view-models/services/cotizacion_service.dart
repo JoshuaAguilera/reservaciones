@@ -43,19 +43,19 @@ class CotizacionService extends BaseService {
         () async {
           for (var element in habitaciones!) {
             if (isQuoteGroup) {
-              element.tarifaXDia!.clear();
-              int days = DateTime.parse(element.fechaCheckOut!)
-                  .difference(DateTime.parse(element.fechaCheckIn!))
+              element.tarifaXHabitacion!.clear();
+              int days = DateTime.parse(element.checkOut!)
+                  .difference(DateTime.parse(element.checkIn!))
                   .inDays;
 
               for (var ink = 0; ink < days; ink++) {
-                DateTime dateNow = DateTime.parse(element.fechaCheckOut!)
+                DateTime dateNow = DateTime.parse(element.checkOut!)
                     .add(Duration(days: ink));
                 TarifaXDia newTariff = element.tarifaGrupal!.copyWith();
                 newTariff.fecha = dateNow;
                 newTariff.dia = ink;
                 newTariff.numDays = 1;
-                element.tarifaXDia!.add(
+                element.tarifaXHabitacion!.add(
                   newTariff.copyWith(),
                 );
               }
@@ -66,20 +66,20 @@ class CotizacionService extends BaseService {
                     // categoria: Value(element.categoria),
                     fecha: DateTime.now(),
                     useCashSeason: Value(element.useCashSeason),
-                    fechaCheckIn: Value(element.fechaCheckIn),
-                    fechaCheckOut: Value(element.fechaCheckOut),
+                    fechaCheckIn: Value(element.checkIn),
+                    fechaCheckOut: Value(element.checkOut),
                     folioCotizacion: Value(folio),
                     adultos: Value(element.adultos),
                     count: Value(element.count),
                     // descuento: Value(element.descuento),
-                    folioHabitacion: Value(element.folioHabitacion),
-                    isFree: Value(element.isFree),
+                    folioHabitacion: Value(element.id),
+                    isFree: Value(element.esCortesia),
                     menores0a6: Value(element.menores0a6),
                     menores7a12: Value(element.menores7a12),
                     paxAdic: Value(0),
                     // total: Value(element.total),
                     // totalReal: Value(element.totalReal),
-                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifaXDia!)),
+                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifaXHabitacion!)),
                   ),
                 );
           }

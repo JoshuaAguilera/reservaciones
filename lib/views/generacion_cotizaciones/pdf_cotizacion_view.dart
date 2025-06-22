@@ -246,7 +246,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
       context: context,
       builder: (context) {
         return SendMailDialog(
-          id: widget.cotizacion.id ?? 0,
+          id: widget.cotizacion.idInt ?? 0,
           selectMail: selectMail,
           messageError: messageError,
           returnFunction: (p0, p1) {
@@ -293,7 +293,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
     try {
       final output = await getDownloadsDirectory();
       final file = File(
-          '${output!.path}/Comprobante de cotizacion ${widget.cotizacion.folioPrincipal} ${DateTime.now().toString().replaceAll(RegExp(r':'), "_")}.pdf');
+          '${output!.path}/Comprobante de cotizacion ${widget.cotizacion.folio} ${DateTime.now().toString().replaceAll(RegExp(r':'), "_")}.pdf');
       await file.writeAsBytes(await widget.comprobantePDF.save());
 
       final pdfUrl = Uri.file(file.path);
@@ -323,9 +323,9 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
       context: context,
       builder: (context) => SendMessageDialog(
         message: message,
-        nombreHuesped: widget.cotizacion.cliente?.nombre ?? '',
+        nombreHuesped: widget.cotizacion.cliente?.nombres ?? '',
         numberContact: widget.cotizacion.cliente?.numeroTelefonico ?? '',
-        cotizacionId: widget.cotizacion.id ?? 0,
+        cotizacionId: widget.cotizacion.idInt ?? 0,
         saveFunction: (p0) {
           print(p0);
           widget.cotizacion.cliente?.numeroTelefonico = p0;

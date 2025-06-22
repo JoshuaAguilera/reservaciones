@@ -360,7 +360,7 @@ class _SummaryControllerWidgetState
                                           for (var element in tarifasFiltradas)
                                             CustomWidgets.itemListCount(
                                               nameItem:
-                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.code == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
+                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.id == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
                                               subTitle: element.subCode != null
                                                   ? '(Mod)'
                                                   : '',
@@ -563,7 +563,7 @@ class _SummaryControllerWidgetState
   bool revisedValidTariff(Habitacion habitacion) {
     bool isInvalid = false;
 
-    for (var element in habitacion.tarifaXDia ?? List<TarifaXDia>.empty()) {
+    for (var element in habitacion.tarifaXHabitacion ?? List<TarifaXDia>.empty()) {
       if (element.tarifa == null) {
         isInvalid = true;
         break;
@@ -583,7 +583,7 @@ class _SummaryControllerWidgetState
     bool useSeasonCash = false,
   }) {
     List<Habitacion> rooms =
-        habitaciones.where((element) => !element.isFree).toList();
+        habitaciones.where((element) => !element.esCortesia).toList();
 
     bool showListDescuentosRoom = false;
     bool showListSubtotalRoom = false;
@@ -642,7 +642,7 @@ class _SummaryControllerWidgetState
                                     tarifas: element.tarifaGrupal?.tarifas,
                                   ),
                                   element,
-                                  element.tarifaXDia!.length,
+                                  element.tarifaXHabitacion!.length,
                                   getTotalRoom: true,
                                   descuentoProvisional: element
                                       .tarifaGrupal?.descuentoProvisional,
@@ -654,7 +654,7 @@ class _SummaryControllerWidgetState
                                       !(element.tarifaGrupal?.modificado ??
                                           false),
                                 ) *
-                                element.tarifaXDia!.length)
+                                element.tarifaXHabitacion!.length)
                             : (isVR
                                 ? (element.totalRealVR ?? 0)
                                 : (element.totalRealVPM ?? 0)),
@@ -684,16 +684,16 @@ class _SummaryControllerWidgetState
                   ),
                   children: [
                     for (var element in (widget.saveRooms ?? habitaciones)
-                        .where((element) => !element.isFree)
+                        .where((element) => !element.esCortesia)
                         .toList())
                       CustomWidgets.itemListCount(
                         nameItem:
-                            "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1} (${element.tarifaGrupal?.temporadaSelect?.porcentajePromocion ?? element.tarifaGrupal?.descuentoProvisional ?? 0}%)",
+                            "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1} (${element.tarifaGrupal?.temporadaSelect?.porcentajePromocion ?? element.tarifaGrupal?.descuentoProvisional ?? 0}%)",
                         count: typeQuote
                             ? -Utility.calculateDiscountTotal(
                                 [element.tarifaGrupal ?? TarifaXDia()],
                                 element,
-                                element.tarifaXDia?.length ?? 0,
+                                element.tarifaXHabitacion?.length ?? 0,
                                 typeQuote: typeQuote,
                                 onlyTariffVR: isVR,
                                 onlyTariffVPM: !isVR,
@@ -709,11 +709,11 @@ class _SummaryControllerWidgetState
                         sizeText: 11.5,
                       ),
                     for (var element in (widget.saveRooms ?? habitaciones)
-                        .where((element) => element.isFree)
+                        .where((element) => element.esCortesia)
                         .toList())
                       CustomWidgets.itemListCount(
                         nameItem:
-                            "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().firstWhere((elementInt) => elementInt.folioHabitacion == element.folioHabitacion)) + 1} (Cortesía)",
+                            "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().firstWhere((elementInt) => elementInt.id == element.id)) + 1} (Cortesía)",
                         count: typeQuote
                             ? -(Utility.calculateTotalTariffRoom(
                                   RegistroTarifa(
@@ -722,7 +722,7 @@ class _SummaryControllerWidgetState
                                     tarifas: element.tarifaGrupal?.tarifas,
                                   ),
                                   element,
-                                  element.tarifaXDia!.length,
+                                  element.tarifaXHabitacion!.length,
                                   getTotalRoom: true,
                                   descuentoProvisional: element
                                       .tarifaGrupal?.descuentoProvisional,
@@ -733,21 +733,21 @@ class _SummaryControllerWidgetState
                                       !(element.tarifaGrupal?.modificado ??
                                           false),
                                 ) *
-                                element.tarifaXDia!.length)
+                                element.tarifaXHabitacion!.length)
                             : -((isVR ? element.totalVR : element.totalVPM) ??
                                 0),
                         context: context,
                         color: Colors.green[300],
                         sizeText: 11.5,
                         onChanged: ((widget.saveRooms ?? habitaciones)
-                                    .where((element) => !element.isFree)
+                                    .where((element) => !element.esCortesia)
                                     .toList()
                                     .length <
                                 2)
                             ? null
                             : () {
                                 if ((widget.saveRooms ?? habitaciones)
-                                        .where((element) => !element.isFree)
+                                        .where((element) => !element.esCortesia)
                                         .toList()
                                         .length <
                                     3) {
@@ -755,10 +755,10 @@ class _SummaryControllerWidgetState
                                       .read(
                                           HabitacionProvider.provider.notifier)
                                       .changedFreeRoom(
-                                          element.folioHabitacion!);
+                                          element.id!);
                                 } else {
                                   String selectRoom =
-                                      "Room ${(widget.saveRooms ?? habitaciones).where((elementInt) => !elementInt.isFree).toList().indexOf((widget.saveRooms ?? habitaciones).firstWhere((elementInt) => !elementInt.isFree && elementInt.folioHabitacion == element.folioHabitacion)) + 1}";
+                                      "Room ${(widget.saveRooms ?? habitaciones).where((elementInt) => !elementInt.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).firstWhere((elementInt) => !elementInt.esCortesia && elementInt.id == element.id)) + 1}";
                                   String changedRoom = selectRoom;
 
                                   showDialog(
@@ -788,8 +788,8 @@ class _SummaryControllerWidgetState
                                                   in (widget.saveRooms ??
                                                           habitaciones)
                                                       .where((element) =>
-                                                          !element.isFree))
-                                                "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.isFree).toList().indexOf(element) + 1}"
+                                                          !element.esCortesia))
+                                                "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1}"
                                             ])
                                       ]),
                                       funtionMain: () {
@@ -806,10 +806,10 @@ class _SummaryControllerWidgetState
                                                 (widget.saveRooms ??
                                                         habitaciones)
                                                     .where((element) =>
-                                                        !element.isFree)
+                                                        !element.esCortesia)
                                                     .toList()[
                                                         int.parse(result) - 1]
-                                                    .folioHabitacion!,
+                                                    .id!,
                                                 indexRoom: (widget.saveRooms ??
                                                         habitaciones)
                                                     .indexOf(element));

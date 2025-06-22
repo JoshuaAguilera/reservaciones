@@ -194,12 +194,12 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       final cerrador = row.readTableOrNull(cerradorAlias);
       final cli = row.readTableOrNull(clienteAlias);
       return Cotizacion(
-        id: cot.id,
+        idInt: cot.id,
         cotId: cot.cotId,
-        folioPrincipal: cot.folioPrincipal,
+        folio: cot.folioPrincipal,
         fechaLimite: cot.fechaLimite,
         esGrupo: cot.esGrupo,
-        esConcretado: cot.esConcretado,
+        estatus: cot.esConcretado,
         comentarios: cot.comentarios,
         createdAt: cot.createdAt,
         creadoPor: Usuario.fromJson(creador?.toJson() ?? <String, dynamic>{}),

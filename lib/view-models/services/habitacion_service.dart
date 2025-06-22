@@ -16,28 +16,28 @@ class HabitacionService extends BaseService {
       for (var element in resp) {
         habitaciones.add(Habitacion(
           // categoria: element.categoria,
-          fechaCheckIn: element.fechaCheckIn,
-          fechaCheckOut: element.fechaCheckOut,
-          fecha: element.fecha.toString(),
-          folioHabitacion: element.folioHabitacion,
+          checkIn: element.fechaCheckIn,
+          checkOut: element.fechaCheckOut,
+          createdAt: element.fecha.toString(),
+          id: element.folioHabitacion,
           adultos: element.adultos,
           count: element.count ?? 1,
           useCashSeason: element.useCashSeason,
           // descuento: element.descuento,
           folioCotizacion: element.folioCotizacion,
-          isFree: element.isFree ?? false,
+          esCortesia: element.isFree ?? false,
           menores0a6: element.menores0a6,
           menores7a12: element.menores7a12,
-          tarifaXDia: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
+          tarifaXHabitacion: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
           // total: element.total,
           // totalReal: element.totalReal,
-          id: element.id,
+          idInt: element.id,
         ));
       }
 
       for (var element in habitaciones) {
         List<TarifaXDia> tarifasFiltradas =
-            Utility.getUniqueTariffs(element.tarifaXDia!);
+            Utility.getUniqueTariffs(element.tarifaXHabitacion!);
 
         element.totalRealVR = Utility.calculateTariffTotals(
           tarifasFiltradas,
@@ -50,7 +50,7 @@ class HabitacionService extends BaseService {
         element.descuentoVR = Utility.calculateDiscountTotal(
           tarifasFiltradas,
           element,
-          element.tarifaXDia?.length ?? 0,
+          element.tarifaXHabitacion?.length ?? 0,
           onlyTariffVR: true,
         );
 
@@ -67,7 +67,7 @@ class HabitacionService extends BaseService {
         element.descuentoVPM = Utility.calculateDiscountTotal(
           tarifasFiltradas,
           element,
-          element.tarifaXDia?.length ?? 0,
+          element.tarifaXHabitacion?.length ?? 0,
           onlyTariffVPM: true,
         );
 

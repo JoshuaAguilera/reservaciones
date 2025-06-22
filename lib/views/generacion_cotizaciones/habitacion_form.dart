@@ -65,7 +65,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   TarifaXDia tarifaLibre = TarifaXDia(
     color: DesktopColors.turquezaOscure,
     descuentoProvisional: 0,
-    code: "tariffFree",
+    id: "tariffFree",
     nombreTariff: "Tarifa Libre",
   );
   List<TarifaXDia> recoveryTariffs = [];
@@ -203,7 +203,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
                             if (!startflow) {
                               isEditing =
-                                  habitacionProvider.tarifaXDia!.isNotEmpty;
+                                  habitacionProvider.tarifaXHabitacion!.isNotEmpty;
                               if (list.isEmpty) {
                                 Future.delayed(
                                   600.ms,
@@ -220,24 +220,24 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   () => setState(() => showSaveButton = true));
 
                               _fechaEntrada = TextEditingController(
-                                  text: habitacionProvider.fechaCheckIn ??
+                                  text: habitacionProvider.checkIn ??
                                       DateTime.now()
                                           .toString()
                                           .substring(0, 10));
                               _fechaSalida = TextEditingController(
-                                  text: habitacionProvider.fechaCheckOut ??
+                                  text: habitacionProvider.checkOut ??
                                       DateTime.now()
                                           .add(const Duration(days: 1))
                                           .toString()
                                           .substring(0, 10));
 
-                              if (habitacionProvider.tarifaXDia!.any(
-                                  (element) => element.code == "tariffFree")) {
+                              if (habitacionProvider.tarifaXHabitacion!.any(
+                                  (element) => element.id == "tariffFree")) {
                                 applyFreeTariff = true;
                               }
 
                               showSwitchCashSeason = habitacionProvider
-                                      .tarifaXDia
+                                      .tarifaXHabitacion
                                       ?.any((element) =>
                                           element.temporadas?.any((element) =>
                                               element.forCash ?? false) ??
@@ -377,11 +377,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                           setState(() {});
 
                                                           habitacionProvider
-                                                                  .fechaCheckIn =
+                                                                  .checkIn =
                                                               _fechaEntrada
                                                                   .text;
                                                           habitacionProvider
-                                                                  .fechaCheckOut =
+                                                                  .checkOut =
                                                               _fechaSalida.text;
 
                                                           getTarifasSelect(
@@ -635,35 +635,35 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                 alternativeTariffInd;
 
                                             bool isVoidTariff = (applyFreeTariff ||
-                                                habitacionProvider.tarifaXDia!
+                                                habitacionProvider.tarifaXHabitacion!
                                                     .any((element) =>
-                                                        element.code!.contains(
+                                                        element.id!.contains(
                                                             "Unknow") ||
-                                                        element.code!.contains(
+                                                        element.id!.contains(
                                                             "tariffFree")));
 
                                             if (isVoidTariff) {
                                               for (var element
                                                   in preTarifasVacias) {
                                                 if (habitacionProvider
-                                                        .tarifaXDia ==
+                                                        .tarifaXHabitacion ==
                                                     null) {
                                                   continue;
                                                 }
 
-                                                if (element.code ==
+                                                if (element.id ==
                                                     (habitacionProvider
-                                                            .tarifaXDia
+                                                            .tarifaXHabitacion
                                                             ?.first
-                                                            .code ??
+                                                            .id ??
                                                         '')) {
                                                   TarifaXDia _tariff =
                                                       habitacionProvider
-                                                          .tarifaXDia!.first;
+                                                          .tarifaXHabitacion!.first;
 
                                                   element.categoria =
                                                       _tariff.categoria;
-                                                  element.code = _tariff.code;
+                                                  element.id = _tariff.id;
                                                   element.color = _tariff.color;
                                                   element.folioRoom =
                                                       _tariff.folioRoom;
@@ -672,7 +672,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                           .descuentoProvisional;
                                                   element.numDays =
                                                       _tariff.numDays;
-                                                  element.id = _tariff.id;
+                                                  element.idInt = _tariff.idInt;
                                                   element.subCode =
                                                       _tariff.subCode;
                                                   element.tarifa = _tariff
@@ -766,11 +766,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                     isAppling: true,
                                                     numDays: DateTime.parse(
                                                             habitacionProvider
-                                                                    .fechaCheckOut ??
+                                                                    .checkOut ??
                                                                 '')
                                                         .difference(DateTime.parse(
                                                             habitacionProvider
-                                                                    .fechaCheckIn ??
+                                                                    .checkIn ??
                                                                 ''))
                                                         .inDays,
                                                   ),
@@ -957,7 +957,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                     final habitacionesProvider = HabitacionProvider.provider;
 
                     if (!isEditing) {
-                      habitacionProvider.folioHabitacion =
+                      habitacionProvider.id =
                           Utility.getUniqueCode().toString();
                     }
 
@@ -971,7 +971,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                               .inDays;
 
                           if (alternativeTariffInd.any(
-                                  (element) => element.code == "tariffFree") &&
+                                  (element) => element.id == "tariffFree") &&
                               !applyFreeTariff) {
                             List<TarifaXDia> tarifasEncontradas = getTariffXDia(
                               list,
@@ -998,9 +998,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                             );
                           }
 
-                          habitacionProvider.tarifaXDia = alternativeTariffInd;
+                          habitacionProvider.tarifaXHabitacion = alternativeTariffInd;
                         } else {
-                          habitacionProvider.tarifaXDia = recoveryTariffs;
+                          habitacionProvider.tarifaXHabitacion = recoveryTariffs;
                         }
                         if (alternativeGrupTariff != null) {
                           TarifaXDia? subAlternativeTariff =
@@ -1024,12 +1024,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                         } else if (applyFreeTariff) {
                           habitacionProvider.tarifaGrupal =
                               Utility.getUniqueTariffs(
-                                      habitacionProvider.tarifaXDia!)
+                                      habitacionProvider.tarifaXHabitacion!)
                                   .first;
                         }
                       }
                       ref.read(habitacionesProvider.notifier).editItem(
-                          habitacionProvider.folioHabitacion,
+                          habitacionProvider.id,
                           habitacionProvider);
                     } else {
                       ref
@@ -1045,7 +1045,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           if (data != null) {
                             int rooms = 0;
                             for (var element in habitaciones) {
-                              if (!element.isFree) rooms += element.count;
+                              if (!element.esCortesia) rooms += element.count;
                             }
 
                             if (!typeQuote &&
@@ -1121,7 +1121,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     required bool useCashSeason,
   }) {
     if (onlyCategory) {
-      for (var tariffDay in habitacion.tarifaXDia!) {
+      for (var tariffDay in habitacion.tarifaXHabitacion!) {
         tariffDay.categoria = habitacion.categoria;
         if (tariffDay.tarifas != null) {
           if (tariffDay.tarifa != null) {
@@ -1146,7 +1146,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
       if (isGroup || useCashSeason) {
         if (!alreadySaveTariff) {
-          for (var element in habitacion.tarifaXDia!) {
+          for (var element in habitacion.tarifaXHabitacion!) {
             recoveryTariffs.add(element.copyWith());
           }
           alreadySaveTariff = true;
@@ -1158,7 +1158,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           .inDays;
 
       if (updateToCash) {
-        for (var element in habitacion.tarifaXDia!) {
+        for (var element in habitacion.tarifaXHabitacion!) {
           Temporada? selectSeason = Utility.getSeasonNow(
             RegistroTarifa(temporadas: element.temporadas),
             days,
@@ -1173,7 +1173,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         return;
       }
 
-      habitacion.tarifaXDia!.clear();
+      habitacion.tarifaXHabitacion!.clear();
 
       if (isGroup) {
         if (habitacion.tarifaGrupal != null && !alreadyApply) {
@@ -1184,11 +1184,11 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             newTariff.fecha = dateNow;
             newTariff.dia = ink;
             newTariff.numDays = 1;
-            habitacion.tarifaXDia!.add(
+            habitacion.tarifaXHabitacion!.add(
               newTariff.copyWith(),
             );
           }
-          if (habitacion.tarifaGrupal?.code == "tariffFree") {
+          if (habitacion.tarifaGrupal?.id == "tariffFree") {
             tarifaLibre = habitacion.tarifaGrupal!;
             applyFreeTariff = true;
           } else {
@@ -1222,8 +1222,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
             tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
               RegistroTarifa(temporadas: tarifaGrupal.temporadas),
-              DateTime.parse(habitacion.fechaCheckOut!)
-                  .difference(DateTime.parse(habitacion.fechaCheckIn!))
+              DateTime.parse(habitacion.checkOut!)
+                  .difference(DateTime.parse(habitacion.checkIn!))
                   .inDays,
               isGroup: true,
               useCashTariff: false,
@@ -1238,7 +1238,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                   DateTime dateNow = DateTime.parse(_fechaEntrada.text)
                       .add(Duration(days: ink));
                   subTariff.fecha = dateNow;
-                  habitacion.tarifaXDia!.add(subTariff.copyWith());
+                  habitacion.tarifaXHabitacion!.add(subTariff.copyWith());
                 }
                 setState(() {});
               },
@@ -1256,7 +1256,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         return;
       }
 
-      habitacion.tarifaXDia!.addAll(
+      habitacion.tarifaXHabitacion!.addAll(
         getTariffXDia(
           list,
           days,
@@ -1287,18 +1287,18 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
               .reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
           if (withoutAction &&
-              tarifaGrupal.code == (alternativeGrupTariff?.code ?? '')) {
+              tarifaGrupal.id == (alternativeGrupTariff?.id ?? '')) {
             return;
           }
 
-          if (withoutAction) habitacion.tarifaXDia!.clear();
+          if (withoutAction) habitacion.tarifaXHabitacion!.clear();
 
           tarifaGrupal.numDays = 1;
 
           tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
             RegistroTarifa(temporadas: tarifaGrupal.temporadas),
-            DateTime.parse(habitacion.fechaCheckOut!)
-                .difference(DateTime.parse(habitacion.fechaCheckIn!))
+            DateTime.parse(habitacion.checkOut!)
+                .difference(DateTime.parse(habitacion.checkIn!))
                 .inDays,
             isGroup: true,
           );
@@ -1313,7 +1313,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                 DateTime dateNow =
                     DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
                 subTariff.fecha = dateNow;
-                habitacion.tarifaXDia!.add(subTariff.copyWith());
+                habitacion.tarifaXHabitacion!.add(subTariff.copyWith());
               }
               setState(() {});
             },
@@ -1321,7 +1321,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
         } else {
           if (!applyFreeTariff) {
             if (withoutAction &&
-                list.first!.code == alternativeGrupTariff?.code) {
+                list.first!.id == alternativeGrupTariff?.id) {
               if (list.first?.temporadas != null) {
                 if (list.first?.temporadaSelect ==
                     alternativeGrupTariff?.temporadaSelect) {}
@@ -1334,7 +1334,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             }
           }
 
-          if (withoutAction) habitacion.tarifaXDia!.clear();
+          if (withoutAction) habitacion.tarifaXHabitacion!.clear();
 
           TarifaXDia subTariff = list.first!.copyWith();
           subTariff.numDays = 1;
@@ -1354,7 +1354,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
             DateTime dateNow =
                 DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
             subTariff.fecha = dateNow;
-            habitacion.tarifaXDia!.add(subTariff.copyWith());
+            habitacion.tarifaXHabitacion!.add(subTariff.copyWith());
           }
           setState(() {});
         }
@@ -1382,7 +1382,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
       if (applyFreeTariff) {
         TarifaXDia newTarifaLibre = TarifaXDia(
-          code: tarifaLibre.code,
+          id: tarifaLibre.id,
           color: tarifaLibre.color,
           descuentoProvisional: tarifaLibre.descuentoProvisional,
           modificado: tarifaLibre.modificado,
@@ -1411,7 +1411,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           dia: ink,
           fecha: dateNow,
           nombreTariff: "No definido",
-          code: "Unknow",
+          id: "Unknow",
           categoria: categoria,
           descuentoProvisional:
               (tarifasProvisionales.isEmpty) ? 0 : descuentoProvisional,
@@ -1448,8 +1448,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
           color: newTariff.copyWith().color,
           nombreTariff: newTariff.copyWith().nombre,
           categoria: categoria,
-          code: newTariff.copyWith().code,
-          id: newTariff.copyWith().id,
+          id: newTariff.copyWith().code,
+          idInt: newTariff.copyWith().id,
           periodo: Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
           tarifa: (selectSeason?.forCash ?? false)
               ? Utility.getTarifasData(

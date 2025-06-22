@@ -20,10 +20,10 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     int limit = 20,
     int page = 1,
   }) {
-    final query = select(db.clienteTable);
+    final query = select(db.habitacionTable);
 
     if (cotizacionId != null) {
-      query.where((u) => u.);
+      query.where((u) => u.cotizacionInt.equals(cotizacionId));
     }
 
     if (initDate != null) {

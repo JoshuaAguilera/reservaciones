@@ -162,7 +162,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
         int rooms = 0;
 
         for (var element in habitaciones) {
-          if (!element.isFree) rooms += element.count;
+          if (!element.esCortesia) rooms += element.count;
         }
 
         // if (!(Preferences.rol == 'RECEPCION')) {
@@ -182,7 +182,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
             isReduced: true)) {
           ref.read(habitacionesProvider.notifier).removeFreeItem(
               politica.intervaloHabitacionGratuita!,
-              widget.habitacion.folioHabitacion!);
+              widget.habitacion.id!);
         }
       }
     }
@@ -252,9 +252,9 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                       TextStyles.standardText(
                         text: Utility.getStringPeriod(
                           initDate:
-                              DateTime.parse(widget.habitacion.fechaCheckIn!),
+                              DateTime.parse(widget.habitacion.checkIn!),
                           lastDate:
-                              DateTime.parse(widget.habitacion.fechaCheckOut!),
+                              DateTime.parse(widget.habitacion.checkOut!),
                         ),
                         align: TextAlign.center,
                         color: colorText,
@@ -377,7 +377,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                         color: colorText,
                         size: 11,
                       ),
-                    if (!widget.esDetalle && !widget.habitacion.isFree)
+                    if (!widget.esDetalle && !widget.habitacion.esCortesia)
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 10,
@@ -450,7 +450,7 @@ double _getTotalRoomGroup({
       tarifas: room.tarifaGrupal?.tarifas,
     ),
     room,
-    room.tarifaXDia!.length,
+    room.tarifaXHabitacion!.length,
     getTotalRoom: true,
     descuentoProvisional: room.tarifaGrupal?.descuentoProvisional,
     onlyTariffVR: onlyTariffVR,
@@ -460,7 +460,7 @@ double _getTotalRoomGroup({
     applyRoundFormat: !(room.tarifaGrupal?.modificado ?? false),
   );
 
-  return (totalGroup * room.tarifaXDia!.length);
+  return (totalGroup * room.tarifaXHabitacion!.length);
 }
 
 double _getTotalRoom({
@@ -470,14 +470,14 @@ double _getTotalRoom({
   bool onlyDiscount = false,
 }) {
   List<TarifaXDia> tarifasFiltradas =
-      Utility.getUniqueTariffs(room.tarifaXDia ?? []);
+      Utility.getUniqueTariffs(room.tarifaXHabitacion ?? []);
 
   double discount = !withDiscount
       ? 0
       : Utility.calculateDiscountTotal(
           tarifasFiltradas,
           room,
-          room.tarifaXDia?.length ?? 0,
+          room.tarifaXHabitacion?.length ?? 0,
           typeQuote: false,
           onlyTariffVR: onlyTariffVR,
           onlyTariffVPM: !onlyTariffVR,
@@ -551,7 +551,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         int rooms = 0;
 
         for (var element in habitaciones) {
-          if (!element.isFree) rooms += element.count;
+          if (!element.esCortesia) rooms += element.count;
         }
 
         // if (!(Preferences.rol == 'RECEPCION')) {
@@ -571,7 +571,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
             isReduced: true)) {
           ref.read(habitacionesProvider.notifier).removeFreeItem(
               politica.intervaloHabitacionGratuita!,
-              widget.habitacion.folioHabitacion!);
+              widget.habitacion.id!);
         }
       }
     }
@@ -610,8 +610,8 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         title: TextStyles.TextAsociative(
           (screenWidthWithSideBar < 1100) ? "Fechas: " : "Fechas de estancia: ",
           Utility.getStringPeriod(
-              initDate: DateTime.parse(widget.habitacion.fechaCheckIn!),
-              lastDate: DateTime.parse(widget.habitacion.fechaCheckOut!)),
+              initDate: DateTime.parse(widget.habitacion.checkIn!),
+              lastDate: DateTime.parse(widget.habitacion.checkOut!)),
           color: colorText,
           size: 13.5,
         ),

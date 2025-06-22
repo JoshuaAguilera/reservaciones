@@ -40,7 +40,7 @@ class TableRows {
     double tarifaAdulto = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
-      habitacion.tarifaXDia!.length,
+      habitacion.tarifaXHabitacion!.length,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
       useCashSeason: useCashSeason,
@@ -50,7 +50,7 @@ class TableRows {
     double tarifaMenores = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
-      habitacion.tarifaXDia!.length,
+      habitacion.tarifaXHabitacion!.length,
       isCalculateChildren: true,
       descuentoProvisional: tarifaXDia.descuentoProvisional,
       isGroupTariff: isGroupTariff,
@@ -63,8 +63,8 @@ class TableRows {
         context: context,
         builder: (context) => ManagerTariffSingleDialog(
           tarifaXDia: tarifaXDia,
-          numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
-              .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
+          numDays: DateTime.parse(habitacion.checkOut ?? '')
+              .difference(DateTime.parse(habitacion.checkIn ?? ''))
               .inDays,
         ),
       ).then(

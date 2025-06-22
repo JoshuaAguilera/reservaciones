@@ -12,9 +12,19 @@ class Settings {
   static bool _applyAnimations = true;
   static bool _applySSL = true;
   static bool _ignoreBadCertificate = false;
+  static bool _isOnline = false;
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  static bool get isOnline {
+    return _prefs.getBool('isOnline') ?? _isOnline;
+  }
+
+  static set isOnline(bool value) {
+    _isOnline = value;
+    _prefs.setBool('isOnline', value);
   }
 
   static String get sucursal {

@@ -93,9 +93,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
-      habitacionSelect.tarifaXDia = [];
-      for (var element in habitacion.tarifaXDia!) {
-        habitacionSelect.tarifaXDia!.add(element.copyWith());
+      habitacionSelect.tarifaXHabitacion = [];
+      for (var element in habitacion.tarifaXHabitacion!) {
+        habitacionSelect.tarifaXHabitacion!.add(element.copyWith());
       }
 
       ref
@@ -180,8 +180,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       }
 
       receiptQuotePresent = cotizacion.CopyWith();
-      receiptQuotePresent.id = id;
-      receiptQuotePresent.folioPrincipal = folio;
+      receiptQuotePresent.idInt = id;
+      receiptQuotePresent.folio = folio;
       receiptQuotePresent.esGrupo = typeQuote;
       // receiptQuotePresent.numeroTelefonico =
       //     (cotizacion.numeroTelefonico ?? '').isEmpty
@@ -226,7 +226,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
         id: notificaciones.length + 1,
         level: "info",
         content:
-            "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombre ?? ''} ha sido registrada.",
+            "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombres ?? ''} ha sido registrada.",
         title: "Nueva cotización registrada",
       );
 
@@ -324,11 +324,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           msgError: "Campo requerido*",
                                           controller: TextEditingController(
                                               text:
-                                                  cotizacion.cliente?.nombre ??
+                                                  cotizacion.cliente?.nombres ??
                                                       ''),
                                           isRequired: true,
                                           onChanged: (p0) =>
-                                              cotizacion.cliente?.nombre = p0,
+                                              cotizacion.cliente?.nombres = p0,
                                           onUnfocus: () => setState(() {}),
                                         ),
                                         Row(
@@ -417,12 +417,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         adultos: 1,
                                         menores0a6: 0,
                                         menores7a12: 0,
-                                        tarifaXDia: [],
-                                        isFree: false,
-                                        fechaCheckIn: DateTime.now()
+                                        tarifaXHabitacion: [],
+                                        esCortesia: false,
+                                        checkIn: DateTime.now()
                                             .toString()
                                             .substring(0, 10),
-                                        fechaCheckOut: DateTime.now()
+                                        checkOut: DateTime.now()
                                             .add(const Duration(days: 1))
                                             .toString()
                                             .substring(0, 10),
@@ -432,7 +432,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         _goDetailRoom(p0.CopyWith()),
                                     duplicateRoom: (p0) {
                                       Habitacion roomDuplicate = p0.CopyWith();
-                                      roomDuplicate.folioHabitacion =
+                                      roomDuplicate.id =
                                           Utility.getUniqueCode().toString();
 
                                       roomDuplicate.count = 1;
@@ -452,7 +452,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           if (data != null) {
                                             int rooms = 0;
                                             for (var element in habitaciones) {
-                                              if (!element.isFree) {
+                                              if (!element.esCortesia) {
                                                 rooms += element.count;
                                               }
                                             }
@@ -499,7 +499,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           if (data != null) {
                                             int rooms = 0;
                                             for (var element in habitaciones) {
-                                              if (!element.isFree) {
+                                              if (!element.esCortesia) {
                                                 rooms += element.count;
                                               }
                                             }
@@ -538,7 +538,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                     },
                                     sideController: widget.sideController,
                                     habitaciones: habitaciones
-                                        .where((element) => !element.isFree)
+                                        .where((element) => !element.esCortesia)
                                         .toList(),
                                   ),
                                 ).animate(target: targetHabitaciones).fadeIn(
@@ -573,7 +573,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
                     showCancel: (habitaciones.isNotEmpty ||
-                        (cotizacion.cliente?.nombre?.isNotEmpty ?? false) ||
+                        (cotizacion.cliente?.nombres?.isNotEmpty ?? false) ||
                         (cotizacion.cliente?.correoElectronico?.isNotEmpty ??
                             false) ||
                         (cotizacion.cliente?.numeroTelefonico?.isNotEmpty ??
@@ -598,7 +598,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             }
 
                             if (habitaciones
-                                .where((element) => !element.isFree)
+                                .where((element) => !element.esCortesia)
                                 .toList()
                                 .isEmpty) {
                               showSnackBar(

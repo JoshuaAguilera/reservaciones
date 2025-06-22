@@ -12,83 +12,90 @@ Cliente ClienteFromJson(String str) => Cliente.fromJson(json.decode(str));
 String ClienteToJson(Cliente data) => json.encode(data.toJson());
 
 class Cliente {
-  int? id;
-  String? nombre;
-  String? apellido;
+  int? idInt;
+  String? id;
+  String? nombres;
+  String? apellidos;
   String? numeroTelefonico;
   String? correoElectronico;
-  String? nacionalidad;
+  String? pais;
   String? estado;
   String? ciudad;
-  String? cp;
+  String? direccion;
   String? notas;
   DateTime? createdAt;
 
   Cliente({
+    this.idInt,
     this.id,
-    this.nombre,
-    this.apellido,
+    this.nombres,
+    this.apellidos,
     this.numeroTelefonico,
     this.correoElectronico,
-    this.nacionalidad,
+    this.pais,
     this.estado,
     this.ciudad,
-    this.cp,
+    this.direccion,
     this.notas,
     this.createdAt,
   });
 
   Cliente CopyWith({
-    int? id,
-    String? nombre,
-    String? apellido,
+    int? idInt,
+    String? id,
+    String? nombres,
+    String? apellidos,
     String? numeroTelefonico,
     String? correoElectronico,
-    String? nacionalidad,
+    String? pais,
     String? estado,
     String? ciudad,
-    String? cp,
+    String? direccion,
     String? notas,
-    DateTime? createAt,
+    DateTime? createdAt,
   }) =>
       Cliente(
+        idInt: idInt ?? this.idInt,
         id: id ?? this.id,
-        nombre: nombre ?? this.nombre,
-        apellido: apellido ?? this.apellido,
+        nombres: nombres ?? this.nombres,
+        apellidos: apellidos ?? this.apellidos,
         numeroTelefonico: numeroTelefonico ?? this.numeroTelefonico,
-        correoElectronico: correoElectronico ?? this.nacionalidad,
-        nacionalidad: nacionalidad ?? this.nacionalidad,
+        correoElectronico: correoElectronico ?? this.pais,
+        pais: pais ?? this.pais,
         estado: estado ?? this.estado,
         ciudad: ciudad ?? this.ciudad,
-        cp: cp ?? this.cp,
+        direccion: direccion ?? this.direccion,
         notas: notas ?? this.notas,
+        createdAt: createdAt ?? this.createdAt,
       );
 
   factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
+        idInt: json['id_int'],
         id: json['_id'],
-        nombre: json['nombre'],
-        apellido: json['apellido'],
+        nombres: json['nombres'],
+        apellidos: json['apellidos'],
         numeroTelefonico: json['numero_telefonico'],
         correoElectronico: json['correo_electronico'],
-        nacionalidad: json['nacionalidad'],
+        pais: json['pais'],
         estado: json['estado'],
         ciudad: json['ciudad'],
-        cp: json['cp'],
+        direccion: json['direccion'],
         notas: json['notas'],
         createdAt: json['created_at'],
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "_id": id,
-      "nombre": nombre,
-      "apellido": apellido,
+      "id_int": idInt,
+      "id": id,
+      "nombres": nombres,
+      "apellidos": apellidos,
       "numero_telefonico": numeroTelefonico,
       "correo_electronico": correoElectronico,
-      "nacionalidad": nacionalidad,
+      "pais": pais,
       "estado": estado,
       "ciudad": ciudad,
-      "cp": cp,
+      "direccion": direccion,
       "notas": notas,
     };
 

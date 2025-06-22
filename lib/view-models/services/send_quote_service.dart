@@ -45,7 +45,7 @@ class SendQuoteService extends BaseService {
         ..recipients
             .add(newMail ?? receiptQuotePresent.cliente?.correoElectronico)
         ..subject =
-            'Cotización de Reserva ${receiptQuotePresent.folioPrincipal} : ${DateTime.now().toString().substring(0, 10)}'
+            'Cotización de Reserva ${receiptQuotePresent.folio} : ${DateTime.now().toString().substring(0, 10)}'
         ..html =
             await FilesTemplate.getHTMLMail(receiptQuotePresent, quotesPresent)
         ..attachments = [
@@ -70,9 +70,9 @@ class SendQuoteService extends BaseService {
   Future<String> generateMessageWhatsApp(
       Cotizacion comprobante, List<Habitacion> habitaciones) async {
     List<Habitacion> rooms =
-        habitaciones.where((element) => !element.isFree).toList();
+        habitaciones.where((element) => !element.esCortesia).toList();
 
-    var message = "*Estimad@ ${comprobante.cliente?.nombre}*," + "\n";
+    var message = "*Estimad@ ${comprobante.cliente?.nombres}*," + "\n";
     message += "De antemano disculpe la demora de respuesta.\n";
     message +=
         "Agradecemos su interés en nuestro hotel CORAL BLUE HUATULCO, de acuerdo con su amable solicitud, me complace en presentarle la siguiente cotización.";
@@ -81,7 +81,7 @@ class SendQuoteService extends BaseService {
     Map<String, List<Habitacion>> quoteFilters = {};
 
     for (var element in rooms) {
-      String selectDates = "${element.fechaCheckIn}/${element.fechaCheckOut}";
+      String selectDates = "${element.checkIn}/${element.checkOut}";
 
       if (quoteFilters.containsKey(selectDates)) {
         quoteFilters[selectDates]!.add(element);
@@ -99,7 +99,7 @@ class SendQuoteService extends BaseService {
       message +=
           "*Estancia: ${Utility.getPeriodReservation([roomList.first])}*";
       message += "\n";
-      message += "*Noches: ${roomList.first.tarifaXDia?.length}*";
+      message += "*Noches: ${roomList.first.tarifaXHabitacion?.length}*";
 
       message += "\n\n";
       message += "*Habitación Deluxe doble, vista a la reserva* 🏞️";
@@ -109,7 +109,7 @@ class SendQuoteService extends BaseService {
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
         message +=
             "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVR ?? 0.0) * element.count)}\n" : ""}";
       }
@@ -122,7 +122,7 @@ class SendQuoteService extends BaseService {
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXDia?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
         message +=
             "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVPM ?? 0.0) * element.count)}\n" : ""}";
       }
@@ -155,7 +155,7 @@ class SendQuoteService extends BaseService {
   }
 
   Future<String> generateMessageWhatsAppGroup(Cotizacion comprobante) async {
-    var message = "*Estimad@ ${comprobante.cliente?.nombre}*," + "\n";
+    var message = "*Estimad@ ${comprobante.cliente?.nombres}*," + "\n";
     message +=
         "Le comparto por este medio la cotización que amablemente solicitó a Hotel Coral Blue Huatulco, esperando esta sea de su agrado y podamos ser beneficiados por su preferencia, en caso de requerir alguna solicitud especial que no está especificada en esta cotización favor de mencionarla para poder enviarla a la brevedad posible.";
     message += "\n\n";

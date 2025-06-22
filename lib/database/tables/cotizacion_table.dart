@@ -5,8 +5,8 @@ import 'usuario_table.dart';
 
 class CotizacionTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
-  TextColumn get folio => text().nullable()();
   TextColumn get id => text().nullable()();
+  TextColumn get folio => text().nullable()();
   IntColumn get clienteInt =>
       integer().nullable().references(ClienteTable, #id)();
   TextColumn get cliente => text().nullable()();

@@ -151,7 +151,7 @@ class GeneradorDocService extends BaseService {
           ]);
         },
         build: (context) => [
-          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombre}", style: styleBold),
+          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombres}", style: styleBold),
           pw.SizedBox(height: 13),
           pw.Text(FilesTemplate.StructureDoc(1), style: styleLigth),
           pw.SizedBox(height: 14),
@@ -389,7 +389,7 @@ class GeneradorDocService extends BaseService {
     int freeRooms = 0;
 
     for (var element in habitaciones) {
-      if (!element.isFree) {
+      if (!element.esCortesia) {
         numRooms += element.count;
       } else {
         freeRooms += element.count;
@@ -427,7 +427,7 @@ class GeneradorDocService extends BaseService {
         },
         build: (context) => [
           pw.SizedBox(height: 8),
-          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombre}", style: styleBold),
+          pw.Text("ESTIMAD@: ${cotizacion.cliente?.nombres}", style: styleBold),
           pw.SizedBox(height: 3),
           if ((cotizacion.cliente?.numeroTelefonico ?? '').isNotEmpty)
             pw.Text("TELÉFONO: ${cotizacion.cliente?.numeroTelefonico}",
@@ -623,7 +623,7 @@ class GeneradorDocService extends BaseService {
 
     if (!typeQuote) {
       for (var element
-          in habitaciones.where((element) => !element.isFree).toList()) {
+          in habitaciones.where((element) => !element.esCortesia).toList()) {
         tablas.add(
           FilesTemplate.getTablesCotIndiv(
             nameTable:
@@ -635,7 +635,7 @@ class GeneradorDocService extends BaseService {
             colorHeader: color,
             typeRoom: tipoHabitacion.first,
             numRooms: habitaciones
-                .where((element) => !element.isFree)
+                .where((element) => !element.esCortesia)
                 .toList()
                 .length,
           ),
@@ -653,7 +653,7 @@ class GeneradorDocService extends BaseService {
             colorHeader: color,
             typeRoom: tipoHabitacion.last,
             numRooms: habitaciones
-                .where((element) => !element.isFree)
+                .where((element) => !element.esCortesia)
                 .toList()
                 .length,
           ),
@@ -662,11 +662,11 @@ class GeneradorDocService extends BaseService {
       }
     } else {
       for (var element
-          in habitaciones.where((element) => !element.isFree).toList()) {
+          in habitaciones.where((element) => !element.esCortesia).toList()) {
         tablas.add(
           FilesTemplate.getTablesCotGroup(
             nameTable: "PLAN TODO INCLUIDO - TARIFA POR NOCHE"
-                " ${habitaciones.length > 1 ? Utility.getStringPeriod(initDate: DateTime.parse(element.fechaCheckIn!), lastDate: DateTime.parse(element.fechaCheckOut!)) : ""}",
+                " ${habitaciones.length > 1 ? Utility.getStringPeriod(initDate: DateTime.parse(element.checkIn!), lastDate: DateTime.parse(element.checkOut!)) : ""}",
             habitacion: element,
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
@@ -675,10 +675,10 @@ class GeneradorDocService extends BaseService {
           ),
         );
         if (habitaciones
-                .where((element) => !element.isFree)
+                .where((element) => !element.esCortesia)
                 .toList()
                 .indexOf(element) <
-            habitaciones.where((element) => !element.isFree).toList().length) {
+            habitaciones.where((element) => !element.esCortesia).toList().length) {
           tablas.add(pw.SizedBox(height: 10));
         }
       }

@@ -170,7 +170,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                         if (difference <= 2 &&
                             difference > 0 &&
-                            (element.esConcretado ?? false)) {
+                            (element.estatus ?? false)) {
                           return true;
                         }
 

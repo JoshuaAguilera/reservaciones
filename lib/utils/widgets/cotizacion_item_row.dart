@@ -49,7 +49,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   @override
   void initState() {
     super.initState();
-    isConcrete = (widget.cotizacion.esConcretado ?? false);
+    isConcrete = (widget.cotizacion.estatus ?? false);
     isGroup = (widget.cotizacion.esGrupo ?? false);
     isInvalid = !isConcrete &&
         (DateTime.now()
@@ -87,10 +87,10 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
     colorItem = isInvalid
         ? DesktopColors.cotNoConcr
         : isGroup
-            ? (widget.cotizacion.esConcretado ?? false)
+            ? (widget.cotizacion.estatus ?? false)
                 ? DesktopColors.resGrupal
                 : DesktopColors.cotGrupal
-            : (widget.cotizacion.esConcretado ?? false)
+            : (widget.cotizacion.estatus ?? false)
                 ? DesktopColors.resIndiv
                 : DesktopColors.cotIndiv;
   }
@@ -119,13 +119,13 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   index: widget.index + 1, color: colorTextIndice),
           title: TextStyles.titleText(
               color: colorText,
-              text: "Huesped: ${widget.cotizacion.cliente?.nombre}",
+              text: "Huesped: ${widget.cotizacion.cliente?.nombres}",
               size: widget.isQuery ? 13 : 16),
           subtitle: Wrap(
             spacing: 10,
             children: [
               TextStyles.TextAsociative(
-                  "Folio: ", widget.cotizacion.folioPrincipal!,
+                  "Folio: ", widget.cotizacion.folio!,
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
                   "${Utility.getCompleteDate(data: widget.cotizacion.createdAt)} ${widget.cotizacion.createdAt?.toIso8601String().substring(11, 16)}",

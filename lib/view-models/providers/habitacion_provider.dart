@@ -30,7 +30,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     int rooms = 0;
     int freeRooms = 0;
     for (var element in state) {
-      if (!element.isFree) {
+      if (!element.esCortesia) {
         rooms += element.count;
       } else {
         freeRooms++;
@@ -40,7 +40,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     int freeRoomsValid = rooms ~/ interval;
 
     Habitacion item = habitacion.CopyWith();
-    item.isFree = true;
+    item.esCortesia = true;
     item.count = 1;
 
     for (var room = freeRooms; room < freeRoomsValid; room++) {
@@ -59,7 +59,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
           int rooms = 0;
           List<Habitacion> freeRooms = [];
           for (var element in state) {
-            if (!element.isFree) {
+            if (!element.esCortesia) {
               rooms += element.count;
             } else {
               freeRooms.add(element);
@@ -71,21 +71,21 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
           if (rooms >= data.intervaloHabitacionGratuita!) {
             for (var element in freeRooms) {
               if (!state.any((element2) =>
-                  !element2.isFree &&
-                  element2.folioHabitacion == element.folioHabitacion)) {
+                  !element2.esCortesia &&
+                  element2.id == element.id)) {
                 state.remove(element);
               }
             }
 
             if (freeRoomsValid >=
-                state.where((element) => element.isFree).toList().length) {
+                state.where((element) => element.esCortesia).toList().length) {
               addFreeItem(
                   state.reduce((value, element) =>
                       value.count > element.count ? value : element),
                   data.intervaloHabitacionGratuita!);
             }
           } else {
-            state.removeWhere((element) => element.isFree);
+            state.removeWhere((element) => element.esCortesia);
           }
 
           ref.notifyListeners();
@@ -103,17 +103,17 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   }
 
   void editItem(String? folio, Habitacion item) {
-    int index = state.indexWhere((element) => element.folioHabitacion == folio);
+    int index = state.indexWhere((element) => element.id == folio);
     if (index != -1) {
       state[index] = item;
 
       if (state.any((element) =>
-          element.folioHabitacion == state[index].folioHabitacion)) {
+          element.id == state[index].id)) {
         Habitacion roomEdit = item.CopyWith();
-        roomEdit.isFree = true;
+        roomEdit.esCortesia = true;
         for (var element in state.where((element) =>
-            element.folioHabitacion == state[index].folioHabitacion &&
-            element.isFree)) {
+            element.id == state[index].id &&
+            element.esCortesia)) {
           state[state.indexOf(element)] = roomEdit;
         }
       }
@@ -123,7 +123,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   }
 
   void remove(String folio) {
-    state.removeWhere((element) => element.folioHabitacion == folio);
+    state.removeWhere((element) => element.id == folio);
     ref.notifyListeners();
     revisedFreeRooms();
   }
@@ -132,7 +132,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     int rooms = 0;
     int freeRooms = 0;
     for (var element in state) {
-      if (!element.isFree) {
+      if (!element.esCortesia) {
         rooms += element.count;
       } else {
         freeRooms++;
@@ -144,15 +144,15 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     if (freeRoomsValid > 0) {
       for (var room = freeRooms; room > freeRoomsValid; room--) {
         if (state.any(
-            (element) => element.folioHabitacion == folio && element.isFree)) {
+            (element) => element.id == folio && element.esCortesia)) {
           state.remove(state.firstWhere(
-              (element) => element.folioHabitacion == folio && element.isFree));
+              (element) => element.id == folio && element.esCortesia));
         } else {
-          state.remove(state.firstWhere((element) => element.isFree));
+          state.remove(state.firstWhere((element) => element.esCortesia));
         }
       }
     } else {
-      state.removeWhere((element) => element.isFree);
+      state.removeWhere((element) => element.esCortesia);
     }
     ref.notifyListeners();
   }
@@ -160,20 +160,20 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   void changedFreeRoom(String folio, {int indexRoom = -1}) {
     Habitacion newFreeRoom = state
         .firstWhere((element) =>
-            !element.isFree &&
+            !element.esCortesia &&
             (indexRoom != -1
-                ? element.folioHabitacion == folio
-                : element.folioHabitacion != folio))
+                ? element.id == folio
+                : element.id != folio))
         .CopyWith();
 
-    newFreeRoom.isFree = true;
+    newFreeRoom.esCortesia = true;
     newFreeRoom.count = 1;
 
     if (indexRoom != -1) {
       state[indexRoom] = newFreeRoom;
       ref.notifyListeners();
     } else {
-      state.remove(state.firstWhere((element) => element.isFree));
+      state.remove(state.firstWhere((element) => element.esCortesia));
       state = [...state, newFreeRoom];
     }
   }
@@ -184,7 +184,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     for (var item in state) {
       if (selectTariffs.isNotEmpty) {
         TarifaXDia? selectTariff = selectTariffs.firstWhere(
-          (element) => element?.folioRoom == item.folioHabitacion,
+          (element) => element?.folioRoom == item.id,
           orElse: () => null,
         );
 
@@ -197,7 +197,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               .firstOrNull;
         }
 
-        selectTariff?.numDays = item.tarifaXDia?.length ?? 0;
+        selectTariff?.numDays = item.tarifaXHabitacion?.length ?? 0;
 
         item.tarifaGrupal = selectTariff;
         continue;
@@ -205,19 +205,19 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
       if (item.tarifaGrupal == null) {
         List<TarifaXDia> filterTariffs =
-            Utility.getUniqueTariffs(item.tarifaXDia!);
+            Utility.getUniqueTariffs(item.tarifaXHabitacion!);
         TarifaXDia? tarifaGrupo =
             filterTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
         tarifaGrupo.temporadaSelect = Utility.getSeasonNow(
           RegistroTarifa(temporadas: tarifaGrupo.temporadas),
-          DateTime.parse(item.fechaCheckOut!)
-              .difference(DateTime.parse(item.fechaCheckIn!))
+          DateTime.parse(item.checkOut!)
+              .difference(DateTime.parse(item.checkIn!))
               .inDays,
           isGroup: true,
         );
 
-        tarifaGrupo.numDays = item.tarifaXDia?.length ?? 0;
+        tarifaGrupo.numDays = item.tarifaXHabitacion?.length ?? 0;
 
         item.tarifaGrupal = tarifaGrupo;
       }
@@ -265,7 +265,7 @@ final detectChangeProvider = StateProvider<int>((ref) => 0);
 
 final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   final detectChanged = ref.watch(detectChangeProvider);
-  final list = ref.watch(habitacionSelectProvider).tarifaXDia ?? [];
+  final list = ref.watch(habitacionSelectProvider).tarifaXHabitacion ?? [];
   return list;
 });
 

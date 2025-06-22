@@ -389,7 +389,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
 
                                     respHabitaciones = await HabitacionService()
                                         .getHabitacionesByFolio(
-                                            list[index].folioPrincipal ?? '');
+                                            list[index].folio ?? '');
 
                                     if (!mounted) return;
 
@@ -403,12 +403,12 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                     Cotizacion newComprobante = Cotizacion(
                                       creadoPor: list[index].creadoPor,
                                       esGrupo: list[index].esGrupo,
-                                      esConcretado: list[index].esConcretado,
+                                      estatus: list[index].estatus,
                                       cliente: list[index].cliente,
-                                      folioPrincipal:
-                                          list[index].folioPrincipal,
+                                      folio:
+                                          list[index].folio,
                                       habitaciones: respHabitaciones,
-                                      id: list[index].id,
+                                      idInt: list[index].idInt,
                                     );
 
                                     ref
@@ -431,13 +431,13 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                           context: context,
                                           title: "Eliminar comprobante",
                                           contentText:
-                                              "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].cliente?.nombre}?",
+                                              "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].cliente?.nombres}?",
                                           nameButtonMain: "Aceptar",
                                           otherButton: true,
                                           withLoadingProcess: true,
                                           funtionMain: () async {
                                             await deleteQuote(
-                                                list[index].folioPrincipal);
+                                                list[index].folio);
                                           },
                                           nameButtonCancel: "Cancelar",
                                           withButtonCancel: true,

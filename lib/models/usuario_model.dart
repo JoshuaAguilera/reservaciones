@@ -14,8 +14,8 @@ Usuario UsuarioFromJson(String str) => Usuario.fromJson(json.decode(str));
 String UsuarioToJson(Usuario data) => json.encode(data.toJson());
 
 class Usuario {
-  int? id;
-  String? userId;
+  int? idInt;
+  String? id;
   String? username;
   String? password;
   String? rol;
@@ -29,8 +29,8 @@ class Usuario {
   DateTime? createdAt;
 
   Usuario({
+    this.idInt,
     this.id,
-    this.userId,
     this.password,
     this.username,
     this.telefono,
@@ -60,8 +60,8 @@ class Usuario {
     DateTime? createAt,
   }) =>
       Usuario(
-        id: id ?? this.id,
-        userId: userId ?? this.userId,
+        idInt: id ?? this.idInt,
+        id: userId ?? this.id,
         username: username ?? this.username,
         password: password ?? this.password,
         rol: rol ?? this.rol,
@@ -76,7 +76,7 @@ class Usuario {
       );
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
-        id: json['_id'],
+        idInt: json['_id'],
         username: json['username'],
         password: json['password'],
         rol: json['rol'],
@@ -92,7 +92,7 @@ class Usuario {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "_id": id,
+      "_id": idInt,
       "username": username,
       "password": password,
       "rol": rol,

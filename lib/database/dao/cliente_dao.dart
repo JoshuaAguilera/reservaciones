@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../models/cliente_model.dart';
 import '../database.dart';
 import '../tables/cliente_table.dart';
 
@@ -10,7 +11,7 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
   ClienteDao(AppDatabase db) : super(db);
 
   // LIST
-  Future<List<ClienteTableData>> getList({
+  Future<List<Cliente>> getList({
     String nombre = '',
     String correo = '',
     DateTime? initDate,
@@ -19,11 +20,22 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
     String order = 'asc',
     int limit = 20,
     int page = 1,
-  }) {
+  }) async {
     final query = select(db.clienteTable);
 
     if (nombre.isNotEmpty) {
-      query.where((u) => u.nombre.like('%$nombre%'));
+      final value = '%${nombre.toLowerCase()}%';
+      query.where(
+        (tbl) {
+          var response = tbl.nombre.lower().like(value) |
+              tbl.apellido.lower().like(value) |
+              (tbl.nombre + const Constant(' ') + tbl.apellido)
+                  .lower()
+                  .like(value);
+
+          return response;
+        },
+      );
     }
 
     if (correo.isNotEmpty) {
@@ -67,28 +79,47 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
     final offset = (page - 1) * limit;
     query.limit(limit, offset: offset);
 
-    return query.get();
+    final data = await query.get();
+
+    List<Cliente> response = [];
+
+    for (var element in data) {
+      Cliente client = Cliente.fromJson(element.toJson());
+      response.add(client);
+    }
+
+    return response;
   }
 
   // CREATE
-  Future<int> insert(ClienteTableCompanion cliente) {
-    return into(db.clienteTable).insert(cliente);
+  Future<int> insert(Cliente cliente) {
+    var response = into(db.clienteTable).insert(
+      ClienteTableData.fromJson(
+        cliente.toJson(),
+      ),
+    );
+
+    return response;
   }
 
   // READ: Usuario por ID
-  Future<ClienteTableData?> getByID(int id) {
-    var response = (select(db.clienteTable)
+  Future<Cliente?> getByID(int id) async {
+    var response = await (select(db.clienteTable)
           ..where((u) {
             return u.id.equals(id);
           }))
         .getSingleOrNull();
 
-    return response;
+    return Cliente?.fromJson(response?.toJson() ?? <String, dynamic>{});
   }
 
   // UPDATE
-  Future<bool> updat3(ClienteTableData cliente) {
-    var response = update(db.clienteTable).replace(cliente);
+  Future<bool> updat3(Cliente cliente) {
+    var response = update(db.clienteTable).replace(
+      ClienteTableData.fromJson(
+        cliente.toJson(),
+      ),
+    );
 
     return response;
   }

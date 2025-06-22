@@ -168,7 +168,7 @@ class _HabitacionesListState extends State<HabitacionesList> {
                       isTable: viewTable,
                       onPressedDelete: () {
                         widget.deleteRoom!
-                            .call(widget.habitaciones[index].folioHabitacion!);
+                            .call(widget.habitaciones[index].id!);
                       },
                       onPressedEdit: () =>
                           widget.editRoom!.call(widget.habitaciones[index]),

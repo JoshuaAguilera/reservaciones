@@ -158,7 +158,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
-      habitacion.tarifaXDia!.length,
+      habitacion.tarifaXHabitacion!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
       isGroupTariff: typeQuote,
       useCashSeason: useCashSeason,
@@ -168,7 +168,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     double totalMenores = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
-      habitacion.tarifaXDia!.length,
+      habitacion.tarifaXHabitacion!.length,
       descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
       isCalculateChildren: true,
       isGroupTariff: typeQuote,
@@ -308,8 +308,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
 
   Widget _buildRear(Habitacion habitacion, bool typeQuote) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
-    bool isUnknow = widget.tarifaXDia.code!.contains("Unknow") ||
-        widget.tarifaXDia.code!.contains("tariffFree");
+    bool isUnknow = widget.tarifaXDia.id!.contains("Unknow") ||
+        widget.tarifaXDia.id!.contains("tariffFree");
 
     return __buildLayout(
       key: ValueKey(false),
@@ -474,8 +474,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
       context: context,
       builder: (context) => ManagerTariffSingleDialog(
         tarifaXDia: widget.tarifaXDia,
-        numDays: DateTime.parse(habitacion.fechaCheckOut ?? '')
-            .difference(DateTime.parse(habitacion.fechaCheckIn ?? ''))
+        numDays: DateTime.parse(habitacion.checkOut ?? '')
+            .difference(DateTime.parse(habitacion.checkIn ?? ''))
             .inDays,
       ),
     ).then(

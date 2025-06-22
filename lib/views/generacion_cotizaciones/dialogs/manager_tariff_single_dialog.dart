@@ -96,13 +96,13 @@ class _ManagerTariffDayWidgetState
   void initState() {
     _descuentoController.text =
         (widget.tarifaXDia.descuentoProvisional ?? 0).toString();
-    isUnknow = widget.tarifaXDia.code!.contains("Unknow");
+    isUnknow = widget.tarifaXDia.id!.contains("Unknow");
     seasons = widget.tarifaXDia.temporadas;
     selectSeason = widget.tarifaXDia.temporadaSelect;
     selectTariff = widget.tarifaXDia.tarifa;
     tariffs = widget.tarifaXDia.tarifas;
     baseTariffs = widget.tarifaXDia.tarifasBase;
-    isFreeTariff = widget.tarifaXDia.code!.contains("tariffFree");
+    isFreeTariff = widget.tarifaXDia.id!.contains("tariffFree");
     colorTariff = widget.tarifaXDia.color ?? DesktopColors.ceruleanOscure;
     isEditing = isFreeTariff
         ? true
@@ -602,7 +602,7 @@ class _ManagerTariffDayWidgetState
                                 categoria: tipoHabitacion[
                                     categorias.indexOf(selectCategory)],
                                 code: selectTariff?.code ??
-                                    "${widget.tarifaXDia.code} - $selectCategory",
+                                    "${widget.tarifaXDia.id} - $selectCategory",
                                 fecha: selectTariff?.fecha ?? DateTime.now(),
                                 id: selectTariff?.id ??
                                     categorias.indexOf(selectCategory),
@@ -828,9 +828,9 @@ class _ManagerTariffDayWidgetState
                                         },
                                       ),
                                     ),
-                                if (habitacionProvider.tarifaXDia!.any(
+                                if (habitacionProvider.tarifaXHabitacion!.any(
                                         (element) =>
-                                            element.code != 'Unknow') &&
+                                            element.id != 'Unknow') &&
                                     (usuario.rol != 'RECEPCION'))
                                   if (!widget.isAppling && widget.numDays > 1)
                                     CustomWidgets.checkBoxWithDescription(
@@ -1020,7 +1020,7 @@ class _ManagerTariffDayWidgetState
               } else if (selectTariff != null) {
                 selectTariff = TarifaTableData(
                   id: newTarifa?.id ?? 0,
-                  code: newTarifa?.code ?? widget.tarifaXDia.code ?? '',
+                  code: newTarifa?.code ?? widget.tarifaXDia.id ?? '',
                   categoria:
                       newTarifa?.categoria ?? widget.tarifaXDia.categoria,
                   fecha: newTarifa?.fecha ?? DateTime.now(),
@@ -1130,8 +1130,8 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllTariff) {
-                for (var element in habitacionProvider.tarifaXDia!) {
-                  if (element.code == widget.tarifaXDia.code) {
+                for (var element in habitacionProvider.tarifaXHabitacion!) {
+                  if (element.id == widget.tarifaXDia.id) {
                     element.tarifa = selectTariff;
                     element.subCode = null;
                     element.temporadaSelect = selectSeason;
@@ -1146,12 +1146,12 @@ class _ManagerTariffDayWidgetState
                     ? null
                     : UniqueKey().hashCode.toString();
 
-                for (var element in habitacionProvider.tarifaXDia!
-                    .where((element) => element.code!.contains("Unknow"))) {
+                for (var element in habitacionProvider.tarifaXHabitacion!
+                    .where((element) => element.id!.contains("Unknow"))) {
                   element.tarifa = selectTariff;
                   element.subCode = widget.tarifaXDia.subCode;
                   element.categoria = widget.tarifaXDia.categoria;
-                  element.code = widget.tarifaXDia.code;
+                  element.id = widget.tarifaXDia.id;
                   element.color = widget.tarifaXDia.color;
                   element.nombreTariff = widget.tarifaXDia.nombreTariff;
                   element.temporadaSelect = selectSeason;
@@ -1165,8 +1165,8 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllNoTariff && isUnknow) {
-                for (var element in habitacionProvider.tarifaXDia!
-                    .where((element) => element.code!.contains("Unknow"))) {
+                for (var element in habitacionProvider.tarifaXHabitacion!
+                    .where((element) => element.id!.contains("Unknow"))) {
                   element.tarifa = selectTariff;
                   element.tarifasBase = baseTariffs;
                   element.temporadaSelect = selectSeason;
@@ -1186,11 +1186,11 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllDays) {
-                for (var element in habitacionProvider.tarifaXDia!) {
+                for (var element in habitacionProvider.tarifaXHabitacion!) {
                   element.tarifa = selectTariff?.copyWith();
                   element.nombreTariff =
                       widget.tarifaXDia.copyWith().nombreTariff!;
-                  element.code = widget.tarifaXDia.copyWith().code;
+                  element.id = widget.tarifaXDia.copyWith().id;
                   element.color = widget.tarifaXDia.copyWith().color;
                   element.subCode = null;
                   if (isUnknow || isFreeTariff) {
@@ -1380,8 +1380,8 @@ class _ManagerTariffDayWidgetState
   bool isValidForApplyNotTariff(Habitacion habitacion) {
     bool isValid = false;
     if (isUnknow) return true;
-    if (habitacion.tarifaXDia!
-        .any((element) => element.code!.contains("Unknow"))) isValid = true;
+    if (habitacion.tarifaXHabitacion!
+        .any((element) => element.id!.contains("Unknow"))) isValid = true;
 
     return isValid;
   }

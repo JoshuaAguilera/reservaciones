@@ -18,8 +18,8 @@ List<TarifaTableData> listTarifasDataFromJson(List<dynamic> list) =>
     List<TarifaTableData>.from(list.map((x) => TarifaTableData.fromJson(x)));
 
 class TarifaXDia {
-  int? id;
-  String? code;
+  int? idInt;
+  String? id;
   String? folioRoom;
   String? categoria;
   String? subCode;
@@ -40,13 +40,13 @@ class TarifaXDia {
   int numDays;
 
   TarifaXDia({
-    this.id,
+    this.idInt,
     this.color,
     this.folioRoom,
     this.tariffCode,
     this.fecha,
     this.dia,
-    this.code,
+    this.id,
     this.subCode,
     this.descuentoProvisional,
     this.nombreTariff,
@@ -85,8 +85,8 @@ class TarifaXDia {
     int? numDays,
   }) =>
       TarifaXDia(
-        id: id ?? this.id,
-        code: code ?? this.code,
+        idInt: id ?? this.idInt,
+        id: code ?? this.id,
         folioRoom: folioRoom ?? this.folioRoom,
         color: color ?? this.color,
         temporadas: temporadas ?? this.temporadas,
@@ -109,8 +109,8 @@ class TarifaXDia {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'code': code,
+      'id': idInt,
+      'code': id,
       'tariffCode': tariffCode,
       'color': colorToHex(color ?? DesktopColors.cerulean),
       'temporadas': temporadas,
@@ -132,8 +132,8 @@ class TarifaXDia {
 
   factory TarifaXDia.fromJson(Map<String, dynamic> json) {
     return TarifaXDia(
-      id: json['id'],
-      code: json['code'],
+      idInt: json['id'],
+      id: json['code'],
       tariffCode: json['tariffCode'],
       color: colorFromHex(json['color']),
       temporadas: json['temporadas'] != null

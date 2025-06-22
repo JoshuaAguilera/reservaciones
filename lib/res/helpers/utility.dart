@@ -146,13 +146,13 @@ class Utility {
 
               for (var element in quotesInd) {
                 if (element.esGrupo!) {
-                  if (element.esConcretado ?? false) {
+                  if (element.estatus ?? false) {
                     quoteDay.numReservacionesGrupales++;
                   } else {
                     quoteDay.numCotizacionesGrupales++;
                   }
                 } else {
-                  if (element.esConcretado ?? false) {
+                  if (element.estatus ?? false) {
                     quoteDay.numReservacionesIndividual++;
                   } else {
                     quoteDay.numCotizacionesIndividual++;
@@ -184,13 +184,13 @@ class Utility {
 
             for (var element in quotes) {
               if (element.esGrupo!) {
-                if (element.esConcretado ?? false) {
+                if (element.estatus ?? false) {
                   quoteDay.numReservacionesGrupales++;
                 } else {
                   quoteDay.numCotizacionesGrupales++;
                 }
               } else {
-                if (element.esConcretado ?? false) {
+                if (element.estatus ?? false) {
                   quoteDay.numReservacionesIndividual++;
                 } else {
                   quoteDay.numCotizacionesIndividual++;
@@ -219,13 +219,13 @@ class Utility {
 
             for (var element in quotes) {
               if (element.esGrupo!) {
-                if (element.esConcretado ?? false) {
+                if (element.estatus ?? false) {
                   quoteDay.numReservacionesGrupales++;
                 } else {
                   quoteDay.numCotizacionesGrupales++;
                 }
               } else {
-                if (element.esConcretado ?? false) {
+                if (element.estatus ?? false) {
                   quoteDay.numReservacionesIndividual++;
                 } else {
                   quoteDay.numCotizacionesIndividual++;
@@ -278,20 +278,20 @@ class Utility {
     for (var element in respIndToday ?? List<Cotizacion>.empty()) {
       if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
               1 &&
-          !(element.esConcretado ?? false)) {
+          !(element.estatus ?? false)) {
         cotizacionesNoConcretadas.numCotizaciones++;
 
         continue;
       }
 
       if (element.esGrupo ?? false) {
-        if (element.esConcretado ?? false) {
+        if (element.estatus ?? false) {
           reservacionesGrupales.numCotizaciones++;
         } else {
           cotizacionesGrupales.numCotizaciones++;
         }
       } else {
-        if (element.esConcretado ?? false) {
+        if (element.estatus ?? false) {
           reservacionesIndividuales.numCotizaciones++;
         } else {
           cotizacionesIndividuales.numCotizaciones++;
@@ -371,14 +371,14 @@ class Utility {
     String period = "";
     Intl.defaultLocale = "es_ES";
     List<Habitacion> realQuotes =
-        cotizaciones.where((element) => !element.isFree).toList();
+        cotizaciones.where((element) => !element.esCortesia).toList();
 
     if (realQuotes.length > 1) {
       List<String> dates = [];
 
       for (var element in realQuotes) {
-        DateTime initTime = DateTime.parse(element.fechaCheckIn!);
-        DateTime lastTime = DateTime.parse(element.fechaCheckOut!);
+        DateTime initTime = DateTime.parse(element.checkIn!);
+        DateTime lastTime = DateTime.parse(element.checkOut!);
         DateFormat formatter = DateFormat('MMMM');
         if (lastTime.month == initTime.month) {
           dates.add("${initTime.day} al ${getCompleteDate(data: lastTime)}");
@@ -396,8 +396,8 @@ class Utility {
         if (dates.last != date) period += ", ";
       }
     } else {
-      DateTime initTime = DateTime.parse(cotizaciones.first.fechaCheckIn!);
-      DateTime lastTime = DateTime.parse(cotizaciones.first.fechaCheckOut!);
+      DateTime initTime = DateTime.parse(cotizaciones.first.checkIn!);
+      DateTime lastTime = DateTime.parse(cotizaciones.first.checkOut!);
       DateFormat formatter = DateFormat('MMMM');
       if (lastTime.month == initTime.month) {
         period += "${initTime.day} al ${getCompleteDate(data: lastTime)}";
@@ -411,8 +411,8 @@ class Utility {
   }
 
   static int getDifferenceInDays({List<Habitacion>? habitaciones}) {
-    int days = DateTime.parse(habitaciones!.first.fechaCheckOut!)
-        .difference(DateTime.parse(habitaciones.first.fechaCheckIn!))
+    int days = DateTime.parse(habitaciones!.first.checkOut!)
+        .difference(DateTime.parse(habitaciones.first.checkIn!))
         .inDays;
 
     return days;
@@ -1443,15 +1443,15 @@ class Utility {
 
     for (var element in list) {
       if (!tarifasFiltradas
-          .any((elementInt) => elementInt.code == element.code)) {
+          .any((elementInt) => elementInt.id == element.id)) {
         tarifasFiltradas.add(element.copyWith());
       } else {
         if (element.subCode == null) {
           if (tarifasFiltradas
-              .any((elementInt) => elementInt.code == element.code)) {
+              .any((elementInt) => elementInt.id == element.id)) {
             TarifaXDia? tarifaNow = tarifasFiltradas
                 .where((elementInt) =>
-                    elementInt.code == element.code &&
+                    elementInt.id == element.id &&
                     elementInt.subCode == null)
                 .firstOrNull;
             if (tarifaNow != null) {
@@ -1467,7 +1467,7 @@ class Utility {
               .any((elementInt) => elementInt.subCode == element.subCode)) {
             TarifaXDia? tarifaNow = tarifasFiltradas
                 .where((elementInt) =>
-                    elementInt.code == element.code &&
+                    elementInt.id == element.id &&
                     elementInt.subCode == element.subCode)
                 .firstOrNull;
             if (tarifaNow != null) {
@@ -1507,7 +1507,7 @@ class Utility {
     int rooms = 0;
     int freeRooms = 0;
     for (var element in habitaciones) {
-      if (element.isFree) {
+      if (element.esCortesia) {
         freeRooms += element.count;
       } else {
         rooms += element.count;
@@ -1540,7 +1540,7 @@ class Utility {
     double total = 0;
 
     List<Habitacion> realRooms =
-        habitaciones.where((element) => !element.isFree).toList();
+        habitaciones.where((element) => !element.esCortesia).toList();
     List<Habitacion> rooms = realRooms;
 
     for (var element in rooms) {
@@ -1557,7 +1557,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1567,7 +1567,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
           }
 
           if (onlySecoundCategory) {
@@ -1577,7 +1577,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1587,7 +1587,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1631,7 +1631,7 @@ class Utility {
             double subtotalCategory = calculateDiscountTotal(
               [element.tarifaGrupal ?? TarifaXDia()],
               element,
-              element.tarifaXDia?.length ?? 0,
+              element.tarifaXHabitacion?.length ?? 0,
               onlyTariffVR: true,
               typeQuote: true,
               applyRoundFormatt: applyRound,
@@ -1662,7 +1662,7 @@ class Utility {
             double subtotalCategory = calculateDiscountTotal(
               [element.tarifaGrupal ?? TarifaXDia()],
               element,
-              element.tarifaXDia?.length ?? 0,
+              element.tarifaXHabitacion?.length ?? 0,
               onlyTariffVPM: true,
               typeQuote: true,
               applyRoundFormatt: applyRound,
@@ -1701,7 +1701,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1711,7 +1711,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
           }
 
           if (onlySecoundCategory) {
@@ -1721,7 +1721,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1731,7 +1731,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXDia!.length) * element.count;
+                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1753,7 +1753,7 @@ class Utility {
     }
 
     if (onlyDiscount) {
-      for (var element in habitaciones.where((element) => element.isFree)) {
+      for (var element in habitaciones.where((element) => element.esCortesia)) {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
@@ -1766,7 +1766,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1775,7 +1775,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
           }
 
           if (onlySecoundCategory) {
@@ -1785,7 +1785,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1794,7 +1794,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1817,7 +1817,7 @@ class Utility {
 
     if (onlyTotal) {
       double desc = 0;
-      for (var element in habitaciones.where((element) => element.isFree)) {
+      for (var element in habitaciones.where((element) => element.esCortesia)) {
         double subtotal = 0;
 
         if (groupQuote && element.tarifaGrupal != null) {
@@ -1830,7 +1830,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1839,7 +1839,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
           }
 
           if (onlySecoundCategory) {
@@ -1849,7 +1849,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXDia!.length,
+              element.tarifaXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1858,7 +1858,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXDia!.length);
+            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
           }
         } else {
           subtotal = ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) *
@@ -2133,8 +2133,8 @@ class Utility {
     if (temporadas == null) return null;
     if (temporadas.isEmpty) return null;
 
-    int totalEstancia = DateTime.parse(habitacion.fechaCheckOut!)
-        .difference(DateTime.parse(habitacion.fechaCheckIn!))
+    int totalEstancia = DateTime.parse(habitacion.checkOut!)
+        .difference(DateTime.parse(habitacion.checkIn!))
         .inDays;
 
     List<String> promocionesNoValidas = [];
@@ -2188,10 +2188,10 @@ class Utility {
     bool withoutChanges = false;
 
     Habitacion originalRoom = habitaciones.firstWhere(
-        (element) => element.folioHabitacion == editRoom.folioHabitacion);
+        (element) => element.id == editRoom.id);
 
-    if (originalRoom.fechaCheckIn != editRoom.fechaCheckIn ||
-        originalRoom.fechaCheckOut != editRoom.fechaCheckOut) {
+    if (originalRoom.checkIn != editRoom.checkIn ||
+        originalRoom.checkOut != editRoom.checkOut) {
       withoutChanges = true;
     }
 

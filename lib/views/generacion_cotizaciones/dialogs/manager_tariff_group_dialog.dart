@@ -76,7 +76,7 @@ class _ManagerTariffGroupDialogState
         ? [ref.watch(habitacionSelectProvider)]
         : ref
             .watch(HabitacionProvider.provider)
-            .where((element) => !element.isFree)
+            .where((element) => !element.esCortesia)
             .toList();
 
     if (!startFlow) {
@@ -198,8 +198,8 @@ class _ManagerTariffGroupDialogState
                                     withOutWidth: true,
                                     backgroundColor: Theme.of(context)
                                         .scaffoldBackgroundColor,
-                                    isSelect: selectTariff!.code ==
-                                        roomTariffs[index].code,
+                                    isSelect: selectTariff!.id ==
+                                        roomTariffs[index].id,
                                   ),
                                 ),
                               ),
@@ -277,10 +277,10 @@ class _ManagerTariffGroupDialogState
                                 saveIntTariff = TarifaTableData(
                                   categoria: tipoHabitacion[
                                       categorias.indexOf(selectCategory)],
-                                  code: selectTariff?.code ??
-                                      "${selectTariff?.code} - $selectCategory",
+                                  code: selectTariff?.id ??
+                                      "${selectTariff?.id} - $selectCategory",
                                   fecha: selectTariff?.fecha ?? DateTime.now(),
-                                  id: selectTariff?.id ??
+                                  id: selectTariff?.idInt ??
                                       categorias.indexOf(selectCategory),
                                   tarifaAdultoSGLoDBL: double.tryParse(
                                       _tarifaAdultoSingleController.text),
@@ -325,7 +325,7 @@ class _ManagerTariffGroupDialogState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              if (selectTariff!.code != "tariffFree")
+                              if (selectTariff!.id != "tariffFree")
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop(
@@ -347,8 +347,8 @@ class _ManagerTariffGroupDialogState
                                       backgroundColor:
                                           DesktopColors.ceruleanOscure),
                                   onPressed: (habitaciones
-                                              .first.folioHabitacion ==
-                                          selectRoom?.folioHabitacion)
+                                              .first.id ==
+                                          selectRoom?.id)
                                       ? null
                                       : () {
                                           int index =
@@ -445,17 +445,17 @@ class _ManagerTariffGroupDialogState
                                       selectTariffs.firstWhere(
                                     (element) =>
                                         element?.folioRoom ==
-                                        selectRoom?.folioHabitacion,
+                                        selectRoom?.id,
                                     orElse: () => null,
                                   );
 
                                   if (foundTariff != null) {
-                                    if (foundTariff.code !=
-                                        selectTariff?.code) {
+                                    if (foundTariff.id !=
+                                        selectTariff?.id) {
                                       int indexFound = selectTariffs.indexWhere(
                                           (element) =>
                                               element?.folioRoom ==
-                                              selectRoom?.folioHabitacion);
+                                              selectRoom?.id);
                                       if (indexFound != -1) {
                                         selectTariffs[indexFound] =
                                             selectTariff!;
@@ -463,7 +463,7 @@ class _ManagerTariffGroupDialogState
                                     }
                                   } else {
                                     selectTariff?.folioRoom =
-                                        selectRoom?.folioHabitacion;
+                                        selectRoom?.id;
                                     selectTariffs.add(selectTariff!);
                                   }
 
@@ -532,7 +532,7 @@ class _ManagerTariffGroupDialogState
   void _selectNewRoom(Habitacion? room) {
     selectRoom = room;
     roomTariffs = widget.tarifasHabitacion ??
-        Utility.getUniqueTariffs(selectRoom!.tarifaXDia!);
+        Utility.getUniqueTariffs(selectRoom!.tarifaXHabitacion!);
     _selectTariff(
       roomTariffs.reduce(
         ((a, b) => a.numDays > b.numDays ? a : b),
@@ -547,14 +547,14 @@ class _ManagerTariffGroupDialogState
         selectTariff?.descuentoProvisional?.toString() ?? '';
     temporadaDataSelect = Utility.getSeasonNow(
       RegistroTarifa(temporadas: selectTariff?.temporadas),
-      DateTime.parse(selectRoom!.fechaCheckOut!)
-          .difference(DateTime.parse(selectRoom!.fechaCheckIn!))
+      DateTime.parse(selectRoom!.checkOut!)
+          .difference(DateTime.parse(selectRoom!.checkIn!))
           .inDays,
       isGroup: true,
     );
 
-    isUnknow = tarifa?.code == "Unknow";
-    isFree = tarifa?.code == "tariffFree";
+    isUnknow = tarifa?.id == "Unknow";
+    isFree = tarifa?.id == "tariffFree";
 
     int indexSeason = roomTariffs.indexOf(tarifa ?? TarifaXDia());
 
