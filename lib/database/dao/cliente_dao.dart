@@ -81,14 +81,12 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
 
     final data = await query.get();
 
-    List<Cliente> response = [];
-
-    for (var element in data) {
-      Cliente client = Cliente.fromJson(element.toJson());
-      response.add(client);
-    }
-
-    return response;
+    return data.map(
+      (e) {
+        Cliente client = Cliente.fromJson(e.toJson());
+        return client;
+      },
+    ).toList();
   }
 
   // CREATE

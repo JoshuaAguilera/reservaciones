@@ -46,12 +46,12 @@ class Usuario {
   });
 
   Usuario copyWith({
-    int? id,
-    String? userId,
+    int? idInt,
+    String? id,
     String? username,
     String? password,
     Rol? rol,
-    String? estado,
+    String? estatus,
     String? correoElectronico,
     String? telefono,
     DateTime? fechaNacimiento,
@@ -61,17 +61,17 @@ class Usuario {
     DateTime? createdAt,
   }) =>
       Usuario(
-        idInt: id ?? this.idInt,
-        id: userId ?? this.id,
+        idInt: idInt ?? this.idInt,
+        id: id ?? this.id,
         username: username ?? this.username,
         password: password ?? this.password,
-        rol: rol ?? this.rol,
-        estatus: estado ?? this.estatus,
+        rol: rol?.copyWith() ?? this.rol?.copyWith(),
+        estatus: estatus ?? this.estatus,
         correoElectronico: correoElectronico ?? this.correoElectronico,
         telefono: telefono ?? this.telefono,
         fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
         nombre: nombre ?? this.nombre,
-        imagen: imagen ?? this.imagen,
+        imagen: imagen?.copyWith() ?? this.imagen?.copyWith(),
         apellido: apellido ?? this.apellido,
         createdAt: createdAt ?? this.createdAt,
       );
@@ -94,7 +94,8 @@ class Usuario {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "_id": idInt,
+      "id_int": idInt,
+      "id": id,
       "username": username,
       "password": password,
       "rol": rol?.id,

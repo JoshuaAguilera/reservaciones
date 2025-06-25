@@ -19,7 +19,6 @@ String cotizacionToJson(Cotizacion data) => json.encode(data.toJson());
 class Cotizacion {
   int? idInt;
   String? id;
-  String? cotId;
   String? folio;
   Cliente? cliente;
   DateTime? createdAt;
@@ -28,10 +27,10 @@ class Cotizacion {
   bool? esGrupo;
   Usuario? creadoPor;
   Usuario? cerradoPor;
-  double? subtotal;
-  double? descuento;
-  double? impuestos;
-  double? total;
+  double? subtotal;//Not remisible
+  double? descuento;//Not remisible
+  double? impuestos;//Not remisible
+  double? total;//Not remisible
   String? comentarios;
   Cotizacion? cotizacion;
   List<Habitacion>? habitaciones;
@@ -39,7 +38,6 @@ class Cotizacion {
   Cotizacion({
     this.idInt,
     this.id,
-    this.cotId,
     this.folio,
     this.cliente,
     this.createdAt,
@@ -74,7 +72,6 @@ class Cotizacion {
   }) =>
       Cotizacion(
         idInt: id ?? this.idInt,
-        cotId: cotId ?? this.cotId,
         folio: folio ?? this.folio,
         createdAt: createdAt ?? this.createdAt,
         esGrupo: esGrupo ?? this.esGrupo,

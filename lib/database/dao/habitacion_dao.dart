@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../models/habitacion_model.dart';
 import '../database.dart';
 import '../tables/habitacion_table.dart';
 
@@ -11,7 +12,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   HabitacionDao(AppDatabase db) : super(db);
 
   // LIST
-  Future<List<HabitacionTableData>> getList({
+  Future<List<Habitacion>> getList({
     int? cotizacionId,
     DateTime? initDate,
     DateTime? lastDate,
@@ -19,7 +20,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     String order = 'asc',
     int limit = 20,
     int page = 1,
-  }) {
+  }) async {
     final query = select(db.habitacionTable);
 
     if (cotizacionId != null) {
@@ -32,6 +33,12 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
 
     if (lastDate != null) {
       query.where((u) => u.createdAt.isSmallerOrEqualValue(lastDate));
+    }
+
+    if (initDate != null && lastDate != null) {
+      query.where(
+        (tbl) => tbl.createdAt.isBetweenValues(initDate, lastDate),
+      );
     }
 
     OrderingTerm? ordering;
@@ -53,7 +60,14 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     final offset = (page - 1) * limit;
     query.limit(limit, offset: offset);
 
-    return query.get();
+    final response = await query.get();
+
+    return response.map(
+      (e) {
+        Habitacion newHab = Habitacion.fromJson(e.toJson());
+        return newHab;
+      },
+    ).toList();
   }
 
   // CREATE
@@ -61,7 +75,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     return into(db.clienteTable).insert(cliente);
   }
 
-  // READ: Usuario por ID
+  // READ: Habitacion por ID
   Future<ClienteTableData?> getByID(int id) {
     var response = (select(db.clienteTable)
           ..where((u) {

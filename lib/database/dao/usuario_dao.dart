@@ -29,7 +29,7 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
     }
 
     if (id != null) {
-      query.where((u) => u.id.equals(id));
+      query.where((u) => u.idInt.equals(id));
     }
 
     if (correo.isNotEmpty) {
@@ -89,7 +89,7 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   Future<UsuarioTableData?> getByID(int id) {
     var response = (select(db.usuarioTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .getSingleOrNull();
 
@@ -107,7 +107,7 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   Future<int> delet3(int id) {
     var response = (delete(db.usuarioTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .go();
 
