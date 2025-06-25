@@ -158,8 +158,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     double totalAdulto = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
-      habitacion.tarifaXHabitacion!.length,
-      descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      habitacion.tarifasXHabitacion!.length,
+      descuentoProvisional: widget.tarifaXDia.descIntegrado,
       isGroupTariff: typeQuote,
       useCashSeason: useCashSeason,
       applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
@@ -168,8 +168,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     double totalMenores = Utility.calculateTotalTariffRoom(
       nowRegister,
       habitacion,
-      habitacion.tarifaXHabitacion!.length,
-      descuentoProvisional: widget.tarifaXDia.descuentoProvisional,
+      habitacion.tarifasXHabitacion!.length,
+      descuentoProvisional: widget.tarifaXDia.descIntegrado,
       isCalculateChildren: true,
       isGroupTariff: typeQuote,
       useCashSeason: useCashSeason,
@@ -361,7 +361,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                         ? "Descuento: "
                         : "Temporada: ",
                     (isUnknow && widget.tarifaXDia.tariffCode == null)
-                        ? "${widget.tarifaXDia.descuentoProvisional}%"
+                        ? "${widget.tarifaXDia.descIntegrado}%"
                         : widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
                     boldInversed: true,
                     textAling: TextAlign.center,

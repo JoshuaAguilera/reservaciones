@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'tarifa_x_dia_model.dart';
 
-List<TarifaXHabitacion> TarifaXHabitacionXHabitacionsFromJson(String str) =>
+List<TarifaXHabitacion> tarifaXHabitacionXHabitacionsFromJson(String str) =>
     List<TarifaXHabitacion>.from(
         json.decode(str).map((x) => TarifaXHabitacion.fromJson(x)));
 
-String TarifaXHabitacionsToJson(List<TarifaXHabitacion> data) =>
+String tarifaXHabitacionsToJson(List<TarifaXHabitacion> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 List<TarifaXHabitacion> listTarifaXHabitacionsFromJson(List<dynamic> list) =>
@@ -56,7 +56,7 @@ class TarifaXHabitacion {
       );
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
       'id_int': idInt,
       'id': id,
       'habitacion_int': habitacionInt,
@@ -67,6 +67,11 @@ class TarifaXHabitacion {
       'fecha': fecha,
       'es_grupal': esGrupal,
     };
+
+    // Remueve todas las claves con valor null
+    data.removeWhere((key, value) => value == null);
+
+    return data;
   }
 
   factory TarifaXHabitacion.fromJson(Map<String, dynamic> json) {

@@ -135,7 +135,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                                 estanciaMin: element.estanciaMinima,
                                 isCash: element.forCash ?? false,
                                 isGroup: element.forGroup ?? false,
-                                porcentaje: element.porcentajePromocion,
+                                porcentaje: element.descuento,
                               ),
                           ],
                         ),

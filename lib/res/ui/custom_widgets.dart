@@ -122,7 +122,7 @@ class CustomWidgets {
                                   context: context,
                                   onChanged: (p0) {
                                     onChangedUseTariff?.call(p0);
-                                    temporada.porcentajePromocion = null;
+                                    temporada.descuento = null;
                                     onChangedDescuento!.call('');
                                   },
                                 ),
@@ -212,7 +212,7 @@ class CustomWidgets {
                               name: "Descuento",
                               isNumeric: true,
                               initialValue:
-                                  temporada.porcentajePromocion?.toString(),
+                                  temporada.descuento?.toString(),
                               icon: const Icon(
                                 CupertinoIcons.percent,
                                 size: 20,

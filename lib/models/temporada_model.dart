@@ -11,42 +11,44 @@ List<Temporada> listTemporadaFromJson(List<dynamic> list) =>
     List<Temporada>.from(list.map((x) => Temporada.fromJson(x)));
 
 class Temporada {
-  int? id;
-  String? code;
+  int? idInt;
+  String? id;
+  String? tipo;
   String? nombre;
-  DateTime? fecha;
+  DateTime? createdAt;
   int? estanciaMinima;
-  double? porcentajePromocion;
-  String? codeTarifa;
+  double? descuento;
+  double? ocupMin;
+  double? ocupMax;
   List<Tarifa>? tarifas;
   bool? editable;
-  bool? forGroup;
-  bool? forCash;
   bool? useTariff;
 
   Temporada({
+    this.idInt,
     this.id,
-    this.code,
+    this.tipo,
     this.nombre,
-    this.fecha,
+    this.createdAt,
     this.estanciaMinima,
-    this.porcentajePromocion,
+    this.descuento,
     this.tarifas,
-    this.codeTarifa,
+    this.ocupMax,
+    this.ocupMin,
     this.editable = true,
-    this.forGroup = false,
-    this.forCash = false,
     this.useTariff = false,
   });
 
   Temporada copyWith({
-    int? id,
-    String? code,
+    int? idInt,
+    String? id,
+    String? estatus,
     String? nombre,
-    DateTime? fecha,
+    DateTime? createdAt,
     int? estanciaMinima,
-    double? porcentajePromocion,
-    String? codeTarifa,
+    double? descuento,
+    double? ocupMin,
+    double? ocupMax,
     List<Tarifa>? tarifas,
     bool? editable,
     bool? forGroup,
@@ -54,53 +56,54 @@ class Temporada {
     bool? useTariff,
   }) =>
       Temporada(
+        idInt: idInt ?? this.idInt,
         id: id ?? this.id,
-        code: code ?? this.code,
+        tipo: estatus ?? this.tipo,
         nombre: nombre ?? this.nombre,
-        fecha: fecha ?? this.fecha,
+        createdAt: createdAt ?? this.createdAt,
         estanciaMinima: estanciaMinima ?? this.estanciaMinima,
-        porcentajePromocion: porcentajePromocion ?? this.porcentajePromocion,
-        codeTarifa: codeTarifa ?? this.codeTarifa,
+        descuento: descuento ?? this.descuento,
         tarifas: tarifas ?? this.tarifas,
         editable: editable ?? this.editable,
-        forCash: forCash ?? this.forCash,
-        forGroup: forGroup ?? this.forGroup,
         useTariff: useTariff ?? this.useTariff,
+        ocupMax: ocupMax ?? this.ocupMax,
+        ocupMin: ocupMin ?? this.ocupMin,
       );
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
+      'id_int': idInt,
       'id': id,
-      'code': code,
+      'tipo': tipo,
       'nombre': nombre,
-      'fecha': fecha != null ? fecha!.toIso8601String() : '',
-      'estanciaMinima': estanciaMinima,
-      'porcentajePromocion': porcentajePromocion,
-      'codeTarifa': codeTarifa,
+      'created_at': createdAt,
+      'estancia_minima': estanciaMinima,
+      'descuento': descuento,
+      'ocup_min': ocupMin,
+      'ocup_max': ocupMax,
       'tarifas': tarifas,
-      'forGroup': forGroup,
-      'forCash': forCash,
-      'useTariff': useTariff,
     };
+
+    // Remueve todas las claves con valor null
+    data.removeWhere((key, value) => value == null);
+
+    return data;
   }
 
   factory Temporada.fromJson(Map<String, dynamic> json) {
     return Temporada(
-      id: json['id'],
-      code: json['code'],
+      idInt: json['id'],
+      id: json['code'],
       tarifas: json['tarifas'] != null
           ? json['tarifas'] != '[]'
               ? listTarifasFromJson(json['tarifas'])
               : List<Tarifa>.empty()
           : List<Tarifa>.empty(),
-      fecha: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
+      createdAt: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
       nombre: json['nombre'],
-      codeTarifa: json['codeTarifa'],
       editable: json['editable'],
       estanciaMinima: json['estanciaMinima'],
-      forCash: json['forCash'],
-      forGroup: json['forGroup'],
-      porcentajePromocion: json['porcentajePromocion'],
+      descuento: json['porcentajePromocion'],
       useTariff: json['useTariff'],
     );
   }

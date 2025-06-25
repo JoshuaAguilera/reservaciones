@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class ImageTable extends Table {
+class ImagenTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
   TextColumn get id => text().nullable()();
   TextColumn get nombre => text().nullable()();

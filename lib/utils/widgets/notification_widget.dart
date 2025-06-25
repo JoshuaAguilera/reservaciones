@@ -147,9 +147,9 @@ class _NotificationItem extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            _getColorNotification(notificacion.level ?? ''),
+            _getColorNotification(notificacion.mensaje ?? ''),
             Utility.darken(
-                _getColorNotification(notificacion.level ?? ''), -0.15)
+                _getColorNotification(notificacion.mensaje ?? ''), -0.15)
           ],
           end: Alignment.centerRight,
           begin: Alignment.centerLeft,
@@ -161,21 +161,21 @@ class _NotificationItem extends StatelessWidget {
           Positioned(
             right: 0,
             child: Icon(
-              notificacion.icon ?? CupertinoIcons.bell,
+              notificacion.ruta ?? CupertinoIcons.bell,
               color: Utility.darken(
-                  _getColorNotification(notificacion.level ?? ''), 0.05),
+                  _getColorNotification(notificacion.mensaje ?? ''), 0.05),
               size: 80,
             ),
           ),
           ListTile(
             title: TextStyles.standardText(
-              text: notificacion.title ?? '',
+              text: notificacion.id ?? '',
               size: 12.5,
               isBold: true,
               color: Colors.white,
             ),
             subtitle: TextStyles.standardText(
-              text: notificacion.content ?? '',
+              text: notificacion.createdAt ?? '',
               size: 11,
               overClip: true,
               color: Colors.white,

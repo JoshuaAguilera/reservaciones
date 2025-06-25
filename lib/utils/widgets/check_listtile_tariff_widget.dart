@@ -124,9 +124,9 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXHabitacion!.length,
+                    widget.habitacion.tarifasXHabitacion!.length,
                     descuentoProvisional:
-                        widget.tarifaXDia.descuentoProvisional,
+                        widget.tarifaXDia.descIntegrado,
                     isGroupTariff: widget.isGroupTariff,
                     useCashSeason: widget.useSeasonCash,
                     applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
@@ -141,9 +141,9 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXHabitacion!.length,
+                    widget.habitacion.tarifasXHabitacion!.length,
                     descuentoProvisional:
-                        widget.tarifaXDia.descuentoProvisional,
+                        widget.tarifaXDia.descIntegrado,
                     isCalculateChildren: true,
                     isGroupTariff: widget.isGroupTariff,
                     useCashSeason: widget.useSeasonCash,
@@ -165,9 +165,9 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
                   Utility.calculateTotalTariffRoom(
                     tarifa,
                     widget.habitacion,
-                    widget.habitacion.tarifaXHabitacion!.length,
+                    widget.habitacion.tarifasXHabitacion!.length,
                     descuentoProvisional:
-                        widget.tarifaXDia.descuentoProvisional,
+                        widget.tarifaXDia.descIntegrado,
                     isGroupTariff: widget.isGroupTariff,
                     useCashSeason: widget.useSeasonCash,
                     getTotalRoom: true,
@@ -201,7 +201,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
               if (widget.tarifaXDia.temporadas == null)
                 TextStyles.TextAsociative(
                   "Descuento:  ",
-                  "${widget.tarifaXDia.descuentoProvisional ?? 0}%",
+                  "${widget.tarifaXDia.descIntegrado ?? 0}%",
                   color: Theme.of(context).primaryColor,
                   size: 12,
                 ),

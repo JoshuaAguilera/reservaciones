@@ -35,7 +35,7 @@ class Categoria {
     this.creadoPor,
   });
 
-  Categoria CopyWith({
+  Categoria copyWith({
     int? idInt,
     String? id,
     String? nombre,
@@ -50,8 +50,9 @@ class Categoria {
         nombre: nombre ?? this.nombre,
         descripcion: descripcion ?? this.descripcion,
         color: color ?? this.color,
-        tipoHabitacion: tipoHabitacion ?? this.tipoHabitacion,
-        creadoPor: creadoPor ?? this.creadoPor,
+        tipoHabitacion:
+            tipoHabitacion?.copyWith() ?? this.tipoHabitacion?.copyWith(),
+        creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
       );
 
   factory Categoria.fromJson(Map<String, dynamic> json) {

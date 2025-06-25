@@ -240,10 +240,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
           Preferences.userImageUrl = imageUser.urlImage ?? '';
           ref.watch(imagePerfilProvider.notifier).update(
                 (ref) => Imagen(
-                  code: int.parse(imageUser.code ?? '0'),
-                  urlImagen: imageUser.urlImage,
-                  usuarioId: usuario.id,
-                  id: imageUser.id,
+                  createdAt: int.parse(imageUser.code ?? '0'),
+                  ruta: imageUser.urlImage,
+                  nombre: usuario.id,
+                  idInt: imageUser.id,
                 ),
               );
         } else {

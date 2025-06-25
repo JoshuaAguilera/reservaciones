@@ -1242,7 +1242,7 @@ class Utility {
             totalDays,
             isGroup: isGroupTariff,
             useCashTariff: useCashSeason,
-          )?.porcentajePromocion ??
+          )?.descuento ??
           0;
     } else {
       descuento = descuentoProvisional ?? 0;
@@ -1412,16 +1412,16 @@ class Utility {
     for (var element in temporadasData!) {
       temporadas.add(
         Temporada(
-          id: element.id,
-          code: element.code,
+          idInt: element.id,
+          id: element.code,
           estanciaMinima: element.estanciaMinima,
           nombre: element.nombre,
-          porcentajePromocion: element.porcentajePromocion,
+          descuento: element.porcentajePromocion,
           editable: !(count < 3),
           forGroup: element.forGroup ?? false,
           forCash: element.forCash ?? false,
           codeTarifa: element.codeTarifa,
-          fecha: element.fecha,
+          createdAt: element.fecha,
         ),
       );
       count++;
@@ -1557,7 +1557,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1567,7 +1567,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
+                (subtotalCategory * element.tarifasXHabitacion!.length) * element.count;
           }
 
           if (onlySecoundCategory) {
@@ -1577,7 +1577,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1587,7 +1587,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
+                (subtotalCategory * element.tarifasXHabitacion!.length) * element.count;
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1631,7 +1631,7 @@ class Utility {
             double subtotalCategory = calculateDiscountTotal(
               [element.tarifaGrupal ?? TarifaXDia()],
               element,
-              element.tarifaXHabitacion?.length ?? 0,
+              element.tarifasXHabitacion?.length ?? 0,
               onlyTariffVR: true,
               typeQuote: true,
               applyRoundFormatt: applyRound,
@@ -1662,7 +1662,7 @@ class Utility {
             double subtotalCategory = calculateDiscountTotal(
               [element.tarifaGrupal ?? TarifaXDia()],
               element,
-              element.tarifaXHabitacion?.length ?? 0,
+              element.tarifasXHabitacion?.length ?? 0,
               onlyTariffVPM: true,
               typeQuote: true,
               applyRoundFormatt: applyRound,
@@ -1701,7 +1701,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1711,7 +1711,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
+                (subtotalCategory * element.tarifasXHabitacion!.length) * element.count;
           }
 
           if (onlySecoundCategory) {
@@ -1721,7 +1721,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1731,7 +1731,7 @@ class Utility {
             );
 
             subtotal +=
-                (subtotalCategory * element.tarifaXHabitacion!.length) * element.count;
+                (subtotalCategory * element.tarifasXHabitacion!.length) * element.count;
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1766,7 +1766,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1775,7 +1775,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
+            subtotal += (subtotalCategory * element.tarifasXHabitacion!.length);
           }
 
           if (onlySecoundCategory) {
@@ -1785,7 +1785,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1794,7 +1794,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
+            subtotal += (subtotalCategory * element.tarifasXHabitacion!.length);
           }
         } else {
           if (!onlyFirstCategory && !onlySecoundCategory) {
@@ -1830,7 +1830,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVR: true,
@@ -1839,7 +1839,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
+            subtotal += (subtotalCategory * element.tarifasXHabitacion!.length);
           }
 
           if (onlySecoundCategory) {
@@ -1849,7 +1849,7 @@ class Utility {
                 tarifas: element.tarifaGrupal?.tarifas,
               ),
               element,
-              element.tarifaXHabitacion!.length,
+              element.tarifasXHabitacion!.length,
               getTotalRoom: true,
               descuentoProvisional: element.tarifaGrupal?.descuentoProvisional,
               onlyTariffVPM: true,
@@ -1858,7 +1858,7 @@ class Utility {
               applyRoundFormat: applyRound,
             );
 
-            subtotal += (subtotalCategory * element.tarifaXHabitacion!.length);
+            subtotal += (subtotalCategory * element.tarifasXHabitacion!.length);
           }
         } else {
           subtotal = ((element.totalVR ?? 0) + (element.totalVPM ?? 0)) *
@@ -2032,7 +2032,7 @@ class Utility {
     double totalR = totalChildren + totalAdults;
 
     double descuento = element.temporadaSelect?.porcentajePromocion ??
-        element.descuentoProvisional ??
+        element.descIntegrado ??
         0;
 
     double discountAdult = calculatePromotion(
@@ -2230,12 +2230,12 @@ class Utility {
           id: element?.id ?? 0,
           categoria: element?.categoria,
           code: element?.code,
-          fecha: DateTime.tryParse(element?.fecha ?? ''),
+          fecha: DateTime.tryParse(element?.createdAt ?? ''),
           tarifaAdultoCPLE: element?.tarifaAdulto4,
           tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
           tarifaAdultoTPL: element?.tarifaAdulto3,
           tarifaMenores7a12: element?.tarifaMenores7a12,
-          tarifaPadreId: element?.tarifaBaseId,
+          tarifaPadreId: element?.tarifaBase,
           tarifaPaxAdicional: element?.tarifaPaxAdicional,
         ))!);
       } else {
@@ -2243,12 +2243,12 @@ class Utility {
           id: element?.id ?? 0,
           categoria: element?.categoria,
           code: element?.code,
-          fecha: DateTime.tryParse(element?.fecha ?? ''),
+          fecha: DateTime.tryParse(element?.createdAt ?? ''),
           tarifaAdultoCPLE: element?.tarifaAdulto4,
           tarifaAdultoSGLoDBL: element?.tarifaAdulto1a2,
           tarifaAdultoTPL: element?.tarifaAdulto3,
           tarifaMenores7a12: element?.tarifaMenores7a12,
-          tarifaPadreId: element?.tarifaBaseId,
+          tarifaPadreId: element?.tarifaBase,
           tarifaPaxAdicional: element?.tarifaPaxAdicional,
         ));
       }

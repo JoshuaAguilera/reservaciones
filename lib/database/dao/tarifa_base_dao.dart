@@ -14,7 +14,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
     with _$TarifaBaseDaoMixin {
   TarifaBaseDao(AppDatabase db) : super(db);
 
-  Future<List<TarifaBaseInt>> getBaseTariffComplement(
+  Future<List<TarifaBase>> getBaseTariffComplement(
       {int? tarifaBaseId, int? tarifaPadreId}) async {
     final query = customSelect(
       '''
@@ -74,13 +74,13 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
           id: tarifaId,
           code: code,
           categoria: categoria,
-          fecha: fecha.toString().substring(0, 10),
+          createdAt: fecha.toString().substring(0, 10),
           tarifaAdulto1a2: tarifaAdultoSGLoDBL,
           tarifaAdulto3: tarifaAdultoTPL,
           tarifaAdulto4: tarifaAdultoCPLE,
           tarifaMenores7a12: tarifaMenores7a12,
           tarifaPaxAdicional: tarifaPaxAdicional,
-          tarifaBaseId: tarifaBaseId,
+          tarifaBase: tarifaBaseId,
         );
         tarifasPorTarifaBase
             .putIfAbsent(tarifaBaseId, () => [])
@@ -88,11 +88,11 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
       }
     }
 
-    final List<TarifaBaseInt> tarifasBase = [];
+    final List<TarifaBase> tarifasBase = [];
 
     for (final row in rows) {
       final tarifaBaseId = row.read<int>('tarifaBaseId');
-      final tarifaOrigenId = row.read<int?>('tarifaOrigenId');
+      // final tarifaOrigenId = row.read<int?>('tarifaOrigenId');
       final code = row.read<String?>('tarifaBaseCode');
       final nombre = row.read<String?>('tarifaBaseNombre');
       final withAuto = row.read<bool?>('withAuto');
@@ -102,19 +102,19 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
       final upgradePaxAdic = row.read<double?>('tarifaBaseUpgradePaxAdic');
       final tarifaPadreId = row.read<int?>('tarifaPadreId');
 
-      if (!tarifasBase.any((c) => c.id == tarifaBaseId)) {
+      if (!tarifasBase.any((c) => c.idInt == tarifaBaseId)) {
         tarifasBase.add(
-          TarifaBaseInt(
-            id: tarifaBaseId,
-            code: code,
+          TarifaBase(
+            idInt: tarifaBaseId,
+            codigo: code,
             nombre: nombre,
-            withAuto: withAuto,
-            descIntegrado: descuento,
+            conAutocalculacion: withAuto,
+            aumIntegrado: descuento,
             upgradeCategoria: upgradeCategoria,
             upgradeMenor: upgradeMenor,
             upgradePaxAdic: upgradePaxAdic,
-            tarifaOrigenId: tarifaOrigenId,
-            tarifaPadre: tarifaPadreId != null
+            // creadoPor: tarifaOrigenId,
+            tarifaBase: tarifaPadreId != null
                 ? (await getBaseTariffComplement(tarifaBaseId: tarifaPadreId))
                     .first
                 : null,
@@ -143,7 +143,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
     int tarifaId = baseTariff.id;
     final tarifaDao = TarifaDao(db);
 
-    List<TarifaBaseInt> _tariffs =
+    List<TarifaBase> _tariffs =
         await getBaseTariffComplement(tarifaPadreId: tarifaId);
 
     if (_tariffs.isNotEmpty) {
@@ -152,7 +152,7 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
           continue;
         }
 
-        double divisor = tarifaBase.descIntegrado ?? 1;
+        double divisor = tarifaBase.aumIntegrado ?? 1;
 
         for (var element in (tarifaBase.tarifas!)) {
           tf.Tarifa? selectTariff = await tarifasBase
@@ -179,14 +179,14 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
               tarifaMenores7a12: Value(element.tarifaMenores7a12),
               tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
             ),
-            baseTariffId: tarifaBase.id!,
+            baseTariffId: tarifaBase.idInt!,
             id: element.id ?? 0,
           );
         }
 
         await propageChangesTariff(
           baseTariff: TarifaBaseTableData(
-              id: tarifaBase.id!, descIntegrado: tarifaBase.descIntegrado),
+              id: tarifaBase.idInt!, descIntegrado: tarifaBase.aumIntegrado),
           tarifasBase: tarifaBase.tarifas ?? List<tf.Tarifa>.empty(),
         );
       }
@@ -219,12 +219,12 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  Future<int> deleteBaseTariff(TarifaBaseInt tarifaBaseSelect) {
-    removePadreTarifaId(padreId: tarifaBaseSelect.id);
-    removeOrigenTarifaId(origenId: tarifaBaseSelect.id);
+  Future<int> deleteBaseTariff(TarifaBase tarifaBaseSelect) {
+    removePadreTarifaId(padreId: tarifaBaseSelect.idInt);
+    removeOrigenTarifaId(origenId: tarifaBaseSelect.idInt);
 
     return (delete(tarifaBaseTable)
-          ..where((t) => t.id.equals(tarifaBaseSelect.id!)))
+          ..where((t) => t.id.equals(tarifaBaseSelect.idInt!)))
         .go();
   }
 }

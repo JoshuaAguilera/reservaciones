@@ -28,7 +28,7 @@ class TipoHabitacion {
     this.descripcion,
   });
 
-  TipoHabitacion CopyWith({
+  TipoHabitacion copyWith({
     int? idInt,
     String? id,
     String? codigo,

@@ -30,13 +30,13 @@ class ImageService extends BaseService {
       ImageTableData? result =
           await database.into(database.imageTable).insertReturningOrNull(
                 ImageTableCompanion.insert(
-                  code: Value(imagen?.code?.toString()),
-                  urlImage: Value(imagen?.urlImagen),
+                  code: Value(imagen?.createdAt?.toString()),
+                  urlImage: Value(imagen?.ruta),
                 ),
               );
       await database.close();
       response = result;
-      Preferences.userImageUrl = imagen!.urlImagen ?? '';
+      Preferences.userImageUrl = imagen!.ruta ?? '';
     } catch (e) {
       await database.close();
     }

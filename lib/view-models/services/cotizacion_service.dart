@@ -43,7 +43,7 @@ class CotizacionService extends BaseService {
         () async {
           for (var element in habitaciones!) {
             if (isQuoteGroup) {
-              element.tarifaXHabitacion!.clear();
+              element.tarifasXHabitacion!.clear();
               int days = DateTime.parse(element.checkOut!)
                   .difference(DateTime.parse(element.checkIn!))
                   .inDays;
@@ -55,7 +55,7 @@ class CotizacionService extends BaseService {
                 newTariff.fecha = dateNow;
                 newTariff.dia = ink;
                 newTariff.numDays = 1;
-                element.tarifaXHabitacion!.add(
+                element.tarifasXHabitacion!.add(
                   newTariff.copyWith(),
                 );
               }
@@ -79,7 +79,7 @@ class CotizacionService extends BaseService {
                     paxAdic: Value(0),
                     // total: Value(element.total),
                     // totalReal: Value(element.totalReal),
-                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifaXHabitacion!)),
+                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifasXHabitacion!)),
                   ),
                 );
           }

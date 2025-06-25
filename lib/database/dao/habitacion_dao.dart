@@ -37,25 +37,15 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     OrderingTerm? ordering;
 
     switch (sortBy) {
-      case 'nombre':
-        ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.nombre)
-            : OrderingTerm.asc(db.clienteTable.nombre);
-        break;
-      case 'correo':
-        ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.correoElectronico)
-            : OrderingTerm.asc(db.clienteTable.correoElectronico);
-        break;
       case 'createdAt':
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.createdAt)
-            : OrderingTerm.asc(db.clienteTable.createdAt);
+            ? OrderingTerm.desc(db.habitacionTable.createdAt)
+            : OrderingTerm.asc(db.habitacionTable.createdAt);
         break;
       default:
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.id)
-            : OrderingTerm.asc(db.clienteTable.id);
+            ? OrderingTerm.desc(db.habitacionTable.id)
+            : OrderingTerm.asc(db.habitacionTable.id);
     }
 
     query.orderBy([(_) => ordering!]);
@@ -75,7 +65,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   Future<ClienteTableData?> getByID(int id) {
     var response = (select(db.clienteTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .getSingleOrNull();
 
@@ -93,7 +83,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   Future<int> delet3(int id) {
     var response = (delete(db.clienteTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .go();
 

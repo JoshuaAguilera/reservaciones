@@ -23,7 +23,7 @@ import '../../../utils/widgets/textformfield_custom.dart';
 class ManagerBaseTariffDialog extends StatefulWidget {
   const ManagerBaseTariffDialog({super.key, required this.tarifasBase});
 
-  final List<TarifaBaseInt> tarifasBase;
+  final List<TarifaBase> tarifasBase;
 
   @override
   State<ManagerBaseTariffDialog> createState() =>
@@ -50,8 +50,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   double? upgradeCateg;
   double? upgradeMenor;
   double? upGradePaxAdic;
-  TarifaBaseInt? tarifaPadre;
-  TarifaBaseInt? selectBaseTariff;
+  TarifaBase? tarifaPadre;
+  TarifaBase? selectBaseTariff;
   String messageError = "";
   bool isLoading = false;
   bool isTariffPadre = false;
@@ -65,12 +65,12 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     super.initState();
   }
 
-  void _updateTarifasPadre(TarifaBaseInt? selectTariff) {
+  void _updateTarifasPadre(TarifaBase? selectTariff) {
     isTariffPadre = false;
-    tarifaPadre = selectTariff?.tarifaPadre;
+    tarifaPadre = selectTariff?.tarifaBase;
     if (widget.tarifasBase.any((element) =>
-        (element.tarifaPadre?.nombre == (selectTariff?.nombre ?? '') ||
-            (element.tarifaOrigenId == (selectTariff?.id ?? 0))))) {
+        (element.tarifaBase?.nombre == (selectTariff?.nombre ?? '') ||
+            (element.creadoPor == (selectTariff?.idInt ?? 0))))) {
       isTariffPadre = true;
       setState(() {});
     }
@@ -80,18 +80,18 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     //Arreglar administracion de tarifas padre en cuanto a su uso, evitando sobre uso de propios hijos
     for (var element in widget.tarifasBase) {
       if ((element.nombre ?? '') == selectTariff?.nombre) continue;
-      if ((element.tarifaPadre?.id ?? 0) == selectTariff?.id) continue;
-      if ((element.tarifaOrigenId ?? 0) == selectTariff?.id) continue;
-      if ((element.tarifaPadre?.tarifaPadre?.id ?? 0) == selectTariff?.id) {
+      if ((element.tarifaBase?.idInt ?? 0) == selectTariff?.idInt) continue;
+      if ((element.creadoPor ?? 0) == selectTariff?.idInt) continue;
+      if ((element.tarifaBase?.tarifaBase?.idInt ?? 0) == selectTariff?.idInt) {
         continue;
       }
-      if ((element.tarifaPadre?.tarifaPadre?.tarifaPadre?.id ?? 0) ==
-          selectTariff?.id) {
+      if ((element.tarifaBase?.tarifaBase?.tarifaBase?.idInt ?? 0) ==
+          selectTariff?.idInt) {
         continue;
       }
-      if ((element.tarifaPadre?.tarifaPadre?.tarifaPadre?.tarifaPadre?.id ??
+      if ((element.tarifaBase?.tarifaBase?.tarifaBase?.tarifaBase?.idInt ??
               0) ==
-          selectTariff?.id) {
+          selectTariff?.idInt) {
         continue;
       }
       tarifasBaseTags.add(element.nombre!);
@@ -244,7 +244,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                     .indexOf(selectCategory)])
                                             .firstOrNull;
 
-                                        saveTariff?.tarifaBaseId = null;
+                                        saveTariff?.tarifaBase = null;
 
                                         _applyDiscountTariff(
                                           tarifaPadre?.tarifas
@@ -473,7 +473,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                   percent: (tarifaPadre ==
                                                               null ||
                                                           saveTariff
-                                                                  ?.tarifaBaseId !=
+                                                                  ?.tarifaBase !=
                                                               null)
                                                       ? null
                                                       : double.tryParse(
@@ -726,7 +726,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   nowTariff.tarifaMenores7a12 = double.parse(
                                       _tarifaMenoresController.text);
 
-                                  if (selectBaseTariff?.id != null) {
+                                  if (selectBaseTariff?.idInt != null) {
                                     nowTariff.id = selectBaseTariff?.tarifas
                                         ?.where((element) =>
                                             element.categoria ==
@@ -740,7 +740,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     saveTariff?.categoria = tipoHabitacion.last;
                                   }
 
-                                  if (selectBaseTariff?.id != null) {
+                                  if (selectBaseTariff?.idInt != null) {
                                     nowTariff.id = selectBaseTariff?.tarifas
                                         ?.where((element) =>
                                             element.categoria ==
@@ -750,7 +750,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                         ?.id;
                                   }
 
-                                  if (selectBaseTariff?.id != null) {
+                                  if (selectBaseTariff?.idInt != null) {
                                     saveTariff?.id = selectBaseTariff?.tarifas
                                         ?.where((element) =>
                                             element.categoria !=
@@ -811,24 +811,24 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                             secondTariff?.tarifaMenores7a12);
                                   }
 
-                                  TarifaBaseInt tarifaBase =
-                                      TarifaBaseInt(id: selectBaseTariff?.id);
-                                  tarifaBase.code = selectBaseTariff?.code;
-                                  tarifaBase.withAuto = withAutocalculation;
+                                  TarifaBase tarifaBase =
+                                      TarifaBase(idInt: selectBaseTariff?.idInt);
+                                  tarifaBase.codigo = selectBaseTariff?.codigo;
+                                  tarifaBase.conAutocalculacion = withAutocalculation;
                                   tarifaBase.nombre =
                                       _nombreTarifaController.text;
-                                  tarifaBase.descIntegrado = double.tryParse(
+                                  tarifaBase.aumIntegrado = double.tryParse(
                                       _dividendoController.text);
                                   tarifaBase.upgradeCategoria = upgradeCateg;
                                   tarifaBase.upgradeMenor = upgradeMenor;
                                   tarifaBase.upgradePaxAdic = upGradePaxAdic;
-                                  tarifaBase.tarifaPadre = tarifaPadre;
-                                  tarifaBase.tarifaOrigenId =
-                                      tarifaPadre?.tarifaOrigenId;
+                                  tarifaBase.tarifaBase = tarifaPadre;
+                                  tarifaBase.creadoPor =
+                                      tarifaPadre?.creadoPor;
                                   tarifaBase.tarifas = [
                                     nowTariff,
                                     if (!applyUpgrades ||
-                                        (selectBaseTariff?.id != null &&
+                                        (selectBaseTariff?.idInt != null &&
                                             applyUpgrades &&
                                             saveTariff != null))
                                       saveTariff!
@@ -836,7 +836,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
                                   if (mounted) {
                                     String messageResponse =
-                                        selectBaseTariff?.id != null
+                                        selectBaseTariff?.idInt != null
                                             ? await TarifaService()
                                                 .updateBaseTariff(
                                                 tarifaBase,
@@ -891,13 +891,13 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     });
   }
 
-  void _selectNewBaseTariff(TarifaBaseInt? baseTariff) {
+  void _selectNewBaseTariff(TarifaBase? baseTariff) {
     _updateTarifasPadre(baseTariff);
     selectBaseTariff = baseTariff;
     selectCategory = categorias.first;
-    selectTarifaPadre = baseTariff?.tarifaPadre?.nombre ?? 'Ninguna';
+    selectTarifaPadre = baseTariff?.tarifaBase?.nombre ?? 'Ninguna';
     applyPropageChange = true;
-    withAutocalculation = baseTariff?.withAuto ?? false;
+    withAutocalculation = baseTariff?.conAutocalculacion ?? false;
 
     if (selectBaseTariff != null) {
       _updateDataInput(selectBaseTariff);
@@ -928,7 +928,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     return parentRate;
   }
 
-  void _updateDataInput(TarifaBaseInt? selectTariff, {double? percent}) {
+  void _updateDataInput(TarifaBase? selectTariff, {double? percent}) {
     applyUpgrades = selectTariff?.upgradeCategoria != null;
     if (applyUpgrades) {
       upgradeCateg = selectTariff?.upgradeCategoria;
@@ -946,7 +946,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
 
-    _dividendoController.text = (selectTariff?.descIntegrado ?? '').toString();
+    _dividendoController.text = (selectTariff?.aumIntegrado ?? '').toString();
     _applyDiscountTariff(initTariff, percent: percent);
   }
 
@@ -968,7 +968,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
             .toString();
   }
 
-  void _recoverySaveTariff(TarifaBaseInt? selectTariff) {
+  void _recoverySaveTariff(TarifaBase? selectTariff) {
     saveTariff = selectTariff?.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.last)
         .firstOrNull;
@@ -976,7 +976,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
   Widget _buildStepItem(
     String title,
-    TarifaBaseInt? tariff, {
+    TarifaBase? tariff, {
     bool isNew = false,
   }) {
     return Padding(
@@ -996,7 +996,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                       ? Icon(CupertinoIcons.add_circled,
                           size: 22, color: DesktopColors.turqueza)
                       : const Icon(HeroIcons.plus, size: 16)
-                  : Radio<TarifaBaseInt>(
+                  : Radio<TarifaBase>(
                       value: tariff!,
                       groupValue: selectBaseTariff,
                       onChanged: (value) {

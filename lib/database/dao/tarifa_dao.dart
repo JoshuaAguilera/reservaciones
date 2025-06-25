@@ -20,11 +20,11 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
       tf.Tarifa tariff = tf.Tarifa(id: element.id);
       tariff.categoria = element.categoria;
       tariff.code = element.code;
-      tariff.fecha = element.fecha?.toIso8601String();
+      tariff.createdAt = element.fecha?.toIso8601String();
       tariff.tarifaAdulto1a2 = element.tarifaAdultoSGLoDBL;
       tariff.tarifaAdulto3 = element.tarifaAdultoTPL;
       tariff.tarifaAdulto4 = element.tarifaAdultoCPLE;
-      tariff.tarifaBaseId = element.tarifaPadreId;
+      tariff.tarifaBase = element.tarifaPadreId;
       tariff.tarifaMenores7a12 = element.tarifaMenores7a12;
       tariff.tarifaPaxAdicional = element.tarifaPaxAdicional;
       tarifas.add(tariff);

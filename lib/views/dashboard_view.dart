@@ -190,16 +190,16 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                             if (count > 0) {
                               Notificacion newNotification = Notificacion(
-                                id: 0,
-                                level: "alert",
-                                icon: HeroIcons.calendar,
-                                content:
+                                idInt: 0,
+                                mensaje: "alert",
+                                ruta: HeroIcons.calendar,
+                                createdAt:
                                     "Tiene${count > 1 ? "s" : ""} ${count > 1 ? count : "una"} cotizacion${count > 1 ? "es" : ""} que esta${count > 1 ? "n" : ""} a punto de dejar de ser vigentes.",
-                                title: "Cotizaciones por Vencer",
+                                id: "Cotizaciones por Vencer",
                               );
 
                               if (!notificaciones
-                                  .any((element) => element.id == 0)) {
+                                  .any((element) => element.idInt == 0)) {
                                 ref
                                     .read(userViewProvider.notifier)
                                     .update((state) => false);
@@ -218,7 +218,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   .read(userViewProvider.notifier)
                                   .update((state) => false);
                               if (notificaciones
-                                  .any((element) => element.id == 0)) {
+                                  .any((element) => element.idInt == 0)) {
                                 ref
                                     .watch(
                                         NotificacionProvider.provider.notifier)

@@ -99,7 +99,7 @@ class SendQuoteService extends BaseService {
       message +=
           "*Estancia: ${Utility.getPeriodReservation([roomList.first])}*";
       message += "\n";
-      message += "*Noches: ${roomList.first.tarifaXHabitacion?.length}*";
+      message += "*Noches: ${roomList.first.tarifasXHabitacion?.length}*";
 
       message += "\n\n";
       message += "*Habitación Deluxe doble, vista a la reserva* 🏞️";
@@ -109,7 +109,7 @@ class SendQuoteService extends BaseService {
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifaXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVR ?? 0) / (element.tarifasXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVR ?? 0.0)}";
         message +=
             "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVR ?? 0.0) * element.count)}\n" : ""}";
       }
@@ -122,7 +122,7 @@ class SendQuoteService extends BaseService {
         message += "*${Utility.getOcupattionMessage(element)}*";
         message += "\n";
         message +=
-            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifaXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
+            "*Total por noche:* ${Utility.formatterNumber(((element.totalVPM ?? 0) / (element.tarifasXHabitacion?.length ?? 1)))}\n*Total de ${element.count > 1 ? "habitación" : "estancia"}:* ${Utility.formatterNumber(element.totalVPM ?? 0.0)}";
         message +=
             "\n${element.count > 1 ? "*Total de estancia:* ${Utility.formatterNumber((element.totalVPM ?? 0.0) * element.count)}\n" : ""}";
       }

@@ -360,15 +360,15 @@ class FilesTemplate {
     List<List<pw.Widget>> contenido = [];
 
     double descuentoTarifa =
-        habitacion.tarifaXHabitacion?.first.descuentoProvisional ??
-            habitacion.tarifaXHabitacion?.first.temporadaSelect?.porcentajePromocion ??
+        habitacion.tarifasXHabitacion?.first.descuentoProvisional ??
+            habitacion.tarifasXHabitacion?.first.temporadaSelect?.porcentajePromocion ??
             0;
 
-    TarifaTableData? tariffVR = habitacion.tarifaXHabitacion?.first.tarifas
+    TarifaTableData? tariffVR = habitacion.tarifasXHabitacion?.first.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.first)
         .firstOrNull;
 
-    TarifaTableData? tariffVPM = habitacion.tarifaXHabitacion?.first.tarifas
+    TarifaTableData? tariffVPM = habitacion.tarifasXHabitacion?.first.tarifas
         ?.where((element) => element.categoria == tipoHabitacion.last)
         .firstOrNull;
 
@@ -384,7 +384,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -394,7 +394,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -404,7 +404,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -414,7 +414,7 @@ class FilesTemplate {
                 (tariffVR?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -430,7 +430,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoSGLoDBL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -440,7 +440,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoTPL ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -450,7 +450,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaAdultoCPLE ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -460,7 +460,7 @@ class FilesTemplate {
                 (tariffVPM?.tarifaMenores7a12 ?? 0).toString(),
                 descuentoTarifa,
                 returnDouble: true,
-                rounded: !(habitacion.tarifaXHabitacion?.first.modificado ?? false),
+                rounded: !(habitacion.tarifasXHabitacion?.first.modificado ?? false),
               ),
             ),
             style: styleBold),
@@ -641,29 +641,29 @@ class FilesTemplate {
     for (int i = 0; i < days; i++) {
       double totalAdulto = Utility.calculateTotalTariffRoom(
         RegistroTarifa(
-            temporadas: habitacion.tarifaXHabitacion![i].temporadas,
-            tarifas: habitacion.tarifaXHabitacion![i].tarifas),
+            temporadas: habitacion.tarifasXHabitacion![i].temporadas,
+            tarifas: habitacion.tarifasXHabitacion![i].tarifas),
         habitacion,
-        habitacion.tarifaXHabitacion!.length,
-        descuentoProvisional: habitacion.tarifaXHabitacion![i].descuentoProvisional,
+        habitacion.tarifasXHabitacion!.length,
+        descuentoProvisional: habitacion.tarifasXHabitacion![i].descuentoProvisional,
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
         useCashSeason: habitacion.useCashSeason ?? false,
-        applyRoundFormat: !(habitacion.tarifaXHabitacion?[i].modificado ?? false),
+        applyRoundFormat: !(habitacion.tarifasXHabitacion?[i].modificado ?? false),
       );
 
       double totalMenores = Utility.calculateTotalTariffRoom(
         RegistroTarifa(
-            temporadas: habitacion.tarifaXHabitacion![i].temporadas,
-            tarifas: habitacion.tarifaXHabitacion![i].tarifas),
+            temporadas: habitacion.tarifasXHabitacion![i].temporadas,
+            tarifas: habitacion.tarifasXHabitacion![i].tarifas),
         habitacion,
-        habitacion.tarifaXHabitacion!.length,
-        descuentoProvisional: habitacion.tarifaXHabitacion![i].descuentoProvisional,
+        habitacion.tarifasXHabitacion!.length,
+        descuentoProvisional: habitacion.tarifasXHabitacion![i].descuentoProvisional,
         onlyTariffVR: typeRoom == tipoHabitacion.first,
         onlyTariffVPM: typeRoom == tipoHabitacion.last,
         isCalculateChildren: true,
         useCashSeason: habitacion.useCashSeason ?? false,
-        applyRoundFormat: !(habitacion.tarifaXHabitacion?[i].modificado ?? false),
+        applyRoundFormat: !(habitacion.tarifasXHabitacion?[i].modificado ?? false),
       );
 
       DateTime now = DateTime.parse(habitacion.checkIn!);
@@ -727,7 +727,7 @@ class FilesTemplate {
           contentMail = contentMail
               .replaceAll(
                   r'FTIMESTATE', Utility.getPeriodReservation([roomList.first]))
-              .replaceAll(r'FNUMNIGHT', "${roomList.first.tarifaXHabitacion!.length}");
+              .replaceAll(r'FNUMNIGHT', "${roomList.first.tarifasXHabitacion!.length}");
 
           contentMail +=
               '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>''';
@@ -737,7 +737,7 @@ class FilesTemplate {
           for (var element in roomList) {
             contentMail +=
                 '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
-                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVR ?? 1) / (element.tarifaXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVR ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVR ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
+                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVR ?? 1) / (element.tarifasXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVR ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVR ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
           }
 
           contentMail +=
@@ -746,7 +746,7 @@ class FilesTemplate {
           for (var element in roomList) {
             contentMail +=
                 '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
-                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifaXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
+                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifasXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
           }
 
           contentMail +=

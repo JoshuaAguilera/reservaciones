@@ -8,7 +8,7 @@ class TarifaXDiaTable extends Table {
   IntColumn get tarifaRackInt =>
       integer().nullable().references(TarifaRackTable, #id)();
   TextColumn get tarifaRack => text().nullable()();
-  RealColumn get descIntegreado => real().nullable()();
+  RealColumn get descIntegrado => real().nullable()();
   BoolColumn get esLibre => boolean().nullable()();
   TextColumn get tarifaRackJson => text().nullable()();
 }

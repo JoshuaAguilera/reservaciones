@@ -1,18 +1,19 @@
 import 'dart:convert';
 
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-
 import 'resumen_habitacion_model.dart';
 import 'tarifa_x_habitacion_model.dart';
 
-List<TarifaXDia> tarifasXDiaFromJson(String str) =>
-    List<TarifaXDia>.from(json.decode(str).map((x) => TarifaXDia.fromJson(x)));
+List<Habitacion> habitacionesFromJson(String str) =>
+    List<Habitacion>.from(json.decode(str).map((x) => Habitacion.fromJson(x)));
 
-String tarifasXDiaToJson(List<TarifaXDia> data) =>
+String habitacionesToJson(List<Habitacion> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
-    List<TarifaXDia>.from(list.map((x) => TarifaXDia.fromJson(x)));
+List<Habitacion> listHabitacionFromJson(List<dynamic> list) =>
+    List<Habitacion>.from(list.map((x) => Habitacion.fromJson(x)));
+
+Habitacion habitacionJson(String str) => Habitacion.fromJson(json.decode(str));
+String habitacionToJson(Habitacion data) => json.encode(data.toJson());
 
 class Habitacion {
   int? idInt;
@@ -28,7 +29,7 @@ class Habitacion {
   int? paxAdic;
   int count;
   bool esCortesia;
-  List<TarifaXHabitacion>? tarifaXHabitacion;
+  List<TarifaXHabitacion>? tarifasXHabitacion;
   List<ResumenHabitacion>? resumenes;
 
   Habitacion({
@@ -39,7 +40,7 @@ class Habitacion {
     this.checkIn,
     this.checkOut,
     this.createdAt,
-    this.tarifaXHabitacion,
+    this.tarifasXHabitacion,
     this.adultos,
     this.menores0a6,
     this.menores7a12,
@@ -49,7 +50,7 @@ class Habitacion {
     this.resumenes,
   });
 
-  Habitacion CopyWith({
+  Habitacion copyWith({
     int? idInt,
     String? id,
     int? cotizacionInt,
@@ -63,7 +64,7 @@ class Habitacion {
     int? paxAdic,
     int? count,
     bool? esCortesia,
-    List<TarifaXHabitacion>? tarifaXHabitacion,
+    List<TarifaXHabitacion>? tarifasXHabitacion,
     List<ResumenHabitacion>? resumenes,
   }) =>
       Habitacion(
@@ -77,7 +78,7 @@ class Habitacion {
         adultos: adultos ?? this.adultos,
         menores0a6: menores0a6 ?? this.menores0a6,
         menores7a12: menores7a12 ?? this.menores7a12,
-        tarifaXHabitacion: tarifaXHabitacion ?? this.tarifaXHabitacion,
+        tarifasXHabitacion: tarifasXHabitacion ?? this.tarifasXHabitacion,
         count: count ?? this.count,
         esCortesia: esCortesia ?? this.esCortesia,
         resumenes: resumenes ?? this.resumenes,
@@ -85,7 +86,7 @@ class Habitacion {
       );
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = {
       'id_int': idInt,
       'id': id,
       'cotizacion_int': cotizacionInt,
@@ -99,6 +100,11 @@ class Habitacion {
       'count': count,
       'es_cortesia': esCortesia,
     };
+
+    // Remueve todas las claves con valor null
+    data.removeWhere((key, value) => value == null);
+
+    return data;
   }
 
   factory Habitacion.fromJson(Map<String, dynamic> json) {
@@ -107,29 +113,30 @@ class Habitacion {
       id: json['id'],
       cotizacionInt: json['cotizacion_int'],
       cotizacion: json['cotizacion'],
-      checkIn: json['fechaCheckIn'],
-      checkOut: json['fechaCheckOut'],
-      createdAt: json['fecha'],
+      checkIn:
+          json['check_in'] == null ? null : DateTime.tryParse(json['check_in']),
+      checkOut: json['check_out'] == null
+          ? null
+          : DateTime.tryParse(json['check_out']),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.tryParse(json['created_at']),
       adultos: json['adultos'],
       menores0a6: json['menores0a6'],
       menores7a12: json['menores7a12'],
-      tarifaXHabitacion: json['tarifaXDia'] != null
-          ? json['tarifaXDia'] != '[]'
-              ? listTarifasXDiaFromJson(json['tarifaXDia'])
-              : List<TarifaXDia>.empty()
-          : List<TarifaXDia>.empty(),
-      totalRealVR: json['totalRealVR'],
-      descuentoVR: json['descuentoVR'],
-      totalVR: json['totalVR'],
-      totalRealVPM: json['totalRealVPM'],
-      descuentoVPM: json['descuentoVPM'],
-      totalVPM: json['totalVPM'],
+      paxAdic: json['pax_adic'],
       count: json['count'],
       esCortesia: json['isFree'],
-      tarifaGrupal: json['tarifaGrupal'] == null
-          ? null
-          : TarifaXDia.fromJson(json['tarifaGrupal']),
-      useCashSeason: json['useCashSeason'],
+      tarifasXHabitacion: json['tarifas_x_habitacion'] != null
+          ? json['tarifas_x_habitacion'] != '[]'
+              ? listTarifaXHabitacionsFromJson(json['tarifas_x_habitacion'])
+              : List<TarifaXHabitacion>.empty()
+          : List<TarifaXHabitacion>.empty(),
+      resumenes: json['resumenes'] != null
+          ? json['resumenes'] != '[]'
+              ? listResumenHabitacionFromJson(json['resumenes'])
+              : List<ResumenHabitacion>.empty()
+          : List<ResumenHabitacion>.empty(),
     );
   }
 }

@@ -17,7 +17,7 @@ import 'package:generador_formato/res/helpers/utility.dart';
 import '../../database/database.dart';
 
 class TarifaService extends BaseService {
-  Future<String> saveBaseTariff(TarifaBaseInt tarifaBase) async {
+  Future<String> saveBaseTariff(TarifaBase tarifaBase) async {
     String error = "";
     String codeBase = "${Utility.getUniqueCode()}-tarifaBase-$userId-$userName";
     DateTime now = DateTime.now();
@@ -31,11 +31,11 @@ class TarifaService extends BaseService {
               await database.into(database.tarifaBaseTable).insertReturning(
                     TarifaBaseTableCompanion.insert(
                       code: Value(codeBase),
-                      descIntegrado: Value(tarifaBase.descIntegrado),
-                      withAuto: Value(tarifaBase.withAuto),
+                      descIntegrado: Value(tarifaBase.aumIntegrado),
+                      withAuto: Value(tarifaBase.conAutocalculacion),
                       nombre: Value(tarifaBase.nombre),
-                      tarifaPadreId: Value(tarifaBase.tarifaPadre?.id),
-                      tarifaOrigenId: Value(tarifaBase.tarifaOrigenId),
+                      tarifaPadreId: Value(tarifaBase.tarifaBase?.idInt),
+                      tarifaOrigenId: Value(tarifaBase.creadoPor),
                       upgradeCategoria: Value(tarifaBase.upgradeCategoria),
                       upgradeMenor: Value(tarifaBase.upgradeMenor),
                       upgradePaxAdic: Value(tarifaBase.upgradePaxAdic),
@@ -214,7 +214,7 @@ class TarifaService extends BaseService {
                     ),
                     estanciaMinima: Value(element.estanciaMinima),
                     fecha: Value(now),
-                    porcentajePromocion: Value(element.porcentajePromocion),
+                    porcentajePromocion: Value(element.descuento),
                     forGroup: Value(element.forGroup),
                     forCash: Value(element.forCash),
                   ),
@@ -350,14 +350,14 @@ class TarifaService extends BaseService {
 
           for (var element in oldRegister.temporadas!) {
             if (!temporadas.any((elementInt) =>
-                elementInt.id != null && elementInt.id == element.id)) {
+                elementInt.idInt != null && elementInt.idInt == element.idInt)) {
               if (element.forCash ?? false) {
                 await tarifaDao.deleteByCode(element.codeTarifa ?? '');
               }
 
               await database.deleteSeasonByIDandCode(
-                  oldRegister.codeSeason ?? '', element.id!);
-              print("Delete ${element.id}: ${element.nombre}");
+                  oldRegister.codeSeason ?? '', element.idInt!);
+              print("Delete ${element.idInt}: ${element.nombre}");
             }
           }
 
@@ -369,10 +369,10 @@ class TarifaService extends BaseService {
             String codeSeasonCash =
                 "${Utility.getUniqueCode()}-temporada-${element.nombre}-${element.estanciaMinima}-${UniqueKey().hashCode}";
 
-            if (element.id != null) {
+            if (element.idInt != null) {
               String codeSeasonTariff = codeTariff;
 
-              if (isCash && element.porcentajePromocion != null) {
+              if (isCash && element.descuento != null) {
                 if (element.tarifas?.first.code != codeTariff &&
                     withBaseTariff) {
                   await tarifaDao.deleteByCode(element.codeTarifa ?? '');
@@ -420,10 +420,10 @@ class TarifaService extends BaseService {
                   nombre: Value(element.nombre ?? ''),
                   codeTarifa: Value(codeSeasonTariff),
                   estanciaMinima: Value(element.estanciaMinima),
-                  porcentajePromocion: Value(element.porcentajePromocion),
+                  porcentajePromocion: Value(element.descuento),
                 ),
                 codeUniv: oldRegister.codeSeason ?? oldRegister.code ?? '',
-                id: element.id!,
+                id: element.idInt!,
               );
               continue;
             }
@@ -459,7 +459,7 @@ class TarifaService extends BaseService {
                     ),
                     estanciaMinima: Value(element.estanciaMinima),
                     fecha: Value(now),
-                    porcentajePromocion: Value(element.porcentajePromocion),
+                    porcentajePromocion: Value(element.descuento),
                     forGroup: Value(element.forGroup),
                     forCash: Value(element.forCash),
                   ),
@@ -487,7 +487,7 @@ class TarifaService extends BaseService {
     }
   }
 
-  Future<String> updateBaseTariff(TarifaBaseInt tarifaBase,
+  Future<String> updateBaseTariff(TarifaBase tarifaBase,
       {bool propageChanges = false}) async {
     String response = '';
 
@@ -503,21 +503,21 @@ class TarifaService extends BaseService {
       await database.transaction(
         () async {
           TarifaBaseTableData tarifaBaseNueva = TarifaBaseTableData(
-            id: tarifaBase.id!,
-            descIntegrado: tarifaBase.descIntegrado,
+            id: tarifaBase.idInt!,
+            descIntegrado: tarifaBase.aumIntegrado,
             nombre: tarifaBase.nombre,
-            tarifaPadreId: tarifaBase.tarifaPadre?.id,
+            tarifaPadreId: tarifaBase.tarifaBase?.idInt,
             upgradeCategoria: tarifaBase.upgradeCategoria,
             upgradeMenor: tarifaBase.upgradeMenor,
             upgradePaxAdic: tarifaBase.upgradePaxAdic,
-            tarifaOrigenId: tarifaBase.tarifaOrigenId,
-            withAuto: tarifaBase.withAuto,
+            tarifaOrigenId: tarifaBase.creadoPor,
+            withAuto: tarifaBase.conAutocalculacion,
           );
 
           await tarifaBaseDao.updateBaseTariff(
             baseTariff: tarifaBaseNueva,
-            code: tarifaBase.code!,
-            id: tarifaBase.id!,
+            code: tarifaBase.codigo!,
+            id: tarifaBase.idInt!,
           );
           if (tarifaBase.upgradeCategoria != null) {
             Tarifa? secondTariff = tarifasRegister
@@ -544,7 +544,7 @@ class TarifaService extends BaseService {
             saveTariff?.tarifaMenores7a12 = tariffMinorsUpgrade;
             saveTariff?.tarifaPaxAdicional = tariffPaxAdicUpgrade;
             saveTariff?.categoria = tipoHabitacion.last;
-            saveTariff?.tarifaBaseId = tarifaBase.id;
+            saveTariff?.tarifaBase = tarifaBase.idInt;
             saveTariff?.id = tarifasRegister
                 .firstWhere(
                     (element) => element.categoria == tipoHabitacion.last)
@@ -558,7 +558,7 @@ class TarifaService extends BaseService {
                 tarifaAdultoCPLE: Value(saveTariff?.tarifaAdulto3),
                 tarifaAdultoTPL: Value(saveTariff?.tarifaAdulto4),
               ),
-              baseTariffId: tarifaBase.id!,
+              baseTariffId: tarifaBase.idInt!,
               id: tarifasRegister
                       .firstWhere(
                           (element) => element.categoria == tipoHabitacion.last)
@@ -578,7 +578,7 @@ class TarifaService extends BaseService {
                 tarifaMenores7a12: Value(element.tarifaMenores7a12),
                 tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
               ),
-              baseTariffId: tarifaBase.id!,
+              baseTariffId: tarifaBase.idInt!,
               id: element.id ?? 0,
             );
           }
@@ -623,12 +623,12 @@ class TarifaService extends BaseService {
 
           for (var element in tarifa.temporadas!) {
             if ((element.forCash ?? false) &&
-                element.porcentajePromocion == null) {
+                element.descuento == null) {
               tarifaDao.deleteByCode(element.codeTarifa ?? '');
             }
-            if (element.id != null) {
+            if (element.idInt != null) {
               await database.deleteSeasonByIDandCode(
-                  tarifa.codeSeason ?? '', element.id!);
+                  tarifa.codeSeason ?? '', element.idInt!);
             }
           }
 
@@ -718,8 +718,8 @@ class TarifaService extends BaseService {
     return tarifasRegistradas;
   }
 
-  Future<List<TarifaBaseInt>> getBaseTariff() async {
-    List<TarifaBaseInt> tarifasBase = [];
+  Future<List<TarifaBase>> getBaseTariff() async {
+    List<TarifaBase> tarifasBase = [];
 
     try {
       final db = AppDatabase();
@@ -734,7 +734,7 @@ class TarifaService extends BaseService {
     return tarifasBase;
   }
 
-  Future<String> deleteBaseTariff(TarifaBaseInt tarifaBase) async {
+  Future<String> deleteBaseTariff(TarifaBase tarifaBase) async {
     String response = "";
     try {
       final database = AppDatabase();
@@ -742,7 +742,7 @@ class TarifaService extends BaseService {
       final tarifaDao = TarifaDao(database);
       await database.transaction(
         () async {
-          await tarifaDao.removeBaseTariff(tarifaBase.id!);
+          await tarifaDao.removeBaseTariff(tarifaBase.idInt!);
           await tarifaBaseDao.deleteBaseTariff(tarifaBase);
         },
       );

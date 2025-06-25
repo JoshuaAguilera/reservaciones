@@ -1,25 +1,26 @@
 import 'dart:convert';
 
 import 'imagen_model.dart';
+import 'rol_model.dart';
 
-List<Usuario> UsuariosFromJson(String str) =>
+List<Usuario> usuariosFromJson(String str) =>
     List<Usuario>.from(json.decode(str).map((x) => Usuario.fromJson(x)));
-String UsuariosToJson(List<Usuario> data) =>
+String usuariosToJson(List<Usuario> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<Usuario> ListUsuarioFromJson(List<dynamic> str) =>
+List<Usuario> listUsuarioFromJson(List<dynamic> str) =>
     List<Usuario>.from(str.map((x) => Usuario.fromJson(x)));
 
-Usuario UsuarioFromJson(String str) => Usuario.fromJson(json.decode(str));
-String UsuarioToJson(Usuario data) => json.encode(data.toJson());
+Usuario usuarioFromJson(String str) => Usuario.fromJson(json.decode(str));
+String usuarioToJson(Usuario data) => json.encode(data.toJson());
 
 class Usuario {
   int? idInt;
   String? id;
   String? username;
   String? password;
-  String? rol;
-  String? estado;
+  Rol? rol;
+  String? estatus;
   String? correoElectronico;
   String? telefono;
   DateTime? fechaNacimiento;
@@ -37,19 +38,19 @@ class Usuario {
     this.imagen,
     this.apellido,
     this.correoElectronico,
-    this.estado,
+    this.estatus,
     this.fechaNacimiento,
     this.nombre,
     this.rol,
     this.createdAt,
   });
 
-  Usuario CopyWith({
+  Usuario copyWith({
     int? id,
     String? userId,
     String? username,
     String? password,
-    String? rol,
+    Rol? rol,
     String? estado,
     String? correoElectronico,
     String? telefono,
@@ -57,7 +58,7 @@ class Usuario {
     String? nombre,
     String? apellido,
     Imagen? imagen,
-    DateTime? createAt,
+    DateTime? createdAt,
   }) =>
       Usuario(
         idInt: id ?? this.idInt,
@@ -65,22 +66,23 @@ class Usuario {
         username: username ?? this.username,
         password: password ?? this.password,
         rol: rol ?? this.rol,
-        estado: estado ?? this.estado,
+        estatus: estado ?? this.estatus,
         correoElectronico: correoElectronico ?? this.correoElectronico,
         telefono: telefono ?? this.telefono,
         fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
         nombre: nombre ?? this.nombre,
         imagen: imagen ?? this.imagen,
         apellido: apellido ?? this.apellido,
-        createdAt: createAt ?? this.createdAt,
+        createdAt: createdAt ?? this.createdAt,
       );
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
-        idInt: json['_id'],
+        idInt: json['id_int'],
+        id: json['id'],
         username: json['username'],
         password: json['password'],
-        rol: json['rol'],
-        estado: json['estado'],
+        rol: json['rol'] != null ? Rol.fromJson(json['rol']) : null,
+        estatus: json['estatus'],
         telefono: json['telefono'],
         correoElectronico: json['correo_electronico'],
         fechaNacimiento: json['fecha_nacimiento'],
@@ -95,14 +97,16 @@ class Usuario {
       "_id": idInt,
       "username": username,
       "password": password,
-      "rol": rol,
-      "estado": estado,
+      "rol": rol?.id,
+      "rol_int": rol?.idInt,
+      "estado": estatus,
       "telefono": telefono,
       "correo_electronico": correoElectronico,
       "fecha_nacimiento": fechaNacimiento,
       "nombre": nombre,
       "apellido": apellido,
-      "imagen": imagen,
+      "imagen": imagen?.id,
+      "imagen_int": imagen?.idInt,
     };
 
     // Remueve todas las claves con valor null

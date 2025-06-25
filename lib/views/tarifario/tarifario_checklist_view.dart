@@ -61,7 +61,7 @@ class _TarifarioChecklistViewState
                                   registro: list[index],
                                   tarifaBase: tarifasB
                                           .where((elementInt) =>
-                                              elementInt.id ==
+                                              elementInt.idInt ==
                                               list[index]
                                                   .tarifas!
                                                   .first

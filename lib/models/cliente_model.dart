@@ -40,7 +40,7 @@ class Cliente {
     this.createdAt,
   });
 
-  Cliente CopyWith({
+  Cliente copyWith({
     int? idInt,
     String? id,
     String? nombres,
@@ -81,7 +81,9 @@ class Cliente {
         ciudad: json['ciudad'],
         direccion: json['direccion'],
         notas: json['notas'],
-        createdAt: json['created_at'],
+        createdAt: json['created_at'] == null
+            ? null
+            : DateTime.tryParse(json['created_at']),
       );
 
   Map<String, dynamic> toJson() {

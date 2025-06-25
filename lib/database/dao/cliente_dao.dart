@@ -27,9 +27,9 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
       final value = '%${nombre.toLowerCase()}%';
       query.where(
         (tbl) {
-          var response = tbl.nombre.lower().like(value) |
-              tbl.apellido.lower().like(value) |
-              (tbl.nombre + const Constant(' ') + tbl.apellido)
+          var response = tbl.nombres.lower().like(value) |
+              tbl.apellidos.lower().like(value) |
+              (tbl.nombres + const Constant(' ') + tbl.apellidos)
                   .lower()
                   .like(value);
 
@@ -55,8 +55,8 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
     switch (sortBy) {
       case 'nombre':
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.nombre)
-            : OrderingTerm.asc(db.clienteTable.nombre);
+            ? OrderingTerm.desc(db.clienteTable.nombres)
+            : OrderingTerm.asc(db.clienteTable.nombres);
         break;
       case 'correo':
         ordering = order == 'desc'
@@ -106,7 +106,7 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
   Future<Cliente?> getByID(int id) async {
     var response = await (select(db.clienteTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .getSingleOrNull();
 
@@ -128,7 +128,7 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
   Future<int> delet3(int id) {
     var response = (delete(db.clienteTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .go();
 

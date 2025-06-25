@@ -197,7 +197,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               .firstOrNull;
         }
 
-        selectTariff?.numDays = item.tarifaXHabitacion?.length ?? 0;
+        selectTariff?.numDays = item.tarifasXHabitacion?.length ?? 0;
 
         item.tarifaGrupal = selectTariff;
         continue;
@@ -205,7 +205,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
       if (item.tarifaGrupal == null) {
         List<TarifaXDia> filterTariffs =
-            Utility.getUniqueTariffs(item.tarifaXHabitacion!);
+            Utility.getUniqueTariffs(item.tarifasXHabitacion!);
         TarifaXDia? tarifaGrupo =
             filterTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
@@ -217,7 +217,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
           isGroup: true,
         );
 
-        tarifaGrupo.numDays = item.tarifaXHabitacion?.length ?? 0;
+        tarifaGrupo.numDays = item.tarifasXHabitacion?.length ?? 0;
 
         item.tarifaGrupal = tarifaGrupo;
       }
@@ -265,7 +265,7 @@ final detectChangeProvider = StateProvider<int>((ref) => 0);
 
 final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
   final detectChanged = ref.watch(detectChangeProvider);
-  final list = ref.watch(habitacionSelectProvider).tarifaXHabitacion ?? [];
+  final list = ref.watch(habitacionSelectProvider).tarifasXHabitacion ?? [];
   return list;
 });
 

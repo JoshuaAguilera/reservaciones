@@ -430,7 +430,7 @@ class _ManagerTariffGroupDialogState
                                       temporadaDataSelect;
                                   if (selectTariff?.temporadas?.isEmpty ??
                                       true) {
-                                    selectTariff!.descuentoProvisional =
+                                    selectTariff!.descIntegrado =
                                         double.parse(
                                             _descuentoController.text.trim());
                                   }
@@ -532,7 +532,7 @@ class _ManagerTariffGroupDialogState
   void _selectNewRoom(Habitacion? room) {
     selectRoom = room;
     roomTariffs = widget.tarifasHabitacion ??
-        Utility.getUniqueTariffs(selectRoom!.tarifaXHabitacion!);
+        Utility.getUniqueTariffs(selectRoom!.tarifasXHabitacion!);
     _selectTariff(
       roomTariffs.reduce(
         ((a, b) => a.numDays > b.numDays ? a : b),
@@ -544,7 +544,7 @@ class _ManagerTariffGroupDialogState
   void _selectTariff(TarifaXDia? tarifa) {
     selectTariff = tarifa;
     _descuentoController.text =
-        selectTariff?.descuentoProvisional?.toString() ?? '';
+        selectTariff?.descIntegrado?.toString() ?? '';
     temporadaDataSelect = Utility.getSeasonNow(
       RegistroTarifa(temporadas: selectTariff?.temporadas),
       DateTime.parse(selectRoom!.checkOut!)
@@ -581,7 +581,7 @@ class _ManagerTariffGroupDialogState
 
     _applyDiscountTariff(
       temporadaDataSelect,
-      descuentoProvisional: tarifa?.descuentoProvisional,
+      descuentoProvisional: tarifa?.descIntegrado,
     );
   }
 
@@ -601,7 +601,7 @@ class _ManagerTariffGroupDialogState
             .toList()
             .firstOrNull;
 
-    double descuento = seasonSelect?.porcentajePromocion ??
+    double descuento = seasonSelect?.descuento ??
         descuentoProvisional ??
         (descuentoText.isEmpty ? 0 : double.parse(descuentoText));
 

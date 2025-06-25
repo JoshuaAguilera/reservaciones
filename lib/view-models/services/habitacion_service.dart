@@ -28,7 +28,7 @@ class HabitacionService extends BaseService {
           esCortesia: element.isFree ?? false,
           menores0a6: element.menores0a6,
           menores7a12: element.menores7a12,
-          tarifaXHabitacion: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
+          tarifasXHabitacion: tarifasXDiaFromJson(element.tarifaXDia ?? '[]'),
           // total: element.total,
           // totalReal: element.totalReal,
           idInt: element.id,
@@ -37,7 +37,7 @@ class HabitacionService extends BaseService {
 
       for (var element in habitaciones) {
         List<TarifaXDia> tarifasFiltradas =
-            Utility.getUniqueTariffs(element.tarifaXHabitacion!);
+            Utility.getUniqueTariffs(element.tarifasXHabitacion!);
 
         element.totalRealVR = Utility.calculateTariffTotals(
           tarifasFiltradas,
@@ -50,7 +50,7 @@ class HabitacionService extends BaseService {
         element.descuentoVR = Utility.calculateDiscountTotal(
           tarifasFiltradas,
           element,
-          element.tarifaXHabitacion?.length ?? 0,
+          element.tarifasXHabitacion?.length ?? 0,
           onlyTariffVR: true,
         );
 
@@ -67,7 +67,7 @@ class HabitacionService extends BaseService {
         element.descuentoVPM = Utility.calculateDiscountTotal(
           tarifasFiltradas,
           element,
-          element.tarifaXHabitacion?.length ?? 0,
+          element.tarifasXHabitacion?.length ?? 0,
           onlyTariffVPM: true,
         );
 

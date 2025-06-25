@@ -93,9 +93,9 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
     void _goDetailRoom(Habitacion habitacion) {
       Habitacion habitacionSelect = habitacion.CopyWith();
-      habitacionSelect.tarifaXHabitacion = [];
-      for (var element in habitacion.tarifaXHabitacion!) {
-        habitacionSelect.tarifaXHabitacion!.add(element.copyWith());
+      habitacionSelect.tarifasXHabitacion = [];
+      for (var element in habitacion.tarifasXHabitacion!) {
+        habitacionSelect.tarifasXHabitacion!.add(element.copyWith());
       }
 
       ref
@@ -223,11 +223,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       final notificaciones = ref.watch(NotificacionProvider.provider);
 
       Notificacion newNotification = Notificacion(
-        id: notificaciones.length + 1,
-        level: "info",
-        content:
+        idInt: notificaciones.length + 1,
+        mensaje: "info",
+        createdAt:
             "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombres ?? ''} ha sido registrada.",
-        title: "Nueva cotización registrada",
+        id: "Nueva cotización registrada",
       );
 
       ref.read(userViewProvider.notifier).update((state) => false);
@@ -417,7 +417,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                         adultos: 1,
                                         menores0a6: 0,
                                         menores7a12: 0,
-                                        tarifaXHabitacion: [],
+                                        tarifasXHabitacion: [],
                                         esCortesia: false,
                                         checkIn: DateTime.now()
                                             .toString()

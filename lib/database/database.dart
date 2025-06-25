@@ -7,6 +7,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 import '../res/helpers/constants.dart';
+import '../res/helpers/general_helpers.dart';
 import 'dao/cliente_dao.dart';
 import 'dao/cotizacion_dao.dart';
 import 'dao/tarifa_base_dao.dart';
@@ -17,7 +18,7 @@ import 'tables/categoria_table.dart';
 import 'tables/cliente_table.dart';
 import 'tables/habitacion_table.dart';
 import 'tables/cotizacion_table.dart';
-import 'tables/images_table.dart';
+import 'tables/imagen_table.dart';
 import 'tables/periodo_table.dart';
 import 'tables/politicas_table.dart';
 import 'tables/reservacion_table.dart';
@@ -37,20 +38,27 @@ part 'database.g.dart';
 
 // @DriftDatabase(
 //   tables: [
-//     UsuarioTable,
+// CategoriaTable,
+//     ClienteTable,
 //     CotizacionTable,
 //     HabitacionTable,
-//     TarifaXDiaTable,
+//     ImagenTable,
+//     NotificacionTable,
 //     PeriodoTable,
-//     TemporadaTable,
-//     TarifaTable,
-//     UserActivity,
-//     TarifaRackTable,
-//     PoliticaTable,
-//     ImageTable,
-//     TemporadaTarifaTable,
+//     PoliticaTarifarioTable,
+//     ReservacionTable,
+//     ResumenHabitacionTable,
+//     RolTable,
 //     TarifaBaseTable,
-//     ClienteTable,
+//     TarifaRackTable,
+//     TarifaTable,
+//     TarifaXDiaTable,
+//     TarifaXHabitacionTable,
+//     TemporadaTable,
+//     TarifaTemporadaTable,
+//     TipoHabitacionTable,
+//     UsuarioTable,
+//     ReservacionBrazaleteTable,
 //   ],
 //   daos: [
 //     TarifaBaseDao,
@@ -65,26 +73,27 @@ part 'database.g.dart';
 
 @DriftDatabase(
   tables: [
-    UsuarioTable,
+    CategoriaTable,
+    ClienteTable,
     CotizacionTable,
     HabitacionTable,
-    TarifaXDiaTable,
-    PeriodoTable,
-    TemporadaTable,
-    TarifaTable,
+    ImagenTable,
     NotificacionTable,
-    TarifaRackTable,
-    PoliticaTable,
-    ImageTable,
-    TarifaTemporadaTable,
-    TarifaBaseTable,
-    ClienteTable,
-    CategoriaTable,
+    PeriodoTable,
+    PoliticaTarifarioTable,
     ReservacionTable,
     ResumenHabitacionTable,
     RolTable,
+    TarifaBaseTable,
+    TarifaRackTable,
+    TarifaTable,
+    TarifaXDiaTable,
     TarifaXHabitacionTable,
+    TemporadaTable,
+    TarifaTemporadaTable,
     TipoHabitacionTable,
+    UsuarioTable,
+    ReservacionBrazaleteTable,
   ],
   daos: [
     TarifaBaseDao,

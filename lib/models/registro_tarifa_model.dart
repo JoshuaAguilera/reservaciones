@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/temporada_model.dart';
+import '../database/database.dart';
+import 'temporada_model.dart';
 
 class RegistroTarifa {
   int? id;

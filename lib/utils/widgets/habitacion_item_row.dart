@@ -450,7 +450,7 @@ double _getTotalRoomGroup({
       tarifas: room.tarifaGrupal?.tarifas,
     ),
     room,
-    room.tarifaXHabitacion!.length,
+    room.tarifasXHabitacion!.length,
     getTotalRoom: true,
     descuentoProvisional: room.tarifaGrupal?.descuentoProvisional,
     onlyTariffVR: onlyTariffVR,
@@ -460,7 +460,7 @@ double _getTotalRoomGroup({
     applyRoundFormat: !(room.tarifaGrupal?.modificado ?? false),
   );
 
-  return (totalGroup * room.tarifaXHabitacion!.length);
+  return (totalGroup * room.tarifasXHabitacion!.length);
 }
 
 double _getTotalRoom({
@@ -470,14 +470,14 @@ double _getTotalRoom({
   bool onlyDiscount = false,
 }) {
   List<TarifaXDia> tarifasFiltradas =
-      Utility.getUniqueTariffs(room.tarifaXHabitacion ?? []);
+      Utility.getUniqueTariffs(room.tarifasXHabitacion ?? []);
 
   double discount = !withDiscount
       ? 0
       : Utility.calculateDiscountTotal(
           tarifasFiltradas,
           room,
-          room.tarifaXHabitacion?.length ?? 0,
+          room.tarifasXHabitacion?.length ?? 0,
           typeQuote: false,
           onlyTariffVR: onlyTariffVR,
           onlyTariffVPM: !onlyTariffVR,

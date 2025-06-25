@@ -95,7 +95,7 @@ class _ManagerTariffDayWidgetState
   @override
   void initState() {
     _descuentoController.text =
-        (widget.tarifaXDia.descuentoProvisional ?? 0).toString();
+        (widget.tarifaXDia.descIntegrado ?? 0).toString();
     isUnknow = widget.tarifaXDia.id!.contains("Unknow");
     seasons = widget.tarifaXDia.temporadas;
     selectSeason = widget.tarifaXDia.temporadaSelect;
@@ -467,7 +467,7 @@ class _ManagerTariffDayWidgetState
                                     canBeReset = false;
                                     _descuentoController.text = (widget
                                                 .tarifaXDia
-                                                .descuentoProvisional ??
+                                                .descIntegrado ??
                                             0)
                                         .toString();
                                     setState(() {});
@@ -516,7 +516,7 @@ class _ManagerTariffDayWidgetState
                                 .firstOrNull;
 
                             if (selectSeason != null &&
-                                selectSeason.porcentajePromocion == null) {
+                                selectSeason.descuento == null) {
                               _insertTariffForm(Utility.getTarifasData([
                                 selectSeason.tarifas
                                     ?.where((element) =>
@@ -828,7 +828,7 @@ class _ManagerTariffDayWidgetState
                                         },
                                       ),
                                     ),
-                                if (habitacionProvider.tarifaXHabitacion!.any(
+                                if (habitacionProvider.tarifasXHabitacion!.any(
                                         (element) =>
                                             element.id != 'Unknow') &&
                                     (usuario.rol != 'RECEPCION'))
@@ -894,7 +894,7 @@ class _ManagerTariffDayWidgetState
                                       height: 40),
                                   CustomWidgets.itemListCount(
                                       nameItem:
-                                          "Descuento (${(selectSeason != null) ? selectSeason?.porcentajePromocion ?? 0 : _descuentoController.text}%):",
+                                          "Descuento (${(selectSeason != null) ? selectSeason?.descuento ?? 0 : _descuentoController.text}%):",
                                       count: descTariff,
                                       context: context,
                                       height: 40),
@@ -1121,16 +1121,16 @@ class _ManagerTariffDayWidgetState
               }
 
               if (isUnknow || isFreeTariff) {
-                widget.tarifaXDia.descuentoProvisional =
+                widget.tarifaXDia.descIntegrado =
                     double.tryParse(_descuentoController.text);
               }
 
               if (selectItemTariff != null && isUnknow) {
-                widget.tarifaXDia.descuentoProvisional = null;
+                widget.tarifaXDia.descIntegrado = null;
               }
 
               if (applyAllTariff) {
-                for (var element in habitacionProvider.tarifaXHabitacion!) {
+                for (var element in habitacionProvider.tarifasXHabitacion!) {
                   if (element.id == widget.tarifaXDia.id) {
                     element.tarifa = selectTariff;
                     element.subCode = null;
@@ -1146,7 +1146,7 @@ class _ManagerTariffDayWidgetState
                     ? null
                     : UniqueKey().hashCode.toString();
 
-                for (var element in habitacionProvider.tarifaXHabitacion!
+                for (var element in habitacionProvider.tarifasXHabitacion!
                     .where((element) => element.id!.contains("Unknow"))) {
                   element.tarifa = selectTariff;
                   element.subCode = widget.tarifaXDia.subCode;
@@ -1165,7 +1165,7 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllNoTariff && isUnknow) {
-                for (var element in habitacionProvider.tarifaXHabitacion!
+                for (var element in habitacionProvider.tarifasXHabitacion!
                     .where((element) => element.id!.contains("Unknow"))) {
                   element.tarifa = selectTariff;
                   element.tarifasBase = baseTariffs;
@@ -1186,7 +1186,7 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllDays) {
-                for (var element in habitacionProvider.tarifaXHabitacion!) {
+                for (var element in habitacionProvider.tarifasXHabitacion!) {
                   element.tarifa = selectTariff?.copyWith();
                   element.nombreTariff =
                       widget.tarifaXDia.copyWith().nombreTariff!;
@@ -1254,7 +1254,7 @@ class _ManagerTariffDayWidgetState
     double discount = 0;
 
     if (selectSeason != null) {
-      discount = (total * 0.01) * (selectSeason?.porcentajePromocion ?? 0);
+      discount = (total * 0.01) * (selectSeason?.descuento ?? 0);
     } else {
       if (isUnknow || isFreeTariff) {
         discount = (total * 0.01) *
@@ -1275,7 +1275,7 @@ class _ManagerTariffDayWidgetState
 
     if ((isUnknow || isFreeTariff) && selectItemTariff == null) {
       isSame = double.tryParse(_descuentoController.text) ==
-          (widget.tarifaXDia.descuentoProvisional ?? 0);
+          (widget.tarifaXDia.descIntegrado ?? 0);
     }
 
     return isSame;
@@ -1380,7 +1380,7 @@ class _ManagerTariffDayWidgetState
   bool isValidForApplyNotTariff(Habitacion habitacion) {
     bool isValid = false;
     if (isUnknow) return true;
-    if (habitacion.tarifaXHabitacion!
+    if (habitacion.tarifasXHabitacion!
         .any((element) => element.id!.contains("Unknow"))) isValid = true;
 
     return isValid;

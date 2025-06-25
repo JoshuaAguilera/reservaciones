@@ -18,14 +18,14 @@ class NotificacionProvider extends StateNotifier<List<Notificacion>> {
   }
 
   void editItem(Notificacion item) {
-    int index = state.indexWhere((element) => element.id == item.id);
+    int index = state.indexWhere((element) => element.idInt == item.idInt);
     if (index != -1) {
       state[index] = item;
     }
   }
 
   void remove(int id) {
-    state = [...state.where((element) => element.id != id)];
+    state = [...state.where((element) => element.idInt != id)];
   }
 
   void clear() {

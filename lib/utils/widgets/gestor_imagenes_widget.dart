@@ -93,7 +93,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
     if (widget.imagenes!.isNotEmpty) {
       //   isUpdatingImage = true;
       imagenSelect = widget.imagenes![0];
-      codeImage = imagenSelect!.code ?? 0;
+      codeImage = imagenSelect!.createdAt ?? 0;
       imagen = imagenSelect!.newImage;
       // height = 350;
       setState(() {});
@@ -119,7 +119,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
               child: SizedBox(
                 child: Stack(
                   children: [
-                    if (imageUser.urlImagen == null)
+                    if (imageUser.ruta == null)
                       Image(
                         image: const AssetImage("assets/image/usuario.png"),
                         height: height * 0.60,
@@ -134,7 +134,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                 width: 2)),
                         child: ClipOval(
                           child: Image.file(
-                            File(imageUser.urlImagen!),
+                            File(imageUser.ruta!),
                             height: height * 0.60,
                             width: height * 0.60,
                             fit: BoxFit.cover,
@@ -440,28 +440,28 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                           isUploadingImage = true;
                                           setState(() {});
 
-                                          if (imageUser.id != null) {
+                                          if (imageUser.idInt != null) {
                                             if (urlImage.isEmpty) {
                                               showError = true;
                                             } else {
                                               bool updateImage =
                                                   await ImageService()
                                                       .updateUrlImage(
-                                                imageUser.id!,
-                                                (imageUser.code ?? 0)
+                                                imageUser.idInt!,
+                                                (imageUser.createdAt ?? 0)
                                                     .toString(),
                                                 urlImage,
-                                                imageUser.urlImagen!,
+                                                imageUser.ruta!,
                                               );
 
                                               if (updateImage) {
                                                 showError = true;
                                               } else {
                                                 Imagen newImage = Imagen(
-                                                  id: imageUser.id ?? 0,
-                                                  code: imageUser.code,
-                                                  urlImagen: urlImage,
-                                                  usuarioId: usuario.id,
+                                                  idInt: imageUser.idInt ?? 0,
+                                                  createdAt: imageUser.createdAt,
+                                                  ruta: urlImage,
+                                                  nombre: usuario.id,
                                                 );
 
                                                 ref
@@ -480,10 +480,10 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                   Utility.getUniqueCode();
 
                                               Imagen newImage = Imagen(
-                                                id: 0,
-                                                code: uniqueCode,
-                                                urlImagen: urlImage,
-                                                usuarioId: usuario.id,
+                                                idInt: 0,
+                                                createdAt: uniqueCode,
+                                                ruta: urlImage,
+                                                nombre: usuario.id,
                                               );
 
                                               ImageTableData? response =

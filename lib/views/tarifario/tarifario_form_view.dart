@@ -84,7 +84,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     false,
     false,
   ];
-  TarifaBaseInt? selectBaseTariff;
+  TarifaBase? selectBaseTariff;
   bool usedBaseTariff = false;
   bool isLoading = false;
 
@@ -194,7 +194,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           data: (data) {
             selectBaseTariff = data
                 .where((element) =>
-                    element.code == actualTarifa.tarifas?.first.code)
+                    element.codigo == actualTarifa.tarifas?.first.code)
                 .firstOrNull;
 
             usedBaseTariff = selectBaseTariff != null;
@@ -1054,7 +1054,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                 temporada: element,
                 onRemove: () => setState(() => temporadas.remove(element)),
                 onChangedDescuento: (p0) => setState(
-                    () => element.porcentajePromocion = double.tryParse(p0)),
+                    () => element.descuento = double.tryParse(p0)),
                 onChangedName: (p0) => setState(() => element.nombre = p0),
                 onChangedEstancia: (p0) =>
                     element.estanciaMinima = int.tryParse(p0),

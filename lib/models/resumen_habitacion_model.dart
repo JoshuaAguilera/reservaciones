@@ -2,18 +2,18 @@ import 'dart:convert';
 
 import 'categoria_model.dart';
 
-List<ResumenHabitacion> ResumenHabitacionesFromJson(String str) =>
+List<ResumenHabitacion> resumenHabitacionesFromJson(String str) =>
     List<ResumenHabitacion>.from(
         json.decode(str).map((x) => ResumenHabitacion.fromJson(x)));
-String ResumenHabitacionesToJson(List<ResumenHabitacion> data) =>
+String resumenHabitacionesToJson(List<ResumenHabitacion> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<ResumenHabitacion> ListResumenHabitacionFromJson(List<dynamic> str) =>
+List<ResumenHabitacion> listResumenHabitacionFromJson(List<dynamic> str) =>
     List<ResumenHabitacion>.from(str.map((x) => ResumenHabitacion.fromJson(x)));
 
-ResumenHabitacion ResumenHabitacionJson(String str) =>
+ResumenHabitacion resumenHabitacionJson(String str) =>
     ResumenHabitacion.fromJson(json.decode(str));
-String ResumenHabitacionToJson(ResumenHabitacion data) =>
+String resumenHabitacionToJson(ResumenHabitacion data) =>
     json.encode(data.toJson());
 
 class ResumenHabitacion {
@@ -34,6 +34,25 @@ class ResumenHabitacion {
     this.total,
     this.categoria,
   });
+
+  ResumenHabitacion copyWith({
+    int? idInt,
+    String? id,
+    double? subtotal,
+    double? descuento,
+    double? impuestos,
+    double? total,
+    Categoria? categoria,
+  }) =>
+      ResumenHabitacion(
+        idInt: idInt ?? this.idInt,
+        id: id ?? this.id,
+        subtotal: subtotal ?? this.subtotal,
+        descuento: descuento ?? this.descuento,
+        impuestos: impuestos ?? this.descuento,
+        categoria: categoria?.copyWith() ?? this.categoria?.copyWith(),
+        total: total ?? this.total,
+      );
 
   factory ResumenHabitacion.fromJson(Map<String, dynamic> json) =>
       ResumenHabitacion(

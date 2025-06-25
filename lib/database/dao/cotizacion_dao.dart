@@ -53,24 +53,26 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     ]);
 
     if (creadorId != null) {
-      query.where(db.cotizacionTable.creadoPor.equals(creadorId));
+      query.where(db.cotizacionTable.creadoPorInt.equals(creadorId));
     }
 
     if (cerradorId != null) {
-      query.where(db.cotizacionTable.cerradoPor.equals(cerradorId));
+      query.where(db.cotizacionTable.cerradoPorInt.equals(cerradorId));
     }
 
     if (clienteId != null) {
-      query.where(db.cotizacionTable.cliente.equals(clienteId));
+      query.where(db.cotizacionTable.clienteInt.equals(clienteId));
     }
 
     if (clienteNombre.trim().isNotEmpty) {
       final value = '%${clienteNombre.toLowerCase()}%';
 
       query.where(
-        clienteAlias.nombre.lower().like(value) |
-            clienteAlias.apellido.lower().like(value) |
-            (clienteAlias.nombre + const Constant(' ') + clienteAlias.apellido)
+        clienteAlias.nombres.lower().like(value) |
+            clienteAlias.apellidos.lower().like(value) |
+            (clienteAlias.nombres +
+                    const Constant(' ') +
+                    clienteAlias.apellidos)
                 .lower()
                 .like(value),
       );
@@ -127,7 +129,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
 
       if (showFilter[1]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(true) &
-            db.cotizacionTable.esConcretado.equals(false) &
+            db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isBiggerThan(
               Variable(
                 DateTime.now(),
@@ -137,7 +139,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
 
       if (showFilter[2]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(false) &
-            db.cotizacionTable.esConcretado.equals(false) &
+            db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isBiggerThan(
               Variable(
                 DateTime.now(),
@@ -147,16 +149,16 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
 
       if (showFilter[3]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(true) &
-            db.cotizacionTable.esConcretado.equals(true);
+            db.cotizacionTable.estatus.equals("reservado");
       }
 
       if (showFilter[4]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(false) &
-            db.cotizacionTable.esConcretado.equals(true);
+            db.cotizacionTable.estatus.equals("reservado");
       }
 
       if (showFilter[5]) {
-        implementFilter = db.cotizacionTable.esConcretado.equals(false) &
+        implementFilter = db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isSmallerThan(
               Variable(
                 DateTime.now(),
@@ -194,12 +196,13 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       final cerrador = row.readTableOrNull(cerradorAlias);
       final cli = row.readTableOrNull(clienteAlias);
       return Cotizacion(
-        idInt: cot.id,
-        cotId: cot.cotId,
-        folio: cot.folioPrincipal,
+        idInt: cot.idInt,
+        id: cot.id,
+        cotizacion: Cotizacion.fromJson(cot.toJson()),
+        folio: cot.folio,
         fechaLimite: cot.fechaLimite,
         esGrupo: cot.esGrupo,
-        estatus: cot.esConcretado,
+        estatus: cot.estatus,
         comentarios: cot.comentarios,
         createdAt: cot.createdAt,
         creadoPor: Usuario.fromJson(creador?.toJson() ?? <String, dynamic>{}),
@@ -218,7 +221,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
   Future<CotizacionTableData?> getByID(int id) {
     var quote = (select(db.cotizacionTable)
           ..where((u) {
-            return u.id.equals(id);
+            return u.idInt.equals(id);
           }))
         .getSingleOrNull();
 
@@ -238,9 +241,9 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
           ..where(
             (u) {
               if (id != null) {
-                return u.id.equals(id);
+                return u.idInt.equals(id);
               } else {
-                return u.folioPrincipal.equals(folio);
+                return u.folio.equals(folio);
               }
             },
           ))

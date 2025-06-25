@@ -360,7 +360,7 @@ class _SummaryControllerWidgetState
                                           for (var element in tarifasFiltradas)
                                             CustomWidgets.itemListCount(
                                               nameItem:
-                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.id == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descuentoProvisional ?? 0}%)",
+                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.id == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descIntegrado ?? 0}%)",
                                               subTitle: element.subCode != null
                                                   ? '(Mod)'
                                                   : '',
@@ -563,7 +563,7 @@ class _SummaryControllerWidgetState
   bool revisedValidTariff(Habitacion habitacion) {
     bool isInvalid = false;
 
-    for (var element in habitacion.tarifaXHabitacion ?? List<TarifaXDia>.empty()) {
+    for (var element in habitacion.tarifasXHabitacion ?? List<TarifaXDia>.empty()) {
       if (element.tarifa == null) {
         isInvalid = true;
         break;
@@ -642,7 +642,7 @@ class _SummaryControllerWidgetState
                                     tarifas: element.tarifaGrupal?.tarifas,
                                   ),
                                   element,
-                                  element.tarifaXHabitacion!.length,
+                                  element.tarifasXHabitacion!.length,
                                   getTotalRoom: true,
                                   descuentoProvisional: element
                                       .tarifaGrupal?.descuentoProvisional,
@@ -654,7 +654,7 @@ class _SummaryControllerWidgetState
                                       !(element.tarifaGrupal?.modificado ??
                                           false),
                                 ) *
-                                element.tarifaXHabitacion!.length)
+                                element.tarifasXHabitacion!.length)
                             : (isVR
                                 ? (element.totalRealVR ?? 0)
                                 : (element.totalRealVPM ?? 0)),
@@ -693,7 +693,7 @@ class _SummaryControllerWidgetState
                             ? -Utility.calculateDiscountTotal(
                                 [element.tarifaGrupal ?? TarifaXDia()],
                                 element,
-                                element.tarifaXHabitacion?.length ?? 0,
+                                element.tarifasXHabitacion?.length ?? 0,
                                 typeQuote: typeQuote,
                                 onlyTariffVR: isVR,
                                 onlyTariffVPM: !isVR,
@@ -722,7 +722,7 @@ class _SummaryControllerWidgetState
                                     tarifas: element.tarifaGrupal?.tarifas,
                                   ),
                                   element,
-                                  element.tarifaXHabitacion!.length,
+                                  element.tarifasXHabitacion!.length,
                                   getTotalRoom: true,
                                   descuentoProvisional: element
                                       .tarifaGrupal?.descuentoProvisional,
@@ -733,7 +733,7 @@ class _SummaryControllerWidgetState
                                       !(element.tarifaGrupal?.modificado ??
                                           false),
                                 ) *
-                                element.tarifaXHabitacion!.length)
+                                element.tarifasXHabitacion!.length)
                             : -((isVR ? element.totalVR : element.totalVPM) ??
                                 0),
                         context: context,

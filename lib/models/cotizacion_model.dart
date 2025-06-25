@@ -1,6 +1,20 @@
+import 'dart:convert';
+
 import 'cliente_model.dart';
 import 'habitacion_model.dart';
 import 'usuario_model.dart';
+
+List<Cotizacion> cotizacionesFromJson(String str) =>
+    List<Cotizacion>.from(json.decode(str).map((x) => Cotizacion.fromJson(x)));
+
+String cotizacionesToJson(List<Cotizacion> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+List<Cotizacion> listCotizacionFromJson(List<dynamic> list) =>
+    List<Cotizacion>.from(list.map((x) => Cotizacion.fromJson(x)));
+
+Cotizacion cotizacionJson(String str) => Cotizacion.fromJson(json.decode(str));
+String cotizacionToJson(Cotizacion data) => json.encode(data.toJson());
 
 class Cotizacion {
   int? idInt;
@@ -43,7 +57,7 @@ class Cotizacion {
     this.cotizacion,
   });
 
-  Cotizacion CopyWith({
+  Cotizacion copyWith({
     int? id,
     String? cotId,
     String? folio,
@@ -67,9 +81,9 @@ class Cotizacion {
         estatus: estatus ?? this.estatus,
         habitaciones: habitaciones ?? this.habitaciones,
         fechaLimite: fechaLimite ?? this.fechaLimite,
-        creadoPor: creadoPor ?? this.creadoPor,
-        cerradoPor: cerradoPor ?? this.cerradoPor,
-        cliente: cliente,
+        creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
+        cerradoPor: cerradoPor?.copyWith() ?? this.cerradoPor?.copyWith(),
+        cliente: cliente?.copyWith(),
       );
 
   factory Cotizacion.fromJson(Map<String, dynamic> json) => Cotizacion(
@@ -81,9 +95,9 @@ class Cotizacion {
                 json['cliente'],
               )
             : null,
-        createdAt: json['createdAt'] == null
+        createdAt: json['created_at'] == null
             ? null
-            : DateTime.tryParse(json['createdAt']),
+            : DateTime.tryParse(json['created_at']),
         fechaLimite: json['fecha_limite'] == null
             ? null
             : DateTime.tryParse(json['fecha_limite']),

@@ -40,8 +40,8 @@ class TableRows {
     double tarifaAdulto = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
-      habitacion.tarifaXHabitacion!.length,
-      descuentoProvisional: tarifaXDia.descuentoProvisional,
+      habitacion.tarifasXHabitacion!.length,
+      descuentoProvisional: tarifaXDia.descIntegrado,
       isGroupTariff: isGroupTariff,
       useCashSeason: useCashSeason,
       applyRoundFormat: !(tarifaXDia.modificado ?? false),
@@ -50,9 +50,9 @@ class TableRows {
     double tarifaMenores = Utility.calculateTotalTariffRoom(
       tarifa,
       habitacion,
-      habitacion.tarifaXHabitacion!.length,
+      habitacion.tarifasXHabitacion!.length,
       isCalculateChildren: true,
-      descuentoProvisional: tarifaXDia.descuentoProvisional,
+      descuentoProvisional: tarifaXDia.descIntegrado,
       isGroupTariff: isGroupTariff,
       useCashSeason: useCashSeason,
       applyRoundFormat: !(tarifaXDia.modificado ?? false),
@@ -183,7 +183,7 @@ class TableRows {
       required double screenWidth,
       void Function(RegistroTarifa)? onEdit,
       void Function(RegistroTarifa)? onDelete,
-      required List<TarifaBaseInt> tarifasBase}) {
+      required List<TarifaBase> tarifasBase}) {
     return TableRow(
       children: [
         Padding(
@@ -267,7 +267,7 @@ class TableRows {
                   textAlign: TextAlign.center,
                   message:
                       "Estancia Min: ${element.temporadas?[index].estanciaMinima ?? 0}\n"
-                      "Descuento: ${element.temporadas?[index].porcentajePromocion ?? 0}%",
+                      "Descuento: ${element.temporadas?[index].descuento ?? 0}%",
                   child: ItemRows.filterItemRow(
                     withDeleteButton: false,
                     colorCard: (element.temporadas?[index].forGroup ?? false)
@@ -289,7 +289,7 @@ class TableRows {
             child: TextStyles.standardText(
               text: tarifasBase
                       .where((elementInt) =>
-                          elementInt.id == element.tarifas!.first.tarifaPadreId)
+                          elementInt.idInt == element.tarifas!.first.tarifaPadreId)
                       .firstOrNull
                       ?.nombre ??
                   '',
@@ -372,11 +372,11 @@ class TableRows {
                       .firstOrNull
                       ?.tarifaAdulto1a2 ??
                   0)
-              : (adults1a2.text.isEmpty && element.porcentajePromocion == null)
+              : (adults1a2.text.isEmpty && element.descuento == null)
                   ? "—"
                   : Utility.calculatePromotion(
                       adults1a2.text,
-                      element.porcentajePromocion,
+                      element.descuento,
                     ),
           color: Theme.of(context).primaryColor,
           align: TextAlign.center,
@@ -390,11 +390,11 @@ class TableRows {
                       ?.tarifaAdulto3 ??
                   0)
               : ((adults3.text.isEmpty || adults3.text == '0') &&
-                      element.porcentajePromocion == null)
+                      element.descuento == null)
                   ? "—"
                   : Utility.calculatePromotion(
                       adults3.text,
-                      element.porcentajePromocion,
+                      element.descuento,
                     ),
           color: Theme.of(context).primaryColor,
           align: TextAlign.center,
@@ -408,11 +408,11 @@ class TableRows {
                         ?.tarifaAdulto4 ??
                     0)
                 : ((adults4.text.isEmpty || adults4.text == '0') &&
-                        element.porcentajePromocion == null)
+                        element.descuento == null)
                     ? "—"
                     : Utility.calculatePromotion(
                         adults4.text,
-                        element.porcentajePromocion,
+                        element.descuento,
                       ),
             color: Theme.of(context).primaryColor,
             align: TextAlign.center,
@@ -427,11 +427,11 @@ class TableRows {
                         ?.tarifaMenores7a12 ??
                     0)
                 : (minor7a12.text.isEmpty &&
-                        element.porcentajePromocion == null)
+                        element.descuento == null)
                     ? "—"
                     : Utility.calculatePromotion(
                         minor7a12.text,
-                        element.porcentajePromocion,
+                        element.descuento,
                       ),
             color: Theme.of(context).primaryColor,
             align: TextAlign.center,
@@ -445,11 +445,11 @@ class TableRows {
                         .firstOrNull
                         ?.tarifaPaxAdicional ??
                     0)
-                : (paxAdic.text.isEmpty && element.porcentajePromocion == null)
+                : (paxAdic.text.isEmpty && element.descuento == null)
                     ? "—"
                     : Utility.calculatePromotion(
                         paxAdic.text,
-                        element.porcentajePromocion,
+                        element.descuento,
                       ),
             color: Theme.of(context).primaryColor,
             align: TextAlign.center,

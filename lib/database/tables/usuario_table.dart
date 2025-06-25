@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-import 'images_table.dart';
+import 'imagen_table.dart';
 import 'rol_table.dart';
 
 class UsuarioTable extends Table {
@@ -17,7 +17,7 @@ class UsuarioTable extends Table {
   DateTimeColumn get fechaNacimiento => dateTime().nullable()();
   TextColumn get nombre => text().nullable()();
   TextColumn get apellido => text().nullable()();
-  IntColumn get imagenInt => integer().nullable().references(ImageTable, #id)();
+  IntColumn get imagenInt => integer().nullable().references(ImagenTable, #id)();
   TextColumn get imagen => text().nullable()();
   IntColumn get rolInt => integer().nullable().references(RolTable, #id)();
   TextColumn get rol => text().nullable()();

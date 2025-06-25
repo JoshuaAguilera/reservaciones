@@ -1,172 +1,80 @@
 import 'dart:convert';
-import 'dart:ui';
 
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/temporada_model.dart';
+import 'tarifa_rack_model.dart';
 
-import '../database/database.dart';
-import '../res/helpers/desktop_colors.dart';
+List<TarifaXDia> tarifasXDiaFromJson(String str) =>
+    List<TarifaXDia>.from(json.decode(str).map((x) => TarifaXDia.fromJson(x)));
 
-List<TarifaTableData> tarifasDataFromJson(String str) =>
-    List<TarifaTableData>.from(
-        json.decode(str).map((x) => TarifaTableData.fromJson(x)));
-
-String tarifasDataToJson(List<TarifaTableData> data) =>
+String tarifasXDiaToJson(List<TarifaXDia> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<TarifaTableData> listTarifasDataFromJson(List<dynamic> list) =>
-    List<TarifaTableData>.from(list.map((x) => TarifaTableData.fromJson(x)));
+List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
+    List<TarifaXDia>.from(list.map((x) => TarifaXDia.fromJson(x)));
 
 class TarifaXDia {
   int? idInt;
   String? id;
-  String? folioRoom;
-  String? categoria;
-  String? subCode;
-  String? tariffCode;
-  double? descuentoProvisional;
+  double? descIntegrado;
   bool? modificado;
-  int? dia;
-  DateTime? fecha;
-  String? nombreTariff;
-  Color? color;
-  TarifaTableData? tarifa;
-  Temporada? temporadaSelect;
-  PeriodoTableData? periodo;
-  List<Temporada>? temporadas;
-  List<TarifaTableData>? tarifas;
-  List<TarifaTableData>? tarifasBase;
-  List<TarifaTableData>? tarifasEfectivo;
-  int numDays;
+  bool? esLibre;
+  TarifaRack? tarifaRack;
+  String? tarifaRackJson;
 
   TarifaXDia({
     this.idInt,
-    this.color,
-    this.folioRoom,
-    this.tariffCode,
-    this.fecha,
-    this.dia,
     this.id,
-    this.subCode,
-    this.descuentoProvisional,
-    this.nombreTariff,
-    this.periodo,
-    this.tarifa,
-    this.temporadaSelect,
-    this.temporadas,
+    this.descIntegrado,
+    this.esLibre,
     this.modificado = false,
-    this.categoria,
-    this.tarifas,
-    this.tarifasBase,
-    this.tarifasEfectivo,
-    this.numDays = 1,
+    this.tarifaRack,
+    this.tarifaRackJson,
   });
 
   TarifaXDia copyWith({
-    int? id,
-    Color? color,
-    String? folioRoom,
-    String? tariffCode,
-    DateTime? fecha,
-    int? dia,
-    String? code,
-    String? subCode,
-    double? descuentoProvisional,
-    String? nombreTarif,
-    PeriodoTableData? periodo,
-    TarifaTableData? tarifa,
-    Temporada? temporadaSelect,
-    List<Temporada>? temporadas,
+    int? idInt,
+    String? id,
+    double? descIntegrado,
     bool? modificado,
-    String? categoria,
-    List<TarifaTableData>? tarifas,
-    List<TarifaTableData>? tarifasBase,
-    List<TarifaTableData>? tarifasEfectivo,
-    int? numDays,
+    bool? esLibre,
+    TarifaRack? tarifaRack,
+    String? tarifaRackJson,
   }) =>
       TarifaXDia(
-        idInt: id ?? this.idInt,
-        id: code ?? this.id,
-        folioRoom: folioRoom ?? this.folioRoom,
-        color: color ?? this.color,
-        temporadas: temporadas ?? this.temporadas,
-        tarifas: tarifas ?? this.tarifas,
-        numDays: numDays ?? this.numDays,
-        categoria: categoria ?? this.categoria,
-        descuentoProvisional: descuentoProvisional ?? this.descuentoProvisional,
-        dia: dia ?? this.dia,
-        fecha: fecha ?? this.fecha,
+        idInt: idInt ?? this.idInt,
+        id: id ?? this.id,
+        descIntegrado: descIntegrado ?? this.descIntegrado,
         modificado: modificado ?? this.modificado,
-        nombreTariff: nombreTarif ?? this.nombreTariff,
-        periodo: periodo ?? this.periodo,
-        subCode: subCode ?? this.subCode,
-        tarifa: tarifa ?? this.tarifa,
-        tarifasBase: tarifasBase ?? this.tarifasBase,
-        tarifasEfectivo: tarifasEfectivo ?? this.tarifasEfectivo,
-        temporadaSelect: temporadaSelect ?? this.temporadaSelect,
-        tariffCode: tariffCode ?? this.tariffCode,
+        esLibre: esLibre ?? this.esLibre,
+        tarifaRack: tarifaRack?.copyWith() ?? this.tarifaRack?.copyWith(),
+        tarifaRackJson: tarifaRackJson ?? this.tarifaRackJson,
       );
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': idInt,
-      'code': id,
-      'tariffCode': tariffCode,
-      'color': colorToHex(color ?? DesktopColors.cerulean),
-      'temporadas': temporadas,
-      'tarifas': tarifas,
-      'tarifasBase': tarifasBase,
-      'numDays': numDays,
-      'categoria': categoria,
-      'descuentoProvisional': descuentoProvisional,
-      'dia': dia,
-      'fecha': fecha != null ? fecha!.toIso8601String() : '',
-      'modificado': modificado,
-      'nombreTarif': nombreTariff,
-      'periodo': periodo,
-      'subCode': subCode,
-      'tarifa': tarifa,
-      'temporadaSelect': temporadaSelect,
+    final data = <String, dynamic>{
+      "id_int": idInt,
+      "id": id,
+      "tarifa_rack_int": tarifaRack?.idInt,
+      "tarifa_rack": tarifaRack?.id,
+      "desc_integrado": descIntegrado,
+      "es_libre": esLibre,
+      "tarifa_rack_json": tarifaRackJson,
     };
+
+    // Remueve todas las claves con valor null
+    data.removeWhere((key, value) => value == null);
+
+    return data;
   }
 
   factory TarifaXDia.fromJson(Map<String, dynamic> json) {
     return TarifaXDia(
-      idInt: json['id'],
-      id: json['code'],
-      tariffCode: json['tariffCode'],
-      color: colorFromHex(json['color']),
-      temporadas: json['temporadas'] != null
-          ? json['temporadas'] != '[]'
-              ? listTemporadaFromJson(json['temporadas'])
-              : List<Temporada>.empty()
-          : List<Temporada>.empty(),
-      tarifas: json['tarifas'] != null
-          ? json['tarifas'] != '[]'
-              ? listTarifasDataFromJson(json['tarifas'])
-              : List<TarifaTableData>.empty()
-          : List<TarifaTableData>.empty(),
-      tarifasBase: json['tarifasBase'] != null
-          ? json['tarifasBase'] != '[]'
-              ? listTarifasDataFromJson(json['tarifasBase'])
-              : List<TarifaTableData>.empty()
-          : List<TarifaTableData>.empty(),
-      numDays: json['numDays'],
-      categoria: json['categoria'],
-      descuentoProvisional: json['descuentoProvisional'],
-      dia: json['dia'],
-      fecha: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
-      modificado: json['modificado'],
-      nombreTariff: json['nombreTarif'],
-      periodo: json['periodo'] != null
-          ? PeriodoTableData.fromJson(json['periodo'])
-          : null,
-      subCode: json['subCode'],
-      tarifa:
-          json['tarifa'] != null ? TarifaTableData.fromJson(json['tarifa']) : null,
-      temporadaSelect: json['temporadaSelect'] != null
-          ? Temporada.fromJson(json['temporadaSelect'])
-          : null,
-    );
+        idInt: json['id'],
+        id: json['code'],
+        esLibre: json['es_libre'],
+        descIntegrado: json['desc_integrado'],
+        tarifaRackJson: json['tarifa_rack_json'],
+        tarifaRack: json['tarifa_rack_json'] != null
+            ? tarifaRackFromJson(json['tarifa_rack_json'])
+            : null);
   }
 }
