@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'cliente_model.dart';
 import 'habitacion_model.dart';
+import 'resumen_operacion_model.dart';
 import 'usuario_model.dart';
 
 List<Cotizacion> cotizacionesFromJson(String str) =>
@@ -27,13 +28,10 @@ class Cotizacion {
   bool? esGrupo;
   Usuario? creadoPor;
   Usuario? cerradoPor;
-  double? subtotal;//Not remisible
-  double? descuento;//Not remisible
-  double? impuestos;//Not remisible
-  double? total;//Not remisible
   String? comentarios;
   Cotizacion? cotizacion;
   List<Habitacion>? habitaciones;
+  List<ResumenOperacion>? resumenes;
 
   Cotizacion({
     this.idInt,
@@ -47,17 +45,14 @@ class Cotizacion {
     this.creadoPor,
     this.cerradoPor,
     this.estatus,
-    this.subtotal,
-    this.descuento,
-    this.impuestos,
-    this.total,
     this.comentarios,
     this.cotizacion,
+    this.resumenes,
   });
 
   Cotizacion copyWith({
-    int? id,
-    String? cotId,
+    int? idInt,
+    String? id,
     String? folio,
     DateTime? createdAt,
     DateTime? fechaLimite,
@@ -68,10 +63,12 @@ class Cotizacion {
     Usuario? cerradoPor,
     Cliente? cliente,
     String? comentarios,
-    Cotizacion? cotizacionOrigenId,
+    Cotizacion? cotizacion,
+    List<ResumenOperacion>? resumenes,
   }) =>
       Cotizacion(
-        idInt: id ?? this.idInt,
+        idInt: idInt ?? this.idInt,
+        id: id ?? this.id,
         folio: folio ?? this.folio,
         createdAt: createdAt ?? this.createdAt,
         esGrupo: esGrupo ?? this.esGrupo,
@@ -81,6 +78,7 @@ class Cotizacion {
         creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
         cerradoPor: cerradoPor?.copyWith() ?? this.cerradoPor?.copyWith(),
         cliente: cliente?.copyWith(),
+        resumenes: resumenes ?? this.resumenes,
       );
 
   factory Cotizacion.fromJson(Map<String, dynamic> json) => Cotizacion(
@@ -106,14 +104,15 @@ class Cotizacion {
         cerradoPor: json['cerrado_por'] != null
             ? Usuario.fromJson(json['cerrado_por'])
             : null,
-        subtotal: json['subtotal'],
-        descuento: json['descuento'],
-        impuestos: json['impuestos'],
-        total: json['total'],
         comentarios: json['comentarios'],
         cotizacion: (json['cotizacion']) != null
             ? Cotizacion.fromJson(json['cotizacion'])
             : null,
+        resumenes: json['resumenes'] != null
+            ? json['resumenes'] != '[]'
+                ? listResumenHabitacionFromJson(json['resumenes'])
+                : List<ResumenOperacion>.empty()
+            : List<ResumenOperacion>.empty(),
       );
 
   Map<String, dynamic> toJson() {
@@ -130,13 +129,10 @@ class Cotizacion {
       "creado_por_int": creadoPor?.idInt,
       "cerrado_por": cerradoPor?.id,
       "cerrado_por_int": cerradoPor?.idInt,
-      "subtotal": subtotal,
-      "descuento": descuento,
-      "impuestos": impuestos,
-      "total": total,
       "comentarios": comentarios,
       "cotizacion": cotizacion?.id,
       "cotizacion_int": cotizacion?.idInt,
+      "resumenes": resumenes,
     };
 
     // Remueve todas las claves con valor null

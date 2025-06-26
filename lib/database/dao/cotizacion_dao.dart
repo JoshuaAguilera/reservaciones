@@ -23,7 +23,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     int? clienteId,
     DateTime? initDate,
     DateTime? lastDate,
-    String? sortBy,
+    String sortBy = 'created_at',
     String order = 'asc',
     int limit = 20,
     int page = 1,
@@ -41,16 +41,16 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     final query = select(db.cotizacionTable).join([
       leftOuterJoin(
         creadorAlias,
-        creadorAlias.id.equalsExp(db.cotizacionTable.creadoPor),
+        creadorAlias.idInt.equalsExp(db.cotizacionTable.creadoPorInt),
       ),
       if (conDetalle)
         leftOuterJoin(
           cerradorAlias,
-          cerradorAlias.id.equalsExp(db.cotizacionTable.cerradoPor),
+          cerradorAlias.idInt.equalsExp(db.cotizacionTable.cerradoPorInt),
         ),
       leftOuterJoin(
         clienteAlias,
-        clienteAlias.id.equalsExp(db.cotizacionTable.cliente),
+        clienteAlias.idInt.equalsExp(db.cotizacionTable.clienteInt),
       ),
     ]);
 
@@ -173,7 +173,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
 
     OrderingTerm orderingTerm;
     switch (sortBy) {
-      case 'fecha':
+      case 'created_at':
         orderingTerm = order == 'desc'
             ? OrderingTerm.desc(db.cotizacionTable.createdAt)
             : OrderingTerm.asc(db.cotizacionTable.createdAt);
@@ -264,10 +264,12 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       fechaLimite: cot.fechaLimite,
       estatus: cot.estatus,
       esGrupo: cot.esGrupo,
+      comentarios: cot.comentarios,
       creadoPor: Usuario.fromJson(creador?.toJson() ?? <String, dynamic>{}),
       cerradoPor: Usuario.fromJson(cerrador?.toJson() ?? <String, dynamic>{}),
       cliente: Cliente.fromJson(cli?.toJson() ?? <String, dynamic>{}),
     );
+
     return quote;
   }
 

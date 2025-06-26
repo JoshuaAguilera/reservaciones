@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 
 import 'categoria_table.dart';
+import 'cotizacion_table.dart';
 import 'habitacion_table.dart';
 
-class ResumenHabitacionTable extends Table {
+class ResumenOperacionTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
   TextColumn get id => text().nullable()();
   RealColumn get subtotal => real().withDefault(const Constant(0))();
@@ -16,4 +17,7 @@ class ResumenHabitacionTable extends Table {
   IntColumn get categoriaInt =>
       integer().nullable().references(CategoriaTable, #id)();
   TextColumn get categoria => text().nullable()();
+  IntColumn get cotizacionInt =>
+      integer().nullable().references(CotizacionTable, #id)();
+  TextColumn get cotizacion => text().nullable()();
 }

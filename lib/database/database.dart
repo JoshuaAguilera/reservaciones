@@ -22,7 +22,7 @@ import 'tables/imagen_table.dart';
 import 'tables/periodo_table.dart';
 import 'tables/politicas_table.dart';
 import 'tables/reservacion_table.dart';
-import 'tables/resumen_habitacion_table.dart';
+import 'tables/resumen_operacion_table.dart';
 import 'tables/rol_table.dart';
 import 'tables/tarifa_base_table.dart';
 import 'tables/tarifa_rack_table.dart';
@@ -82,7 +82,7 @@ part 'database.g.dart';
     PeriodoTable,
     PoliticaTarifarioTable,
     ReservacionTable,
-    ResumenHabitacionTable,
+    ResumenOperacionTable,
     RolTable,
     TarifaBaseTable,
     TarifaRackTable,

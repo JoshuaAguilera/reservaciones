@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'resumen_habitacion_model.dart';
+import 'resumen_operacion_model.dart';
 import 'tarifa_x_habitacion_model.dart';
 
 List<Habitacion> habitacionesFromJson(String str) =>
@@ -30,7 +30,7 @@ class Habitacion {
   int count;
   bool esCortesia;
   List<TarifaXHabitacion>? tarifasXHabitacion;
-  List<ResumenHabitacion>? resumenes;
+  List<ResumenOperacion>? resumenes;
 
   Habitacion({
     this.idInt,
@@ -65,7 +65,7 @@ class Habitacion {
     int? count,
     bool? esCortesia,
     List<TarifaXHabitacion>? tarifasXHabitacion,
-    List<ResumenHabitacion>? resumenes,
+    List<ResumenOperacion>? resumenes,
   }) =>
       Habitacion(
         idInt: idInt ?? this.idInt,
@@ -135,8 +135,8 @@ class Habitacion {
       resumenes: json['resumenes'] != null
           ? json['resumenes'] != '[]'
               ? listResumenHabitacionFromJson(json['resumenes'])
-              : List<ResumenHabitacion>.empty()
-          : List<ResumenHabitacion>.empty(),
+              : List<ResumenOperacion>.empty()
+          : List<ResumenOperacion>.empty(),
     );
   }
 }

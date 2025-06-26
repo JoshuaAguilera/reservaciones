@@ -10,6 +10,7 @@ class CategoriaTable extends Table {
       dateTime().withDefault(currentDateAndTime).nullable()();
   TextColumn get nombre => text().nullable()();
   TextColumn get color => text().nullable()();
+  TextColumn get descripcion => text().nullable()();
   IntColumn get tipoHabitacionInt =>
       integer().nullable().references(TipoHabitacionTable, #id)();
   TextColumn get tipoHabitacion => text().nullable()();

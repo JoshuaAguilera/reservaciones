@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'categoria_model.dart';
 
-List<ResumenHabitacion> resumenHabitacionesFromJson(String str) =>
-    List<ResumenHabitacion>.from(
-        json.decode(str).map((x) => ResumenHabitacion.fromJson(x)));
-String resumenHabitacionesToJson(List<ResumenHabitacion> data) =>
+List<ResumenOperacion> resumenHabitacionesFromJson(String str) =>
+    List<ResumenOperacion>.from(
+        json.decode(str).map((x) => ResumenOperacion.fromJson(x)));
+String resumenHabitacionesToJson(List<ResumenOperacion> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<ResumenHabitacion> listResumenHabitacionFromJson(List<dynamic> str) =>
-    List<ResumenHabitacion>.from(str.map((x) => ResumenHabitacion.fromJson(x)));
+List<ResumenOperacion> listResumenHabitacionFromJson(List<dynamic> str) =>
+    List<ResumenOperacion>.from(str.map((x) => ResumenOperacion.fromJson(x)));
 
-ResumenHabitacion resumenHabitacionJson(String str) =>
-    ResumenHabitacion.fromJson(json.decode(str));
-String resumenHabitacionToJson(ResumenHabitacion data) =>
+ResumenOperacion resumenHabitacionJson(String str) =>
+    ResumenOperacion.fromJson(json.decode(str));
+String resumenHabitacionToJson(ResumenOperacion data) =>
     json.encode(data.toJson());
 
-class ResumenHabitacion {
+class ResumenOperacion {
   int? idInt;
   String? id;
   double? subtotal;
@@ -25,7 +25,7 @@ class ResumenHabitacion {
   double? total;
   Categoria? categoria;
 
-  ResumenHabitacion({
+  ResumenOperacion({
     this.idInt,
     this.id,
     this.subtotal,
@@ -35,7 +35,7 @@ class ResumenHabitacion {
     this.categoria,
   });
 
-  ResumenHabitacion copyWith({
+  ResumenOperacion copyWith({
     int? idInt,
     String? id,
     double? subtotal,
@@ -44,7 +44,7 @@ class ResumenHabitacion {
     double? total,
     Categoria? categoria,
   }) =>
-      ResumenHabitacion(
+      ResumenOperacion(
         idInt: idInt ?? this.idInt,
         id: id ?? this.id,
         subtotal: subtotal ?? this.subtotal,
@@ -54,8 +54,8 @@ class ResumenHabitacion {
         total: total ?? this.total,
       );
 
-  factory ResumenHabitacion.fromJson(Map<String, dynamic> json) =>
-      ResumenHabitacion(
+  factory ResumenOperacion.fromJson(Map<String, dynamic> json) =>
+      ResumenOperacion(
         idInt: json['id_int'],
         id: json['id'],
         subtotal: json['subtotal'],

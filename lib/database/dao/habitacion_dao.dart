@@ -16,7 +16,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     int? cotizacionId,
     DateTime? initDate,
     DateTime? lastDate,
-    String? sortBy,
+    String sortBy = 'created_at',
     String order = 'asc',
     int limit = 20,
     int page = 1,
@@ -44,7 +44,7 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     OrderingTerm? ordering;
 
     switch (sortBy) {
-      case 'createdAt':
+      case 'created_at':
         ordering = order == 'desc'
             ? OrderingTerm.desc(db.habitacionTable.createdAt)
             : OrderingTerm.asc(db.habitacionTable.createdAt);
@@ -71,31 +71,41 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(ClienteTableCompanion cliente) {
-    return into(db.clienteTable).insert(cliente);
+  Future<int> insert(Habitacion habitacion) {
+    return into(db.habitacionTable).insert(
+      HabitacionTableData.fromJson(
+        habitacion.toJson(),
+      ),
+    );
   }
 
   // READ: Habitacion por ID
-  Future<ClienteTableData?> getByID(int id) {
-    var response = (select(db.clienteTable)
+  Future<Habitacion?> getByID(int id) async {
+    var response = await (select(db.habitacionTable)
           ..where((u) {
             return u.idInt.equals(id);
           }))
         .getSingleOrNull();
 
-    return response;
+    if (response == null) return null;
+    var room = Habitacion.fromJson(response.toJson());
+    return room;
   }
 
   // UPDATE
-  Future<bool> updat3(ClienteTableData cliente) {
-    var response = update(db.clienteTable).replace(cliente);
+  Future<bool> updat3(Habitacion habitacion) {
+    var response = update(db.habitacionTable).replace(
+      HabitacionTableData.fromJson(
+        habitacion.toJson(),
+      ),
+    );
 
     return response;
   }
 
   // DELETE
   Future<int> delet3(int id) {
-    var response = (delete(db.clienteTable)
+    var response = (delete(db.habitacionTable)
           ..where((u) {
             return u.idInt.equals(id);
           }))

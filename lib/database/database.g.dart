@@ -6743,7 +6743,7 @@ class ReservacionTableCompanion extends UpdateCompanion<ReservacionTableData> {
   }
 }
 
-class $ResumenHabitacionTableTable extends ResumenHabitacionTable
+class $ResumenHabitacionTableTable extends ResumenOperacionTable
     with TableInfo<$ResumenHabitacionTableTable, ResumenHabitacionTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
