@@ -19,6 +19,10 @@ String resumenHabitacionToJson(ResumenOperacion data) =>
 class ResumenOperacion {
   int? idInt;
   String? id;
+  int? habitacionInt;
+  String? habitacion;
+  int? cotizacionInt;
+  String? cotizacion;
   double? subtotal;
   double? descuento;
   double? impuestos;
@@ -28,6 +32,10 @@ class ResumenOperacion {
   ResumenOperacion({
     this.idInt,
     this.id,
+    this.habitacionInt,
+    this.habitacion,
+    this.cotizacionInt,
+    this.cotizacion,
     this.subtotal,
     this.descuento,
     this.impuestos,
@@ -38,6 +46,10 @@ class ResumenOperacion {
   ResumenOperacion copyWith({
     int? idInt,
     String? id,
+    int? habitacionIdInt,
+    String? habitacionId,
+    int? cotizacionIdInt,
+    String? cotizacionId,
     double? subtotal,
     double? descuento,
     double? impuestos,
@@ -47,6 +59,10 @@ class ResumenOperacion {
       ResumenOperacion(
         idInt: idInt ?? this.idInt,
         id: id ?? this.id,
+        habitacionInt: habitacionIdInt ?? this.habitacionInt,
+        habitacion: habitacionId ?? this.habitacion,
+        cotizacionInt: cotizacionIdInt ?? this.cotizacionInt,
+        cotizacion: cotizacionId ?? this.cotizacion,
         subtotal: subtotal ?? this.subtotal,
         descuento: descuento ?? this.descuento,
         impuestos: impuestos ?? this.descuento,
@@ -58,6 +74,10 @@ class ResumenOperacion {
       ResumenOperacion(
         idInt: json['id_int'],
         id: json['id'],
+        habitacionInt: json['habitacion_int'],
+        habitacion: json['habitacion'],
+        cotizacionInt: json['cotizacion_int'],
+        cotizacion: json['cotizacion'],
         subtotal: json['subtotal'],
         descuento: json['descuento'],
         impuestos: json['impuestos'],
@@ -73,6 +93,10 @@ class ResumenOperacion {
     final data = <String, dynamic>{
       "id_int": idInt,
       "id": id,
+      "habitacion_int": habitacionInt,
+      "habitacion": habitacion,
+      "cotizacion_int": cotizacionInt,
+      "cotizacion": cotizacion,
       "subtotal": subtotal,
       "descuento": descuento,
       "impuestos": impuestos,

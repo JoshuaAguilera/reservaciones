@@ -8,11 +8,15 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 import '../res/helpers/constants.dart';
 import '../res/helpers/general_helpers.dart';
+import 'dao/categoria_dao.dart';
 import 'dao/cliente_dao.dart';
 import 'dao/cotizacion_dao.dart';
+import 'dao/habitacion_dao.dart';
+import 'dao/resumen_operacion_dao.dart';
 import 'dao/tarifa_base_dao.dart';
 import 'dao/tarifa_dao.dart';
 import 'dao/tarifa_rack_dao.dart';
+import 'dao/tarifa_x_habitacion_dao.dart';
 import 'dao/usuario_dao.dart';
 import 'tables/categoria_table.dart';
 import 'tables/cliente_table.dart';
@@ -47,7 +51,7 @@ part 'database.g.dart';
 //     PeriodoTable,
 //     PoliticaTarifarioTable,
 //     ReservacionTable,
-//     ResumenHabitacionTable,
+//     ResumenOperacionTable,
 //     RolTable,
 //     TarifaBaseTable,
 //     TarifaRackTable,
@@ -67,6 +71,10 @@ part 'database.g.dart';
 //     CotizacionDao,
 //     UsuarioDao,
 //     ClienteDao,
+//     CategoriaDao,
+//     HabitacionDao,
+//     TarifaXHabitacionDao,
+//     ResumenOperacionDao,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -102,6 +110,9 @@ part 'database.g.dart';
     CotizacionDao,
     UsuarioDao,
     ClienteDao,
+    HabitacionDao,
+    TarifaXHabitacionDao,
+    ResumenOperacionDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

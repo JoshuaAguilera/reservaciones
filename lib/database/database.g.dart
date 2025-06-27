@@ -1742,6 +1742,12 @@ class $CategoriaTableTable extends CategoriaTable
   late final GeneratedColumn<String> color = GeneratedColumn<String>(
       'color', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _descripcionMeta =
+      const VerificationMeta('descripcion');
+  @override
+  late final GeneratedColumn<String> descripcion = GeneratedColumn<String>(
+      'descripcion', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _tipoHabitacionIntMeta =
       const VerificationMeta('tipoHabitacionInt');
   @override
@@ -1779,6 +1785,7 @@ class $CategoriaTableTable extends CategoriaTable
         createdAt,
         nombre,
         color,
+        descripcion,
         tipoHabitacionInt,
         tipoHabitacion,
         creadoPorInt,
@@ -1812,6 +1819,12 @@ class $CategoriaTableTable extends CategoriaTable
     if (data.containsKey('color')) {
       context.handle(
           _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+    }
+    if (data.containsKey('descripcion')) {
+      context.handle(
+          _descripcionMeta,
+          descripcion.isAcceptableOrUnknown(
+              data['descripcion']!, _descripcionMeta));
     }
     if (data.containsKey('tipo_habitacion_int')) {
       context.handle(
@@ -1854,6 +1867,8 @@ class $CategoriaTableTable extends CategoriaTable
           .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}color']),
+      descripcion: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}descripcion']),
       tipoHabitacionInt: attachedDatabase.typeMapping.read(
           DriftSqlType.int, data['${effectivePrefix}tipo_habitacion_int']),
       tipoHabitacion: attachedDatabase.typeMapping
@@ -1878,6 +1893,7 @@ class CategoriaTableData extends DataClass
   final DateTime? createdAt;
   final String? nombre;
   final String? color;
+  final String? descripcion;
   final int? tipoHabitacionInt;
   final String? tipoHabitacion;
   final int? creadoPorInt;
@@ -1888,6 +1904,7 @@ class CategoriaTableData extends DataClass
       this.createdAt,
       this.nombre,
       this.color,
+      this.descripcion,
       this.tipoHabitacionInt,
       this.tipoHabitacion,
       this.creadoPorInt,
@@ -1907,6 +1924,9 @@ class CategoriaTableData extends DataClass
     }
     if (!nullToAbsent || color != null) {
       map['color'] = Variable<String>(color);
+    }
+    if (!nullToAbsent || descripcion != null) {
+      map['descripcion'] = Variable<String>(descripcion);
     }
     if (!nullToAbsent || tipoHabitacionInt != null) {
       map['tipo_habitacion_int'] = Variable<int>(tipoHabitacionInt);
@@ -1934,6 +1954,9 @@ class CategoriaTableData extends DataClass
           nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
       color:
           color == null && nullToAbsent ? const Value.absent() : Value(color),
+      descripcion: descripcion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descripcion),
       tipoHabitacionInt: tipoHabitacionInt == null && nullToAbsent
           ? const Value.absent()
           : Value(tipoHabitacionInt),
@@ -1958,6 +1981,7 @@ class CategoriaTableData extends DataClass
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       nombre: serializer.fromJson<String?>(json['nombre']),
       color: serializer.fromJson<String?>(json['color']),
+      descripcion: serializer.fromJson<String?>(json['descripcion']),
       tipoHabitacionInt: serializer.fromJson<int?>(json['tipoHabitacionInt']),
       tipoHabitacion: serializer.fromJson<String?>(json['tipoHabitacion']),
       creadoPorInt: serializer.fromJson<int?>(json['creadoPorInt']),
@@ -1973,6 +1997,7 @@ class CategoriaTableData extends DataClass
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'nombre': serializer.toJson<String?>(nombre),
       'color': serializer.toJson<String?>(color),
+      'descripcion': serializer.toJson<String?>(descripcion),
       'tipoHabitacionInt': serializer.toJson<int?>(tipoHabitacionInt),
       'tipoHabitacion': serializer.toJson<String?>(tipoHabitacion),
       'creadoPorInt': serializer.toJson<int?>(creadoPorInt),
@@ -1986,6 +2011,7 @@ class CategoriaTableData extends DataClass
           Value<DateTime?> createdAt = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
           Value<String?> color = const Value.absent(),
+          Value<String?> descripcion = const Value.absent(),
           Value<int?> tipoHabitacionInt = const Value.absent(),
           Value<String?> tipoHabitacion = const Value.absent(),
           Value<int?> creadoPorInt = const Value.absent(),
@@ -1996,6 +2022,7 @@ class CategoriaTableData extends DataClass
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
         nombre: nombre.present ? nombre.value : this.nombre,
         color: color.present ? color.value : this.color,
+        descripcion: descripcion.present ? descripcion.value : this.descripcion,
         tipoHabitacionInt: tipoHabitacionInt.present
             ? tipoHabitacionInt.value
             : this.tipoHabitacionInt,
@@ -2012,6 +2039,8 @@ class CategoriaTableData extends DataClass
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
       color: data.color.present ? data.color.value : this.color,
+      descripcion:
+          data.descripcion.present ? data.descripcion.value : this.descripcion,
       tipoHabitacionInt: data.tipoHabitacionInt.present
           ? data.tipoHabitacionInt.value
           : this.tipoHabitacionInt,
@@ -2033,6 +2062,7 @@ class CategoriaTableData extends DataClass
           ..write('createdAt: $createdAt, ')
           ..write('nombre: $nombre, ')
           ..write('color: $color, ')
+          ..write('descripcion: $descripcion, ')
           ..write('tipoHabitacionInt: $tipoHabitacionInt, ')
           ..write('tipoHabitacion: $tipoHabitacion, ')
           ..write('creadoPorInt: $creadoPorInt, ')
@@ -2043,7 +2073,7 @@ class CategoriaTableData extends DataClass
 
   @override
   int get hashCode => Object.hash(idInt, id, createdAt, nombre, color,
-      tipoHabitacionInt, tipoHabitacion, creadoPorInt, creadoPor);
+      descripcion, tipoHabitacionInt, tipoHabitacion, creadoPorInt, creadoPor);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2053,6 +2083,7 @@ class CategoriaTableData extends DataClass
           other.createdAt == this.createdAt &&
           other.nombre == this.nombre &&
           other.color == this.color &&
+          other.descripcion == this.descripcion &&
           other.tipoHabitacionInt == this.tipoHabitacionInt &&
           other.tipoHabitacion == this.tipoHabitacion &&
           other.creadoPorInt == this.creadoPorInt &&
@@ -2065,6 +2096,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
   final Value<DateTime?> createdAt;
   final Value<String?> nombre;
   final Value<String?> color;
+  final Value<String?> descripcion;
   final Value<int?> tipoHabitacionInt;
   final Value<String?> tipoHabitacion;
   final Value<int?> creadoPorInt;
@@ -2075,6 +2107,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
     this.createdAt = const Value.absent(),
     this.nombre = const Value.absent(),
     this.color = const Value.absent(),
+    this.descripcion = const Value.absent(),
     this.tipoHabitacionInt = const Value.absent(),
     this.tipoHabitacion = const Value.absent(),
     this.creadoPorInt = const Value.absent(),
@@ -2086,6 +2119,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
     this.createdAt = const Value.absent(),
     this.nombre = const Value.absent(),
     this.color = const Value.absent(),
+    this.descripcion = const Value.absent(),
     this.tipoHabitacionInt = const Value.absent(),
     this.tipoHabitacion = const Value.absent(),
     this.creadoPorInt = const Value.absent(),
@@ -2097,6 +2131,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
     Expression<DateTime>? createdAt,
     Expression<String>? nombre,
     Expression<String>? color,
+    Expression<String>? descripcion,
     Expression<int>? tipoHabitacionInt,
     Expression<String>? tipoHabitacion,
     Expression<int>? creadoPorInt,
@@ -2108,6 +2143,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
       if (createdAt != null) 'created_at': createdAt,
       if (nombre != null) 'nombre': nombre,
       if (color != null) 'color': color,
+      if (descripcion != null) 'descripcion': descripcion,
       if (tipoHabitacionInt != null) 'tipo_habitacion_int': tipoHabitacionInt,
       if (tipoHabitacion != null) 'tipo_habitacion': tipoHabitacion,
       if (creadoPorInt != null) 'creado_por_int': creadoPorInt,
@@ -2121,6 +2157,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
       Value<DateTime?>? createdAt,
       Value<String?>? nombre,
       Value<String?>? color,
+      Value<String?>? descripcion,
       Value<int?>? tipoHabitacionInt,
       Value<String?>? tipoHabitacion,
       Value<int?>? creadoPorInt,
@@ -2131,6 +2168,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
       createdAt: createdAt ?? this.createdAt,
       nombre: nombre ?? this.nombre,
       color: color ?? this.color,
+      descripcion: descripcion ?? this.descripcion,
       tipoHabitacionInt: tipoHabitacionInt ?? this.tipoHabitacionInt,
       tipoHabitacion: tipoHabitacion ?? this.tipoHabitacion,
       creadoPorInt: creadoPorInt ?? this.creadoPorInt,
@@ -2156,6 +2194,9 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
     if (color.present) {
       map['color'] = Variable<String>(color.value);
     }
+    if (descripcion.present) {
+      map['descripcion'] = Variable<String>(descripcion.value);
+    }
     if (tipoHabitacionInt.present) {
       map['tipo_habitacion_int'] = Variable<int>(tipoHabitacionInt.value);
     }
@@ -2179,6 +2220,7 @@ class CategoriaTableCompanion extends UpdateCompanion<CategoriaTableData> {
           ..write('createdAt: $createdAt, ')
           ..write('nombre: $nombre, ')
           ..write('color: $color, ')
+          ..write('descripcion: $descripcion, ')
           ..write('tipoHabitacionInt: $tipoHabitacionInt, ')
           ..write('tipoHabitacion: $tipoHabitacion, ')
           ..write('creadoPorInt: $creadoPorInt, ')
@@ -6743,12 +6785,12 @@ class ReservacionTableCompanion extends UpdateCompanion<ReservacionTableData> {
   }
 }
 
-class $ResumenHabitacionTableTable extends ResumenOperacionTable
-    with TableInfo<$ResumenHabitacionTableTable, ResumenHabitacionTableData> {
+class $ResumenOperacionTableTable extends ResumenOperacionTable
+    with TableInfo<$ResumenOperacionTableTable, ResumenOperacionTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ResumenHabitacionTableTable(this.attachedDatabase, [this._alias]);
+  $ResumenOperacionTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idIntMeta = const VerificationMeta('idInt');
   @override
   late final GeneratedColumn<int> idInt = GeneratedColumn<int>(
@@ -6824,6 +6866,21 @@ class $ResumenHabitacionTableTable extends ResumenOperacionTable
   late final GeneratedColumn<String> categoria = GeneratedColumn<String>(
       'categoria', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cotizacionIntMeta =
+      const VerificationMeta('cotizacionInt');
+  @override
+  late final GeneratedColumn<int> cotizacionInt = GeneratedColumn<int>(
+      'cotizacion_int', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES cotizacion_table (id)'));
+  static const VerificationMeta _cotizacionMeta =
+      const VerificationMeta('cotizacion');
+  @override
+  late final GeneratedColumn<String> cotizacion = GeneratedColumn<String>(
+      'cotizacion', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         idInt,
@@ -6835,16 +6892,18 @@ class $ResumenHabitacionTableTable extends ResumenOperacionTable
         habitacionInt,
         habitacion,
         categoriaInt,
-        categoria
+        categoria,
+        cotizacionInt,
+        cotizacion
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'resumen_habitacion_table';
+  static const String $name = 'resumen_operacion_table';
   @override
   VerificationContext validateIntegrity(
-      Insertable<ResumenHabitacionTableData> instance,
+      Insertable<ResumenOperacionTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -6893,16 +6952,28 @@ class $ResumenHabitacionTableTable extends ResumenOperacionTable
       context.handle(_categoriaMeta,
           categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));
     }
+    if (data.containsKey('cotizacion_int')) {
+      context.handle(
+          _cotizacionIntMeta,
+          cotizacionInt.isAcceptableOrUnknown(
+              data['cotizacion_int']!, _cotizacionIntMeta));
+    }
+    if (data.containsKey('cotizacion')) {
+      context.handle(
+          _cotizacionMeta,
+          cotizacion.isAcceptableOrUnknown(
+              data['cotizacion']!, _cotizacionMeta));
+    }
     return context;
   }
 
   @override
   Set<GeneratedColumn> get $primaryKey => {idInt};
   @override
-  ResumenHabitacionTableData map(Map<String, dynamic> data,
+  ResumenOperacionTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ResumenHabitacionTableData(
+    return ResumenOperacionTableData(
       idInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
       id: attachedDatabase.typeMapping
@@ -6923,17 +6994,21 @@ class $ResumenHabitacionTableTable extends ResumenOperacionTable
           .read(DriftSqlType.int, data['${effectivePrefix}categoria_int']),
       categoria: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}categoria']),
+      cotizacionInt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}cotizacion_int']),
+      cotizacion: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cotizacion']),
     );
   }
 
   @override
-  $ResumenHabitacionTableTable createAlias(String alias) {
-    return $ResumenHabitacionTableTable(attachedDatabase, alias);
+  $ResumenOperacionTableTable createAlias(String alias) {
+    return $ResumenOperacionTableTable(attachedDatabase, alias);
   }
 }
 
-class ResumenHabitacionTableData extends DataClass
-    implements Insertable<ResumenHabitacionTableData> {
+class ResumenOperacionTableData extends DataClass
+    implements Insertable<ResumenOperacionTableData> {
   final int idInt;
   final String? id;
   final double subtotal;
@@ -6944,7 +7019,9 @@ class ResumenHabitacionTableData extends DataClass
   final String? habitacion;
   final int? categoriaInt;
   final String? categoria;
-  const ResumenHabitacionTableData(
+  final int? cotizacionInt;
+  final String? cotizacion;
+  const ResumenOperacionTableData(
       {required this.idInt,
       this.id,
       required this.subtotal,
@@ -6954,7 +7031,9 @@ class ResumenHabitacionTableData extends DataClass
       this.habitacionInt,
       this.habitacion,
       this.categoriaInt,
-      this.categoria});
+      this.categoria,
+      this.cotizacionInt,
+      this.cotizacion});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -6978,11 +7057,17 @@ class ResumenHabitacionTableData extends DataClass
     if (!nullToAbsent || categoria != null) {
       map['categoria'] = Variable<String>(categoria);
     }
+    if (!nullToAbsent || cotizacionInt != null) {
+      map['cotizacion_int'] = Variable<int>(cotizacionInt);
+    }
+    if (!nullToAbsent || cotizacion != null) {
+      map['cotizacion'] = Variable<String>(cotizacion);
+    }
     return map;
   }
 
-  ResumenHabitacionTableCompanion toCompanion(bool nullToAbsent) {
-    return ResumenHabitacionTableCompanion(
+  ResumenOperacionTableCompanion toCompanion(bool nullToAbsent) {
+    return ResumenOperacionTableCompanion(
       idInt: Value(idInt),
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       subtotal: Value(subtotal),
@@ -7001,13 +7086,19 @@ class ResumenHabitacionTableData extends DataClass
       categoria: categoria == null && nullToAbsent
           ? const Value.absent()
           : Value(categoria),
+      cotizacionInt: cotizacionInt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cotizacionInt),
+      cotizacion: cotizacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cotizacion),
     );
   }
 
-  factory ResumenHabitacionTableData.fromJson(Map<String, dynamic> json,
+  factory ResumenOperacionTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ResumenHabitacionTableData(
+    return ResumenOperacionTableData(
       idInt: serializer.fromJson<int>(json['idInt']),
       id: serializer.fromJson<String?>(json['id']),
       subtotal: serializer.fromJson<double>(json['subtotal']),
@@ -7018,6 +7109,8 @@ class ResumenHabitacionTableData extends DataClass
       habitacion: serializer.fromJson<String?>(json['habitacion']),
       categoriaInt: serializer.fromJson<int?>(json['categoriaInt']),
       categoria: serializer.fromJson<String?>(json['categoria']),
+      cotizacionInt: serializer.fromJson<int?>(json['cotizacionInt']),
+      cotizacion: serializer.fromJson<String?>(json['cotizacion']),
     );
   }
   @override
@@ -7034,10 +7127,12 @@ class ResumenHabitacionTableData extends DataClass
       'habitacion': serializer.toJson<String?>(habitacion),
       'categoriaInt': serializer.toJson<int?>(categoriaInt),
       'categoria': serializer.toJson<String?>(categoria),
+      'cotizacionInt': serializer.toJson<int?>(cotizacionInt),
+      'cotizacion': serializer.toJson<String?>(cotizacion),
     };
   }
 
-  ResumenHabitacionTableData copyWith(
+  ResumenOperacionTableData copyWith(
           {int? idInt,
           Value<String?> id = const Value.absent(),
           double? subtotal,
@@ -7047,8 +7142,10 @@ class ResumenHabitacionTableData extends DataClass
           Value<int?> habitacionInt = const Value.absent(),
           Value<String?> habitacion = const Value.absent(),
           Value<int?> categoriaInt = const Value.absent(),
-          Value<String?> categoria = const Value.absent()}) =>
-      ResumenHabitacionTableData(
+          Value<String?> categoria = const Value.absent(),
+          Value<int?> cotizacionInt = const Value.absent(),
+          Value<String?> cotizacion = const Value.absent()}) =>
+      ResumenOperacionTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
         subtotal: subtotal ?? this.subtotal,
@@ -7061,10 +7158,13 @@ class ResumenHabitacionTableData extends DataClass
         categoriaInt:
             categoriaInt.present ? categoriaInt.value : this.categoriaInt,
         categoria: categoria.present ? categoria.value : this.categoria,
+        cotizacionInt:
+            cotizacionInt.present ? cotizacionInt.value : this.cotizacionInt,
+        cotizacion: cotizacion.present ? cotizacion.value : this.cotizacion,
       );
-  ResumenHabitacionTableData copyWithCompanion(
-      ResumenHabitacionTableCompanion data) {
-    return ResumenHabitacionTableData(
+  ResumenOperacionTableData copyWithCompanion(
+      ResumenOperacionTableCompanion data) {
+    return ResumenOperacionTableData(
       idInt: data.idInt.present ? data.idInt.value : this.idInt,
       id: data.id.present ? data.id.value : this.id,
       subtotal: data.subtotal.present ? data.subtotal.value : this.subtotal,
@@ -7080,12 +7180,17 @@ class ResumenHabitacionTableData extends DataClass
           ? data.categoriaInt.value
           : this.categoriaInt,
       categoria: data.categoria.present ? data.categoria.value : this.categoria,
+      cotizacionInt: data.cotizacionInt.present
+          ? data.cotizacionInt.value
+          : this.cotizacionInt,
+      cotizacion:
+          data.cotizacion.present ? data.cotizacion.value : this.cotizacion,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('ResumenHabitacionTableData(')
+    return (StringBuffer('ResumenOperacionTableData(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
           ..write('subtotal: $subtotal, ')
@@ -7095,18 +7200,31 @@ class ResumenHabitacionTableData extends DataClass
           ..write('habitacionInt: $habitacionInt, ')
           ..write('habitacion: $habitacion, ')
           ..write('categoriaInt: $categoriaInt, ')
-          ..write('categoria: $categoria')
+          ..write('categoria: $categoria, ')
+          ..write('cotizacionInt: $cotizacionInt, ')
+          ..write('cotizacion: $cotizacion')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idInt, id, subtotal, descuento, impuestos,
-      total, habitacionInt, habitacion, categoriaInt, categoria);
+  int get hashCode => Object.hash(
+      idInt,
+      id,
+      subtotal,
+      descuento,
+      impuestos,
+      total,
+      habitacionInt,
+      habitacion,
+      categoriaInt,
+      categoria,
+      cotizacionInt,
+      cotizacion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ResumenHabitacionTableData &&
+      (other is ResumenOperacionTableData &&
           other.idInt == this.idInt &&
           other.id == this.id &&
           other.subtotal == this.subtotal &&
@@ -7116,11 +7234,13 @@ class ResumenHabitacionTableData extends DataClass
           other.habitacionInt == this.habitacionInt &&
           other.habitacion == this.habitacion &&
           other.categoriaInt == this.categoriaInt &&
-          other.categoria == this.categoria);
+          other.categoria == this.categoria &&
+          other.cotizacionInt == this.cotizacionInt &&
+          other.cotizacion == this.cotizacion);
 }
 
-class ResumenHabitacionTableCompanion
-    extends UpdateCompanion<ResumenHabitacionTableData> {
+class ResumenOperacionTableCompanion
+    extends UpdateCompanion<ResumenOperacionTableData> {
   final Value<int> idInt;
   final Value<String?> id;
   final Value<double> subtotal;
@@ -7131,7 +7251,9 @@ class ResumenHabitacionTableCompanion
   final Value<String?> habitacion;
   final Value<int?> categoriaInt;
   final Value<String?> categoria;
-  const ResumenHabitacionTableCompanion({
+  final Value<int?> cotizacionInt;
+  final Value<String?> cotizacion;
+  const ResumenOperacionTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
     this.subtotal = const Value.absent(),
@@ -7142,8 +7264,10 @@ class ResumenHabitacionTableCompanion
     this.habitacion = const Value.absent(),
     this.categoriaInt = const Value.absent(),
     this.categoria = const Value.absent(),
+    this.cotizacionInt = const Value.absent(),
+    this.cotizacion = const Value.absent(),
   });
-  ResumenHabitacionTableCompanion.insert({
+  ResumenOperacionTableCompanion.insert({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
     this.subtotal = const Value.absent(),
@@ -7154,8 +7278,10 @@ class ResumenHabitacionTableCompanion
     this.habitacion = const Value.absent(),
     this.categoriaInt = const Value.absent(),
     this.categoria = const Value.absent(),
+    this.cotizacionInt = const Value.absent(),
+    this.cotizacion = const Value.absent(),
   });
-  static Insertable<ResumenHabitacionTableData> custom({
+  static Insertable<ResumenOperacionTableData> custom({
     Expression<int>? idInt,
     Expression<String>? id,
     Expression<double>? subtotal,
@@ -7166,6 +7292,8 @@ class ResumenHabitacionTableCompanion
     Expression<String>? habitacion,
     Expression<int>? categoriaInt,
     Expression<String>? categoria,
+    Expression<int>? cotizacionInt,
+    Expression<String>? cotizacion,
   }) {
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
@@ -7178,10 +7306,12 @@ class ResumenHabitacionTableCompanion
       if (habitacion != null) 'habitacion': habitacion,
       if (categoriaInt != null) 'categoria_int': categoriaInt,
       if (categoria != null) 'categoria': categoria,
+      if (cotizacionInt != null) 'cotizacion_int': cotizacionInt,
+      if (cotizacion != null) 'cotizacion': cotizacion,
     });
   }
 
-  ResumenHabitacionTableCompanion copyWith(
+  ResumenOperacionTableCompanion copyWith(
       {Value<int>? idInt,
       Value<String?>? id,
       Value<double>? subtotal,
@@ -7191,8 +7321,10 @@ class ResumenHabitacionTableCompanion
       Value<int?>? habitacionInt,
       Value<String?>? habitacion,
       Value<int?>? categoriaInt,
-      Value<String?>? categoria}) {
-    return ResumenHabitacionTableCompanion(
+      Value<String?>? categoria,
+      Value<int?>? cotizacionInt,
+      Value<String?>? cotizacion}) {
+    return ResumenOperacionTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
       subtotal: subtotal ?? this.subtotal,
@@ -7203,6 +7335,8 @@ class ResumenHabitacionTableCompanion
       habitacion: habitacion ?? this.habitacion,
       categoriaInt: categoriaInt ?? this.categoriaInt,
       categoria: categoria ?? this.categoria,
+      cotizacionInt: cotizacionInt ?? this.cotizacionInt,
+      cotizacion: cotizacion ?? this.cotizacion,
     );
   }
 
@@ -7239,12 +7373,18 @@ class ResumenHabitacionTableCompanion
     if (categoria.present) {
       map['categoria'] = Variable<String>(categoria.value);
     }
+    if (cotizacionInt.present) {
+      map['cotizacion_int'] = Variable<int>(cotizacionInt.value);
+    }
+    if (cotizacion.present) {
+      map['cotizacion'] = Variable<String>(cotizacion.value);
+    }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('ResumenHabitacionTableCompanion(')
+    return (StringBuffer('ResumenOperacionTableCompanion(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
           ..write('subtotal: $subtotal, ')
@@ -7254,7 +7394,9 @@ class ResumenHabitacionTableCompanion
           ..write('habitacionInt: $habitacionInt, ')
           ..write('habitacion: $habitacion, ')
           ..write('categoriaInt: $categoriaInt, ')
-          ..write('categoria: $categoria')
+          ..write('categoria: $categoria, ')
+          ..write('cotizacionInt: $cotizacionInt, ')
+          ..write('cotizacion: $cotizacion')
           ..write(')'))
         .toString();
   }
@@ -10761,8 +10903,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $PoliticaTarifarioTableTable(this);
   late final $ReservacionTableTable reservacionTable =
       $ReservacionTableTable(this);
-  late final $ResumenHabitacionTableTable resumenHabitacionTable =
-      $ResumenHabitacionTableTable(this);
+  late final $ResumenOperacionTableTable resumenOperacionTable =
+      $ResumenOperacionTableTable(this);
   late final $TarifaBaseTableTable tarifaBaseTable =
       $TarifaBaseTableTable(this);
   late final $TarifaTableTable tarifaTable = $TarifaTableTable(this);
@@ -10781,6 +10923,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final CotizacionDao cotizacionDao = CotizacionDao(this as AppDatabase);
   late final UsuarioDao usuarioDao = UsuarioDao(this as AppDatabase);
   late final ClienteDao clienteDao = ClienteDao(this as AppDatabase);
+  late final HabitacionDao habitacionDao = HabitacionDao(this as AppDatabase);
+  late final TarifaXHabitacionDao tarifaXHabitacionDao =
+      TarifaXHabitacionDao(this as AppDatabase);
+  late final ResumenOperacionDao resumenOperacionDao =
+      ResumenOperacionDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -10799,7 +10946,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         periodoTable,
         politicaTarifarioTable,
         reservacionTable,
-        resumenHabitacionTable,
+        resumenOperacionTable,
         tarifaBaseTable,
         tarifaTable,
         tarifaXDiaTable,
@@ -11653,6 +11800,7 @@ typedef $$CategoriaTableTableCreateCompanionBuilder = CategoriaTableCompanion
   Value<DateTime?> createdAt,
   Value<String?> nombre,
   Value<String?> color,
+  Value<String?> descripcion,
   Value<int?> tipoHabitacionInt,
   Value<String?> tipoHabitacion,
   Value<int?> creadoPorInt,
@@ -11665,6 +11813,7 @@ typedef $$CategoriaTableTableUpdateCompanionBuilder = CategoriaTableCompanion
   Value<DateTime?> createdAt,
   Value<String?> nombre,
   Value<String?> color,
+  Value<String?> descripcion,
   Value<int?> tipoHabitacionInt,
   Value<String?> tipoHabitacion,
   Value<int?> creadoPorInt,
@@ -11694,6 +11843,7 @@ class $$CategoriaTableTableTableManager extends RootTableManager<
             Value<DateTime?> createdAt = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
             Value<String?> color = const Value.absent(),
+            Value<String?> descripcion = const Value.absent(),
             Value<int?> tipoHabitacionInt = const Value.absent(),
             Value<String?> tipoHabitacion = const Value.absent(),
             Value<int?> creadoPorInt = const Value.absent(),
@@ -11705,6 +11855,7 @@ class $$CategoriaTableTableTableManager extends RootTableManager<
             createdAt: createdAt,
             nombre: nombre,
             color: color,
+            descripcion: descripcion,
             tipoHabitacionInt: tipoHabitacionInt,
             tipoHabitacion: tipoHabitacion,
             creadoPorInt: creadoPorInt,
@@ -11716,6 +11867,7 @@ class $$CategoriaTableTableTableManager extends RootTableManager<
             Value<DateTime?> createdAt = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
             Value<String?> color = const Value.absent(),
+            Value<String?> descripcion = const Value.absent(),
             Value<int?> tipoHabitacionInt = const Value.absent(),
             Value<String?> tipoHabitacion = const Value.absent(),
             Value<int?> creadoPorInt = const Value.absent(),
@@ -11727,6 +11879,7 @@ class $$CategoriaTableTableTableManager extends RootTableManager<
             createdAt: createdAt,
             nombre: nombre,
             color: color,
+            descripcion: descripcion,
             tipoHabitacionInt: tipoHabitacionInt,
             tipoHabitacion: tipoHabitacion,
             creadoPorInt: creadoPorInt,
@@ -11760,6 +11913,11 @@ class $$CategoriaTableTableFilterComposer
 
   ColumnFilters<String> get color => $state.composableBuilder(
       column: $state.table.color,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get descripcion => $state.composableBuilder(
+      column: $state.table.descripcion,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -11801,19 +11959,19 @@ class $$CategoriaTableTableFilterComposer
     return composer;
   }
 
-  ComposableFilter resumenHabitacionTableRefs(
-      ComposableFilter Function($$ResumenHabitacionTableTableFilterComposer f)
+  ComposableFilter resumenOperacionTableRefs(
+      ComposableFilter Function($$ResumenOperacionTableTableFilterComposer f)
           f) {
-    final $$ResumenHabitacionTableTableFilterComposer composer =
+    final $$ResumenOperacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
             getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.resumenHabitacionTable,
+            referencedTable: $state.db.resumenOperacionTable,
             getReferencedColumn: (t) => t.categoriaInt,
             builder: (joinBuilder, parentComposers) =>
-                $$ResumenHabitacionTableTableFilterComposer(ComposerState(
+                $$ResumenOperacionTableTableFilterComposer(ComposerState(
                     $state.db,
-                    $state.db.resumenHabitacionTable,
+                    $state.db.resumenOperacionTable,
                     joinBuilder,
                     parentComposers)));
     return f(composer);
@@ -11858,6 +12016,11 @@ class $$CategoriaTableTableOrderingComposer
 
   ColumnOrderings<String> get color => $state.composableBuilder(
       column: $state.table.color,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get descripcion => $state.composableBuilder(
+      column: $state.table.descripcion,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -12462,6 +12625,24 @@ class $$CotizacionTableTableFilterComposer
                     $state.db.reservacionTable, joinBuilder, parentComposers)));
     return f(composer);
   }
+
+  ComposableFilter resumenOperacionTableRefs(
+      ComposableFilter Function($$ResumenOperacionTableTableFilterComposer f)
+          f) {
+    final $$ResumenOperacionTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.resumenOperacionTable,
+            getReferencedColumn: (t) => t.cotizacionInt,
+            builder: (joinBuilder, parentComposers) =>
+                $$ResumenOperacionTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.resumenOperacionTable,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$CotizacionTableTableOrderingComposer
@@ -12786,19 +12967,19 @@ class $$HabitacionTableTableFilterComposer
     return composer;
   }
 
-  ComposableFilter resumenHabitacionTableRefs(
-      ComposableFilter Function($$ResumenHabitacionTableTableFilterComposer f)
+  ComposableFilter resumenOperacionTableRefs(
+      ComposableFilter Function($$ResumenOperacionTableTableFilterComposer f)
           f) {
-    final $$ResumenHabitacionTableTableFilterComposer composer =
+    final $$ResumenOperacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
             getCurrentColumn: (t) => t.id,
-            referencedTable: $state.db.resumenHabitacionTable,
+            referencedTable: $state.db.resumenOperacionTable,
             getReferencedColumn: (t) => t.habitacionInt,
             builder: (joinBuilder, parentComposers) =>
-                $$ResumenHabitacionTableTableFilterComposer(ComposerState(
+                $$ResumenOperacionTableTableFilterComposer(ComposerState(
                     $state.db,
-                    $state.db.resumenHabitacionTable,
+                    $state.db.resumenOperacionTable,
                     joinBuilder,
                     parentComposers)));
     return f(composer);
@@ -13967,8 +14148,8 @@ class $$ReservacionTableTableOrderingComposer
   }
 }
 
-typedef $$ResumenHabitacionTableTableCreateCompanionBuilder
-    = ResumenHabitacionTableCompanion Function({
+typedef $$ResumenOperacionTableTableCreateCompanionBuilder
+    = ResumenOperacionTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
   Value<double> subtotal,
@@ -13979,9 +14160,11 @@ typedef $$ResumenHabitacionTableTableCreateCompanionBuilder
   Value<String?> habitacion,
   Value<int?> categoriaInt,
   Value<String?> categoria,
+  Value<int?> cotizacionInt,
+  Value<String?> cotizacion,
 });
-typedef $$ResumenHabitacionTableTableUpdateCompanionBuilder
-    = ResumenHabitacionTableCompanion Function({
+typedef $$ResumenOperacionTableTableUpdateCompanionBuilder
+    = ResumenOperacionTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
   Value<double> subtotal,
@@ -13992,24 +14175,26 @@ typedef $$ResumenHabitacionTableTableUpdateCompanionBuilder
   Value<String?> habitacion,
   Value<int?> categoriaInt,
   Value<String?> categoria,
+  Value<int?> cotizacionInt,
+  Value<String?> cotizacion,
 });
 
-class $$ResumenHabitacionTableTableTableManager extends RootTableManager<
+class $$ResumenOperacionTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $ResumenHabitacionTableTable,
-    ResumenHabitacionTableData,
-    $$ResumenHabitacionTableTableFilterComposer,
-    $$ResumenHabitacionTableTableOrderingComposer,
-    $$ResumenHabitacionTableTableCreateCompanionBuilder,
-    $$ResumenHabitacionTableTableUpdateCompanionBuilder> {
-  $$ResumenHabitacionTableTableTableManager(
-      _$AppDatabase db, $ResumenHabitacionTableTable table)
+    $ResumenOperacionTableTable,
+    ResumenOperacionTableData,
+    $$ResumenOperacionTableTableFilterComposer,
+    $$ResumenOperacionTableTableOrderingComposer,
+    $$ResumenOperacionTableTableCreateCompanionBuilder,
+    $$ResumenOperacionTableTableUpdateCompanionBuilder> {
+  $$ResumenOperacionTableTableTableManager(
+      _$AppDatabase db, $ResumenOperacionTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer: $$ResumenHabitacionTableTableFilterComposer(
+          filteringComposer: $$ResumenOperacionTableTableFilterComposer(
               ComposerState(db, table)),
-          orderingComposer: $$ResumenHabitacionTableTableOrderingComposer(
+          orderingComposer: $$ResumenOperacionTableTableOrderingComposer(
               ComposerState(db, table)),
           updateCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -14022,8 +14207,10 @@ class $$ResumenHabitacionTableTableTableManager extends RootTableManager<
             Value<String?> habitacion = const Value.absent(),
             Value<int?> categoriaInt = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
+            Value<int?> cotizacionInt = const Value.absent(),
+            Value<String?> cotizacion = const Value.absent(),
           }) =>
-              ResumenHabitacionTableCompanion(
+              ResumenOperacionTableCompanion(
             idInt: idInt,
             id: id,
             subtotal: subtotal,
@@ -14034,6 +14221,8 @@ class $$ResumenHabitacionTableTableTableManager extends RootTableManager<
             habitacion: habitacion,
             categoriaInt: categoriaInt,
             categoria: categoria,
+            cotizacionInt: cotizacionInt,
+            cotizacion: cotizacion,
           ),
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -14046,8 +14235,10 @@ class $$ResumenHabitacionTableTableTableManager extends RootTableManager<
             Value<String?> habitacion = const Value.absent(),
             Value<int?> categoriaInt = const Value.absent(),
             Value<String?> categoria = const Value.absent(),
+            Value<int?> cotizacionInt = const Value.absent(),
+            Value<String?> cotizacion = const Value.absent(),
           }) =>
-              ResumenHabitacionTableCompanion.insert(
+              ResumenOperacionTableCompanion.insert(
             idInt: idInt,
             id: id,
             subtotal: subtotal,
@@ -14058,13 +14249,15 @@ class $$ResumenHabitacionTableTableTableManager extends RootTableManager<
             habitacion: habitacion,
             categoriaInt: categoriaInt,
             categoria: categoria,
+            cotizacionInt: cotizacionInt,
+            cotizacion: cotizacion,
           ),
         ));
 }
 
-class $$ResumenHabitacionTableTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $ResumenHabitacionTableTable> {
-  $$ResumenHabitacionTableTableFilterComposer(super.$state);
+class $$ResumenOperacionTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ResumenOperacionTableTable> {
+  $$ResumenOperacionTableTableFilterComposer(super.$state);
   ColumnFilters<int> get idInt => $state.composableBuilder(
       column: $state.table.idInt,
       builder: (column, joinBuilders) =>
@@ -14105,6 +14298,11 @@ class $$ResumenHabitacionTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<String> get cotizacion => $state.composableBuilder(
+      column: $state.table.cotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   $$HabitacionTableTableFilterComposer get habitacionInt {
     final $$HabitacionTableTableFilterComposer composer =
         $state.composerBuilder(
@@ -14129,11 +14327,24 @@ class $$ResumenHabitacionTableTableFilterComposer
                 $state.db.categoriaTable, joinBuilder, parentComposers)));
     return composer;
   }
+
+  $$CotizacionTableTableFilterComposer get cotizacionInt {
+    final $$CotizacionTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.cotizacionInt,
+            referencedTable: $state.db.cotizacionTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$CotizacionTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
-class $$ResumenHabitacionTableTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $ResumenHabitacionTableTable> {
-  $$ResumenHabitacionTableTableOrderingComposer(super.$state);
+class $$ResumenOperacionTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ResumenOperacionTableTable> {
+  $$ResumenOperacionTableTableOrderingComposer(super.$state);
   ColumnOrderings<int> get idInt => $state.composableBuilder(
       column: $state.table.idInt,
       builder: (column, joinBuilders) =>
@@ -14174,6 +14385,11 @@ class $$ResumenHabitacionTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get cotizacion => $state.composableBuilder(
+      column: $state.table.cotizacion,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   $$HabitacionTableTableOrderingComposer get habitacionInt {
     final $$HabitacionTableTableOrderingComposer composer =
         $state.composerBuilder(
@@ -14197,6 +14413,19 @@ class $$ResumenHabitacionTableTableOrderingComposer
             builder: (joinBuilder, parentComposers) =>
                 $$CategoriaTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.categoriaTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$CotizacionTableTableOrderingComposer get cotizacionInt {
+    final $$CotizacionTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.cotizacionInt,
+            referencedTable: $state.db.cotizacionTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$CotizacionTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.cotizacionTable, joinBuilder, parentComposers)));
     return composer;
   }
 }
@@ -15782,9 +16011,8 @@ class $AppDatabaseManager {
           _db, _db.politicaTarifarioTable);
   $$ReservacionTableTableTableManager get reservacionTable =>
       $$ReservacionTableTableTableManager(_db, _db.reservacionTable);
-  $$ResumenHabitacionTableTableTableManager get resumenHabitacionTable =>
-      $$ResumenHabitacionTableTableTableManager(
-          _db, _db.resumenHabitacionTable);
+  $$ResumenOperacionTableTableTableManager get resumenOperacionTable =>
+      $$ResumenOperacionTableTableTableManager(_db, _db.resumenOperacionTable);
   $$TarifaBaseTableTableTableManager get tarifaBaseTable =>
       $$TarifaBaseTableTableTableManager(_db, _db.tarifaBaseTable);
   $$TarifaTableTableTableManager get tarifaTable =>
