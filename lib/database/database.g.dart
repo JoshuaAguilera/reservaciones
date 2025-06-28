@@ -10917,17 +10917,21 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TarifaTemporadaTableTable(this);
   late final $ReservacionBrazaleteTableTable reservacionBrazaleteTable =
       $ReservacionBrazaleteTableTable(this);
+  late final CategoriaDao categoriaDao = CategoriaDao(this as AppDatabase);
+  late final ClienteDao clienteDao = ClienteDao(this as AppDatabase);
+  late final CotizacionDao cotizacionDao = CotizacionDao(this as AppDatabase);
+  late final HabitacionDao habitacionDao = HabitacionDao(this as AppDatabase);
+  late final PeriodoDao periodoDao = PeriodoDao(this as AppDatabase);
+  late final ResumenOperacionDao resumenOperacionDao =
+      ResumenOperacionDao(this as AppDatabase);
   late final TarifaBaseDao tarifaBaseDao = TarifaBaseDao(this as AppDatabase);
   late final TarifaDao tarifaDao = TarifaDao(this as AppDatabase);
   late final TarifaRackDao tarifaRackDao = TarifaRackDao(this as AppDatabase);
-  late final CotizacionDao cotizacionDao = CotizacionDao(this as AppDatabase);
-  late final UsuarioDao usuarioDao = UsuarioDao(this as AppDatabase);
-  late final ClienteDao clienteDao = ClienteDao(this as AppDatabase);
-  late final HabitacionDao habitacionDao = HabitacionDao(this as AppDatabase);
+  late final TarifaXDiaDao tarifaXDiaDao = TarifaXDiaDao(this as AppDatabase);
   late final TarifaXHabitacionDao tarifaXHabitacionDao =
       TarifaXHabitacionDao(this as AppDatabase);
-  late final ResumenOperacionDao resumenOperacionDao =
-      ResumenOperacionDao(this as AppDatabase);
+  late final TemporadaDao temporadaDao = TemporadaDao(this as AppDatabase);
+  late final UsuarioDao usuarioDao = UsuarioDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../models/usuario_model.dart';
 import '../utils/encrypt/encrypter.dart';
 import 'dao/usuario_dao.dart';
 import 'database.dart';
@@ -12,12 +13,11 @@ class InitDatabase {
     List<UsuarioTableData> allUsers = await db.select(db.usuarioTable).get();
     if (allUsers.isEmpty) {
       await usuarioDao.insert(
-        UsuarioTableCompanion.insert(
-          username: const Value('admin'),
-          password: Value(EncrypterTool.encryptData("12345678", null)),
-          rol: const Value("SUPERADMIN"),
-          correoElectronico: const Value("sys2@coralbluehuatulco.mx"),
-          estatus: const Value("registrado"),
+        Usuario(
+          username: 'admin',
+          password: EncrypterTool.encryptData("12345678", null),
+          correoElectronico: "sys2@coralbluehuatulco.mx",
+          estatus: "Registrado",
         ),
       );
     }

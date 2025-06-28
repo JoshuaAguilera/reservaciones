@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:generador_formato/database/tables/tarifa_base_table.dart';
 
 import 'categoria_table.dart';
+import 'tarifa_base_table.dart';
+import 'tarifa_rack_table.dart';
 
 class TarifaTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
@@ -20,4 +21,15 @@ class TarifaTable extends Table {
   IntColumn get tarifaBaseInt =>
       integer().nullable().references(TarifaBaseTable, #id)();
   TextColumn get tarifaBase => text().nullable()();
+}
+
+class RegistroTarifaTable extends Table {
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
+  IntColumn get tarifaInt =>
+      integer().nullable().references(TarifaTable, #id)();
+  TextColumn get tarifa => text().nullable()();
+  IntColumn get tarifaRackInt =>
+      integer().nullable().references(TarifaRackTable, #id)();
+  TextColumn get tarifaRack => text().nullable()();
 }

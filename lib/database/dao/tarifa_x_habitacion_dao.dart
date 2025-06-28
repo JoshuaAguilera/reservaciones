@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../models/tarifa_x_dia_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../database.dart';
 import '../tables/tarifa_x_habitacion_table.dart';
@@ -16,22 +17,44 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
     int? habitacionId,
     int limit = 20,
     int page = 1,
+    bool conDetalle = false,
   }) async {
-    final query = select(db.tarifaXHabitacionTable);
+    final tarifaAlias = alias(db.tarifaXDiaTable, 'tarifa');
+
+    final query = select(db.tarifaXHabitacionTable).join([
+      if (conDetalle)
+        leftOuterJoin(
+          tarifaAlias,
+          tarifaAlias.idInt.equalsExp(db.tarifaXHabitacionTable.tarifaXDiaInt),
+        ),
+    ]);
 
     if (habitacionId != null) {
-      query.where((u) => u.habitacionInt.equals(habitacionId));
+      query.where(db.tarifaXHabitacionTable.habitacionInt.equals(habitacionId));
     }
 
     final offset = (page - 1) * limit;
     query.limit(limit, offset: offset);
 
-    final response = await query.get();
+    final rows = await query.get();
 
-    return response.map(
-      (e) {
-        TarifaXHabitacion newRate = TarifaXHabitacion.fromJson(e.toJson());
-        return newRate;
+    return rows.map(
+      (row) {
+        final tarHab = row.readTable(db.tarifaXHabitacionTable);
+        final tarDia = row.readTableOrNull(tarifaAlias);
+
+        return TarifaXHabitacion(
+          idInt: tarHab.idInt,
+          id: tarHab.id,
+          dia: tarHab.dia,
+          esGrupal: tarHab.esGrupal,
+          fecha: tarHab.fecha,
+          habitacion: tarHab.habitacion,
+          habitacionInt: tarHab.habitacionInt,
+          tarifaXDia: TarifaXDia.fromJson(
+            tarDia?.toJson() ?? <String, dynamic>{},
+          ),
+        );
       },
     ).toList();
   }
@@ -47,15 +70,35 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
 
   // READ: TarifaXHabitacion por ID
   Future<TarifaXHabitacion?> getByID(int id) async {
-    var response = await (select(db.tarifaXHabitacionTable)
-          ..where((u) {
-            return u.idInt.equals(id);
-          }))
-        .getSingleOrNull();
+    final tarifaAlias = alias(db.tarifaXDiaTable, 'tarifa');
 
-    if (response == null) return null;
-    var tarifa = TarifaXHabitacion.fromJson(response.toJson());
-    return tarifa;
+    final query = select(db.tarifaXHabitacionTable).join([
+      leftOuterJoin(
+        tarifaAlias,
+        tarifaAlias.idInt.equalsExp(db.tarifaXHabitacionTable.tarifaXDiaInt),
+      ),
+    ]);
+
+    query.where(db.tarifaXHabitacionTable.idInt.equals(id));
+
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+
+    final tarHab = row.readTable(db.tarifaXHabitacionTable);
+    final tarDia = row.readTableOrNull(tarifaAlias);
+
+    return TarifaXHabitacion(
+      idInt: tarHab.idInt,
+      id: tarHab.id,
+      dia: tarHab.dia,
+      esGrupal: tarHab.esGrupal,
+      fecha: tarHab.fecha,
+      habitacion: tarHab.habitacion,
+      habitacionInt: tarHab.habitacionInt,
+      tarifaXDia: TarifaXDia.fromJson(
+        tarDia?.toJson() ?? <String, dynamic>{},
+      ),
+    );
   }
 
   // UPDATE

@@ -7,6 +7,8 @@ class TarifaBaseTable extends Table {
   TextColumn get id => text().nullable()();
   TextColumn get codigo => text().nullable()();
   TextColumn get nombre => text().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
   RealColumn get aumentoIntegrado => real().nullable()();
   BoolColumn get conAutocalculacion => boolean().nullable()();
   RealColumn get upgradeCategoria => real().nullable()();

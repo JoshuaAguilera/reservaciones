@@ -1,12 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/database/tables/tarifa_base_table.dart';
-import 'package:generador_formato/database/tables/tarifa_table.dart';
-import 'package:generador_formato/models/tarifa_base_model.dart';
-import 'package:generador_formato/models/tarifa_model.dart' as tf;
-import 'package:generador_formato/res/helpers/utility.dart';
 
-import 'tarifa_dao.dart';
+import '../../models/tarifa_base_model.dart';
+import '../../models/usuario_model.dart';
+import '../database.dart';
+import '../tables/tarifa_base_table.dart';
+import '../tables/tarifa_table.dart';
+
 part 'tarifa_base_dao.g.dart';
 
 @DriftAccessor(tables: [TarifaBaseTable, TarifaTable])
@@ -14,217 +13,268 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
     with _$TarifaBaseDaoMixin {
   TarifaBaseDao(AppDatabase db) : super(db);
 
-  Future<List<TarifaBase>> getBaseTariffComplement(
-      {int? tarifaBaseId, int? tarifaPadreId}) async {
-    final query = customSelect(
-      '''
-      SELECT 
-        c.id AS tarifaBaseId, 
-        c.code AS tarifaBaseCode, 
-        c.nombre AS tarifaBaseNombre,
-        c.with_auto AS withAuto,
-        c.desc_integrado AS tarifaBaseDescuento,
-        c.upgrade_categoria AS tarifaBaseUpgradeCategoria,
-        c.upgrade_menor AS tarifaBaseUpgradeMenor, 
-        c.upgrade_pax_adic AS tarifaBaseUpgradePaxAdic, 
-        c.tarifa_padre_id AS tarifaPadreId, 
-        c.tarifa_origen_id AS tarifaOrigenId, 
-        p.id AS tarifaId, 
-        p.code AS tarifaCode,
-        p.fecha AS tarifaFecha,
-        p.categoria AS tarifaCategoriclia,
-        p.tarifa_adulto_s_g_lo_d_b_l AS tarifaAdultoSGLoDBL,
-        p.tarifa_adulto_t_p_l AS tarifaAdultoTPL,
-        P.tarifa_adulto_c_p_l_e AS tarifaAdultoCPLE,
-        p.tarifa_menores7a12 AS tarifaMenores7a12,
-        p.tarifa_pax_adicional AS tarifaPaxAdicional
-      FROM tarifa_base_table c
-      LEFT JOIN tarifa_table p 
-        ON c.id = p.tarifa_padre_id
-        ${tarifaBaseId != null ? 'WHERE c.id = ?' : ''}
-        ${tarifaPadreId != null ? 'WHERE c.tarifa_padre_id = ?' : ''}
-        ORDER BY c.id, p.id
-      ''',
-      variables: tarifaBaseId != null
-          ? [Variable<int>(tarifaBaseId)]
-          : tarifaPadreId != null
-              ? [Variable<int>(tarifaPadreId)]
-              : [],
-      readsFrom: {tarifaBaseTable, tarifaTable},
-    );
+  var mapEmpty = <String, dynamic>{};
+
+  // LIST
+  Future<List<TarifaBase>> getList({
+    String nombre = '',
+    String codigo = '',
+    int? tarifaBaseId,
+    int? creadorId,
+    DateTime? initDate,
+    DateTime? lastDate,
+    String? sortBy,
+    String order = 'asc',
+    int limit = 20,
+    int page = 1,
+    bool conDetalle = false,
+  }) async {
+    final baseAlias = alias(db.tarifaBaseTable, 'base');
+    final creadorAlias = alias(db.usuarioTable, 'creador');
+
+    final query = select(db.tarifaBaseTable).join([
+      if (conDetalle)
+        leftOuterJoin(
+          baseAlias,
+          baseAlias.idInt.equalsExp(db.tarifaBaseTable.tarifaBaseInt),
+        ),
+      leftOuterJoin(
+        creadorAlias,
+        creadorAlias.idInt.equalsExp(db.tarifaBaseTable.creadoPorInt),
+      ),
+    ]);
+
+    if (tarifaBaseId != null) {
+      query.where(db.tarifaBaseTable.tarifaBaseInt.equals(tarifaBaseId));
+    }
+
+    if (creadorId != null) {
+      query.where(db.tarifaBaseTable.creadoPorInt.equals(creadorId));
+    }
+
+    if (codigo.isNotEmpty) {
+      final value = '%${codigo.toLowerCase()}%';
+      query.where(db.tarifaBaseTable.codigo.lower().like(value));
+    }
+
+    if (nombre.isNotEmpty) {
+      final value = '%${nombre.toLowerCase()}%';
+      query.where(db.tarifaBaseTable.nombre.lower().like(value));
+    }
+
+    if (initDate != null) {
+      query.where(db.tarifaBaseTable.createdAt.isBiggerOrEqualValue(initDate));
+    }
+
+    if (lastDate != null) {
+      query.where(db.tarifaBaseTable.createdAt.isSmallerOrEqualValue(lastDate));
+    }
+
+    if (initDate != null && lastDate != null) {
+      query.where(
+        db.tarifaBaseTable.createdAt.isBetweenValues(initDate, lastDate),
+      );
+    }
+
+    OrderingTerm? ordering;
+
+    switch (sortBy) {
+      case 'nombre':
+        ordering = order == 'desc'
+            ? OrderingTerm.desc(db.tarifaBaseTable.nombre)
+            : OrderingTerm.asc(db.tarifaBaseTable.nombre);
+        break;
+      case 'createdAt':
+        ordering = order == 'desc'
+            ? OrderingTerm.desc(db.tarifaBaseTable.createdAt)
+            : OrderingTerm.asc(db.tarifaBaseTable.createdAt);
+        break;
+      default:
+        ordering = order == 'desc'
+            ? OrderingTerm.desc(db.tarifaBaseTable.idInt)
+            : OrderingTerm.asc(db.tarifaBaseTable.idInt);
+    }
+
+    query.orderBy([ordering]);
+
+    final offset = (page - 1) * limit;
+    query.limit(limit, offset: offset);
 
     final rows = await query.get();
 
-    final Map<int, List<tf.Tarifa>> tarifasPorTarifaBase = {};
+    return rows.map(
+      (row) {
+        final tarifa = row.readTable(db.tarifaBaseTable);
+        final base = row.readTableOrNull(baseAlias);
+        final creador = row.readTableOrNull(creadorAlias);
 
-    for (final row in rows) {
-      final tarifaBaseId = row.read<int>('tarifaBaseId');
-      final tarifaId = row.read<int?>('tarifaId');
-      final code = row.read<String?>('tarifaCode');
-      final categoria = row.read<String?>('tarifaCategoria');
-      final fecha = row.read<DateTime?>('tarifaFecha');
-      final tarifaAdultoSGLoDBL = row.read<double?>("tarifaAdultoSGLoDBL");
-      final tarifaAdultoTPL = row.read<double?>("tarifaAdultoTPL");
-      final tarifaAdultoCPLE = row.read<double?>("tarifaAdultoCPLE");
-      final tarifaMenores7a12 = row.read<double?>("tarifaMenores7a12");
-      final tarifaPaxAdicional = row.read<double?>("tarifaPaxAdicional");
-
-      if (tarifaId != null && code != null) {
-        final tarifaData = tf.Tarifa(
-          id: tarifaId,
-          code: code,
-          categoria: categoria,
-          createdAt: fecha.toString().substring(0, 10),
-          tarifaAdulto1a2: tarifaAdultoSGLoDBL,
-          tarifaAdulto3: tarifaAdultoTPL,
-          tarifaAdulto4: tarifaAdultoCPLE,
-          tarifaMenores7a12: tarifaMenores7a12,
-          tarifaPaxAdicional: tarifaPaxAdicional,
-          tarifaBase: tarifaBaseId,
+        return TarifaBase(
+          idInt: tarifa.idInt,
+          id: tarifa.id,
+          nombre: tarifa.nombre,
+          aumIntegrado: tarifa.aumentoIntegrado,
+          codigo: tarifa.codigo,
+          conAutocalculacion: tarifa.conAutocalculacion,
+          upgradeCategoria: tarifa.upgradeCategoria,
+          upgradeMenor: tarifa.upgradeMenor,
+          upgradePaxAdic: tarifa.upgradePaxAdic,
+          tarifaBase: TarifaBase.fromJson(base?.toJson() ?? mapEmpty),
+          creadoPor: Usuario.fromJson(creador?.toJson() ?? mapEmpty),
         );
-        tarifasPorTarifaBase
-            .putIfAbsent(tarifaBaseId, () => [])
-            .add(tarifaData);
-      }
-    }
-
-    final List<TarifaBase> tarifasBase = [];
-
-    for (final row in rows) {
-      final tarifaBaseId = row.read<int>('tarifaBaseId');
-      // final tarifaOrigenId = row.read<int?>('tarifaOrigenId');
-      final code = row.read<String?>('tarifaBaseCode');
-      final nombre = row.read<String?>('tarifaBaseNombre');
-      final withAuto = row.read<bool?>('withAuto');
-      final descuento = row.read<double?>('tarifaBaseDescuento');
-      final upgradeCategoria = row.read<double?>('tarifaBaseUpgradeCategoria');
-      final upgradeMenor = row.read<double?>('tarifaBaseUpgradeMenor');
-      final upgradePaxAdic = row.read<double?>('tarifaBaseUpgradePaxAdic');
-      final tarifaPadreId = row.read<int?>('tarifaPadreId');
-
-      if (!tarifasBase.any((c) => c.idInt == tarifaBaseId)) {
-        tarifasBase.add(
-          TarifaBase(
-            idInt: tarifaBaseId,
-            codigo: code,
-            nombre: nombre,
-            conAutocalculacion: withAuto,
-            aumIntegrado: descuento,
-            upgradeCategoria: upgradeCategoria,
-            upgradeMenor: upgradeMenor,
-            upgradePaxAdic: upgradePaxAdic,
-            // creadoPor: tarifaOrigenId,
-            tarifaBase: tarifaPadreId != null
-                ? (await getBaseTariffComplement(tarifaBaseId: tarifaPadreId))
-                    .first
-                : null,
-            tarifas: tarifasPorTarifaBase[tarifaBaseId] ?? [],
-          ),
-        );
-      }
-    }
-
-    return tarifasBase;
+      },
+    ).toList();
   }
 
-  Future<int> updateBaseTariff(
-      {required TarifaBaseTableData baseTariff,
-      required int id,
-      required String code}) {
-    return (update(tarifaBaseTable)
-          ..where((tbl) => tbl.code.equals(code))
-          ..where((tbl) => tbl.id.equals(id)))
-        .write(baseTariff);
-  }
-
-  Future<int> propageChangesTariff(
-      {required TarifaBaseTableData baseTariff,
-      required List<tf.Tarifa> tarifasBase}) async {
-    int tarifaId = baseTariff.id;
-    final tarifaDao = TarifaDao(db);
-
-    List<TarifaBase> _tariffs =
-        await getBaseTariffComplement(tarifaPadreId: tarifaId);
-
-    if (_tariffs.isNotEmpty) {
-      for (var tarifaBase in _tariffs) {
-        if ((tarifaBase.tarifas ?? []).isEmpty) {
-          continue;
-        }
-
-        double divisor = tarifaBase.aumIntegrado ?? 1;
-
-        for (var element in (tarifaBase.tarifas!)) {
-          tf.Tarifa? selectTariff = await tarifasBase
-              .where((elementInt) =>
-                  elementInt.categoria == (element.categoria ?? ''))
-              .firstOrNull;
-
-          if (selectTariff == null) continue;
-
-          element.tarifaAdulto4 = Utility.formatNumberRound(
-              (selectTariff.tarifaAdulto4 ?? 0) / divisor);
-          element.tarifaAdulto1a2 = Utility.formatNumberRound(
-              (selectTariff.tarifaAdulto1a2 ?? 0) / divisor);
-          element.tarifaAdulto3 = Utility.formatNumberRound(
-              (selectTariff.tarifaAdulto3 ?? 0) / divisor);
-          element.tarifaMenores7a12 = Utility.formatNumberRound(
-              (selectTariff.tarifaMenores7a12 ?? 0) / divisor);
-
-          await tarifaDao.updateForBaseTariff(
-            tarifaData: TarifaTableCompanion(
-              tarifaAdultoCPLE: Value(element.tarifaAdulto4),
-              tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
-              tarifaAdultoTPL: Value(element.tarifaAdulto3),
-              tarifaMenores7a12: Value(element.tarifaMenores7a12),
-              tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
-            ),
-            baseTariffId: tarifaBase.idInt!,
-            id: element.id ?? 0,
-          );
-        }
-
-        await propageChangesTariff(
-          baseTariff: TarifaBaseTableData(
-              id: tarifaBase.idInt!, descIntegrado: tarifaBase.aumIntegrado),
-          tarifasBase: tarifaBase.tarifas ?? List<tf.Tarifa>.empty(),
-        );
-      }
-    }
-
-    tarifaDao.close();
-
-    return tarifaId;
-  }
-
-  Future<int> removeOrigenTarifaId({required int? origenId}) {
-    return (update(tarifaBaseTable)
-          ..where((tbl) => tbl.tarifaOrigenId.equals(origenId!)))
-        .write(
-      const TarifaBaseTableCompanion(
-        tarifaOrigenId: Value(null),
+  // CREATE
+  Future<int> insert(TarifaBase tarifa) {
+    var response = into(db.tarifaBaseTable).insert(
+      TarifaBaseTableData.fromJson(
+        tarifa.toJson(),
       ),
+    );
+
+    return response;
+  }
+
+  // READ: TarifaBase por ID
+  Future<TarifaBase?> getByID(int id) async {
+    final baseAlias = alias(db.tarifaBaseTable, 'base');
+    final creadorAlias = alias(db.usuarioTable, 'creador');
+
+    final query = select(db.tarifaBaseTable).join([
+      leftOuterJoin(
+        baseAlias,
+        baseAlias.idInt.equalsExp(db.tarifaBaseTable.tarifaBaseInt),
+      ),
+      leftOuterJoin(
+        creadorAlias,
+        creadorAlias.idInt.equalsExp(db.tarifaBaseTable.creadoPorInt),
+      ),
+    ]);
+
+    query.where(db.tarifaBaseTable.idInt.equals(id));
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+    final tarifa = row.readTable(db.tarifaBaseTable);
+    final base = row.readTableOrNull(baseAlias);
+    final creador = row.readTableOrNull(creadorAlias);
+
+    return TarifaBase(
+      idInt: tarifa.idInt,
+      id: tarifa.id,
+      nombre: tarifa.nombre,
+      aumIntegrado: tarifa.aumentoIntegrado,
+      codigo: tarifa.codigo,
+      conAutocalculacion: tarifa.conAutocalculacion,
+      upgradeCategoria: tarifa.upgradeCategoria,
+      upgradeMenor: tarifa.upgradeMenor,
+      upgradePaxAdic: tarifa.upgradePaxAdic,
+      tarifaBase: TarifaBase.fromJson(base?.toJson() ?? mapEmpty),
+      creadoPor: Usuario.fromJson(creador?.toJson() ?? mapEmpty),
     );
   }
 
-  Future<int> removePadreTarifaId({required int? padreId}) {
-    return (update(tarifaBaseTable)
-          ..where((tbl) => tbl.tarifaPadreId.equals(padreId!)))
-        .write(
-      const TarifaBaseTableCompanion(
-        tarifaPadreId: Value(null),
-        tarifaOrigenId: Value(null),
-        descIntegrado: Value(null),
+  // UPDATE
+  Future<bool> updat3(TarifaBase tarifa) {
+    var response = update(db.tarifaBaseTable).replace(
+      TarifaBaseTableData.fromJson(
+        tarifa.toJson(),
       ),
     );
+
+    return response;
   }
 
-  Future<int> deleteBaseTariff(TarifaBase tarifaBaseSelect) {
-    removePadreTarifaId(padreId: tarifaBaseSelect.idInt);
-    removeOrigenTarifaId(origenId: tarifaBaseSelect.idInt);
-
-    return (delete(tarifaBaseTable)
-          ..where((t) => t.id.equals(tarifaBaseSelect.idInt!)))
+  // DELETE
+  Future<int> delet3(int id) {
+    var response = (delete(db.tarifaBaseTable)
+          ..where((u) {
+            return u.idInt.equals(id);
+          }))
         .go();
+
+    return response;
   }
+
+  // Future<int> propageChangesTariff(
+  //     {required TarifaBaseTableData baseTariff,
+  //     required List<tf.Tarifa> tarifasBase}) async {
+  //   int tarifaId = baseTariff.id;
+  //   final tarifaDao = TarifaDao(db);
+
+  //   List<TarifaBase> _tariffs =
+  //       await getBaseTariffComplement(tarifaPadreId: tarifaId);
+
+  //   if (_tariffs.isNotEmpty) {
+  //     for (var tarifaBase in _tariffs) {
+  //       if ((tarifaBase.tarifas ?? []).isEmpty) {
+  //         continue;
+  //       }
+
+  //       double divisor = tarifaBase.aumIntegrado ?? 1;
+
+  //       for (var element in (tarifaBase.tarifas!)) {
+  //         tf.Tarifa? selectTariff = await tarifasBase
+  //             .where((elementInt) =>
+  //                 elementInt.categoria == (element.categoria ?? ''))
+  //             .firstOrNull;
+
+  //         if (selectTariff == null) continue;
+
+  //         element.tarifaAdulto4 = Utility.formatNumberRound(
+  //             (selectTariff.tarifaAdulto4 ?? 0) / divisor);
+  //         element.tarifaAdulto1a2 = Utility.formatNumberRound(
+  //             (selectTariff.tarifaAdulto1a2 ?? 0) / divisor);
+  //         element.tarifaAdulto3 = Utility.formatNumberRound(
+  //             (selectTariff.tarifaAdulto3 ?? 0) / divisor);
+  //         element.tarifaMenores7a12 = Utility.formatNumberRound(
+  //             (selectTariff.tarifaMenores7a12 ?? 0) / divisor);
+
+  //         await tarifaDao.updateForBaseTariff(
+  //           tarifaData: TarifaTableCompanion(
+  //             tarifaAdultoCPLE: Value(element.tarifaAdulto4),
+  //             tarifaAdultoSGLoDBL: Value(element.tarifaAdulto1a2),
+  //             tarifaAdultoTPL: Value(element.tarifaAdulto3),
+  //             tarifaMenores7a12: Value(element.tarifaMenores7a12),
+  //             tarifaPaxAdicional: Value(element.tarifaPaxAdicional),
+  //           ),
+  //           baseTariffId: tarifaBase.idInt!,
+  //           id: element.id ?? 0,
+  //         );
+  //       }
+
+  //       await propageChangesTariff(
+  //         baseTariff: TarifaBaseTableData(
+  //             id: tarifaBase.idInt!, descIntegrado: tarifaBase.aumIntegrado),
+  //         tarifasBase: tarifaBase.tarifas ?? List<tf.Tarifa>.empty(),
+  //       );
+  //     }
+  //   }
+
+  //   tarifaDao.close();
+
+  //   return tarifaId;
+  // }
+
+  // Future<int> removeOrigenTarifaId({required int? origenId}) {
+  //   return (update(tarifaBaseTable)
+  //         ..where((tbl) => tbl.tarifaOrigenId.equals(origenId!)))
+  //       .write(
+  //     const TarifaBaseTableCompanion(
+  //       tarifaOrigenId: Value(null),
+  //     ),
+  //   );
+  // }
+
+  // Future<int> removePadreTarifaId({required int? padreId}) {
+  //   return (update(tarifaBaseTable)
+  //         ..where((tbl) => tbl.tarifaPadreId.equals(padreId!)))
+  //       .write(
+  //     const TarifaBaseTableCompanion(
+  //       tarifaPadreId: Value(null),
+  //       tarifaOrigenId: Value(null),
+  //       descIntegrado: Value(null),
+  //     ),
+  //   );
+  // }
 }

@@ -100,7 +100,7 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
     return response;
   }
 
-  // READ: Usuario por ID
+  // READ: Cliente por ID
   Future<Cliente?> getByID(int id) async {
     var response = await (select(db.clienteTable)
           ..where((u) {

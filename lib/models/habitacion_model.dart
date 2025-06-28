@@ -78,10 +78,13 @@ class Habitacion {
         adultos: adultos ?? this.adultos,
         menores0a6: menores0a6 ?? this.menores0a6,
         menores7a12: menores7a12 ?? this.menores7a12,
-        tarifasXHabitacion: tarifasXHabitacion ?? this.tarifasXHabitacion,
+        tarifasXHabitacion: (tarifasXHabitacion ?? this.tarifasXHabitacion)
+            ?.map((e) => e.copyWith())
+            .toList(),
         count: count ?? this.count,
         esCortesia: esCortesia ?? this.esCortesia,
-        resumenes: resumenes ?? this.resumenes,
+        resumenes:
+            (resumenes ?? this.resumenes)?.map((e) => e.copyWith()).toList(),
         paxAdic: paxAdic ?? this.paxAdic,
       );
 

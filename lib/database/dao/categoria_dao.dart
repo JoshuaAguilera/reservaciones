@@ -14,6 +14,8 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
     with _$CategoriaDaoMixin {
   CategoriaDao(AppDatabase db) : super(db);
 
+  var mapEmpty = <String, dynamic>{};
+
   // LIST
   Future<List<Categoria>> getList({
     String nombre = '',
@@ -26,6 +28,7 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
     String order = 'asc',
     int limit = 20,
     int page = 1,
+    bool conDetalle = false,
   }) async {
     final tipoAlias = alias(db.tipoHabitacionTable, 'tipo');
     final creadorAlias = alias(db.usuarioTable, 'creador');
@@ -35,10 +38,11 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
         tipoAlias,
         tipoAlias.idInt.equalsExp(db.categoriaTable.tipoHabitacionInt),
       ),
-      leftOuterJoin(
-        creadorAlias,
-        creadorAlias.idInt.equalsExp(db.cotizacionTable.creadoPorInt),
-      ),
+      if (conDetalle)
+        leftOuterJoin(
+          creadorAlias,
+          creadorAlias.idInt.equalsExp(db.categoriaTable.creadoPorInt),
+        ),
     ]);
 
     if (tipoHabId != null) {
@@ -98,7 +102,6 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
     query.limit(limit, offset: offset);
 
     final rows = await query.get();
-    var mapEmpty = <String, dynamic>{};
 
     return rows.map(
       (row) {
@@ -110,7 +113,7 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
           idInt: categoria.idInt,
           id: categoria.id,
           color: ColorsHelpers.colorFromJson(categoria.color),
-          // descripcion: categoria.,
+          descripcion: categoria.descripcion,
           nombre: categoria.nombre,
           tipoHabitacion: TipoHabitacion.fromJson(tipo?.toJson() ?? mapEmpty),
           creadoPor: Usuario.fromJson(creador?.toJson() ?? mapEmpty),
@@ -130,15 +133,38 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
     return response;
   }
 
-  // READ: Usuario por ID
+  // READ: Categoria por ID
   Future<Categoria?> getByID(int id) async {
-    var response = await (select(db.categoriaTable)
-          ..where((u) {
-            return u.idInt.equals(id);
-          }))
-        .getSingleOrNull();
+    final tipoAlias = alias(db.tipoHabitacionTable, 'tipo');
+    final creadorAlias = alias(db.usuarioTable, 'creador');
 
-    return Categoria?.fromJson(response?.toJson() ?? <String, dynamic>{});
+    final query = select(db.categoriaTable).join([
+      leftOuterJoin(
+        tipoAlias,
+        tipoAlias.idInt.equalsExp(db.categoriaTable.tipoHabitacionInt),
+      ),
+      leftOuterJoin(
+        creadorAlias,
+        creadorAlias.idInt.equalsExp(db.categoriaTable.creadoPorInt),
+      ),
+    ]);
+
+    query.where(db.categoriaTable.idInt.equals(id));
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+    final categoria = row.readTable(db.categoriaTable);
+    final tipo = row.readTableOrNull(tipoAlias);
+    final creador = row.readTableOrNull(creadorAlias);
+
+    return Categoria(
+      idInt: categoria.idInt,
+      id: categoria.id,
+      color: ColorsHelpers.colorFromJson(categoria.color),
+      descripcion: categoria.descripcion,
+      nombre: categoria.nombre,
+      tipoHabitacion: TipoHabitacion.fromJson(tipo?.toJson() ?? mapEmpty),
+      creadoPor: Usuario.fromJson(creador?.toJson() ?? mapEmpty),
+    );
   }
 
   // UPDATE

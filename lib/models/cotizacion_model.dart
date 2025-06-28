@@ -73,12 +73,15 @@ class Cotizacion {
         createdAt: createdAt ?? this.createdAt,
         esGrupo: esGrupo ?? this.esGrupo,
         estatus: estatus ?? this.estatus,
-        habitaciones: habitaciones ?? this.habitaciones,
+        habitaciones: (habitaciones ?? this.habitaciones)
+            ?.map((e) => e.copyWith())
+            .toList(),
         fechaLimite: fechaLimite ?? this.fechaLimite,
         creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
         cerradoPor: cerradoPor?.copyWith() ?? this.cerradoPor?.copyWith(),
         cliente: cliente?.copyWith(),
-        resumenes: resumenes ?? this.resumenes,
+        resumenes:
+            (resumenes ?? this.resumenes)?.map((e) => e.copyWith()).toList(),
       );
 
   factory Cotizacion.fromJson(Map<String, dynamic> json) => Cotizacion(
@@ -113,6 +116,11 @@ class Cotizacion {
                 ? listResumenHabitacionFromJson(json['resumenes'])
                 : List<ResumenOperacion>.empty()
             : List<ResumenOperacion>.empty(),
+        habitaciones: json['habitaciones'] != null
+            ? json['habitaciones'] != '[]'
+                ? listHabitacionFromJson(json['habitaciones'])
+                : List<Habitacion>.empty()
+            : List<Habitacion>.empty(),
       );
 
   Map<String, dynamic> toJson() {

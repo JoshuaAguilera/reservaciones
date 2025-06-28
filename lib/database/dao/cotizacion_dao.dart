@@ -245,9 +245,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       ),
     ]);
 
-    query.where(
-      db.cotizacionTable.idInt.equals(id),
-    );
+    query.where(db.cotizacionTable.idInt.equals(id));
 
     var row = await query.getSingleOrNull();
     if (row == null) return null;

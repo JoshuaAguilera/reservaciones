@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../res/helpers/colors_helpers.dart';
+import 'periodo_model.dart';
+import 'tarifa_model.dart';
+import 'temporada_model.dart';
 import 'usuario_model.dart';
 
 List<TarifaRack> tarifaRacksFromJson(String str) =>
@@ -24,6 +27,9 @@ class TarifaRack {
   Color? color;
   String? nombre;
   Usuario? creadoPor;
+  List<Periodo>? periodos;
+  List<Temporada>? temporadas;
+  List<Tarifa>? tarifas;
 
   TarifaRack({
     this.idInt,
@@ -32,6 +38,9 @@ class TarifaRack {
     this.color,
     this.nombre,
     this.creadoPor,
+    this.periodos,
+    this.temporadas,
+    this.tarifas,
   });
 
   TarifaRack copyWith({
@@ -41,6 +50,9 @@ class TarifaRack {
     Color? color,
     String? nombre,
     Usuario? creadoPor,
+    List<Periodo>? periodos,
+    List<Temporada>? temporadas,
+    List<Tarifa>? tarifas,
   }) =>
       TarifaRack(
         idInt: idInt ?? this.idInt,
@@ -49,20 +61,42 @@ class TarifaRack {
         color: color ?? this.color,
         nombre: nombre ?? this.nombre,
         creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
+        periodos:
+            (periodos ?? this.periodos)?.map((e) => e.copyWith()).toList(),
+        temporadas:
+            (temporadas ?? this.temporadas)?.map((e) => e.copyWith()).toList(),
+        tarifas: (tarifas ?? this.tarifas)?.map((e) => e.copyWith()).toList(),
       );
 
-  factory TarifaRack.fromJson(Map<String, dynamic> json) => TarifaRack(
-        idInt: json['id_int'],
-        id: json['id'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
-        nombre: json['nombre'],
-        color: ColorsHelpers.colorFromJson(json['color']),
-        creadoPor: json['creado_por'] != null
-            ? Usuario.fromJson(json['creado_por'])
-            : null,
-      );
+  factory TarifaRack.fromJson(Map<String, dynamic> json) {
+    return TarifaRack(
+      idInt: json['id_int'],
+      id: json['id'],
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.tryParse(json['created_at']),
+      nombre: json['nombre'],
+      color: ColorsHelpers.colorFromJson(json['color']),
+      creadoPor: json['creado_por'] != null
+          ? Usuario.fromJson(json['creado_por'])
+          : null,
+      periodos: json['periodos'] != null
+          ? json['periodos'] != '[]'
+              ? listPeriodoFromJson(json['periodos'])
+              : List<Periodo>.empty()
+          : List<Periodo>.empty(),
+      temporadas: json['temporadas'] != null
+          ? json['temporadas'] != '[]'
+              ? listTemporadaFromJson(json['temporadas'])
+              : List<Temporada>.empty()
+          : List<Temporada>.empty(),
+      tarifas: json['tarifas'] != null
+          ? json['tarifas'] != '[]'
+              ? listTarifasFromJson(json['tarifas'])
+              : List<Tarifa>.empty()
+          : List<Tarifa>.empty(),
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{

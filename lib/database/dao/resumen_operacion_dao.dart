@@ -45,7 +45,7 @@ class ResumenOperacionDao extends DatabaseAccessor<AppDatabase>
     // Mapear resultados con joins
     return rows.map((row) {
       final resumen = row.readTable(db.resumenOperacionTable);
-      final creador = row.readTableOrNull(categoriaAlias);
+      final categoria = row.readTableOrNull(categoriaAlias);
 
       return ResumenOperacion(
         idInt: resumen.idInt,
@@ -58,7 +58,7 @@ class ResumenOperacionDao extends DatabaseAccessor<AppDatabase>
         impuestos: resumen.impuestos,
         subtotal: resumen.subtotal,
         total: resumen.total,
-        categoria: Categoria.fromJson(creador?.toJson() ?? <String, dynamic>{}),
+        categoria: Categoria.fromJson(categoria?.toJson() ?? <String, dynamic>{}),
       );
     }).toList();
   }
@@ -74,15 +74,36 @@ class ResumenOperacionDao extends DatabaseAccessor<AppDatabase>
 
   // READ: Resumen Operacion por ID
   Future<ResumenOperacion?> getByID(int id) async {
-    var response = await (select(db.resumenOperacionTable)
-          ..where((u) {
-            return u.idInt.equals(id);
-          }))
-        .getSingleOrNull();
+    final categoriaAlias = alias(db.categoriaTable, 'categoria');
 
-    if (response == null) return null;
-    var resumen = ResumenOperacion.fromJson(response.toJson());
-    return resumen;
+    final query = select(db.resumenOperacionTable).join([
+      leftOuterJoin(
+        categoriaAlias,
+        categoriaAlias.idInt.equalsExp(db.resumenOperacionTable.categoriaInt),
+      ),
+    ]);
+
+    query.where(
+      db.resumenOperacionTable.idInt.equals(id),
+    );
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+    final resumen = row.readTable(db.resumenOperacionTable);
+    final categoria = row.readTableOrNull(categoriaAlias);
+
+    return ResumenOperacion(
+      idInt: resumen.idInt,
+      id: resumen.id,
+      cotizacion: resumen.cotizacion,
+      cotizacionInt: resumen.cotizacionInt,
+      habitacion: resumen.habitacion,
+      habitacionInt: resumen.habitacionInt,
+      descuento: resumen.descuento,
+      impuestos: resumen.impuestos,
+      subtotal: resumen.subtotal,
+      total: resumen.total,
+      categoria: Categoria.fromJson(categoria?.toJson() ?? <String, dynamic>{}),
+    );
   }
 
   // UPDATE

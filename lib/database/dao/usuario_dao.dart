@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
 
+import '../../models/imagen_model.dart';
+import '../../models/rol_model.dart';
+import '../../models/usuario_model.dart';
 import '../database.dart';
 import '../tables/usuario_table.dart';
 
@@ -10,10 +13,9 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   UsuarioDao(AppDatabase db) : super(db);
 
   // LIST
-  Future<List<UsuarioTableData>> getList({
+  Future<List<Usuario>> getList({
     String username = '',
     String correo = '',
-    int? id,
     String estatus = 'registrado',
     DateTime? initDate,
     DateTime? lastDate,
@@ -21,31 +23,39 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
     String order = 'asc',
     int limit = 20,
     int page = 1,
-  }) {
-    final query = select(db.usuarioTable);
+  }) async {
+    final rolAlias = alias(db.rolTable, 'rol');
+    final imagenAlias = alias(db.imagenTable, 'image');
+
+    final query = select(db.usuarioTable).join([
+      leftOuterJoin(
+        rolAlias,
+        rolAlias.idInt.equalsExp(db.usuarioTable.rolInt),
+      ),
+      leftOuterJoin(
+        imagenAlias,
+        imagenAlias.idInt.equalsExp(db.usuarioTable.imagenInt),
+      ),
+    ]);
 
     if (username.isNotEmpty) {
-      query.where((u) => u.username.like('%$username%'));
-    }
-
-    if (id != null) {
-      query.where((u) => u.idInt.equals(id));
+      query.where(usuarioTable.username.like('%$username%'));
     }
 
     if (correo.isNotEmpty) {
-      query.where((u) => u.correoElectronico.like('%$correo%'));
+      query.where(usuarioTable.correoElectronico.like('%$correo%'));
     }
 
     if (estatus.isNotEmpty) {
-      query.where((u) => u.estatus.like('%$estatus%'));
+      query.where(usuarioTable.estatus.like('%$estatus%'));
     }
 
     if (initDate != null) {
-      query.where((u) => u.createdAt.isBiggerOrEqualValue(initDate));
+      query.where(usuarioTable.createdAt.isBiggerOrEqualValue(initDate));
     }
 
     if (lastDate != null) {
-      query.where((u) => u.createdAt.isSmallerOrEqualValue(lastDate));
+      query.where(usuarioTable.createdAt.isSmallerOrEqualValue(lastDate));
     }
 
     OrderingTerm? ordering;
@@ -72,33 +82,88 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
             : OrderingTerm.asc(db.usuarioTable.id);
     }
 
-    query.orderBy([(_) => ordering!]);
+    query.orderBy([ordering]);
 
     final offset = (page - 1) * limit;
     query.limit(limit, offset: offset);
 
-    return query.get();
+    final rows = await query.get();
+
+    // Mapear resultados con joins
+    return rows.map((row) {
+      final user = row.readTable(db.usuarioTable);
+      final rol = row.readTableOrNull(rolAlias);
+      final image = row.readTableOrNull(imagenAlias);
+
+      return Usuario(
+        idInt: user.idInt,
+        id: user.id,
+        estatus: user.estatus,
+        createdAt: user.createdAt,
+        apellido: user.apellido,
+        correoElectronico: user.correoElectronico,
+        fechaNacimiento: user.fechaNacimiento,
+        nombre: user.nombre,
+        telefono: user.telefono,
+        username: user.username,
+        imagen: Imagen.fromJson(image?.toJson() ?? <String, dynamic>{}),
+        rol: Rol.fromJson(rol?.toJson() ?? <String, dynamic>{}),
+      );
+    }).toList();
   }
 
   // CREATE
-  Future<int> insert(UsuarioTableCompanion usuario) {
-    return into(db.usuarioTable).insert(usuario);
+  Future<int> insert(Usuario usuario) {
+    return into(db.usuarioTable).insert(
+      UsuarioTableData.fromJson(usuario.toJson()),
+    );
   }
 
   // READ: Usuario por ID
-  Future<UsuarioTableData?> getByID(int id) {
-    var response = (select(db.usuarioTable)
-          ..where((u) {
-            return u.idInt.equals(id);
-          }))
-        .getSingleOrNull();
+  Future<Usuario?> getByID(int id) async {
+    final rolAlias = alias(db.rolTable, 'rol');
+    final imagenAlias = alias(db.imagenTable, 'image');
 
-    return response;
+    final query = select(db.usuarioTable).join([
+      leftOuterJoin(
+        rolAlias,
+        rolAlias.idInt.equalsExp(db.usuarioTable.rolInt),
+      ),
+      leftOuterJoin(
+        imagenAlias,
+        imagenAlias.idInt.equalsExp(db.usuarioTable.imagenInt),
+      ),
+    ]);
+
+    query.where(db.cotizacionTable.idInt.equals(id));
+
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+    final user = row.readTable(db.usuarioTable);
+    final rol = row.readTableOrNull(rolAlias);
+    final image = row.readTableOrNull(imagenAlias);
+
+    return Usuario(
+      idInt: user.idInt,
+      id: user.id,
+      estatus: user.estatus,
+      createdAt: user.createdAt,
+      apellido: user.apellido,
+      correoElectronico: user.correoElectronico,
+      fechaNacimiento: user.fechaNacimiento,
+      nombre: user.nombre,
+      telefono: user.telefono,
+      username: user.username,
+      imagen: Imagen.fromJson(image?.toJson() ?? <String, dynamic>{}),
+      rol: Rol.fromJson(rol?.toJson() ?? <String, dynamic>{}),
+    );
   }
 
   // UPDATE
-  Future<bool> updat3(UsuarioTableData usuario) {
-    var response = update(db.usuarioTable).replace(usuario);
+  Future<bool> updat3(Usuario usuario) {
+    var response = update(db.usuarioTable).replace(
+      UsuarioTableData.fromJson(usuario.toJson()),
+    );
 
     return response;
   }
