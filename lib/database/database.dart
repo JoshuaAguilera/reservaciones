@@ -12,7 +12,9 @@ import 'dao/categoria_dao.dart';
 import 'dao/cliente_dao.dart';
 import 'dao/cotizacion_dao.dart';
 import 'dao/habitacion_dao.dart';
+import 'dao/imagen_dao.dart';
 import 'dao/periodo_dao.dart';
+import 'dao/politica_tarifario_dao.dart';
 import 'dao/resumen_operacion_dao.dart';
 import 'dao/tarifa_base_dao.dart';
 import 'dao/tarifa_dao.dart';
@@ -27,7 +29,7 @@ import 'tables/habitacion_table.dart';
 import 'tables/cotizacion_table.dart';
 import 'tables/imagen_table.dart';
 import 'tables/periodo_table.dart';
-import 'tables/politicas_table.dart';
+import 'tables/politica_tarifario_table.dart';
 import 'tables/reservacion_table.dart';
 import 'tables/resumen_operacion_table.dart';
 import 'tables/rol_table.dart';
@@ -81,6 +83,8 @@ part 'database.g.dart';
 //     TarifaXHabitacionDao,
 //     TemporadaDao,
 //     UsuarioDao,
+//     ImagenDao,
+//     PoliticaTarifarioDao,
 //   ],
 // )
 // class AppDatabase extends _$AppDatabase {}
@@ -123,6 +127,8 @@ part 'database.g.dart';
     TarifaXHabitacionDao,
     TemporadaDao,
     UsuarioDao,
+    ImagenDao,
+    PoliticaTarifarioDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -130,35 +136,6 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
-
-  // Image dao
-
-  Future<int> updateURLImage(int id, String code, String newUrl) {
-    return (update(imageTable)..where((t) => t.id.equals(id)))
-        .write(ImageTableData(
-      id: id,
-      code: code,
-      urlImage: newUrl,
-    ));
-  }
-
-  Future<List<ImageTableData>> getImageById(int id) async {
-    return await (select(imageTable)..where((tbl) => tbl.id.equals(id))).get();
-  }
-
-  // -- // Policies
-
-  Future<List<PoliticaTableData>> getTariffPolicy() {
-    return (select(politicaTable)).get();
-  }
-
-  Future<int> updateTariffPolicy(
-      {required PoliticaTableData politica, required int id}) {
-    return (update(politicaTable)..where((tbl) => tbl.id.equals(id)))
-        .write(politica);
-  }
-
-  // -- // Tarifa Base Dao
 }
 
 LazyDatabase _openConnection() {
@@ -169,7 +146,7 @@ LazyDatabase _openConnection() {
       // for your app.
 
       //Location BD for release version
-      final dbFolder = "/";
+      const dbFolder = "/";
       //Location BD for beta version
       final dbFolderBeta = await getApplicationDocumentsDirectory();
 

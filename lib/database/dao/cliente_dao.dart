@@ -70,8 +70,8 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
         break;
       default:
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.clienteTable.id)
-            : OrderingTerm.asc(db.clienteTable.id);
+            ? OrderingTerm.desc(db.clienteTable.idInt)
+            : OrderingTerm.asc(db.clienteTable.idInt);
     }
 
     query.orderBy([(_) => ordering!]);

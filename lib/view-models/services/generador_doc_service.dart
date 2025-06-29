@@ -626,14 +626,14 @@ class GeneradorDocService extends BaseService {
           in habitaciones.where((element) => !element.esCortesia).toList()) {
         tablas.add(
           FilesTemplate.getTablesCotIndiv(
-            nameTable:
+            categoria:
                 "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-            habitaciones: [element],
+            room: [element],
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
             styleBold: styleBoldTable,
             colorHeader: color,
-            typeRoom: tipoHabitacion.first,
+            tipoHab: tipoHabitacion.first,
             numRooms: habitaciones
                 .where((element) => !element.esCortesia)
                 .toList()
@@ -644,14 +644,14 @@ class GeneradorDocService extends BaseService {
 
         tablas.add(
           FilesTemplate.getTablesCotIndiv(
-            nameTable:
+            categoria:
                 "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-            habitaciones: [element],
+            room: [element],
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
             styleBold: styleBoldTable,
             colorHeader: color,
-            typeRoom: tipoHabitacion.last,
+            tipoHab: tipoHabitacion.last,
             numRooms: habitaciones
                 .where((element) => !element.esCortesia)
                 .toList()

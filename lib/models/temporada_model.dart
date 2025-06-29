@@ -10,6 +10,9 @@ String temporadasToJson(List<Temporada> data) =>
 List<Temporada> listTemporadaFromJson(List<dynamic> list) =>
     List<Temporada>.from(list.map((x) => Temporada.fromJson(x)));
 
+Temporada temporadaFromJson(String str) => Temporada.fromJson(json.decode(str));
+String temporadaToJson(Temporada data) => json.encode(data.toJson());
+
 class Temporada {
   int? idInt;
   String? id;

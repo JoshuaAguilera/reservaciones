@@ -1,5 +1,3 @@
-import 'package:drift/drift.dart';
-
 import '../models/usuario_model.dart';
 import '../utils/encrypt/encrypter.dart';
 import 'dao/usuario_dao.dart';

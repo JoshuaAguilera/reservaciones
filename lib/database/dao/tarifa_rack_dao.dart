@@ -70,8 +70,8 @@ class TarifaRackDao extends DatabaseAccessor<AppDatabase>
         break;
       default:
         orderingTerm = order == 'desc'
-            ? OrderingTerm.desc(db.tarifaRackTable.id)
-            : OrderingTerm.asc(db.tarifaRackTable.id);
+            ? OrderingTerm.desc(db.tarifaRackTable.idInt)
+            : OrderingTerm.asc(db.tarifaRackTable.idInt);
     }
 
     query.orderBy([orderingTerm]);

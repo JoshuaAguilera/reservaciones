@@ -78,8 +78,8 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
         break;
       default:
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.usuarioTable.id)
-            : OrderingTerm.asc(db.usuarioTable.id);
+            ? OrderingTerm.desc(db.usuarioTable.idInt)
+            : OrderingTerm.asc(db.usuarioTable.idInt);
     }
 
     query.orderBy([ordering]);

@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
+import '../../models/temporada_model.dart';
 import '../database.dart';
 import '../tables/tarifa_x_dia_table.dart';
 
@@ -48,7 +49,9 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
           id: tarDia.id,
           descIntegrado: tarDia.descIntegrado,
           esLibre: tarDia.esLibre,
+          modificado: tarDia.modificado,
           tarifaRackJson: tarDia.tarifaRackJson,
+          temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
           tarifaRack: TarifaRack.fromJson(
             rack?.toJson() ?? <String, dynamic>{},
           ),
@@ -90,7 +93,9 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
       id: tarDia.id,
       descIntegrado: tarDia.descIntegrado,
       esLibre: tarDia.esLibre,
+      modificado: tarDia.modificado,
       tarifaRackJson: tarDia.tarifaRackJson,
+      temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
       tarifaRack: TarifaRack.fromJson(
         rack?.toJson() ?? <String, dynamic>{},
       ),

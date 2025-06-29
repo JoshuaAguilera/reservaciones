@@ -2,11 +2,15 @@ import 'package:drift/drift.dart';
 
 import '../../models/cliente_model.dart';
 import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/resumen_operacion_model.dart';
 import '../../models/usuario_model.dart';
 import '../database.dart';
 import '../tables/cliente_table.dart';
 import '../tables/cotizacion_table.dart';
 import '../tables/usuario_table.dart';
+import 'habitacion_dao.dart';
+import 'resumen_operacion_dao.dart';
 
 part 'cotizacion_dao.g.dart';
 
@@ -180,8 +184,8 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
         break;
       default:
         orderingTerm = order == 'desc'
-            ? OrderingTerm.desc(db.cotizacionTable.id)
-            : OrderingTerm.asc(db.cotizacionTable.id);
+            ? OrderingTerm.desc(db.cotizacionTable.idInt)
+            : OrderingTerm.asc(db.cotizacionTable.idInt);
     }
 
     query.orderBy([orderingTerm]);
@@ -229,19 +233,24 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     final creadorAlias = alias(db.usuarioTable, 'creador');
     final cerradorAlias = alias(db.usuarioTable, 'cerrador');
     final clienteAlias = alias(db.clienteTable, 'cliente');
+    final cotizacionAlias = alias(db.cotizacionTable, 'cotizacion');
 
     final query = select(db.cotizacionTable).join([
       leftOuterJoin(
         creadorAlias,
-        creadorAlias.id.equalsExp(db.cotizacionTable.creadoPor),
+        creadorAlias.idInt.equalsExp(db.cotizacionTable.creadoPorInt),
       ),
       leftOuterJoin(
         cerradorAlias,
-        cerradorAlias.id.equalsExp(db.cotizacionTable.cerradoPor),
+        cerradorAlias.idInt.equalsExp(db.cotizacionTable.cerradoPorInt),
       ),
       leftOuterJoin(
         clienteAlias,
-        clienteAlias.id.equalsExp(db.cotizacionTable.cliente),
+        clienteAlias.idInt.equalsExp(db.cotizacionTable.clienteInt),
+      ),
+      leftOuterJoin(
+        cotizacionAlias,
+        cotizacionAlias.idInt.equalsExp(db.cotizacionTable.cotizacionInt),
       ),
     ]);
 
@@ -253,6 +262,15 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     final creador = row.readTableOrNull(creadorAlias);
     final cerrador = row.readTableOrNull(cerradorAlias);
     final cli = row.readTableOrNull(clienteAlias);
+    final cotOri = row.readTableOrNull(cotizacionAlias);
+
+    List<Habitacion> rooms = [];
+    List<ResumenOperacion> resumenes = [];
+    final habDao = HabitacionDao(db);
+    final resDao = ResumenOperacionDao(db);
+
+    rooms = await habDao.getList(cotizacionId: cot.idInt, limit: 100);
+    resumenes = await resDao.getList(cotizacionId: cot.idInt, limit: 100);
 
     var quote = Cotizacion(
       id: cot.id,
@@ -263,9 +281,12 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       estatus: cot.estatus,
       esGrupo: cot.esGrupo,
       comentarios: cot.comentarios,
+      habitaciones: rooms,
+      resumenes: resumenes,
       creadoPor: Usuario.fromJson(creador?.toJson() ?? <String, dynamic>{}),
       cerradoPor: Usuario.fromJson(cerrador?.toJson() ?? <String, dynamic>{}),
       cliente: Cliente.fromJson(cli?.toJson() ?? <String, dynamic>{}),
+      cotizacion: Cotizacion.fromJson(cotOri?.toJson() ?? <String, dynamic>{}),
     );
 
     return quote;

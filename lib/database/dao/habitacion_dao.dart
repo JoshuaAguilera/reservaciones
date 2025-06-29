@@ -1,8 +1,12 @@
 import 'package:drift/drift.dart';
 
 import '../../models/habitacion_model.dart';
+import '../../models/resumen_operacion_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
 import '../database.dart';
 import '../tables/habitacion_table.dart';
+import 'resumen_operacion_dao.dart';
+import 'tarifa_x_habitacion_dao.dart';
 
 part 'habitacion_dao.g.dart';
 
@@ -51,8 +55,8 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
         break;
       default:
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.habitacionTable.id)
-            : OrderingTerm.asc(db.habitacionTable.id);
+            ? OrderingTerm.desc(db.habitacionTable.idInt)
+            : OrderingTerm.asc(db.habitacionTable.idInt);
     }
 
     query.orderBy([(_) => ordering!]);
@@ -88,7 +92,22 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
 
     if (response == null) return null;
-    var room = Habitacion.fromJson(response.toJson());
+    Habitacion room = Habitacion.fromJson(response.toJson());
+
+    List<TarifaXHabitacion> tarifas = [];
+    List<ResumenOperacion> resumenes = [];
+    final tarHabDao = TarifaXHabitacionDao(db);
+    final resDao = ResumenOperacionDao(db);
+
+    tarifas = await tarHabDao.getList(
+      habitacionId: room.idInt,
+      conDetalle: true,
+      limit: 100,
+    );
+    resumenes = await resDao.getList(habitacionId: room.idInt, limit: 100);
+    room.tarifasXHabitacion = tarifas;
+    room.resumenes = resumenes;
+
     return room;
   }
 

@@ -7432,6 +7432,14 @@ class $TarifaBaseTableTable extends TarifaBaseTable
   late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
       'nombre', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   static const VerificationMeta _aumentoIntegradoMeta =
       const VerificationMeta('aumentoIntegrado');
   @override
@@ -7501,6 +7509,7 @@ class $TarifaBaseTableTable extends TarifaBaseTable
         id,
         codigo,
         nombre,
+        createdAt,
         aumentoIntegrado,
         conAutocalculacion,
         upgradeCategoria,
@@ -7536,6 +7545,10 @@ class $TarifaBaseTableTable extends TarifaBaseTable
     if (data.containsKey('nombre')) {
       context.handle(_nombreMeta,
           nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     if (data.containsKey('aumento_integrado')) {
       context.handle(
@@ -7606,6 +7619,8 @@ class $TarifaBaseTableTable extends TarifaBaseTable
           .read(DriftSqlType.string, data['${effectivePrefix}codigo']),
       nombre: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}nombre']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
       aumentoIntegrado: attachedDatabase.typeMapping.read(
           DriftSqlType.double, data['${effectivePrefix}aumento_integrado']),
       conAutocalculacion: attachedDatabase.typeMapping.read(
@@ -7639,6 +7654,7 @@ class TarifaBaseTableData extends DataClass
   final String? id;
   final String? codigo;
   final String? nombre;
+  final DateTime? createdAt;
   final double? aumentoIntegrado;
   final bool? conAutocalculacion;
   final double? upgradeCategoria;
@@ -7653,6 +7669,7 @@ class TarifaBaseTableData extends DataClass
       this.id,
       this.codigo,
       this.nombre,
+      this.createdAt,
       this.aumentoIntegrado,
       this.conAutocalculacion,
       this.upgradeCategoria,
@@ -7674,6 +7691,9 @@ class TarifaBaseTableData extends DataClass
     }
     if (!nullToAbsent || nombre != null) {
       map['nombre'] = Variable<String>(nombre);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
     }
     if (!nullToAbsent || aumentoIntegrado != null) {
       map['aumento_integrado'] = Variable<double>(aumentoIntegrado);
@@ -7713,6 +7733,9 @@ class TarifaBaseTableData extends DataClass
           codigo == null && nullToAbsent ? const Value.absent() : Value(codigo),
       nombre:
           nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
       aumentoIntegrado: aumentoIntegrado == null && nullToAbsent
           ? const Value.absent()
           : Value(aumentoIntegrado),
@@ -7751,6 +7774,7 @@ class TarifaBaseTableData extends DataClass
       id: serializer.fromJson<String?>(json['id']),
       codigo: serializer.fromJson<String?>(json['codigo']),
       nombre: serializer.fromJson<String?>(json['nombre']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       aumentoIntegrado: serializer.fromJson<double?>(json['aumentoIntegrado']),
       conAutocalculacion:
           serializer.fromJson<bool?>(json['conAutocalculacion']),
@@ -7771,6 +7795,7 @@ class TarifaBaseTableData extends DataClass
       'id': serializer.toJson<String?>(id),
       'codigo': serializer.toJson<String?>(codigo),
       'nombre': serializer.toJson<String?>(nombre),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
       'aumentoIntegrado': serializer.toJson<double?>(aumentoIntegrado),
       'conAutocalculacion': serializer.toJson<bool?>(conAutocalculacion),
       'upgradeCategoria': serializer.toJson<double?>(upgradeCategoria),
@@ -7788,6 +7813,7 @@ class TarifaBaseTableData extends DataClass
           Value<String?> id = const Value.absent(),
           Value<String?> codigo = const Value.absent(),
           Value<String?> nombre = const Value.absent(),
+          Value<DateTime?> createdAt = const Value.absent(),
           Value<double?> aumentoIntegrado = const Value.absent(),
           Value<bool?> conAutocalculacion = const Value.absent(),
           Value<double?> upgradeCategoria = const Value.absent(),
@@ -7802,6 +7828,7 @@ class TarifaBaseTableData extends DataClass
         id: id.present ? id.value : this.id,
         codigo: codigo.present ? codigo.value : this.codigo,
         nombre: nombre.present ? nombre.value : this.nombre,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
         aumentoIntegrado: aumentoIntegrado.present
             ? aumentoIntegrado.value
             : this.aumentoIntegrado,
@@ -7828,6 +7855,7 @@ class TarifaBaseTableData extends DataClass
       id: data.id.present ? data.id.value : this.id,
       codigo: data.codigo.present ? data.codigo.value : this.codigo,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       aumentoIntegrado: data.aumentoIntegrado.present
           ? data.aumentoIntegrado.value
           : this.aumentoIntegrado,
@@ -7862,6 +7890,7 @@ class TarifaBaseTableData extends DataClass
           ..write('id: $id, ')
           ..write('codigo: $codigo, ')
           ..write('nombre: $nombre, ')
+          ..write('createdAt: $createdAt, ')
           ..write('aumentoIntegrado: $aumentoIntegrado, ')
           ..write('conAutocalculacion: $conAutocalculacion, ')
           ..write('upgradeCategoria: $upgradeCategoria, ')
@@ -7881,6 +7910,7 @@ class TarifaBaseTableData extends DataClass
       id,
       codigo,
       nombre,
+      createdAt,
       aumentoIntegrado,
       conAutocalculacion,
       upgradeCategoria,
@@ -7898,6 +7928,7 @@ class TarifaBaseTableData extends DataClass
           other.id == this.id &&
           other.codigo == this.codigo &&
           other.nombre == this.nombre &&
+          other.createdAt == this.createdAt &&
           other.aumentoIntegrado == this.aumentoIntegrado &&
           other.conAutocalculacion == this.conAutocalculacion &&
           other.upgradeCategoria == this.upgradeCategoria &&
@@ -7914,6 +7945,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
   final Value<String?> id;
   final Value<String?> codigo;
   final Value<String?> nombre;
+  final Value<DateTime?> createdAt;
   final Value<double?> aumentoIntegrado;
   final Value<bool?> conAutocalculacion;
   final Value<double?> upgradeCategoria;
@@ -7928,6 +7960,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
     this.id = const Value.absent(),
     this.codigo = const Value.absent(),
     this.nombre = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.aumentoIntegrado = const Value.absent(),
     this.conAutocalculacion = const Value.absent(),
     this.upgradeCategoria = const Value.absent(),
@@ -7943,6 +7976,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
     this.id = const Value.absent(),
     this.codigo = const Value.absent(),
     this.nombre = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.aumentoIntegrado = const Value.absent(),
     this.conAutocalculacion = const Value.absent(),
     this.upgradeCategoria = const Value.absent(),
@@ -7958,6 +7992,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
     Expression<String>? id,
     Expression<String>? codigo,
     Expression<String>? nombre,
+    Expression<DateTime>? createdAt,
     Expression<double>? aumentoIntegrado,
     Expression<bool>? conAutocalculacion,
     Expression<double>? upgradeCategoria,
@@ -7973,6 +8008,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
       if (id != null) 'id': id,
       if (codigo != null) 'codigo': codigo,
       if (nombre != null) 'nombre': nombre,
+      if (createdAt != null) 'created_at': createdAt,
       if (aumentoIntegrado != null) 'aumento_integrado': aumentoIntegrado,
       if (conAutocalculacion != null) 'con_autocalculacion': conAutocalculacion,
       if (upgradeCategoria != null) 'upgrade_categoria': upgradeCategoria,
@@ -7990,6 +8026,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
       Value<String?>? id,
       Value<String?>? codigo,
       Value<String?>? nombre,
+      Value<DateTime?>? createdAt,
       Value<double?>? aumentoIntegrado,
       Value<bool?>? conAutocalculacion,
       Value<double?>? upgradeCategoria,
@@ -8004,6 +8041,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
       id: id ?? this.id,
       codigo: codigo ?? this.codigo,
       nombre: nombre ?? this.nombre,
+      createdAt: createdAt ?? this.createdAt,
       aumentoIntegrado: aumentoIntegrado ?? this.aumentoIntegrado,
       conAutocalculacion: conAutocalculacion ?? this.conAutocalculacion,
       upgradeCategoria: upgradeCategoria ?? this.upgradeCategoria,
@@ -8030,6 +8068,9 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
     }
     if (nombre.present) {
       map['nombre'] = Variable<String>(nombre.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (aumentoIntegrado.present) {
       map['aumento_integrado'] = Variable<double>(aumentoIntegrado.value);
@@ -8068,6 +8109,7 @@ class TarifaBaseTableCompanion extends UpdateCompanion<TarifaBaseTableData> {
           ..write('id: $id, ')
           ..write('codigo: $codigo, ')
           ..write('nombre: $nombre, ')
+          ..write('createdAt: $createdAt, ')
           ..write('aumentoIntegrado: $aumentoIntegrado, ')
           ..write('conAutocalculacion: $conAutocalculacion, ')
           ..write('upgradeCategoria: $upgradeCategoria, ')
@@ -8821,11 +8863,26 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("es_libre" IN (0, 1))'));
+  static const VerificationMeta _modificadoMeta =
+      const VerificationMeta('modificado');
+  @override
+  late final GeneratedColumn<bool> modificado = GeneratedColumn<bool>(
+      'modificado', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("modificado" IN (0, 1))'));
   static const VerificationMeta _tarifaRackJsonMeta =
       const VerificationMeta('tarifaRackJson');
   @override
   late final GeneratedColumn<String> tarifaRackJson = GeneratedColumn<String>(
       'tarifa_rack_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _temporadaJsonMeta =
+      const VerificationMeta('temporadaJson');
+  @override
+  late final GeneratedColumn<String> temporadaJson = GeneratedColumn<String>(
+      'temporada_json', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
@@ -8835,7 +8892,9 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
         tarifaRack,
         descIntegrado,
         esLibre,
-        tarifaRackJson
+        modificado,
+        tarifaRackJson,
+        temporadaJson
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8877,11 +8936,23 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
       context.handle(_esLibreMeta,
           esLibre.isAcceptableOrUnknown(data['es_libre']!, _esLibreMeta));
     }
+    if (data.containsKey('modificado')) {
+      context.handle(
+          _modificadoMeta,
+          modificado.isAcceptableOrUnknown(
+              data['modificado']!, _modificadoMeta));
+    }
     if (data.containsKey('tarifa_rack_json')) {
       context.handle(
           _tarifaRackJsonMeta,
           tarifaRackJson.isAcceptableOrUnknown(
               data['tarifa_rack_json']!, _tarifaRackJsonMeta));
+    }
+    if (data.containsKey('temporada_json')) {
+      context.handle(
+          _temporadaJsonMeta,
+          temporadaJson.isAcceptableOrUnknown(
+              data['temporada_json']!, _temporadaJsonMeta));
     }
     return context;
   }
@@ -8904,8 +8975,12 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
           .read(DriftSqlType.double, data['${effectivePrefix}desc_integrado']),
       esLibre: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}es_libre']),
+      modificado: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}modificado']),
       tarifaRackJson: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}tarifa_rack_json']),
+      temporadaJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}temporada_json']),
     );
   }
 
@@ -8923,7 +8998,9 @@ class TarifaXDiaTableData extends DataClass
   final String? tarifaRack;
   final double? descIntegrado;
   final bool? esLibre;
+  final bool? modificado;
   final String? tarifaRackJson;
+  final String? temporadaJson;
   const TarifaXDiaTableData(
       {required this.idInt,
       this.id,
@@ -8931,7 +9008,9 @@ class TarifaXDiaTableData extends DataClass
       this.tarifaRack,
       this.descIntegrado,
       this.esLibre,
-      this.tarifaRackJson});
+      this.modificado,
+      this.tarifaRackJson,
+      this.temporadaJson});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -8951,8 +9030,14 @@ class TarifaXDiaTableData extends DataClass
     if (!nullToAbsent || esLibre != null) {
       map['es_libre'] = Variable<bool>(esLibre);
     }
+    if (!nullToAbsent || modificado != null) {
+      map['modificado'] = Variable<bool>(modificado);
+    }
     if (!nullToAbsent || tarifaRackJson != null) {
       map['tarifa_rack_json'] = Variable<String>(tarifaRackJson);
+    }
+    if (!nullToAbsent || temporadaJson != null) {
+      map['temporada_json'] = Variable<String>(temporadaJson);
     }
     return map;
   }
@@ -8973,9 +9058,15 @@ class TarifaXDiaTableData extends DataClass
       esLibre: esLibre == null && nullToAbsent
           ? const Value.absent()
           : Value(esLibre),
+      modificado: modificado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(modificado),
       tarifaRackJson: tarifaRackJson == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaRackJson),
+      temporadaJson: temporadaJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(temporadaJson),
     );
   }
 
@@ -8989,7 +9080,9 @@ class TarifaXDiaTableData extends DataClass
       tarifaRack: serializer.fromJson<String?>(json['tarifaRack']),
       descIntegrado: serializer.fromJson<double?>(json['descIntegrado']),
       esLibre: serializer.fromJson<bool?>(json['esLibre']),
+      modificado: serializer.fromJson<bool?>(json['modificado']),
       tarifaRackJson: serializer.fromJson<String?>(json['tarifaRackJson']),
+      temporadaJson: serializer.fromJson<String?>(json['temporadaJson']),
     );
   }
   @override
@@ -9002,7 +9095,9 @@ class TarifaXDiaTableData extends DataClass
       'tarifaRack': serializer.toJson<String?>(tarifaRack),
       'descIntegrado': serializer.toJson<double?>(descIntegrado),
       'esLibre': serializer.toJson<bool?>(esLibre),
+      'modificado': serializer.toJson<bool?>(modificado),
       'tarifaRackJson': serializer.toJson<String?>(tarifaRackJson),
+      'temporadaJson': serializer.toJson<String?>(temporadaJson),
     };
   }
 
@@ -9013,7 +9108,9 @@ class TarifaXDiaTableData extends DataClass
           Value<String?> tarifaRack = const Value.absent(),
           Value<double?> descIntegrado = const Value.absent(),
           Value<bool?> esLibre = const Value.absent(),
-          Value<String?> tarifaRackJson = const Value.absent()}) =>
+          Value<bool?> modificado = const Value.absent(),
+          Value<String?> tarifaRackJson = const Value.absent(),
+          Value<String?> temporadaJson = const Value.absent()}) =>
       TarifaXDiaTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
@@ -9023,8 +9120,11 @@ class TarifaXDiaTableData extends DataClass
         descIntegrado:
             descIntegrado.present ? descIntegrado.value : this.descIntegrado,
         esLibre: esLibre.present ? esLibre.value : this.esLibre,
+        modificado: modificado.present ? modificado.value : this.modificado,
         tarifaRackJson:
             tarifaRackJson.present ? tarifaRackJson.value : this.tarifaRackJson,
+        temporadaJson:
+            temporadaJson.present ? temporadaJson.value : this.temporadaJson,
       );
   TarifaXDiaTableData copyWithCompanion(TarifaXDiaTableCompanion data) {
     return TarifaXDiaTableData(
@@ -9039,9 +9139,14 @@ class TarifaXDiaTableData extends DataClass
           ? data.descIntegrado.value
           : this.descIntegrado,
       esLibre: data.esLibre.present ? data.esLibre.value : this.esLibre,
+      modificado:
+          data.modificado.present ? data.modificado.value : this.modificado,
       tarifaRackJson: data.tarifaRackJson.present
           ? data.tarifaRackJson.value
           : this.tarifaRackJson,
+      temporadaJson: data.temporadaJson.present
+          ? data.temporadaJson.value
+          : this.temporadaJson,
     );
   }
 
@@ -9054,14 +9159,16 @@ class TarifaXDiaTableData extends DataClass
           ..write('tarifaRack: $tarifaRack, ')
           ..write('descIntegrado: $descIntegrado, ')
           ..write('esLibre: $esLibre, ')
-          ..write('tarifaRackJson: $tarifaRackJson')
+          ..write('modificado: $modificado, ')
+          ..write('tarifaRackJson: $tarifaRackJson, ')
+          ..write('temporadaJson: $temporadaJson')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(idInt, id, tarifaRackInt, tarifaRack,
-      descIntegrado, esLibre, tarifaRackJson);
+      descIntegrado, esLibre, modificado, tarifaRackJson, temporadaJson);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9072,7 +9179,9 @@ class TarifaXDiaTableData extends DataClass
           other.tarifaRack == this.tarifaRack &&
           other.descIntegrado == this.descIntegrado &&
           other.esLibre == this.esLibre &&
-          other.tarifaRackJson == this.tarifaRackJson);
+          other.modificado == this.modificado &&
+          other.tarifaRackJson == this.tarifaRackJson &&
+          other.temporadaJson == this.temporadaJson);
 }
 
 class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
@@ -9082,7 +9191,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
   final Value<String?> tarifaRack;
   final Value<double?> descIntegrado;
   final Value<bool?> esLibre;
+  final Value<bool?> modificado;
   final Value<String?> tarifaRackJson;
+  final Value<String?> temporadaJson;
   const TarifaXDiaTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
@@ -9090,7 +9201,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     this.tarifaRack = const Value.absent(),
     this.descIntegrado = const Value.absent(),
     this.esLibre = const Value.absent(),
+    this.modificado = const Value.absent(),
     this.tarifaRackJson = const Value.absent(),
+    this.temporadaJson = const Value.absent(),
   });
   TarifaXDiaTableCompanion.insert({
     this.idInt = const Value.absent(),
@@ -9099,7 +9212,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     this.tarifaRack = const Value.absent(),
     this.descIntegrado = const Value.absent(),
     this.esLibre = const Value.absent(),
+    this.modificado = const Value.absent(),
     this.tarifaRackJson = const Value.absent(),
+    this.temporadaJson = const Value.absent(),
   });
   static Insertable<TarifaXDiaTableData> custom({
     Expression<int>? idInt,
@@ -9108,7 +9223,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     Expression<String>? tarifaRack,
     Expression<double>? descIntegrado,
     Expression<bool>? esLibre,
+    Expression<bool>? modificado,
     Expression<String>? tarifaRackJson,
+    Expression<String>? temporadaJson,
   }) {
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
@@ -9117,7 +9234,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       if (tarifaRack != null) 'tarifa_rack': tarifaRack,
       if (descIntegrado != null) 'desc_integrado': descIntegrado,
       if (esLibre != null) 'es_libre': esLibre,
+      if (modificado != null) 'modificado': modificado,
       if (tarifaRackJson != null) 'tarifa_rack_json': tarifaRackJson,
+      if (temporadaJson != null) 'temporada_json': temporadaJson,
     });
   }
 
@@ -9128,7 +9247,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       Value<String?>? tarifaRack,
       Value<double?>? descIntegrado,
       Value<bool?>? esLibre,
-      Value<String?>? tarifaRackJson}) {
+      Value<bool?>? modificado,
+      Value<String?>? tarifaRackJson,
+      Value<String?>? temporadaJson}) {
     return TarifaXDiaTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
@@ -9136,7 +9257,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       tarifaRack: tarifaRack ?? this.tarifaRack,
       descIntegrado: descIntegrado ?? this.descIntegrado,
       esLibre: esLibre ?? this.esLibre,
+      modificado: modificado ?? this.modificado,
       tarifaRackJson: tarifaRackJson ?? this.tarifaRackJson,
+      temporadaJson: temporadaJson ?? this.temporadaJson,
     );
   }
 
@@ -9161,8 +9284,14 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     if (esLibre.present) {
       map['es_libre'] = Variable<bool>(esLibre.value);
     }
+    if (modificado.present) {
+      map['modificado'] = Variable<bool>(modificado.value);
+    }
     if (tarifaRackJson.present) {
       map['tarifa_rack_json'] = Variable<String>(tarifaRackJson.value);
+    }
+    if (temporadaJson.present) {
+      map['temporada_json'] = Variable<String>(temporadaJson.value);
     }
     return map;
   }
@@ -9176,7 +9305,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
           ..write('tarifaRack: $tarifaRack, ')
           ..write('descIntegrado: $descIntegrado, ')
           ..write('esLibre: $esLibre, ')
-          ..write('tarifaRackJson: $tarifaRackJson')
+          ..write('modificado: $modificado, ')
+          ..write('tarifaRackJson: $tarifaRackJson, ')
+          ..write('temporadaJson: $temporadaJson')
           ..write(')'))
         .toString();
   }
@@ -10932,6 +11063,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       TarifaXHabitacionDao(this as AppDatabase);
   late final TemporadaDao temporadaDao = TemporadaDao(this as AppDatabase);
   late final UsuarioDao usuarioDao = UsuarioDao(this as AppDatabase);
+  late final ImagenDao imagenDao = ImagenDao(this as AppDatabase);
+  late final PoliticaTarifarioDao politicaTarifarioDao =
+      PoliticaTarifarioDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -14440,6 +14574,7 @@ typedef $$TarifaBaseTableTableCreateCompanionBuilder = TarifaBaseTableCompanion
   Value<String?> id,
   Value<String?> codigo,
   Value<String?> nombre,
+  Value<DateTime?> createdAt,
   Value<double?> aumentoIntegrado,
   Value<bool?> conAutocalculacion,
   Value<double?> upgradeCategoria,
@@ -14456,6 +14591,7 @@ typedef $$TarifaBaseTableTableUpdateCompanionBuilder = TarifaBaseTableCompanion
   Value<String?> id,
   Value<String?> codigo,
   Value<String?> nombre,
+  Value<DateTime?> createdAt,
   Value<double?> aumentoIntegrado,
   Value<bool?> conAutocalculacion,
   Value<double?> upgradeCategoria,
@@ -14489,6 +14625,7 @@ class $$TarifaBaseTableTableTableManager extends RootTableManager<
             Value<String?> id = const Value.absent(),
             Value<String?> codigo = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
             Value<double?> aumentoIntegrado = const Value.absent(),
             Value<bool?> conAutocalculacion = const Value.absent(),
             Value<double?> upgradeCategoria = const Value.absent(),
@@ -14504,6 +14641,7 @@ class $$TarifaBaseTableTableTableManager extends RootTableManager<
             id: id,
             codigo: codigo,
             nombre: nombre,
+            createdAt: createdAt,
             aumentoIntegrado: aumentoIntegrado,
             conAutocalculacion: conAutocalculacion,
             upgradeCategoria: upgradeCategoria,
@@ -14519,6 +14657,7 @@ class $$TarifaBaseTableTableTableManager extends RootTableManager<
             Value<String?> id = const Value.absent(),
             Value<String?> codigo = const Value.absent(),
             Value<String?> nombre = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
             Value<double?> aumentoIntegrado = const Value.absent(),
             Value<bool?> conAutocalculacion = const Value.absent(),
             Value<double?> upgradeCategoria = const Value.absent(),
@@ -14534,6 +14673,7 @@ class $$TarifaBaseTableTableTableManager extends RootTableManager<
             id: id,
             codigo: codigo,
             nombre: nombre,
+            createdAt: createdAt,
             aumentoIntegrado: aumentoIntegrado,
             conAutocalculacion: conAutocalculacion,
             upgradeCategoria: upgradeCategoria,
@@ -14567,6 +14707,11 @@ class $$TarifaBaseTableTableFilterComposer
 
   ColumnFilters<String> get nombre => $state.composableBuilder(
       column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -14664,6 +14809,11 @@ class $$TarifaBaseTableTableOrderingComposer
 
   ColumnOrderings<String> get nombre => $state.composableBuilder(
       column: $state.table.nombre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -15035,7 +15185,9 @@ typedef $$TarifaXDiaTableTableCreateCompanionBuilder = TarifaXDiaTableCompanion
   Value<String?> tarifaRack,
   Value<double?> descIntegrado,
   Value<bool?> esLibre,
+  Value<bool?> modificado,
   Value<String?> tarifaRackJson,
+  Value<String?> temporadaJson,
 });
 typedef $$TarifaXDiaTableTableUpdateCompanionBuilder = TarifaXDiaTableCompanion
     Function({
@@ -15045,7 +15197,9 @@ typedef $$TarifaXDiaTableTableUpdateCompanionBuilder = TarifaXDiaTableCompanion
   Value<String?> tarifaRack,
   Value<double?> descIntegrado,
   Value<bool?> esLibre,
+  Value<bool?> modificado,
   Value<String?> tarifaRackJson,
+  Value<String?> temporadaJson,
 });
 
 class $$TarifaXDiaTableTableTableManager extends RootTableManager<
@@ -15072,7 +15226,9 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             Value<String?> tarifaRack = const Value.absent(),
             Value<double?> descIntegrado = const Value.absent(),
             Value<bool?> esLibre = const Value.absent(),
+            Value<bool?> modificado = const Value.absent(),
             Value<String?> tarifaRackJson = const Value.absent(),
+            Value<String?> temporadaJson = const Value.absent(),
           }) =>
               TarifaXDiaTableCompanion(
             idInt: idInt,
@@ -15081,7 +15237,9 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             tarifaRack: tarifaRack,
             descIntegrado: descIntegrado,
             esLibre: esLibre,
+            modificado: modificado,
             tarifaRackJson: tarifaRackJson,
+            temporadaJson: temporadaJson,
           ),
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -15090,7 +15248,9 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             Value<String?> tarifaRack = const Value.absent(),
             Value<double?> descIntegrado = const Value.absent(),
             Value<bool?> esLibre = const Value.absent(),
+            Value<bool?> modificado = const Value.absent(),
             Value<String?> tarifaRackJson = const Value.absent(),
+            Value<String?> temporadaJson = const Value.absent(),
           }) =>
               TarifaXDiaTableCompanion.insert(
             idInt: idInt,
@@ -15099,7 +15259,9 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             tarifaRack: tarifaRack,
             descIntegrado: descIntegrado,
             esLibre: esLibre,
+            modificado: modificado,
             tarifaRackJson: tarifaRackJson,
+            temporadaJson: temporadaJson,
           ),
         ));
 }
@@ -15132,8 +15294,18 @@ class $$TarifaXDiaTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<bool> get modificado => $state.composableBuilder(
+      column: $state.table.modificado,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ColumnFilters<String> get tarifaRackJson => $state.composableBuilder(
       column: $state.table.tarifaRackJson,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get temporadaJson => $state.composableBuilder(
+      column: $state.table.temporadaJson,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -15197,8 +15369,18 @@ class $$TarifaXDiaTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<bool> get modificado => $state.composableBuilder(
+      column: $state.table.modificado,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get tarifaRackJson => $state.composableBuilder(
       column: $state.table.tarifaRackJson,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get temporadaJson => $state.composableBuilder(
+      column: $state.table.temporadaJson,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

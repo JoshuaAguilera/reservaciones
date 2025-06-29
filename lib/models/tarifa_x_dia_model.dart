@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'tarifa_rack_model.dart';
+import 'temporada_model.dart';
 
 List<TarifaXDia> tarifasXDiaFromJson(String str) =>
     List<TarifaXDia>.from(json.decode(str).map((x) => TarifaXDia.fromJson(x)));
@@ -19,6 +20,7 @@ class TarifaXDia {
   bool? esLibre;
   TarifaRack? tarifaRack;
   String? tarifaRackJson;
+  Temporada? temporadaSelect;
 
   TarifaXDia({
     this.idInt,
@@ -28,6 +30,7 @@ class TarifaXDia {
     this.modificado = false,
     this.tarifaRack,
     this.tarifaRackJson,
+    this.temporadaSelect,
   });
 
   TarifaXDia copyWith({
@@ -38,6 +41,7 @@ class TarifaXDia {
     bool? esLibre,
     TarifaRack? tarifaRack,
     String? tarifaRackJson,
+    Temporada? temporadaSelect,
   }) =>
       TarifaXDia(
         idInt: idInt ?? this.idInt,
@@ -47,6 +51,8 @@ class TarifaXDia {
         esLibre: esLibre ?? this.esLibre,
         tarifaRack: tarifaRack?.copyWith() ?? this.tarifaRack?.copyWith(),
         tarifaRackJson: tarifaRackJson ?? this.tarifaRackJson,
+        temporadaSelect:
+            temporadaSelect?.copyWith() ?? this.temporadaSelect?.copyWith(),
       );
 
   Map<String, dynamic> toJson() {
@@ -58,6 +64,7 @@ class TarifaXDia {
       "desc_integrado": descIntegrado,
       "es_libre": esLibre,
       "tarifa_rack_json": tarifaRackJson,
+      "temporada_json": temporadaSelect,
     };
 
     // Remueve todas las claves con valor null
@@ -68,13 +75,17 @@ class TarifaXDia {
 
   factory TarifaXDia.fromJson(Map<String, dynamic> json) {
     return TarifaXDia(
-        idInt: json['id'],
-        id: json['code'],
-        esLibre: json['es_libre'],
-        descIntegrado: json['desc_integrado'],
-        tarifaRackJson: json['tarifa_rack_json'],
-        tarifaRack: json['tarifa_rack_json'] != null
-            ? tarifaRackFromJson(json['tarifa_rack_json'])
-            : null);
+      idInt: json['id'],
+      id: json['code'],
+      esLibre: json['es_libre'],
+      descIntegrado: json['desc_integrado'],
+      tarifaRackJson: json['tarifa_rack_json'],
+      tarifaRack: json['tarifa_rack_json'] != null
+          ? tarifaRackFromJson(json['tarifa_rack_json'])
+          : null,
+      temporadaSelect: json['temporada_json'] != null
+          ? temporadaFromJson(json['temporada_json'])
+          : null,
+    );
   }
 }

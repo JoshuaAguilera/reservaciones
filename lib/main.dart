@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:generador_formato/models/estructura_documento.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'database/init_database.dart';
@@ -18,6 +19,7 @@ import 'views/login_view.dart';
 Future<void> main() async {
   //Compatibily Windows scale
   WidgetsFlutterBinding.ensureInitialized();
+  await EstructuraDocumento().cargarEstructuras();
   await Preferences.init();
   await Settings.init();
   await windowManager.ensureInitialized();

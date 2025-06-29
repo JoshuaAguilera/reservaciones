@@ -73,8 +73,8 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
         break;
       default:
         ordering = order == 'desc'
-            ? OrderingTerm.desc(db.tarifaTable.id)
-            : OrderingTerm.asc(db.tarifaTable.id);
+            ? OrderingTerm.desc(db.tarifaTable.idInt)
+            : OrderingTerm.asc(db.tarifaTable.idInt);
     }
 
     query.orderBy([ordering]);

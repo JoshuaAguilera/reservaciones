@@ -10,5 +10,7 @@ class TarifaXDiaTable extends Table {
   TextColumn get tarifaRack => text().nullable()();
   RealColumn get descIntegrado => real().nullable()();
   BoolColumn get esLibre => boolean().nullable()();
+  BoolColumn get modificado => boolean().nullable()();
   TextColumn get tarifaRackJson => text().nullable()();
+  TextColumn get temporadaJson => text().nullable()();
 }
