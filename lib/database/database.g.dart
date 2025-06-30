@@ -9333,6 +9333,12 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _subcodeMeta =
+      const VerificationMeta('subcode');
+  @override
+  late final GeneratedColumn<String> subcode = GeneratedColumn<String>(
+      'subcode', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _habitacionIntMeta =
       const VerificationMeta('habitacionInt');
   @override
@@ -9386,6 +9392,7 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
   List<GeneratedColumn> get $columns => [
         idInt,
         id,
+        subcode,
         habitacionInt,
         habitacion,
         tarifaXDiaInt,
@@ -9411,6 +9418,10 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('subcode')) {
+      context.handle(_subcodeMeta,
+          subcode.isAcceptableOrUnknown(data['subcode']!, _subcodeMeta));
     }
     if (data.containsKey('habitacion_int')) {
       context.handle(
@@ -9462,6 +9473,8 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
           .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id']),
+      subcode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subcode']),
       habitacionInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}habitacion_int']),
       habitacion: attachedDatabase.typeMapping
@@ -9489,6 +9502,7 @@ class TarifaXHabitacionTableData extends DataClass
     implements Insertable<TarifaXHabitacionTableData> {
   final int idInt;
   final String? id;
+  final String? subcode;
   final int? habitacionInt;
   final String? habitacion;
   final int? tarifaXDiaInt;
@@ -9499,6 +9513,7 @@ class TarifaXHabitacionTableData extends DataClass
   const TarifaXHabitacionTableData(
       {required this.idInt,
       this.id,
+      this.subcode,
       this.habitacionInt,
       this.habitacion,
       this.tarifaXDiaInt,
@@ -9512,6 +9527,9 @@ class TarifaXHabitacionTableData extends DataClass
     map['id_int'] = Variable<int>(idInt);
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<String>(id);
+    }
+    if (!nullToAbsent || subcode != null) {
+      map['subcode'] = Variable<String>(subcode);
     }
     if (!nullToAbsent || habitacionInt != null) {
       map['habitacion_int'] = Variable<int>(habitacionInt);
@@ -9541,6 +9559,9 @@ class TarifaXHabitacionTableData extends DataClass
     return TarifaXHabitacionTableCompanion(
       idInt: Value(idInt),
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      subcode: subcode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subcode),
       habitacionInt: habitacionInt == null && nullToAbsent
           ? const Value.absent()
           : Value(habitacionInt),
@@ -9568,6 +9589,7 @@ class TarifaXHabitacionTableData extends DataClass
     return TarifaXHabitacionTableData(
       idInt: serializer.fromJson<int>(json['idInt']),
       id: serializer.fromJson<String?>(json['id']),
+      subcode: serializer.fromJson<String?>(json['subcode']),
       habitacionInt: serializer.fromJson<int?>(json['habitacionInt']),
       habitacion: serializer.fromJson<String?>(json['habitacion']),
       tarifaXDiaInt: serializer.fromJson<int?>(json['tarifaXDiaInt']),
@@ -9583,6 +9605,7 @@ class TarifaXHabitacionTableData extends DataClass
     return <String, dynamic>{
       'idInt': serializer.toJson<int>(idInt),
       'id': serializer.toJson<String?>(id),
+      'subcode': serializer.toJson<String?>(subcode),
       'habitacionInt': serializer.toJson<int?>(habitacionInt),
       'habitacion': serializer.toJson<String?>(habitacion),
       'tarifaXDiaInt': serializer.toJson<int?>(tarifaXDiaInt),
@@ -9596,6 +9619,7 @@ class TarifaXHabitacionTableData extends DataClass
   TarifaXHabitacionTableData copyWith(
           {int? idInt,
           Value<String?> id = const Value.absent(),
+          Value<String?> subcode = const Value.absent(),
           Value<int?> habitacionInt = const Value.absent(),
           Value<String?> habitacion = const Value.absent(),
           Value<int?> tarifaXDiaInt = const Value.absent(),
@@ -9606,6 +9630,7 @@ class TarifaXHabitacionTableData extends DataClass
       TarifaXHabitacionTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
+        subcode: subcode.present ? subcode.value : this.subcode,
         habitacionInt:
             habitacionInt.present ? habitacionInt.value : this.habitacionInt,
         habitacion: habitacion.present ? habitacion.value : this.habitacion,
@@ -9621,6 +9646,7 @@ class TarifaXHabitacionTableData extends DataClass
     return TarifaXHabitacionTableData(
       idInt: data.idInt.present ? data.idInt.value : this.idInt,
       id: data.id.present ? data.id.value : this.id,
+      subcode: data.subcode.present ? data.subcode.value : this.subcode,
       habitacionInt: data.habitacionInt.present
           ? data.habitacionInt.value
           : this.habitacionInt,
@@ -9642,6 +9668,7 @@ class TarifaXHabitacionTableData extends DataClass
     return (StringBuffer('TarifaXHabitacionTableData(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
+          ..write('subcode: $subcode, ')
           ..write('habitacionInt: $habitacionInt, ')
           ..write('habitacion: $habitacion, ')
           ..write('tarifaXDiaInt: $tarifaXDiaInt, ')
@@ -9654,7 +9681,7 @@ class TarifaXHabitacionTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(idInt, id, habitacionInt, habitacion,
+  int get hashCode => Object.hash(idInt, id, subcode, habitacionInt, habitacion,
       tarifaXDiaInt, tarifaXDia, dia, fecha, esGrupal);
   @override
   bool operator ==(Object other) =>
@@ -9662,6 +9689,7 @@ class TarifaXHabitacionTableData extends DataClass
       (other is TarifaXHabitacionTableData &&
           other.idInt == this.idInt &&
           other.id == this.id &&
+          other.subcode == this.subcode &&
           other.habitacionInt == this.habitacionInt &&
           other.habitacion == this.habitacion &&
           other.tarifaXDiaInt == this.tarifaXDiaInt &&
@@ -9675,6 +9703,7 @@ class TarifaXHabitacionTableCompanion
     extends UpdateCompanion<TarifaXHabitacionTableData> {
   final Value<int> idInt;
   final Value<String?> id;
+  final Value<String?> subcode;
   final Value<int?> habitacionInt;
   final Value<String?> habitacion;
   final Value<int?> tarifaXDiaInt;
@@ -9685,6 +9714,7 @@ class TarifaXHabitacionTableCompanion
   const TarifaXHabitacionTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
+    this.subcode = const Value.absent(),
     this.habitacionInt = const Value.absent(),
     this.habitacion = const Value.absent(),
     this.tarifaXDiaInt = const Value.absent(),
@@ -9696,6 +9726,7 @@ class TarifaXHabitacionTableCompanion
   TarifaXHabitacionTableCompanion.insert({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
+    this.subcode = const Value.absent(),
     this.habitacionInt = const Value.absent(),
     this.habitacion = const Value.absent(),
     this.tarifaXDiaInt = const Value.absent(),
@@ -9707,6 +9738,7 @@ class TarifaXHabitacionTableCompanion
   static Insertable<TarifaXHabitacionTableData> custom({
     Expression<int>? idInt,
     Expression<String>? id,
+    Expression<String>? subcode,
     Expression<int>? habitacionInt,
     Expression<String>? habitacion,
     Expression<int>? tarifaXDiaInt,
@@ -9718,6 +9750,7 @@ class TarifaXHabitacionTableCompanion
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
       if (id != null) 'id': id,
+      if (subcode != null) 'subcode': subcode,
       if (habitacionInt != null) 'habitacion_int': habitacionInt,
       if (habitacion != null) 'habitacion': habitacion,
       if (tarifaXDiaInt != null) 'tarifa_x_dia_int': tarifaXDiaInt,
@@ -9731,6 +9764,7 @@ class TarifaXHabitacionTableCompanion
   TarifaXHabitacionTableCompanion copyWith(
       {Value<int>? idInt,
       Value<String?>? id,
+      Value<String?>? subcode,
       Value<int?>? habitacionInt,
       Value<String?>? habitacion,
       Value<int?>? tarifaXDiaInt,
@@ -9741,6 +9775,7 @@ class TarifaXHabitacionTableCompanion
     return TarifaXHabitacionTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
+      subcode: subcode ?? this.subcode,
       habitacionInt: habitacionInt ?? this.habitacionInt,
       habitacion: habitacion ?? this.habitacion,
       tarifaXDiaInt: tarifaXDiaInt ?? this.tarifaXDiaInt,
@@ -9759,6 +9794,9 @@ class TarifaXHabitacionTableCompanion
     }
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (subcode.present) {
+      map['subcode'] = Variable<String>(subcode.value);
     }
     if (habitacionInt.present) {
       map['habitacion_int'] = Variable<int>(habitacionInt.value);
@@ -9789,6 +9827,7 @@ class TarifaXHabitacionTableCompanion
     return (StringBuffer('TarifaXHabitacionTableCompanion(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
+          ..write('subcode: $subcode, ')
           ..write('habitacionInt: $habitacionInt, ')
           ..write('habitacion: $habitacion, ')
           ..write('tarifaXDiaInt: $tarifaXDiaInt, ')
@@ -15402,6 +15441,7 @@ typedef $$TarifaXHabitacionTableTableCreateCompanionBuilder
     = TarifaXHabitacionTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
+  Value<String?> subcode,
   Value<int?> habitacionInt,
   Value<String?> habitacion,
   Value<int?> tarifaXDiaInt,
@@ -15414,6 +15454,7 @@ typedef $$TarifaXHabitacionTableTableUpdateCompanionBuilder
     = TarifaXHabitacionTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
+  Value<String?> subcode,
   Value<int?> habitacionInt,
   Value<String?> habitacion,
   Value<int?> tarifaXDiaInt,
@@ -15443,6 +15484,7 @@ class $$TarifaXHabitacionTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
+            Value<String?> subcode = const Value.absent(),
             Value<int?> habitacionInt = const Value.absent(),
             Value<String?> habitacion = const Value.absent(),
             Value<int?> tarifaXDiaInt = const Value.absent(),
@@ -15454,6 +15496,7 @@ class $$TarifaXHabitacionTableTableTableManager extends RootTableManager<
               TarifaXHabitacionTableCompanion(
             idInt: idInt,
             id: id,
+            subcode: subcode,
             habitacionInt: habitacionInt,
             habitacion: habitacion,
             tarifaXDiaInt: tarifaXDiaInt,
@@ -15465,6 +15508,7 @@ class $$TarifaXHabitacionTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
+            Value<String?> subcode = const Value.absent(),
             Value<int?> habitacionInt = const Value.absent(),
             Value<String?> habitacion = const Value.absent(),
             Value<int?> tarifaXDiaInt = const Value.absent(),
@@ -15476,6 +15520,7 @@ class $$TarifaXHabitacionTableTableTableManager extends RootTableManager<
               TarifaXHabitacionTableCompanion.insert(
             idInt: idInt,
             id: id,
+            subcode: subcode,
             habitacionInt: habitacionInt,
             habitacion: habitacion,
             tarifaXDiaInt: tarifaXDiaInt,
@@ -15497,6 +15542,11 @@ class $$TarifaXHabitacionTableTableFilterComposer
 
   ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get subcode => $state.composableBuilder(
+      column: $state.table.subcode,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -15562,6 +15612,11 @@ class $$TarifaXHabitacionTableTableOrderingComposer
 
   ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get subcode => $state.composableBuilder(
+      column: $state.table.subcode,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

@@ -12,6 +12,7 @@ import 'package:generador_formato/utils/widgets/table_rows.dart';
 import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../res/helpers/date_helpers.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../utils/shared_preferences/settings.dart';
 
@@ -67,8 +68,10 @@ class _DiasListState extends ConsumerState<DiasListView> {
           children: [
             Center(
               child: TextStyles.titleText(
-                  text:
-                      Utility.defineMonthPeriod(widget.initDay, widget.lastDay),
+                  text: DateHelpers.defineMonthPeriod(
+                    widget.initDay,
+                    widget.lastDay,
+                  ),
                   color: Theme.of(context).dividerColor,
                   size: 21),
             ),

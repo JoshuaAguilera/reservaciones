@@ -42,20 +42,20 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
     return rows.map(
       (row) {
         final tarDia = row.readTable(db.tarifaXDiaTable);
-        final rack = row.readTableOrNull(rackAlias);
+        // final rack = row.readTableOrNull(rackAlias);
 
         return TarifaXDia(
-          idInt: tarDia.idInt,
-          id: tarDia.id,
-          descIntegrado: tarDia.descIntegrado,
-          esLibre: tarDia.esLibre,
-          modificado: tarDia.modificado,
-          tarifaRackJson: tarDia.tarifaRackJson,
-          temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
-          tarifaRack: TarifaRack.fromJson(
-            rack?.toJson() ?? <String, dynamic>{},
-          ),
-        );
+            idInt: tarDia.idInt,
+            id: tarDia.id,
+            descIntegrado: tarDia.descIntegrado,
+            esLibre: tarDia.esLibre,
+            modificado: tarDia.modificado,
+            temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
+            tarifaRack: tarifaRackFromJson(tarDia.tarifaRackJson ?? '{}')
+            // tarifaRack: TarifaRack.fromJson(
+            //   rack?.toJson() ?? <String, dynamic>{},
+            // ),
+            );
       },
     ).toList();
   }
@@ -86,20 +86,20 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
     if (row == null) return null;
 
     final tarDia = row.readTable(db.tarifaXDiaTable);
-    final rack = row.readTableOrNull(rackAlias);
+    // final rack = row.readTableOrNull(rackAlias);
 
     return TarifaXDia(
-      idInt: tarDia.idInt,
-      id: tarDia.id,
-      descIntegrado: tarDia.descIntegrado,
-      esLibre: tarDia.esLibre,
-      modificado: tarDia.modificado,
-      tarifaRackJson: tarDia.tarifaRackJson,
-      temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
-      tarifaRack: TarifaRack.fromJson(
-        rack?.toJson() ?? <String, dynamic>{},
-      ),
-    );
+        idInt: tarDia.idInt,
+        id: tarDia.id,
+        descIntegrado: tarDia.descIntegrado,
+        esLibre: tarDia.esLibre,
+        modificado: tarDia.modificado,
+        temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
+        tarifaRack: tarifaRackFromJson(tarDia.tarifaRackJson ?? '{}')
+        // tarifaRack: TarifaRack.fromJson(
+        //   rack?.toJson() ?? <String, dynamic>{},
+        // ),
+        );
   }
 
   // UPDATE

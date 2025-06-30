@@ -1,0 +1,68 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:icons_plus/icons_plus.dart';
+
+import '../../models/periodo_model.dart';
+
+class IconHelpers {
+  static IconData? getIconNavbar(String type) {
+    switch (type) {
+      case "alert":
+        return CupertinoIcons.exclamationmark_octagon;
+      case "danger":
+        return CupertinoIcons.exclamationmark_triangle;
+      case "success":
+        return CupertinoIcons.checkmark_alt;
+      case "info":
+        return CupertinoIcons.exclamationmark_bubble;
+      default:
+    }
+    return null;
+  }
+
+  static IconData? getIconCardDashboard(String? tipoCotizacion) {
+    switch (tipoCotizacion) {
+      case "Cotizaciones grupales":
+        return CupertinoIcons.person_2_fill;
+      case "Reservaciones grupales":
+        return CupertinoIcons.person_2_fill;
+      case "Cotizaciones individuales":
+        return CupertinoIcons.person_fill;
+      case "Reservaciones individuales":
+        return CupertinoIcons.person_fill;
+      case "Cotizaciones no concretadas":
+        return Iconsax.clipboard_outline;
+      default:
+        return Icons.error_outline;
+    }
+  }
+
+  static Widget getIconStatusPeriod(Periodo nowPeriod, Color color) {
+    final today = DateTime.now();
+    final current = DateTime(today.year, today.month, today.day);
+
+    final iconColor = useWhiteForeground(color) ? Colors.white : Colors.black;
+    const iconSize = 15.0;
+
+    Widget buildIcon(IconData iconData) {
+      return Icon(iconData, color: iconColor, size: iconSize);
+    }
+
+    final start = nowPeriod.fechaInicial!;
+    final end = nowPeriod.fechaFinal!;
+
+    if (current.isBefore(start)) {
+      return buildIcon(CupertinoIcons.time);
+    }
+
+    if (current.isAfter(end)) {
+      return buildIcon(Icons.done_all_outlined);
+    }
+
+    return RotatedBox(
+      quarterTurns: 3,
+      child: buildIcon(CupertinoIcons.chevron_right_2),
+    );
+  }
+}

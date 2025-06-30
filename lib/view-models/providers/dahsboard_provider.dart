@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/numero_cotizacion_model.dart';
-import '../../models/reporte_Cotizacion_model.dart';
+import '../../models/reporte_cotizacion_model.dart';
 import '../services/cotizacion_service.dart';
 import '../../res/helpers/utility.dart';
 

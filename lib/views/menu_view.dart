@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/views/clientes/clientes_view.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/habitacion_form.dart';
-import 'package:generador_formato/views/tarifario/tarifario_form_view.dart';
-import 'package:generador_formato/views/tarifario/tarifario_view.dart';
-import 'package:generador_formato/views/usuarios/gestion_usuarios_view.dart';
-import 'package:generador_formato/views/historial/cotizacion_detalle_view.dart';
-import 'package:generador_formato/views/configuracion/configuracion_view.dart';
-import 'package:generador_formato/views/dashboard_view.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/generar_cotizacion_view.dart';
-import 'package:generador_formato/views/historial/historial_view.dart';
-import 'package:generador_formato/views/perfil_view.dart';
+
 import 'package:sidebarx/sidebarx.dart';
+
+import '../res/helpers/utility.dart';
+import 'clientes/clientes_view.dart';
+import 'configuracion/configuracion_view.dart';
+import 'dashboard_view.dart';
+import 'generacion_cotizaciones/generar_cotizacion_view.dart';
+import 'generacion_cotizaciones/habitacion_form.dart';
+import 'historial/cotizacion_detalle_view.dart';
+import 'historial/historial_view.dart';
+import 'perfil_view.dart';
+import 'tarifario/tarifario_form_view.dart';
+import 'tarifario/tarifario_view.dart';
+import 'usuarios/gestion_usuarios_view.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({
-    Key? key,
+    super.key,
     required this.controller,
-  }) : super(key: key);
+  });
 
   final SidebarXController controller;
 

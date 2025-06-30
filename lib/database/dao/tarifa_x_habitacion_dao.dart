@@ -46,6 +46,7 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
         return TarifaXHabitacion(
           idInt: tarHab.idInt,
           id: tarHab.id,
+          subcode: tarHab.subcode,
           dia: tarHab.dia,
           esGrupal: tarHab.esGrupal,
           fecha: tarHab.fecha,
@@ -90,6 +91,7 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
     return TarifaXHabitacion(
       idInt: tarHab.idInt,
       id: tarHab.id,
+      subcode: tarHab.subcode,
       dia: tarHab.dia,
       esGrupal: tarHab.esGrupal,
       fecha: tarHab.fecha,

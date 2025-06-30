@@ -7,12 +7,12 @@ import '../../models/categoria_model.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/estructura_documento.dart';
 import '../../models/habitacion_model.dart';
-import '../../models/registro_tarifa_model.dart';
+import '../../models/resumen_operacion_model.dart';
 import '../../models/tarifa_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import 'calculator_helpers.dart';
-import 'constants.dart';
+import 'date_helpers.dart';
 import 'utility.dart';
 
 class FilesTemplate {
@@ -67,80 +67,83 @@ class FilesTemplate {
     int index = contenido.length - 1;
     contenido.addAll(generateDaysCotizacion(room, index, tipoHab, categoria));
 
-    return pw.Column(children: [
-      if (numRooms > 1)
+    return pw.Column(
+      children: [
+        if (numRooms > 1)
+          pw.TableHelper.fromTextArray(
+            border: pw.TableBorder.all(width: 1),
+            headerStyle: styleHeader,
+            headerCellDecoration: pw.BoxDecoration(
+                color: PdfColor.fromHex(colorHeader ?? "#009999")),
+            cellPadding: const pw.EdgeInsets.all(4),
+            headers: [Utility.getOcupattionMessage(room)],
+            data: [],
+          ),
         pw.TableHelper.fromTextArray(
           border: pw.TableBorder.all(width: 1),
           headerStyle: styleHeader,
-          headerCellDecoration: pw.BoxDecoration(
-              color: PdfColor.fromHex(colorHeader ?? "#009999")),
           cellPadding: const pw.EdgeInsets.all(4),
-          headers: [Utility.getOcupattionMessage(room)],
+          headers: [categoria.nombre],
           data: [],
         ),
-      pw.TableHelper.fromTextArray(
-        border: pw.TableBorder.all(width: 1),
-        headerStyle: styleHeader,
-        cellPadding: const pw.EdgeInsets.all(4),
-        headers: [categoria.nombre],
-        data: [],
-      ),
-      pw.TableHelper.fromTextArray(
-        cellStyle: styleGeneral,
-        cellAlignment: pw.Alignment.center,
-        headerAlignment: pw.Alignment.center,
-        border: pw.TableBorder.all(width: 1),
-        headerCellDecoration: pw.BoxDecoration(
-          color: PdfColor.fromHex(colorHeader ?? "#009999"),
-        ),
-        headerStyle: styleBold,
-        cellPadding: const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 3.5, 1.5, 2),
-        columnWidths: {
-          0: const pw.FixedColumnWidth(10),
-          1: const pw.FixedColumnWidth(40),
-          2: const pw.FixedColumnWidth(30),
-          3: const pw.FixedColumnWidth(30),
-          4: const pw.FixedColumnWidth(30),
-          5: const pw.FixedColumnWidth(60),
-        },
-        headers: contenido.first,
-        data: contenido.sublist(1),
-      ),
-      pw.Padding(
-        padding: const pw.EdgeInsets.only(left: 177),
-        child: pw.TableHelper.fromTextArray(
-          // border: pw.TableBorder.all(width: 0.9),
-          border: pw.TableBorder.all(width: 1),
-          headerStyle: styleHeader,
-          cellStyle: styleHeader,
-          columnWidths: {
-            0: const pw.FixedColumnWidth(100),
-            1: const pw.FixedColumnWidth(100),
-            // if (cotizaciones.any((element) => element.esPreventa!))
-            //   2: const pw.FixedColumnWidth(160)
-          },
-          cellPadding:
-              const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
-          headerCellDecoration: pw.BoxDecoration(
-              color: PdfColor.fromHex(colorHeader ?? "#009999")),
-          cellDecoration: (index, data, rowNum) => pw.BoxDecoration(
-              color: PdfColor.fromHex(colorHeader ?? "#009999")),
+        pw.TableHelper.fromTextArray(
+          cellStyle: styleGeneral,
           cellAlignment: pw.Alignment.center,
-          headers: [
-            "TOTAL DE ${room.count > 1 ? "HABITACIÓN" : "ESTANCIA"}",
-            Utility.formatterNumber(total),
-          ],
-          data: [
-            if (room.count > 1)
-              <String>[
-                "TOTAL DE ESTANCIA (x${room.count} rooms)",
-                Utility.formatterNumber(total * room.count),
-              ],
-          ],
+          headerAlignment: pw.Alignment.center,
+          border: pw.TableBorder.all(width: 1),
+          headerCellDecoration: pw.BoxDecoration(
+            color: PdfColor.fromHex(colorHeader ?? "#009999"),
+          ),
+          headerStyle: styleBold,
+          cellPadding:
+              const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          headerPadding: const pw.EdgeInsets.fromLTRB(1.5, 3.5, 1.5, 2),
+          columnWidths: {
+            0: const pw.FixedColumnWidth(10),
+            1: const pw.FixedColumnWidth(40),
+            2: const pw.FixedColumnWidth(30),
+            3: const pw.FixedColumnWidth(30),
+            4: const pw.FixedColumnWidth(30),
+            5: const pw.FixedColumnWidth(60),
+          },
+          headers: contenido.first,
+          data: contenido.sublist(1),
         ),
-      )
-    ]);
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(left: 177),
+          child: pw.TableHelper.fromTextArray(
+            // border: pw.TableBorder.all(width: 0.9),
+            border: pw.TableBorder.all(width: 1),
+            headerStyle: styleHeader,
+            cellStyle: styleHeader,
+            columnWidths: {
+              0: const pw.FixedColumnWidth(100),
+              1: const pw.FixedColumnWidth(100),
+              // if (cotizaciones.any((element) => element.esPreventa!))
+              //   2: const pw.FixedColumnWidth(160)
+            },
+            cellPadding:
+                const pw.EdgeInsets.symmetric(horizontal: 2, vertical: 3),
+            headerCellDecoration: pw.BoxDecoration(
+                color: PdfColor.fromHex(colorHeader ?? "#009999")),
+            cellDecoration: (index, data, rowNum) => pw.BoxDecoration(
+                color: PdfColor.fromHex(colorHeader ?? "#009999")),
+            cellAlignment: pw.Alignment.center,
+            headers: [
+              "TOTAL DE ${room.count > 1 ? "HABITACIÓN" : "ESTANCIA"}",
+              Utility.formatterNumber(total),
+            ],
+            data: [
+              if (room.count > 1)
+                <String>[
+                  "TOTAL DE ESTANCIA (x${room.count} rooms)",
+                  Utility.formatterNumber(total * room.count),
+                ],
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   static pw.Widget getTablesCotGroup({
@@ -200,9 +203,9 @@ class FilesTemplate {
           ),
           pw.Text(
               Utility.formatterNumber(
-                Utility.calculatePromotion(
-                  (tarifa.tarifaAdulto1a2 ?? 0).toString(),
-                  descuentoTarifa,
+                CalculatorHelpers.getPromotion(
+                  tarifa.tarifaAdulto1a2,
+                  promocion: descuentoTarifa,
                   returnDouble: true,
                   rounded: !(tarifaXDia?.modificado ?? false),
                 ),
@@ -210,9 +213,9 @@ class FilesTemplate {
               style: styleBold),
           pw.Text(
               Utility.formatterNumber(
-                Utility.calculatePromotion(
-                  (tarifa.tarifaAdulto3 ?? 0).toString(),
-                  descuentoTarifa,
+                CalculatorHelpers.getPromotion(
+                  tarifa.tarifaAdulto3,
+                  promocion: descuentoTarifa,
                   returnDouble: true,
                   rounded: !(tarifaXDia?.modificado ?? false),
                 ),
@@ -220,9 +223,9 @@ class FilesTemplate {
               style: styleBold),
           pw.Text(
               Utility.formatterNumber(
-                Utility.calculatePromotion(
-                  (tarifa.tarifaAdulto4 ?? 0).toString(),
-                  descuentoTarifa,
+                CalculatorHelpers.getPromotion(
+                  tarifa.tarifaAdulto4,
+                  promocion: descuentoTarifa,
                   returnDouble: true,
                   rounded: !(tarifaXDia?.modificado ?? false),
                 ),
@@ -230,9 +233,9 @@ class FilesTemplate {
               style: styleBold),
           pw.Text(
               Utility.formatterNumber(
-                Utility.calculatePromotion(
-                  (tarifa.tarifaMenores7a12 ?? 0).toString(),
-                  descuentoTarifa,
+                CalculatorHelpers.getPromotion(
+                  tarifa.tarifaMenores7a12,
+                  promocion: descuentoTarifa,
                   returnDouble: true,
                   rounded: !(tarifaXDia?.modificado ?? false),
                 ),
@@ -286,49 +289,53 @@ class FilesTemplate {
     bool widgetFirst = false,
   }) {
     return pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          if (widgets != null && widgetFirst)
-            for (pw.Widget widg in widgets)
-              textIndice(
-                  text: "",
-                  styleText: styleLight,
-                  styleIndice: styleIndice,
-                  withRound: withRound,
-                  isSubindice: isSubIndice,
-                  widget: widg),
-          for (var element in idsText)
-            if (element == 39 || element == 64 || element == 65)
-              textIndice(
-                text: StructureDoc(element),
-                styleText: styleIndice,
-                styleIndice: styleIndice,
-                withRound: withRound,
-              )
-            else if (element == 6 || element == 7)
-              textIndice(
-                text: StructureDoc(element),
-                styleText: styleItalic!,
-                styleIndice: styleIndice,
-                withRound: withRound,
-              )
-            else
-              textIndice(
-                  text: StructureDoc(element),
-                  styleText: styleLight,
-                  styleIndice: styleIndice,
-                  withRound: withRound,
-                  isSubindice: isSubIndice),
-          if (widgets != null && !widgetFirst)
-            for (pw.Widget widg in widgets)
-              textIndice(
-                  text: "",
-                  styleText: styleLight,
-                  styleIndice: styleIndice,
-                  withRound: withRound,
-                  isSubindice: isSubIndice,
-                  widget: widg),
-        ]);
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        if (widgets != null && widgetFirst)
+          for (pw.Widget widg in widgets)
+            textIndice(
+              text: "",
+              styleText: styleLight,
+              styleIndice: styleIndice,
+              withRound: withRound,
+              isSubindice: isSubIndice,
+              widget: widg,
+            ),
+        for (var element in idsText)
+          if (element == 39 || element == 64 || element == 65)
+            textIndice(
+              text: StructureDoc(element),
+              styleText: styleIndice,
+              styleIndice: styleIndice,
+              withRound: withRound,
+            )
+          else if (element == 6 || element == 7)
+            textIndice(
+              text: StructureDoc(element),
+              styleText: styleItalic!,
+              styleIndice: styleIndice,
+              withRound: withRound,
+            )
+          else
+            textIndice(
+              text: StructureDoc(element),
+              styleText: styleLight,
+              styleIndice: styleIndice,
+              withRound: withRound,
+              isSubindice: isSubIndice,
+            ),
+        if (widgets != null && !widgetFirst)
+          for (pw.Widget widg in widgets)
+            textIndice(
+              text: "",
+              styleText: styleLight,
+              styleIndice: styleIndice,
+              withRound: withRound,
+              isSubindice: isSubIndice,
+              widget: widg,
+            ),
+      ],
+    );
   }
 
   static pw.Widget textIndice({
@@ -414,12 +421,12 @@ class FilesTemplate {
     Categoria categoria,
   ) {
     List<List<String>> dias = [];
-    int days = Utility.getDifferenceInDays(habitaciones: [habitacion]);
+    // int days = DateHelpers.getDifferenceInDays(habitacion);
     int i = 0;
 
     for (var tarifaRoom
         in habitacion.tarifasXHabitacion ?? List<TarifaXHabitacion>.empty()) {
-      double totalAdulto = CalculatorHelpers.calculateTarifa(
+      double totalAdulto = CalculatorHelpers.getTarifa(
         habitacion,
         habitacion.tarifasXHabitacion?.length ?? 0,
         categoria,
@@ -428,7 +435,7 @@ class FilesTemplate {
         applyRoundFormat: !(tarifaRoom.tarifaXDia?.modificado ?? false),
       );
 
-      double totalMenores = CalculatorHelpers.calculateTarifa(
+      double totalMenores = CalculatorHelpers.getTarifa(
         habitacion,
         habitacion.tarifasXHabitacion?.length ?? 0,
         categoria,
@@ -459,7 +466,10 @@ class FilesTemplate {
   }
 
   static Future<String> getHTMLMail(
-      Cotizacion cotizacion, List<Habitacion> habitaciones) async {
+    Cotizacion cotizacion,
+    List<Habitacion> habitaciones,
+    List<Categoria> categorias,
+  ) async {
     String mailHTML = "";
 
     List<Habitacion> rooms =
@@ -467,7 +477,7 @@ class FilesTemplate {
 
     try {
       String contenidoHtml = await rootBundle.loadString(
-          "assets/file/${!(cotizacion.esGrupo ?? false) ? "xsx" : "quote_send_mail_group"}.html");
+          "assets/file/quote_send_mail${!(cotizacion.esGrupo ?? false) ? "" : "_group"}.html");
       String preMailHTML = "";
 
       if (!(cotizacion.esGrupo ?? false)) {
@@ -497,29 +507,29 @@ class FilesTemplate {
               '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong>Plan Todo Incluido</strong><br>Estancia:<strong>FTIMESTATE</strong><br>Noches:<strong>FNUMNIGHT</strong></p>''';
 
           contentMail = contentMail
-              .replaceAll(
-                  r'FTIMESTATE', Utility.getPeriodReservation([roomList.first]))
+              .replaceAll(r'FTIMESTATE',
+                  DateHelpers.getPeriodReservation([roomList.first]))
               .replaceAll(
                   r'FNUMNIGHT', "${roomList.first.tarifasXHabitacion!.length}");
 
-          contentMail +=
-              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble, vista a la reserva 🏞️</b></p>''';
-
-          contentMail +=
-              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong></strong></p>''';
-          for (var element in roomList) {
+          for (var categoria in categorias) {
             contentMail +=
-                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
-                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVR ?? 1) / (element.tarifasXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVR ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVR ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
-          }
+                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>${categoria.tipoHabitacion?.codigo}, ${categoria.nombre} 🏞️</b></p>''';
 
-          contentMail +=
-              '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><b>Habitación Deluxe doble o King size, vista parcial al océano 🌊</b></p>''';
-
-          for (var element in roomList) {
             contentMail +=
-                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
-                 <u>${Utility.getOcupattionMessage(element)}</u><br><strong>Total por noche ${Utility.formatterNumber(((element.totalVPM ?? 1) / (element.tarifasXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${element.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(element.totalVPM ?? 0)}${element.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((element.totalVPM ?? 0) * element.count)}</strong></p>" : "</strong></p>"}''';
+                '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px"><strong></strong></p>''';
+
+            for (var room in roomList) {
+              ResumenOperacion? resumen = room.resumenes?.where(
+                (element) {
+                  return element.categoria?.idInt == categoria.idInt;
+                },
+              ).firstOrNull;
+
+              contentMail +=
+                  '''<p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;Margin-bottom:15px;color:#131313;font-size:14px">
+                 <u>${Utility.getOcupattionMessage(room)}</u><br><strong>Total por noche ${Utility.formatterNumber(((resumen?.total ?? 0) / (room.tarifasXHabitacion?.length ?? 1)))}&nbsp;&nbsp;<br>Total por ${room.count > 1 ? "habitación" : "estancia"} ${Utility.formatterNumber(resumen?.total ?? 0)}${room.count > 1 ? "&nbsp;&nbsp;<br>Total por estancia ${Utility.formatterNumber((resumen?.total ?? 0) * room.count)}</strong></p>" : "</strong></p>"}''';
+            }
           }
 
           contentMail +=

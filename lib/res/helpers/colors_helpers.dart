@@ -1,8 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:generador_formato/res/helpers/desktop_colors.dart';
+
+import 'desktop_colors.dart';
 
 extension HexColor on Color {
   static Color fromHex(String hexString) {
@@ -75,6 +73,55 @@ class ColorsHelpers {
         return DesktopColors.notSuccess;
       default:
         return DesktopColors.grisPalido;
+    }
+  }
+
+  static List<Color> getGradientQuote(String? tipoCotizacion) {
+    switch (tipoCotizacion) {
+      case "Cotizaciones grupales":
+        return [
+          DesktopColors.cotGrupal,
+          const Color.fromARGB(255, 255, 205, 124)
+        ];
+      case "Reservaciones grupales":
+        return [
+          DesktopColors.resGrupal,
+          const Color.fromARGB(255, 226, 109, 31)
+        ];
+      case "Cotizaciones individuales":
+        return [
+          DesktopColors.cotIndiv,
+          const Color.fromARGB(255, 73, 185, 255)
+        ];
+      case "Reservaciones individuales":
+        return [
+          DesktopColors.resIndiv,
+          const Color.fromARGB(255, 140, 207, 240)
+        ];
+      case "Cotizaciones no concretadas":
+        return [
+          DesktopColors.cotNoConcr,
+          DesktopColors.grisPalido,
+        ];
+      default:
+        return [];
+    }
+  }
+
+  static Color getColorRegisterQuote(String type) {
+    switch (type) {
+      case "Cotizaciones grupales":
+        return DesktopColors.cotGrupal;
+      case "Reservaciones grupales":
+        return DesktopColors.resGrupal;
+      case "Cotizaciones individuales":
+        return DesktopColors.cotIndiv;
+      case "Reservaciones individuales":
+        return DesktopColors.resIndiv;
+      case "Cotizaciones no concretadas":
+        return DesktopColors.cotNoConcr;
+      default:
+        return Colors.white;
     }
   }
 }

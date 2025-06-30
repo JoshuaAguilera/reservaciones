@@ -12,6 +12,9 @@ String tarifasXDiaToJson(List<TarifaXDia> data) =>
 List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
     List<TarifaXDia>.from(list.map((x) => TarifaXDia.fromJson(x)));
 
+TarifaXDia tarifaXDiaFromJson(String str) => TarifaXDia.fromJson(json.decode(str));
+String tarifaXDiaToJson(TarifaXDia data) => json.encode(data.toJson());
+
 class TarifaXDia {
   int? idInt;
   String? id;
@@ -19,7 +22,6 @@ class TarifaXDia {
   bool? modificado;
   bool? esLibre;
   TarifaRack? tarifaRack;
-  String? tarifaRackJson;
   Temporada? temporadaSelect;
 
   TarifaXDia({
@@ -29,7 +31,6 @@ class TarifaXDia {
     this.esLibre,
     this.modificado = false,
     this.tarifaRack,
-    this.tarifaRackJson,
     this.temporadaSelect,
   });
 
@@ -50,7 +51,6 @@ class TarifaXDia {
         modificado: modificado ?? this.modificado,
         esLibre: esLibre ?? this.esLibre,
         tarifaRack: tarifaRack?.copyWith() ?? this.tarifaRack?.copyWith(),
-        tarifaRackJson: tarifaRackJson ?? this.tarifaRackJson,
         temporadaSelect:
             temporadaSelect?.copyWith() ?? this.temporadaSelect?.copyWith(),
       );
@@ -63,7 +63,6 @@ class TarifaXDia {
       "tarifa_rack": tarifaRack?.id,
       "desc_integrado": descIntegrado,
       "es_libre": esLibre,
-      "tarifa_rack_json": tarifaRackJson,
       "temporada_json": temporadaSelect,
     };
 
@@ -79,7 +78,6 @@ class TarifaXDia {
       id: json['code'],
       esLibre: json['es_libre'],
       descIntegrado: json['desc_integrado'],
-      tarifaRackJson: json['tarifa_rack_json'],
       tarifaRack: json['tarifa_rack_json'] != null
           ? tarifaRackFromJson(json['tarifa_rack_json'])
           : null,

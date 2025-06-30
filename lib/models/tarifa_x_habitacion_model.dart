@@ -16,27 +16,32 @@ List<TarifaXHabitacion> listTarifaXHabitacionsFromJson(List<dynamic> list) =>
 class TarifaXHabitacion {
   int? idInt;
   String? id;
+  String? subcode;
   int? habitacionInt;
   String? habitacion;
   TarifaXDia? tarifaXDia;
   int? dia;
   DateTime? fecha;
   bool? esGrupal;
+  int numDays;
 
   TarifaXHabitacion({
     this.id,
     this.idInt,
+    this.subcode,
     this.habitacionInt,
     this.habitacion,
     this.tarifaXDia,
     this.dia,
     this.fecha,
     this.esGrupal,
+    this.numDays = 1,
   });
 
   TarifaXHabitacion copyWith({
     int? idInt,
     String? id,
+    String? subcode,
     int? habitacionInt,
     String? habitacion,
     TarifaXDia? tarifaXDia,
@@ -47,6 +52,7 @@ class TarifaXHabitacion {
       TarifaXHabitacion(
         idInt: idInt ?? this.idInt,
         id: id ?? this.id,
+        subcode: subcode,
         habitacion: habitacion ?? this.habitacion,
         habitacionInt: habitacionInt ?? this.habitacionInt,
         tarifaXDia: tarifaXDia ?? this.tarifaXDia,
@@ -59,6 +65,7 @@ class TarifaXHabitacion {
     final data = <String, dynamic>{
       'id_int': idInt,
       'id': id,
+      'subcode': subcode,
       'habitacion_int': habitacionInt,
       'habitacion': habitacion,
       'tarifa_x_dia_int': tarifaXDia?.idInt,
@@ -78,6 +85,7 @@ class TarifaXHabitacion {
     return TarifaXHabitacion(
       idInt: json['id_int'],
       id: json['id'],
+      subcode: json['subcode'],
       habitacionInt: json['habitacion_int'],
       habitacion: json['habitacion'],
       tarifaXDia: json['tarifa_x_dia'],

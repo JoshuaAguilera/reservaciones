@@ -13,7 +13,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../models/cotizacion_model.dart';
 import '../models/notificacion_model.dart';
 import '../models/numero_cotizacion_model.dart';
-import '../models/reporte_Cotizacion_model.dart';
+import '../models/reporte_cotizacion_model.dart';
 import '../res/helpers/constants.dart';
 import '../res/helpers/desktop_colors.dart';
 import '../res/helpers/utility.dart';
