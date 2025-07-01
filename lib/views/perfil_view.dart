@@ -398,7 +398,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
       return;
     }
 
-    if (await AuthService().foundUserName(usernameController.text, userId)) {
+    if (await AuthService().getUser(usernameController.text, userId)) {
       showSnackBar(
         type: "alert",
         context: context,

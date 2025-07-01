@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../models/periodo_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
 import '../../models/temporada_model.dart';
@@ -45,17 +46,18 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
         // final rack = row.readTableOrNull(rackAlias);
 
         return TarifaXDia(
-            idInt: tarDia.idInt,
-            id: tarDia.id,
-            descIntegrado: tarDia.descIntegrado,
-            esLibre: tarDia.esLibre,
-            modificado: tarDia.modificado,
-            temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
-            tarifaRack: tarifaRackFromJson(tarDia.tarifaRackJson ?? '{}')
-            // tarifaRack: TarifaRack.fromJson(
-            //   rack?.toJson() ?? <String, dynamic>{},
-            // ),
-            );
+          idInt: tarDia.idInt,
+          id: tarDia.id,
+          descIntegrado: tarDia.descIntegrado,
+          esLibre: tarDia.esLibre,
+          modificado: tarDia.modificado,
+          temporadaSelect: temporadaFromJson(tarDia.temporadaJson ?? '{}'),
+          tarifaRack: tarifaRackFromJson(tarDia.tarifaRackJson ?? '{}'),
+          periodoSelect: periodoFromJson(tarDia.periodoJson ?? '{}'),
+          // tarifaRack: TarifaRack.fromJson(
+          //   rack?.toJson() ?? <String, dynamic>{},
+          // ),
+        );
       },
     ).toList();
   }

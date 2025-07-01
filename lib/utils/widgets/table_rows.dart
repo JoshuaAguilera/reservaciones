@@ -62,7 +62,7 @@ class TableRows {
       showDialog(
         context: context,
         builder: (context) => ManagerTariffSingleDialog(
-          tarifaXDia: tarifaXDia,
+          tarifaXHabitacion: tarifaXDia,
           numDays: DateTime.parse(habitacion.checkOut ?? '')
               .difference(DateTime.parse(habitacion.checkIn ?? ''))
               .inDays,
@@ -250,46 +250,47 @@ class TableRows {
           ),
         ),
         if (screenWidth > 1150)
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            child: Container(
-              height: 35,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                color: Theme.of(context).scaffoldBackgroundColor,
-              ),
-              child: ListView.builder(
-                itemCount: element.temporadas?.length,
-                physics: const AlwaysScrollableScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) => Tooltip(
-                  textAlign: TextAlign.center,
-                  message:
-                      "Estancia Min: ${element.temporadas?[index].estanciaMinima ?? 0}\n"
-                      "Descuento: ${element.temporadas?[index].descuento ?? 0}%",
-                  child: ItemRows.filterItemRow(
-                    withDeleteButton: false,
-                    colorCard: (element.temporadas?[index].forGroup ?? false)
-                        ? DesktopColors.cotGrupal
-                        : (element.temporadas?[index].forCash ?? false)
-                            ? DesktopColors.cashSeason
-                            : DesktopColors.cotIndiv,
-                    title: element.temporadas?[index].nombre ?? '',
-                    sizeText: 12,
-                    withOutWidth: true,
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Container(
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                child: ListView.builder(
+                  itemCount: element.temporadas?.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) => Tooltip(
+                    textAlign: TextAlign.center,
+                    message:
+                        "Estancia Min: ${element.temporadas?[index].estanciaMinima ?? 0}\n"
+                        "Descuento: ${element.temporadas?[index].descuento ?? 0}%",
+                    child: ItemRows.filterItemRow(
+                      withDeleteButton: false,
+                      colorCard: (element.temporadas?[index].forGroup ?? false)
+                          ? DesktopColors.cotGrupal
+                          : (element.temporadas?[index].forCash ?? false)
+                              ? DesktopColors.cashSeason
+                              : DesktopColors.cotIndiv,
+                      title: element.temporadas?[index].nombre ?? '',
+                      sizeText: 12,
+                      withOutWidth: true,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
         if (screenWidth > 950)
           Center(
             child: TextStyles.standardText(
               text: tarifasBase
                       .where((elementInt) =>
-                          elementInt.idInt == element.tarifas!.first.tarifaPadreId)
+                          elementInt.idInt ==
+                          element.tarifas!.first.tarifaPadreId)
                       .firstOrNull
                       ?.nombre ??
                   '',
@@ -335,8 +336,7 @@ class TableRows {
     required TextEditingController adults4,
     required TextEditingController paxAdic,
     required TextEditingController minor7a12,
-    bool isGroup = false,
-    bool isCash = false,
+    String? tipo = "individual",
     required String categoria,
   }) {
     Color? colorBox = isGroup
@@ -426,8 +426,7 @@ class TableRows {
                         .firstOrNull
                         ?.tarifaMenores7a12 ??
                     0)
-                : (minor7a12.text.isEmpty &&
-                        element.descuento == null)
+                : (minor7a12.text.isEmpty && element.descuento == null)
                     ? "—"
                     : Utility.calculatePromotion(
                         minor7a12.text,

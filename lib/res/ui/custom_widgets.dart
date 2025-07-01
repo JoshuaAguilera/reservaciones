@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/tarifa_model.dart';
-import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/views/tarifario/dialogs/manager_cash_tariff_dialog.dart';
-import 'package:generador_formato/utils/widgets/table_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../models/tarifa_model.dart';
+import '../../models/temporada_model.dart';
+import '../../utils/widgets/table_rows.dart';
+import '../../views/tarifario/dialogs/manager_cash_tariff_dialog.dart';
+import '../helpers/colors_helpers.dart';
 import '../helpers/desktop_colors.dart';
 import '../../utils/widgets/form_widgets.dart';
+import '../helpers/utility.dart';
 import 'text_styles.dart';
 import '../../utils/widgets/textformfield_custom.dart';
 import 'buttons.dart';
@@ -106,7 +107,7 @@ class CustomWidgets {
                             ),
                           ),
                         ),
-                        if (temporada.forCash ?? false)
+                        if (temporada.tipo == "efectivo")
                           Expanded(
                             flex: 2,
                             child: Align(
@@ -204,15 +205,14 @@ class CustomWidgets {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      if (!(temporada.forCash ?? false) ||
+                      if (!(temporada.tipo == 'efectivo') ||
                           (temporada.useTariff ?? false))
                         Expanded(
                           child: SizedBox(
                             child: TextFormFieldCustom.textFormFieldwithBorder(
                               name: "Descuento",
                               isNumeric: true,
-                              initialValue:
-                                  temporada.descuento?.toString(),
+                              initialValue: temporada.descuento?.toString(),
                               icon: const Icon(
                                 CupertinoIcons.percent,
                                 size: 20,
@@ -479,8 +479,7 @@ class CustomWidgets {
                     adults4: adults4,
                     paxAdic: paxAdic,
                     minor7a12: minor7a12,
-                    isGroup: element.forGroup ?? false,
-                    isCash: element.forCash ?? false,
+                    tipo: element.tipo,
                     categoria: tipoHabitacion,
                   ),
               ],
@@ -901,13 +900,13 @@ class CustomWidgets {
   static Widget itemMedal(String rol, Brightness brightness, {Color? color}) {
     return Container(
       decoration: BoxDecoration(
-        color: color ?? Utility.getColorTypeUser(rol, alpha: 100),
+        color: color ?? ColorsHelpers.getColorTypeUser(rol, alpha: 100),
         border: Border.all(
           color: color != null
               ? useWhiteForeground(color)
-                  ? Utility.darken(color, -0.40)
-                  : Utility.darken(color, 0.25)
-              : Utility.getColorTypeUser(rol, isText: true) ??
+                  ? ColorsHelpers.darken(color, -0.40)
+                  : ColorsHelpers.darken(color, 0.25)
+              : ColorsHelpers.getColorTypeUser(rol, isText: true) ??
                   DesktopColors.grisPalido,
           width: 1.5,
         ),
@@ -922,12 +921,12 @@ class CustomWidgets {
           align: TextAlign.center,
           color: color != null
               ? useWhiteForeground(color)
-                  ? Utility.darken(
+                  ? ColorsHelpers.darken(
                       color, brightness == Brightness.light ? -0.40 : -0.35)
-                  : Utility.darken(
+                  : ColorsHelpers.darken(
                       color, brightness == Brightness.light ? 0.15 : 0.22)
-              : Utility.darken(
-                  Utility.getColorTypeUser(rol, isText: true) ??
+              : ColorsHelpers.darken(
+                  ColorsHelpers.getColorTypeUser(rol, isText: true) ??
                       DesktopColors.grisPalido,
                   brightness == Brightness.light ? 0.15 : -0.15),
           overClip: true,

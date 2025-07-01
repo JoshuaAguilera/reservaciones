@@ -124,4 +124,20 @@ class ColorsHelpers {
         return Colors.white;
     }
   }
+
+    static Color? getColorTypeUser(String rol,
+      {int alpha = 255, bool isText = false}) {
+    switch (rol) {
+      case "SUPERADMIN":
+        return Color.fromARGB(alpha, 255, 192, 1);
+      case "ADMIN":
+        return Color.fromARGB(alpha, 202, 202, 202);
+      case "VENTAS":
+        return Color.fromARGB(alpha, 10, 166, 180);
+      case "RECEPCION":
+        return Color.fromARGB(alpha, 230, 92, 0);
+      default:
+        return isText ? DesktopColors.grisPalido : DesktopColors.greyClean;
+    }
+  }
 }

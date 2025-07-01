@@ -5,18 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/imagen_model.dart';
-import 'package:generador_formato/view-models/providers/usuario_provider.dart';
-import 'package:generador_formato/view-models/services/image_service.dart';
-import 'package:generador_formato/res/ui/buttons.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../database/database.dart';
+import '../../models/imagen_model.dart';
+import '../../res/ui/buttons.dart';
+import '../../res/ui/text_styles.dart';
+import '../../view-models/providers/usuario_provider.dart';
 import '../../view-models/services/auth_service.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../view-models/services/image_service.dart';
 import '../shared_preferences/settings.dart';
 
 class GestorImagenes extends ConsumerStatefulWidget {
@@ -93,7 +91,6 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
     if (widget.imagenes!.isNotEmpty) {
       //   isUpdatingImage = true;
       imagenSelect = widget.imagenes![0];
-      codeImage = imagenSelect!.createdAt ?? 0;
       imagen = imagenSelect!.newImage;
       // height = 350;
       setState(() {});
@@ -444,22 +441,23 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                             if (urlImage.isEmpty) {
                                               showError = true;
                                             } else {
-                                              bool updateImage =
+                                              final updateImage =
                                                   await ImageService()
-                                                      .updateUrlImage(
-                                                imageUser.idInt!,
-                                                (imageUser.createdAt ?? 0)
-                                                    .toString(),
-                                                urlImage,
-                                                imageUser.ruta!,
+                                                      .saveImage(
+                                                imagen: Imagen(
+                                                  idInt: imageUser.idInt,
+                                                  url: urlImage,
+                                                ),
+                                                oldUrl: imageUser.ruta!,
                                               );
 
-                                              if (updateImage) {
+                                              if (updateImage.item1 != null) {
                                                 showError = true;
                                               } else {
                                                 Imagen newImage = Imagen(
                                                   idInt: imageUser.idInt ?? 0,
-                                                  createdAt: imageUser.createdAt,
+                                                  createdAt:
+                                                      imageUser.createdAt,
                                                   ruta: urlImage,
                                                   nombre: usuario.id,
                                                 );
@@ -476,29 +474,26 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                             if (urlImage.isEmpty) {
                                               showError = true;
                                             } else {
-                                              int uniqueCode =
-                                                  Utility.getUniqueCode();
-
                                               Imagen newImage = Imagen(
                                                 idInt: 0,
-                                                createdAt: uniqueCode,
                                                 ruta: urlImage,
                                                 nombre: usuario.id,
                                               );
 
-                                              ImageTableData? response =
+                                              final response =
                                                   await ImageService()
-                                                      .saveImage(newImage);
+                                                      .saveImage(
+                                                          imagen: newImage);
 
-                                              if (response == null) {
+                                              if (response.item1 == null) {
                                                 showError = true;
                                               } else {
                                                 bool updateSuccess =
                                                     await AuthService()
                                                         .updateImagePerfil(
-                                                  usuario.id,
+                                                  usuario.idInt,
                                                   usuario.username!,
-                                                  response.id,
+                                                  response.item2?.idInt ?? 0,
                                                 );
 
                                                 if (updateSuccess) {

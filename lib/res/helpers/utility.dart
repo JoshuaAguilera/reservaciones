@@ -1,18 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/cotizacion_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/numero_cotizacion_model.dart';
+import '../../models/periodo_model.dart';
 import '../../models/politica_tarifario_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
 import '../../models/tarifa_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
+import '../../models/temporada_model.dart';
+import '../../utils/shared_preferences/preferences.dart';
+import '../ui/text_styles.dart';
 import 'calculator_helpers.dart';
 import 'constants.dart';
-import 'desktop_colors.dart';
 
 class Utility {
   static String getTitleByIndex(int index) {
@@ -306,22 +310,6 @@ class Utility {
     return width;
   }
 
-  static Color? getColorTypeUser(String rol,
-      {int alpha = 255, bool isText = false}) {
-    switch (rol) {
-      case "SUPERADMIN":
-        return Color.fromARGB(alpha, 255, 192, 1);
-      case "ADMIN":
-        return Color.fromARGB(alpha, 202, 202, 202);
-      case "VENTAS":
-        return Color.fromARGB(alpha, 10, 166, 180);
-      case "RECEPCION":
-        return Color.fromARGB(alpha, 230, 92, 0);
-      default:
-        return isText ? DesktopColors.grisPalido : DesktopColors.greyClean;
-    }
-  }
-
   static List<Widget> generateTextWidget(
       List<String> list, Color? primaryColor) {
     List<Widget> children = [];
@@ -591,7 +579,7 @@ class Utility {
   //   }
   // }
 
-  static List<Periodo> getPeriodsRegister(List<PeriodoTableData>? periods) {
+  static List<Periodo> getPeriodsRegister(List<Periodo>? periods) {
     List<Periodo> periodos = [];
 
     for (var element in periods!) {
@@ -823,7 +811,7 @@ class Utility {
     code = code.toString().replaceAll(RegExp(r':'), '');
     code = code.toString().replaceAll(RegExp(r' '), '');
 
-    return int.parse("$code${Preferences.userId}");
+    return int.parse("$code${Preferences.userIdInt}");
   }
 
   static bool revisedPropiertiesSaveTariff(Tarifa? saveTariff) {

@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-List<Imagen> ImagenesFromJson(String str) =>
+List<Imagen> imagenesFromJson(String str) =>
     List<Imagen>.from(json.decode(str).map((x) => Imagen.fromJson(x)));
-String ImagenesToJson(List<Imagen> data) =>
+String imagenesToJson(List<Imagen> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-List<Imagen> ListImagenFromJson(List<dynamic> str) =>
+List<Imagen> listImagenFromJson(List<dynamic> str) =>
     List<Imagen>.from(str.map((x) => Imagen.fromJson(x)));
 
-Imagen ImagenJson(String str) => Imagen.fromJson(json.decode(str));
-String ImagenToJson(Imagen data) => json.encode(data.toJson());
+Imagen imagenFromJson(String str) => Imagen.fromJson(json.decode(str));
+String imagenToJson(Imagen data) => json.encode(data.toJson());
 
 class Imagen {
   int? idInt;

@@ -16,7 +16,8 @@ class Preferences {
   static String _urlApi = '';
   static String _aplication = '';
   static int _numberQuotes = 0;
-  static int _userId = 0;
+  static int _userIdInt = 0;
+  static String _userId = '';
   static String _userImageUrl = '';
 
   static Future init() async {
@@ -140,13 +141,22 @@ class Preferences {
     _prefs.setInt('numberQuotes', numberQuotes);
   }
 
-  static int get userId {
-    return _prefs.getInt('userId') ?? _userId;
+  static int get userIdInt {
+    return _prefs.getInt('userIdInt') ?? _userIdInt;
   }
 
-  static set userId(int userId) {
+  static set userIdInt(int userIdInt) {
+    _userIdInt = userIdInt;
+    _prefs.setInt('userIdInt', userIdInt);
+  }
+
+  static String get userId {
+    return _prefs.getString('userId') ?? _userId;
+  }
+
+  static set userId(String userId) {
     _userId = userId;
-    _prefs.setInt('userId', userId);
+    _prefs.setString('userId', userId);
   }
 
   static String get userImageUrl {

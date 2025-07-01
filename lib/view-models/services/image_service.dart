@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:drift/drift.dart';
+import 'package:tuple/tuple.dart';
 
+import '../../database/dao/imagen_dao.dart';
 import '../../database/database.dart';
 import '../../models/imagen_model.dart';
 import '../../res/helpers/utility.dart';
@@ -9,64 +10,57 @@ import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
 class ImageService extends BaseService {
-  Future<ImageTableData?> getImageById(int imageId) async {
-    List<ImageTableData> images = [];
+  Future<Tuple2<String?, Imagen?>> getImageById(int imageId) async {
+    Imagen? imagen;
 
     try {
       final db = AppDatabase();
-      images = await db.getImageById(imageId);
+      final imagenDao = ImagenDao(db);
+      imagen = await imagenDao.getByID(imageId);
+      imagenDao.close();
       db.close();
+
+      if (imagen == null) throw Exception('Imagen no encontrada');
     } catch (e) {
       print(e);
+      return Tuple2(e.toString(), null);
     }
-    return images.firstOrNull;
+    return Tuple2(null, imagen);
   }
 
-  Future<ImageTableData?> saveImage(Imagen? imagen) async {
-    ImageTableData? response;
-    final database = AppDatabase();
+  Future<Tuple2<String?, Imagen?>> saveImage({
+    required Imagen imagen,
+    String oldUrl = '',
+  }) async {
+    Imagen? newImage;
+    bool isUpdate = imagen.idInt != null;
 
     try {
-      ImageTableData? result =
-          await database.into(database.imageTable).insertReturningOrNull(
-                ImageTableCompanion.insert(
-                  code: Value(imagen?.createdAt?.toString()),
-                  urlImage: Value(imagen?.ruta),
-                ),
-              );
-      await database.close();
-      response = result;
-      Preferences.userImageUrl = imagen!.ruta ?? '';
-    } catch (e) {
-      await database.close();
-    }
-
-    return response;
-  }
-
-  Future<bool> updateUrlImage(
-      int id, String code, String url, String urlOld) async {
-    bool success = false;
-    final archivo = File(urlOld);
-
-    try {
-      if (await archivo.exists()) {
-        await archivo.delete();
-      } else {
-        print('El archivo no existe.');
+      if (oldUrl.isNotEmpty) {
+        final archivo = File(oldUrl);
+        if (await archivo.exists()) {
+          await archivo.delete();
+        } else {
+          print('El archivo no existe.');
+        }
       }
 
       final db = AppDatabase();
-      int response = await db.updateURLImage(id, code, url);
-      success = response != 1;
-      db.close();
-      Preferences.userImageUrl = url;
+      final imagenDao = ImagenDao(db);
+      final response = await (isUpdate
+          ? imagenDao.updat3(imagen)
+          : imagenDao.insert(imagen));
+      await imagenDao.close();
+      await db.close();
+
+      if (response == null) throw Exception('Ocurrió un error al guardar');
+      newImage = response;
     } catch (e) {
-      success = true;
       print(e);
+      return Tuple2(e.toString(), null);
     }
 
-    return success;
+    return Tuple2(null, newImage);
   }
 
   Future<String> handleImageSelection(File? pathImage) async {
@@ -76,7 +70,7 @@ class ImageService extends BaseService {
 
       //agregar code para no sobrescribir imagenes
       final fileName =
-          'image_user_${Preferences.userId}_perfil_$uniqueCode.png';
+          'image_user_${Preferences.userIdInt}_perfil_$uniqueCode.png';
       final filePath = '$folderPath/$fileName';
 
       final folder = Directory(folderPath);

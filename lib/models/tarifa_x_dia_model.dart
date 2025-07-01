@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'periodo_model.dart';
 import 'tarifa_rack_model.dart';
 import 'temporada_model.dart';
 
@@ -12,7 +13,8 @@ String tarifasXDiaToJson(List<TarifaXDia> data) =>
 List<TarifaXDia> listTarifasXDiaFromJson(List<dynamic> list) =>
     List<TarifaXDia>.from(list.map((x) => TarifaXDia.fromJson(x)));
 
-TarifaXDia tarifaXDiaFromJson(String str) => TarifaXDia.fromJson(json.decode(str));
+TarifaXDia tarifaXDiaFromJson(String str) =>
+    TarifaXDia.fromJson(json.decode(str));
 String tarifaXDiaToJson(TarifaXDia data) => json.encode(data.toJson());
 
 class TarifaXDia {
@@ -23,6 +25,7 @@ class TarifaXDia {
   bool? esLibre;
   TarifaRack? tarifaRack;
   Temporada? temporadaSelect;
+  Periodo? periodoSelect;
 
   TarifaXDia({
     this.idInt,
@@ -32,6 +35,7 @@ class TarifaXDia {
     this.modificado = false,
     this.tarifaRack,
     this.temporadaSelect,
+    this.periodoSelect,
   });
 
   TarifaXDia copyWith({
@@ -43,6 +47,7 @@ class TarifaXDia {
     TarifaRack? tarifaRack,
     String? tarifaRackJson,
     Temporada? temporadaSelect,
+    Periodo? periodoSelect,
   }) =>
       TarifaXDia(
         idInt: idInt ?? this.idInt,
@@ -53,6 +58,8 @@ class TarifaXDia {
         tarifaRack: tarifaRack?.copyWith() ?? this.tarifaRack?.copyWith(),
         temporadaSelect:
             temporadaSelect?.copyWith() ?? this.temporadaSelect?.copyWith(),
+        periodoSelect:
+            periodoSelect?.copyWith() ?? this.periodoSelect?.copyWith(),
       );
 
   Map<String, dynamic> toJson() {
@@ -64,6 +71,7 @@ class TarifaXDia {
       "desc_integrado": descIntegrado,
       "es_libre": esLibre,
       "temporada_json": temporadaSelect,
+      "periodo_json": periodoSelect,
     };
 
     // Remueve todas las claves con valor null
@@ -83,6 +91,9 @@ class TarifaXDia {
           : null,
       temporadaSelect: json['temporada_json'] != null
           ? temporadaFromJson(json['temporada_json'])
+          : null,
+      periodoSelect: json['periodo_json'] != null
+          ? periodoFromJson(json['periodo_json'])
           : null,
     );
   }

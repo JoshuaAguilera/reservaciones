@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/database.dart';
 import '../models/imagen_model.dart';
+import '../res/helpers/colors_helpers.dart';
 import '../view-models/providers/cotizacion_provider.dart';
 import '../view-models/providers/dahsboard_provider.dart';
 import '../view-models/providers/habitacion_provider.dart';
@@ -60,7 +61,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
             colors: [
               brightness == Brightness.light
                   ? Colors.white
-                  : Utility.darken(DesktopColors.canvasColor, 0.15),
+                  : ColorsHelpers.darken(DesktopColors.canvasColor, 0.15),
               brightness == Brightness.light
                   ? DesktopColors.cerulean
                   : DesktopColors.canvasColor,
@@ -203,7 +204,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Future submitData(Brightness brightness) async {
     setState(() => isLoading = true);
     if (_formKeyLogin.currentState!.validate()) {
-      if (!await AuthService().foundUserName(userNameController.text)) {
+      if (!await AuthService().getUser(userNameController.text)) {
         setState(() => isLoading = false);
         showSnackBar(
           type: "alert",

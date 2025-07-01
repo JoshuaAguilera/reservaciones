@@ -8,9 +8,11 @@ class EncrypterTool {
 
     final iv = enc.IV.fromUtf8(EncryptionData.encryptionIV);
 
-    final encrypter = enc.Encrypter(enc.AES(key,
-        mode: _aesmode ?? enc.AESMode.cbc,
-        padding: EncryptionModes.AESPADDING));
+    final encrypter = enc.Encrypter(
+      enc.AES(key,
+          mode: _aesmode ?? enc.AESMode.cbc,
+          padding: EncryptionModes.AESPADDING),
+    );
 
     final encrypted = encrypter.encrypt(text, iv: iv);
 
@@ -22,9 +24,11 @@ class EncrypterTool {
 
     final iv = enc.IV.fromUtf8(EncryptionData.encryptionIV);
 
-    final encrypter = enc.Encrypter(enc.AES(key,
-        mode: _aesmode ?? enc.AESMode.cbc,
-        padding: EncryptionModes.AESPADDING));
+    final encrypter = enc.Encrypter(
+      enc.AES(key,
+          mode: _aesmode ?? enc.AESMode.cbc,
+          padding: EncryptionModes.AESPADDING),
+    );
 
     final decrypted = encrypter.decrypt(enc.Encrypted.fromBase64(text), iv: iv);
 

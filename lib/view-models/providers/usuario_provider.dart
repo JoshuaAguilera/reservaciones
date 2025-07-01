@@ -16,7 +16,7 @@ final userProvider = StateProvider<UsuarioTableData>((ref) {
 });
 
 final imagePerfilProvider = StateProvider<Imagen>((ref) {
-  return Imagen(nombre: Preferences.userId);
+  return Imagen(nombre: Preferences.userIdInt);
 });
 
 final changeUsersProvider = StateProvider<int>((ref) {

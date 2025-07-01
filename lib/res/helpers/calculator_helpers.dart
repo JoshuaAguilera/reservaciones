@@ -244,7 +244,6 @@ class CalculatorHelpers {
     bool onlyDiscount = false,
     double? descuentoProvisional,
     bool getTotalRoom = false,
-    bool useCashSeason = true,
     bool applyRoundFormat = false,
   }) {
     double tariffAdult = 0;
@@ -526,7 +525,6 @@ class CalculatorHelpers {
       categoria,
       totalDays,
       withDiscount: false,
-      useCashSeason: useCashTariff,
       // applyRoundFormat: applyRoundFormatt,
     );
     double totalChildren = getTotalCategoryRoom(
@@ -536,7 +534,6 @@ class CalculatorHelpers {
       totalDays,
       withDiscount: false,
       isCalculateChildren: true,
-      useCashSeason: useCashTariff,
       // applyRoundFormat: applyRoundFormatt,
     );
 

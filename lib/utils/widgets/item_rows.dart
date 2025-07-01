@@ -86,7 +86,7 @@ class ItemRows {
                 child: CardAnimationWidget(
                   key: UniqueKey(),
                   sideController: sideController,
-                  tarifaXDia: tarifaXDia!,
+                  tarifaXHabitacion: tarifaXDia!,
                 ),
               )
             : Container(

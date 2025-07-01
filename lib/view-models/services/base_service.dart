@@ -9,7 +9,7 @@ class BaseService extends ChangeNotifier {
   var mail = Preferences.mail;
   var phone = Preferences.phone;
   var passwordMail = Preferences.passwordMail;
-  var userId = Preferences.userId;
+  var userId = Preferences.userIdInt;
   var mailUser = Preferences.mail;
   var passwordUser = Preferences.passwordMail;
   var phoneUser = Preferences.phone;

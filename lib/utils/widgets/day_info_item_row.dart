@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
-import '../../database/database.dart';
+import '../../models/periodo_model.dart';
+import '../../models/tarifa_rack_model.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';
 import 'form_widgets.dart';
@@ -13,7 +14,7 @@ class DayInfoItemRow extends StatefulWidget {
   const DayInfoItemRow({
     super.key,
     required this.child,
-    required this.tarifa,
+    required this.rack,
     this.yearNow,
     this.day,
     this.month,
@@ -21,7 +22,7 @@ class DayInfoItemRow extends StatefulWidget {
     this.isntWeek = true,
   });
 
-  final RegistroTarifa tarifa;
+  final TarifaRack rack;
   final int? yearNow;
   final int? day;
   final DateTime? month;
@@ -37,7 +38,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   final _controller = SuperTooltipController();
   GlobalKey _containerKey = GlobalKey();
   TooltipDirection position = TooltipDirection.down;
-  late PeriodoTableData nowPeriod;
+  late Periodo nowPeriod;
 
   Future<bool>? _willPopCallback() async {
     if (_controller.isVisible) {
@@ -56,7 +57,8 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
   @override
   void initState() {
     if (widget.weekNow != null) {
-      nowPeriod = Utility.getPeriodNow(widget.weekNow!, widget.tarifa.periodos);
+      nowPeriod =
+          DateHelpers.getPeriodNow(widget.weekNow!, widget.rack.periodos);
     }
     super.initState();
   }
@@ -100,16 +102,17 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                 child: Column(
                   children: [
                     TextStyles.standardText(
-                      text: widget.tarifa.nombre ?? '',
+                      text: widget.rack.nombre ?? '',
                       isBold: true,
                       color: Theme.of(context).primaryColor,
                     ),
                     TextStyles.standardText(
-                      text: Utility.definePeriodNow(
-                          widget.weekNow ??
-                              DateTime(widget.yearNow!, widget.month!.month,
-                                  widget.day!),
-                          widget.tarifa.periodos),
+                      text: DateHelpers.definePeriodNow(
+                        widget.weekNow ??
+                            DateTime(widget.yearNow!, widget.month!.month,
+                                widget.day!),
+                        periodos: widget.rack.periodos,
+                      ),
                       color: Theme.of(context).primaryColor,
                     ),
                     if (widget.isntWeek && widget.weekNow != null)
@@ -129,12 +132,11 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            for (var element in widget.tarifa.temporadas!)
+                            for (var element in widget.rack.temporadas!)
                               _itemSeasonInfo(
                                 nombre: element.nombre ?? '',
                                 estanciaMin: element.estanciaMinima,
-                                isCash: element.forCash ?? false,
-                                isGroup: element.forGroup ?? false,
+                                tipo: element.tipo,
                                 porcentaje: element.descuento,
                               ),
                           ],
@@ -156,8 +158,7 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
     required String nombre,
     required int? estanciaMin,
     double? porcentaje,
-    bool isGroup = false,
-    bool isCash = false,
+    String? tipo = "individual",
   }) {
     return Column(
       children: [
@@ -166,9 +167,9 @@ class _DayInfoItemRowState extends State<DayInfoItemRow> {
           height: 30,
           margin: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isCash
+            color: tipo == 'efectivo'
                 ? DesktopColors.cashSeason
-                : isGroup
+                : tipo == 'grupal'
                     ? DesktopColors.cotGrupal
                     : DesktopColors.cotIndiv,
             borderRadius: const BorderRadius.all(

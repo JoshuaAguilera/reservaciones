@@ -2,12 +2,12 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/res/ui/text_styles.dart';
-import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
-import 'package:generador_formato/res/helpers/desktop_colors.dart';
 
+import '../../res/helpers/date_helpers.dart';
+import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/buttons.dart';
+import '../../res/ui/text_styles.dart';
+import 'textformfield_custom.dart';
 
 class Dialogs {
   static Widget customAlertDialog({
@@ -146,7 +146,7 @@ class Dialogs {
                   dateController: _initDateController,
                   onChanged: () => setState(
                     () => _endDateController.text =
-                        Utility.getNextMonth(_initDateController.text),
+                        DateHelpers.getNextMonth(_initDateController.text),
                   ),
                 ),
                 TextFormFieldCustom.textFormFieldwithBorderCalendar(

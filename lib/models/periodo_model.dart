@@ -9,7 +9,7 @@ String periodosToJson(List<Periodo> data) =>
 List<Periodo> listPeriodoFromJson(List<dynamic> list) =>
     List<Periodo>.from(list.map((x) => Periodo.fromJson(x)));
 
-Periodo periodoJson(String str) => Periodo.fromJson(json.decode(str));
+Periodo periodoFromJson(String str) => Periodo.fromJson(json.decode(str));
 String periodoToJson(Periodo data) => json.encode(data.toJson());
 
 List<String> candenasFromJson(List<dynamic> str) {

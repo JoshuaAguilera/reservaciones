@@ -6,31 +6,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/res/ui/buttons.dart';
-import 'package:generador_formato/res/helpers/desktop_colors.dart';
-import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/categoria_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/tarifa_rack_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../models/temporada_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
+import '../../res/helpers/colors_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
+import '../../res/helpers/desktop_colors.dart';
+import '../../res/ui/buttons.dart';
 import '../../view-models/providers/habitacion_provider.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/ui/text_styles.dart';
+import '../../views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
+import '../shared_preferences/settings.dart';
 
 class CardAnimationWidget extends ConsumerStatefulWidget {
   const CardAnimationWidget({
     super.key,
     this.resetTime = const Duration(milliseconds: 3500),
     required this.sideController,
-    required this.tarifaXDia,
+    required this.tarifaXHabitacion,
   });
 
   final Duration resetTime;
   final SidebarXController sideController;
-  final TarifaXDia tarifaXDia;
+  final TarifaXHabitacion tarifaXHabitacion;
 
   @override
   _CardAnimationWidgetState createState() => _CardAnimationWidgetState();
@@ -42,23 +47,20 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   bool _isLoading = false;
   bool _isEditing = false;
   late Timer flipCard;
-  RegistroTarifa? nowRegister;
+  TarifaRack? nowRegister;
+  Categoria? selectCategoria;
 
   @override
   void initState() {
     _showFrontSide = true;
     _flipXAxis = true;
-    nowRegister = widget.tarifaXDia.tarifa == null
-        ? null
-        : RegistroTarifa(
-            tarifas: (widget.tarifaXDia.tarifas != null ||
-                    (widget.tarifaXDia.tarifas ?? []).isNotEmpty)
-                ? widget.tarifaXDia.tarifas
-                : [widget.tarifaXDia.tarifa!],
-            temporadas: (widget.tarifaXDia.temporadaSelect != null
-                ? [widget.tarifaXDia.temporadaSelect!]
-                : []),
-          );
+    TarifaRack? initRack = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack;
+    Temporada? selectTemp =
+        widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect;
+    nowRegister = TarifaRack(
+      tarifas: initRack?.tarifas,
+      temporadas: selectTemp == null ? [] : [selectTemp],
+    );
     super.initState();
   }
 
@@ -111,7 +113,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     }
   }
 
-  Widget _buildFlipAnimation(Habitacion habitacion, bool typeQuote) {
+  Widget _buildFlipAnimation(Habitacion habitacion, String typeQuote) {
     return GestureDetector(
       onTap: _switchCard,
       child: AnimatedSwitcher(
@@ -151,29 +153,31 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildFront(Habitacion habitacion, bool typeQuote) {
-    final useCashSeason = ref.watch(useCashSeasonRoomProvider);
+  Widget _buildFront(Habitacion habitacion, String tipoCotizacion) {
+    // final useCashSeason = ref.watch(useCashSeasonRoomProvider);
 
     double padding = (MediaQuery.of(context).size.width > 850) ? 12 : 6;
-    double totalAdulto = Utility.calculateTotalTariffRoom(
+    double totalAdulto = CalculatorHelpers.getTotalCategoryRoom(
       nowRegister,
       habitacion,
+      selectCategoria,
       habitacion.tarifasXHabitacion!.length,
-      descuentoProvisional: widget.tarifaXDia.descIntegrado,
-      isGroupTariff: typeQuote,
-      useCashSeason: useCashSeason,
-      applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
+      tipoTemporada: tipoCotizacion,
+      descuentoProvisional: widget.tarifaXHabitacion.tarifaXDia?.descIntegrado,
+      applyRoundFormat:
+          !(widget.tarifaXHabitacion.tarifaXDia?.modificado ?? false),
     );
 
-    double totalMenores = Utility.calculateTotalTariffRoom(
+    double totalMenores = CalculatorHelpers.getTotalCategoryRoom(
       nowRegister,
       habitacion,
+      selectCategoria,
       habitacion.tarifasXHabitacion!.length,
-      descuentoProvisional: widget.tarifaXDia.descIntegrado,
+      tipoTemporada: tipoCotizacion,
+      descuentoProvisional: widget.tarifaXHabitacion.tarifaXDia?.descIntegrado,
       isCalculateChildren: true,
-      isGroupTariff: typeQuote,
-      useCashSeason: useCashSeason,
-      applyRoundFormat: !(widget.tarifaXDia.modificado ?? false),
+      applyRoundFormat:
+          !(widget.tarifaXHabitacion.tarifaXDia?.modificado ?? false),
     );
 
     bool showToolTip = (MediaQuery.of(context).size.width >
@@ -194,7 +198,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       if (MediaQuery.of(context).size.width <
                           (1210 - (widget.sideController.extended ? 0 : 100)))
                         TextStyles.standardText(
-                          text: widget.tarifaXDia.nombreTariff ?? '',
+                          text: widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                  ?.nombre ??
+                              '',
                           size: 11,
                           color: Theme.of(context).primaryColorDark,
                         ),
@@ -202,27 +208,21 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                           (1510 - (widget.sideController.extended ? 50 : 175)))
                         _messageAsociate(
                           title: "Adul: ",
-                          count: widget.tarifaXDia.tarifa == null
-                              ? 0
-                              : totalAdulto,
+                          count: totalAdulto,
                           isTooltip: true,
                         ),
                       if (MediaQuery.of(context).size.width <
                           (1610 - (widget.sideController.extended ? 50 : 175)))
                         _messageAsociate(
                           title: "Men 7-12: ",
-                          count: widget.tarifaXDia.tarifa == null
-                              ? 0
-                              : totalMenores,
+                          count: totalMenores,
                           isTooltip: true,
                         ),
                       if (MediaQuery.of(context).size.width <
                           (1720 - (widget.sideController.extended ? 100 : 200)))
                         _messageAsociate(
                           title: "Total: ",
-                          count: widget.tarifaXDia.tarifa == null
-                              ? 0
-                              : (totalMenores + totalAdulto),
+                          count: (totalMenores + totalAdulto),
                           isTooltip: true,
                         ),
                     ],
@@ -235,11 +235,15 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
           child: Column(
             children: [
               TextStyles.TextTitleList(
-                index: widget.tarifaXDia.fecha!.day,
-                color: widget.tarifaXDia.subCode == null
-                    ? widget.tarifaXDia.color ?? Theme.of(context).dividerColor
-                    : Utility.darken(
-                        widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
+                index: widget.tarifaXHabitacion.fecha!.day,
+                color: widget.tarifaXHabitacion.subcode == null
+                    ? widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ??
+                        Theme.of(context).dividerColor
+                    : ColorsHelpers.darken(
+                        widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                ?.color ??
+                            DesktopColors.cerulean,
+                        0.2),
                 size: (MediaQuery.of(context).size.width >
                         (1110 - (widget.sideController.extended ? 0 : 100)))
                     ? 28
@@ -253,7 +257,9 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   if (MediaQuery.of(context).size.width >
                       (1210 - (widget.sideController.extended ? 0 : 100)))
                     TextStyles.standardText(
-                      text: widget.tarifaXDia.nombreTariff ?? '',
+                      text: widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                              ?.nombre ??
+                          '',
                       size: 11,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -261,23 +267,20 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                       (1510 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
                       title: "Adul: ",
-                      count: widget.tarifaXDia.tarifa == null ? 0 : totalAdulto,
+                      count: totalAdulto,
                     ),
                   if (MediaQuery.of(context).size.width >
                       (1610 - (widget.sideController.extended ? 50 : 175)))
                     _messageAsociate(
                       title: "Men 7-12: ",
-                      count:
-                          widget.tarifaXDia.tarifa == null ? 0 : totalMenores,
+                      count: totalMenores,
                     ),
                   if (MediaQuery.of(context).size.width > 1710)
                     const SizedBox(height: 10),
                   if (showToolTip)
                     _messageAsociate(
                       title: "Total: ",
-                      count: widget.tarifaXDia.tarifa == null
-                          ? 0
-                          : (totalMenores + totalAdulto),
+                      count: (totalMenores + totalAdulto),
                     ),
                 ],
               ),
@@ -306,17 +309,20 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     );
   }
 
-  Widget _buildRear(Habitacion habitacion, bool typeQuote) {
+  Widget _buildRear(Habitacion habitacion, String typeQuote) {
     double padding = (MediaQuery.of(context).size.width > 850) ? 10 : 0;
-    bool isUnknow = widget.tarifaXDia.id!.contains("Unknow") ||
-        widget.tarifaXDia.id!.contains("tariffFree");
+    bool isUnknow = widget.tarifaXHabitacion.id!.contains("Unknow") ||
+        widget.tarifaXHabitacion.id!.contains("tariffFree");
 
     return __buildLayout(
       key: ValueKey(false),
-      backgroundColor: widget.tarifaXDia.subCode == null
-          ? widget.tarifaXDia.color ?? DesktopColors.cerulean
-          : Utility.darken(
-              widget.tarifaXDia.color ?? DesktopColors.cerulean, 0.2),
+      backgroundColor: widget.tarifaXHabitacion.subcode == null
+          ? widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ??
+              DesktopColors.cerulean
+          : ColorsHelpers.darken(
+              widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ??
+                  DesktopColors.cerulean,
+              0.2),
       faceName: "Rear",
       child: Padding(
         padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
@@ -327,26 +333,31 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.center,
             children: [
-              if (typeQuote
+              if (typeQuote == 'grupal'
                   ? true
                   : MediaQuery.of(context).size.width >
                       (1100 + (widget.sideController.extended ? 120 : 0)))
                 TextStyles.TextTitleList(
-                  index: widget.tarifaXDia.fecha!.day,
-                  color: widget.tarifaXDia.color == null
-                      ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.subCode == null
-                              ? widget.tarifaXDia.color ??
-                                  DesktopColors.cerulean
-                              : Utility.darken(
-                                  widget.tarifaXDia.color ??
-                                      DesktopColors.cerulean,
-                                  0.2))
+                  index: widget.tarifaXHabitacion.fecha!.day,
+                  color:
+                      widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ==
+                              null
                           ? Colors.white
-                          : const Color.fromARGB(255, 43, 43, 43),
+                          : useWhiteForeground(
+                                  widget.tarifaXHabitacion.subcode == null
+                                      ? widget.tarifaXHabitacion.tarifaXDia
+                                              ?.tarifaRack?.color ??
+                                          DesktopColors.cerulean
+                                      : ColorsHelpers.darken(
+                                          widget.tarifaXHabitacion.tarifaXDia
+                                                  ?.tarifaRack?.color ??
+                                              DesktopColors.cerulean,
+                                          0.2))
+                              ? Colors.white
+                              : const Color.fromARGB(255, 43, 43, 43),
                   size: (MediaQuery.of(context).size.width > 1390)
                       ? 28
-                      : !typeQuote
+                      : typeQuote == 'individual'
                           ? 20
                           : 26,
                 ),
@@ -357,29 +368,42 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                 Padding(
                   padding: EdgeInsets.only(bottom: isUnknow ? 10 : 0),
                   child: TextStyles.TextAsociative(
-                    (isUnknow && widget.tarifaXDia.tariffCode == null)
+                    (isUnknow &&
+                            widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                    ?.idInt ==
+                                null)
                         ? "Descuento: "
                         : "Temporada: ",
-                    (isUnknow && widget.tarifaXDia.tariffCode == null)
-                        ? "${widget.tarifaXDia.descIntegrado}%"
-                        : widget.tarifaXDia.temporadaSelect?.nombre ?? "---",
+                    (isUnknow &&
+                            widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                    ?.idInt ==
+                                null)
+                        ? "${widget.tarifaXHabitacion.tarifaXDia?.descIntegrado}%"
+                        : widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect
+                                ?.nombre ??
+                            "---",
                     boldInversed: true,
                     textAling: TextAlign.center,
                     size: 11,
-                    color: widget.tarifaXDia.color == null
+                    color: widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                ?.color ==
+                            null
                         ? Colors.white
-                        : useWhiteForeground(widget.tarifaXDia.subCode == null
-                                ? widget.tarifaXDia.color ??
-                                    DesktopColors.cerulean
-                                : Utility.darken(
-                                    widget.tarifaXDia.color ??
-                                        DesktopColors.cerulean,
-                                    0.2))
+                        : useWhiteForeground(
+                                widget.tarifaXHabitacion.subcode == null
+                                    ? widget.tarifaXHabitacion.tarifaXDia
+                                            ?.tarifaRack?.color ??
+                                        DesktopColors.cerulean
+                                    : ColorsHelpers.darken(
+                                        widget.tarifaXHabitacion.tarifaXDia
+                                                ?.tarifaRack?.color ??
+                                            DesktopColors.cerulean,
+                                        0.2))
                             ? Colors.white
                             : const Color.fromARGB(255, 43, 43, 43),
                     overflow: (MediaQuery.of(context).size.width > 1590)
                         ? TextOverflow.clip
-                        : typeQuote
+                        : typeQuote == 'grupal'
                             ? TextOverflow.clip
                             : TextOverflow.ellipsis,
                   ),
@@ -389,29 +413,37 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                   !isUnknow)
                 TextStyles.TextAsociative(
                   "Periodo: ",
-                  widget.tarifaXDia.periodo == null
+                  widget.tarifaXHabitacion.tarifaXDia?.periodoSelect == null
                       ? "No definido"
-                      : Utility.getStringPeriod(
-                          initDate: widget.tarifaXDia.periodo!.fechaInicial!,
-                          lastDate: widget.tarifaXDia.periodo!.fechaFinal!,
+                      : DateHelpers.getStringPeriod(
+                          initDate: widget.tarifaXHabitacion.tarifaXDia!
+                              .periodoSelect!.fechaInicial!,
+                          lastDate: widget.tarifaXHabitacion.tarifaXDia!
+                              .periodoSelect!.fechaFinal!,
                           compact: true,
                         ),
                   boldInversed: true,
                   textAling: TextAlign.center,
                   size: 11,
-                  color: widget.tarifaXDia.color == null
-                      ? Colors.white
-                      : useWhiteForeground(widget.tarifaXDia.subCode == null
-                              ? widget.tarifaXDia.color ??
-                                  DesktopColors.cerulean
-                              : Utility.darken(
-                                  widget.tarifaXDia.color ??
-                                      DesktopColors.cerulean,
-                                  0.2))
+                  color:
+                      widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ==
+                              null
                           ? Colors.white
-                          : const Color.fromARGB(255, 43, 43, 43),
+                          : useWhiteForeground(
+                                  widget.tarifaXHabitacion.subcode == null
+                                      ? widget.tarifaXHabitacion.tarifaXDia
+                                              ?.tarifaRack?.color ??
+                                          DesktopColors.cerulean
+                                      : ColorsHelpers.darken(
+                                          widget.tarifaXHabitacion.tarifaXDia
+                                                  ?.tarifaRack?.color ??
+                                              DesktopColors.cerulean,
+                                          0.2))
+                              ? Colors.white
+                              : const Color.fromARGB(255, 43, 43, 43),
                 ),
-              if (MediaQuery.of(context).size.width > 1490 && !typeQuote)
+              if (MediaQuery.of(context).size.width > 1490 &&
+                  typeQuote == 'individual')
                 SizedBox(
                   width:
                       (MediaQuery.of(context).size.width > 1490) ? 105 : null,
@@ -421,30 +453,41 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                     sizeText: 11.5,
                     isBold: true,
                     withRoundedBorder: true,
-                    color: Utility.darken(
-                        widget.tarifaXDia.subCode == null
-                            ? widget.tarifaXDia.color ?? DesktopColors.cerulean
-                            : Utility.darken(
-                                widget.tarifaXDia.color ??
+                    color: ColorsHelpers.darken(
+                        widget.tarifaXHabitacion.subcode == null
+                            ? widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                    ?.color ??
+                                DesktopColors.cerulean
+                            : ColorsHelpers.darken(
+                                widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                        ?.color ??
                                     DesktopColors.cerulean,
                                 0.2),
                         0.2),
-                    colorText: widget.tarifaXDia.color == null
+                    colorText: widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                ?.color ==
+                            null
                         ? Colors.white
-                        : useWhiteForeground(Utility.darken(
-                                widget.tarifaXDia.subCode == null
-                                    ? widget.tarifaXDia.color ??
-                                        DesktopColors.cerulean
-                                    : Utility.darken(
-                                        widget.tarifaXDia.color ??
-                                            DesktopColors.cerulean,
-                                        0.2),
-                                0.2))
+                        : useWhiteForeground(
+                            ColorsHelpers.darken(
+                              widget.tarifaXHabitacion.subcode == null
+                                  ? widget.tarifaXHabitacion.tarifaXDia
+                                          ?.tarifaRack?.color ??
+                                      DesktopColors.cerulean
+                                  : ColorsHelpers.darken(
+                                      widget.tarifaXHabitacion.tarifaXDia
+                                              ?.tarifaRack?.color ??
+                                          DesktopColors.cerulean,
+                                      0.2),
+                              0.2,
+                            ),
+                          )
                             ? Colors.white
                             : const Color.fromARGB(255, 43, 43, 43),
                   ),
                 ),
-              if (MediaQuery.of(context).size.width <= 1490 && !typeQuote)
+              if (MediaQuery.of(context).size.width <= 1490 &&
+                  typeQuote == 'individual')
                 Tooltip(
                   message: "Editar",
                   child: IconButton(
@@ -452,7 +495,10 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
                     icon: Icon(
                       Icons.mode_edit_outline_outlined,
                       color: useWhiteForeground(
-                              widget.tarifaXDia.color ?? DesktopColors.cerulean)
+                        widget.tarifaXHabitacion.tarifaXDia?.tarifaRack
+                                ?.color ??
+                            DesktopColors.cerulean,
+                      )
                           ? Colors.white
                           : const Color.fromARGB(255, 43, 43, 43),
                     ),
@@ -473,10 +519,8 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     showDialog(
       context: context,
       builder: (context) => ManagerTariffSingleDialog(
-        tarifaXDia: widget.tarifaXDia,
-        numDays: DateTime.parse(habitacion.checkOut ?? '')
-            .difference(DateTime.parse(habitacion.checkIn ?? ''))
-            .inDays,
+        tarifaXHabitacion: widget.tarifaXHabitacion,
+        numDays: habitacion.checkOut!.difference(habitacion.checkIn!).inDays,
       ),
     ).then(
       (value) {
@@ -493,16 +537,13 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
           );
         }
 
-        nowRegister = widget.tarifaXDia.tarifa == null
-            ? null
-            : RegistroTarifa(
-                tarifas: (widget.tarifaXDia.tarifas != null ||
-                        widget.tarifaXDia.tarifas!.isNotEmpty)
-                    ? widget.tarifaXDia.tarifas
-                    : [widget.tarifaXDia.tarifa!],
-                temporadas: widget.tarifaXDia.temporadaSelect != null
-                    ? [widget.tarifaXDia.temporadaSelect!]
-                    : []);
+        TarifaRack? initRack = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack;
+        Temporada? selectTemp =
+            widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect;
+        nowRegister = TarifaRack(
+          tarifas: initRack?.tarifas,
+          temporadas: selectTemp == null ? [] : [selectTemp],
+        );
 
         Future.delayed(
           1200.ms,
@@ -553,6 +594,6 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
   }
 
   String getNameMonth() {
-    return monthNames[widget.tarifaXDia.fecha!.month - 1];
+    return monthNames[widget.tarifaXHabitacion.fecha!.month - 1];
   }
 }

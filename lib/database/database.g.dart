@@ -8884,6 +8884,12 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
   late final GeneratedColumn<String> temporadaJson = GeneratedColumn<String>(
       'temporada_json', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _periodoJsonMeta =
+      const VerificationMeta('periodoJson');
+  @override
+  late final GeneratedColumn<String> periodoJson = GeneratedColumn<String>(
+      'periodo_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         idInt,
@@ -8894,7 +8900,8 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
         esLibre,
         modificado,
         tarifaRackJson,
-        temporadaJson
+        temporadaJson,
+        periodoJson
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8954,6 +8961,12 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
           temporadaJson.isAcceptableOrUnknown(
               data['temporada_json']!, _temporadaJsonMeta));
     }
+    if (data.containsKey('periodo_json')) {
+      context.handle(
+          _periodoJsonMeta,
+          periodoJson.isAcceptableOrUnknown(
+              data['periodo_json']!, _periodoJsonMeta));
+    }
     return context;
   }
 
@@ -8981,6 +8994,8 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
           DriftSqlType.string, data['${effectivePrefix}tarifa_rack_json']),
       temporadaJson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}temporada_json']),
+      periodoJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}periodo_json']),
     );
   }
 
@@ -9001,6 +9016,7 @@ class TarifaXDiaTableData extends DataClass
   final bool? modificado;
   final String? tarifaRackJson;
   final String? temporadaJson;
+  final String? periodoJson;
   const TarifaXDiaTableData(
       {required this.idInt,
       this.id,
@@ -9010,7 +9026,8 @@ class TarifaXDiaTableData extends DataClass
       this.esLibre,
       this.modificado,
       this.tarifaRackJson,
-      this.temporadaJson});
+      this.temporadaJson,
+      this.periodoJson});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -9038,6 +9055,9 @@ class TarifaXDiaTableData extends DataClass
     }
     if (!nullToAbsent || temporadaJson != null) {
       map['temporada_json'] = Variable<String>(temporadaJson);
+    }
+    if (!nullToAbsent || periodoJson != null) {
+      map['periodo_json'] = Variable<String>(periodoJson);
     }
     return map;
   }
@@ -9067,6 +9087,9 @@ class TarifaXDiaTableData extends DataClass
       temporadaJson: temporadaJson == null && nullToAbsent
           ? const Value.absent()
           : Value(temporadaJson),
+      periodoJson: periodoJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(periodoJson),
     );
   }
 
@@ -9083,6 +9106,7 @@ class TarifaXDiaTableData extends DataClass
       modificado: serializer.fromJson<bool?>(json['modificado']),
       tarifaRackJson: serializer.fromJson<String?>(json['tarifaRackJson']),
       temporadaJson: serializer.fromJson<String?>(json['temporadaJson']),
+      periodoJson: serializer.fromJson<String?>(json['periodoJson']),
     );
   }
   @override
@@ -9098,6 +9122,7 @@ class TarifaXDiaTableData extends DataClass
       'modificado': serializer.toJson<bool?>(modificado),
       'tarifaRackJson': serializer.toJson<String?>(tarifaRackJson),
       'temporadaJson': serializer.toJson<String?>(temporadaJson),
+      'periodoJson': serializer.toJson<String?>(periodoJson),
     };
   }
 
@@ -9110,7 +9135,8 @@ class TarifaXDiaTableData extends DataClass
           Value<bool?> esLibre = const Value.absent(),
           Value<bool?> modificado = const Value.absent(),
           Value<String?> tarifaRackJson = const Value.absent(),
-          Value<String?> temporadaJson = const Value.absent()}) =>
+          Value<String?> temporadaJson = const Value.absent(),
+          Value<String?> periodoJson = const Value.absent()}) =>
       TarifaXDiaTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
@@ -9125,6 +9151,7 @@ class TarifaXDiaTableData extends DataClass
             tarifaRackJson.present ? tarifaRackJson.value : this.tarifaRackJson,
         temporadaJson:
             temporadaJson.present ? temporadaJson.value : this.temporadaJson,
+        periodoJson: periodoJson.present ? periodoJson.value : this.periodoJson,
       );
   TarifaXDiaTableData copyWithCompanion(TarifaXDiaTableCompanion data) {
     return TarifaXDiaTableData(
@@ -9147,6 +9174,8 @@ class TarifaXDiaTableData extends DataClass
       temporadaJson: data.temporadaJson.present
           ? data.temporadaJson.value
           : this.temporadaJson,
+      periodoJson:
+          data.periodoJson.present ? data.periodoJson.value : this.periodoJson,
     );
   }
 
@@ -9161,14 +9190,24 @@ class TarifaXDiaTableData extends DataClass
           ..write('esLibre: $esLibre, ')
           ..write('modificado: $modificado, ')
           ..write('tarifaRackJson: $tarifaRackJson, ')
-          ..write('temporadaJson: $temporadaJson')
+          ..write('temporadaJson: $temporadaJson, ')
+          ..write('periodoJson: $periodoJson')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idInt, id, tarifaRackInt, tarifaRack,
-      descIntegrado, esLibre, modificado, tarifaRackJson, temporadaJson);
+  int get hashCode => Object.hash(
+      idInt,
+      id,
+      tarifaRackInt,
+      tarifaRack,
+      descIntegrado,
+      esLibre,
+      modificado,
+      tarifaRackJson,
+      temporadaJson,
+      periodoJson);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9181,7 +9220,8 @@ class TarifaXDiaTableData extends DataClass
           other.esLibre == this.esLibre &&
           other.modificado == this.modificado &&
           other.tarifaRackJson == this.tarifaRackJson &&
-          other.temporadaJson == this.temporadaJson);
+          other.temporadaJson == this.temporadaJson &&
+          other.periodoJson == this.periodoJson);
 }
 
 class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
@@ -9194,6 +9234,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
   final Value<bool?> modificado;
   final Value<String?> tarifaRackJson;
   final Value<String?> temporadaJson;
+  final Value<String?> periodoJson;
   const TarifaXDiaTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
@@ -9204,6 +9245,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     this.modificado = const Value.absent(),
     this.tarifaRackJson = const Value.absent(),
     this.temporadaJson = const Value.absent(),
+    this.periodoJson = const Value.absent(),
   });
   TarifaXDiaTableCompanion.insert({
     this.idInt = const Value.absent(),
@@ -9215,6 +9257,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     this.modificado = const Value.absent(),
     this.tarifaRackJson = const Value.absent(),
     this.temporadaJson = const Value.absent(),
+    this.periodoJson = const Value.absent(),
   });
   static Insertable<TarifaXDiaTableData> custom({
     Expression<int>? idInt,
@@ -9226,6 +9269,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     Expression<bool>? modificado,
     Expression<String>? tarifaRackJson,
     Expression<String>? temporadaJson,
+    Expression<String>? periodoJson,
   }) {
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
@@ -9237,6 +9281,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       if (modificado != null) 'modificado': modificado,
       if (tarifaRackJson != null) 'tarifa_rack_json': tarifaRackJson,
       if (temporadaJson != null) 'temporada_json': temporadaJson,
+      if (periodoJson != null) 'periodo_json': periodoJson,
     });
   }
 
@@ -9249,7 +9294,8 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       Value<bool?>? esLibre,
       Value<bool?>? modificado,
       Value<String?>? tarifaRackJson,
-      Value<String?>? temporadaJson}) {
+      Value<String?>? temporadaJson,
+      Value<String?>? periodoJson}) {
     return TarifaXDiaTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
@@ -9260,6 +9306,7 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
       modificado: modificado ?? this.modificado,
       tarifaRackJson: tarifaRackJson ?? this.tarifaRackJson,
       temporadaJson: temporadaJson ?? this.temporadaJson,
+      periodoJson: periodoJson ?? this.periodoJson,
     );
   }
 
@@ -9293,6 +9340,9 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
     if (temporadaJson.present) {
       map['temporada_json'] = Variable<String>(temporadaJson.value);
     }
+    if (periodoJson.present) {
+      map['periodo_json'] = Variable<String>(periodoJson.value);
+    }
     return map;
   }
 
@@ -9307,7 +9357,8 @@ class TarifaXDiaTableCompanion extends UpdateCompanion<TarifaXDiaTableData> {
           ..write('esLibre: $esLibre, ')
           ..write('modificado: $modificado, ')
           ..write('tarifaRackJson: $tarifaRackJson, ')
-          ..write('temporadaJson: $temporadaJson')
+          ..write('temporadaJson: $temporadaJson, ')
+          ..write('periodoJson: $periodoJson')
           ..write(')'))
         .toString();
   }
@@ -15227,6 +15278,7 @@ typedef $$TarifaXDiaTableTableCreateCompanionBuilder = TarifaXDiaTableCompanion
   Value<bool?> modificado,
   Value<String?> tarifaRackJson,
   Value<String?> temporadaJson,
+  Value<String?> periodoJson,
 });
 typedef $$TarifaXDiaTableTableUpdateCompanionBuilder = TarifaXDiaTableCompanion
     Function({
@@ -15239,6 +15291,7 @@ typedef $$TarifaXDiaTableTableUpdateCompanionBuilder = TarifaXDiaTableCompanion
   Value<bool?> modificado,
   Value<String?> tarifaRackJson,
   Value<String?> temporadaJson,
+  Value<String?> periodoJson,
 });
 
 class $$TarifaXDiaTableTableTableManager extends RootTableManager<
@@ -15268,6 +15321,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             Value<bool?> modificado = const Value.absent(),
             Value<String?> tarifaRackJson = const Value.absent(),
             Value<String?> temporadaJson = const Value.absent(),
+            Value<String?> periodoJson = const Value.absent(),
           }) =>
               TarifaXDiaTableCompanion(
             idInt: idInt,
@@ -15279,6 +15333,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             modificado: modificado,
             tarifaRackJson: tarifaRackJson,
             temporadaJson: temporadaJson,
+            periodoJson: periodoJson,
           ),
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -15290,6 +15345,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             Value<bool?> modificado = const Value.absent(),
             Value<String?> tarifaRackJson = const Value.absent(),
             Value<String?> temporadaJson = const Value.absent(),
+            Value<String?> periodoJson = const Value.absent(),
           }) =>
               TarifaXDiaTableCompanion.insert(
             idInt: idInt,
@@ -15301,6 +15357,7 @@ class $$TarifaXDiaTableTableTableManager extends RootTableManager<
             modificado: modificado,
             tarifaRackJson: tarifaRackJson,
             temporadaJson: temporadaJson,
+            periodoJson: periodoJson,
           ),
         ));
 }
@@ -15345,6 +15402,11 @@ class $$TarifaXDiaTableTableFilterComposer
 
   ColumnFilters<String> get temporadaJson => $state.composableBuilder(
       column: $state.table.temporadaJson,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get periodoJson => $state.composableBuilder(
+      column: $state.table.periodoJson,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -15420,6 +15482,11 @@ class $$TarifaXDiaTableTableOrderingComposer
 
   ColumnOrderings<String> get temporadaJson => $state.composableBuilder(
       column: $state.table.temporadaJson,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get periodoJson => $state.composableBuilder(
+      column: $state.table.periodoJson,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

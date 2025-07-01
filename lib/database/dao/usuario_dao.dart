@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../../models/imagen_model.dart';
 import '../../models/rol_model.dart';
 import '../../models/usuario_model.dart';
+import '../../utils/encrypt/encrypter.dart';
 import '../database.dart';
 import '../tables/usuario_table.dart';
 
@@ -112,6 +113,17 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
     }).toList();
   }
 
+  //EXISTS
+  Future<bool> exists({String? username, int? id}) async {
+    final query = select(usuarioTable);
+    if (username != null) query.where((u) => u.username.equals(username));
+    if (id != null) query.where((u) => u.idInt.equals(id));
+    final usuario = await query.getSingleOrNull();
+
+    final exists = usuario != null;
+    return exists;
+  }
+
   // CREATE
   Future<int> insert(Usuario usuario) {
     return into(db.usuarioTable).insert(
@@ -120,7 +132,12 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   }
 
   // READ: Usuario por ID
-  Future<Usuario?> getByID(int id) async {
+  Future<Usuario?> get({
+    int? id,
+    String? username,
+    String? password,
+    String? notStatus,
+  }) async {
     final rolAlias = alias(db.rolTable, 'rol');
     final imagenAlias = alias(db.imagenTable, 'image');
 
@@ -135,7 +152,20 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
       ),
     ]);
 
-    query.where(db.cotizacionTable.idInt.equals(id));
+    if (id != null) query.where(db.usuarioTable.idInt.equals(id));
+
+    if (username != null) {
+      query.where(db.usuarioTable.username.equals(username));
+    }
+
+    if (password != null) {
+      String posPassword = EncrypterTool.encryptData(password, null);
+      query.where(db.usuarioTable.password.equals(posPassword));
+    }
+
+    if (notStatus != null) {
+      query.where(db.usuarioTable.estatus.equals(notStatus).not());
+    }
 
     var row = await query.getSingleOrNull();
     if (row == null) return null;

@@ -71,14 +71,16 @@ class ImagenDao extends DatabaseAccessor<AppDatabase> with _$ImagenDaoMixin {
   }
 
   // CREATE
-  Future<int> insert(Imagen imagen) {
-    var response = into(db.imagenTable).insert(
+  Future<Imagen?> insert(Imagen imagen) async {
+    var response = await into(db.imagenTable).insertReturningOrNull(
       ImagenTableData.fromJson(
         imagen.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    Imagen newImage = Imagen.fromJson(response.toJson());
+    return newImage;
   }
 
   // READ: Imagen por ID
@@ -93,14 +95,15 @@ class ImagenDao extends DatabaseAccessor<AppDatabase> with _$ImagenDaoMixin {
   }
 
   // UPDATE
-  Future<bool> updat3(Imagen imagen) {
-    var response = update(db.imagenTable).replace(
+  Future<Imagen?> updat3(Imagen imagen) async {
+    var response = await update(db.imagenTable).replace(
       ImagenTableData.fromJson(
         imagen.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(imagen.idInt ?? 0);
   }
 
   // DELETE

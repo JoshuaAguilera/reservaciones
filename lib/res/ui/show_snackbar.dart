@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/res/ui/text_styles.dart';
+
+import '../../utils/shared_preferences/settings.dart';
+import '../helpers/colors_helpers.dart';
+import '../helpers/icon_helpers.dart';
+import 'text_styles.dart';
 
 void showSnackBar({
   required BuildContext context,
@@ -22,7 +24,7 @@ void showSnackBar({
       backgroundColor: Colors.transparent,
       content: Card(
         elevation: 4,
-        color: Utility.getColorNavbar(type),
+        color: ColorsHelpers.getColorNavbar(type),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(18, 12, 18, 20),
           child: Row(
@@ -46,7 +48,7 @@ void showSnackBar({
               Expanded(
                 flex: 1,
                 child: Icon(
-                  iconCustom ?? Utility.getIconNavbar(type),
+                  iconCustom ?? IconHelpers.getIconNavbar(type),
                   size: 50,
                   color: Colors.white,
                 ),

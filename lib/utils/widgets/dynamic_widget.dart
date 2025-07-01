@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/utils/shared_preferences/settings.dart';
-import 'package:generador_formato/utils/widgets/day_info_item_row.dart';
 
-import '../../database/database.dart';
+import '../../models/periodo_model.dart';
+import '../../models/tarifa_rack_model.dart';
+import '../../res/helpers/date_helpers.dart';
+import '../../res/helpers/icon_helpers.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/ui/text_styles.dart';
+import '../shared_preferences/settings.dart';
+import 'day_info_item_row.dart';
 
 class dynamicWidget {
   static Padding containerResizable(
@@ -57,7 +59,7 @@ class dynamicWidget {
   static List<Widget> buildExpansionItemWeek({
     required List<DateTime> weekNowSegment,
     required DateTime weekNow,
-    required RegistroTarifa tarifa,
+    required TarifaRack tarifa,
     required double sectionDay,
     bool compact = false,
     double target = 1,
@@ -67,7 +69,7 @@ class dynamicWidget {
   }) {
     List<Widget> cards = [];
     bool isRepeat = false;
-    PeriodoTableData nowPeriod = Utility.getPeriodNow(weekNow, tarifa.periodos);
+    Periodo nowPeriod = DateHelpers.getPeriodNow(weekNow, tarifa.periodos);
 
     for (var element in weekNowSegment) {
       if (Utility.defineApplyDays(nowPeriod, element)) {
@@ -97,7 +99,7 @@ class dynamicWidget {
               BlendMode.modulate,
             ),
             child: DayInfoItemRow(
-              tarifa: tarifa,
+              rack: tarifa,
               weekNow: weekNow,
               isntWeek: isntWeek,
               child: Card(
@@ -118,8 +120,10 @@ class dynamicWidget {
                             children: [
                               Expanded(
                                 child: TextStyles.standardText(
-                                  text: Utility.definePeriodNow(
-                                      weekNow, tarifa.periodos),
+                                  text: DateHelpers.definePeriodNow(
+                                    weekNow,
+                                    periodos: tarifa.periodos,
+                                  ),
                                   size: 11,
                                   color: useWhiteForeground(tarifa.color!)
                                       ? Colors.white
@@ -168,8 +172,10 @@ class dynamicWidget {
                                                   : Colors.black),
                                     ),
                                     const SizedBox(width: 5),
-                                    Utility.getIconStatusPeriod(
-                                        nowPeriod, tarifa.color!),
+                                    IconHelpers.getIconStatusPeriod(
+                                      nowPeriod,
+                                      tarifa.color!,
+                                    ),
                                   ],
                                 ),
                               ),

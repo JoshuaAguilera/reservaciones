@@ -59,7 +59,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   TextEditingController _fechaEntrada = TextEditingController(text: "");
   TextEditingController _fechaSalida = TextEditingController(text: "");
   String codeTarifa =
-      "${UniqueKey()} - ${Preferences.username} - ${Preferences.userId} - ${DateTime.now().toString()}";
+      "${UniqueKey()} - ${Preferences.username} - ${Preferences.userIdInt} - ${DateTime.now().toString()}";
 
   TextEditingController adults1_2VRController = TextEditingController();
   TextEditingController adults3VRController = TextEditingController(text: "0");

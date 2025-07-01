@@ -101,7 +101,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     setState(() => inProcess = true);
 
     if (await AuthService()
-        .foundUserName(nameController.text, widget.usuario?.id)) {
+        .getUser(nameController.text, widget.usuario?.id)) {
       messageError =
           "Nombre no valido. Este usuario ya existe, cambie el nombre de usuario";
       nameController =

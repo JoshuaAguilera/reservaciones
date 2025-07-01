@@ -1,12 +1,12 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/view-models/services/auth_service.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
 
+import '../../models/usuario_model.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../shared_preferences/settings.dart';
@@ -118,7 +118,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     controller: passwordMailNewController,
                     passwordVisible: true,
                     validator: (p0) {
-                      if (p0 == null || p0!.isEmpty || p0.length < 4) {
+                      if (p0 == null || p0.isEmpty || p0.length < 4) {
                         return "La contraseña debe de tener al menos 4 caracteres*";
                       }
                       return null;
@@ -130,9 +130,9 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                     passwordVisible: true,
                     controller: passwordMailConfirmController,
                     validator: (p0) {
-                      if (passwordMailNewController.text.length > 0) {
+                      if (passwordMailNewController.text.isNotEmpty) {
                         if (p0 == null ||
-                            p0!.isEmpty ||
+                            p0.isEmpty ||
                             p0 != passwordMailNewController.text) {
                           return "La contraseña debe ser la misma*";
                         }
@@ -183,8 +183,8 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         null,
                       );
 
-                      var userData = UsuarioTableData(
-                        id: widget.userId,
+                      var userData = Usuario(
+                        idInt: widget.userId,
                         password: newPassword,
                       );
 

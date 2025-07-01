@@ -169,7 +169,7 @@ class _TarifarioCalendaryYearViewState
                   Expanded(
                     child: DayInfoItemRow(
                       key: UniqueKey(),
-                      tarifa: tariffNow,
+                      rack: tariffNow,
                       yearNow: dateTariffer.year,
                       day: text,
                       month: month,

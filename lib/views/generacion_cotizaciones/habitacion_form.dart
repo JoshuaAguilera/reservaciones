@@ -762,7 +762,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                   context: context,
                                                   builder: (context) =>
                                                       ManagerTariffSingleDialog(
-                                                    tarifaXDia: tarifaLibre,
+                                                    tarifaXHabitacion: tarifaLibre,
                                                     isAppling: true,
                                                     numDays: DateTime.parse(
                                                             habitacionProvider

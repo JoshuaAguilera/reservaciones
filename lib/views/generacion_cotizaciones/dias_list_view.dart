@@ -296,7 +296,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                     itemBuilder: (context, ink) {
                       return CheckListtileTariffWidget(
                         habitacion: habitacionProvider,
-                        tarifaXDia: list[ink],
+                        tarifaXHab: list[ink],
                         isGroupTariff: typeQuote,
                         useSeasonCash: useCashSeason || useCashRoomSeason,
                       );

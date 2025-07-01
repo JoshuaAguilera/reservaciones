@@ -8,6 +8,7 @@ import 'package:generador_formato/res/ui/custom_widgets.dart';
 import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../../models/politica_tarifario_model.dart';
 import '../../models/registro_tarifa_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
 import '../../view-models/providers/habitacion_provider.dart';
@@ -150,7 +151,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
-    void updateList(int value, PoliticaTableData? politica) {
+    void updateList(int value, PoliticaTarifario? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -181,8 +182,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
             habitaciones, politica.intervaloHabitacionGratuita!,
             isReduced: true)) {
           ref.read(habitacionesProvider.notifier).removeFreeItem(
-              politica.intervaloHabitacionGratuita!,
-              widget.habitacion.id!);
+              politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
         }
       }
     }
@@ -251,10 +251,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     if (screenWidthWithSideBar > 950)
                       TextStyles.standardText(
                         text: Utility.getStringPeriod(
-                          initDate:
-                              DateTime.parse(widget.habitacion.checkIn!),
-                          lastDate:
-                              DateTime.parse(widget.habitacion.checkOut!),
+                          initDate: DateTime.parse(widget.habitacion.checkIn!),
+                          lastDate: DateTime.parse(widget.habitacion.checkOut!),
                         ),
                         align: TextAlign.center,
                         color: colorText,
@@ -570,8 +568,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
             habitaciones, politica.intervaloHabitacionGratuita!,
             isReduced: true)) {
           ref.read(habitacionesProvider.notifier).removeFreeItem(
-              politica.intervaloHabitacionGratuita!,
-              widget.habitacion.id!);
+              politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
         }
       }
     }

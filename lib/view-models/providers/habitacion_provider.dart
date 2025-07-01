@@ -271,7 +271,7 @@ final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
 
 final useCashSeasonProvider = StateProvider<bool>((ref) => false);
 final useCashSeasonRoomProvider = StateProvider<bool>((ref) => false);
-final typeQuoteProvider = StateProvider<bool>((ref) => false);
+final typeQuoteProvider = StateProvider<String>((ref) => 'individual');
 final showManagerTariffGroupProvider = StateProvider<bool>((ref) => false);
 
 final detectChangeRoomProvider = StateProvider<int>((ref) => 0);

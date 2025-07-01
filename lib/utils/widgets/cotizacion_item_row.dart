@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/database/database.dart';
 
 import '../../models/cotizacion_model.dart';
+import '../../models/usuario_model.dart';
+import '../../res/helpers/colors_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
-import '../../res/helpers/utility.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/text_styles.dart';
 import '../shared_preferences/preferences.dart';
@@ -49,7 +50,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
   @override
   void initState() {
     super.initState();
-    isConcrete = (widget.cotizacion.estatus ?? false);
+    isConcrete = widget.cotizacion.estatus == "reservado";
     isGroup = (widget.cotizacion.esGrupo ?? false);
     isInvalid = !isConcrete &&
         (DateTime.now()
@@ -87,10 +88,10 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
     colorItem = isInvalid
         ? DesktopColors.cotNoConcr
         : isGroup
-            ? (widget.cotizacion.estatus ?? false)
+            ? isConcrete
                 ? DesktopColors.resGrupal
                 : DesktopColors.cotGrupal
-            : (widget.cotizacion.estatus ?? false)
+            : isConcrete
                 ? DesktopColors.resIndiv
                 : DesktopColors.cotIndiv;
   }
@@ -102,7 +103,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [colorItem!, Utility.darken(colorItem!, -0.15)],
+            colors: [colorItem!, ColorsHelpers.darken(colorItem!, -0.15)],
             end: Alignment.centerRight,
             begin: Alignment.centerLeft,
           ),
@@ -124,15 +125,14 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           subtitle: Wrap(
             spacing: 10,
             children: [
-              TextStyles.TextAsociative(
-                  "Folio: ", widget.cotizacion.folio!,
+              TextStyles.TextAsociative("Folio: ", widget.cotizacion.folio!,
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
-                  "${Utility.getCompleteDate(data: widget.cotizacion.createdAt)} ${widget.cotizacion.createdAt?.toIso8601String().substring(11, 16)}",
+                  "${DateHelpers.getStringDate(data: widget.cotizacion.createdAt)} ${widget.cotizacion.createdAt?.toIso8601String().substring(11, 16)}",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               if (!isConcrete)
                 TextStyles.TextAsociative("Vigencia: ",
-                    "${Utility.getCompleteDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
+                    "${DateHelpers.getStringDate(data: widget.cotizacion.fechaLimite)} ${widget.cotizacion.fechaLimite?.toIso8601String().substring(11, 16)}",
                     size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               if ((widget.cotizacion.cliente?.correoElectronico ?? '')
                   .isNotEmpty)
@@ -150,7 +150,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
                   icon: CupertinoIcons.person_alt_circle,
                   color: colorText!,
                   label: widget.cotizacion.creadoPor?.username != null
-                      ? UsuarioTableData.fromJson(jsonDecode(
+                      ? Usuario.fromJson(jsonDecode(
                                   widget.cotizacion.creadoPor?.nombre ?? "{}"))
                               .username ??
                           ''
