@@ -106,6 +106,15 @@ class ImagenDao extends DatabaseAccessor<AppDatabase> with _$ImagenDaoMixin {
     return await getByID(imagen.idInt ?? 0);
   }
 
+  // SAVE
+  Future<Imagen?> save(Imagen imagen) async {
+    if (imagen.idInt != null && imagen.idInt! > 0) {
+      return await updat3(imagen);
+    } else {
+      return await insert(imagen);
+    }
+  }
+
   // DELETE
   Future<int> delet3(int id) {
     var response = (delete(db.imagenTable)

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../res/helpers/colors_helpers.dart';
 import '../../res/ui/buttons.dart';
-import '../../res/helpers/utility.dart';
 
 class SelectButtonsWidget extends StatefulWidget {
   const SelectButtonsWidget({
@@ -45,8 +45,8 @@ class _SelectButtonsWidgetState extends State<SelectButtonsWidget> {
                   selected: isButtonNow,
                   round: 4,
                   roundActive: 8,
-                  color:
-                      Utility.darken(widget.buttons[index].values.first, -0.15),
+                  color: ColorsHelpers.darken(
+                      widget.buttons[index].values.first, -0.15),
                   onPressed: () {
                     if (isButtonNow) return;
 
@@ -57,7 +57,7 @@ class _SelectButtonsWidgetState extends State<SelectButtonsWidget> {
                   child: Text(
                     widget.buttons[index].keys.first,
                     style: TextStyle(
-                      color: Utility.darken(
+                      color: ColorsHelpers.darken(
                           widget.buttons[index].values.first, 0.15),
                     ),
                   ),

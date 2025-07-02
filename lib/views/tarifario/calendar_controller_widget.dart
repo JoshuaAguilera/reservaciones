@@ -279,7 +279,7 @@ class _ControllerCalendarWidgetState
                                         itemBuilder: (context, index) {
                                           return ItemRows.tarifaItemRow(
                                             context,
-                                            registroTarifa: list[index],
+                                            tarifaRack: list[index],
                                             onEdit: () {
                                               ref
                                                   .read(

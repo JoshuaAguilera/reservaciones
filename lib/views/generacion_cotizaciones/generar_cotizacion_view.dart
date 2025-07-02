@@ -159,7 +159,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     // }
 
     Future saveQuoteBD({int? limitDay}) async {
-      int id = await CotizacionService().createCotizacion(
+      int id = await CotizacionService().saveData(
         cotizacion: cotizacion,
         habitaciones: habitaciones,
         folio: folio,

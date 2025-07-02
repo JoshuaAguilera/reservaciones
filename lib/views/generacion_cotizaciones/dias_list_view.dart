@@ -271,7 +271,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                             context,
                             habitacion: habitacionProvider,
                             screenWidth: screenWidth,
-                            tarifaXDia: list[ink],
+                            tarHab: list[ink],
                             setState: () => setState(() {}),
                             isGroupTariff: typeQuote,
                             useCashSeason: useCashSeason || useCashRoomSeason,

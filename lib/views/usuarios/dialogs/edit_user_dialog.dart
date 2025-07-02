@@ -2,10 +2,10 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:generador_formato/res/ui/title_page.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
+import '../../../models/usuario_model.dart';
 import '../../../view-models/services/auth_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/custom_widgets.dart';
@@ -26,9 +26,9 @@ class EditUserDialog extends StatefulWidget {
     this.onUpdateList,
   }) : super(key: key);
 
-  final UsuarioTableData? usuario;
-  final void Function(UsuarioTableData?)? onInsert;
-  final void Function(UsuarioTableData?)? onUpdate;
+  final Usuario? usuario;
+  final void Function(Usuario?)? onInsert;
+  final void Function(Usuario?)? onUpdate;
   final void Function()? onUpdateList;
 
   @override
@@ -100,8 +100,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
     setState(() => inProcess = true);
 
-    if (await AuthService()
-        .getUser(nameController.text, widget.usuario?.id)) {
+    if (await AuthService().getUser(nameController.text, widget.usuario?.id)) {
       messageError =
           "Nombre no valido. Este usuario ya existe, cambie el nombre de usuario";
       nameController =

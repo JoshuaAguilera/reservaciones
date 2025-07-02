@@ -15,26 +15,26 @@ final documentQuoteIndProvider =
   pw.Document comprobantePDF =
       await GeneradorDocService().generarComprobanteCotizacionIndividual(
     habitaciones: [
-      Habitacion(
-        categoria: categorias.first,
-        checkIn: "2021-01-01",
-        checkOut: "2021-01-05",
-      ),
-      Habitacion(
-        categoria: categorias.first,
-        checkIn: "2021-01-01",
-        checkOut: "2021-01-05",
-      ),
-      Habitacion(
-        categoria: categorias[1],
-        checkIn: "2021-01-01",
-        checkOut: "2021-01-05",
-      ),
-      Habitacion(
-        categoria: categorias[1],
-        checkIn: "2021-01-01",
-        checkOut: "2021-01-05",
-      )
+      // Habitacion(
+      //   categoria: categorias.first,
+      //   checkIn: "2021-01-01",
+      //   checkOut: "2021-01-05",
+      // ),
+      // Habitacion(
+      //   categoria: categorias.first,
+      //   checkIn: "2021-01-01",
+      //   checkOut: "2021-01-05",
+      // ),
+      // Habitacion(
+      //   categoria: categorias[1],
+      //   checkIn: "2021-01-01",
+      //   checkOut: "2021-01-05",
+      // ),
+      // Habitacion(
+      //   categoria: categorias[1],
+      //   checkIn: "2021-01-01",
+      //   checkOut: "2021-01-05",
+      // )
     ],
     cotizacion: Cotizacion(
       cliente: Cliente(

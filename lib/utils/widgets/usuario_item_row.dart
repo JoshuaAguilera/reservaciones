@@ -8,6 +8,7 @@ import 'package:generador_formato/views/usuarios/dialogs/edit_user_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../../models/usuario_model.dart';
 import '../../view-models/services/auth_service.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
@@ -29,7 +30,7 @@ class UsuarioItemRow extends StatefulWidget {
 
   final void Function()? onUpdateList;
   final bool isTable;
-  final UsuarioTableData usuario;
+  final Usuario usuario;
   final SidebarXController sideController;
   final int index;
 
@@ -40,7 +41,7 @@ class UsuarioItemRow extends StatefulWidget {
 class _UsuarioItemRowState extends State<UsuarioItemRow> {
   bool selected = false;
 
-  void showUpdateDialog(UsuarioTableData user, Brightness brightness) {
+  void showUpdateDialog(Usuario user, Brightness brightness) {
     showDialog(
       context: context,
       builder: (contextBL) {
@@ -72,7 +73,7 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
     );
   }
 
-  void showDeleteDialog(UsuarioTableData user) {
+  void showDeleteDialog(Usuario user) {
     showDialog(
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
@@ -158,7 +159,7 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
 }
 
 class _TableRowUser extends ConsumerStatefulWidget {
-  final UsuarioTableData usuario;
+  final Usuario usuario;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final SidebarXController sideController;
@@ -204,7 +205,8 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: CustomWidgets.itemMedal(widget.usuario.rol!, brightness),
+                child: CustomWidgets.itemMedal(
+                    widget.usuario.rol?.nombre ?? 'unknown', brightness),
               ),
               TextStyles.standardText(
                 text: widget.usuario.username ?? '',
@@ -285,7 +287,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowUser> {
 }
 
 class _ListTileUser extends ConsumerStatefulWidget {
-  final UsuarioTableData usuario;
+  final Usuario usuario;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
   final SidebarXController sideController;
@@ -315,7 +317,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
       child: ListTile(
         titleAlignment: ListTileTitleAlignment.top,
         leading: TextStyles.TextSpecial(
-          day: widget.usuario.id,
+          day: widget.usuario.idInt ?? 0,
           colorTitle: colorText,
           colorsubTitle: colorText,
           subtitle: "ID",
@@ -349,7 +351,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileUser> {
                       SizedBox(
                         width: 150,
                         child: CustomWidgets.itemMedal(
-                            (widget.usuario.rol ?? ''), brightness),
+                            (widget.usuario.rol?.nombre ?? ''), brightness),
                       ),
                     ],
                   ),

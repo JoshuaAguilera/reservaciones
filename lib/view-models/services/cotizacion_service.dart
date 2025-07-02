@@ -1,280 +1,270 @@
-import 'package:drift/drift.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../database/dao/cotizacion_dao.dart';
+import '../../database/dao/habitacion_dao.dart';
+import '../../database/dao/tarifa_x_dia_dao.dart';
+import '../../database/dao/tarifa_x_habitacion_dao.dart';
 import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
+import '../../models/error_model.dart';
 import '../../models/habitacion_model.dart';
-import '../../models/periodo_model.dart';
-import '../../models/prefijo_telefonico_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../models/usuario_model.dart';
 import 'base_service.dart';
 
 class CotizacionService extends BaseService {
-  Future<List<Cotizacion>> getCotizacionesTimePeriod(
-      DateTime initTime, DateTime lastTime) async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
+  Future<List<Cotizacion>> getList({
+    int pagina = 1,
+    int limit = 20,
+    List<bool>? showFilter,
+    String search = "",
+    String ordenBy = "",
+    DateTime? initDate,
+    DateTime? lastDate,
+    bool conDetalle = false,
+    Usuario? creadorPor,
+    Usuario? cerradorPor,
+    String? lapso,
+  }) async {
+    var cotizaciones = List<Cotizacion>.empty();
+
+    bool inLastDay = false;
+    bool inLastWeek = false;
+    bool inLastMonth = false;
+    String sortSBy = "";
+    String ordenSBy = "asc";
+
+    switch (ordenBy) {
+      case "A":
+        sortSBy = "nombre";
+        ordenSBy = "asc";
+      case "MR":
+        sortSBy = "createdAt";
+        ordenSBy = "desc";
+      case "MA":
+        sortSBy = "createdAt";
+        ordenSBy = "asc";
+      default:
+        sortSBy = "createdAt";
+        ordenSBy = "asc";
+    }
+
+    if (lapso != null) {
+      switch (lapso) {
+        case "Ultimo día":
+          inLastDay = true;
+          break;
+        case "Ultima semana":
+          inLastWeek = true;
+          break;
+        case "Ultimo mes":
+          inLastMonth = true;
+          break;
+        default:
+      }
+    }
+
     try {
+      final db = AppDatabase();
+      final cotDao = CotizacionDao(db);
       List<Cotizacion> resp = await cotDao.getList(
-        initDate: initTime,
-        lastDate: lastTime,
+        page: pagina,
+        limit: limit,
+        clienteNombre: search,
+        initDate: initDate,
+        lastDate: lastDate,
+        orderBy: ordenSBy,
+        sortBy: sortSBy,
+        conDetalle: conDetalle,
+        creadorId: creadorPor?.idInt,
+        cerradorId: cerradorPor?.idInt,
+        showFilter: showFilter,
+        inLastDay: inLastDay,
+        inLastWeek: inLastWeek,
+        inLastMonth: inLastMonth,
       );
 
       await db.close();
       return resp;
     } catch (e) {
-      return List.empty();
+      print(e);
     }
+    return cotizaciones;
   }
 
-  Future<int> createCotizacion({
-    required Cotizacion cotizacion,
-    List<Habitacion>? habitaciones,
-    required String folio,
-    required PrefijoTelefonico prefijoInit,
-    int? limitDay,
-    bool isQuoteGroup = false,
-  }) async {
-    final database = AppDatabase();
-    int id = 0;
+  Future<Cotizacion?> getByID(int id) async {
+    Cotizacion? cotizacion;
 
     try {
-      await database.transaction(
+      final db = AppDatabase();
+      final cotDao = CotizacionDao(db);
+      cotizacion = await cotDao.getByID(id);
+      await db.close();
+    } catch (e) {
+      print(e);
+    }
+
+    return cotizacion;
+  }
+
+  Future<Tuple3<ErrorModel?, Cotizacion?, bool>> saveData(
+      Cotizacion cotizacion) async {
+    ErrorModel error = ErrorModel();
+    bool invalidToken = false;
+
+    try {
+      Cotizacion? saveCotizacion;
+      final db = AppDatabase();
+
+      await db.transaction(
         () async {
-          for (var element in habitaciones!) {
-            if (isQuoteGroup) {
-              element.tarifasXHabitacion!.clear();
-              int days = DateTime.parse(element.checkOut!)
-                  .difference(DateTime.parse(element.checkIn!))
-                  .inDays;
+          final cotizacionDao = CotizacionDao(db);
+          final habitacionDao = HabitacionDao(db);
+          final tarifaHabDao = TarifaXHabitacionDao(db);
+          final tarifaDiaDao = TarifaXDiaDao(db);
+
+          Cotizacion? newCotizacion = await cotizacionDao.save(cotizacion);
+          if (newCotizacion == null) {
+            throw Exception("Error al guardar la cotización");
+          }
+          saveCotizacion = newCotizacion;
+          saveCotizacion!.habitaciones ??= List<Habitacion>.empty();
+
+          for (var room
+              in cotizacion.habitaciones ?? List<Habitacion>.empty()) {
+            if (cotizacion.esGrupo ?? false) {
+              room.tarifasXHabitacion!.clear();
+              int days = room.checkOut!.difference(room.checkIn!).inDays;
 
               for (var ink = 0; ink < days; ink++) {
-                DateTime dateNow = DateTime.parse(element.checkOut!)
-                    .add(Duration(days: ink));
-                TarifaXDia newTariff = element.tarifaGrupal!.copyWith();
+                DateTime dateNow = room.checkOut!.add(Duration(days: ink));
+                TarifaXHabitacion newTariff = room.tarifasXHabitacion!
+                    .where((element) => element.esGrupal ?? false)
+                    .first
+                    .copyWith();
                 newTariff.fecha = dateNow;
                 newTariff.dia = ink;
                 newTariff.numDays = 1;
-                element.tarifasXHabitacion!.add(
+                room.tarifasXHabitacion!.add(
                   newTariff.copyWith(),
                 );
               }
             }
 
-            await database.into(database.habitacionTable).insert(
-                  HabitacionTableCompanion.insert(
-                    // categoria: Value(element.categoria),
-                    fecha: DateTime.now(),
-                    useCashSeason: Value(element.useCashSeason),
-                    fechaCheckIn: Value(element.checkIn),
-                    fechaCheckOut: Value(element.checkOut),
-                    folioCotizacion: Value(folio),
-                    adultos: Value(element.adultos),
-                    count: Value(element.count),
-                    // descuento: Value(element.descuento),
-                    folioHabitacion: Value(element.id),
-                    isFree: Value(element.esCortesia),
-                    menores0a6: Value(element.menores0a6),
-                    menores7a12: Value(element.menores7a12),
-                    paxAdic: Value(0),
-                    // total: Value(element.total),
-                    // totalReal: Value(element.totalReal),
-                    tarifaXDia: Value(tarifasXDiaToJson(element.tarifasXHabitacion!)),
-                  ),
-                );
+            room.cotizacionInt = newCotizacion.idInt;
+            Habitacion? newRoom = await habitacionDao.save(room);
+            if (newRoom == null) {
+              throw Exception("Error al guardar la habitación");
+            }
+
+            newRoom.tarifasXHabitacion ??= List<TarifaXHabitacion>.empty();
+
+            for (var tarHab
+                in room.tarifasXHabitacion ?? List<TarifaXHabitacion>.empty()) {
+              tarHab.habitacionInt = newRoom.idInt;
+              TarifaXDia? newTariff;
+
+              if (tarHab.tarifaXDia != null) {
+                newTariff = await tarifaDiaDao.save(tarHab.tarifaXDia!);
+                if (newTariff == null) {
+                  throw Exception("Error al guardar la tarifa del día");
+                }
+              }
+
+              if (tarHab.tarifaXDia == null) {
+                tarHab.tarifaXDia?.idInt = newTariff?.idInt;
+              }
+
+              TarifaXHabitacion? newRateRoom = await tarifaHabDao.save(tarHab);
+              if (newRateRoom == null) {
+                throw Exception("Error al guardar la tarifa de la habitación");
+              }
+
+              newRateRoom.tarifaXDia = newTariff;
+              newRoom.tarifasXHabitacion!.add(newRateRoom);
+            }
+
+            saveCotizacion!.habitaciones!.add(newRoom);
           }
 
-          id = await database.into(database.cotizacionTable).insert(
-                CotizacionTableCompanion.insert(
-                  esGrupo: Value(isQuoteGroup),
-                  folioPrincipal: Value(folio),
-                  habitaciones: const Value(""),
-                  creadoPor: Value(userId),
-                  esConcretado: const Value(false),
-                  fechaLimite: Value(
-                    DateTime.now().add(Duration(days: limitDay ?? 0)),
-                  ),
-                ),
-              );
+          tarifaDiaDao.close();
+          tarifaHabDao.close();
+          habitacionDao.close();
+          cotizacionDao.close();
         },
       );
-      await database.close();
-      return id;
+      await db.close();
+      return Tuple3(null, saveCotizacion, invalidToken);
     } catch (e) {
       print(e);
-      await database.close();
-      return id;
+      error.message = e.toString();
     }
+
+    return Tuple3(error, null, invalidToken);
   }
 
-  Future<List<Cotizacion>> getCotizacionesLocales(
-    String search,
-    int pag,
-    String filtro,
-    bool empty,
-    Periodo? periodo,
-    List<bool> showFilter,
-  ) async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-    int? selectUser = (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null;
+  Future<Tuple3<ErrorModel?, bool, bool>> delete(Cotizacion cotizacion) async {
+    ErrorModel error = ErrorModel();
+    bool invalidToken = false;
 
     try {
-      List<Cotizacion> comprobantes = [];
-      if (empty) {
-        comprobantes = await cotDao.getList(
-          // userId: (rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null,
-          showFilter: showFilter,
-        );
-      } else {
-        if (periodo != null) {
-          comprobantes = await cotDao.getList(
-            initDate: periodo.fechaInicial,
-            lastDate: periodo.fechaFinal,
-            clienteNombre: search,
-            cerradorId: selectUser,
-            showFilter: showFilter,
-          );
-        } else {
-          switch (filtro) {
-            case "Todos":
-              comprobantes = await cotDao.getList(
-                clienteNombre: search,
-                creadorId: selectUser,
-                showFilter: showFilter,
-              );
-              break;
-            case 'Hace un dia':
-              comprobantes = await cotDao.getList(
-                creadorId: selectUser,
-                clienteNombre: search,
-                showFilter: showFilter,
-                inLastDay: true,
-              );
-              break;
-            case 'Hace una semana':
-              comprobantes = await cotDao.getList(
-                creadorId: selectUser,
-                clienteNombre: search,
-                showFilter: showFilter,
-                inLastWeek: true,
-              );
-              break;
-            case 'Hace un mes':
-              comprobantes = await cotDao.getList(
-                creadorId: selectUser,
-                clienteNombre: search,
-                showFilter: showFilter,
-                inLastMonth: true,
-              );
-              break;
-            default:
-          }
-        }
-      }
+      final db = AppDatabase();
 
-      await db.close();
-
-      return comprobantes;
-    } catch (e) {
-      print(e);
-      await db.close();
-
-      return List.empty();
-    }
-  }
-
-  Future<bool> eliminarCotizacion(String folio) async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-    try {
       await db.transaction(
         () async {
-          int responseDQ = await cotDao.delet3(folio: folio);
-          int responseDR = await db.deleteHabitacionByFolio(folio);
+          final cotDao = CotizacionDao(db);
+          final habitacionDao = HabitacionDao(db);
+          final tarifaHabDao = TarifaXHabitacionDao(db);
+          final tarifaDiaDao = TarifaXDiaDao(db);
 
-          print("$responseDQ - $responseDR");
+          final responseDQ = await cotDao.delet3(
+            id: cotizacion.idInt,
+            folio: cotizacion.folio ?? '',
+          );
+
+          if (responseDQ == 0) {
+            throw Exception("Error al eliminar la cotización");
+          }
+          for (var room
+              in cotizacion.habitaciones ?? List<Habitacion>.empty()) {
+            final responseDH = await habitacionDao.delet3(room.idInt ?? 0);
+            if (responseDH == 0) {
+              throw Exception("Error al eliminar la habitación");
+            }
+
+            for (var tarHab
+                in room.tarifasXHabitacion ?? List<TarifaXHabitacion>.empty()) {
+              if (tarHab.tarifaXDia != null) {
+                final responseDTar = await tarifaDiaDao.delet3(
+                  tarHab.tarifaXDia!.idInt ?? 0,
+                );
+                if (responseDTar == 0) {
+                  throw Exception("Error al eliminar la tarifa del día");
+                }
+              }
+
+              final responseDT = await tarifaHabDao.delet3(tarHab.idInt ?? 0);
+              if (responseDT == 0) {
+                throw Exception("Error al eliminar la tarifa de la habitación");
+              }
+            }
+          }
+
+          tarifaDiaDao.close();
+          tarifaHabDao.close();
+          habitacionDao.close();
+          cotDao.close();
         },
       );
 
       await db.close();
-      return true;
+      return const Tuple3(null, true, false);
     } catch (e) {
       print(e);
-      await db.close();
-      return false;
+      error.message = e.toString();
     }
-  }
 
-  Future<List<Cotizacion>> getCotizacionesRecientes() async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-    try {
-      //(rol != "SUPERADMIN" && rol != "ADMIN") ? userId : null
-      List<Cotizacion> resp = await cotDao.getList(order: "created_at");
-      return resp;
-    } catch (e) {
-      print(e);
-      await db.close();
-      return List.empty();
-    }
-  }
-
-  Future<List<Cotizacion>> getCotizacionesActuales() async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-    try {
-      List<Cotizacion> resp = await cotDao.getList();
-
-      await db.close();
-      return resp;
-    } catch (e) {
-      await db.close();
-      return List.empty();
-    }
-  }
-
-  Future<List<Cotizacion>> getCotizaciones({
-    int pagina = 1,
-    int limit = 20,
-    String search = "",
-    String sortBy = "",
-    String ordenBy = "asc",
-    DateTime? initDate,
-    DateTime? lastDate,
-  }) async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-    try {
-      List<Cotizacion> resp = await cotDao.getList(
-        page: pagina,
-        limit: limit,
-        clienteNombre: search,
-        sortBy: sortBy,
-        order: ordenBy,
-        initDate: initDate,
-        lastDate: lastDate,
-      );
-      await db.close();
-      return resp;
-    } catch (e) {
-      await db.close();
-      return List.empty();
-    }
-  }
-
-  Future<bool> updateCotizacion(CotizacionTableData data) async {
-    final db = AppDatabase();
-    final cotDao = CotizacionDao(db);
-
-    try {
-      bool result = await cotDao.updat3(data);
-      await db.close();
-      return result;
-    } catch (e) {
-      print(e);
-      await db.close();
-      return false;
-    }
+    return Tuple3(error, false, invalidToken);
   }
 }

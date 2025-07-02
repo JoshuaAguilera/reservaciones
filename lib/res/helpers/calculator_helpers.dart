@@ -338,11 +338,10 @@ class CalculatorHelpers {
   static double getTotalRooms(
     List<Habitacion> habitaciones,
     Categoria categoria, {
+    String tipoCotizacion = "individual",
     bool onlyTotalReal = false,
     bool onlyDiscount = false,
     bool onlyTotal = false,
-    bool groupQuote = false,
-    bool useSeasonCash = false,
   }) {
     double total = 0;
 
@@ -353,7 +352,7 @@ class CalculatorHelpers {
           ?.where((t) => t.esGrupal ?? false)
           .firstOrNull;
 
-      if (groupQuote && tariffGroup != null && isGroup) {
+      if (tipoCotizacion == 'grupal' && tariffGroup != null && isGroup) {
         final applyRound = !(tariffGroup.tarifaXDia?.modificado ?? false);
 
         double baseTotal = getTotalCategoryRoom(
@@ -481,9 +480,7 @@ class CalculatorHelpers {
     Habitacion habitacion,
     Categoria categoria,
     int totalDays, {
-    bool onlyTariffVR = false,
-    bool onlyTariffVPM = false,
-    bool typeQuote = false,
+    String typeQuote = "individual",
     bool applyRoundFormatt = false,
   }) {
     double discountTotal = 0;
@@ -494,8 +491,6 @@ class CalculatorHelpers {
         habitacion,
         categoria,
         totalDays,
-        onlyTariffVPM: onlyTariffVPM,
-        onlyTariffVR: onlyTariffVR,
         typeQuote: typeQuote,
         applyRoundFormatt:
             !(element.tarifaXDia?.modificado ?? false) || applyRoundFormatt,
@@ -510,10 +505,8 @@ class CalculatorHelpers {
     Habitacion habitacion,
     Categoria categoria,
     int totalDays, {
-    bool onlyTariffVR = false,
-    bool onlyTariffVPM = false,
     bool onlyDiscountUnitary = false,
-    bool typeQuote = false,
+    String typeQuote = "individual",
     bool useCashTariff = false,
     bool applyRoundFormatt = false,
   }) {

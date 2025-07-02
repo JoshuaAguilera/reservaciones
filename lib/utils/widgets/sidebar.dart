@@ -9,6 +9,7 @@ import 'package:sidebarx/sidebarx.dart';
 import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/registro_tarifa_model.dart';
+import '../../models/usuario_model.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/providers/dahsboard_provider.dart';
 import '../../view-models/providers/habitacion_provider.dart';
@@ -205,7 +206,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                               ),
                             ),
                             Text(
-                              usuario.rol ?? '',
+                              usuario?.rol?.nombre ?? '',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontFamily: "poppins_regular",
@@ -303,13 +304,13 @@ class _SideBarState extends ConsumerState<SideBar> {
             name: "Configuración",
             icon: HeroIcons.wrench_screwdriver,
           ),
-          if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
-            _SideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
-          if (usuario.rol == 'SUPERADMIN')
-            _SideBarCustomItem(
-              name: "Gestión de usuarios",
-              icon: HeroIcons.user_group,
-            ),
+          // if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
+          _SideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
+          // if (usuario.rol == 'SUPERADMIN')
+          _SideBarCustomItem(
+            name: "Gestión de usuarios",
+            icon: HeroIcons.user_group,
+          ),
           _SideBarCustomItem(name: "Clientes", icon: Iconsax.profile_2user_bold)
         ],
         headerDivider: Padding(
@@ -343,7 +344,9 @@ class _SideBarState extends ConsumerState<SideBar> {
                   ref
                       .read(useCashSeasonRoomProvider.notifier)
                       .update((state) => false);
-                  ref.read(typeQuoteProvider.notifier).update((state) => false);
+                  ref
+                      .read(typeQuoteProvider.notifier)
+                      .update((state) => "individual");
                   ref
                       .read(showManagerTariffGroupProvider.notifier)
                       .update((state) => false);
@@ -359,15 +362,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                   ref
                       .read(selectedModeViewProvider.notifier)
                       .update((state) => <bool>[true, false, false]);
-                  ref.read(userProvider.notifier).update(
-                        (state) => const UsuarioTableData(
-                          id: 0,
-                          username: "",
-                          password: "",
-                          rol: "",
-                          correoElectronico: "",
-                        ),
-                      );
+                  ref.read(userProvider.notifier).update((state) => null);
 
                   ref.read(userViewProvider.notifier).update((state) => false);
 

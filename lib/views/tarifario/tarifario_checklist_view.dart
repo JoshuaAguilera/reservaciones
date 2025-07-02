@@ -58,7 +58,7 @@ class _TarifarioChecklistViewState
                               shrinkWrap: false,
                               itemBuilder: (context, index) {
                                 return ItemRows.tarifaCheckListItemRow(
-                                  registro: list[index],
+                                  rack: list[index],
                                   tarifaBase: tarifasB
                                           .where((elementInt) =>
                                               elementInt.idInt ==

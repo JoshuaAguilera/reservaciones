@@ -316,6 +316,17 @@ class DateHelpers {
 
     return totalCells <= 35 ? 5 : 6;
   }
+
+  static String getWeekDays(List<String>? weekDays) {
+    String days = "";
+
+    for (var element in weekDays ?? <String>[]) {
+      days +=
+          "${element.substring(0, 1).toUpperCase()}${element.substring(1, 2).toLowerCase()} ";
+    }
+
+    return days.trim();
+  }
 }
 
 extension DateOnlyCompare on DateTime {

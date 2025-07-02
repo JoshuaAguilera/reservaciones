@@ -99,7 +99,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     }
 
     Future deleteQuote(String? folio) async {
-      if (await CotizacionService().eliminarCotizacion(folio ?? '')) {
+      if (await CotizacionService().delete(folio ?? '')) {
         ref
             .read(changeHistoryProvider.notifier)
             .update((state) => UniqueKey().hashCode);

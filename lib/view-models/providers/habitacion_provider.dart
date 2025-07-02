@@ -5,7 +5,10 @@ import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/habitacion_model.dart';
 import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
 import '../../res/helpers/utility.dart';
 import '../services/generador_doc_service.dart';
 import 'tarifario_provider.dart';
@@ -39,7 +42,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
     int freeRoomsValid = rooms ~/ interval;
 
-    Habitacion item = habitacion.CopyWith();
+    Habitacion item = habitacion.copyWith();
     item.esCortesia = true;
     item.count = 1;
 
@@ -66,13 +69,12 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
             }
           }
 
-          int freeRoomsValid = rooms ~/ data.intervaloHabitacionGratuita!;
+          int freeRoomsValid = rooms ~/ data.valor!;
 
-          if (rooms >= data.intervaloHabitacionGratuita!) {
+          if (rooms >= data.valor!) {
             for (var element in freeRooms) {
               if (!state.any((element2) =>
-                  !element2.esCortesia &&
-                  element2.id == element.id)) {
+                  !element2.esCortesia && element2.id == element.id)) {
                 state.remove(element);
               }
             }
@@ -82,7 +84,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
               addFreeItem(
                   state.reduce((value, element) =>
                       value.count > element.count ? value : element),
-                  data.intervaloHabitacionGratuita!);
+                  data.valor!);
             }
           } else {
             state.removeWhere((element) => element.esCortesia);
@@ -107,13 +109,11 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     if (index != -1) {
       state[index] = item;
 
-      if (state.any((element) =>
-          element.id == state[index].id)) {
-        Habitacion roomEdit = item.CopyWith();
+      if (state.any((element) => element.id == state[index].id)) {
+        Habitacion roomEdit = item.copyWith();
         roomEdit.esCortesia = true;
-        for (var element in state.where((element) =>
-            element.id == state[index].id &&
-            element.esCortesia)) {
+        for (var element in state.where(
+            (element) => element.id == state[index].id && element.esCortesia)) {
           state[state.indexOf(element)] = roomEdit;
         }
       }
@@ -143,8 +143,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
     if (freeRoomsValid > 0) {
       for (var room = freeRooms; room > freeRoomsValid; room--) {
-        if (state.any(
-            (element) => element.id == folio && element.esCortesia)) {
+        if (state.any((element) => element.id == folio && element.esCortesia)) {
           state.remove(state.firstWhere(
               (element) => element.id == folio && element.esCortesia));
         } else {
@@ -161,10 +160,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
     Habitacion newFreeRoom = state
         .firstWhere((element) =>
             !element.esCortesia &&
-            (indexRoom != -1
-                ? element.id == folio
-                : element.id != folio))
-        .CopyWith();
+            (indexRoom != -1 ? element.id == folio : element.id != folio))
+        .copyWith();
 
     newFreeRoom.esCortesia = true;
     newFreeRoom.count = 1;
@@ -180,46 +177,48 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void clear() => state = [];
 
-  void implementGroupTariff(List<TarifaXDia?> selectTariffs) {
+  void implementGroupTariff(List<TarifaXHabitacion?> selectTariffs) {
     for (var item in state) {
       if (selectTariffs.isNotEmpty) {
-        TarifaXDia? selectTariff = selectTariffs.firstWhere(
-          (element) => element?.folioRoom == item.id,
+        TarifaXHabitacion? selectTariff = selectTariffs.firstWhere(
+          (element) => element?.idInt == item.idInt,
           orElse: () => null,
         );
 
-        if (selectTariff != null &&
-            (selectTariff.tarifasBase ?? []).isNotEmpty) {
-          selectTariff.tarifas = selectTariff.tarifasBase;
-          selectTariff.tarifa = selectTariff.tarifasBase
-              ?.where((element) => element.categoria == item.categoria)
-              .toList()
-              .firstOrNull;
-        }
+        // if (selectTariff != null &&
+        //     (selectTariff.tarifasBase ?? []).isNotEmpty) {
+        //   selectTariff.tarifas = selectTariff.tarifasBase;
+        //   selectTariff.tarifa = selectTariff.tarifasBase
+        //       ?.where((element) => element.categoria == item.categoria)
+        //       .toList()
+        //       .firstOrNull;
+        // }
 
         selectTariff?.numDays = item.tarifasXHabitacion?.length ?? 0;
 
-        item.tarifaGrupal = selectTariff;
+        // item.tarifaGrupal = selectTariff;
         continue;
       }
 
-      if (item.tarifaGrupal == null) {
-        List<TarifaXDia> filterTariffs =
+      if (item.tarifasXHabitacion
+              ?.where((element) => element.esGrupal ?? false)
+              .firstOrNull ==
+          null) {
+        List<TarifaXHabitacion> filterTariffs =
             Utility.getUniqueTariffs(item.tarifasXHabitacion!);
-        TarifaXDia? tarifaGrupo =
+        TarifaXHabitacion? tarifaGrupo =
             filterTariffs.reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
-        tarifaGrupo.temporadaSelect = Utility.getSeasonNow(
-          RegistroTarifa(temporadas: tarifaGrupo.temporadas),
-          DateTime.parse(item.checkOut!)
-              .difference(DateTime.parse(item.checkIn!))
-              .inDays,
-          isGroup: true,
+        tarifaGrupo.tarifaXDia?.temporadaSelect =
+            CalculatorHelpers.getSeasonNow(
+          tarifaGrupo.tarifaXDia?.tarifaRack,
+          item.checkOut!.difference(item.checkIn!).inDays,
+          tipo: "grupal",
         );
 
         tarifaGrupo.numDays = item.tarifasXHabitacion?.length ?? 0;
 
-        item.tarifaGrupal = tarifaGrupo;
+        // item.tarifaGrupal = tarifaGrupo;
       }
     }
 
@@ -228,7 +227,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
 
   void removeGroupTariff() {
     for (var item in state) {
-      item.tarifaGrupal = null;
+      // item.tarifaGrupal = null;
     }
     ref.notifyListeners();
   }
@@ -263,7 +262,8 @@ final habitacionSelectProvider =
 
 final detectChangeProvider = StateProvider<int>((ref) => 0);
 
-final listTariffDayProvider = FutureProvider<List<TarifaXDia>>((ref) async {
+final listTariffDayProvider =
+    FutureProvider<List<TarifaXHabitacion>>((ref) async {
   final detectChanged = ref.watch(detectChangeProvider);
   final list = ref.watch(habitacionSelectProvider).tarifasXHabitacion ?? [];
   return list;
@@ -282,17 +282,17 @@ final listRoomProvider = FutureProvider<List<Habitacion>>((ref) async {
   return list;
 });
 
-class TarifasProvisionalesProvider
-    extends StateNotifier<List<TarifaTableData>> {
+class TarifasProvisionalesProvider extends StateNotifier<List<Tarifa>> {
   TarifasProvisionalesProvider() : super([]);
 
-  static final provider = StateNotifierProvider<TarifasProvisionalesProvider,
-      List<TarifaTableData>>((ref) => TarifasProvisionalesProvider());
+  static final provider =
+      StateNotifierProvider<TarifasProvisionalesProvider, List<Tarifa>>(
+          (ref) => TarifasProvisionalesProvider());
 
-  TarifaTableData _current = const TarifaTableData(id: 0, code: "");
-  TarifaTableData get current => _current;
+  Tarifa _current = Tarifa(idInt: 0);
+  Tarifa get current => _current;
 
-  void addItem(TarifaTableData item) {
+  void addItem(Tarifa item) {
     _current = item;
     state = [...state, item];
   }
@@ -302,7 +302,7 @@ class TarifasProvisionalesProvider
 
   void clear() => state = [];
 
-  void addAll(List<TarifaTableData> items) {
+  void addAll(List<Tarifa> items) {
     state = items;
   }
 }

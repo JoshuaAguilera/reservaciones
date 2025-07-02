@@ -6,7 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 import '../../models/periodo_model.dart';
 
 class IconHelpers {
-  static IconData? getIconNavbar(String type) {
+  static IconData? getIconNavbar(String? type) {
     switch (type) {
       case "alert":
         return CupertinoIcons.exclamationmark_octagon;

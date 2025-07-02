@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/numero_cotizacion_model.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/utils/widgets/card_animation_widget.dart';
-import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/numero_cotizacion_model.dart';
+import '../../models/tarifa_rack_model.dart';
+import '../../models/tarifa_x_dia_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/icon_helpers.dart';
+import '../../res/helpers/utility.dart';
 import '../shared_preferences/settings.dart';
+import 'card_animation_widget.dart';
 import 'dialogs.dart';
 import '../../res/ui/text_styles.dart';
 
@@ -25,7 +28,7 @@ class ItemRows {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         gradient: LinearGradient(
-          colors: Utility.getGradientQuote(register.tipoCotizacion),
+          colors: ColorsHelpers.getGradientQuote(register.tipoCotizacion),
           end: Alignment.centerRight,
           begin: Alignment.centerLeft,
         ),
@@ -38,12 +41,14 @@ class ItemRows {
           Positioned(
             bottom: 0,
             right: 0,
-            child: Icon(Utility.getIconCardDashboard(register.tipoCotizacion),
-                size: 55,
-                color: Utility.darken(
-                  Utility.getColorRegisterQuote(register.tipoCotizacion!),
-                  0.12,
-                )),
+            child: Icon(
+              IconHelpers.getIconCardDashboard(register.tipoCotizacion),
+              size: 55,
+              color: ColorsHelpers.darken(
+                ColorsHelpers.getColorRegisterQuote(register.tipoCotizacion!),
+                0.12,
+              ),
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +78,7 @@ class ItemRows {
     required bool inPeriod,
     DateTime? dateNow,
     required SidebarXController sideController,
-    TarifaXDia? tarifaXDia,
+    TarifaXHabitacion? tarifaXDia,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
@@ -138,16 +143,16 @@ class ItemRows {
 
   static Widget tarifaItemRow(
     BuildContext context, {
-    RegistroTarifa? registroTarifa,
+    TarifaRack? tarifaRack,
     void Function(bool?)? onChangedSelect,
     void Function()? onEdit,
     void Function()? onDelete,
   }) {
     return ListTile(
       leading: Checkbox(
-        value: registroTarifa!.isSelected,
+        value: tarifaRack!.select,
         onChanged: onChangedSelect,
-        activeColor: registroTarifa.color ?? Colors.amber,
+        activeColor: tarifaRack.color ?? Colors.amber,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(3),
@@ -155,7 +160,7 @@ class ItemRows {
         ),
       ),
       title: TextStyles.standardText(
-          text: registroTarifa.nombre ?? 'Unknow',
+          text: tarifaRack.nombre ?? 'Unknow',
           color: Theme.of(context).primaryColor),
       trailing: PopupMenuButton<ListTileTitleAlignment>(
         position: PopupMenuPosition.under,
@@ -187,7 +192,7 @@ class ItemRows {
                   context: context,
                   title: "Eliminar tarifa",
                   contentText:
-                      "¿Desea eliminar la siguiente tarifa: ${registroTarifa.nombre}?",
+                      "¿Desea eliminar la siguiente tarifa: ${tarifaRack.nombre}?",
                   nameButtonMain: "Aceptar",
                   funtionMain: () async {
                     onDelete!.call();
@@ -215,24 +220,24 @@ class ItemRows {
   }
 
   static Widget tarifaCheckListItemRow({
-    required RegistroTarifa registro,
+    required TarifaRack rack,
     required double screenWidth,
-    required void Function(RegistroTarifa)? onEdit,
-    required void Function(RegistroTarifa)? onDelete,
+    required void Function(TarifaRack)? onEdit,
+    required void Function(TarifaRack)? onDelete,
     required String tarifaBase,
   }) {
-    Color? colorText = useWhiteForeground(registro.color!)
-        ? Utility.darken(registro.color!, -0.4)
-        : Utility.darken(registro.color!, 0.4);
-    Color? colorIcon = useWhiteForeground(registro.color!)
-        ? Utility.darken(registro.color!, -0.45)
-        : Utility.darken(registro.color!, 0.45);
+    Color? colorText = useWhiteForeground(rack.color!)
+        ? ColorsHelpers.darken(rack.color!, -0.4)
+        : ColorsHelpers.darken(rack.color!, 0.4);
+    Color? colorIcon = useWhiteForeground(rack.color!)
+        ? ColorsHelpers.darken(rack.color!, -0.45)
+        : ColorsHelpers.darken(rack.color!, 0.45);
 
     return SizedBox(
       width: 170,
       child: Card(
         elevation: 5,
-        color: registro.color,
+        color: rack.color,
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
@@ -240,13 +245,13 @@ class ItemRows {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextStyles.standardText(
-                  text: registro.nombre ?? '',
+                  text: rack.nombre ?? '',
                   isBold: true,
                   color: colorText,
                 ),
                 TextStyles.TextAsociative(
                   "Estatus:  ",
-                  Utility.defineStatusTariff(registro.periodos),
+                  Utility.defineStatusTariff(rack.periodos),
                   color: colorText,
                   boldInversed: true,
                 ),
@@ -255,7 +260,7 @@ class ItemRows {
             trailing: Wrap(
               children: [
                 IconButton(
-                  onPressed: () => onEdit!.call(registro),
+                  onPressed: () => onEdit!.call(rack),
                   tooltip: "Editar",
                   icon: Icon(
                     Iconsax.edit_outline,
@@ -265,7 +270,7 @@ class ItemRows {
                 ),
                 const SizedBox(width: 10),
                 IconButton(
-                  onPressed: () => onDelete!.call(registro),
+                  onPressed: () => onDelete!.call(rack),
                   tooltip: "Eliminar",
                   icon: Icon(
                     CupertinoIcons.delete,
@@ -280,7 +285,7 @@ class ItemRows {
               children: [
                 TextStyles.TextAsociative(
                   "Fecha de registro: ",
-                  Utility.getCompleteDate(data: registro.fechaRegistro),
+                  DateHelpers.getStringDate(data: rack.createdAt),
                   color: colorText,
                   size: 13,
                   boldInversed: true,
@@ -295,7 +300,8 @@ class ItemRows {
 
                 TextStyles.TextAsociative(
                   "Dias de aplicación: ",
-                  "${(registro.periodos?.first.enLunes ?? false) ? "L " : ""}${(registro.periodos?.first.enMartes ?? false) ? "Ma " : ""}${(registro.periodos?.first.enMiercoles ?? false) ? "Mi " : ""}${(registro.periodos?.first.enJueves ?? false) ? "J " : ""}${(registro.periodos?.first.enViernes ?? false) ? "V " : ""}${(registro.periodos?.first.enSabado ?? false) ? "S " : ""}${(registro.periodos?.first.enDomingo ?? false) ? "D " : ""}",
+                  DateHelpers.getWeekDays(
+                      rack.periodos?.firstOrNull?.diasActivo),
                   color: colorText,
                   size: 13,
                   boldInversed: true,
@@ -545,14 +551,16 @@ class ItemRows {
                 TextStyles.standardText(
                   text: (initDate == null && lastDate == null)
                       ? title
-                      : Utility.getStringPeriod(
-                          initDate: initDate!, lastDate: lastDate!),
+                      : DateHelpers.getStringPeriod(
+                          initDate: initDate!,
+                          lastDate: lastDate!,
+                        ),
                   color: useWhiteForeground(
                           isSelect ? colorCard : backgroundColor ?? colorCard)
                       ? isSelect
-                          ? Utility.darken(colorCard, -0.4)
+                          ? ColorsHelpers.darken(colorCard, -0.4)
                           : colorCard
-                      : Utility.darken(colorCard, 0.225),
+                      : ColorsHelpers.darken(colorCard, 0.225),
                   size: sizeText ?? 13,
                 ),
                 if (withDeleteButton)
@@ -570,9 +578,9 @@ class ItemRows {
                                 ? colorCard
                                 : backgroundColor ?? colorCard)
                             ? isSelect
-                                ? Utility.darken(colorCard, -0.42)
+                                ? ColorsHelpers.darken(colorCard, -0.42)
                                 : colorCard
-                            : Utility.darken(colorCard, 0.3),
+                            : ColorsHelpers.darken(colorCard, 0.3),
                       ),
                     ),
                   ),

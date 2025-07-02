@@ -63,12 +63,16 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(TarifaXDia tarifa) {
-    return into(db.tarifaXDiaTable).insert(
+  Future<TarifaXDia?> insert(TarifaXDia tarifa) async {
+    final response = await into(db.tarifaXDiaTable).insertReturningOrNull(
       TarifaXDiaTableData.fromJson(
         tarifa.toJson(),
       ),
     );
+
+    if (response == null) return null;
+    TarifaXDia newRateDay = TarifaXDia.fromJson(response.toJson());
+    return newRateDay;
   }
 
   // READ: TarifaXDia por ID
@@ -105,14 +109,24 @@ class TarifaXDiaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(TarifaXDia tarifa) {
-    var response = update(db.tarifaXDiaTable).replace(
+  Future<TarifaXDia?> updat3(TarifaXDia tarifa) async {
+    var response = await update(db.tarifaXDiaTable).replace(
       TarifaXDiaTableData.fromJson(
         tarifa.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(tarifa.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<TarifaXDia?> save(TarifaXDia tarifa) async {
+    if (tarifa.idInt != null && tarifa.idInt! > 0) {
+      return await updat3(tarifa);
+    } else {
+      return await insert(tarifa);
+    }
   }
 
   // DELETE

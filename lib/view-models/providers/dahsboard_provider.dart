@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/numero_cotizacion_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../services/cotizacion_service.dart';
 import '../../res/helpers/utility.dart';
 
@@ -14,8 +15,9 @@ final reporteCotizacionesIndProvider =
 
   final list = Utility.getCotizacionQuotes(
     cotizaciones: await CotizacionService().getCotizacionesTimePeriod(
-      Utility.calculatePeriodReport(filter, date),
-      Utility.calculatePeriodReport(filter, date, addTime: true),
+      DateHelpers.calculatePeriodReport(filter: filter, date: date),
+      DateHelpers.calculatePeriodReport(
+          filter: filter, date: date, addTime: true),
     ),
     filter: filter,
     date: date,

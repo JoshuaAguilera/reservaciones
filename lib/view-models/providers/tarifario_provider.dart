@@ -8,6 +8,7 @@ import 'package:generador_formato/view-models/services/tarifa_service.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:riverpod/riverpod.dart';
 
+import '../../models/politica_tarifario_model.dart';
 import '../../models/tarifa_base_model.dart';
 
 final editTarifaProvider =
@@ -29,7 +30,7 @@ final listTarifaProvider = FutureProvider.family<List<RegistroTarifa>, String>(
   },
 );
 
-final tariffPolicyProvider = FutureProvider.family<PoliticaTableData?, String>(
+final tariffPolicyProvider = FutureProvider.family<PoliticaTarifario?, String>(
   (ref, arg) async {
     final detectChanged = ref.watch(changeTariffPolicyProvider);
     final list = await TarifaService().getTariffPolicy();

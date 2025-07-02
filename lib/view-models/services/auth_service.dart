@@ -59,13 +59,13 @@ class AuthService extends BaseService {
     return Tuple2(null, response);
   }
 
-  Future<bool> deleteUser(UsuarioTableData user) async {
+  Future<bool> deleteUser(Usuario user) async {
     bool success = false;
 
     try {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
-      int response = await usuarioDao.delet3(user.idInt);
+      int response = await usuarioDao.delet3(user.idInt ?? 0);
       success = response == 1;
       usuarioDao.close();
       db.close();

@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:generador_formato/res/ui/textformfield_style.dart';
 
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/ui/textformfield_style.dart';
 
 class TextFormFieldCustom {
   static Widget textFormFieldwithBorder({
@@ -209,10 +210,12 @@ class TextFormFieldCustom {
                     return null;
                   },
                   controller: TextEditingController(
-                    text: dateController.text.isEmpty ? "" : Utility.getCompleteDate(
-                      data: DateTime.parse(dateController.text),
-                      compact: compact,
-                    ),
+                    text: dateController.text.isEmpty
+                        ? ""
+                        : DateHelpers.getStringDate(
+                            data: DateTime.parse(dateController.text),
+                            compact: compact,
+                          ),
                   ),
                   style: const TextStyle(
                     fontSize: 13,

@@ -2,20 +2,21 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/res/ui/custom_widgets.dart';
-import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import '../../models/categoria_model.dart';
+import '../../models/habitacion_model.dart';
 import '../../models/politica_tarifario_model.dart';
-import '../../models/registro_tarifa_model.dart';
-import '../../models/tarifa_x_dia_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
+import '../../res/ui/custom_widgets.dart';
 import '../../view-models/providers/habitacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../shared_preferences/settings.dart';
 import 'dialogs.dart';
+import 'form_widgets.dart';
 import 'number_input_with_increment_decrement.dart';
 import '../../res/ui/text_styles.dart';
 import '../../res/helpers/utility.dart';
@@ -23,6 +24,7 @@ import '../../res/helpers/utility.dart';
 class HabitacionItemRow extends StatefulWidget {
   final int index;
   final Habitacion habitacion;
+  final Categoria categoria;
   final bool isTable;
   final void Function()? onPressedEdit;
   final void Function()? onPressedDelete;
@@ -39,6 +41,7 @@ class HabitacionItemRow extends StatefulWidget {
     this.onPressedDuplicate,
     this.esDetalle = false,
     required this.sideController,
+    required this.categoria,
   });
 
   @override
@@ -166,40 +169,40 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
           if (!element.esCortesia) rooms += element.count;
         }
 
-        // if (!(Preferences.rol == 'RECEPCION')) {
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
-        }
+        // // if (!(Preferences.rol == 'RECEPCION')) {
+        // if (!typeQuote && rooms >= politica.valor!) {
+        //   ref.read(typeQuoteProvider.notifier).update((state) => true);
+        // } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
+        //   ref.read(typeQuoteProvider.notifier).update((state) => false);
         // }
+        // // }
 
-        if (Utility.verifAddRoomFree(
-            habitaciones, politica.intervaloHabitacionGratuita!)) {
-          ref.read(habitacionesProvider.notifier).addFreeItem(
-              widget.habitacion, politica.intervaloHabitacionGratuita!);
-        } else if (Utility.verifAddRoomFree(
-            habitaciones, politica.intervaloHabitacionGratuita!,
-            isReduced: true)) {
-          ref.read(habitacionesProvider.notifier).removeFreeItem(
-              politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
-        }
+        // if (Utility.verifAddRoomFree(
+        //     habitaciones, politica.intervaloHabitacionGratuita!)) {
+        //   ref.read(habitacionesProvider.notifier).addFreeItem(
+        //       widget.habitacion, politica.intervaloHabitacionGratuita!);
+        // } else if (Utility.verifAddRoomFree(
+        //     habitaciones, politica.intervaloHabitacionGratuita!,
+        //     isReduced: true)) {
+        //   ref.read(habitacionesProvider.notifier).removeFreeItem(
+        //       politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
+        // }
       }
     }
 
     void _recalculateTotals() {
-      widget.habitacion.totalRealVR =
-          _getTotalRoom(room: widget.habitacion, withDiscount: false);
-      widget.habitacion.totalRealVPM = _getTotalRoom(
-          room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
-      widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
-      widget.habitacion.totalVPM =
-          _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
+      // widget.habitacion.totalRealVR =
+      //     _getTotalRoom(room: widget.habitacion, withDiscount: false);
+      // widget.habitacion.totalRealVPM = _getTotalRoom(
+      //     room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
+      // widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
+      // widget.habitacion.totalVPM =
+      //     _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
 
-      widget.habitacion.descuentoVR =
-          _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
-      widget.habitacion.descuentoVPM = _getTotalRoom(
-          room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
+      // widget.habitacion.descuentoVR =
+      //     _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
+      // widget.habitacion.descuentoVPM = _getTotalRoom(
+      //     room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
 
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -250,9 +253,9 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                     ),
                     if (screenWidthWithSideBar > 950)
                       TextStyles.standardText(
-                        text: Utility.getStringPeriod(
-                          initDate: DateTime.parse(widget.habitacion.checkIn!),
-                          lastDate: DateTime.parse(widget.habitacion.checkOut!),
+                        text: DateHelpers.getStringPeriod(
+                          initDate: widget.habitacion.checkIn!,
+                          lastDate: widget.habitacion.checkOut!,
                         ),
                         align: TextAlign.center,
                         color: colorText,
@@ -359,18 +362,18 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
                             ),
                     if (screenWidthWithSideBar > 1700)
                       TextStyles.standardText(
-                        text:
-                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVR ?? 0) : (typeQuote) ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false) : (widget.habitacion.totalRealVR ?? 0))}"
-                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false, onlyTariffVR: false) : (widget.habitacion.totalRealVPM ?? 0))}",
+                        text: "",
+                        // "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVR ?? 0) : (typeQuote) ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false) : (widget.habitacion.totalRealVR ?? 0))}"
+                        // "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalRealVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, withDiscount: false, onlyTariffVR: false) : (widget.habitacion.totalRealVPM ?? 0))}",
                         align: TextAlign.center,
                         color: colorText,
                         size: 11,
                       ),
                     if (screenWidthWithSideBar > 1550)
                       TextStyles.standardText(
-                        text:
-                            "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVR ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion) : (widget.habitacion.totalVR ?? 0))}"
-                            "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, onlyTariffVR: false) : (widget.habitacion.totalVPM ?? 0))}",
+                        text: "",
+                        // "VR: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVR ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion) : (widget.habitacion.totalVR ?? 0))}"
+                        // "\nVPM: ${Utility.formatterNumber(widget.esDetalle ? (widget.habitacion.totalVPM ?? 0) : typeQuote ? _getTotalRoomGroup(room: widget.habitacion, onlyTariffVR: false) : (widget.habitacion.totalVPM ?? 0))}",
                         align: TextAlign.center,
                         color: colorText,
                         size: 11,
@@ -439,23 +442,23 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
 
 double _getTotalRoomGroup({
   required Habitacion room,
+  required Categoria category,
   bool onlyTariffVR = true,
   bool withDiscount = true,
 }) {
-  double totalGroup = Utility.calculateTotalTariffRoom(
-    RegistroTarifa(
-      temporadas: room.tarifaGrupal?.temporadas,
-      tarifas: room.tarifaGrupal?.tarifas,
-    ),
+  TarifaXHabitacion? tarHabGrupal = room.tarifasXHabitacion
+      ?.where((element) => element.esGrupal ?? false)
+      .firstOrNull;
+
+  double totalGroup = CalculatorHelpers.getTotalCategoryRoom(
+    tarHabGrupal?.tarifaXDia?.tarifaRack,
     room,
+    category,
     room.tarifasXHabitacion!.length,
     getTotalRoom: true,
-    descuentoProvisional: room.tarifaGrupal?.descuentoProvisional,
-    onlyTariffVR: onlyTariffVR,
-    onlyTariffVPM: !onlyTariffVR,
-    isGroupTariff: true,
+    descuentoProvisional: tarHabGrupal?.tarifaXDia?.descIntegrado,
     withDiscount: withDiscount,
-    applyRoundFormat: !(room.tarifaGrupal?.modificado ?? false),
+    applyRoundFormat: !(tarHabGrupal?.tarifaXDia?.modificado ?? false),
   );
 
   return (totalGroup * room.tarifasXHabitacion!.length);
@@ -463,35 +466,34 @@ double _getTotalRoomGroup({
 
 double _getTotalRoom({
   required Habitacion room,
+  required Categoria category,
   bool onlyTariffVR = true,
   bool withDiscount = true,
   bool onlyDiscount = false,
 }) {
-  List<TarifaXDia> tarifasFiltradas =
+  List<TarifaXHabitacion> tarifasFiltradas =
       Utility.getUniqueTariffs(room.tarifasXHabitacion ?? []);
 
   double discount = !withDiscount
       ? 0
-      : Utility.calculateDiscountTotal(
+      : CalculatorHelpers.calculateDiscountTotal(
           tarifasFiltradas,
           room,
+          category,
           room.tarifasXHabitacion?.length ?? 0,
-          typeQuote: false,
-          onlyTariffVR: onlyTariffVR,
-          onlyTariffVPM: !onlyTariffVR,
+          typeQuote: "individual",
         );
 
   if (onlyDiscount) {
     return discount;
   }
 
-  double total = Utility.calculateTariffTotals(
+  double total = CalculatorHelpers.getTariffTotals(
         tarifasFiltradas,
         room,
+        category,
         onlyChildren: true,
         onlyAdults: true,
-        onlyTariffVR: onlyTariffVR,
-        onlyTariffVPM: !onlyTariffVR,
       ) -
       (discount);
 
@@ -537,7 +539,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
 
-    void updateList(int value, PoliticaTableData? politica) {
+    void updateList(int value, PoliticaTarifario? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -553,39 +555,39 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         }
 
         // if (!(Preferences.rol == 'RECEPCION')) {
-        if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => true);
-        } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
-          ref.read(typeQuoteProvider.notifier).update((state) => false);
-        }
+        // if (!typeQuote && rooms >= politica.limiteHabitacionCotizacion!) {
+        //   ref.read(typeQuoteProvider.notifier).update((state) => true);
+        // } else if (typeQuote && rooms < politica.limiteHabitacionCotizacion!) {
+        //   ref.read(typeQuoteProvider.notifier).update((state) => false);
         // }
+        // // }
 
-        if (Utility.verifAddRoomFree(
-            habitaciones, politica.intervaloHabitacionGratuita!)) {
-          ref.read(habitacionesProvider.notifier).addFreeItem(
-              widget.habitacion, politica.intervaloHabitacionGratuita!);
-        } else if (Utility.verifAddRoomFree(
-            habitaciones, politica.intervaloHabitacionGratuita!,
-            isReduced: true)) {
-          ref.read(habitacionesProvider.notifier).removeFreeItem(
-              politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
-        }
+        // if (Utility.verifAddRoomFree(
+        //     habitaciones, politica.intervaloHabitacionGratuita!)) {
+        //   ref.read(habitacionesProvider.notifier).addFreeItem(
+        //       widget.habitacion, politica.intervaloHabitacionGratuita!);
+        // } else if (Utility.verifAddRoomFree(
+        //     habitaciones, politica.intervaloHabitacionGratuita!,
+        //     isReduced: true)) {
+        //   ref.read(habitacionesProvider.notifier).removeFreeItem(
+        //       politica.intervaloHabitacionGratuita!, widget.habitacion.id!);
+        // }
       }
     }
 
     void _recalculateTotals() {
-      widget.habitacion.totalRealVR =
-          _getTotalRoom(room: widget.habitacion, withDiscount: false);
-      widget.habitacion.totalRealVPM = _getTotalRoom(
-          room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
-      widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
-      widget.habitacion.totalVPM =
-          _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
+      // widget.habitacion.totalRealVR =
+      //     _getTotalRoom(room: widget.habitacion, withDiscount: false);
+      // widget.habitacion.totalRealVPM = _getTotalRoom(
+      //     room: widget.habitacion, withDiscount: false, onlyTariffVR: false);
+      // widget.habitacion.totalVR = _getTotalRoom(room: widget.habitacion);
+      // widget.habitacion.totalVPM =
+      //     _getTotalRoom(room: widget.habitacion, onlyTariffVR: false);
 
-      widget.habitacion.descuentoVR =
-          _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
-      widget.habitacion.descuentoVPM = _getTotalRoom(
-          room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
+      // widget.habitacion.descuentoVR =
+      //     _getTotalRoom(room: widget.habitacion, onlyDiscount: true);
+      // widget.habitacion.descuentoVPM = _getTotalRoom(
+      //     room: widget.habitacion, onlyTariffVR: false, onlyDiscount: true);
 
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -606,9 +608,10 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
         visualDensity: VisualDensity.standard,
         title: TextStyles.TextAsociative(
           (screenWidthWithSideBar < 1100) ? "Fechas: " : "Fechas de estancia: ",
-          Utility.getStringPeriod(
-              initDate: DateTime.parse(widget.habitacion.checkIn!),
-              lastDate: DateTime.parse(widget.habitacion.checkOut!)),
+          DateHelpers.getStringPeriod(
+            initDate: widget.habitacion.checkIn!,
+            lastDate: widget.habitacion.checkOut!,
+          ),
           color: colorText,
           size: 13.5,
         ),
@@ -621,29 +624,29 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
               spacing: 12,
               runSpacing: 5,
               children: [
-                TextStyles.TextAsociative(
-                  (screenWidthWithSideBar < 1100)
-                      ? "Tarifa VR: "
-                      : "Tarifa Vista Reserva: ",
-                  Utility.formatterNumber(widget.esDetalle
-                      ? (widget.habitacion.totalVR ?? 0)
-                      : typeQuote
-                          ? _getTotalRoomGroup(room: widget.habitacion)
-                          : (widget.habitacion.totalVR ?? 0)),
-                  color: colorText,
-                ),
-                TextStyles.TextAsociative(
-                  (screenWidthWithSideBar < 1100)
-                      ? "Tarifa VPM: "
-                      : "Tarifa Vista Parcial Mar: ",
-                  Utility.formatterNumber(widget.esDetalle
-                      ? (widget.habitacion.totalVPM ?? 0)
-                      : typeQuote
-                          ? _getTotalRoomGroup(
-                              room: widget.habitacion, onlyTariffVR: false)
-                          : (widget.habitacion.totalVPM ?? 0)),
-                  color: colorText,
-                ),
+                // TextStyles.TextAsociative(
+                //   (screenWidthWithSideBar < 1100)
+                //       ? "Tarifa VR: "
+                //       : "Tarifa Vista Reserva: ",
+                //   Utility.formatterNumber(widget.esDetalle
+                //       ? (widget.habitacion.totalVR ?? 0)
+                //       : typeQuote
+                //           ? _getTotalRoomGroup(room: widget.habitacion)
+                //           : (widget.habitacion.totalVR ?? 0)),
+                //   color: colorText,
+                // ),
+                // TextStyles.TextAsociative(
+                //   (screenWidthWithSideBar < 1100)
+                //       ? "Tarifa VPM: "
+                //       : "Tarifa Vista Parcial Mar: ",
+                //   Utility.formatterNumber(widget.esDetalle
+                //       ? (widget.habitacion.totalVPM ?? 0)
+                //       : typeQuote
+                //           ? _getTotalRoomGroup(
+                //               room: widget.habitacion, onlyTariffVR: false)
+                //           : (widget.habitacion.totalVPM ?? 0)),
+                //   color: colorText,
+                // ),
               ],
             ),
             Wrap(

@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/utils/widgets/dynamic_widget.dart';
+
+import '../../models/tarifa_rack_model.dart';
+import '../../res/helpers/date_helpers.dart';
+import 'dynamic_widget.dart';
 
 class PeriodItemRow extends StatefulWidget {
   const PeriodItemRow({
@@ -17,7 +18,7 @@ class PeriodItemRow extends StatefulWidget {
     this.isntWeek = true,
   }) : super(key: key);
 
-  final RegistroTarifa tarifa;
+  final TarifaRack tarifa;
   final int lenghtDays;
   final double lenghtSideBar;
   final DateTime weekNow;
@@ -40,7 +41,7 @@ class _PeriodItemRowState extends State<PeriodItemRow> {
         ? ((screenWidth - 385 - widget.lenghtSideBar) / 7)
         : (screenWidth - widget.lenghtSideBar + (screenWidth > 800 ? 0 : 202)) /
             7)));
-    weekNowSegment = Utility.generateSegmentWeek(widget.weekNow);
+    weekNowSegment = DateHelpers.generateSegmentWeek(widget.weekNow);
 
     return Row(
       children: dynamicWidget.buildExpansionItemWeek(

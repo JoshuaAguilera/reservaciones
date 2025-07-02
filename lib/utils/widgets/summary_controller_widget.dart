@@ -3,12 +3,18 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
+import 'package:generador_formato/models/tarifa_rack_model.dart';
 import 'package:generador_formato/models/tarifa_x_dia_model.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
 import 'package:generador_formato/utils/widgets/custom_dropdown.dart';
 import 'package:generador_formato/utils/widgets/dialogs.dart';
 
+import '../../models/categoria_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
+import '../../res/helpers/colors_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../view-models/providers/habitacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/buttons.dart';
@@ -54,7 +60,8 @@ class _SummaryControllerWidgetState
   bool showListTotalAdulto = false;
   bool showListTotalMenores = false;
   bool showListDescuentos = false;
-  List<TarifaXDia> tarifasFiltradas = [];
+  List<TarifaXHabitacion> tarifasFiltradas = [];
+  late Categoria categoria;
   double totalRoom = 0;
   double totalRealRoom = 0;
   double discount = 0;
@@ -188,54 +195,55 @@ class _SummaryControllerWidgetState
                                               showListTotalAdulto = value,
                                           context: context,
                                           messageNotFound: "Sin tarifas",
-                                          total: Utility.calculateTariffTotals(
+                                          total:
+                                              CalculatorHelpers.getTariffTotals(
                                             tarifasFiltradas,
                                             habitacionProvider,
+                                            categoria,
                                             onlyAdults: true,
-                                            onlyTariffVR:
-                                                habitacionProvider.categoria ==
-                                                    tipoHabitacion.first,
-                                            onlyTariffVPM:
-                                                habitacionProvider.categoria ==
-                                                    tipoHabitacion.last,
                                           ),
                                           children: [
                                             for (var element
                                                 in tarifasFiltradas)
                                               CustomWidgets.itemListCount(
                                                 nameItem:
-                                                    "${element.numDays}x ${element.nombreTariff ?? ''}",
+                                                    "${element.numDays}x ${element.tarifaXDia?.tarifaRack?.nombre ?? ''}",
                                                 subTitle:
-                                                    element.subCode != null
+                                                    element.subcode != null
                                                         ? '(Mod)'
                                                         : '',
-                                                count: Utility
-                                                    .calculateTotalTariffRoom(
-                                                  element.tarifa == null
-                                                      ? null
-                                                      : RegistroTarifa(
-                                                          tarifas:
-                                                              element.tarifas,
-                                                          temporadas: element
-                                                                  .temporadas ??
-                                                              (element.temporadaSelect !=
-                                                                      null
-                                                                  ? [
-                                                                      element
-                                                                          .temporadaSelect!
-                                                                    ]
-                                                                  : []),
-                                                        ),
+                                                count: CalculatorHelpers
+                                                    .getTotalCategoryRoom(
+                                                  TarifaRack(
+                                                    tarifas: element.tarifaXDia
+                                                        ?.tarifaRack?.tarifas,
+                                                    temporadas: element
+                                                            .tarifaXDia
+                                                            ?.tarifaRack
+                                                            ?.temporadas ??
+                                                        (element.tarifaXDia
+                                                                    ?.temporadaSelect !=
+                                                                null
+                                                            ? [
+                                                                element
+                                                                    .tarifaXDia!
+                                                                    .temporadaSelect!
+                                                              ]
+                                                            : []),
+                                                  ),
                                                   habitacionProvider,
+                                                  categoria,
                                                   widget.numDays,
                                                   withDiscount: false,
-                                                  applyRoundFormat:
-                                                      !(element.modificado ??
-                                                          false),
+                                                  applyRoundFormat: !(element
+                                                          .tarifaXDia
+                                                          ?.modificado ??
+                                                      false),
                                                 ),
                                                 context: context,
                                                 sizeText: 11.5,
-                                                color: element.color,
+                                                color: element.tarifaXDia
+                                                    ?.tarifaRack?.color,
                                                 height: 45,
                                                 paddingBottom: 7,
                                               ),
@@ -249,55 +257,56 @@ class _SummaryControllerWidgetState
                                               showListTotalMenores = value,
                                           context: context,
                                           messageNotFound: "Sin tarifas",
-                                          total: Utility.calculateTariffTotals(
+                                          total:
+                                              CalculatorHelpers.getTariffTotals(
                                             tarifasFiltradas,
                                             habitacionProvider,
+                                            categoria,
                                             onlyChildren: true,
-                                            onlyTariffVR:
-                                                habitacionProvider.categoria ==
-                                                    tipoHabitacion.first,
-                                            onlyTariffVPM:
-                                                habitacionProvider.categoria ==
-                                                    tipoHabitacion.last,
                                           ),
                                           children: [
                                             for (var element
                                                 in tarifasFiltradas)
                                               CustomWidgets.itemListCount(
                                                 nameItem:
-                                                    "${element.numDays}x ${element.nombreTariff ?? ''}",
+                                                    "${element.numDays}x ${element.tarifaXDia?.tarifaRack?.nombre ?? ''}",
                                                 subTitle:
-                                                    element.subCode != null
+                                                    element.subcode != null
                                                         ? '(Mod)'
                                                         : '',
-                                                count: Utility
-                                                    .calculateTotalTariffRoom(
-                                                  element.tarifa == null
-                                                      ? null
-                                                      : RegistroTarifa(
-                                                          tarifas:
-                                                              element.tarifas,
-                                                          temporadas: element
-                                                                  .temporadas ??
-                                                              (element.temporadaSelect !=
-                                                                      null
-                                                                  ? [
-                                                                      element
-                                                                          .temporadaSelect!
-                                                                    ]
-                                                                  : []),
-                                                        ),
+                                                count: CalculatorHelpers
+                                                    .getTotalCategoryRoom(
+                                                  TarifaRack(
+                                                    tarifas: element.tarifaXDia
+                                                        ?.tarifaRack?.tarifas,
+                                                    temporadas: element
+                                                            .tarifaXDia
+                                                            ?.tarifaRack
+                                                            ?.temporadas ??
+                                                        (element.tarifaXDia
+                                                                    ?.temporadaSelect !=
+                                                                null
+                                                            ? [
+                                                                element
+                                                                    .tarifaXDia!
+                                                                    .temporadaSelect!
+                                                              ]
+                                                            : []),
+                                                  ),
                                                   habitacionProvider,
+                                                  categoria,
                                                   widget.numDays,
-                                                  applyRoundFormat:
-                                                      !(element.modificado ??
-                                                          false),
+                                                  applyRoundFormat: !(element
+                                                          .tarifaXDia
+                                                          ?.modificado ??
+                                                      false),
                                                   withDiscount: false,
                                                   isCalculateChildren: true,
                                                 ),
                                                 context: context,
                                                 sizeText: 11.5,
-                                                color: element.color,
+                                                color: element.tarifaXDia
+                                                    ?.tarifaRack?.color,
                                                 height: 45,
                                                 paddingBottom: 7,
                                               ),
@@ -319,17 +328,12 @@ class _SummaryControllerWidgetState
                                   if (widget.calculateRoom)
                                     CustomWidgets.itemListCount(
                                       nameItem: "Total:",
-                                      count: Utility.calculateTariffTotals(
+                                      count: CalculatorHelpers.getTariffTotals(
                                         tarifasFiltradas,
                                         habitacionProvider,
+                                        categoria,
                                         onlyChildren: true,
                                         onlyAdults: true,
-                                        onlyTariffVR:
-                                            habitacionProvider.categoria ==
-                                                tipoHabitacion.first,
-                                        onlyTariffVPM:
-                                            habitacionProvider.categoria ==
-                                                tipoHabitacion.last,
                                       ),
                                       context: context,
                                     ),
@@ -343,42 +347,41 @@ class _SummaryControllerWidgetState
                                           showListDescuentos = value,
                                       context: context,
                                       messageNotFound: "Sin descuentos",
-                                      total: -(Utility.calculateDiscountTotal(
+                                      total: -(CalculatorHelpers
+                                          .calculateDiscountTotal(
                                         tarifasFiltradas,
                                         habitacionProvider,
+                                        categoria,
                                         widget.numDays,
                                         typeQuote: typeQuote,
-                                        onlyTariffVR:
-                                            habitacionProvider.categoria ==
-                                                tipoHabitacion.first,
-                                        onlyTariffVPM:
-                                            habitacionProvider.categoria ==
-                                                tipoHabitacion.last,
                                       )),
                                       children: [
                                         if (widget.calculateRoom)
                                           for (var element in tarifasFiltradas)
                                             CustomWidgets.itemListCount(
                                               nameItem:
-                                                  "${element.numDays}x ${element.temporadaSelect?.nombre ?? (element.id == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.temporadaSelect?.porcentajePromocion ?? element.descIntegrado ?? 0}%)",
-                                              subTitle: element.subCode != null
+                                                  "${element.numDays}x ${element.tarifaXDia?.temporadaSelect?.nombre ?? (element.id == "tariffFree" ? 'Tarifa Libre' : 'No definido')} (${element.tarifaXDia?.temporadaSelect?.descuento ?? element.tarifaXDia?.descIntegrado ?? 0}%)",
+                                              subTitle: element.subcode != null
                                                   ? '(Mod)'
                                                   : '',
-                                              count: -(Utility
+                                              count: -(CalculatorHelpers
                                                   .calculateDiscountXTariff(
                                                 element,
                                                 habitacionProvider,
+                                                categoria,
                                                 widget.numDays,
                                                 onlyDiscountUnitary: true,
                                                 typeQuote: typeQuote,
                                                 useCashTariff: useCashSeason,
-                                                applyRoundFormatt:
-                                                    !(element.modificado ??
-                                                        false),
+                                                applyRoundFormatt: !(element
+                                                        .tarifaXDia
+                                                        ?.modificado ??
+                                                    false),
                                               )),
                                               context: context,
                                               sizeText: 11.5,
-                                              color: element.color,
+                                              color: element.tarifaXDia
+                                                  ?.tarifaRack?.color,
                                               height: 45,
                                               paddingBottom: 7,
                                             ),
@@ -395,7 +398,7 @@ class _SummaryControllerWidgetState
                               !(widget.finishQuote))
                             politicaTarifaProvider.when(
                               data: (data) => Card(
-                                color: typeQuote
+                                color: typeQuote == "grupal"
                                     ? DesktopColors.cotGrupal
                                     : DesktopColors.cotIndiv,
                                 child: Padding(
@@ -407,28 +410,28 @@ class _SummaryControllerWidgetState
                                       TextStyles.standardText(
                                         text: "Vigencia:",
                                         size: 12,
-                                        color: !typeQuote
+                                        color: typeQuote == "individual"
                                             ? DesktopColors.azulUltClaro
                                             : DesktopColors.prussianBlue,
                                       ),
-                                      TextStyles.standardText(
-                                        text: Utility.getCompleteDate(
-                                          data: DateTime.now().add(
-                                            Duration(
-                                              days: (typeQuote)
-                                                  ? data?.diasVigenciaCotGroup ??
-                                                      0
-                                                  : data?.diasVigenciaCotInd ??
-                                                      0,
-                                            ),
-                                          ),
-                                        ),
-                                        size: 12,
-                                        isBold: true,
-                                        color: !typeQuote
-                                            ? DesktopColors.azulUltClaro
-                                            : DesktopColors.prussianBlue,
-                                      )
+                                      // TextStyles.standardText(
+                                      //   text: DateHelpers.getStringDate(
+                                      //     data: DateTime.now().add(
+                                      //       Duration(
+                                      //         days: (typeQuote)
+                                      //             ? data?.diasVigenciaCotGroup ??
+                                      //                 0
+                                      //             : data?.diasVigenciaCotInd ??
+                                      //                 0,
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      //   size: 12,
+                                      //   isBold: true,
+                                      //   color: !typeQuote
+                                      //       ? DesktopColors.azulUltClaro
+                                      //       : DesktopColors.prussianBlue,
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -443,29 +446,19 @@ class _SummaryControllerWidgetState
                           if (widget.calculateRoom)
                             CustomWidgets.itemListCount(
                               nameItem: "Total cotizado:",
-                              count: (Utility.calculateTariffTotals(
+                              count: (CalculatorHelpers.getTariffTotals(
                                     tarifasFiltradas,
                                     habitacionProvider,
+                                    categoria,
                                     onlyChildren: true,
                                     onlyAdults: true,
-                                    onlyTariffVR:
-                                        habitacionProvider.categoria ==
-                                            tipoHabitacion.first,
-                                    onlyTariffVPM:
-                                        habitacionProvider.categoria ==
-                                            tipoHabitacion.last,
                                   ) -
-                                  Utility.calculateDiscountTotal(
+                                  CalculatorHelpers.calculateDiscountTotal(
                                     tarifasFiltradas,
                                     habitacionProvider,
+                                    categoria,
                                     widget.numDays,
                                     typeQuote: typeQuote,
-                                    onlyTariffVR:
-                                        habitacionProvider.categoria ==
-                                            tipoHabitacion.first,
-                                    onlyTariffVPM:
-                                        habitacionProvider.categoria ==
-                                            tipoHabitacion.last,
                                   )),
                               context: context,
                               isBold: true,
@@ -538,8 +531,8 @@ class _SummaryControllerWidgetState
                             sizeText: 12.5,
                             compact: true,
                             text: "Cancelar",
-                            color:
-                                Utility.darken(DesktopColors.cerulean, -0.05),
+                            color: ColorsHelpers.darken(
+                                DesktopColors.cerulean, -0.05),
                             onPressed:
                                 (widget.finishQuote ? false : widget.isLoading)
                                     ? null
@@ -563,11 +556,12 @@ class _SummaryControllerWidgetState
   bool revisedValidTariff(Habitacion habitacion) {
     bool isInvalid = false;
 
-    for (var element in habitacion.tarifasXHabitacion ?? List<TarifaXDia>.empty()) {
-      if (element.tarifa == null) {
-        isInvalid = true;
-        break;
-      }
+    for (var element
+        in habitacion.tarifasXHabitacion ?? List<TarifaXHabitacion>.empty()) {
+      // if (element.tarifa == null) {
+      //   isInvalid = true;
+      //   break;
+      // }
     }
 
     return isInvalid;
@@ -579,8 +573,7 @@ class _SummaryControllerWidgetState
     required List<Habitacion> habitaciones,
     bool changeColor = false,
     required void Function(bool) onExpansionChanged,
-    bool typeQuote = false,
-    bool useSeasonCash = false,
+    String typeQuote = "individual",
   }) {
     List<Habitacion> rooms =
         habitaciones.where((element) => !element.esCortesia).toList();
@@ -599,13 +592,11 @@ class _SummaryControllerWidgetState
         onExpansionChanged: onExpansionChanged,
         context: context,
         messageNotFound: "Sin habitaciones",
-        total: Utility.calculateTotalRooms(
+        total: CalculatorHelpers.getTotalRooms(
           (widget.saveRooms ?? rooms),
-          onlyFirstCategory: isVR,
-          onlySecoundCategory: !isVR,
+          categoria,
           onlyTotal: true,
-          groupQuote: typeQuote,
-          useSeasonCash: useSeasonCash,
+          tipoCotizacion: typeQuote,
         ),
         children: [
           Column(
@@ -616,13 +607,11 @@ class _SummaryControllerWidgetState
                 child: CustomWidgets.expansionTileList(
                   title: "Subtotal:",
                   withTopBorder: true,
-                  total: Utility.calculateTotalRooms(
+                  total: CalculatorHelpers.getTotalRooms(
                     (widget.saveRooms ?? rooms),
+                    categoria,
+                    tipoCotizacion: typeQuote,
                     onlyTotalReal: true,
-                    onlyFirstCategory: isVR,
-                    onlySecoundCategory: !isVR,
-                    groupQuote: typeQuote,
-                    useSeasonCash: useSeasonCash,
                   ),
                   showList: showListSubtotalRoom,
                   onExpansionChanged: (value) =>
@@ -630,37 +619,31 @@ class _SummaryControllerWidgetState
                   messageNotFound: "Sin habitaciones",
                   context: context,
                   children: [
-                    for (var element in rooms)
-                      CustomWidgets.itemListCount(
-                        nameItem:
-                            "${element.count}x Room ${rooms.indexOf(element) + 1}",
-                        count: typeQuote
-                            ? (Utility.calculateTotalTariffRoom(
-                                  RegistroTarifa(
-                                    temporadas:
-                                        element.tarifaGrupal?.temporadas,
-                                    tarifas: element.tarifaGrupal?.tarifas,
-                                  ),
-                                  element,
-                                  element.tarifasXHabitacion!.length,
-                                  getTotalRoom: true,
-                                  descuentoProvisional: element
-                                      .tarifaGrupal?.descuentoProvisional,
-                                  onlyTariffVR: isVR,
-                                  onlyTariffVPM: !isVR,
-                                  isGroupTariff: true,
-                                  withDiscount: false,
-                                  applyRoundFormat:
-                                      !(element.tarifaGrupal?.modificado ??
-                                          false),
-                                ) *
-                                element.tarifasXHabitacion!.length)
-                            : (isVR
-                                ? (element.totalRealVR ?? 0)
-                                : (element.totalRealVPM ?? 0)),
-                        context: context,
-                        sizeText: 11.5,
-                      )
+                    // for (var element in rooms)
+                    //   CustomWidgets.itemListCount(
+                    //     nameItem:
+                    //         "${element.count}x Room ${rooms.indexOf(element) + 1}",
+                    //     count: (CalculatorHelpers.getTotalCategoryRoom(
+                    //           RegistroTarifa(
+                    //             temporadas: element.tarifaGrupal?.temporadas,
+                    //             tarifas: element.tarifaGrupal?.tarifas,
+                    //           ),
+                    //           element,
+                    //           element.tarifasXHabitacion!.length,
+                    //           getTotalRoom: true,
+                    //           descuentoProvisional:
+                    //               element.tarifaGrupal?.descuentoProvisional,
+                    //           onlyTariffVR: isVR,
+                    //           onlyTariffVPM: !isVR,
+                    //           isGroupTariff: true,
+                    //           withDiscount: false,
+                    //           applyRoundFormat:
+                    //               !(element.tarifaGrupal?.modificado ?? false),
+                    //         ) *
+                    //         element.tarifasXHabitacion!.length),
+                    //     context: context,
+                    //     sizeText: 11.5,
+                    //   )
                   ],
                 ),
               ),
@@ -674,154 +657,151 @@ class _SummaryControllerWidgetState
                       snapshot(() => showListDescuentosRoom = value),
                   context: context,
                   messageNotFound: "Sin descuentos",
-                  total: -Utility.calculateTotalRooms(
+                  total: -CalculatorHelpers.getTotalRooms(
                     (widget.saveRooms ?? habitaciones),
+                    categoria,
                     onlyDiscount: true,
-                    onlyFirstCategory: isVR,
-                    onlySecoundCategory: !isVR,
-                    groupQuote: typeQuote,
-                    useSeasonCash: useSeasonCash,
+                    tipoCotizacion: typeQuote,
                   ),
                   children: [
-                    for (var element in (widget.saveRooms ?? habitaciones)
-                        .where((element) => !element.esCortesia)
-                        .toList())
-                      CustomWidgets.itemListCount(
-                        nameItem:
-                            "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1} (${element.tarifaGrupal?.temporadaSelect?.porcentajePromocion ?? element.tarifaGrupal?.descuentoProvisional ?? 0}%)",
-                        count: typeQuote
-                            ? -Utility.calculateDiscountTotal(
-                                [element.tarifaGrupal ?? TarifaXDia()],
-                                element,
-                                element.tarifasXHabitacion?.length ?? 0,
-                                typeQuote: typeQuote,
-                                onlyTariffVR: isVR,
-                                onlyTariffVPM: !isVR,
-                                applyRoundFormatt:
-                                    !(element.tarifaGrupal?.modificado ??
-                                        false),
-                              )
-                            : -((isVR
-                                    ? element.descuentoVR
-                                    : element.descuentoVPM) ??
-                                0),
-                        context: context,
-                        sizeText: 11.5,
-                      ),
-                    for (var element in (widget.saveRooms ?? habitaciones)
-                        .where((element) => element.esCortesia)
-                        .toList())
-                      CustomWidgets.itemListCount(
-                        nameItem:
-                            "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().firstWhere((elementInt) => elementInt.id == element.id)) + 1} (Cortesía)",
-                        count: typeQuote
-                            ? -(Utility.calculateTotalTariffRoom(
-                                  RegistroTarifa(
-                                    temporadas:
-                                        element.tarifaGrupal?.temporadas,
-                                    tarifas: element.tarifaGrupal?.tarifas,
-                                  ),
-                                  element,
-                                  element.tarifasXHabitacion!.length,
-                                  getTotalRoom: true,
-                                  descuentoProvisional: element
-                                      .tarifaGrupal?.descuentoProvisional,
-                                  onlyTariffVR: isVR,
-                                  onlyTariffVPM: !isVR,
-                                  isGroupTariff: true,
-                                  applyRoundFormat:
-                                      !(element.tarifaGrupal?.modificado ??
-                                          false),
-                                ) *
-                                element.tarifasXHabitacion!.length)
-                            : -((isVR ? element.totalVR : element.totalVPM) ??
-                                0),
-                        context: context,
-                        color: Colors.green[300],
-                        sizeText: 11.5,
-                        onChanged: ((widget.saveRooms ?? habitaciones)
-                                    .where((element) => !element.esCortesia)
-                                    .toList()
-                                    .length <
-                                2)
-                            ? null
-                            : () {
-                                if ((widget.saveRooms ?? habitaciones)
-                                        .where((element) => !element.esCortesia)
-                                        .toList()
-                                        .length <
-                                    3) {
-                                  ref
-                                      .read(
-                                          HabitacionProvider.provider.notifier)
-                                      .changedFreeRoom(
-                                          element.id!);
-                                } else {
-                                  String selectRoom =
-                                      "Room ${(widget.saveRooms ?? habitaciones).where((elementInt) => !elementInt.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).firstWhere((elementInt) => !elementInt.esCortesia && elementInt.id == element.id)) + 1}";
-                                  String changedRoom = selectRoom;
+                    // for (var element in (widget.saveRooms ?? habitaciones)
+                    //     .where((element) => !element.esCortesia)
+                    //     .toList())
+                    //   CustomWidgets.itemListCount(
+                    //     nameItem:
+                    //         "${element.count}x Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1} (${element.tarifaGrupal?.temporadaSelect?.porcentajePromocion ?? element.tarifaGrupal?.descuentoProvisional ?? 0}%)",
+                    //     count: typeQuote
+                    //         ? -Utility.calculateDiscountTotal(
+                    //             [element.tarifaGrupal ?? TarifaXDia()],
+                    //             element,
+                    //             element.tarifasXHabitacion?.length ?? 0,
+                    //             typeQuote: typeQuote,
+                    //             onlyTariffVR: isVR,
+                    //             onlyTariffVPM: !isVR,
+                    //             applyRoundFormatt:
+                    //                 !(element.tarifaGrupal?.modificado ??
+                    //                     false),
+                    //           )
+                    //         : -((isVR
+                    //                 ? element.descuentoVR
+                    //                 : element.descuentoVPM) ??
+                    //             0),
+                    //     context: context,
+                    //     sizeText: 11.5,
+                    //   ),
+                    // for (var element in (widget.saveRooms ?? habitaciones)
+                    //     .where((element) => element.esCortesia)
+                    //     .toList())
+                    //   CustomWidgets.itemListCount(
+                    //     nameItem:
+                    //         "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().firstWhere((elementInt) => elementInt.id == element.id)) + 1} (Cortesía)",
+                    //     count: typeQuote
+                    //         ? -(Utility.calculateTotalTariffRoom(
+                    //               RegistroTarifa(
+                    //                 temporadas:
+                    //                     element.tarifaGrupal?.temporadas,
+                    //                 tarifas: element.tarifaGrupal?.tarifas,
+                    //               ),
+                    //               element,
+                    //               element.tarifasXHabitacion!.length,
+                    //               getTotalRoom: true,
+                    //               descuentoProvisional: element
+                    //                   .tarifaGrupal?.descuentoProvisional,
+                    //               onlyTariffVR: isVR,
+                    //               onlyTariffVPM: !isVR,
+                    //               isGroupTariff: true,
+                    //               applyRoundFormat:
+                    //                   !(element.tarifaGrupal?.modificado ??
+                    //                       false),
+                    //             ) *
+                    //             element.tarifasXHabitacion!.length)
+                    //         : -((isVR ? element.totalVR : element.totalVPM) ??
+                    //             0),
+                    //     context: context,
+                    //     color: Colors.green[300],
+                    //     sizeText: 11.5,
+                    //     onChanged: ((widget.saveRooms ?? habitaciones)
+                    //                 .where((element) => !element.esCortesia)
+                    //                 .toList()
+                    //                 .length <
+                    //             2)
+                    //         ? null
+                    //         : () {
+                    //             if ((widget.saveRooms ?? habitaciones)
+                    //                     .where((element) => !element.esCortesia)
+                    //                     .toList()
+                    //                     .length <
+                    //                 3) {
+                    //               ref
+                    //                   .read(
+                    //                       HabitacionProvider.provider.notifier)
+                    //                   .changedFreeRoom(element.id!);
+                    //             } else {
+                    //               String selectRoom =
+                    //                   "Room ${(widget.saveRooms ?? habitaciones).where((elementInt) => !elementInt.esCortesia).toList().indexOf((widget.saveRooms ?? habitaciones).firstWhere((elementInt) => !elementInt.esCortesia && elementInt.id == element.id)) + 1}";
+                    //               String changedRoom = selectRoom;
 
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        Dialogs.customAlertDialog(
-                                      context: context,
-                                      title: "Cambiar Habitacion de Cortesía",
-                                      iconData: Icons.sync,
-                                      iconColor: Colors.green[500],
-                                      nameButtonMain: "Aceptar",
-                                      contentCustom: Row(children: [
-                                        Expanded(
-                                          child: TextStyles.standardText(
-                                            text: "Aplicar para la habitación:",
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          ),
-                                        ),
-                                        CustomDropdown.dropdownMenuCustom(
-                                            initialSelection: selectRoom,
-                                            onSelected: (p0) {
-                                              changedRoom = p0!;
-                                            },
-                                            elements: [
-                                              for (var element
-                                                  in (widget.saveRooms ??
-                                                          habitaciones)
-                                                      .where((element) =>
-                                                          !element.esCortesia))
-                                                "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1}"
-                                            ])
-                                      ]),
-                                      funtionMain: () {
-                                        if (selectRoom == changedRoom) {
-                                          return;
-                                        }
-                                        String result = changedRoom
-                                            .replaceFirst("Room ", "");
+                    //               showDialog(
+                    //                 context: context,
+                    //                 builder: (context) =>
+                    //                     Dialogs.customAlertDialog(
+                    //                   context: context,
+                    //                   title: "Cambiar Habitacion de Cortesía",
+                    //                   iconData: Icons.sync,
+                    //                   iconColor: Colors.green[500],
+                    //                   nameButtonMain: "Aceptar",
+                    //                   contentCustom: Row(children: [
+                    //                     Expanded(
+                    //                       child: TextStyles.standardText(
+                    //                         text: "Aplicar para la habitación:",
+                    //                         color:
+                    //                             Theme.of(context).primaryColor,
+                    //                       ),
+                    //                     ),
+                    //                     CustomDropdown.dropdownMenuCustom(
+                    //                         initialSelection: selectRoom,
+                    //                         onSelected: (p0) {
+                    //                           changedRoom = p0!;
+                    //                         },
+                    //                         elements: [
+                    //                           for (var element
+                    //                               in (widget.saveRooms ??
+                    //                                       habitaciones)
+                    //                                   .where((element) =>
+                    //                                       !element.esCortesia))
+                    //                             "Room ${(widget.saveRooms ?? habitaciones).where((element) => !element.esCortesia).toList().indexOf(element) + 1}"
+                    //                         ])
+                    //                   ]),
+                    //                   funtionMain: () {
+                    //                     if (selectRoom == changedRoom) {
+                    //                       return;
+                    //                     }
+                    //                     String result = changedRoom
+                    //                         .replaceFirst("Room ", "");
 
-                                        ref
-                                            .read(HabitacionProvider
-                                                .provider.notifier)
-                                            .changedFreeRoom(
-                                                (widget.saveRooms ??
-                                                        habitaciones)
-                                                    .where((element) =>
-                                                        !element.esCortesia)
-                                                    .toList()[
-                                                        int.parse(result) - 1]
-                                                    .id!,
-                                                indexRoom: (widget.saveRooms ??
-                                                        habitaciones)
-                                                    .indexOf(element));
-                                      },
-                                      withButtonCancel: false,
-                                      colorTextButton:
-                                          Theme.of(context).primaryColor,
-                                    ),
-                                  );
-                                }
-                              },
-                      ),
+                    //                     ref
+                    //                         .read(HabitacionProvider
+                    //                             .provider.notifier)
+                    //                         .changedFreeRoom(
+                    //                             (widget.saveRooms ??
+                    //                                     habitaciones)
+                    //                                 .where((element) =>
+                    //                                     !element.esCortesia)
+                    //                                 .toList()[
+                    //                                     int.parse(result) - 1]
+                    //                                 .id!,
+                    //                             indexRoom: (widget.saveRooms ??
+                    //                                     habitaciones)
+                    //                                 .indexOf(element));
+                    //                   },
+                    //                   withButtonCancel: false,
+                    //                   colorTextButton:
+                    //                       Theme.of(context).primaryColor,
+                    //                 ),
+                    //               );
+                    //             }
+                    //           },
+                    //   ),
                   ],
                 ),
               ),
@@ -833,13 +813,11 @@ class _SummaryControllerWidgetState
                 padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: CustomWidgets.itemListCount(
                   nameItem: "Total:",
-                  count: Utility.calculateTotalRooms(
+                  count: CalculatorHelpers.getTotalRooms(
                     (widget.saveRooms ?? habitaciones),
+                    categoria,
                     onlyTotal: true,
-                    onlyFirstCategory: isVR,
-                    onlySecoundCategory: !isVR,
-                    groupQuote: typeQuote,
-                    useSeasonCash: useSeasonCash,
+                    tipoCotizacion: typeQuote,
                   ),
                   context: context,
                   isBold: true,
@@ -855,7 +833,7 @@ class _SummaryControllerWidgetState
   }
 
   void saveRoom(
-      Habitacion habitacionProvider, bool typeQuote, bool useCashSeason) {
+      Habitacion habitacionProvider, String typeQuote, bool useCashSeason) {
     if (revisedValidTariff(habitacionProvider)) {
       showSnackBar(
         context: context,
@@ -868,43 +846,43 @@ class _SummaryControllerWidgetState
       return;
     }
 
-    habitacionProvider.totalRealVR = Utility.calculateTariffTotals(
-      tarifasFiltradas,
-      habitacionProvider,
-      onlyChildren: true,
-      onlyAdults: true,
-      onlyTariffVR: true,
-    );
+    // habitacionProvider.totalRealVR = Utility.calculateTariffTotals(
+    //   tarifasFiltradas,
+    //   habitacionProvider,
+    //   onlyChildren: true,
+    //   onlyAdults: true,
+    //   onlyTariffVR: true,
+    // );
 
-    habitacionProvider.descuentoVR = Utility.calculateDiscountTotal(
-      tarifasFiltradas,
-      habitacionProvider,
-      widget.numDays,
-      onlyTariffVR: true,
-      typeQuote: typeQuote,
-    );
+    // habitacionProvider.descuentoVR = Utility.calculateDiscountTotal(
+    //   tarifasFiltradas,
+    //   habitacionProvider,
+    //   widget.numDays,
+    //   onlyTariffVR: true,
+    //   typeQuote: typeQuote,
+    // );
 
-    habitacionProvider.totalVR =
-        habitacionProvider.totalRealVR! - habitacionProvider.descuentoVR!;
+    // habitacionProvider.totalVR =
+    //     habitacionProvider.totalRealVR! - habitacionProvider.descuentoVR!;
 
-    habitacionProvider.totalRealVPM = Utility.calculateTariffTotals(
-      tarifasFiltradas,
-      habitacionProvider,
-      onlyChildren: true,
-      onlyAdults: true,
-      onlyTariffVPM: true,
-    );
+    // habitacionProvider.totalRealVPM = Utility.calculateTariffTotals(
+    //   tarifasFiltradas,
+    //   habitacionProvider,
+    //   onlyChildren: true,
+    //   onlyAdults: true,
+    //   onlyTariffVPM: true,
+    // );
 
-    habitacionProvider.descuentoVPM = Utility.calculateDiscountTotal(
-      tarifasFiltradas,
-      habitacionProvider,
-      widget.numDays,
-      onlyTariffVPM: true,
-      typeQuote: typeQuote,
-    );
+    // habitacionProvider.descuentoVPM = Utility.calculateDiscountTotal(
+    //   tarifasFiltradas,
+    //   habitacionProvider,
+    //   widget.numDays,
+    //   onlyTariffVPM: true,
+    //   typeQuote: typeQuote,
+    // );
 
-    habitacionProvider.totalVPM =
-        habitacionProvider.totalRealVPM! - habitacionProvider.descuentoVPM!;
+    // habitacionProvider.totalVPM =
+    //     habitacionProvider.totalRealVPM! - habitacionProvider.descuentoVPM!;
 
     if (widget.onSaveQuote != null) {
       widget.onSaveQuote!.call();

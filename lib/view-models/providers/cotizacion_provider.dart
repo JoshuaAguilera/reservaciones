@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/periodo_model.dart';
+import '../../models/politica_tarifario_model.dart';
 import '../../res/helpers/constants.dart';
 import '../services/cotizacion_service.dart';
 
@@ -53,6 +54,6 @@ final receiptQuoteQueryProvider =
   return list;
 });
 
-final saveTariffPolityProvider = StateProvider<PoliticaTableData?>((ref) {
+final saveTariffPolityProvider = StateProvider<PoliticaTarifario?>((ref) {
   return null;
 });

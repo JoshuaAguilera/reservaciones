@@ -459,7 +459,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                   createdAt:
                                                       imageUser.createdAt,
                                                   ruta: urlImage,
-                                                  nombre: usuario.id,
+                                                  nombre: usuario?.nombre,
                                                 );
 
                                                 ref
@@ -477,7 +477,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                               Imagen newImage = Imagen(
                                                 idInt: 0,
                                                 ruta: urlImage,
-                                                nombre: usuario.id,
+                                                nombre: usuario?.nombre,
                                               );
 
                                               final response =
@@ -491,8 +491,8 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                                 bool updateSuccess =
                                                     await AuthService()
                                                         .updateImagePerfil(
-                                                  usuario.idInt,
-                                                  usuario.username!,
+                                                  usuario?.idInt ?? 0,
+                                                  usuario?.username ?? "",
                                                   response.item2?.idInt ?? 0,
                                                 );
 

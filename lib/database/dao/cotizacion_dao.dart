@@ -28,7 +28,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     DateTime? initDate,
     DateTime? lastDate,
     String sortBy = 'created_at',
-    String order = 'asc',
+    String orderBy = 'asc',
     int limit = 20,
     int page = 1,
     bool inLastDay = false,
@@ -178,12 +178,12 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     OrderingTerm orderingTerm;
     switch (sortBy) {
       case 'created_at':
-        orderingTerm = order == 'desc'
+        orderingTerm = orderBy == 'desc'
             ? OrderingTerm.desc(db.cotizacionTable.createdAt)
             : OrderingTerm.asc(db.cotizacionTable.createdAt);
         break;
       default:
-        orderingTerm = order == 'desc'
+        orderingTerm = orderBy == 'desc'
             ? OrderingTerm.desc(db.cotizacionTable.idInt)
             : OrderingTerm.asc(db.cotizacionTable.idInt);
     }
@@ -219,13 +219,15 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(Cotizacion cotizacion) {
-    var response = into(db.cotizacionTable).insert(
+  Future<Cotizacion?> insert(Cotizacion cotizacion) async {
+    var response = await into(db.cotizacionTable).insertReturningOrNull(
       CotizacionTableData.fromJson(
         cotizacion.toJson(),
       ),
     );
-    return response;
+    if (response == null) return null;
+    Cotizacion newQuote = Cotizacion.fromJson(response.toJson());
+    return newQuote;
   }
 
   // READ: Cotizacion por ID
@@ -293,14 +295,24 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(Cotizacion quote) {
-    var response = update(db.cotizacionTable).replace(
+  Future<Cotizacion?> updat3(Cotizacion quote) async {
+    var response = await update(db.cotizacionTable).replace(
       CotizacionTableData.fromJson(
         quote.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(quote.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Cotizacion?> save(Cotizacion cotizacion) async {
+    if (cotizacion.idInt != null && cotizacion.idInt! > 0) {
+      return await updat3(cotizacion);
+    } else {
+      return await insert(cotizacion);
+    }
   }
 
   // DELETE

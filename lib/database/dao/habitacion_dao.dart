@@ -75,12 +75,16 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(Habitacion habitacion) {
-    return into(db.habitacionTable).insert(
+  Future<Habitacion?> insert(Habitacion habitacion) async {
+    final response = await into(db.habitacionTable).insertReturningOrNull(
       HabitacionTableData.fromJson(
         habitacion.toJson(),
       ),
     );
+
+    if (response == null) return null;
+    Habitacion newRoom = Habitacion.fromJson(response.toJson());
+    return newRoom;
   }
 
   // READ: Habitacion por ID
@@ -112,14 +116,24 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(Habitacion habitacion) {
-    var response = update(db.habitacionTable).replace(
+  Future<Habitacion?> updat3(Habitacion habitacion) async {
+    var response = await update(db.habitacionTable).replace(
       HabitacionTableData.fromJson(
         habitacion.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(habitacion.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Habitacion?> save(Habitacion habitacion) async {
+    if (habitacion.idInt != null && habitacion.idInt! > 0) {
+      return await updat3(habitacion);
+    } else {
+      return await insert(habitacion);
+    }
   }
 
   // DELETE

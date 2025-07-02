@@ -30,6 +30,7 @@ class TarifaRack {
   List<Periodo>? periodos;
   List<Temporada>? temporadas;
   List<Tarifa>? tarifas;
+  bool select;
 
   TarifaRack({
     this.idInt,
@@ -41,6 +42,7 @@ class TarifaRack {
     this.periodos,
     this.temporadas,
     this.tarifas,
+    this.select = false,
   });
 
   TarifaRack copyWith({

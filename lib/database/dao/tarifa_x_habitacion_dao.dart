@@ -61,12 +61,17 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(TarifaXHabitacion tarifas) {
-    return into(db.tarifaXHabitacionTable).insert(
+  Future<TarifaXHabitacion?> insert(TarifaXHabitacion tarifas) async {
+    final response =
+        await into(db.tarifaXHabitacionTable).insertReturningOrNull(
       TarifaXHabitacionTableData.fromJson(
         tarifas.toJson(),
       ),
     );
+
+    if (response == null) return null;
+    final newRateRoom = TarifaXHabitacion.fromJson(response.toJson());
+    return newRateRoom;
   }
 
   // READ: TarifaXHabitacion por ID
@@ -104,14 +109,24 @@ class TarifaXHabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(TarifaXHabitacion tarifa) {
-    var response = update(db.tarifaXHabitacionTable).replace(
+  Future<TarifaXHabitacion?> updat3(TarifaXHabitacion tarifa) async {
+    var response = await update(db.tarifaXHabitacionTable).replace(
       TarifaXHabitacionTableData.fromJson(
         tarifa.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(tarifa.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<TarifaXHabitacion?> save(TarifaXHabitacion tarifa) async {
+    if (tarifa.idInt != null && tarifa.idInt! > 0) {
+      return await updat3(tarifa);
+    } else {
+      return await insert(tarifa);
+    }
   }
 
   // DELETE

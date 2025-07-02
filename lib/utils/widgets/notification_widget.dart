@@ -1,10 +1,12 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/models/notificacion_model.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
 
+import '../../models/notificacion_model.dart';
+import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/icon_helpers.dart';
+import '../../res/helpers/utility.dart';
 import '../../res/ui/text_styles.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -148,7 +150,7 @@ class _NotificationItem extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             _getColorNotification(notificacion.mensaje ?? ''),
-            Utility.darken(
+            ColorsHelpers.darken(
                 _getColorNotification(notificacion.mensaje ?? ''), -0.15)
           ],
           end: Alignment.centerRight,
@@ -161,8 +163,9 @@ class _NotificationItem extends StatelessWidget {
           Positioned(
             right: 0,
             child: Icon(
-              notificacion.ruta ?? CupertinoIcons.bell,
-              color: Utility.darken(
+              IconHelpers.getIconNavbar(notificacion.tipo) ??
+                  CupertinoIcons.bell,
+              color: ColorsHelpers.darken(
                   _getColorNotification(notificacion.mensaje ?? ''), 0.05),
               size: 80,
             ),
@@ -175,7 +178,7 @@ class _NotificationItem extends StatelessWidget {
               color: Colors.white,
             ),
             subtitle: TextStyles.standardText(
-              text: notificacion.createdAt ?? '',
+              text: (notificacion.createdAt ?? DateTime.now()).toString(),
               size: 11,
               overClip: true,
               color: Colors.white,

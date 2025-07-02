@@ -2,21 +2,14 @@ import 'package:riverpod/riverpod.dart';
 
 import '../../database/database.dart';
 import '../../models/imagen_model.dart';
+import '../../models/usuario_model.dart';
 import '../services/auth_service.dart';
 import '../../utils/shared_preferences/preferences.dart';
 
-final userProvider = StateProvider<UsuarioTableData>((ref) {
-  return const UsuarioTableData(
-    id: 0,
-    username: "",
-    password: "",
-    rol: "",
-    correoElectronico: "",
-  );
-});
+final userProvider = StateProvider<Usuario?>((ref) => null);
 
 final imagePerfilProvider = StateProvider<Imagen>((ref) {
-  return Imagen(nombre: Preferences.userIdInt);
+  return Imagen(idInt: Preferences.userIdInt);
 });
 
 final changeUsersProvider = StateProvider<int>((ref) {
@@ -30,7 +23,7 @@ final foundImageFileProvider = StateProvider<bool>((ref) => false);
 final searchUserProvider = StateProvider<String>((ref) => '');
 
 final userQueryProvider =
-    FutureProvider.family<List<UsuarioTableData>, String>((ref, arg) async {
+    FutureProvider.family<List<Usuario>, String>((ref, arg) async {
   // final period = ref.watch(periodoProvider);
   final empty = ref.watch(isEmptyUserProvider);
   final search = ref.watch(searchUserProvider);
