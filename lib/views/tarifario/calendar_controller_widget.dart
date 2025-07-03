@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/view-models/providers/tarifario_provider.dart';
-import 'package:generador_formato/view-models/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/services/tarifa_base_service.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
@@ -342,7 +342,7 @@ class _ControllerCalendarWidgetState
                                             },
                                             onDelete: () async {
                                               bool isSaves =
-                                                  await TarifaService()
+                                                  await TarifaBaseService()
                                                       .deleteTarifaRack(
                                                           list[index]);
 

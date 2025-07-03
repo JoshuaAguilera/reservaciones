@@ -17,7 +17,7 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import '../../models/registro_tarifa_model.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
-import '../../view-models/services/tarifa_service.dart';
+import '../../view-models/services/tarifa_base_service.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/ui/title_page.dart';
@@ -93,7 +93,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
               "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
           nameButtonMain: "Aceptar",
           funtionMain: () async {
-            bool isSaves = await TarifaService().deleteTarifaRack(register);
+            bool isSaves = await TarifaBaseService().deleteTarifaRack(register);
 
             if (isSaves) {
               showSnackBar(

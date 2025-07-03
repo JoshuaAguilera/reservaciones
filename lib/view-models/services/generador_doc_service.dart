@@ -2,11 +2,12 @@ import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../models/categoria_model.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/habitacion_model.dart';
 import '../../res/helpers/constants.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/files_templates.dart';
-import '../../res/helpers/utility.dart';
 import '../../res/ui/text_styles.dart';
 import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
@@ -19,33 +20,59 @@ class GeneradorDocService extends BaseService {
   pw.TextStyle styleTag =
       pw.TextStyle(color: PdfColor.fromHex("#2A00A0"), fontSize: 16, height: 2);
 
-  Future<pw.Document> generarComprobanteCotizacionIndividual({
-    required List<Habitacion> habitaciones,
+  static PdfPageFormat pageFormatDefault = const PdfPageFormat(
+    21.59 * PdfPageFormat.cm,
+    27.94 * PdfPageFormat.cm,
+    marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
+    marginTop: (2.6 * 0.393) * PdfPageFormat.cm,
+    marginLeft: 3 * PdfPageFormat.cm,
+    marginRight: 3 * PdfPageFormat.cm,
+  );
+
+  Future<pw.Image> getImagePDF({
+    required String route,
+    pw.BoxFit fit = pw.BoxFit.contain,
+    double? width,
+    double? height,
+  }) async {
+    final image = await rootBundle.load('assets/image/$route');
+    final imageBytes = image.buffer.asUint8List();
+    return pw.Image(
+      pw.MemoryImage(imageBytes),
+      width: width,
+      height: height,
+      fit: fit,
+    );
+  }
+
+  Future<pw.Image> getImageGallery(String route) async {
+    return await getImagePDF(
+      route: route,
+      width: 194,
+      height: 128,
+      fit: pw.BoxFit.fill,
+    );
+  }
+
+  Future<pw.RichText> getTextStyle(int title, int content, double size) async {
+    return await TextStyles.pwTextAsotiation(
+      title: FilesTemplate.StructureDoc(title),
+      content: FilesTemplate.StructureDoc(content),
+      size: size,
+    );
+  }
+
+  Future<pw.Document> generarCompInd({
     required Cotizacion cotizacion,
     bool themeDefault = false,
     bool isDirect = false,
   }) async {
     //PDF generation
     final pdf = pw.Document();
-    PdfPageFormat pageFormatDefault = const PdfPageFormat(
-      21.59 * PdfPageFormat.cm,
-      27.94 * PdfPageFormat.cm,
-      marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
-      marginTop: (2.6 * 0.393) * PdfPageFormat.cm,
-      marginLeft: 3 * PdfPageFormat.cm,
-      marginRight: 3 * PdfPageFormat.cm,
-    );
-
-    //Header
-    final imgenLogo = await rootBundle.load('assets/image/logo_documento.png');
-    final imageBytes = imgenLogo.buffer.asUint8List();
-    pw.MemoryImage logoImage = pw.MemoryImage(imageBytes);
-    pw.Image logoHeaderImage = pw.Image(logoImage, width: 165);
-
-    //Footer
-    final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
-    final imageBytesW = imgWhatsApp.buffer.asUint8List();
-    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 9.5);
+    final logoHeaderImage =
+        await getImagePDF(route: "logo_documento.png", width: 165);
+    final whatsAppImage =
+        await getImagePDF(route: "whatsApp_icon.png", width: 9);
 
     //Styles
     pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF(size: 9);
@@ -62,68 +89,25 @@ class GeneradorDocService extends BaseService {
         await TextStyles.pwStylePDF(size: 9, isRegular: true);
 
     // text Asotiative
-    pw.RichText cancelPolity1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(120),
-        content: FilesTemplate.StructureDoc(12),
-        size: 9);
-    pw.RichText cancelPolity2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(130),
-        content: FilesTemplate.StructureDoc(13),
-        size: 9);
-    pw.RichText cancelPolity3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(140),
-        content: FilesTemplate.StructureDoc(14),
-        size: 9);
-
-    pw.RichText service1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(149),
-        content: FilesTemplate.StructureDoc(49),
-        size: 9);
-    pw.RichText service2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(136),
-        content: FilesTemplate.StructureDoc(36),
-        size: 9);
-    pw.RichText service3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(137),
-        content: FilesTemplate.StructureDoc(37),
-        size: 9);
-    pw.RichText service4 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(138),
-        content: FilesTemplate.StructureDoc(38),
-        size: 9);
-    pw.RichText service5 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(148),
-        content: FilesTemplate.StructureDoc(48),
-        size: 9);
+    pw.RichText cancelPolity1 = await getTextStyle(120, 12, 9);
+    pw.RichText cancelPolity2 = await getTextStyle(130, 13, 9);
+    pw.RichText cancelPolity3 = await getTextStyle(140, 14, 9);
+    pw.RichText service1 = await getTextStyle(149, 49, 9);
+    pw.RichText service2 = await getTextStyle(136, 36, 9);
+    pw.RichText service3 = await getTextStyle(137, 37, 9);
+    pw.RichText service4 = await getTextStyle(138, 38, 9);
+    pw.RichText service5 = await getTextStyle(148, 48, 9);
 
     //facilities
-    pw.RichText ease1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(150),
-        content: FilesTemplate.StructureDoc(50),
-        size: 9);
-    pw.RichText ease2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(151),
-        content: FilesTemplate.StructureDoc(51),
-        size: 9);
-    pw.RichText ease3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(152),
-        content: FilesTemplate.StructureDoc(52),
-        size: 9);
-    pw.RichText ease4 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(153),
-        content: FilesTemplate.StructureDoc(53),
-        size: 9);
-    pw.RichText ease5 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(154),
-        content: FilesTemplate.StructureDoc(54),
-        size: 9);
-    pw.RichText ease6 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(155),
-        content: FilesTemplate.StructureDoc(55),
-        size: 9);
+    pw.RichText ease1 = await getTextStyle(150, 50, 9);
+    pw.RichText ease2 = await getTextStyle(151, 51, 9);
+    pw.RichText ease3 = await getTextStyle(152, 52, 9);
+    pw.RichText ease4 = await getTextStyle(153, 53, 9);
+    pw.RichText ease5 = await getTextStyle(154, 54, 9);
+    pw.RichText ease6 = await getTextStyle(155, 55, 9);
 
     List<pw.Widget> tables = generateTables(
-      habitaciones: habitaciones,
+      habitaciones: cotizacion.habitaciones,
       styleLigth: styleLigthHeaderTable,
       styleLigthHeaderTable: styleBoldTable,
       styleBoldTable: styleBoldTable,
@@ -142,7 +126,7 @@ class GeneradorDocService extends BaseService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.only(top: 40),
                   child: pw.Text(
-                      "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
+                      "Bahías de Huatulco Oaxaca a ${DateHelpers.getStringDate()}",
                       style: styleLigthHeader),
                 ),
               ],
@@ -274,25 +258,10 @@ class GeneradorDocService extends BaseService {
   }) async {
     //PDF generation
     final pdf = pw.Document();
-    PdfPageFormat pageFormatDefault = const PdfPageFormat(
-      21.59 * PdfPageFormat.cm,
-      27.94 * PdfPageFormat.cm,
-      marginBottom: (2.5 * 0.2) * PdfPageFormat.cm,
-      marginTop: (2.6 * 0.393) * PdfPageFormat.cm,
-      marginLeft: 3 * PdfPageFormat.cm,
-      marginRight: 3 * PdfPageFormat.cm,
-    );
-
-    //Header img
-    final imgenLogo = await rootBundle.load('assets/image/logo_documento.png');
-    final imageBytes = imgenLogo.buffer.asUint8List();
-    pw.MemoryImage logoImage = pw.MemoryImage(imageBytes);
-    pw.Image logoHeaderImage = pw.Image(logoImage, width: 165);
-
-    //Footer img
-    final imgWhatsApp = await rootBundle.load('assets/image/whatsApp_icon.png');
-    final imageBytesW = imgWhatsApp.buffer.asUint8List();
-    pw.Image whatsAppImage = pw.Image(pw.MemoryImage(imageBytesW), width: 9);
+    final logoHeaderImage =
+        await getImagePDF(route: "logo_documento.png", width: 165);
+    final whatsAppImage =
+        await getImagePDF(route: "whatsApp_icon.png", width: 9);
 
     //Styles
     pw.TextStyle styleLigthHeader = await TextStyles.pwStylePDF(size: 9);
@@ -315,74 +284,32 @@ class GeneradorDocService extends BaseService {
     // pw.TextStyle styleRegular =
     //     await TextStyles.pwStylePDF(size: 9.2, isBold: true);
 
-    // text Asotiative
-    pw.RichText cancelPolity1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(69),
-        content: FilesTemplate.StructureDoc(70),
-        size: 9);
-    pw.RichText cancelPolity2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(71),
-        content: FilesTemplate.StructureDoc(72),
-        size: 9);
-    pw.RichText cancelPolity3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(73),
-        content: FilesTemplate.StructureDoc(74),
-        size: 9);
+    // Text Asotiative
+    pw.RichText cancelPolity1 = await getTextStyle(69, 70, 9);
+    pw.RichText cancelPolity2 = await getTextStyle(71, 72, 9);
+    pw.RichText cancelPolity3 = await getTextStyle(73, 74, 9);
 
-    pw.RichText service1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(149),
-        content: FilesTemplate.StructureDoc(49),
-        size: 9);
-    pw.RichText service2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(136),
-        content: FilesTemplate.StructureDoc(36),
-        size: 9);
-    pw.RichText service3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(137),
-        content: FilesTemplate.StructureDoc(37),
-        size: 9);
-    pw.RichText service4 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(138),
-        content: FilesTemplate.StructureDoc(38),
-        size: 9);
-    pw.RichText service5 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(148),
-        content: FilesTemplate.StructureDoc(48),
-        size: 9);
+    pw.RichText service1 = await getTextStyle(149, 49, 9);
+    pw.RichText service2 = await getTextStyle(136, 36, 9);
+    pw.RichText service3 = await getTextStyle(137, 37, 9);
+    pw.RichText service4 = await getTextStyle(138, 38, 9);
+    pw.RichText service5 = await getTextStyle(148, 48, 9);
 
-    //facilities
-    pw.RichText ease1 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(150),
-        content: FilesTemplate.StructureDoc(50),
-        size: 9);
-    pw.RichText ease2 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(151),
-        content: FilesTemplate.StructureDoc(51),
-        size: 9);
-    pw.RichText ease3 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(152),
-        content: FilesTemplate.StructureDoc(52),
-        size: 9);
-    pw.RichText ease4 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(153),
-        content: FilesTemplate.StructureDoc(53),
-        size: 9);
-    pw.RichText ease5 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(154),
-        content: FilesTemplate.StructureDoc(54),
-        size: 9);
-    pw.RichText ease6 = await TextStyles.pwTextAsotiation(
-        title: FilesTemplate.StructureDoc(155),
-        content: FilesTemplate.StructureDoc(55),
-        size: 9);
+    // Facilities
+    pw.RichText ease1 = await getTextStyle(150, 50, 9);
+    pw.RichText ease2 = await getTextStyle(151, 51, 9);
+    pw.RichText ease3 = await getTextStyle(152, 52, 9);
+    pw.RichText ease4 = await getTextStyle(153, 53, 9);
+    pw.RichText ease5 = await getTextStyle(154, 54, 9);
+    pw.RichText ease6 = await getTextStyle(155, 55, 9);
 
-    // Colection images
-    pw.Image oneImage = await getImagePDF("habitacion_1.jpeg");
-    pw.Image secImage = await getImagePDF("habitacion_2.jpeg");
-    pw.Image threeImage = await getImagePDF("buffet.jpeg");
-    pw.Image fourImage = await getImagePDF("parque_acuatico.jpeg");
-    pw.Image fiveImage = await getImagePDF("fachada.jpeg");
-    pw.Image sixImage = await getImagePDF("alberca.jpeg");
+    // Collection images
+    pw.Image oneImage = await getImageGallery("habitacion_1.jpeg");
+    pw.Image secImage = await getImageGallery("habitacion_2.jpeg");
+    pw.Image threeImage = await getImageGallery("buffet.jpeg");
+    pw.Image fourImage = await getImageGallery("parque_acuatico.jpeg");
+    pw.Image fiveImage = await getImageGallery("fachada.jpeg");
+    pw.Image sixImage = await getImageGallery("alberca.jpeg");
 
     int numRooms = 0;
 
@@ -417,7 +344,7 @@ class GeneradorDocService extends BaseService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.only(top: 40),
                   child: pw.Text(
-                      "Bahías de Huatulco Oaxaca a ${Utility.getCompleteDate()}",
+                      "Bahías de Huatulco Oaxaca a ${DateHelpers.getStringDate()}",
                       style: styleLigthHeader),
                 ),
               ],
@@ -449,7 +376,7 @@ class GeneradorDocService extends BaseService {
           if ((cotizacion.cliente?.correoElectronico ?? '').isNotEmpty)
             pw.SizedBox(height: 3),
           pw.Text(
-              "FECHAS DE ESTANCIA: ${Utility.getPeriodReservation(habitaciones)}",
+              "FECHAS DE ESTANCIA: ${DateHelpers.getPeriodReservation(habitaciones)}",
               style: styleBold),
           pw.SizedBox(height: 3),
           pw.Text(
@@ -611,6 +538,7 @@ class GeneradorDocService extends BaseService {
 
   List<pw.Widget> generateTables({
     List<Habitacion>? habitaciones,
+    List<Categoria>? categorias,
     required pw.TextStyle styleLigth,
     required pw.TextStyle styleLigthHeaderTable,
     required pw.TextStyle styleBoldTable,
@@ -620,45 +548,29 @@ class GeneradorDocService extends BaseService {
     List<pw.Widget> tablas = [];
 
     if (habitaciones == null) return tablas;
+    categorias ??= [];
 
     if (!typeQuote) {
       for (var element
           in habitaciones.where((element) => !element.esCortesia).toList()) {
-        tablas.add(
-          FilesTemplate.getTablesCotIndiv(
-            categoria:
-                "HABITACIÓN DELUXE DOBLE, VISTA A LA RESERVA – PLAN TODO INCLUIDO",
-            room: [element],
-            styleGeneral: styleLigth,
-            styleHeader: styleLigthHeaderTable,
-            styleBold: styleBoldTable,
-            colorHeader: color,
-            tipoHab: tipoHabitacion.first,
-            numRooms: habitaciones
-                .where((element) => !element.esCortesia)
-                .toList()
-                .length,
-          ),
-        );
-        tablas.add(pw.SizedBox(height: 10));
-
-        tablas.add(
-          FilesTemplate.getTablesCotIndiv(
-            categoria:
-                "HABITACIÓN DELUXE DOBLE O KING SIZE, VISTA PARCIAL AL OCÉANO – PLAN TODO INCLUIDO",
-            room: [element],
-            styleGeneral: styleLigth,
-            styleHeader: styleLigthHeaderTable,
-            styleBold: styleBoldTable,
-            colorHeader: color,
-            tipoHab: tipoHabitacion.last,
-            numRooms: habitaciones
-                .where((element) => !element.esCortesia)
-                .toList()
-                .length,
-          ),
-        );
-        tablas.add(pw.SizedBox(height: 10));
+        for (var categoria in categorias) {
+          tablas.add(
+            FilesTemplate.getTablesCotIndiv(
+              categoria: categoria,
+              room: element,
+              styleGeneral: styleLigth,
+              styleHeader: styleLigthHeaderTable,
+              styleBold: styleBoldTable,
+              colorHeader: color,
+              tipoHab: tipoHabitacion.last,
+              numRooms: habitaciones
+                  .where((element) => !element.esCortesia)
+                  .toList()
+                  .length,
+            ),
+          );
+          tablas.add(pw.SizedBox(height: 10));
+        }
       }
     } else {
       for (var element
@@ -666,7 +578,7 @@ class GeneradorDocService extends BaseService {
         tablas.add(
           FilesTemplate.getTablesCotGroup(
             nameTable: "PLAN TODO INCLUIDO - TARIFA POR NOCHE"
-                " ${habitaciones.length > 1 ? Utility.getStringPeriod(initDate: DateTime.parse(element.checkIn!), lastDate: DateTime.parse(element.checkOut!)) : ""}",
+                " ${habitaciones.length > 1 ? DateHelpers.getStringPeriod(initDate: element.checkIn!, lastDate: element.checkOut!) : ""}",
             habitacion: element,
             styleGeneral: styleLigth,
             styleHeader: styleLigthHeaderTable,
@@ -678,19 +590,15 @@ class GeneradorDocService extends BaseService {
                 .where((element) => !element.esCortesia)
                 .toList()
                 .indexOf(element) <
-            habitaciones.where((element) => !element.esCortesia).toList().length) {
+            habitaciones
+                .where((element) => !element.esCortesia)
+                .toList()
+                .length) {
           tablas.add(pw.SizedBox(height: 10));
         }
       }
     }
 
     return tablas;
-  }
-
-  Future<pw.Image> getImagePDF(String route) async {
-    final image = await rootBundle.load('assets/image/$route');
-    final imageBytes = image.buffer.asUint8List();
-    return pw.Image(pw.MemoryImage(imageBytes),
-        width: 194, height: 128, fit: pw.BoxFit.fill);
   }
 }

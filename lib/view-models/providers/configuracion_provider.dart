@@ -13,7 +13,7 @@ final documentQuoteIndProvider =
   final themeDefault = ref.watch(themeDefaultIndProvider);
 
   pw.Document comprobantePDF =
-      await GeneradorDocService().generarComprobanteCotizacionIndividual(
+      await GeneradorDocService().generarCompInd(
     habitaciones: [
       // Habitacion(
       //   categoria: categorias.first,

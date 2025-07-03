@@ -107,12 +107,16 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
   }
 
   // CREATE
-  Future<int> insert(Tarifa tarifa) {
-    return into(db.tarifaTable).insert(
+  Future<Tarifa?> insert(Tarifa tarifa) async {
+    final response = await into(db.tarifaTable).insertReturningOrNull(
       TarifaTableData.fromJson(
         tarifa.toJson(),
       ),
     );
+
+    if (response == null) return null;
+    final newRate = Tarifa.fromJson(response.toJson());
+    return newRate;
   }
 
   // READ: Tarifa por ID
@@ -154,14 +158,24 @@ class TarifaDao extends DatabaseAccessor<AppDatabase> with _$TarifaDaoMixin {
   }
 
   // UPDATE
-  Future<bool> updat3(Tarifa tarifa) {
-    var response = update(db.tarifaTable).replace(
+  Future<Tarifa?> updat3(Tarifa tarifa) async {
+    var response = await update(db.tarifaTable).replace(
       TarifaTableData.fromJson(
         tarifa.toJson(),
       ),
     );
+    if (!response) return null;
+    return await getByID(tarifa.idInt ?? 0);
+  }
 
-    return response;
+  // SAVE
+  Future<Tarifa?> save(Tarifa tarifa) async {
+    final existingTarifa = await getByID(tarifa.idInt ?? 0);
+    if (existingTarifa != null) {
+      return await updat3(tarifa);
+    } else {
+      return await insert(tarifa);
+    }
   }
 
   // DELETE

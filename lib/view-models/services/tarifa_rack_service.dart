@@ -1,23 +1,26 @@
-import '../../database/dao/habitacion_dao.dart';
 import '../../database/database.dart';
-import '../../models/habitacion_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import 'base_service.dart';
 
-class HabitacionService extends BaseService {
-  Future<List<Habitacion>> getList({
-    int? cotizacionId,
+class TarifaRackService extends BaseService {
+  Future<List<TarifaRack>> getList({
+    int? tarifaBaseId,
+    int? categoriaId,
     DateTime? initDate,
     DateTime? lastDate,
-    String sortBy = '',
-    String orderBy = '',
-    int pagina = 1,
+    String sortBy = 'created_at',
+    String orderBy = 'asc',
     int limit = 20,
+    int page = 1,
     bool conDetalle = false,
   }) async {
     String sortSBy = "";
     String ordenSBy = "asc";
 
     switch (orderBy) {
+      case "A":
+        sortSBy = "nombre";
+        ordenSBy = "asc";
       case "MR":
         sortSBy = "createdAt";
         ordenSBy = "desc";
@@ -31,22 +34,19 @@ class HabitacionService extends BaseService {
 
     try {
       final db = AppDatabase();
-      final habDao = HabitacionDao(db);
-      List<Habitacion> resp = await habDao.getList(
-        page: pagina,
-        limit: limit,
+      final tarifaRackDao = db.tarifaRackDao;
+
+      final list = await tarifaRackDao.getList(
+        
         initDate: initDate,
         lastDate: lastDate,
-        orderBy: ordenSBy,
         sortBy: sortSBy,
+        order: ordenSBy,
+        limit: limit,
+        page: page,
       );
-
-      await habDao.close();
-      await db.close();
-      return resp;
     } catch (e) {
       print(e);
     }
-    return [];
   }
 }

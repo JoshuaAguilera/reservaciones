@@ -36,9 +36,9 @@ class CotizacionService extends BaseService {
     String ordenSBy = "asc";
 
     switch (ordenBy) {
-      case "A":
-        sortSBy = "nombre";
-        ordenSBy = "asc";
+      // case "A":
+      //   sortSBy = "nombre";
+      //   ordenSBy = "asc";
       case "MR":
         sortSBy = "createdAt";
         ordenSBy = "desc";
@@ -85,6 +85,7 @@ class CotizacionService extends BaseService {
         inLastMonth: inLastMonth,
       );
 
+      await cotDao.close();
       await db.close();
       return resp;
     } catch (e) {
@@ -182,16 +183,16 @@ class CotizacionService extends BaseService {
               }
 
               newRateRoom.tarifaXDia = newTariff;
-              newRoom.tarifasXHabitacion!.add(newRateRoom);
+              newRoom.tarifasXHabitacion?.add(newRateRoom);
             }
 
             saveCotizacion!.habitaciones!.add(newRoom);
           }
 
-          tarifaDiaDao.close();
-          tarifaHabDao.close();
-          habitacionDao.close();
-          cotizacionDao.close();
+          await tarifaDiaDao.close();
+          await tarifaHabDao.close();
+          await habitacionDao.close();
+          await cotizacionDao.close();
         },
       );
       await db.close();

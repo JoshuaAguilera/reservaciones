@@ -33,7 +33,6 @@ class ImageService extends BaseService {
     String oldUrl = '',
   }) async {
     Imagen? newImage;
-    bool isUpdate = imagen.idInt != null;
 
     try {
       if (oldUrl.isNotEmpty) {
@@ -47,9 +46,7 @@ class ImageService extends BaseService {
 
       final db = AppDatabase();
       final imagenDao = ImagenDao(db);
-      final response = await (isUpdate
-          ? imagenDao.updat3(imagen)
-          : imagenDao.insert(imagen));
+      final response = await imagenDao.save(imagen);
       await imagenDao.close();
       await db.close();
 

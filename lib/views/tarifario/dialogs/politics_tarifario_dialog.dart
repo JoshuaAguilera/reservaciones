@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:icons_plus/icons_plus.dart';
-import '../../../view-models/services/tarifa_service.dart';
+import '../../../view-models/services/tarifa_base_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/show_snackbar.dart';
 import '../../../res/ui/title_page.dart';
@@ -191,7 +191,7 @@ class _PoliticsTarifarioDialogState extends State<PoliticsTarifarioDialog> {
                       );
 
                       bool responseSavePolicy =
-                          await TarifaService().saveTariffPolicy(savePolicy);
+                          await TarifaBaseService().saveTariffPolicy(savePolicy);
 
                       if (!context.mounted) return;
 

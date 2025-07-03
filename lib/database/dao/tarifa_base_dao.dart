@@ -126,14 +126,16 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(TarifaBase tarifa) {
-    var response = into(db.tarifaBaseTable).insert(
+  Future<TarifaBase?> insert(TarifaBase tarifa) async {
+    var response = await into(db.tarifaBaseTable).insertReturningOrNull(
       TarifaBaseTableData.fromJson(
         tarifa.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    final newQuote = TarifaBase.fromJson(response.toJson());
+    return newQuote;
   }
 
   // READ: TarifaBase por ID
@@ -175,14 +177,24 @@ class TarifaBaseDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(TarifaBase tarifa) {
-    var response = update(db.tarifaBaseTable).replace(
+  Future<TarifaBase?> updat3(TarifaBase tarifa) async {
+    var response = await update(db.tarifaBaseTable).replace(
       TarifaBaseTableData.fromJson(
         tarifa.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(tarifa.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<TarifaBase?> save(TarifaBase tarifa) async {
+    if (tarifa.idInt == null || tarifa.idInt == 0) {
+      return await insert(tarifa);
+    } else {
+      return await updat3(tarifa);
+    }
   }
 
   // DELETE

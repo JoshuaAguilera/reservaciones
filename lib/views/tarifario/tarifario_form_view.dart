@@ -12,7 +12,7 @@ import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/view-models/providers/tarifario_provider.dart';
-import 'package:generador_formato/view-models/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/services/tarifa_base_service.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
@@ -897,7 +897,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     }
 
     bool isSaves = oldRegister != null
-        ? await TarifaService().updateTarifaBD(
+        ? await TarifaBaseService().updateTarifaBD(
             oldRegister: oldRegister!,
             name: nombreTarifaController.text,
             colorIdentificativo: colorTarifa,
@@ -908,7 +908,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
             tarifaVR: tarifaVR,
             withBaseTariff: usedBaseTariff,
           )
-        : await TarifaService().saveTarifaBD(
+        : await TarifaBaseService().saveTarifaBD(
             name: nombreTarifaController.text,
             colorIdentificativo: colorTarifa,
             diasAplicacion: selectedDayWeek,

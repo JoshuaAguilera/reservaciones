@@ -358,7 +358,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                               } else {
                                                 comprobantePDF =
                                                     await GeneradorDocService()
-                                                        .generarComprobanteCotizacionIndividual(
+                                                        .generarCompInd(
                                                   habitaciones:
                                                       cotizacion.habitaciones!,
                                                   cotizacion: cotizacion,

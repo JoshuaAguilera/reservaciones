@@ -236,7 +236,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
       Cotizacion cotizacion, bool typeQuote) async {
     if (!typeQuote) {
       return pdfPrinc =
-          await GeneradorDocService().generarComprobanteCotizacionIndividual(
+          await GeneradorDocService().generarCompInd(
         habitaciones: state,
         cotizacion: cotizacion,
         isDirect: true,

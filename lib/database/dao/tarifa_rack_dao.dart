@@ -97,13 +97,16 @@ class TarifaRackDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(TarifaRack tarifa) {
-    var response = into(db.tarifaRackTable).insert(
+  Future<TarifaRack?> insert(TarifaRack tarifa) async {
+    var response = await into(db.tarifaRackTable).insertReturningOrNull(
       TarifaRackTableData.fromJson(
         tarifa.toJson(),
       ),
     );
-    return response;
+
+    if (response == null) return null;
+    final newRate = TarifaRack.fromJson(response.toJson());
+    return newRate;
   }
 
   // READ: TarifaRack por ID
@@ -137,14 +140,15 @@ class TarifaRackDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(TarifaRack tarifa) {
-    var response = update(db.tarifaRackTable).replace(
+  Future<TarifaRack?> updat3(TarifaRack tarifa) async {
+    var response = await update(db.tarifaRackTable).replace(
       TarifaRackTableData.fromJson(
         tarifa.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(tarifa.idInt ?? 0);
   }
 
   // DELETE

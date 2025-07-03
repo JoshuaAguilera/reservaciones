@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/database/database.dart';
 import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/view-models/services/tarifa_service.dart';
+import 'package:generador_formato/view-models/services/tarifa_base_service.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -17,7 +17,7 @@ final editTarifaProvider =
 final allTarifaProvider = FutureProvider.family<List<RegistroTarifa>, String>(
   (ref, arg) async {
     final detectChanged = ref.watch(changeTarifasProvider);
-    final list = await TarifaService().getTarifasBD();
+    final list = await TarifaBaseService().getTarifasBD();
     return list;
   },
 );
@@ -33,7 +33,7 @@ final listTarifaProvider = FutureProvider.family<List<RegistroTarifa>, String>(
 final tariffPolicyProvider = FutureProvider.family<PoliticaTarifario?, String>(
   (ref, arg) async {
     final detectChanged = ref.watch(changeTariffPolicyProvider);
-    final list = await TarifaService().getTariffPolicy();
+    final list = await TarifaBaseService().getTariffPolicy();
     return list;
   },
 );
@@ -60,7 +60,7 @@ final temporadasEfectivoProvider = StateProvider<List<Temporada>>((ref) => []);
 final tarifaBaseProvider = FutureProvider.family<List<TarifaBase>, String>(
   (ref, arg) async {
     final detectChanged = ref.watch(changeTarifasBaseProvider);
-    final list = await TarifaService().getBaseTariff();
+    final list = await TarifaBaseService().getBaseTariff();
     return list;
   },
 );

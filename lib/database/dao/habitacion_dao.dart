@@ -20,8 +20,10 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
     int? cotizacionId,
     DateTime? initDate,
     DateTime? lastDate,
+    DateTime? initTime,
+    DateTime? lastTime,
     String sortBy = 'created_at',
-    String order = 'asc',
+    String orderBy = 'asc',
     int limit = 20,
     int page = 1,
   }) async {
@@ -49,12 +51,12 @@ class HabitacionDao extends DatabaseAccessor<AppDatabase>
 
     switch (sortBy) {
       case 'created_at':
-        ordering = order == 'desc'
+        ordering = orderBy == 'desc'
             ? OrderingTerm.desc(db.habitacionTable.createdAt)
             : OrderingTerm.asc(db.habitacionTable.createdAt);
         break;
       default:
-        ordering = order == 'desc'
+        ordering = orderBy == 'desc'
             ? OrderingTerm.desc(db.habitacionTable.idInt)
             : OrderingTerm.asc(db.habitacionTable.idInt);
     }

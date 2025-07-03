@@ -45,50 +45,6 @@ import 'tables/tipo_habitacion_table.dart';
 import 'tables/usuario_table.dart';
 part 'database.g.dart';
 
-// @DriftDatabase(
-//   tables: [
-//     CategoriaTable,
-//     ClienteTable,
-//     CotizacionTable,
-//     HabitacionTable,
-//     ImagenTable,
-//     NotificacionTable,
-//     PeriodoTable,
-//     PoliticaTarifarioTable,
-//     ReservacionTable,
-//     ResumenOperacionTable,
-//     RolTable,
-//     TarifaBaseTable,
-//     TarifaRackTable,
-//     TarifaTable,
-//     TarifaXDiaTable,
-//     TarifaXHabitacionTable,
-//     TemporadaTable,
-//     TarifaTemporadaTable,
-//     TipoHabitacionTable,
-//     UsuarioTable,
-//     ReservacionBrazaleteTable,
-//   ],
-//   daos: [
-//     CategoriaDao,
-//     ClienteDao,
-//     CotizacionDao,
-//     HabitacionDao,
-//     PeriodoDao,
-//     ResumenOperacionDao,
-//     TarifaBaseDao,
-//     TarifaDao,
-//     TarifaRackDao,
-//     TarifaXDiaDao,
-//     TarifaXHabitacionDao,
-//     TemporadaDao,
-//     UsuarioDao,
-//     ImagenDao,
-//     PoliticaTarifarioDao,
-//   ],
-// )
-// class AppDatabase extends _$AppDatabase {}
-
 @DriftDatabase(
   tables: [
     CategoriaTable,
