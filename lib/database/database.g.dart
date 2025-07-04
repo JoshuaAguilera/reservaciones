@@ -11101,6 +11101,362 @@ class ReservacionBrazaleteTableCompanion
   }
 }
 
+class $RegistroTarifaTableTable extends RegistroTarifaTable
+    with TableInfo<$RegistroTarifaTableTable, RegistroTarifaTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RegistroTarifaTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idIntMeta = const VerificationMeta('idInt');
+  @override
+  late final GeneratedColumn<int> idInt = GeneratedColumn<int>(
+      'id_int', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaIntMeta =
+      const VerificationMeta('tarifaInt');
+  @override
+  late final GeneratedColumn<int> tarifaInt = GeneratedColumn<int>(
+      'tarifa_int', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_table (id)'));
+  static const VerificationMeta _tarifaMeta = const VerificationMeta('tarifa');
+  @override
+  late final GeneratedColumn<String> tarifa = GeneratedColumn<String>(
+      'tarifa', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tarifaRackIntMeta =
+      const VerificationMeta('tarifaRackInt');
+  @override
+  late final GeneratedColumn<int> tarifaRackInt = GeneratedColumn<int>(
+      'tarifa_rack_int', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES tarifa_rack_table (id)'));
+  static const VerificationMeta _tarifaRackMeta =
+      const VerificationMeta('tarifaRack');
+  @override
+  late final GeneratedColumn<String> tarifaRack = GeneratedColumn<String>(
+      'tarifa_rack', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idInt, id, tarifaInt, tarifa, tarifaRackInt, tarifaRack];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'registro_tarifa_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<RegistroTarifaTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_int')) {
+      context.handle(
+          _idIntMeta, idInt.isAcceptableOrUnknown(data['id_int']!, _idIntMeta));
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('tarifa_int')) {
+      context.handle(_tarifaIntMeta,
+          tarifaInt.isAcceptableOrUnknown(data['tarifa_int']!, _tarifaIntMeta));
+    }
+    if (data.containsKey('tarifa')) {
+      context.handle(_tarifaMeta,
+          tarifa.isAcceptableOrUnknown(data['tarifa']!, _tarifaMeta));
+    }
+    if (data.containsKey('tarifa_rack_int')) {
+      context.handle(
+          _tarifaRackIntMeta,
+          tarifaRackInt.isAcceptableOrUnknown(
+              data['tarifa_rack_int']!, _tarifaRackIntMeta));
+    }
+    if (data.containsKey('tarifa_rack')) {
+      context.handle(
+          _tarifaRackMeta,
+          tarifaRack.isAcceptableOrUnknown(
+              data['tarifa_rack']!, _tarifaRackMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idInt};
+  @override
+  RegistroTarifaTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RegistroTarifaTableData(
+      idInt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id']),
+      tarifaInt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_int']),
+      tarifa: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tarifa']),
+      tarifaRackInt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tarifa_rack_int']),
+      tarifaRack: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tarifa_rack']),
+    );
+  }
+
+  @override
+  $RegistroTarifaTableTable createAlias(String alias) {
+    return $RegistroTarifaTableTable(attachedDatabase, alias);
+  }
+}
+
+class RegistroTarifaTableData extends DataClass
+    implements Insertable<RegistroTarifaTableData> {
+  final int idInt;
+  final String? id;
+  final int? tarifaInt;
+  final String? tarifa;
+  final int? tarifaRackInt;
+  final String? tarifaRack;
+  const RegistroTarifaTableData(
+      {required this.idInt,
+      this.id,
+      this.tarifaInt,
+      this.tarifa,
+      this.tarifaRackInt,
+      this.tarifaRack});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_int'] = Variable<int>(idInt);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
+    }
+    if (!nullToAbsent || tarifaInt != null) {
+      map['tarifa_int'] = Variable<int>(tarifaInt);
+    }
+    if (!nullToAbsent || tarifa != null) {
+      map['tarifa'] = Variable<String>(tarifa);
+    }
+    if (!nullToAbsent || tarifaRackInt != null) {
+      map['tarifa_rack_int'] = Variable<int>(tarifaRackInt);
+    }
+    if (!nullToAbsent || tarifaRack != null) {
+      map['tarifa_rack'] = Variable<String>(tarifaRack);
+    }
+    return map;
+  }
+
+  RegistroTarifaTableCompanion toCompanion(bool nullToAbsent) {
+    return RegistroTarifaTableCompanion(
+      idInt: Value(idInt),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      tarifaInt: tarifaInt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaInt),
+      tarifa:
+          tarifa == null && nullToAbsent ? const Value.absent() : Value(tarifa),
+      tarifaRackInt: tarifaRackInt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaRackInt),
+      tarifaRack: tarifaRack == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tarifaRack),
+    );
+  }
+
+  factory RegistroTarifaTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RegistroTarifaTableData(
+      idInt: serializer.fromJson<int>(json['idInt']),
+      id: serializer.fromJson<String?>(json['id']),
+      tarifaInt: serializer.fromJson<int?>(json['tarifaInt']),
+      tarifa: serializer.fromJson<String?>(json['tarifa']),
+      tarifaRackInt: serializer.fromJson<int?>(json['tarifaRackInt']),
+      tarifaRack: serializer.fromJson<String?>(json['tarifaRack']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idInt': serializer.toJson<int>(idInt),
+      'id': serializer.toJson<String?>(id),
+      'tarifaInt': serializer.toJson<int?>(tarifaInt),
+      'tarifa': serializer.toJson<String?>(tarifa),
+      'tarifaRackInt': serializer.toJson<int?>(tarifaRackInt),
+      'tarifaRack': serializer.toJson<String?>(tarifaRack),
+    };
+  }
+
+  RegistroTarifaTableData copyWith(
+          {int? idInt,
+          Value<String?> id = const Value.absent(),
+          Value<int?> tarifaInt = const Value.absent(),
+          Value<String?> tarifa = const Value.absent(),
+          Value<int?> tarifaRackInt = const Value.absent(),
+          Value<String?> tarifaRack = const Value.absent()}) =>
+      RegistroTarifaTableData(
+        idInt: idInt ?? this.idInt,
+        id: id.present ? id.value : this.id,
+        tarifaInt: tarifaInt.present ? tarifaInt.value : this.tarifaInt,
+        tarifa: tarifa.present ? tarifa.value : this.tarifa,
+        tarifaRackInt:
+            tarifaRackInt.present ? tarifaRackInt.value : this.tarifaRackInt,
+        tarifaRack: tarifaRack.present ? tarifaRack.value : this.tarifaRack,
+      );
+  RegistroTarifaTableData copyWithCompanion(RegistroTarifaTableCompanion data) {
+    return RegistroTarifaTableData(
+      idInt: data.idInt.present ? data.idInt.value : this.idInt,
+      id: data.id.present ? data.id.value : this.id,
+      tarifaInt: data.tarifaInt.present ? data.tarifaInt.value : this.tarifaInt,
+      tarifa: data.tarifa.present ? data.tarifa.value : this.tarifa,
+      tarifaRackInt: data.tarifaRackInt.present
+          ? data.tarifaRackInt.value
+          : this.tarifaRackInt,
+      tarifaRack:
+          data.tarifaRack.present ? data.tarifaRack.value : this.tarifaRack,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RegistroTarifaTableData(')
+          ..write('idInt: $idInt, ')
+          ..write('id: $id, ')
+          ..write('tarifaInt: $tarifaInt, ')
+          ..write('tarifa: $tarifa, ')
+          ..write('tarifaRackInt: $tarifaRackInt, ')
+          ..write('tarifaRack: $tarifaRack')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(idInt, id, tarifaInt, tarifa, tarifaRackInt, tarifaRack);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RegistroTarifaTableData &&
+          other.idInt == this.idInt &&
+          other.id == this.id &&
+          other.tarifaInt == this.tarifaInt &&
+          other.tarifa == this.tarifa &&
+          other.tarifaRackInt == this.tarifaRackInt &&
+          other.tarifaRack == this.tarifaRack);
+}
+
+class RegistroTarifaTableCompanion
+    extends UpdateCompanion<RegistroTarifaTableData> {
+  final Value<int> idInt;
+  final Value<String?> id;
+  final Value<int?> tarifaInt;
+  final Value<String?> tarifa;
+  final Value<int?> tarifaRackInt;
+  final Value<String?> tarifaRack;
+  const RegistroTarifaTableCompanion({
+    this.idInt = const Value.absent(),
+    this.id = const Value.absent(),
+    this.tarifaInt = const Value.absent(),
+    this.tarifa = const Value.absent(),
+    this.tarifaRackInt = const Value.absent(),
+    this.tarifaRack = const Value.absent(),
+  });
+  RegistroTarifaTableCompanion.insert({
+    this.idInt = const Value.absent(),
+    this.id = const Value.absent(),
+    this.tarifaInt = const Value.absent(),
+    this.tarifa = const Value.absent(),
+    this.tarifaRackInt = const Value.absent(),
+    this.tarifaRack = const Value.absent(),
+  });
+  static Insertable<RegistroTarifaTableData> custom({
+    Expression<int>? idInt,
+    Expression<String>? id,
+    Expression<int>? tarifaInt,
+    Expression<String>? tarifa,
+    Expression<int>? tarifaRackInt,
+    Expression<String>? tarifaRack,
+  }) {
+    return RawValuesInsertable({
+      if (idInt != null) 'id_int': idInt,
+      if (id != null) 'id': id,
+      if (tarifaInt != null) 'tarifa_int': tarifaInt,
+      if (tarifa != null) 'tarifa': tarifa,
+      if (tarifaRackInt != null) 'tarifa_rack_int': tarifaRackInt,
+      if (tarifaRack != null) 'tarifa_rack': tarifaRack,
+    });
+  }
+
+  RegistroTarifaTableCompanion copyWith(
+      {Value<int>? idInt,
+      Value<String?>? id,
+      Value<int?>? tarifaInt,
+      Value<String?>? tarifa,
+      Value<int?>? tarifaRackInt,
+      Value<String?>? tarifaRack}) {
+    return RegistroTarifaTableCompanion(
+      idInt: idInt ?? this.idInt,
+      id: id ?? this.id,
+      tarifaInt: tarifaInt ?? this.tarifaInt,
+      tarifa: tarifa ?? this.tarifa,
+      tarifaRackInt: tarifaRackInt ?? this.tarifaRackInt,
+      tarifaRack: tarifaRack ?? this.tarifaRack,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idInt.present) {
+      map['id_int'] = Variable<int>(idInt.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tarifaInt.present) {
+      map['tarifa_int'] = Variable<int>(tarifaInt.value);
+    }
+    if (tarifa.present) {
+      map['tarifa'] = Variable<String>(tarifa.value);
+    }
+    if (tarifaRackInt.present) {
+      map['tarifa_rack_int'] = Variable<int>(tarifaRackInt.value);
+    }
+    if (tarifaRack.present) {
+      map['tarifa_rack'] = Variable<String>(tarifaRack.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RegistroTarifaTableCompanion(')
+          ..write('idInt: $idInt, ')
+          ..write('id: $id, ')
+          ..write('tarifaInt: $tarifaInt, ')
+          ..write('tarifa: $tarifa, ')
+          ..write('tarifaRackInt: $tarifaRackInt, ')
+          ..write('tarifaRack: $tarifaRack')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -11138,6 +11494,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TarifaTemporadaTableTable(this);
   late final $ReservacionBrazaleteTableTable reservacionBrazaleteTable =
       $ReservacionBrazaleteTableTable(this);
+  late final $RegistroTarifaTableTable registroTarifaTable =
+      $RegistroTarifaTableTable(this);
   late final CategoriaDao categoriaDao = CategoriaDao(this as AppDatabase);
   late final ClienteDao clienteDao = ClienteDao(this as AppDatabase);
   late final CotizacionDao cotizacionDao = CotizacionDao(this as AppDatabase);
@@ -11156,6 +11514,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final ImagenDao imagenDao = ImagenDao(this as AppDatabase);
   late final PoliticaTarifarioDao politicaTarifarioDao =
       PoliticaTarifarioDao(this as AppDatabase);
+  late final RegistroTarifaDao registroTarifaDao =
+      RegistroTarifaDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -11181,7 +11541,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         tarifaXHabitacionTable,
         temporadaTable,
         tarifaTemporadaTable,
-        reservacionBrazaleteTable
+        reservacionBrazaleteTable,
+        registroTarifaTable
       ];
 }
 
@@ -13655,6 +14016,23 @@ class $$TarifaRackTableTableFilterComposer
                 $state.db.temporadaTable, joinBuilder, parentComposers)));
     return f(composer);
   }
+
+  ComposableFilter registroTarifaTableRefs(
+      ComposableFilter Function($$RegistroTarifaTableTableFilterComposer f) f) {
+    final $$RegistroTarifaTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.registroTarifaTable,
+            getReferencedColumn: (t) => t.tarifaRackInt,
+            builder: (joinBuilder, parentComposers) =>
+                $$RegistroTarifaTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.registroTarifaTable,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TarifaRackTableTableOrderingComposer
@@ -15180,6 +15558,23 @@ class $$TarifaTableTableFilterComposer
                     parentComposers)));
     return f(composer);
   }
+
+  ComposableFilter registroTarifaTableRefs(
+      ComposableFilter Function($$RegistroTarifaTableTableFilterComposer f) f) {
+    final $$RegistroTarifaTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.registroTarifaTable,
+            getReferencedColumn: (t) => t.tarifaInt,
+            builder: (joinBuilder, parentComposers) =>
+                $$RegistroTarifaTableTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.registroTarifaTable,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$TarifaTableTableOrderingComposer
@@ -16289,6 +16684,175 @@ class $$ReservacionBrazaleteTableTableOrderingComposer
   }
 }
 
+typedef $$RegistroTarifaTableTableCreateCompanionBuilder
+    = RegistroTarifaTableCompanion Function({
+  Value<int> idInt,
+  Value<String?> id,
+  Value<int?> tarifaInt,
+  Value<String?> tarifa,
+  Value<int?> tarifaRackInt,
+  Value<String?> tarifaRack,
+});
+typedef $$RegistroTarifaTableTableUpdateCompanionBuilder
+    = RegistroTarifaTableCompanion Function({
+  Value<int> idInt,
+  Value<String?> id,
+  Value<int?> tarifaInt,
+  Value<String?> tarifa,
+  Value<int?> tarifaRackInt,
+  Value<String?> tarifaRack,
+});
+
+class $$RegistroTarifaTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $RegistroTarifaTableTable,
+    RegistroTarifaTableData,
+    $$RegistroTarifaTableTableFilterComposer,
+    $$RegistroTarifaTableTableOrderingComposer,
+    $$RegistroTarifaTableTableCreateCompanionBuilder,
+    $$RegistroTarifaTableTableUpdateCompanionBuilder> {
+  $$RegistroTarifaTableTableTableManager(
+      _$AppDatabase db, $RegistroTarifaTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$RegistroTarifaTableTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$RegistroTarifaTableTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> idInt = const Value.absent(),
+            Value<String?> id = const Value.absent(),
+            Value<int?> tarifaInt = const Value.absent(),
+            Value<String?> tarifa = const Value.absent(),
+            Value<int?> tarifaRackInt = const Value.absent(),
+            Value<String?> tarifaRack = const Value.absent(),
+          }) =>
+              RegistroTarifaTableCompanion(
+            idInt: idInt,
+            id: id,
+            tarifaInt: tarifaInt,
+            tarifa: tarifa,
+            tarifaRackInt: tarifaRackInt,
+            tarifaRack: tarifaRack,
+          ),
+          createCompanionCallback: ({
+            Value<int> idInt = const Value.absent(),
+            Value<String?> id = const Value.absent(),
+            Value<int?> tarifaInt = const Value.absent(),
+            Value<String?> tarifa = const Value.absent(),
+            Value<int?> tarifaRackInt = const Value.absent(),
+            Value<String?> tarifaRack = const Value.absent(),
+          }) =>
+              RegistroTarifaTableCompanion.insert(
+            idInt: idInt,
+            id: id,
+            tarifaInt: tarifaInt,
+            tarifa: tarifa,
+            tarifaRackInt: tarifaRackInt,
+            tarifaRack: tarifaRack,
+          ),
+        ));
+}
+
+class $$RegistroTarifaTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $RegistroTarifaTableTable> {
+  $$RegistroTarifaTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get idInt => $state.composableBuilder(
+      column: $state.table.idInt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tarifa => $state.composableBuilder(
+      column: $state.table.tarifa,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tarifaRack => $state.composableBuilder(
+      column: $state.table.tarifaRack,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TarifaTableTableFilterComposer get tarifaInt {
+    final $$TarifaTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaInt,
+        referencedTable: $state.db.tarifaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableTableFilterComposer(ComposerState($state.db,
+                $state.db.tarifaTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaRackTableTableFilterComposer get tarifaRackInt {
+    final $$TarifaRackTableTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaRackInt,
+            referencedTable: $state.db.tarifaRackTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaRackTableTableFilterComposer(ComposerState($state.db,
+                    $state.db.tarifaRackTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$RegistroTarifaTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $RegistroTarifaTableTable> {
+  $$RegistroTarifaTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get idInt => $state.composableBuilder(
+      column: $state.table.idInt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tarifa => $state.composableBuilder(
+      column: $state.table.tarifa,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tarifaRack => $state.composableBuilder(
+      column: $state.table.tarifaRack,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TarifaTableTableOrderingComposer get tarifaInt {
+    final $$TarifaTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tarifaInt,
+        referencedTable: $state.db.tarifaTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TarifaTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.tarifaTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$TarifaRackTableTableOrderingComposer get tarifaRackInt {
+    final $$TarifaRackTableTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tarifaRackInt,
+            referencedTable: $state.db.tarifaRackTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TarifaRackTableTableOrderingComposer(ComposerState($state.db,
+                    $state.db.tarifaRackTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
@@ -16337,4 +16901,6 @@ class $AppDatabaseManager {
   $$ReservacionBrazaleteTableTableTableManager get reservacionBrazaleteTable =>
       $$ReservacionBrazaleteTableTableTableManager(
           _db, _db.reservacionBrazaleteTable);
+  $$RegistroTarifaTableTableTableManager get registroTarifaTable =>
+      $$RegistroTarifaTableTableTableManager(_db, _db.registroTarifaTable);
 }

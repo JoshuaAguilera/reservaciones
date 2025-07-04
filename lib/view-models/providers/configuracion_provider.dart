@@ -12,36 +12,14 @@ final documentQuoteIndProvider =
   final detectChanged = ref.watch(changeDocIndProvider);
   final themeDefault = ref.watch(themeDefaultIndProvider);
 
-  pw.Document comprobantePDF =
-      await GeneradorDocService().generarCompInd(
-    habitaciones: [
-      // Habitacion(
-      //   categoria: categorias.first,
-      //   checkIn: "2021-01-01",
-      //   checkOut: "2021-01-05",
-      // ),
-      // Habitacion(
-      //   categoria: categorias.first,
-      //   checkIn: "2021-01-01",
-      //   checkOut: "2021-01-05",
-      // ),
-      // Habitacion(
-      //   categoria: categorias[1],
-      //   checkIn: "2021-01-01",
-      //   checkOut: "2021-01-05",
-      // ),
-      // Habitacion(
-      //   categoria: categorias[1],
-      //   checkIn: "2021-01-01",
-      //   checkOut: "2021-01-05",
-      // )
-    ],
+  pw.Document comprobantePDF = await GeneradorDocService().generarCompInd(
     cotizacion: Cotizacion(
       cliente: Cliente(
         correoElectronico: "example@email.com",
         numeroTelefonico: "01-800-2020",
         nombres: "Example Lorem ipsut",
       ),
+      habitaciones: [],
     ),
     themeDefault: themeDefault,
   );

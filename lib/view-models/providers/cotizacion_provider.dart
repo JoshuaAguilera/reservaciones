@@ -42,13 +42,13 @@ final receiptQuoteQueryProvider =
 
   final detectChanged = ref.watch(changeHistoryProvider);
 
-  final list = await CotizacionService().getCotizacionesLocales(
-    search,
-    pag,
-    filter,
-    empty,
-    period,
-    showFilter,
+  final list = await CotizacionService().getList(
+    search: empty ? '' : search,
+    lapso: filter,
+    pagina: pag,
+    initDate: period?.fechaInicial,
+    lastDate: period?.fechaFinal,
+    showFilter: showFilter,
   );
 
   return list;

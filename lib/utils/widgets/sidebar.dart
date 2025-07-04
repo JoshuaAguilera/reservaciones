@@ -6,10 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
-import '../../models/registro_tarifa_model.dart';
-import '../../models/usuario_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/providers/dahsboard_provider.dart';
 import '../../view-models/providers/habitacion_provider.dart';
@@ -358,7 +356,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                       .update((state) => 0);
                   ref
                       .read(editTarifaProvider.notifier)
-                      .update((state) => RegistroTarifa());
+                      .update((state) => TarifaRack());
                   ref
                       .read(selectedModeViewProvider.notifier)
                       .update((state) => <bool>[true, false, false]);

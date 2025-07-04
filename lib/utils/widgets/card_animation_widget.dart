@@ -58,7 +58,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
     Temporada? selectTemp =
         widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect;
     nowRegister = TarifaRack(
-      tarifas: initRack?.tarifas,
+      registros: initRack?.registros,
       temporadas: selectTemp == null ? [] : [selectTemp],
     );
     super.initState();
@@ -541,7 +541,7 @@ class _CardAnimationWidgetState extends ConsumerState<CardAnimationWidget> {
         Temporada? selectTemp =
             widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect;
         nowRegister = TarifaRack(
-          tarifas: initRack?.tarifas,
+          registros: initRack?.registros,
           temporadas: selectTemp == null ? [] : [selectTemp],
         );
 

@@ -443,7 +443,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           .addItem(roomDuplicate, typeQuote);
 
                                       final politicaTarifaProvider =
-                                          ref.watch(tariffPolicyProvider(""));
+                                          ref.watch(listPolicyProvider(""));
                                       final habitaciones = ref
                                           .watch(HabitacionProvider.provider);
 
@@ -492,7 +492,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       final typeQuote =
                                           ref.watch(typeQuoteProvider);
                                       final politicaTarifaProvider =
-                                          ref.watch(tariffPolicyProvider(""));
+                                          ref.watch(listPolicyProvider(""));
 
                                       politicaTarifaProvider.when(
                                         data: (data) {
@@ -614,7 +614,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
                             setState(() => isLoading = true);
                             final politicaTarifaProvider =
-                                ref.watch(tariffPolicyProvider(""));
+                                ref.watch(listPolicyProvider(""));
 
                             await politicaTarifaProvider.when(
                               data: (data) async {

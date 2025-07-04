@@ -15,6 +15,7 @@ import 'dao/habitacion_dao.dart';
 import 'dao/imagen_dao.dart';
 import 'dao/periodo_dao.dart';
 import 'dao/politica_tarifario_dao.dart';
+import 'dao/registro_tarifa_dao.dart';
 import 'dao/resumen_operacion_dao.dart';
 import 'dao/tarifa_base_dao.dart';
 import 'dao/tarifa_dao.dart';
@@ -68,6 +69,7 @@ part 'database.g.dart';
     TipoHabitacionTable,
     UsuarioTable,
     ReservacionBrazaleteTable,
+    RegistroTarifaTable,
   ],
   daos: [
     CategoriaDao,
@@ -85,6 +87,7 @@ part 'database.g.dart';
     UsuarioDao,
     ImagenDao,
     PoliticaTarifarioDao,
+    RegistroTarifaDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

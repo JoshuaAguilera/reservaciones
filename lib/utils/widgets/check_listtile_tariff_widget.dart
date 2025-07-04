@@ -75,7 +75,7 @@ class _CheckListtileTariffWidgetState extends State<CheckListtileTariffWidget> {
     TarifaRack? rack = widget.tarifaXHab.tarifaXDia?.tarifaRack;
     Temporada? temporada = widget.tarifaXHab.tarifaXDia?.temporadaSelect;
     TarifaRack? tarifa = TarifaRack(
-      tarifas: rack?.tarifas,
+      registros: rack?.registros,
       temporadas: temporada != null ? [temporada] : [],
     );
 

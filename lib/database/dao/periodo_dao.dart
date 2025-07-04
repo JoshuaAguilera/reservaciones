@@ -36,14 +36,15 @@ class PeriodoDao extends DatabaseAccessor<AppDatabase> with _$PeriodoDaoMixin {
   }
 
   // CREATE
-  Future<int> insert(Periodo periodo) {
-    var response = into(db.periodoTable).insert(
+  Future<Periodo?> insert(Periodo periodo) async {
+    var response = await into(db.periodoTable).insertReturningOrNull(
       PeriodoTableData.fromJson(
         periodo.toJson(),
       ),
     );
-
-    return response;
+    if (response == null) return null;
+    final newPeriod = Periodo.fromJson(response.toJson());
+    return newPeriod;
   }
 
   // READ: Periodo por ID
@@ -58,14 +59,24 @@ class PeriodoDao extends DatabaseAccessor<AppDatabase> with _$PeriodoDaoMixin {
   }
 
   // UPDATE
-  Future<bool> updat3(Periodo periodo) {
-    var response = update(db.periodoTable).replace(
+  Future<Periodo?> updat3(Periodo periodo) async {
+    var response = await update(db.periodoTable).replace(
       PeriodoTableData.fromJson(
         periodo.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(periodo.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Periodo?> save(Periodo periodo) async {
+    if (periodo.idInt == null || periodo.idInt == 0) {
+      return await insert(periodo);
+    } else {
+      return await updat3(periodo);
+    }
   }
 
   // DELETE

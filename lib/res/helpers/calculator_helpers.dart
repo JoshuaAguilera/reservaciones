@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../../models/categoria_model.dart';
 import '../../models/habitacion_model.dart';
+import '../../models/registro_tarifa_bd_model.dart';
 import '../../models/tarifa_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
@@ -75,7 +76,13 @@ class CalculatorHelpers {
 
     TarifaRack rack = tarifaHab.tarifaXDia!.tarifaRack!;
 
-    List<Tarifa> tarifas = tarifaHab.tarifaXDia?.tarifaRack?.tarifas ?? [];
+    List<Tarifa> tarifas = [];
+
+    for (var tarifa in tarifaHab.tarifaXDia!.tarifaRack!.registros ??
+        <RegistroTarifaBD>[]) {
+      if (tarifa.tarifa == null) continue;
+      tarifas.add(tarifa.tarifa!);
+    }
 
     Tarifa? nowTarifa = tarifas
         .where((element) => element.categoria?.idInt == categoria.idInt)
@@ -250,11 +257,13 @@ class CalculatorHelpers {
     double tariffChildren = 0;
 
     if (rate == null) return 0;
-    if (rate.tarifas == null) return 0;
+    if (rate.registros == null) return 0;
 
-    Tarifa? nowTarifa = rate.tarifas!
-        .where((element) => element.categoria?.idInt == categoria?.idInt)
-        .firstOrNull;
+    Tarifa? nowTarifa = rate.registros!
+        .where(
+            (element) => element.tarifa?.categoria?.idInt == categoria?.idInt)
+        .firstOrNull
+        ?.tarifa;
 
     double descuento = 0;
 
@@ -431,9 +440,11 @@ class CalculatorHelpers {
       Tarifa? selectTarifa;
       bool applyRound = !(element.tarifaXDia?.modificado ?? false);
 
-      selectTarifa = element.tarifaXDia?.tarifaRack?.tarifas
-          ?.where((element) => element.categoria?.idInt == categoria.idInt)
-          .firstOrNull;
+      selectTarifa = element.tarifaXDia?.tarifaRack?.registros
+          ?.where(
+              (element) => element.tarifa?.categoria?.idInt == categoria.idInt)
+          .firstOrNull
+          ?.tarifa;
 
       if (onlyAdults) {
         switch (habitacion.adultos) {

@@ -111,7 +111,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
     final tarifasProvisionalesProvider =
         ref.watch(TarifasProvisionalesProvider.provider);
     final descuentoProvider = ref.watch(descuentoProvisionalProvider);
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     final saveTariff = ref.watch(saveTariffPolityProvider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final habitaciones = ref.watch(HabitacionProvider.provider);
@@ -1037,7 +1037,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           .addItem(habitacionProvider, typeQuote);
 
                       final politicaTarifaProvider =
-                          ref.watch(tariffPolicyProvider(""));
+                          ref.watch(listPolicyProvider(""));
                       final habitaciones = ref.watch(habitacionesProvider);
 
                       politicaTarifaProvider.when(

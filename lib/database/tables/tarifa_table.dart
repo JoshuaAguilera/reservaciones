@@ -26,6 +26,7 @@ class TarifaTable extends Table {
 class RegistroTarifaTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
   TextColumn get id => text().nullable()();
+  BoolColumn get esOriginal => boolean().withDefault(const Constant(false))();
   IntColumn get tarifaInt =>
       integer().nullable().references(TarifaTable, #id)();
   TextColumn get tarifa => text().nullable()();

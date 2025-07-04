@@ -123,14 +123,15 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(Categoria categoria) {
-    var response = into(db.categoriaTable).insert(
+  Future<Categoria?> insert(Categoria categoria) async {
+    var response = await into(db.categoriaTable).insertReturningOrNull(
       CategoriaTableData.fromJson(
         categoria.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    return Categoria.fromJson(response.toJson());
   }
 
   // READ: Categoria por ID
@@ -168,14 +169,24 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(Categoria categoria) {
-    var response = update(db.categoriaTable).replace(
+  Future<Categoria?> updat3(Categoria categoria) async {
+    var response = await update(db.categoriaTable).replace(
       CategoriaTableData.fromJson(
         categoria.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(categoria.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Categoria?> save(Categoria categoria) async {
+    if (categoria.idInt == null) {
+      return await insert(categoria);
+    } else {
+      return await updat3(categoria);
+    }
   }
 
   // DELETE

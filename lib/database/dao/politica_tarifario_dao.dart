@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../models/politica_tarifario_model.dart';
+import '../../models/usuario_model.dart';
 import '../database.dart';
 import '../tables/politica_tarifario_table.dart';
 
@@ -16,6 +17,8 @@ class PoliticaTarifarioDao extends DatabaseAccessor<AppDatabase>
   // LIST
   Future<List<PoliticaTarifario>> getList({
     String descripcion = '',
+    String clave = '',
+    int? creadorId,
     DateTime? initDate,
     DateTime? lastDate,
     String? sortBy,
@@ -23,18 +26,39 @@ class PoliticaTarifarioDao extends DatabaseAccessor<AppDatabase>
     int limit = 20,
     int page = 1,
   }) async {
-    final query = select(db.politicaTarifarioTable);
+    final creadorAlias = alias(db.usuarioTable, 'creador');
+
+    final query = select(db.politicaTarifarioTable).join([
+      leftOuterJoin(
+        creadorAlias,
+        creadorAlias.idInt.equalsExp(db.politicaTarifarioTable.creadoPorInt),
+      ),
+    ]);
+
+    if (creadorId != null) {
+      query.where(db.politicaTarifarioTable.creadoPorInt.equals(creadorId));
+    }
 
     if (descripcion.isNotEmpty) {
-      query.where((u) => u.descripcion.like('%$descripcion%'));
+      query.where(db.politicaTarifarioTable.descripcion
+          .lower()
+          .like('%${descripcion.toLowerCase()}%'));
     }
 
     if (initDate != null) {
-      query.where((u) => u.createdAt.isBiggerOrEqualValue(initDate));
+      query.where(
+          db.politicaTarifarioTable.createdAt.isBiggerOrEqualValue(initDate));
     }
 
     if (lastDate != null) {
-      query.where((u) => u.createdAt.isSmallerOrEqualValue(lastDate));
+      query.where(
+          db.politicaTarifarioTable.createdAt.isSmallerOrEqualValue(lastDate));
+    }
+
+    if (initDate != null && lastDate != null) {
+      query.where(
+        db.politicaTarifarioTable.createdAt.isBetweenValues(initDate, lastDate),
+      );
     }
 
     OrderingTerm? ordering;
@@ -61,53 +85,96 @@ class PoliticaTarifarioDao extends DatabaseAccessor<AppDatabase>
             : OrderingTerm.asc(db.politicaTarifarioTable.idInt);
     }
 
-    query.orderBy([(_) => ordering!]);
+    query.orderBy([ordering]);
 
     final offset = (page - 1) * limit;
     query.limit(limit, offset: offset);
 
-    final data = await query.get();
+    final rows = await query.get();
 
-    return data.map(
-      (e) {
-        PoliticaTarifario policy = PoliticaTarifario.fromJson(e.toJson());
-        return policy;
+    return rows.map(
+      (row) {
+        final politica = row.readTable(db.politicaTarifarioTable);
+        final creador = row.readTableOrNull(creadorAlias);
+
+        return PoliticaTarifario(
+          idInt: politica.idInt,
+          id: politica.id,
+          clave: politica.clave,
+          descripcion: politica.descripcion,
+          createdAt: politica.createdAt,
+          valor: politica.valor,
+          updatedAt: politica.updatedAt,
+          creadoPor: Usuario.fromJson(
+            creador?.toJson() ?? mapEmpty,
+          ),
+        );
       },
     ).toList();
   }
 
   // CREATE
-  Future<int> insert(PoliticaTarifario politica) {
-    var response = into(db.politicaTarifarioTable).insert(
+  Future<PoliticaTarifario?> insert(PoliticaTarifario politica) async {
+    var response = await into(db.politicaTarifarioTable).insertReturningOrNull(
       PoliticaTarifarioTableData.fromJson(
         politica.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    return PoliticaTarifario.fromJson(response.toJson());
   }
 
   // READ: Politica Tarifario por ID
   Future<PoliticaTarifario?> getByID(int id) async {
-    var response = await (select(db.politicaTarifarioTable)
-          ..where((u) {
-            return u.idInt.equals(id);
-          }))
-        .getSingleOrNull();
+    final creadorAlias = alias(db.usuarioTable, 'creador');
 
-    return PoliticaTarifario?.fromJson(
-        response?.toJson() ?? <String, dynamic>{});
+    final query = select(db.politicaTarifarioTable).join([
+      leftOuterJoin(
+        creadorAlias,
+        creadorAlias.idInt.equalsExp(db.politicaTarifarioTable.creadoPorInt),
+      ),
+    ]);
+
+    query.where(db.politicaTarifarioTable.idInt.equals(id));
+    var row = await query.getSingleOrNull();
+    if (row == null) return null;
+    final politica = row.readTable(db.politicaTarifarioTable);
+    final creador = row.readTableOrNull(creadorAlias);
+    
+    return PoliticaTarifario(
+      idInt: politica.idInt,
+      id: politica.id,
+      clave: politica.clave,
+      descripcion: politica.descripcion,
+      createdAt: politica.createdAt,
+      valor: politica.valor,
+      updatedAt: politica.updatedAt,
+      creadoPor: Usuario.fromJson(
+        creador?.toJson() ?? mapEmpty,
+      ),
+    );
   }
 
   // UPDATE
-  Future<bool> updat3(PoliticaTarifario politica) {
-    var response = update(db.politicaTarifarioTable).replace(
+  Future<PoliticaTarifario?> updat3(PoliticaTarifario politica) async {
+    var response = await update(db.politicaTarifarioTable).replace(
       PoliticaTarifarioTableData.fromJson(
         politica.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(politica.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<PoliticaTarifario?> save(PoliticaTarifario politica) async {
+    if (politica.idInt == null) {
+      return await insert(politica);
+    } else {
+      return await updat3(politica);
+    }
   }
 
   // DELETE

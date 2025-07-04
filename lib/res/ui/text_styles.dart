@@ -9,6 +9,7 @@ import 'package:pdf/widgets.dart' as pw;
 class TextStyles {
   static Text standardText({
     required String text,
+    int? maxLines,
     TextAlign align = TextAlign.left,
     bool overClip = false,
     double size = 12,
@@ -19,6 +20,7 @@ class TextStyles {
     return Text(
       text,
       textAlign: align,
+      maxLines: maxLines,
       style: styleStandar(
         size: size,
         isBold: isBold,

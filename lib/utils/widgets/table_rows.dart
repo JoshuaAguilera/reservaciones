@@ -1,22 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/models/tarifa_base_model.dart';
-import 'package:generador_formato/models/tarifa_rack_model.dart';
-import 'package:generador_formato/models/temporada_model.dart';
-import 'package:generador_formato/res/helpers/calculator_helpers.dart';
-import 'package:generador_formato/views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../models/categoria_model.dart';
 import '../../models/habitacion_model.dart';
-import '../../models/registro_tarifa_model.dart';
-import '../../models/tarifa_x_dia_model.dart';
+import '../../models/tarifa_base_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
+import '../../models/temporada_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
 import '../../res/helpers/colors_helpers.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../views/generacion_cotizaciones/dialogs/manager_tariff_single_dialog.dart';
 import 'item_rows.dart';
 import '../../res/ui/text_styles.dart';
 
@@ -31,7 +29,7 @@ class TableRows {
     void Function()? setState,
   }) {
     TarifaRack? tarifa = TarifaRack(
-      tarifas: tarHab.tarifaXDia?.tarifaRack?.tarifas,
+      registros: tarHab.tarifaXDia?.tarifaRack?.registros,
       temporadas: tarHab.tarifaXDia?.temporadaSelect != null
           ? [tarHab.tarifaXDia!.temporadaSelect!]
           : [],
@@ -285,7 +283,7 @@ class TableRows {
               text: tarifasBase
                       .where((elementInt) =>
                           elementInt.idInt ==
-                          element.tarifas!.first.tarifaBase?.idInt)
+                          element.registros!.first.tarifa?.tarifaBase?.idInt)
                       .firstOrNull
                       ?.nombre ??
                   '',

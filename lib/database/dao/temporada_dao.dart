@@ -37,14 +37,16 @@ class TemporadaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<int> insert(Temporada temporada) {
-    var response = into(db.temporadaTable).insert(
+  Future<Temporada?> insert(Temporada temporada) async {
+    var response = await into(db.temporadaTable).insertReturningOrNull(
       TemporadaTableData.fromJson(
         temporada.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    final newSeason = Temporada.fromJson(response.toJson());
+    return newSeason;
   }
 
   // READ: Temporada por ID
@@ -59,14 +61,24 @@ class TemporadaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<bool> updat3(Temporada temporada) {
-    var response = update(db.temporadaTable).replace(
+  Future<Temporada?> updat3(Temporada temporada) async {
+    var response = await update(db.temporadaTable).replace(
       TemporadaTableData.fromJson(
         temporada.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(temporada.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Temporada?> save(Temporada temporada) async {
+    if (temporada.idInt == null || temporada.idInt == 0) {
+      return await insert(temporada);
+    } else {
+      return await updat3(temporada);
+    }
   }
 
   // DELETE

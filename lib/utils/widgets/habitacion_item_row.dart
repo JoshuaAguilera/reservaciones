@@ -138,7 +138,7 @@ class _TableRowCotizacion extends ConsumerStatefulWidget {
 class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
   @override
   Widget build(BuildContext context) {
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final typeQuote = ref.watch(typeQuoteProvider);
@@ -154,7 +154,7 @@ class _TableRowCotizacionState extends ConsumerState<_TableRowCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 300);
 
-    void updateList(int value, PoliticaTarifario? politica) {
+    void updateList(int value, List<PoliticaTarifario>? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)
@@ -526,7 +526,7 @@ class _ListTileCotizacion extends ConsumerStatefulWidget {
 class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
   @override
   Widget build(BuildContext context) {
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     final habitaciones = ref.watch(HabitacionProvider.provider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final typeQuote = ref.watch(typeQuoteProvider);
@@ -539,7 +539,7 @@ class _ListTileCotizacionState extends ConsumerState<_ListTileCotizacion> {
     double screenWidthWithSideBar = screenWidth +
         (screenWidth > 800 ? (widget.sideController.extended ? 50 : 180) : 50);
 
-    void updateList(int value, PoliticaTarifario? politica) {
+    void updateList(int value, List<PoliticaTarifario>? politica) {
       setState(() => widget.habitacion.count = value);
       ref
           .read(detectChangeRoomProvider.notifier)

@@ -57,7 +57,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     final modeViewProvider = ref.watch(selectedModeViewProvider);
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     void onEdit(RegistroTarifa register) {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../res/helpers/colors_helpers.dart';
 import 'periodo_model.dart';
-import 'tarifa_model.dart';
+import 'registro_tarifa_bd_model.dart';
 import 'temporada_model.dart';
 import 'usuario_model.dart';
 
@@ -29,7 +29,7 @@ class TarifaRack {
   Usuario? creadoPor;
   List<Periodo>? periodos;
   List<Temporada>? temporadas;
-  List<Tarifa>? tarifas;
+  List<RegistroTarifaBD>? registros;
   bool select;
 
   TarifaRack({
@@ -41,7 +41,7 @@ class TarifaRack {
     this.creadoPor,
     this.periodos,
     this.temporadas,
-    this.tarifas,
+    this.registros,
     this.select = false,
   });
 
@@ -54,7 +54,7 @@ class TarifaRack {
     Usuario? creadoPor,
     List<Periodo>? periodos,
     List<Temporada>? temporadas,
-    List<Tarifa>? tarifas,
+    List<RegistroTarifaBD>? registros,
   }) =>
       TarifaRack(
         idInt: idInt ?? this.idInt,
@@ -67,7 +67,8 @@ class TarifaRack {
             (periodos ?? this.periodos)?.map((e) => e.copyWith()).toList(),
         temporadas:
             (temporadas ?? this.temporadas)?.map((e) => e.copyWith()).toList(),
-        tarifas: (tarifas ?? this.tarifas)?.map((e) => e.copyWith()).toList(),
+        registros:
+            (registros ?? this.registros)?.map((e) => e.copyWith()).toList(),
       );
 
   factory TarifaRack.fromJson(Map<String, dynamic> json) {
@@ -92,11 +93,11 @@ class TarifaRack {
               ? listTemporadaFromJson(json['temporadas'])
               : List<Temporada>.empty()
           : List<Temporada>.empty(),
-      tarifas: json['tarifas'] != null
-          ? json['tarifas'] != '[]'
-              ? listTarifasFromJson(json['tarifas'])
-              : List<Tarifa>.empty()
-          : List<Tarifa>.empty(),
+      registros: json['registros_tarifa'] != null
+          ? json['registros_tarifa'] != '[]'
+              ? listRegistroTarifaFromJson(json['registros_tarifa'])
+              : List<RegistroTarifaBD>.empty()
+          : List<RegistroTarifaBD>.empty(),
     );
   }
 

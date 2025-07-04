@@ -55,7 +55,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   }
 
   void revisedFreeRooms() {
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     politicaTarifaProvider.when(
       data: (data) {
         if (data != null) {
@@ -69,26 +69,26 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
             }
           }
 
-          int freeRoomsValid = rooms ~/ data.valor!;
+          // int freeRoomsValid = rooms ~/ data.valor!;
 
-          if (rooms >= data.valor!) {
-            for (var element in freeRooms) {
-              if (!state.any((element2) =>
-                  !element2.esCortesia && element2.id == element.id)) {
-                state.remove(element);
-              }
-            }
+          // if (rooms >= data.valor!) {
+          //   for (var element in freeRooms) {
+          //     if (!state.any((element2) =>
+          //         !element2.esCortesia && element2.id == element.id)) {
+          //       state.remove(element);
+          //     }
+          //   }
 
-            if (freeRoomsValid >=
-                state.where((element) => element.esCortesia).toList().length) {
-              addFreeItem(
-                  state.reduce((value, element) =>
-                      value.count > element.count ? value : element),
-                  data.valor!);
-            }
-          } else {
-            state.removeWhere((element) => element.esCortesia);
-          }
+          //   if (freeRoomsValid >=
+          //       state.where((element) => element.esCortesia).toList().length) {
+          //     addFreeItem(
+          //         state.reduce((value, element) =>
+          //             value.count > element.count ? value : element),
+          //         data.valor!);
+          //   }
+          // } else {
+          //   state.removeWhere((element) => element.esCortesia);
+          // }
 
           ref.notifyListeners();
         } else {
@@ -235,9 +235,7 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   Future<pw.Document> generarComprobante(
       Cotizacion cotizacion, bool typeQuote) async {
     if (!typeQuote) {
-      return pdfPrinc =
-          await GeneradorDocService().generarCompInd(
-        habitaciones: state,
+      return pdfPrinc = await GeneradorDocService().generarCompInd(
         cotizacion: cotizacion,
         isDirect: true,
       );

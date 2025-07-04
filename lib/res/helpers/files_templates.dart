@@ -7,6 +7,7 @@ import '../../models/categoria_model.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/estructura_documento.dart';
 import '../../models/habitacion_model.dart';
+import '../../models/registro_tarifa_bd_model.dart';
 import '../../models/resumen_operacion_model.dart';
 import '../../models/tarifa_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
@@ -190,9 +191,16 @@ class FilesTemplate {
         tarifaXDia?.temporadaSelect?.descuento ??
         0;
 
+    List<Tarifa> tarifas = [];
+
+    for (var register
+        in tarifaXDia?.tarifaRack?.registros ?? <RegistroTarifaBD>[]) {
+      if (register.tarifa == null) continue;
+      tarifas.add(register.tarifa!);
+    }
+
     contenido = [
-      for (var tarifa
-          in tarifaXDia?.tarifaRack?.tarifas ?? List<Tarifa>.empty())
+      for (var tarifa in tarifas)
         <pw.Widget>[
           pw.Align(
             alignment: pw.Alignment.centerLeft,

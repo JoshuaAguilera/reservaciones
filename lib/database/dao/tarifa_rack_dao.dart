@@ -151,6 +151,15 @@ class TarifaRackDao extends DatabaseAccessor<AppDatabase>
     return await getByID(tarifa.idInt ?? 0);
   }
 
+  // SAVE
+  Future<TarifaRack?> save(TarifaRack tarifa) async {
+    if (tarifa.idInt == null || tarifa.idInt == 0) {
+      return await insert(tarifa);
+    } else {
+      return await updat3(tarifa);
+    }
+  }
+
   // DELETE
   Future<int> delet3(int id) {
     var response = (delete(db.tarifaRackTable)

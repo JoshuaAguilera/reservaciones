@@ -76,7 +76,7 @@ class _SummaryControllerWidgetState
     final habitacionesProvider = ref.watch(HabitacionProvider.provider);
     final typeQuote = ref.watch(typeQuoteProvider);
     final useCashSeason = ref.watch(useCashSeasonProvider);
-    final politicaTarifaProvider = ref.watch(tariffPolicyProvider(""));
+    final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
 
     return SizedBox(
       width: screenWidth < 800 ? 260 : 310,
@@ -215,8 +215,8 @@ class _SummaryControllerWidgetState
                                                 count: CalculatorHelpers
                                                     .getTotalCategoryRoom(
                                                   TarifaRack(
-                                                    tarifas: element.tarifaXDia
-                                                        ?.tarifaRack?.tarifas,
+                                                    registros: element.tarifaXDia
+                                                        ?.tarifaRack?.registros,
                                                     temporadas: element
                                                             .tarifaXDia
                                                             ?.tarifaRack
@@ -277,8 +277,8 @@ class _SummaryControllerWidgetState
                                                 count: CalculatorHelpers
                                                     .getTotalCategoryRoom(
                                                   TarifaRack(
-                                                    tarifas: element.tarifaXDia
-                                                        ?.tarifaRack?.tarifas,
+                                                    registros: element.tarifaXDia
+                                                        ?.tarifaRack?.registros,
                                                     temporadas: element
                                                             .tarifaXDia
                                                             ?.tarifaRack

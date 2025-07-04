@@ -24,6 +24,7 @@ class Categoria {
   Color? color;
   TipoHabitacion? tipoHabitacion;
   Usuario? creadoPor;
+  bool isSelect;
 
   Categoria({
     this.idInt,
@@ -33,6 +34,7 @@ class Categoria {
     this.color,
     this.tipoHabitacion,
     this.creadoPor,
+    this.isSelect = false,
   });
 
   Categoria copyWith({
@@ -43,6 +45,7 @@ class Categoria {
     Color? color,
     TipoHabitacion? tipoHabitacion,
     Usuario? creadoPor,
+    bool isSelect = false,
   }) =>
       Categoria(
         idInt: idInt ?? this.idInt,
@@ -53,6 +56,7 @@ class Categoria {
         tipoHabitacion:
             tipoHabitacion?.copyWith() ?? this.tipoHabitacion?.copyWith(),
         creadoPor: creadoPor?.copyWith() ?? this.creadoPor?.copyWith(),
+        isSelect: isSelect,
       );
 
   factory Categoria.fromJson(Map<String, dynamic> json) {

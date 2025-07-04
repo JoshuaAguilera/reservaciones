@@ -90,14 +90,16 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
   }
 
   // CREATE
-  Future<int> insert(Cliente cliente) {
-    var response = into(db.clienteTable).insert(
+  Future<Cliente?> insert(Cliente cliente) async {
+    var response = await into(db.clienteTable).insertReturningOrNull(
       ClienteTableData.fromJson(
         cliente.toJson(),
       ),
     );
 
-    return response;
+    if (response == null) return null;
+    Cliente newCustomer = Cliente.fromJson(response.toJson());
+    return newCustomer;
   }
 
   // READ: Cliente por ID
@@ -112,14 +114,24 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
   }
 
   // UPDATE
-  Future<bool> updat3(Cliente cliente) {
-    var response = update(db.clienteTable).replace(
+  Future<Cliente?> updat3(Cliente cliente) async {
+    var response = await update(db.clienteTable).replace(
       ClienteTableData.fromJson(
         cliente.toJson(),
       ),
     );
 
-    return response;
+    if (!response) return null;
+    return await getByID(cliente.idInt ?? 0);
+  }
+
+  // SAVE
+  Future<Cliente?> save(Cliente cliente) async {
+    if (cliente.idInt == null) {
+      return await insert(cliente);
+    } else {
+      return await updat3(cliente);
+    }
   }
 
   // DELETE

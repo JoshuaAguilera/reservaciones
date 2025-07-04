@@ -21,6 +21,21 @@ class IconHelpers {
     return null;
   }
 
+  static IconData getIconSnackBar(String type) {
+    switch (type) {
+      case "alert":
+        return Iconsax.warning_2_outline;
+      case "info":
+        return Iconsax.info_circle_outline;
+      case "danger":
+        return Iconsax.danger_outline;
+      case "success":
+        return Icons.check_circle_outline_rounded;
+      default:
+        return Iconsax.message_question_outline;
+    }
+  }
+
   static IconData? getIconCardDashboard(String? tipoCotizacion) {
     switch (tipoCotizacion) {
       case "Cotizaciones grupales":
