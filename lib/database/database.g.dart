@@ -681,9 +681,17 @@ class $RolTableTable extends RolTable
   late final GeneratedColumn<String> permisos = GeneratedColumn<String>(
       'permisos', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns =>
-      [idInt, id, nombre, color, descripcion, permisos];
+      [idInt, id, nombre, color, descripcion, permisos, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -719,6 +727,10 @@ class $RolTableTable extends RolTable
       context.handle(_permisosMeta,
           permisos.isAcceptableOrUnknown(data['permisos']!, _permisosMeta));
     }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
     return context;
   }
 
@@ -740,6 +752,8 @@ class $RolTableTable extends RolTable
           .read(DriftSqlType.string, data['${effectivePrefix}descripcion']),
       permisos: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}permisos']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -756,13 +770,15 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
   final String? color;
   final String? descripcion;
   final String? permisos;
+  final DateTime createdAt;
   const RolTableData(
       {required this.idInt,
       this.id,
       this.nombre,
       this.color,
       this.descripcion,
-      this.permisos});
+      this.permisos,
+      required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -782,6 +798,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
     if (!nullToAbsent || permisos != null) {
       map['permisos'] = Variable<String>(permisos);
     }
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -799,6 +816,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
       permisos: permisos == null && nullToAbsent
           ? const Value.absent()
           : Value(permisos),
+      createdAt: Value(createdAt),
     );
   }
 
@@ -812,6 +830,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
       color: serializer.fromJson<String?>(json['color']),
       descripcion: serializer.fromJson<String?>(json['descripcion']),
       permisos: serializer.fromJson<String?>(json['permisos']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
@@ -824,6 +843,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
       'color': serializer.toJson<String?>(color),
       'descripcion': serializer.toJson<String?>(descripcion),
       'permisos': serializer.toJson<String?>(permisos),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
@@ -833,7 +853,8 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
           Value<String?> nombre = const Value.absent(),
           Value<String?> color = const Value.absent(),
           Value<String?> descripcion = const Value.absent(),
-          Value<String?> permisos = const Value.absent()}) =>
+          Value<String?> permisos = const Value.absent(),
+          DateTime? createdAt}) =>
       RolTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
@@ -841,6 +862,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
         color: color.present ? color.value : this.color,
         descripcion: descripcion.present ? descripcion.value : this.descripcion,
         permisos: permisos.present ? permisos.value : this.permisos,
+        createdAt: createdAt ?? this.createdAt,
       );
   RolTableData copyWithCompanion(RolTableCompanion data) {
     return RolTableData(
@@ -851,6 +873,7 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
       descripcion:
           data.descripcion.present ? data.descripcion.value : this.descripcion,
       permisos: data.permisos.present ? data.permisos.value : this.permisos,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -862,14 +885,15 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
           ..write('nombre: $nombre, ')
           ..write('color: $color, ')
           ..write('descripcion: $descripcion, ')
-          ..write('permisos: $permisos')
+          ..write('permisos: $permisos, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(idInt, id, nombre, color, descripcion, permisos);
+      Object.hash(idInt, id, nombre, color, descripcion, permisos, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -879,7 +903,8 @@ class RolTableData extends DataClass implements Insertable<RolTableData> {
           other.nombre == this.nombre &&
           other.color == this.color &&
           other.descripcion == this.descripcion &&
-          other.permisos == this.permisos);
+          other.permisos == this.permisos &&
+          other.createdAt == this.createdAt);
 }
 
 class RolTableCompanion extends UpdateCompanion<RolTableData> {
@@ -889,6 +914,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
   final Value<String?> color;
   final Value<String?> descripcion;
   final Value<String?> permisos;
+  final Value<DateTime> createdAt;
   const RolTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
@@ -896,6 +922,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
     this.color = const Value.absent(),
     this.descripcion = const Value.absent(),
     this.permisos = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   RolTableCompanion.insert({
     this.idInt = const Value.absent(),
@@ -904,6 +931,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
     this.color = const Value.absent(),
     this.descripcion = const Value.absent(),
     this.permisos = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   static Insertable<RolTableData> custom({
     Expression<int>? idInt,
@@ -912,6 +940,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
     Expression<String>? color,
     Expression<String>? descripcion,
     Expression<String>? permisos,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
@@ -920,6 +949,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
       if (color != null) 'color': color,
       if (descripcion != null) 'descripcion': descripcion,
       if (permisos != null) 'permisos': permisos,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
@@ -929,7 +959,8 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
       Value<String?>? nombre,
       Value<String?>? color,
       Value<String?>? descripcion,
-      Value<String?>? permisos}) {
+      Value<String?>? permisos,
+      Value<DateTime>? createdAt}) {
     return RolTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
@@ -937,6 +968,7 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
       color: color ?? this.color,
       descripcion: descripcion ?? this.descripcion,
       permisos: permisos ?? this.permisos,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -961,6 +993,9 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
     if (permisos.present) {
       map['permisos'] = Variable<String>(permisos.value);
     }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     return map;
   }
 
@@ -972,7 +1007,8 @@ class RolTableCompanion extends UpdateCompanion<RolTableData> {
           ..write('nombre: $nombre, ')
           ..write('color: $color, ')
           ..write('descripcion: $descripcion, ')
-          ..write('permisos: $permisos')
+          ..write('permisos: $permisos, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -11121,6 +11157,16 @@ class $RegistroTarifaTableTable extends RegistroTarifaTable
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _esOriginalMeta =
+      const VerificationMeta('esOriginal');
+  @override
+  late final GeneratedColumn<bool> esOriginal = GeneratedColumn<bool>(
+      'es_original', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("es_original" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _tarifaIntMeta =
       const VerificationMeta('tarifaInt');
   @override
@@ -11152,7 +11198,7 @@ class $RegistroTarifaTableTable extends RegistroTarifaTable
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [idInt, id, tarifaInt, tarifa, tarifaRackInt, tarifaRack];
+      [idInt, id, esOriginal, tarifaInt, tarifa, tarifaRackInt, tarifaRack];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -11170,6 +11216,12 @@ class $RegistroTarifaTableTable extends RegistroTarifaTable
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('es_original')) {
+      context.handle(
+          _esOriginalMeta,
+          esOriginal.isAcceptableOrUnknown(
+              data['es_original']!, _esOriginalMeta));
     }
     if (data.containsKey('tarifa_int')) {
       context.handle(_tarifaIntMeta,
@@ -11205,6 +11257,8 @@ class $RegistroTarifaTableTable extends RegistroTarifaTable
           .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id']),
+      esOriginal: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}es_original'])!,
       tarifaInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}tarifa_int']),
       tarifa: attachedDatabase.typeMapping
@@ -11226,6 +11280,7 @@ class RegistroTarifaTableData extends DataClass
     implements Insertable<RegistroTarifaTableData> {
   final int idInt;
   final String? id;
+  final bool esOriginal;
   final int? tarifaInt;
   final String? tarifa;
   final int? tarifaRackInt;
@@ -11233,6 +11288,7 @@ class RegistroTarifaTableData extends DataClass
   const RegistroTarifaTableData(
       {required this.idInt,
       this.id,
+      required this.esOriginal,
       this.tarifaInt,
       this.tarifa,
       this.tarifaRackInt,
@@ -11244,6 +11300,7 @@ class RegistroTarifaTableData extends DataClass
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<String>(id);
     }
+    map['es_original'] = Variable<bool>(esOriginal);
     if (!nullToAbsent || tarifaInt != null) {
       map['tarifa_int'] = Variable<int>(tarifaInt);
     }
@@ -11263,6 +11320,7 @@ class RegistroTarifaTableData extends DataClass
     return RegistroTarifaTableCompanion(
       idInt: Value(idInt),
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      esOriginal: Value(esOriginal),
       tarifaInt: tarifaInt == null && nullToAbsent
           ? const Value.absent()
           : Value(tarifaInt),
@@ -11283,6 +11341,7 @@ class RegistroTarifaTableData extends DataClass
     return RegistroTarifaTableData(
       idInt: serializer.fromJson<int>(json['idInt']),
       id: serializer.fromJson<String?>(json['id']),
+      esOriginal: serializer.fromJson<bool>(json['esOriginal']),
       tarifaInt: serializer.fromJson<int?>(json['tarifaInt']),
       tarifa: serializer.fromJson<String?>(json['tarifa']),
       tarifaRackInt: serializer.fromJson<int?>(json['tarifaRackInt']),
@@ -11295,6 +11354,7 @@ class RegistroTarifaTableData extends DataClass
     return <String, dynamic>{
       'idInt': serializer.toJson<int>(idInt),
       'id': serializer.toJson<String?>(id),
+      'esOriginal': serializer.toJson<bool>(esOriginal),
       'tarifaInt': serializer.toJson<int?>(tarifaInt),
       'tarifa': serializer.toJson<String?>(tarifa),
       'tarifaRackInt': serializer.toJson<int?>(tarifaRackInt),
@@ -11305,6 +11365,7 @@ class RegistroTarifaTableData extends DataClass
   RegistroTarifaTableData copyWith(
           {int? idInt,
           Value<String?> id = const Value.absent(),
+          bool? esOriginal,
           Value<int?> tarifaInt = const Value.absent(),
           Value<String?> tarifa = const Value.absent(),
           Value<int?> tarifaRackInt = const Value.absent(),
@@ -11312,6 +11373,7 @@ class RegistroTarifaTableData extends DataClass
       RegistroTarifaTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
+        esOriginal: esOriginal ?? this.esOriginal,
         tarifaInt: tarifaInt.present ? tarifaInt.value : this.tarifaInt,
         tarifa: tarifa.present ? tarifa.value : this.tarifa,
         tarifaRackInt:
@@ -11322,6 +11384,8 @@ class RegistroTarifaTableData extends DataClass
     return RegistroTarifaTableData(
       idInt: data.idInt.present ? data.idInt.value : this.idInt,
       id: data.id.present ? data.id.value : this.id,
+      esOriginal:
+          data.esOriginal.present ? data.esOriginal.value : this.esOriginal,
       tarifaInt: data.tarifaInt.present ? data.tarifaInt.value : this.tarifaInt,
       tarifa: data.tarifa.present ? data.tarifa.value : this.tarifa,
       tarifaRackInt: data.tarifaRackInt.present
@@ -11337,6 +11401,7 @@ class RegistroTarifaTableData extends DataClass
     return (StringBuffer('RegistroTarifaTableData(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
+          ..write('esOriginal: $esOriginal, ')
           ..write('tarifaInt: $tarifaInt, ')
           ..write('tarifa: $tarifa, ')
           ..write('tarifaRackInt: $tarifaRackInt, ')
@@ -11346,14 +11411,15 @@ class RegistroTarifaTableData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idInt, id, tarifaInt, tarifa, tarifaRackInt, tarifaRack);
+  int get hashCode => Object.hash(
+      idInt, id, esOriginal, tarifaInt, tarifa, tarifaRackInt, tarifaRack);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RegistroTarifaTableData &&
           other.idInt == this.idInt &&
           other.id == this.id &&
+          other.esOriginal == this.esOriginal &&
           other.tarifaInt == this.tarifaInt &&
           other.tarifa == this.tarifa &&
           other.tarifaRackInt == this.tarifaRackInt &&
@@ -11364,6 +11430,7 @@ class RegistroTarifaTableCompanion
     extends UpdateCompanion<RegistroTarifaTableData> {
   final Value<int> idInt;
   final Value<String?> id;
+  final Value<bool> esOriginal;
   final Value<int?> tarifaInt;
   final Value<String?> tarifa;
   final Value<int?> tarifaRackInt;
@@ -11371,6 +11438,7 @@ class RegistroTarifaTableCompanion
   const RegistroTarifaTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
+    this.esOriginal = const Value.absent(),
     this.tarifaInt = const Value.absent(),
     this.tarifa = const Value.absent(),
     this.tarifaRackInt = const Value.absent(),
@@ -11379,6 +11447,7 @@ class RegistroTarifaTableCompanion
   RegistroTarifaTableCompanion.insert({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
+    this.esOriginal = const Value.absent(),
     this.tarifaInt = const Value.absent(),
     this.tarifa = const Value.absent(),
     this.tarifaRackInt = const Value.absent(),
@@ -11387,6 +11456,7 @@ class RegistroTarifaTableCompanion
   static Insertable<RegistroTarifaTableData> custom({
     Expression<int>? idInt,
     Expression<String>? id,
+    Expression<bool>? esOriginal,
     Expression<int>? tarifaInt,
     Expression<String>? tarifa,
     Expression<int>? tarifaRackInt,
@@ -11395,6 +11465,7 @@ class RegistroTarifaTableCompanion
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
       if (id != null) 'id': id,
+      if (esOriginal != null) 'es_original': esOriginal,
       if (tarifaInt != null) 'tarifa_int': tarifaInt,
       if (tarifa != null) 'tarifa': tarifa,
       if (tarifaRackInt != null) 'tarifa_rack_int': tarifaRackInt,
@@ -11405,6 +11476,7 @@ class RegistroTarifaTableCompanion
   RegistroTarifaTableCompanion copyWith(
       {Value<int>? idInt,
       Value<String?>? id,
+      Value<bool>? esOriginal,
       Value<int?>? tarifaInt,
       Value<String?>? tarifa,
       Value<int?>? tarifaRackInt,
@@ -11412,6 +11484,7 @@ class RegistroTarifaTableCompanion
     return RegistroTarifaTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
+      esOriginal: esOriginal ?? this.esOriginal,
       tarifaInt: tarifaInt ?? this.tarifaInt,
       tarifa: tarifa ?? this.tarifa,
       tarifaRackInt: tarifaRackInt ?? this.tarifaRackInt,
@@ -11427,6 +11500,9 @@ class RegistroTarifaTableCompanion
     }
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (esOriginal.present) {
+      map['es_original'] = Variable<bool>(esOriginal.value);
     }
     if (tarifaInt.present) {
       map['tarifa_int'] = Variable<int>(tarifaInt.value);
@@ -11448,6 +11524,7 @@ class RegistroTarifaTableCompanion
     return (StringBuffer('RegistroTarifaTableCompanion(')
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
+          ..write('esOriginal: $esOriginal, ')
           ..write('tarifaInt: $tarifaInt, ')
           ..write('tarifa: $tarifa, ')
           ..write('tarifaRackInt: $tarifaRackInt, ')
@@ -11516,6 +11593,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       PoliticaTarifarioDao(this as AppDatabase);
   late final RegistroTarifaDao registroTarifaDao =
       RegistroTarifaDao(this as AppDatabase);
+  late final RolDao rolDao = RolDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -11840,6 +11918,7 @@ typedef $$RolTableTableCreateCompanionBuilder = RolTableCompanion Function({
   Value<String?> color,
   Value<String?> descripcion,
   Value<String?> permisos,
+  Value<DateTime> createdAt,
 });
 typedef $$RolTableTableUpdateCompanionBuilder = RolTableCompanion Function({
   Value<int> idInt,
@@ -11848,6 +11927,7 @@ typedef $$RolTableTableUpdateCompanionBuilder = RolTableCompanion Function({
   Value<String?> color,
   Value<String?> descripcion,
   Value<String?> permisos,
+  Value<DateTime> createdAt,
 });
 
 class $$RolTableTableTableManager extends RootTableManager<
@@ -11873,6 +11953,7 @@ class $$RolTableTableTableManager extends RootTableManager<
             Value<String?> color = const Value.absent(),
             Value<String?> descripcion = const Value.absent(),
             Value<String?> permisos = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
           }) =>
               RolTableCompanion(
             idInt: idInt,
@@ -11881,6 +11962,7 @@ class $$RolTableTableTableManager extends RootTableManager<
             color: color,
             descripcion: descripcion,
             permisos: permisos,
+            createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -11889,6 +11971,7 @@ class $$RolTableTableTableManager extends RootTableManager<
             Value<String?> color = const Value.absent(),
             Value<String?> descripcion = const Value.absent(),
             Value<String?> permisos = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
           }) =>
               RolTableCompanion.insert(
             idInt: idInt,
@@ -11897,6 +11980,7 @@ class $$RolTableTableTableManager extends RootTableManager<
             color: color,
             descripcion: descripcion,
             permisos: permisos,
+            createdAt: createdAt,
           ),
         ));
 }
@@ -11931,6 +12015,11 @@ class $$RolTableTableFilterComposer
 
   ColumnFilters<String> get permisos => $state.composableBuilder(
       column: $state.table.permisos,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -11978,6 +12067,11 @@ class $$RolTableTableOrderingComposer
 
   ColumnOrderings<String> get permisos => $state.composableBuilder(
       column: $state.table.permisos,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
@@ -16688,6 +16782,7 @@ typedef $$RegistroTarifaTableTableCreateCompanionBuilder
     = RegistroTarifaTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
+  Value<bool> esOriginal,
   Value<int?> tarifaInt,
   Value<String?> tarifa,
   Value<int?> tarifaRackInt,
@@ -16697,6 +16792,7 @@ typedef $$RegistroTarifaTableTableUpdateCompanionBuilder
     = RegistroTarifaTableCompanion Function({
   Value<int> idInt,
   Value<String?> id,
+  Value<bool> esOriginal,
   Value<int?> tarifaInt,
   Value<String?> tarifa,
   Value<int?> tarifaRackInt,
@@ -16723,6 +16819,7 @@ class $$RegistroTarifaTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
+            Value<bool> esOriginal = const Value.absent(),
             Value<int?> tarifaInt = const Value.absent(),
             Value<String?> tarifa = const Value.absent(),
             Value<int?> tarifaRackInt = const Value.absent(),
@@ -16731,6 +16828,7 @@ class $$RegistroTarifaTableTableTableManager extends RootTableManager<
               RegistroTarifaTableCompanion(
             idInt: idInt,
             id: id,
+            esOriginal: esOriginal,
             tarifaInt: tarifaInt,
             tarifa: tarifa,
             tarifaRackInt: tarifaRackInt,
@@ -16739,6 +16837,7 @@ class $$RegistroTarifaTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
+            Value<bool> esOriginal = const Value.absent(),
             Value<int?> tarifaInt = const Value.absent(),
             Value<String?> tarifa = const Value.absent(),
             Value<int?> tarifaRackInt = const Value.absent(),
@@ -16747,6 +16846,7 @@ class $$RegistroTarifaTableTableTableManager extends RootTableManager<
               RegistroTarifaTableCompanion.insert(
             idInt: idInt,
             id: id,
+            esOriginal: esOriginal,
             tarifaInt: tarifaInt,
             tarifa: tarifa,
             tarifaRackInt: tarifaRackInt,
@@ -16765,6 +16865,11 @@ class $$RegistroTarifaTableTableFilterComposer
 
   ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get esOriginal => $state.composableBuilder(
+      column: $state.table.esOriginal,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -16814,6 +16919,11 @@ class $$RegistroTarifaTableTableOrderingComposer
 
   ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get esOriginal => $state.composableBuilder(
+      column: $state.table.esOriginal,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 

@@ -65,7 +65,7 @@ class _ManagerTariffDayWidgetState
     {"VISTA A LA RESERVA": DesktopColors.vistaReserva},
     {"VISTA PARCIAL AL MAR": DesktopColors.vistaParcialMar},
   ];
-  TarifaTableData? saveTariff;
+  Tarifa? saveTariff;
   bool startFlow = false;
 
   Map<String, RegistroTarifa?>? selectItemTariff;
@@ -76,9 +76,9 @@ class _ManagerTariffDayWidgetState
   List<Map<String, RegistroTarifa?>> itemsTariff = [];
   List<Temporada>? seasons;
   Temporada? selectSeason;
-  List<TarifaTableData>? tariffs;
-  TarifaTableData? selectTariff;
-  List<TarifaTableData>? baseTariffs;
+  List<Tarifa?>? tariffs;
+  Tarifa? selectTariff;
+  List<Tarifa>? baseTariffs;
 
   List<String> promociones = ["No aplicar"];
   final TextEditingController _tarifaAdultoController =
@@ -96,23 +96,27 @@ class _ManagerTariffDayWidgetState
   @override
   void initState() {
     _descuentoController.text =
-        (widget.tarifaXHabitacion.descIntegrado ?? 0).toString();
+        (widget.tarifaXHabitacion.tarifaXDia?.descIntegrado ?? 0).toString();
     isUnknow = widget.tarifaXHabitacion.id!.contains("Unknow");
-    seasons = widget.tarifaXHabitacion.temporadas;
-    selectSeason = widget.tarifaXHabitacion.temporadaSelect;
-    selectTariff = widget.tarifaXHabitacion.tarifa;
-    tariffs = widget.tarifaXHabitacion.tarifas;
-    baseTariffs = widget.tarifaXHabitacion.tarifasBase;
+    seasons = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.temporadas;
+    selectSeason = widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect;
+    // selectTariff = widget.tarifaXHabitacion.tarifaXDia.tarifa;
+    tariffs = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.registros
+        ?.map((e) => e.tarifa)
+        .toList();
+    // baseTariffs = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.t;
     isFreeTariff = widget.tarifaXHabitacion.id!.contains("tariffFree");
-    colorTariff = widget.tarifaXHabitacion.color ?? DesktopColors.ceruleanOscure;
+    colorTariff = widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ??
+        DesktopColors.ceruleanOscure;
     isEditing = isFreeTariff
         ? true
-        : (isUnknow)
-            ? (widget.tarifaXHabitacion.tariffCode == null)
-                ? true
-                : (widget.tarifaXHabitacion.modificado ?? false)
-            : (widget.tarifaXHabitacion.modificado ?? false);
-    canBeReset = (widget.tarifaXHabitacion.tarifasBase ?? List.empty()).isNotEmpty;
+        // : (isUnknow)
+        // ? (widget.tarifaXHabitacion.tariffCode == null)
+        //     ? true
+        //     : (widget.tarifaXHabitacion.modificado ?? false)
+        : (widget.tarifaXHabitacion.tarifaXDia?.modificado ?? false);
+    // canBeReset =
+    //     (widget.tarifaXHabitacion.tarifasBase ?? List.empty()).isNotEmpty;
 
     applyTariffData();
 
@@ -124,30 +128,25 @@ class _ManagerTariffDayWidgetState
       _insertTariffForm(selectTariff);
       getSaveTariff();
 
-      selectCategory = categorias[tipoHabitacion
-          .indexOf(selectTariff?.categoria ?? tipoHabitacion.first)];
+      // selectCategory = categorias[tipoHabitacion
+      //     .indexOf(selectTariff?.categoria ?? tipoHabitacion.first)];
     }
   }
 
-  void getSaveTariff({List<TarifaTableData>? selectTarifas}) {
-    TarifaTableData? detectTarifa = (selectTarifas ??
-            tariffs ??
-            List<TarifaTableData>.empty())
-        .where(
-            (element) => element.categoria != (selectTariff?.categoria ?? ""))
+  void getSaveTariff({List<Tarifa>? selectTarifas}) {
+    Tarifa? detectTarifa = (selectTarifas ?? tariffs ?? List<Tarifa?>.empty())
+        .where((element) =>
+            element?.categoria?.idInt != (selectTariff?.categoria?.id ?? ""))
         .toList()
         .firstOrNull;
 
     if (detectTarifa != null) saveTariff = detectTarifa.copyWith();
   }
 
-  void _insertTariffForm(TarifaTableData? tarifa) {
-    _tarifaAdultoController.text =
-        (tarifa?.tarifaAdultoSGLoDBL ?? '').toString();
-    _tarifaAdultoTPLController.text =
-        (tarifa?.tarifaAdultoTPL ?? '').toString();
-    _tarifaAdultoCPLController.text =
-        (tarifa?.tarifaAdultoCPLE ?? '').toString();
+  void _insertTariffForm(Tarifa? tarifa) {
+    _tarifaAdultoController.text = (tarifa?.tarifaAdulto1a2 ?? '').toString();
+    _tarifaAdultoTPLController.text = (tarifa?.tarifaAdulto3 ?? '').toString();
+    _tarifaAdultoCPLController.text = (tarifa?.tarifaAdulto4 ?? '').toString();
     _tarifaMenoresController.text =
         (tarifa?.tarifaMenores7a12 ?? '').toString();
     _tarifaPaxAdicionalController.text =
@@ -439,12 +438,16 @@ class _ManagerTariffDayWidgetState
                                   onPressed: () {
                                     selectItemTariff = null;
 
-                                    if (widget.tarifaXHabitacion.tariffCode == null) {
-                                      selectSeason =
-                                          widget.tarifaXHabitacion.temporadaSelect;
-                                      seasons = widget.tarifaXHabitacion.temporadas;
-                                      selectTariff = widget.tarifaXHabitacion.tarifa;
-                                      tariffs = widget.tarifaXHabitacion.tarifas;
+                                    if (widget.tarifaXHabitacion.tariffCode ==
+                                        null) {
+                                      selectSeason = widget
+                                          .tarifaXHabitacion.temporadaSelect;
+                                      seasons =
+                                          widget.tarifaXHabitacion.temporadas;
+                                      selectTariff =
+                                          widget.tarifaXHabitacion.tarifa;
+                                      tariffs =
+                                          widget.tarifaXHabitacion.tarifas;
                                       baseTariffs =
                                           widget.tarifaXHabitacion.tarifasBase;
                                       setState(() {});
@@ -459,16 +462,19 @@ class _ManagerTariffDayWidgetState
                                     saveTariff = null;
                                     setState(() {});
                                     applyTariffData();
-                                    if (widget.tarifaXHabitacion.tariffCode != null) {
+                                    if (widget.tarifaXHabitacion.tariffCode !=
+                                        null) {
                                       _insertTariffForm(null);
                                     }
                                     if (isUnknow || isFreeTariff) {
                                       isEditing = true;
                                     }
                                     canBeReset = false;
-                                    _descuentoController.text =
-                                        (widget.tarifaXHabitacion.descIntegrado ?? 0)
-                                            .toString();
+                                    _descuentoController.text = (widget
+                                                .tarifaXHabitacion
+                                                .descIntegrado ??
+                                            0)
+                                        .toString();
                                     setState(() {});
                                   },
                                 ),
@@ -1019,8 +1025,8 @@ class _ManagerTariffDayWidgetState
                 selectTariff = TarifaTableData(
                   id: newTarifa?.id ?? 0,
                   code: newTarifa?.code ?? widget.tarifaXHabitacion.id ?? '',
-                  categoria:
-                      newTarifa?.categoria ?? widget.tarifaXHabitacion.categoria,
+                  categoria: newTarifa?.categoria ??
+                      widget.tarifaXHabitacion.categoria,
                   fecha: newTarifa?.fecha ?? DateTime.now(),
                   tarifaAdultoSGLoDBL:
                       double.tryParse(_tarifaAdultoController.text),
@@ -1157,7 +1163,8 @@ class _ManagerTariffDayWidgetState
                   element.tarifas = tariffs;
                   element.periodo = widget.tarifaXHabitacion.periodo;
                   element.tarifasBase = baseTariffs;
-                  element.tarifasEfectivo = widget.tarifaXHabitacion.tarifasEfectivo;
+                  element.tarifasEfectivo =
+                      widget.tarifaXHabitacion.tarifasEfectivo;
                   element.modificado = isEditing;
                 }
               }
@@ -1180,7 +1187,8 @@ class _ManagerTariffDayWidgetState
               }
 
               if (!applyAllTariff && !applyAllNoTariff && !widget.isAppling) {
-                widget.tarifaXHabitacion.subCode = UniqueKey().hashCode.toString();
+                widget.tarifaXHabitacion.subCode =
+                    UniqueKey().hashCode.toString();
               }
 
               if (applyAllDays) {
@@ -1201,7 +1209,8 @@ class _ManagerTariffDayWidgetState
                   element.tarifas = tariffs?.map((e) => e.copyWith()).toList();
                   element.periodo = widget.tarifaXHabitacion.copyWith().periodo;
                   element.tarifasBase = baseTariffs;
-                  element.tarifasEfectivo = widget.tarifaXHabitacion.tarifasEfectivo;
+                  element.tarifasEfectivo =
+                      widget.tarifaXHabitacion.tarifasEfectivo;
                   element.modificado = isEditing;
                 }
 
@@ -1216,8 +1225,9 @@ class _ManagerTariffDayWidgetState
               }
 
               if (widget.isAppling) {
-                widget.tarifaXHabitacion.tarifa = tariffs?.firstWhere((element) =>
-                    element.categoria == habitacionProvider.categoria);
+                widget.tarifaXHabitacion.tarifa = tariffs?.firstWhere(
+                    (element) =>
+                        element.categoria == habitacionProvider.categoria);
               }
 
               ref

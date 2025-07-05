@@ -18,12 +18,14 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
     String username = '',
     String correo = '',
     String estatus = 'registrado',
+    int? rolId,
     DateTime? initDate,
     DateTime? lastDate,
     String? sortBy,
     String order = 'asc',
     int limit = 20,
     int page = 1,
+    bool conDetalle = false,
   }) async {
     final rolAlias = alias(db.rolTable, 'rol');
     final imagenAlias = alias(db.imagenTable, 'image');
@@ -38,6 +40,10 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
         imagenAlias.idInt.equalsExp(db.usuarioTable.imagenInt),
       ),
     ]);
+
+    if (rolId != null) {
+      query.where(db.usuarioTable.rolInt.equals(rolId));
+    }
 
     if (username.isNotEmpty) {
       query.where(usuarioTable.username.like('%$username%'));
@@ -125,14 +131,17 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   }
 
   // CREATE
-  Future<int> insert(Usuario usuario) {
-    return into(db.usuarioTable).insert(
+  Future<Usuario?> insert(Usuario usuario) async {
+    var response = await into(db.usuarioTable).insertReturningOrNull(
       UsuarioTableData.fromJson(usuario.toJson()),
     );
+
+    if (response == null) return null;
+    return Usuario.fromJson(response.toJson());
   }
 
   // READ: Usuario por ID
-  Future<Usuario?> get({
+  Future<Usuario?> getByID({
     int? id,
     String? username,
     String? password,
@@ -190,12 +199,22 @@ class UsuarioDao extends DatabaseAccessor<AppDatabase> with _$UsuarioDaoMixin {
   }
 
   // UPDATE
-  Future<bool> updat3(Usuario usuario) {
-    var response = update(db.usuarioTable).replace(
+  Future<Usuario?> updat3(Usuario usuario) async {
+    var response = await update(db.usuarioTable).replace(
       UsuarioTableData.fromJson(usuario.toJson()),
     );
 
-    return response;
+    if (response == 0) return null;
+    return await getByID(id: usuario.idInt);
+  }
+
+  // SAVE
+  Future<Usuario?> save(Usuario usuario) async {
+    if (usuario.idInt == null) {
+      return await insert(usuario);
+    } else {
+      return await updat3(usuario);
+    }
   }
 
   // DELETE

@@ -14,6 +14,8 @@ import 'package:generador_formato/res/ui/text_styles.dart';
 import '../../../models/categoria_model.dart';
 import '../../../models/tarifa_model.dart';
 import '../../../models/tarifa_x_dia_model.dart';
+import '../../../models/tarifa_x_habitacion_model.dart';
+import '../../../res/helpers/calculator_helpers.dart';
 import '../../../res/helpers/colors_helpers.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../view-models/providers/categoria_provider.dart';
@@ -25,7 +27,7 @@ import '../../../utils/widgets/textformfield_custom.dart';
 
 class ManagerTariffGroupDialog extends ConsumerStatefulWidget {
   const ManagerTariffGroupDialog({super.key, this.tarifasHabitacion});
-  final List<TarifaXDia>? tarifasHabitacion;
+  final List<TarifaXHabitacion>? tarifasHabitacion;
 
   @override
   _ManagerTariffGroupDialogState createState() =>
@@ -43,8 +45,8 @@ class _ManagerTariffGroupDialogState
   final _scrollController = ScrollController(initialScrollOffset: 0);
   Habitacion? selectRoom;
   bool startFlow = false, isUnknow = false, isFree = false;
-  List<TarifaXDia> roomTariffs = [];
-  TarifaXDia? selectTariff;
+  List<TarifaXHabitacion> roomTariffs = [];
+  TarifaXHabitacion? selectTariff;
   String temporadaSelect = '';
   Tarifa? saveTariffUnknow;
   Temporada? temporadaDataSelect;
@@ -189,12 +191,16 @@ class _ManagerTariffGroupDialogState
                                   },
                                   child: ItemRows.filterItemRow(
                                     withDeleteButton: false,
-                                    colorCard:
-                                        roomTariffs[index].tarifaRack?.color ??
-                                            DesktopColors.cerulean,
-                                    title:
-                                        roomTariffs[index].tarifaRack?.nombre ??
-                                            '',
+                                    colorCard: roomTariffs[index]
+                                            .tarifaXDia
+                                            ?.tarifaRack
+                                            ?.color ??
+                                        DesktopColors.cerulean,
+                                    title: roomTariffs[index]
+                                            .tarifaXDia
+                                            ?.tarifaRack
+                                            ?.nombre ??
+                                        '',
                                     withOutWidth: true,
                                     backgroundColor: Theme.of(context)
                                         .scaffoldBackgroundColor,
@@ -206,34 +212,37 @@ class _ManagerTariffGroupDialogState
                             ),
                           ),
                           SizedBox(
-                              height: (selectTariff?.tarifaRack?.temporadas !=
+                              height: (selectTariff?.tarifaXDia?.tarifaRack
+                                              ?.temporadas !=
                                           null &&
-                                      selectTariff!
-                                          .tarifaRack!.temporadas!.isNotEmpty)
+                                      selectTariff!.tarifaXDia!.tarifaRack!
+                                          .temporadas!.isNotEmpty)
                                   ? 20
                                   : 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               TextStyles.standardText(
-                                text:
-                                    selectTariff?.tarifaRack?.temporadas != null
-                                        ? "Temporada: "
-                                        : "Descuento de tarifa:",
+                                text: selectTariff?.tarifaXDia?.tarifaRack
+                                            ?.temporadas !=
+                                        null
+                                    ? "Temporada: "
+                                    : "Descuento de tarifa:",
                                 overClip: true,
                                 size: 12.6,
                               ),
                               const SizedBox(width: 10),
-                              if (selectTariff?.tarifaRack?.temporadas !=
+                              if (selectTariff?.tarifaXDia?.tarifaRack
+                                          ?.temporadas !=
                                       null &&
-                                  selectTariff!
-                                      .tarifaRack!.temporadas!.isNotEmpty)
+                                  selectTariff!.tarifaXDia!.tarifaRack!
+                                      .temporadas!.isNotEmpty)
                                 CustomDropdown.dropdownMenuCustom(
                                   compactWidth: 180,
                                   initialSelection: temporadaSelect,
                                   onSelected: (String? value) {
                                     temporadaDataSelect = selectTariff
-                                        ?.tarifaRack?.temporadas
+                                        ?.tarifaXDia?.tarifaRack?.temporadas
                                         ?.where((element) =>
                                             element.nombre == value)
                                         .toList()
@@ -243,7 +252,8 @@ class _ManagerTariffGroupDialogState
                                   },
                                   elements: ['No aplicar'] +
                                       Utility.getSeasonstoString(
-                                        selectTariff?.tarifaRack?.temporadas,
+                                        selectTariff?.tarifaXDia?.tarifaRack
+                                            ?.temporadas,
                                         tipo: "grupal",
                                       ),
                                   excepcionItem: "No aplicar",
@@ -463,8 +473,9 @@ class _ManagerTariffGroupDialogState
 
   void _selectNewRoom(Habitacion? room) {
     selectRoom = room;
+
     roomTariffs = widget.tarifasHabitacion ??
-        Utility.getUniqueTariffs(selectRoom!.tarifasXHabitacion!);
+        Utility.getUniqueTariffs(selectRoom?.tarifasXHabitacion ?? []);
     _selectTariff(
       roomTariffs.reduce(
         ((a, b) => a.numDays > b.numDays ? a : b),
@@ -473,21 +484,20 @@ class _ManagerTariffGroupDialogState
     setState(() {});
   }
 
-  void _selectTariff(TarifaXDia? tarifa) {
+  void _selectTariff(TarifaXHabitacion? tarifa) {
     selectTariff = tarifa;
-    _descuentoController.text = selectTariff?.descIntegrado?.toString() ?? '';
-    temporadaDataSelect = Utility.getSeasonNow(
-      RegistroTarifa(temporadas: selectTariff?.temporadas),
-      DateTime.parse(selectRoom!.checkOut!)
-          .difference(DateTime.parse(selectRoom!.checkIn!))
-          .inDays,
-      isGroup: true,
+    _descuentoController.text =
+        selectTariff?.tarifaXDia?.descIntegrado?.toString() ?? '';
+    temporadaDataSelect = CalculatorHelpers.getSeasonNow(
+      selectTariff?.tarifaXDia?.tarifaRack,
+      selectRoom!.checkOut!.difference(selectRoom!.checkIn!).inDays,
+      tipo: "grupal",
     );
 
     isUnknow = tarifa?.id == "Unknow";
     isFree = tarifa?.id == "tariffFree";
 
-    int indexSeason = roomTariffs.indexOf(tarifa ?? TarifaXDia());
+    int indexSeason = roomTariffs.indexOf(tarifa ?? TarifaXHabitacion());
 
     if (indexSeason != -1) {
       Future.delayed(
@@ -502,17 +512,17 @@ class _ManagerTariffGroupDialogState
     }
 
     if (isUnknow || isFree) {
-      saveTariffUnknow = selectTariff?.tarifas
-          ?.where((element) =>
-              element.categoria !=
-              tipoHabitacion[categorias.indexOf(selectCategory)])
-          .toList()
-          .firstOrNull;
+      // saveTariffUnknow = selectTariff?.tarifaXDia?.tarifaRack?.registros
+      //     ?.where((element) =>
+      //         element.tarifa?.categoria?.idInt !=
+      //        categorias.indexOf(selectCategory))
+      //     .toList()
+      //     .firstOrNull;
     }
 
     _applyDiscountTariff(
       temporadaDataSelect,
-      descuentoProvisional: tarifa?.descIntegrado,
+      descuentoProvisional: tarifa?.tarifaXDia?.descIntegrado,
     );
   }
 
@@ -522,73 +532,73 @@ class _ManagerTariffGroupDialogState
     double? descuentoProvisional,
   }) {
     temporadaSelect = seasonSelect?.nombre ?? 'No aplicar';
-    TarifaTableData? selectCategoryTariff =
-        ((selectRoom?.useCashSeason ?? false)
-                ? selectTariff?.tarifasBase
-                : selectTariff?.tarifas)
-            ?.where((element) =>
-                element.categoria ==
-                tipoHabitacion[categorias.indexOf(selectCategory)])
-            .toList()
-            .firstOrNull;
+    // Tarifa? selectCategoryTariff =
+    //     ((selectRoom?.useCashSeason ?? false)
+    //             ? selectTariff?.tarifasBase
+    //             : selectTariff?.tarifas)
+    //         ?.where((element) =>
+    //             element.categoria ==
+    //             tipoHabitacion[categorias.indexOf(selectCategory)])
+    //         .toList()
+    //         .firstOrNull;
 
-    double descuento = seasonSelect?.descuento ??
-        descuentoProvisional ??
-        (descuentoText.isEmpty ? 0 : double.parse(descuentoText));
+    // double descuento = seasonSelect?.descuento ??
+    //     descuentoProvisional ??
+    //     (descuentoText.isEmpty ? 0 : double.parse(descuentoText));
 
-    if (isFree || isUnknow) descuento = 0;
+    // if (isFree || isUnknow) descuento = 0;
 
-    _tarifaAdultoSingleController.text = Utility.calculatePromotion(
-      descuento > 100
-          ? "0"
-          : (selectCategoryTariff?.tarifaAdultoSGLoDBL ?? 0).toString(),
-      descuento,
-      returnDouble: true,
-      rounded: !(isFree || isUnknow),
-    ).toString();
+    // _tarifaAdultoSingleController.text = Utility.calculatePromotion(
+    //   descuento > 100
+    //       ? "0"
+    //       : (selectCategoryTariff?.tarifaAdultoSGLoDBL ?? 0).toString(),
+    //   descuento,
+    //   returnDouble: true,
+    //   rounded: !(isFree || isUnknow),
+    // ).toString();
 
-    _tarifaAdultoTPLController.text = Utility.calculatePromotion(
-      descuento > 100
-          ? "0"
-          : (selectCategoryTariff?.tarifaAdultoTPL ?? 0).toString(),
-      descuento,
-      returnDouble: true,
-      rounded: !(isFree || isUnknow),
-    ).toString();
+    // _tarifaAdultoTPLController.text = Utility.calculatePromotion(
+    //   descuento > 100
+    //       ? "0"
+    //       : (selectCategoryTariff?.tarifaAdultoTPL ?? 0).toString(),
+    //   descuento,
+    //   returnDouble: true,
+    //   rounded: !(isFree || isUnknow),
+    // ).toString();
 
-    _tarifaAdultoCPLController.text = Utility.calculatePromotion(
-      descuento > 100
-          ? "0"
-          : (selectCategoryTariff?.tarifaAdultoCPLE ?? 0).toString(),
-      descuento,
-      returnDouble: true,
-      rounded: !(isFree || isUnknow),
-    ).toString();
+    // _tarifaAdultoCPLController.text = Utility.calculatePromotion(
+    //   descuento > 100
+    //       ? "0"
+    //       : (selectCategoryTariff?.tarifaAdultoCPLE ?? 0).toString(),
+    //   descuento,
+    //   returnDouble: true,
+    //   rounded: !(isFree || isUnknow),
+    // ).toString();
 
-    _tarifaPaxAdicionalController.text = Utility.calculatePromotion(
-      descuento > 100
-          ? "0"
-          : (selectCategoryTariff?.tarifaPaxAdicional ?? 0).toString(),
-      descuento,
-      returnDouble: true,
-      rounded: !(isFree || isUnknow),
-    ).toString();
+    // _tarifaPaxAdicionalController.text = Utility.calculatePromotion(
+    //   descuento > 100
+    //       ? "0"
+    //       : (selectCategoryTariff?.tarifaPaxAdicional ?? 0).toString(),
+    //   descuento,
+    //   returnDouble: true,
+    //   rounded: !(isFree || isUnknow),
+    // ).toString();
 
-    _tarifaMenoresController.text = Utility.calculatePromotion(
-      descuento > 100
-          ? "0"
-          : (selectCategoryTariff?.tarifaMenores7a12 ?? 0).toString(),
-      descuento,
-      returnDouble: true,
-      rounded: !(isFree || isUnknow),
-    ).toString();
+    // _tarifaMenoresController.text = Utility.calculatePromotion(
+    //   descuento > 100
+    //       ? "0"
+    //       : (selectCategoryTariff?.tarifaMenores7a12 ?? 0).toString(),
+    //   descuento,
+    //   returnDouble: true,
+    //   rounded: !(isFree || isUnknow),
+    // ).toString();
   }
 
   void _saveChanges() {
     if (isFree || isUnknow) {
       Categoria? _selectCategory = selectCategory?.copyWith();
 
-      selectTariff?.tarifaRack?.registros ??= [];
+      selectTariff?.tarifaXDia?.tarifaRack?.registros ??= [];
 
       Tarifa _selectTariff = Tarifa(
         categoria: _selectCategory,
@@ -598,68 +608,68 @@ class _ManagerTariffGroupDialogState
         tarifaMenores7a12: double.tryParse(_tarifaMenoresController.text),
         tarifaPaxAdicional: double.tryParse(_tarifaPaxAdicionalController.text),
       );
-      
-      selectTariff?.tarifa = _selectTariff;
 
-      int indexFirst = selectTariff?.tarifas
-              ?.indexWhere((element) => element.categoria == _selectCategory) ??
-          -1;
+      //   selectTariff?.tarifaXDia. = _selectTariff;
 
-      if (indexFirst != -1) {
-        selectTariff?.tarifas?[indexFirst] = _selectTariff;
-      } else {
-        selectTariff?.tarifas?.add(_selectTariff);
-      }
+      //   int indexFirst = selectTariff?.tarifas
+      //           ?.indexWhere((element) => element.categoria == _selectCategory) ??
+      //       -1;
 
-      int indexLast = selectTariff?.tarifas?.indexWhere((element) =>
-              element.categoria == (saveTariffUnknow?.categoria ?? '')) ??
-          -1;
+      //   if (indexFirst != -1) {
+      //     selectTariff?.tarifas?[indexFirst] = _selectTariff;
+      //   } else {
+      //     selectTariff?.tarifas?.add(_selectTariff);
+      //   }
 
-      if (indexLast != -1) {
-        selectTariff?.tarifas?[indexLast] = saveTariffUnknow!;
-      } else {
-        selectTariff?.tarifas?.add(saveTariffUnknow!);
-      }
-    }
+      //   int indexLast = selectTariff?.tarifas?.indexWhere((element) =>
+      //           element.categoria == (saveTariffUnknow?.categoria ?? '')) ??
+      //       -1;
 
-    selectTariff!.temporadaSelect = temporadaDataSelect;
-    if (selectTariff?.temporadas?.isEmpty ?? true) {
-      selectTariff!.descIntegrado =
-          double.parse(_descuentoController.text.trim());
-    }
+      //   if (indexLast != -1) {
+      //     selectTariff?.tarifas?[indexLast] = saveTariffUnknow!;
+      //   } else {
+      //     selectTariff?.tarifas?.add(saveTariffUnknow!);
+      //   }
+      // }
 
-    if (habitaciones.length == 1 && widget.tarifasHabitacion != null) {
-      Navigator.of(context).pop([selectTariff]);
-      return;
-    }
+      // selectTariff!.temporadaSelect = temporadaDataSelect;
+      // if (selectTariff?.temporadas?.isEmpty ?? true) {
+      //   selectTariff!.descIntegrado =
+      //       double.parse(_descuentoController.text.trim());
+      // }
 
-    TarifaXDia? foundTariff = selectTariffs.firstWhere(
-      (element) => element?.folioRoom == selectRoom?.id,
-      orElse: () => null,
-    );
+      // if (habitaciones.length == 1 && widget.tarifasHabitacion != null) {
+      //   Navigator.of(context).pop([selectTariff]);
+      //   return;
+      // }
 
-    if (foundTariff != null) {
-      if (foundTariff.id != selectTariff?.id) {
-        int indexFound = selectTariffs
-            .indexWhere((element) => element?.folioRoom == selectRoom?.id);
-        if (indexFound != -1) {
-          selectTariffs[indexFound] = selectTariff!;
-        }
-      }
-    } else {
-      selectTariff?.folioRoom = selectRoom?.id;
-      selectTariffs.add(selectTariff!);
-    }
+      // TarifaXDia? foundTariff = selectTariffs.firstWhere(
+      //   (element) => element?.folioRoom == selectRoom?.id,
+      //   orElse: () => null,
+      // );
 
-    if (selectRoom == habitaciones.last) {
-      Navigator.of(context).pop(selectTariffs);
-      return;
-    }
+      // if (foundTariff != null) {
+      //   if (foundTariff.id != selectTariff?.id) {
+      //     int indexFound = selectTariffs
+      //         .indexWhere((element) => element?.folioRoom == selectRoom?.id);
+      //     if (indexFound != -1) {
+      //       selectTariffs[indexFound] = selectTariff!;
+      //     }
+      //   }
+      // } else {
+      //   selectTariff?.folioRoom = selectRoom?.id;
+      //   selectTariffs.add(selectTariff!);
+      // }
 
-    int index = habitaciones.indexOf(selectRoom!);
-    if (index != -1 && index < habitaciones.length - 1) {
-      _selectNewRoom(selectRoom = habitaciones[(index + 1)]);
-      setState(() {});
+      // if (selectRoom == habitaciones.last) {
+      //   Navigator.of(context).pop(selectTariffs);
+      //   return;
+      // }
+
+      // int index = habitaciones.indexOf(selectRoom!);
+      // if (index != -1 && index < habitaciones.length - 1) {
+      //   _selectNewRoom(selectRoom = habitaciones[(index + 1)]);
+      //   setState(() {});
     }
   }
 }

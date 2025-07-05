@@ -3,6 +3,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../database/dao/usuario_dao.dart';
 import '../../database/database.dart';
+import '../../models/error_model.dart';
 import '../../models/imagen_model.dart';
 import '../../models/usuario_model.dart';
 import '../../utils/shared_preferences/preferences.dart';
@@ -24,15 +25,21 @@ class AuthService extends BaseService {
     return found;
   }
 
-  Future<Tuple2<String?, Usuario?>> loginUser(
+  Future<Tuple2<ErrorModel?, Usuario?>> loginUser(
     String username,
     String password,
   ) async {
+    ErrorModel? error;
     Usuario? response;
+
     try {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
-      response = await usuarioDao.get(
+
+      final existBD = await usuarioDao.exists(username: username);
+      if (!existBD) throw Exception("Usuario no existe");
+
+      response = await usuarioDao.getByID(
         username: username,
         password: password,
         notStatus: "inactivo",
@@ -40,7 +47,7 @@ class AuthService extends BaseService {
 
       db.close();
       usuarioDao.close();
-      if (response == null) return const Tuple2("Credenciales invalidas", null);
+      if (response == null) throw Exception("Credenciales invalidas");
 
       Preferences.mail = response.correoElectronico ?? '';
       Preferences.phone = response.telefono ?? '';
@@ -53,10 +60,9 @@ class AuthService extends BaseService {
       Preferences.birthDate =
           response.fechaNacimiento?.toString().substring(0, 10) ?? '';
     } catch (e) {
-      print(e);
-      return Tuple2("Error: ${e.toString()}", null);
+      error = ErrorModel(message: e.toString());
     }
-    return Tuple2(null, response);
+    return Tuple2(error, response);
   }
 
   Future<bool> deleteUser(Usuario user) async {
@@ -82,8 +88,8 @@ class AuthService extends BaseService {
     try {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
-      bool response = await usuarioDao.updat3(user);
-      success = response;
+      // bool response = await usuarioDao.updat3(user);
+      // success = response;
       db.close();
     } catch (e) {
       print(e);
@@ -99,12 +105,12 @@ class AuthService extends BaseService {
     try {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
-      bool response = await usuarioDao.updat3(Usuario(
-        idInt: userId,
-        username: username,
-        password: newPassword,
-      ));
-      success = response;
+      // bool response = await usuarioDao.updat3(Usuario(
+      //   idInt: userId,
+      //   username: username,
+      //   password: newPassword,
+      // ));
+      // success = response;
       db.close();
     } catch (e) {
       print(e);
@@ -120,8 +126,8 @@ class AuthService extends BaseService {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
       Usuario user = Usuario(idInt: userId, imagen: Imagen(idInt: intId));
-      bool response = await usuarioDao.updat3(user);
-      success = response;
+      // bool response = await usuarioDao.updat3(user);
+      // success = response;
       db.close();
     } catch (e) {
       print(e);

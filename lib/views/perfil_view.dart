@@ -3,21 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/models/imagen_model.dart';
-import 'package:generador_formato/view-models/providers/usuario_provider.dart';
-import 'package:generador_formato/view-models/services/auth_service.dart';
-import 'package:generador_formato/res/ui/buttons.dart';
-import 'package:generador_formato/utils/encrypt/encrypter.dart';
-import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/utils/widgets/change_password_widget.dart';
-import 'package:generador_formato/utils/widgets/gestor_imagenes_widget.dart';
-import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
-import 'package:sidebarx/src/controller/sidebarx_controller.dart';
+import 'package:sidebarx/sidebarx.dart';
 
+import '../models/imagen_model.dart';
 import '../res/ui/custom_widgets.dart';
 import '../res/ui/show_snackbar.dart';
 import '../res/ui/title_page.dart';
+import '../utils/encrypt/encrypter.dart';
+import '../utils/shared_preferences/preferences.dart';
 import '../utils/shared_preferences/settings.dart';
 import '../res/ui/text_styles.dart';
 

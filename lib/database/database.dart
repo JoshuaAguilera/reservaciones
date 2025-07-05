@@ -17,6 +17,7 @@ import 'dao/periodo_dao.dart';
 import 'dao/politica_tarifario_dao.dart';
 import 'dao/registro_tarifa_dao.dart';
 import 'dao/resumen_operacion_dao.dart';
+import 'dao/rol_dao.dart';
 import 'dao/tarifa_base_dao.dart';
 import 'dao/tarifa_dao.dart';
 import 'dao/tarifa_rack_dao.dart';
@@ -88,6 +89,7 @@ part 'database.g.dart';
     ImagenDao,
     PoliticaTarifarioDao,
     RegistroTarifaDao,
+    RolDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

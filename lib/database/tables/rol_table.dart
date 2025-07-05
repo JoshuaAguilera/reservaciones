@@ -7,4 +7,5 @@ class RolTable extends Table {
   TextColumn get color => text().nullable()();
   TextColumn get descripcion => text().nullable()();
   TextColumn get permisos => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
