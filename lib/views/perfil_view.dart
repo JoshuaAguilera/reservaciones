@@ -3,9 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image/image.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../models/imagen_model.dart';
+import '../models/usuario_model.dart';
+import '../res/helpers/format_helpers.dart';
 import '../res/ui/custom_widgets.dart';
 import '../res/ui/show_snackbar.dart';
 import '../res/ui/title_page.dart';
@@ -13,6 +16,7 @@ import '../utils/encrypt/encrypter.dart';
 import '../utils/shared_preferences/preferences.dart';
 import '../utils/shared_preferences/settings.dart';
 import '../res/ui/text_styles.dart';
+import '../view-models/providers/usuario_provider.dart';
 
 class PerfilView extends ConsumerStatefulWidget {
   const PerfilView({super.key, required this.sideController});
@@ -43,21 +47,30 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   @override
   void initState() {
     super.initState();
-    usernameController.text = Preferences.username;
-    firstnameController.text = Preferences.firstName;
-    lastnameController.text = Preferences.lastName;
-    passwordController.text =
-        EncrypterTool.decryptData(Preferences.password, null);
-    phoneController.text =
-        Preferences.phone.isNotEmpty ? Preferences.phone : '';
-    mailController.text = Preferences.mail;
-    passwordMailController.text = Preferences.passwordMail.isNotEmpty
-        ? EncrypterTool.decryptData(Preferences.passwordMail, null)
-        : '';
-    if (Preferences.birthDate.isNotEmpty) {
-      dateController.text = Preferences.birthDate;
-      changeDate = true;
-    }
+    var user = ref.read(userProvider);
+    _fillForm(user);
+  }
+
+  void _fillForm(Usuario? usuario) {
+    usernameController.text = usuario?.username ?? Preferences.username;
+    firstnameController.text = usuario?.nombre ?? Preferences.firstName;
+    lastnameController.text = usuario?.apellido ?? Preferences.lastName;
+    phoneController.text = usuario?.telefono ?? Preferences.phone;
+    mailController.text = usuario?.correoElectronico ?? Preferences.mail;
+    dateController.text = Preferences.birthDate;
+  }
+
+  Future<void> updateUser(int userId) async {
+    Usuario workUser = Usuario();
+    workUser.idInt = userId;
+    workUser.username = FormatHelpers.emptyToNull(usernameController.text);
+    workUser.nombre = FormatHelpers.emptyToNull(firstnameController.text);
+    workUser.apellido = FormatHelpers.emptyToNull(lastnameController.text);
+    workUser.fechaNacimiento = DateTime.tryParse(dateController.text);
+    workUser.correoElectronico = FormatHelpers.emptyToNull(mailController.text);
+    workUser.telefono = FormatHelpers.emptyToNull(phoneController.text);
+
+    // ref.read()
   }
 
   @override
