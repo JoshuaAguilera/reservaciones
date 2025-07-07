@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
@@ -83,5 +84,54 @@ class Permiso with CustomDropdownListFilter {
     data.removeWhere((key, value) => value == null);
 
     return data;
+  }
+}
+
+class Permission {
+  static final Permission _instance = Permission._internal();
+
+  factory Permission() {
+    return _instance;
+  }
+
+  Permission._internal();
+
+  late List<Permiso> _permisos;
+
+  Future<void> cargarPermisos() async {
+    String jsonString = await rootBundle.loadString('assets/permissions.json');
+    final List<dynamic> jsonList = json.decode(jsonString);
+    List<Permiso> permisos = jsonList.map((e) => Permiso.fromJson(e)).toList();
+
+    _permisos = permisos;
+  }
+
+  List<Permiso> get permisos => _permisos;
+
+  Permiso getPermiso({
+    String id = "",
+    String recurso = "",
+    String descripcion = "",
+  }) {
+    return _permisos.firstWhere(
+      (element) {
+        if (id.isNotEmpty) {
+          return element.id == id;
+        } else if (recurso.isNotEmpty) {
+          return element.resource == recurso;
+        } else if (descripcion.isNotEmpty) {
+          return element.description == descripcion;
+        }
+        return false;
+      },
+      orElse: () => Permiso(
+        id: "0",
+        resource: "No encontrado",
+        action: "No encontrado",
+        description: "No encontrado",
+        isLocal: false,
+        isDefault: false,
+      ),
+    );
   }
 }

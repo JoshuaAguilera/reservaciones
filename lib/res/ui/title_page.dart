@@ -1,7 +1,9 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../utils/shared_preferences/settings.dart';
 import 'text_styles.dart';
 
 class TitlePage extends StatefulWidget {
@@ -126,6 +128,6 @@ class _TitlePageState extends State<TitlePage> {
           if (!widget.isDialog) Divider(color: Theme.of(context).primaryColor),
         ],
       ),
-    );
+    ).animate().fadeIn(duration: Settings.applyAnimations ? null : 0.ms);
   }
 }

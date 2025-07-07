@@ -85,7 +85,7 @@ class UsuarioService extends BaseService {
   }
 
   Future<Tuple3<ErrorModel?, Usuario?, bool>> saveData(
-      Usuario user, String? newPassword) async {
+      {required Usuario user, String newPassword = ""}) async {
     ErrorModel? error;
     bool invalideToken = false;
     Usuario? savedUser;
@@ -93,7 +93,7 @@ class UsuarioService extends BaseService {
     try {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
-      if (newPassword != null && newPassword.isNotEmpty) {
+      if (newPassword.isNotEmpty) {
         user.password = EncrypterTool.encryptData(newPassword, null);
       }
 
@@ -107,6 +107,29 @@ class UsuarioService extends BaseService {
     }
 
     return Tuple3(error, savedUser, invalideToken);
+  }
+
+  Future<Tuple3<ErrorModel?, Usuario?, bool>> setStatus(
+      Usuario user, String estatus) async {
+    ErrorModel? error;
+    bool invalideToken = false;
+    Usuario? updatedUser;
+
+    try {
+      var selectUser = user.copyWith(estatus: estatus);
+      final db = AppDatabase();
+      final usuarioDao = UsuarioDao(db);
+      updatedUser = await usuarioDao.save(selectUser);
+      if (updatedUser == null) {
+        throw ("Error al actualizar el estado del usuario.");
+      }
+      await usuarioDao.close();
+      await db.close();
+    } catch (e) {
+      error = ErrorModel(message: e.toString());
+    }
+
+    return Tuple3(error, updatedUser, invalideToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(Usuario user) async {

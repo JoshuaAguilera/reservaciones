@@ -1,7 +1,8 @@
-import 'package:generador_formato/view-models/services/auth_service.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../../models/estatus_snackbar_model.dart';
+import '../../utils/shared_preferences/settings.dart';
+import '../services/auth_service.dart';
 import 'ui_provider.dart';
 
 final authProvider = FutureProvider<bool>(
@@ -20,9 +21,17 @@ final authProvider = FutureProvider<bool>(
             );
         return true;
       }
+
+      // ref.read(userProvider.notifier).state = response.item2;
     }
+
+    return false;
   },
 );
 
 final usernameProvider = StateProvider<String>((ref) => '');
 final passwordProvider = StateProvider<String>((ref) => '');
+
+final saveNameProvider = StateProvider<bool>(
+  (ref) => Settings.savename.isNotEmpty,
+);

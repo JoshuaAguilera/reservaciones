@@ -9,6 +9,7 @@ import 'package:generador_formato/models/estructura_documento.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'database/init_database.dart';
+import 'models/permiso_model.dart';
 import 'res/helpers/custom_scroll_behavior.dart';
 import 'res/ui/themes.dart';
 import 'utils/shared_preferences/preferences.dart';
@@ -20,6 +21,7 @@ Future<void> main() async {
   //Compatibily Windows scale
   WidgetsFlutterBinding.ensureInitialized();
   await EstructuraDocumento().cargarEstructuras();
+  await Permission().cargarPermisos();
   await Preferences.init();
   await Settings.init();
   await windowManager.ensureInitialized();

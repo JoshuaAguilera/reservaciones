@@ -4,6 +4,7 @@ class Settings {
   static late SharedPreferences _prefs;
 
   static String _aplication = '';
+  static String _savename = '';
   static bool _modeDark = false;
   static int _numberQuotes = 0;
   static int _portSMTP = 465;
@@ -107,5 +108,14 @@ class Settings {
   static set ignoreBadCertificate(bool value) {
     _ignoreBadCertificate = value;
     _prefs.setBool('ignoreBadCertificate', value);
+  }
+
+  static String get savename {
+    return _prefs.getString('savename') ?? _savename;
+  }
+
+  static set savename(String value) {
+    _savename = value;
+    _prefs.setString('savename', value);
   }
 }

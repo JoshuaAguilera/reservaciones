@@ -141,7 +141,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                     selectIndex: 99,
                     children: [
                       Expanded(
-                        child: (imageUser.ruta?.isNotEmpty ?? false)
+                        child: (imageUser?.ruta?.isNotEmpty ?? false)
                             ? Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 6),
@@ -154,7 +154,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                                   ),
                                   child: ClipOval(
                                     child: Image.file(
-                                      File(imageUser.ruta!),
+                                      File(imageUser!.ruta!),
                                       fit: BoxFit.cover,
                                       width: 45,
                                       height: 45,
@@ -251,7 +251,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                             ),
                             child: ClipOval(
                               child: Image.file(
-                                File(imageUser.ruta!),
+                                File(imageUser!.ruta!),
                                 fit: BoxFit.cover,
                                 width: 30,
                                 height: 30,

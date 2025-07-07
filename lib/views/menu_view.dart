@@ -13,7 +13,7 @@ import 'historial/historial_view.dart';
 import 'perfil_view.dart';
 import 'tarifario/tarifario_form_view.dart';
 import 'tarifario/tarifario_view.dart';
-import 'usuarios/gestion_usuarios_view.dart';
+import 'gestion_usuarios_view.dart';
 
 class MenuView extends StatefulWidget {
   const MenuView({

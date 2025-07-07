@@ -3,19 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image/image.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../models/imagen_model.dart';
 import '../models/usuario_model.dart';
+import '../res/helpers/animation_helpers.dart';
 import '../res/helpers/format_helpers.dart';
+import '../res/helpers/functions_ui.dart';
+import '../res/ui/buttons.dart';
 import '../res/ui/custom_widgets.dart';
-import '../res/ui/show_snackbar.dart';
 import '../res/ui/title_page.dart';
-import '../utils/encrypt/encrypter.dart';
 import '../utils/shared_preferences/preferences.dart';
-import '../utils/shared_preferences/settings.dart';
 import '../res/ui/text_styles.dart';
+import '../utils/widgets/change_password_widget.dart';
+import '../utils/widgets/gestor_imagenes_widget.dart';
+import '../utils/widgets/textformfield_custom.dart';
 import '../view-models/providers/usuario_provider.dart';
 
 class PerfilView extends ConsumerStatefulWidget {
@@ -23,12 +25,13 @@ class PerfilView extends ConsumerStatefulWidget {
 
   final SidebarXController sideController;
   @override
-  _PerfilViewState createState() => _PerfilViewState();
+  ConsumerState<PerfilView> createState() => _PerfilViewState();
 }
 
 class _PerfilViewState extends ConsumerState<PerfilView> {
-  final TextEditingController dateController =
-      TextEditingController(text: DateTime.now().toString().substring(0, 10));
+  final TextEditingController dateController = TextEditingController(
+    text: DateTime.now().toString().substring(0, 10),
+  );
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController firstnameController = TextEditingController();
   final TextEditingController lastnameController = TextEditingController();
@@ -41,7 +44,6 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   bool canChangedKey = false;
   bool canChangedKeyMail = false;
   bool isSaving = false;
-  bool isImplementImages = false;
   Imagen photoPeril = Imagen();
 
   @override
@@ -60,7 +62,11 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     dateController.text = Preferences.birthDate;
   }
 
-  Future<void> updateUser(int userId) async {
+  Future<void> updateUser([int? userId = 0]) async {
+    // if (!_formKey.currentState!.validate()) return;
+    applyUnfocus();
+    setState(() => isSaving = true);
+
     Usuario workUser = Usuario();
     workUser.idInt = userId;
     workUser.username = FormatHelpers.emptyToNull(usernameController.text);
@@ -70,7 +76,10 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
     workUser.correoElectronico = FormatHelpers.emptyToNull(mailController.text);
     workUser.telefono = FormatHelpers.emptyToNull(phoneController.text);
 
-    // ref.read()
+    ref.read(usuarioProvider.notifier).state = workUser;
+    final response = await ref.read(saveUserProvider.future);
+    setState(() => isSaving = false);
+    if (response.item1) ref.read(usuarioProvider.notifier).state = null;
   }
 
   @override
@@ -89,42 +98,39 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    final usuario = ref.watch(userProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    final usuario = ref.watch(userProvider);
     final foundImageFile = ref.watch(foundImageFileProvider);
 
-    Future submitData() async {
-      setState(() => isSaving = true);
-      await updateUser(usuario.id);
-      setState(() => isSaving = false);
+    Future submitData() async => await updateUser(usuario?.idInt);
+
+    Widget saveButton() {
+      return AnimatedEntry(
+        duration: const Duration(milliseconds: 0),
+        child: SizedBox(
+          height: 35,
+          width: 120,
+          child: Buttons.buttonPrimary(
+            isLoading: isSaving,
+            onPressed: (canChangedKey || canChangedKeyMail)
+                ? () async => await submitData()
+                : null,
+            enable: (canChangedKey || canChangedKeyMail),
+            text: "Guardar",
+          ),
+        ),
+      );
     }
 
     return Stack(
       children: [
         Scaffold(
-          floatingActionButton: screenWidth < 800
-              ? null
-              : SizedBox(
-                  height: 35,
-                  width: 120,
-                  child: Buttons.commonButton(
-                      isLoading: isSaving,
-                      onPressed: (canChangedKey || canChangedKeyMail)
-                          ? null
-                          : () async {
-                              setState(() => isSaving = true);
-                              await updateUser(usuario.id);
-                              setState(() => isSaving = false);
-                            },
-                      text: "Guardar"),
-                ).animate().fadeIn(
-                    delay: !Settings.applyAnimations ? null : 150.ms,
-                    duration: Settings.applyAnimations ? null : 0.ms,
-                  ),
+          floatingActionButton: screenWidth < 800 ? null : saveButton(),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             child: SingleChildScrollView(
               child: Column(
+                spacing: 5,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: screenWidth < 800
                     ? CrossAxisAlignment.center
@@ -134,247 +140,217 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                     title: "Perfil",
                     subtitle:
                         "Gestiona y personaliza la información de tu cuenta",
-                  ).animate().fadeIn(
-                        duration: Settings.applyAnimations ? null : 0.ms,
-                      ),
-                  const SizedBox(height: 5),
+                  ),
                   Form(
                     key: _formKey,
                     child: Wrap(
                       runSpacing: 15,
                       children: [
-                        SizedBox(
-                          width: screenWidth < 800
-                              ? (widget.sideController.extended
-                                  ? screenWidth * 0.8
-                                  : 355)
-                              : 355,
-                          child: Card(
-                            elevation: 8,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextStyles.standardText(
-                                      isBold: true,
-                                      text: "Información general",
-                                      overClip: true,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 16),
-                                  const SizedBox(height: 10),
-                                  Center(
-                                    child: CustomWidgets.itemMedal(
-                                        usuario.rol!, brightness),
-                                  ),
-                                  const SizedBox(height: 7),
-                                  GestorImagenes(
-                                    imagenes: [photoPeril],
-                                    isDialog: true,
-                                    implementDirecty: true,
-                                    blocked: isSaving,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  TextFormFieldCustom.textFormFieldwithBorder(
-                                    name: "Nombre de usuario",
-                                    enabled: !isSaving,
-                                    controller: usernameController,
-                                    textInputAction: TextInputAction.next,
-                                    onFieldSubmitted: (p0) async {
-                                      submitData();
-                                    },
-                                  ),
-                                  const SizedBox(height: 6),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Wrap(
-                                      runSpacing: 5,
-                                      spacing: 10,
-                                      children: [
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Nombre",
-                                          enabled: !isSaving,
-                                          controller: firstnameController,
-                                          textInputAction: TextInputAction.next,
-                                          isRequired: false,
-                                          onFieldSubmitted: (p0) async {
-                                            submitData();
-                                          },
-                                        ),
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Apellido",
-                                          enabled: !isSaving,
-                                          controller: lastnameController,
-                                          textInputAction: TextInputAction.done,
-                                          isRequired: false,
-                                          onFieldSubmitted: (p0) async {
-                                            submitData();
-                                          },
-                                        ),
-                                      ],
+                        AnimatedEntry(
+                          delay: 350.ms,
+                          child: SizedBox(
+                            width: screenWidth < 800
+                                ? (widget.sideController.extended
+                                    ? screenWidth * 0.8
+                                    : 355)
+                                : 355,
+                            child: Card(
+                              elevation: 8,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  spacing: 10,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextStyles.standardText(
+                                        isBold: true,
+                                        text: "Información general",
+                                        overClip: true,
+                                        size: 16),
+                                    Center(
+                                      child: CustomWidgets.itemMedal(
+                                          usuario?.rol?.nombre ?? '',
+                                          brightness),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: TextFormFieldCustom
-                                        .textFormFieldwithBorderCalendar(
-                                      readOnly: true,
-                                      name: "Fecha de nacimiento",
-                                      msgError: "Campo requerido*",
-                                      dateController: dateController,
-                                      nowLastYear: true,
+                                    GestorImagenes(
+                                      imagenes: [photoPeril],
+                                      isDialog: true,
+                                      implementDirecty: true,
+                                      blocked: isSaving,
+                                    ),
+                                    TextFormFieldCustom.textFormFieldwithBorder(
+                                      name: "Nombre de usuario",
                                       enabled: !isSaving,
-                                      fechaLimite: "1900-01-01",
-                                      onChanged: () {
-                                        setState(() {
-                                          changeDate = true;
-                                        });
+                                      controller: usernameController,
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (p0) async {
+                                        submitData();
                                       },
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  ChangePasswordWidget(
-                                    passwordController: passwordController,
-                                    isChanged: (value) =>
-                                        setState(() => canChangedKey = value),
-                                    userId: usuario.id,
-                                    username: usuario.username ?? '',
-                                    isPasswordMail: false,
-                                    enable: !isSaving,
-                                  ),
-                                  const SizedBox(height: 7),
-                                ],
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Wrap(
+                                        runSpacing: 5,
+                                        spacing: 10,
+                                        children: [
+                                          TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Nombre",
+                                            enabled: !isSaving,
+                                            controller: firstnameController,
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            isRequired: false,
+                                            onFieldSubmitted: (p0) async {
+                                              submitData();
+                                            },
+                                          ),
+                                          TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Apellido",
+                                            enabled: !isSaving,
+                                            controller: lastnameController,
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            isRequired: false,
+                                            onFieldSubmitted: (p0) async {
+                                              submitData();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: TextFormFieldCustom
+                                          .textFormFieldwithBorderCalendar(
+                                        readOnly: true,
+                                        name: "Fecha de nacimiento",
+                                        msgError: "Campo requerido*",
+                                        dateController: dateController,
+                                        nowLastYear: true,
+                                        enabled: !isSaving,
+                                        fechaLimite: "1900-01-01",
+                                        onChanged: () {
+                                          setState(() {
+                                            changeDate = true;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    ChangePasswordWidget(
+                                      passwordController: passwordController,
+                                      isChanged: (value) =>
+                                          setState(() => canChangedKey = value),
+                                      userId: usuario?.idInt ?? 0,
+                                      username: usuario?.username ?? '',
+                                      isPasswordMail: false,
+                                      enable: !isSaving,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ).animate().fadeIn(
-                                delay:
-                                    !Settings.applyAnimations ? null : 350.ms,
-                                duration:
-                                    Settings.applyAnimations ? null : 0.ms,
-                              ),
+                          ),
                         ),
-                        SizedBox(
-                          width: screenWidth < 800
-                              ? (widget.sideController.extended
-                                  ? screenWidth * 0.8
-                                  : 355)
-                              : 355,
-                          child: Card(
-                            elevation: 8,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextStyles.standardText(
+                        AnimatedEntry(
+                          delay: 550.ms,
+                          child: SizedBox(
+                            width: screenWidth < 800
+                                ? (widget.sideController.extended
+                                    ? screenWidth * 0.8
+                                    : 355)
+                                : 355,
+                            child: Card(
+                              elevation: 8,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextStyles.standardText(
                                       isBold: true,
                                       text: "Datos de correo y teléfono",
                                       overClip: true,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 16),
-                                  TextStyles.standardText(
-                                    text:
-                                        "Requerido para el envio del comprobante para cotización.",
-                                    color: Theme.of(context).primaryColor,
-                                    size: 11,
-                                    overClip: true,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Wrap(
-                                      runSpacing: 5,
-                                      spacing: 10,
-                                      children: [
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Teléfono",
-                                          isRequired: true,
-                                          controller: phoneController,
-                                          onFieldSubmitted: (p0) async {
-                                            submitData();
-                                          },
-                                          enabled: !isSaving,
-                                          isNumeric: true,
-                                          textInputAction: TextInputAction.next,
-                                          validator: (p0) {
-                                            if (p0 != null &&
-                                                p0.isNotEmpty &&
-                                                p0.length > 10) {
-                                              return "Número no valido";
-                                            }
-
-                                            if (p0 != null &&
-                                                p0.isNotEmpty &&
-                                                p0.length < 10) {
-                                              return "Número no valido";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        TextFormFieldCustom
-                                            .textFormFieldwithBorder(
-                                          name: "Correo electrónico",
-                                          controller: mailController,
-                                          enabled: !isSaving,
-                                          isRequired: false,
-                                          textInputAction: TextInputAction.done,
-                                          onFieldSubmitted: (p0) async {
-                                            submitData();
-                                          },
-                                        ),
-                                      ],
+                                      size: 16,
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  ChangePasswordWidget(
-                                    passwordController: passwordMailController,
-                                    isChanged: (value) => setState(
-                                        () => canChangedKeyMail = value),
-                                    userId: usuario.id,
-                                    username: usuario.username ?? '',
-                                    isPasswordMail: true,
-                                    enable: !isSaving,
-                                  ),
-                                  const SizedBox(height: 7),
-                                  if (screenWidth < 800)
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        height: 35,
-                                        width: 120,
-                                        child: Buttons.commonButton(
-                                            isLoading: isSaving,
-                                            onPressed: (canChangedKey ||
-                                                    canChangedKeyMail)
-                                                ? null
-                                                : () async {
-                                                    setState(
-                                                        () => isSaving = true);
-                                                    await updateUser(
-                                                        usuario.id);
-                                                    setState(
-                                                        () => isSaving = false);
-                                                  },
-                                            text: "Guardar"),
+                                    TextStyles.standardText(
+                                      text:
+                                          "Requerido para el envio del comprobante para cotización.",
+                                      size: 11,
+                                      overClip: true,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Wrap(
+                                        runSpacing: 5,
+                                        spacing: 10,
+                                        children: [
+                                          TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Teléfono",
+                                            isRequired: true,
+                                            controller: phoneController,
+                                            onFieldSubmitted: (p0) async {
+                                              submitData();
+                                            },
+                                            enabled: !isSaving,
+                                            isNumeric: true,
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            validator: (p0) {
+                                              if (p0 != null &&
+                                                  p0.isNotEmpty &&
+                                                  p0.length > 10) {
+                                                return "Número no valido";
+                                              }
+
+                                              if (p0 != null &&
+                                                  p0.isNotEmpty &&
+                                                  p0.length < 10) {
+                                                return "Número no valido";
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          TextFormFieldCustom
+                                              .textFormFieldwithBorder(
+                                            name: "Correo electrónico",
+                                            controller: mailController,
+                                            enabled: !isSaving,
+                                            isRequired: false,
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            onFieldSubmitted: (p0) async {
+                                              submitData();
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                ],
+                                    const SizedBox(height: 5),
+                                    ChangePasswordWidget(
+                                      passwordController:
+                                          passwordMailController,
+                                      isChanged: (value) => setState(
+                                          () => canChangedKeyMail = value),
+                                      userId: usuario?.idInt ?? 0,
+                                      username: usuario?.username ?? '',
+                                      isPasswordMail: true,
+                                      enable: !isSaving,
+                                    ),
+                                    const SizedBox(height: 7),
+                                  ],
+                                ),
                               ),
                             ),
-                          ).animate().fadeIn(
-                                delay:
-                                    !Settings.applyAnimations ? null : 550.ms,
-                                duration:
-                                    Settings.applyAnimations ? null : 0.ms,
-                              ),
+                          ),
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  saveButton(),
                 ],
               ),
             ),
@@ -383,70 +359,9 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
         if (foundImageFile)
           ModalBarrier(
             dismissible: false,
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
           ),
       ],
     );
-  }
-
-  Future updateUser(int userId) async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    if (usernameController.text.isEmpty) {
-      showSnackBar(
-          context: context,
-          title: "Error de actualización",
-          message:
-              "No se puede actualizar ningun dato sin el nombre del usuario.",
-          type: 'danger');
-      return;
-    }
-
-    if (await AuthService().getUser(usernameController.text, userId)) {
-      showSnackBar(
-        type: "alert",
-        context: context,
-        title: "Usuario ya existente",
-        message:
-            "No se puede registrar el nombre: '${usernameController.text}' porque ya esta siendo utilizado.",
-      );
-      usernameController.text = Preferences.username;
-      return;
-    }
-
-    UsuarioTableData usuario = UsuarioTableData(
-      id: userId,
-      username: usernameController.text,
-      nombre: firstnameController.text,
-      apellido: lastnameController.text,
-      fechaNacimiento: changeDate ? dateController.text : '',
-      correoElectronico: mailController.text,
-      telefono: phoneController.text,
-    );
-
-    if (await AuthService().updateUser(usuario)) {
-      showSnackBar(
-          context: context,
-          title: "Error de actualización",
-          message:
-              "No se proceso el cambio de contraseña de correo correctamente",
-          type: 'danger');
-      return;
-    }
-
-    Preferences.birthDate = dateController.text;
-    Preferences.username = usernameController.text;
-    Preferences.firstName = firstnameController.text;
-    Preferences.lastName = lastnameController.text;
-    Preferences.mail = mailController.text;
-    Preferences.phone = phoneController.text;
-
-    showSnackBar(
-        context: context,
-        title: "Perfil actualizado",
-        message: "Se actualizaron los campos solicitados.",
-        type: 'success');
   }
 }

@@ -5,6 +5,7 @@ import 'package:generador_formato/view-models/services/auth_service.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/utils/encrypt/encrypter.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
+import 'package:generador_formato/view-models/services/usuario_service.dart';
 
 import '../../models/usuario_model.dart';
 import '../../res/ui/buttons.dart';
@@ -188,7 +189,7 @@ class _ChangePasswordWidgetState extends State<ChangePasswordWidget> {
                         password: newPassword,
                       );
 
-                      if (await AuthService().updateUser(userData)) {
+                      if (await UsuarioService().updateUser(userData)) {
                         showSnackBar(
                           context: context,
                           title: "Error de actualización",

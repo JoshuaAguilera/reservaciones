@@ -10,6 +10,7 @@ import 'package:icons_plus/icons_plus.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/input_decorations.dart';
+import '../../res/ui/tools_ui.dart';
 import 'number_input_with_increment_decrement.dart';
 import '../../res/ui/text_styles.dart';
 
@@ -439,6 +440,79 @@ class FormWidgets {
       ),
       style: TextStyles.styleStandar(
           color: isError ? DesktopColors.errorColor : null),
+    );
+  }
+
+  static Widget inputCheckBox(
+    BuildContext context, {
+    required String title,
+    String description = "",
+    required bool value,
+    required void Function(bool?) onChanged,
+    Color? activeColor,
+    bool compact = false,
+    double height = 35,
+    double titleSize = 13,
+    double spacing = 0,
+    bool enable = true,
+  }) {
+    return SizedBox(
+      height: height,
+      child: ToolsUi.blockedWidget(
+        isBloqued: !enable,
+        child: Column(
+          children: [
+            Row(
+              spacing: spacing,
+              children: [
+                SizedBox(
+                  height: height,
+                  width: 30,
+                  child: Checkbox(
+                    value: value,
+                    onChanged: (value) => onChanged.call(value),
+                    activeColor: activeColor ?? Colors.amber,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(3),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      TextStyles.standardText(
+                        text: title,
+                        size: titleSize,
+                        textOverflow: TextOverflow.clip,
+                      ),
+                      if (compact && description.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Tooltip(
+                            message: description,
+                            textAlign: TextAlign.center,
+                            child: const Icon(Iconsax.info_circle_outline,
+                                size: 22),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (!compact)
+              TextStyles.standardText(
+                text: description,
+                size: 10,
+                textOverflow: TextOverflow.clip,
+                align: TextAlign.justify,
+              ),
+            if (!compact) const SizedBox(height: 30),
+          ],
+        ),
+      ),
     );
   }
 }

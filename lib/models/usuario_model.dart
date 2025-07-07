@@ -28,6 +28,7 @@ class Usuario {
   String? apellido;
   Imagen? imagen;
   DateTime? createdAt;
+  bool select = false;
 
   Usuario({
     this.idInt,
@@ -43,6 +44,7 @@ class Usuario {
     this.nombre,
     this.rol,
     this.createdAt,
+    this.select = false,
   });
 
   Usuario copyWith({
@@ -59,6 +61,7 @@ class Usuario {
     String? apellido,
     Imagen? imagen,
     DateTime? createdAt,
+    bool select = false,
   }) =>
       Usuario(
         idInt: idInt ?? this.idInt,
@@ -74,6 +77,7 @@ class Usuario {
         imagen: imagen?.copyWith() ?? this.imagen?.copyWith(),
         apellido: apellido ?? this.apellido,
         createdAt: createdAt ?? this.createdAt,
+        select: select,
       );
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(

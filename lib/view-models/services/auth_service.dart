@@ -1,15 +1,42 @@
-import 'package:drift/drift.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../database/dao/usuario_dao.dart';
 import '../../database/database.dart';
 import '../../models/error_model.dart';
-import '../../models/imagen_model.dart';
 import '../../models/usuario_model.dart';
 import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
 class AuthService extends BaseService {
+  Future<bool> searchToken() async {
+    bool isValid = false;
+    print('validar token: ${Preferences.token}');
+    if (Preferences.token != '') isValid = await validToken();
+    notifyListeners();
+    return isValid;
+  }
+
+  Future<bool> validToken() async {
+    bool status = false;
+    status = await validTokenNW();
+    return status;
+  }
+
+  Future<bool> validTokenNW() async {
+    bool status = false;
+
+    try {
+      var response = await verifyJwtToken();
+      if (!response) status = false;
+      status = true;
+    } catch (e) {
+      print(e);
+    }
+    return status;
+  }
+
   Future<bool> getUser(String username, [int? userId]) async {
     bool found = false;
 
@@ -48,7 +75,13 @@ class AuthService extends BaseService {
       db.close();
       usuarioDao.close();
       if (response == null) throw Exception("Credenciales invalidas");
+      String token = await getTokenLocal(
+        id: response.idInt ?? 0,
+        username: response.username ?? '',
+        rolId: response.rol?.idInt ?? 0,
+      );
 
+      Preferences.token = token;
       Preferences.mail = response.correoElectronico ?? '';
       Preferences.phone = response.telefono ?? '';
       Preferences.username = response.username ?? '';
@@ -65,114 +98,77 @@ class AuthService extends BaseService {
     return Tuple2(error, response);
   }
 
-  Future<bool> deleteUser(Usuario user) async {
-    bool success = false;
+// Instancia global de storage seguro
+  final secureStorage = const FlutterSecureStorage();
 
-    try {
-      final db = AppDatabase();
-      final usuarioDao = UsuarioDao(db);
-      int response = await usuarioDao.delet3(user.idInt ?? 0);
-      success = response == 1;
-      usuarioDao.close();
-      db.close();
-    } catch (e) {
-      print(e);
-    }
-
-    return success;
+// Guarda el secret key seguro
+  Future<void> saveSecretKey(String secret) async {
+    await secureStorage.write(key: 'jwt_secret', value: secret);
   }
 
-  Future<bool> updateUser(Usuario user) async {
-    bool success = false;
-
-    try {
-      final db = AppDatabase();
-      final usuarioDao = UsuarioDao(db);
-      // bool response = await usuarioDao.updat3(user);
-      // success = response;
-      db.close();
-    } catch (e) {
-      print(e);
-    }
-
-    return success;
+// Obtiene el secret key seguro
+  Future<String?> getSecretKey() async {
+    return await secureStorage.read(key: 'jwt_secret');
   }
 
-  Future<bool> updatePasswordUser(
-      int userId, String username, String newPassword) async {
-    bool success = false;
+// Genera el secret la primera vez (aleatorio)
+  Future<String> initializeSecretKey() async {
+    String? existing = await getSecretKey();
+    if (existing != null) return existing;
 
-    try {
-      final db = AppDatabase();
-      final usuarioDao = UsuarioDao(db);
-      // bool response = await usuarioDao.updat3(Usuario(
-      //   idInt: userId,
-      //   username: username,
-      //   password: newPassword,
-      // ));
-      // success = response;
-      db.close();
-    } catch (e) {
-      print(e);
-    }
-
-    return success;
+    // Generar clave aleatoria simple (mejor usar una mejor función en producción)
+    final generated =
+        List.generate(32, (i) => (i + 65).toRadixString(16)).join();
+    await saveSecretKey(generated);
+    return generated;
   }
 
-  Future<bool> updateImagePerfil(int userId, String username, int intId) async {
-    bool success = false;
+// Ejemplo: Login local y generación de JWT
+  Future<String> getTokenLocal({
+    required int id,
+    required String username,
+    required int rolId,
+    String role = 'user',
+  }) async {
+    final secret = await initializeSecretKey();
 
-    try {
-      final db = AppDatabase();
-      final usuarioDao = UsuarioDao(db);
-      Usuario user = Usuario(idInt: userId, imagen: Imagen(idInt: intId));
-      // bool response = await usuarioDao.updat3(user);
-      // success = response;
-      db.close();
-    } catch (e) {
-      print(e);
-    }
+    final jwt = JWT(
+      {
+        'username': username,
+        'id': id,
+        'rol_id': rolId,
+        'role': role,
+      },
+      issuer: 'local_app',
+    );
+    final token = jwt.sign(
+      SecretKey(secret),
+      expiresIn: const Duration(hours: 12),
+    );
 
-    return success;
+    // Puedes guardar el token para uso posterior
+    await secureStorage.write(key: 'jwt_token', value: token);
+
+    return token;
   }
 
-  Future<List<Usuario>> getUsers(String search, bool empty) async {
-    List<Usuario> users = [];
+// Verificación del JWT (para pantallas protegidas)
+  Future<bool> verifyJwtToken() async {
+    // final token = await secureStorage.read(key: 'jwt_token');
+    final token = Preferences.token;
+    final secret = await getSecretKey();
+    if (token == null || secret == null) return false;
 
     try {
-      final db = AppDatabase();
-      final usuarioDao = UsuarioDao(db);
-      if (empty) {
-        users = await usuarioDao.getList();
-      } else {
-        users = await usuarioDao.getList(username: search);
-      }
-      db.close();
-    } catch (e) {
-      print(e);
-    }
-
-    return users;
-  }
-
-  Future<bool> saveUsers(UsuarioTableData? user) async {
-    final database = AppDatabase();
-
-    try {
-      await database.into(database.usuarioTable).insert(
-            UsuarioTableCompanion.insert(
-              username: Value(user?.username ?? ''),
-              password: Value(user?.password ?? ''),
-              rol: Value(user?.rol ?? ''),
-              estatus: const Value("registrado"),
-            ),
-          );
-      await database.close();
+      JWT.verify(token, SecretKey(secret));
       return true;
     } catch (e) {
-      print(e);
-      await database.close();
       return false;
     }
+  }
+
+// Cerrar sesión
+  Future<void> logout() async {
+    await secureStorage.delete(key: 'jwt_token');
   }
 }

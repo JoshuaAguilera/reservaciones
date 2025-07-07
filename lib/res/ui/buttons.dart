@@ -97,6 +97,7 @@ class Buttons {
     required void Function()? onPressed,
     String text = "",
     bool isLoading = false,
+    bool enable = true,
     IconData? icon,
     double? sizeIcon,
     double spaceBetween = 10,
@@ -151,7 +152,7 @@ class Buttons {
                       : backgroundColor ?? DesktopColors.buttonPrimary,
                 ),
               ),
-              onPressed: onPressed,
+              onPressed: !enable ? null : onPressed,
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: padVer ?? 8),
                 child: Row(

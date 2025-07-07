@@ -116,7 +116,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
               child: SizedBox(
                 child: Stack(
                   children: [
-                    if (imageUser.ruta == null)
+                    if (imageUser?.ruta == null)
                       Image(
                         image: const AssetImage("assets/image/usuario.png"),
                         height: height * 0.60,
@@ -131,7 +131,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                 width: 2)),
                         child: ClipOval(
                           child: Image.file(
-                            File(imageUser.ruta!),
+                            File(imageUser!.ruta!),
                             height: height * 0.60,
                             width: height * 0.60,
                             fit: BoxFit.cover,
@@ -437,7 +437,7 @@ class _GestorImagenesState extends ConsumerState<GestorImagenes> {
                                           isUploadingImage = true;
                                           setState(() {});
 
-                                          if (imageUser.idInt != null) {
+                                          if (imageUser!.idInt != null) {
                                             if (urlImage.isEmpty) {
                                               showError = true;
                                             } else {

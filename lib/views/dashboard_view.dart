@@ -15,6 +15,7 @@ import '../models/notificacion_model.dart';
 import '../models/numero_cotizacion_model.dart';
 import '../models/reporte_cotizacion_model.dart';
 import '../res/helpers/constants.dart';
+import '../res/helpers/date_helpers.dart';
 import '../res/helpers/desktop_colors.dart';
 import '../res/helpers/utility.dart';
 import '../res/ui/custom_widgets.dart';
@@ -83,7 +84,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
       switch (typePeriod) {
         case "Semanal":
-          period = Utility.getRangeDate(
+          period = DateHelpers.getRangeDate(
             _getStartOfWeek(),
             _getEndOfWeek(),
           );
@@ -143,8 +144,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   children: [
                     TextStyles.standardText(
                       isBold: true,
-                      text: !(usuario.rol != "SUPERADMIN" &&
-                              usuario.rol != "ADMIN")
+                      text: !(usuario?.rol?.nombre != "SUPERADMIN" &&
+                              usuario?.rol?.nombre != "ADMIN")
                           ? "Contador actual del equipo"
                           : "Tu contador actual",
                       overClip: false,
@@ -170,7 +171,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
                         if (difference <= 2 &&
                             difference > 0 &&
-                            (element.estatus ?? false)) {
+                            (element.estatus == "PENDIENTE" ||
+                                element.estatus == "ENVIADA")) {
                           return true;
                         }
 
@@ -191,9 +193,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             if (count > 0) {
                               Notificacion newNotification = Notificacion(
                                 idInt: 0,
-                                mensaje: "alert",
-                                ruta: HeroIcons.calendar,
-                                createdAt:
+                                tipo: "alert",
+                                // ruta: HeroIcons.calendar,
+                                mensaje:
                                     "Tiene${count > 1 ? "s" : ""} ${count > 1 ? count : "una"} cotizacion${count > 1 ? "es" : ""} que esta${count > 1 ? "n" : ""} a punto de dejar de ser vigentes.",
                                 id: "Cotizaciones por Vencer",
                               );
@@ -360,8 +362,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       Expanded(
                                         child: TextStyles.standardText(
                                           isBold: true,
-                                          text: (usuario.rol == "SUPERADMIN" ||
-                                                  usuario.rol == "ADMIN")
+                                          text: (usuario?.rol?.nombre ==
+                                                      "SUPERADMIN" ||
+                                                  usuario?.rol?.nombre ==
+                                                      "ADMIN")
                                               ? "Reporte de cotizaciones del equipo"
                                               : "Reporte de cotizaciones",
                                           color: Theme.of(context).primaryColor,
@@ -853,9 +857,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               Expanded(
                                                 child: TextStyles.standardText(
                                                   isBold: true,
-                                                  text: !(usuario.rol !=
+                                                  text: !(usuario?.rol
+                                                                  ?.nombre !=
                                                               "SUPERADMIN" &&
-                                                          usuario.rol !=
+                                                          usuario?.rol
+                                                                  ?.nombre !=
                                                               "ADMIN")
                                                       ? "Ultimas cotizaciones del equipo"
                                                       : "Ultimas cotizaciones",
