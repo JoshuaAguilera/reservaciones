@@ -314,9 +314,19 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
+import 'package:tuple/tuple.dart';
 
+import '../res/helpers/animation_helpers.dart';
+import '../res/ui/buttons.dart';
+import '../res/ui/custom_widgets.dart';
+import '../res/ui/title_page.dart';
+import '../utils/widgets/filter_modal.dart';
 import '../view-models/providers/gestion_usuario_provider.dart';
+import '../view-models/providers/rol_provider.dart';
+import '../view-models/providers/ui_provider.dart';
+import '../view-models/providers/usuario_provider.dart';
 
 class GestionUsuariosView extends ConsumerWidget {
   const GestionUsuariosView({
@@ -328,12 +338,296 @@ class GestionUsuariosView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final showSearchBar = ref.watch(showSearchExtProvider);
+    final showSelectFunction = ref.watch(selectItemsUMProvider);
     final sectionManager = ref.watch(sectionManagerProvider);
-    final filterUser = ref.watch(filterUMProvider);
+    final sizeScreen = MediaQuery.of(context).size;
+    final filter = ref.watch(filterUMProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
-    return const Center(
-      child: Text("Gestión de Usuarios"),
+    //user provider
+    final userListKey = ref.watch(keyUserListProvider);
+    Tuple4<String, String, String, String> _getArgUser() {
+      var arg = Tuple4("", filter.orderByUser ?? "", userListKey, "registrado");
+      return arg;
+    }
+
+    //role provider
+    final roleListKey = ref.watch(keyRoleListProvider);
+    Tuple3<String, String, String> _getArgRole() {
+      var arg = Tuple3("", filter.orderByRole ?? "", roleListKey);
+      return arg;
+    }
+
+    void existSearchUser() {
+      String oldSearch = ref.watch(usuarioSearchProvider);
+
+      if (oldSearch.isNotEmpty) {
+        ref.watch(usuarioSearchProvider.notifier).update((state) => "");
+        ref
+            .watch(searchManagerUserProvider.notifier)
+            .update((state) => TextEditingController());
+        ref.read(keyUserListProvider.notifier).update((state) {
+          return UniqueKey().hashCode.toString();
+        });
+      }
+    }
+
+    void existSearchRole() {
+      String oldSearch = ref.watch(rolSearchProvider);
+
+      if (oldSearch.isNotEmpty) {
+        ref.watch(rolSearchProvider.notifier).update((state) => "");
+        ref
+            .watch(searchManagerUserProvider.notifier)
+            .update((state) => TextEditingController());
+        ref.read(keyRoleListProvider.notifier).update((state) {
+          return UniqueKey().hashCode.toString();
+        });
+      }
+    }
+
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        ref.read(selectAllItemsUMProvider.notifier).update((state) => false);
+        ref.read(selectItemsUMProvider.notifier).update((state) => false);
+        ref.read(usuariosProvider(_getArgUser()).notifier).selectAll(false);
+        ref.read(rolesProvider(_getArgRole()).notifier).selectAll(false);
+
+        existSearchUser();
+        existSearchRole();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 10,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    AnimatedEntry(
+                      duration: const Duration(milliseconds: 200),
+                      child: TitlePage(
+                        title: "Gestión de usuarios",
+                        subtitle:
+                            "Crea, edita, supervisa y declina los usuarios activos del sistema.",
+                        childOptional: Buttons.buttonPrimary(
+                          text: "Agregar usuario",
+                          onPressed: () {},
+                        ),
+                      ),
+                    ),
+                    const AnimatedEntry(
+                      type: AnimationType.slideIn,
+                      child: Divider(),
+                    ),
+                  ],
+                ),
+                Card(
+                  child: Row(
+                    children: [
+                      if (!showSelectFunction)
+                        Buttons.floatingButton(
+                          context,
+                          tag: "search_manager_user",
+                          icon: showSearchBar
+                              ? Iconsax.close_circle_outline
+                              : Iconsax.search_normal_outline,
+                          onPressed: () {
+                            ref.read(showSearchExtProvider.notifier).update(
+                              (state) {
+                                return !showSearchBar;
+                              },
+                            );
+
+                            if (showSearchBar) {
+                              if (sectionManager[0]) {
+                                existSearchUser();
+                              }
+                              if (sectionManager[1]) {
+                                existSearchRole();
+                              }
+                            }
+                          },
+                        ),
+                      if (!showSelectFunction && !showSearchBar)
+                        Buttons.floatingButton(
+                          context,
+                          tag: "filter_manager_user",
+                          icon: Iconsax.filter_search_outline,
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              elevation: 3,
+                              enableDrag: false,
+                              isScrollControlled: true,
+                              backgroundColor: brightness == Brightness.dark
+                                  ? null
+                                  : Colors.white,
+                              builder: (context) {
+                                return const FilterModal(
+                                  route: "USER_MANAGER",
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      if (!showSearchBar)
+                        ItemRow.compactOptions(
+                          customItems: [
+                            if (showSelectFunction)
+                              ItemRow.itemPopup(
+                                "Eliminar selecciones",
+                                Iconsax.trash_outline,
+                                () async {
+                                  bool withSelections = false;
+
+                                  if (sectionManager[0]) {
+                                    withSelections = ref
+                                        .read(usuariosProvider(_getArgUser())
+                                            .notifier)
+                                        .withSelections();
+                                  }
+
+                                  if (sectionManager[1]) {
+                                    withSelections = ref
+                                        .read(rolesProvider(_getArgRole())
+                                            .notifier)
+                                        .withSelections();
+                                  }
+
+                                  if (sectionManager[2]) {
+                                    withSelections = ref
+                                        .read(permisosProvider(
+                                                _getArgPermission())
+                                            .notifier)
+                                        .withSelections();
+                                  }
+
+                                  if (!withSelections) return;
+
+                                  Widget _dialog = AlertDialog(
+                                    title: TextStyles.textEstandarRegular(
+                                      text: "Dialogo no encontrado",
+                                    ),
+                                  );
+
+                                  if (sectionManager[0]) {
+                                    _dialog = UsuarioDeleteDialog();
+                                  }
+
+                                  if (sectionManager[1]) {
+                                    _dialog = RolDeleteDialog();
+                                  }
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return _dialog;
+                                    },
+                                  );
+                                },
+                              ),
+                            if (showSelectFunction)
+                              ItemRow.itemPopup(
+                                "Cancelar",
+                                Iconsax.redo_outline,
+                                () {
+                                  ref
+                                      .read(selectAllItemsUMProvider.notifier)
+                                      .update((state) => false);
+
+                                  if (sectionManager[0]) {
+                                    ref
+                                        .read(usuariosProvider(_getArgUser())
+                                            .notifier)
+                                        .selectAll(false);
+                                  }
+
+                                  if (sectionManager[1]) {
+                                    ref
+                                        .read(rolesProvider(_getArgRole())
+                                            .notifier)
+                                        .selectAll(false);
+                                  }
+
+                                  if (sectionManager[2]) {
+                                    ref
+                                        .read(permisosProvider(
+                                                _getArgPermission())
+                                            .notifier)
+                                        .selectAll(false);
+                                  }
+
+                                  ref
+                                      .read(selectItemsUMProvider.notifier)
+                                      .update((state) => false);
+                                },
+                              ),
+                            if (!showSelectFunction && sectionManager[0])
+                              ItemRow.itemPopup(
+                                "Usuarios eliminados",
+                                Iconsax.user_minus_outline,
+                                () {
+                                  pushScreen(
+                                    context,
+                                    screen: const UsuarioRecovery(),
+                                    withNavBar: true,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.cupertino,
+                                  );
+                                },
+                              ),
+                            if (!showSelectFunction)
+                              ItemRow.itemPopup(
+                                "Seleccionar",
+                                Iconsax.stop_outline,
+                                () {
+                                  bool activeSelection = false;
+
+                                  if (sectionManager[0]) {
+                                    activeSelection = ref
+                                        .read(usuariosProvider(_getArgUser())
+                                            .notifier)
+                                        .isNotEmpty();
+                                  }
+
+                                  if (sectionManager[1]) {
+                                    activeSelection = ref
+                                        .read(rolesProvider(_getArgRole())
+                                            .notifier)
+                                        .isNotEmpty();
+                                  }
+
+                                  if (sectionManager[2]) {
+                                    activeSelection = ref
+                                        .read(permisosProvider(
+                                                _getArgPermission())
+                                            .notifier)
+                                        .isNotEmpty();
+                                  }
+
+                                  if (!activeSelection) return;
+
+                                  ref
+                                      .read(selectItemsUMProvider.notifier)
+                                      .update((state) => true);
+                                },
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

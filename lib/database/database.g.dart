@@ -4510,11 +4510,25 @@ class $NotificacionTableTable extends NotificacionTable
   late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
       'tipo', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _documentoMeta =
+      const VerificationMeta('documento');
+  @override
+  late final GeneratedColumn<String> documento = GeneratedColumn<String>(
+      'documento', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _estatusMeta =
+      const VerificationMeta('estatus');
+  @override
+  late final GeneratedColumn<String> estatus = GeneratedColumn<String>(
+      'estatus', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Variable("enviado"));
   static const VerificationMeta _rutaMeta = const VerificationMeta('ruta');
   @override
-  late final GeneratedColumn<int> ruta = GeneratedColumn<int>(
+  late final GeneratedColumn<String> ruta = GeneratedColumn<String>(
       'ruta', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _usuarioIntMeta =
       const VerificationMeta('usuarioInt');
   @override
@@ -4531,8 +4545,18 @@ class $NotificacionTableTable extends NotificacionTable
       'usuario', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns =>
-      [idInt, id, createdAt, mensaje, tipo, ruta, usuarioInt, usuario];
+  List<GeneratedColumn> get $columns => [
+        idInt,
+        id,
+        createdAt,
+        mensaje,
+        tipo,
+        documento,
+        estatus,
+        ruta,
+        usuarioInt,
+        usuario
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4562,6 +4586,14 @@ class $NotificacionTableTable extends NotificacionTable
     if (data.containsKey('tipo')) {
       context.handle(
           _tipoMeta, tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta));
+    }
+    if (data.containsKey('documento')) {
+      context.handle(_documentoMeta,
+          documento.isAcceptableOrUnknown(data['documento']!, _documentoMeta));
+    }
+    if (data.containsKey('estatus')) {
+      context.handle(_estatusMeta,
+          estatus.isAcceptableOrUnknown(data['estatus']!, _estatusMeta));
     }
     if (data.containsKey('ruta')) {
       context.handle(
@@ -4596,8 +4628,12 @@ class $NotificacionTableTable extends NotificacionTable
           .read(DriftSqlType.string, data['${effectivePrefix}mensaje']),
       tipo: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}tipo']),
+      documento: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}documento']),
+      estatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}estatus'])!,
       ruta: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ruta']),
+          .read(DriftSqlType.string, data['${effectivePrefix}ruta']),
       usuarioInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}usuario_int']),
       usuario: attachedDatabase.typeMapping
@@ -4618,7 +4654,9 @@ class NotificacionTableData extends DataClass
   final DateTime? createdAt;
   final String? mensaje;
   final String? tipo;
-  final int? ruta;
+  final String? documento;
+  final String estatus;
+  final String? ruta;
   final int? usuarioInt;
   final String? usuario;
   const NotificacionTableData(
@@ -4627,6 +4665,8 @@ class NotificacionTableData extends DataClass
       this.createdAt,
       this.mensaje,
       this.tipo,
+      this.documento,
+      required this.estatus,
       this.ruta,
       this.usuarioInt,
       this.usuario});
@@ -4646,8 +4686,12 @@ class NotificacionTableData extends DataClass
     if (!nullToAbsent || tipo != null) {
       map['tipo'] = Variable<String>(tipo);
     }
+    if (!nullToAbsent || documento != null) {
+      map['documento'] = Variable<String>(documento);
+    }
+    map['estatus'] = Variable<String>(estatus);
     if (!nullToAbsent || ruta != null) {
-      map['ruta'] = Variable<int>(ruta);
+      map['ruta'] = Variable<String>(ruta);
     }
     if (!nullToAbsent || usuarioInt != null) {
       map['usuario_int'] = Variable<int>(usuarioInt);
@@ -4669,6 +4713,10 @@ class NotificacionTableData extends DataClass
           ? const Value.absent()
           : Value(mensaje),
       tipo: tipo == null && nullToAbsent ? const Value.absent() : Value(tipo),
+      documento: documento == null && nullToAbsent
+          ? const Value.absent()
+          : Value(documento),
+      estatus: Value(estatus),
       ruta: ruta == null && nullToAbsent ? const Value.absent() : Value(ruta),
       usuarioInt: usuarioInt == null && nullToAbsent
           ? const Value.absent()
@@ -4688,7 +4736,9 @@ class NotificacionTableData extends DataClass
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       mensaje: serializer.fromJson<String?>(json['mensaje']),
       tipo: serializer.fromJson<String?>(json['tipo']),
-      ruta: serializer.fromJson<int?>(json['ruta']),
+      documento: serializer.fromJson<String?>(json['documento']),
+      estatus: serializer.fromJson<String>(json['estatus']),
+      ruta: serializer.fromJson<String?>(json['ruta']),
       usuarioInt: serializer.fromJson<int?>(json['usuarioInt']),
       usuario: serializer.fromJson<String?>(json['usuario']),
     );
@@ -4702,7 +4752,9 @@ class NotificacionTableData extends DataClass
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'mensaje': serializer.toJson<String?>(mensaje),
       'tipo': serializer.toJson<String?>(tipo),
-      'ruta': serializer.toJson<int?>(ruta),
+      'documento': serializer.toJson<String?>(documento),
+      'estatus': serializer.toJson<String>(estatus),
+      'ruta': serializer.toJson<String?>(ruta),
       'usuarioInt': serializer.toJson<int?>(usuarioInt),
       'usuario': serializer.toJson<String?>(usuario),
     };
@@ -4714,7 +4766,9 @@ class NotificacionTableData extends DataClass
           Value<DateTime?> createdAt = const Value.absent(),
           Value<String?> mensaje = const Value.absent(),
           Value<String?> tipo = const Value.absent(),
-          Value<int?> ruta = const Value.absent(),
+          Value<String?> documento = const Value.absent(),
+          String? estatus,
+          Value<String?> ruta = const Value.absent(),
           Value<int?> usuarioInt = const Value.absent(),
           Value<String?> usuario = const Value.absent()}) =>
       NotificacionTableData(
@@ -4723,6 +4777,8 @@ class NotificacionTableData extends DataClass
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
         mensaje: mensaje.present ? mensaje.value : this.mensaje,
         tipo: tipo.present ? tipo.value : this.tipo,
+        documento: documento.present ? documento.value : this.documento,
+        estatus: estatus ?? this.estatus,
         ruta: ruta.present ? ruta.value : this.ruta,
         usuarioInt: usuarioInt.present ? usuarioInt.value : this.usuarioInt,
         usuario: usuario.present ? usuario.value : this.usuario,
@@ -4734,6 +4790,8 @@ class NotificacionTableData extends DataClass
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       mensaje: data.mensaje.present ? data.mensaje.value : this.mensaje,
       tipo: data.tipo.present ? data.tipo.value : this.tipo,
+      documento: data.documento.present ? data.documento.value : this.documento,
+      estatus: data.estatus.present ? data.estatus.value : this.estatus,
       ruta: data.ruta.present ? data.ruta.value : this.ruta,
       usuarioInt:
           data.usuarioInt.present ? data.usuarioInt.value : this.usuarioInt,
@@ -4749,6 +4807,8 @@ class NotificacionTableData extends DataClass
           ..write('createdAt: $createdAt, ')
           ..write('mensaje: $mensaje, ')
           ..write('tipo: $tipo, ')
+          ..write('documento: $documento, ')
+          ..write('estatus: $estatus, ')
           ..write('ruta: $ruta, ')
           ..write('usuarioInt: $usuarioInt, ')
           ..write('usuario: $usuario')
@@ -4757,8 +4817,8 @@ class NotificacionTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-      idInt, id, createdAt, mensaje, tipo, ruta, usuarioInt, usuario);
+  int get hashCode => Object.hash(idInt, id, createdAt, mensaje, tipo,
+      documento, estatus, ruta, usuarioInt, usuario);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4768,6 +4828,8 @@ class NotificacionTableData extends DataClass
           other.createdAt == this.createdAt &&
           other.mensaje == this.mensaje &&
           other.tipo == this.tipo &&
+          other.documento == this.documento &&
+          other.estatus == this.estatus &&
           other.ruta == this.ruta &&
           other.usuarioInt == this.usuarioInt &&
           other.usuario == this.usuario);
@@ -4780,7 +4842,9 @@ class NotificacionTableCompanion
   final Value<DateTime?> createdAt;
   final Value<String?> mensaje;
   final Value<String?> tipo;
-  final Value<int?> ruta;
+  final Value<String?> documento;
+  final Value<String> estatus;
+  final Value<String?> ruta;
   final Value<int?> usuarioInt;
   final Value<String?> usuario;
   const NotificacionTableCompanion({
@@ -4789,6 +4853,8 @@ class NotificacionTableCompanion
     this.createdAt = const Value.absent(),
     this.mensaje = const Value.absent(),
     this.tipo = const Value.absent(),
+    this.documento = const Value.absent(),
+    this.estatus = const Value.absent(),
     this.ruta = const Value.absent(),
     this.usuarioInt = const Value.absent(),
     this.usuario = const Value.absent(),
@@ -4799,6 +4865,8 @@ class NotificacionTableCompanion
     this.createdAt = const Value.absent(),
     this.mensaje = const Value.absent(),
     this.tipo = const Value.absent(),
+    this.documento = const Value.absent(),
+    this.estatus = const Value.absent(),
     this.ruta = const Value.absent(),
     this.usuarioInt = const Value.absent(),
     this.usuario = const Value.absent(),
@@ -4809,7 +4877,9 @@ class NotificacionTableCompanion
     Expression<DateTime>? createdAt,
     Expression<String>? mensaje,
     Expression<String>? tipo,
-    Expression<int>? ruta,
+    Expression<String>? documento,
+    Expression<String>? estatus,
+    Expression<String>? ruta,
     Expression<int>? usuarioInt,
     Expression<String>? usuario,
   }) {
@@ -4819,6 +4889,8 @@ class NotificacionTableCompanion
       if (createdAt != null) 'created_at': createdAt,
       if (mensaje != null) 'mensaje': mensaje,
       if (tipo != null) 'tipo': tipo,
+      if (documento != null) 'documento': documento,
+      if (estatus != null) 'estatus': estatus,
       if (ruta != null) 'ruta': ruta,
       if (usuarioInt != null) 'usuario_int': usuarioInt,
       if (usuario != null) 'usuario': usuario,
@@ -4831,7 +4903,9 @@ class NotificacionTableCompanion
       Value<DateTime?>? createdAt,
       Value<String?>? mensaje,
       Value<String?>? tipo,
-      Value<int?>? ruta,
+      Value<String?>? documento,
+      Value<String>? estatus,
+      Value<String?>? ruta,
       Value<int?>? usuarioInt,
       Value<String?>? usuario}) {
     return NotificacionTableCompanion(
@@ -4840,6 +4914,8 @@ class NotificacionTableCompanion
       createdAt: createdAt ?? this.createdAt,
       mensaje: mensaje ?? this.mensaje,
       tipo: tipo ?? this.tipo,
+      documento: documento ?? this.documento,
+      estatus: estatus ?? this.estatus,
       ruta: ruta ?? this.ruta,
       usuarioInt: usuarioInt ?? this.usuarioInt,
       usuario: usuario ?? this.usuario,
@@ -4864,8 +4940,14 @@ class NotificacionTableCompanion
     if (tipo.present) {
       map['tipo'] = Variable<String>(tipo.value);
     }
+    if (documento.present) {
+      map['documento'] = Variable<String>(documento.value);
+    }
+    if (estatus.present) {
+      map['estatus'] = Variable<String>(estatus.value);
+    }
     if (ruta.present) {
-      map['ruta'] = Variable<int>(ruta.value);
+      map['ruta'] = Variable<String>(ruta.value);
     }
     if (usuarioInt.present) {
       map['usuario_int'] = Variable<int>(usuarioInt.value);
@@ -4884,6 +4966,8 @@ class NotificacionTableCompanion
           ..write('createdAt: $createdAt, ')
           ..write('mensaje: $mensaje, ')
           ..write('tipo: $tipo, ')
+          ..write('documento: $documento, ')
+          ..write('estatus: $estatus, ')
           ..write('ruta: $ruta, ')
           ..write('usuarioInt: $usuarioInt, ')
           ..write('usuario: $usuario')
@@ -13771,7 +13855,9 @@ typedef $$NotificacionTableTableCreateCompanionBuilder
   Value<DateTime?> createdAt,
   Value<String?> mensaje,
   Value<String?> tipo,
-  Value<int?> ruta,
+  Value<String?> documento,
+  Value<String> estatus,
+  Value<String?> ruta,
   Value<int?> usuarioInt,
   Value<String?> usuario,
 });
@@ -13782,7 +13868,9 @@ typedef $$NotificacionTableTableUpdateCompanionBuilder
   Value<DateTime?> createdAt,
   Value<String?> mensaje,
   Value<String?> tipo,
-  Value<int?> ruta,
+  Value<String?> documento,
+  Value<String> estatus,
+  Value<String?> ruta,
   Value<int?> usuarioInt,
   Value<String?> usuario,
 });
@@ -13810,7 +13898,9 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             Value<DateTime?> createdAt = const Value.absent(),
             Value<String?> mensaje = const Value.absent(),
             Value<String?> tipo = const Value.absent(),
-            Value<int?> ruta = const Value.absent(),
+            Value<String?> documento = const Value.absent(),
+            Value<String> estatus = const Value.absent(),
+            Value<String?> ruta = const Value.absent(),
             Value<int?> usuarioInt = const Value.absent(),
             Value<String?> usuario = const Value.absent(),
           }) =>
@@ -13820,6 +13910,8 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             createdAt: createdAt,
             mensaje: mensaje,
             tipo: tipo,
+            documento: documento,
+            estatus: estatus,
             ruta: ruta,
             usuarioInt: usuarioInt,
             usuario: usuario,
@@ -13830,7 +13922,9 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             Value<DateTime?> createdAt = const Value.absent(),
             Value<String?> mensaje = const Value.absent(),
             Value<String?> tipo = const Value.absent(),
-            Value<int?> ruta = const Value.absent(),
+            Value<String?> documento = const Value.absent(),
+            Value<String> estatus = const Value.absent(),
+            Value<String?> ruta = const Value.absent(),
             Value<int?> usuarioInt = const Value.absent(),
             Value<String?> usuario = const Value.absent(),
           }) =>
@@ -13840,6 +13934,8 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             createdAt: createdAt,
             mensaje: mensaje,
             tipo: tipo,
+            documento: documento,
+            estatus: estatus,
             ruta: ruta,
             usuarioInt: usuarioInt,
             usuario: usuario,
@@ -13875,7 +13971,17 @@ class $$NotificacionTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get ruta => $state.composableBuilder(
+  ColumnFilters<String> get documento => $state.composableBuilder(
+      column: $state.table.documento,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get estatus => $state.composableBuilder(
+      column: $state.table.estatus,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get ruta => $state.composableBuilder(
       column: $state.table.ruta,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -13926,7 +14032,17 @@ class $$NotificacionTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get ruta => $state.composableBuilder(
+  ColumnOrderings<String> get documento => $state.composableBuilder(
+      column: $state.table.documento,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get estatus => $state.composableBuilder(
+      column: $state.table.estatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get ruta => $state.composableBuilder(
       column: $state.table.ruta,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));

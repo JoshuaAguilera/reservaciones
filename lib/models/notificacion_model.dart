@@ -21,8 +21,11 @@ class Notificacion {
   String? id;
   DateTime? createdAt;
   String? mensaje;
+  String? documento;
+  String? estatus;
   String? tipo;
   String? ruta;
+  bool select = false;
   Usuario? usuario;
 
   Notificacion({
@@ -33,6 +36,9 @@ class Notificacion {
     this.mensaje,
     this.ruta,
     this.usuario,
+    this.documento,
+    this.estatus,
+    this.select = false,
   });
 
   Notificacion copyWith({
@@ -43,6 +49,9 @@ class Notificacion {
     String? tipo,
     String? ruta,
     Usuario? usuario,
+    String? documento,
+    String? estatus,
+    bool? select,
   }) =>
       Notificacion(
         idInt: idInt ?? this.idInt,
@@ -52,6 +61,9 @@ class Notificacion {
         tipo: tipo ?? this.tipo,
         usuario: usuario?.copyWith() ?? this.usuario?.copyWith(),
         createdAt: createdAt ?? this.createdAt,
+        documento: documento ?? this.documento,
+        estatus: estatus ?? this.estatus,
+        select: select ?? this.select,
       );
 
   factory Notificacion.fromJson(Map<String, dynamic> json) => Notificacion(
@@ -63,6 +75,8 @@ class Notificacion {
         mensaje: json['mensaje'],
         tipo: json['tipo'],
         ruta: json['ruta'],
+        documento: json['documento'],
+        estatus: json['estatus'],
         usuario:
             json['usuario'] != null ? Usuario.fromJson(json['usuario']) : null,
       );
@@ -72,6 +86,8 @@ class Notificacion {
       "id": id,
       "id_int": idInt,
       "mensaje": mensaje,
+      "documento": documento,
+      "estatus": estatus,
       "tipo": tipo,
       "ruta": ruta,
       "usuario_int": usuario?.idInt,

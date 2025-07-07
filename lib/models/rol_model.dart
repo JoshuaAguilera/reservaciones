@@ -23,6 +23,7 @@ class Rol {
   Color? color;
   String? descripcion;
   List<Permiso>? permisos;
+  bool select = false;
 
   Rol({
     this.idInt,
@@ -31,6 +32,7 @@ class Rol {
     this.color,
     this.descripcion,
     this.permisos,
+    this.select = false,
   });
 
   Rol copyWith({
@@ -40,6 +42,7 @@ class Rol {
     Color? color,
     String? descripcion,
     List<Permiso>? permisos,
+    bool? select,
   }) =>
       Rol(
         idInt: idInt ?? this.idInt,
@@ -48,6 +51,7 @@ class Rol {
         color: color ?? this.color,
         descripcion: descripcion ?? this.descripcion,
         permisos: permisos ?? this.permisos,
+        select: select ?? this.select,
       );
 
   factory Rol.fromJson(Map<String, dynamic> json) => Rol(

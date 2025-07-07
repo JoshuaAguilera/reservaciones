@@ -109,7 +109,7 @@ class SnackbarService {
             ),
         ],
       ),
-      duration: duration ?? const Duration(seconds: 2),
+      duration: duration ?? const Duration(seconds: 3),
       backgroundColor: backgroundColor,
       showCloseIcon: true,
       closeIconColor: colorStrong,

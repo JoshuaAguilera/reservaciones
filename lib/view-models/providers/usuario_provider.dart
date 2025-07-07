@@ -25,7 +25,7 @@ final changeUsersProvider = StateProvider<int>((ref) => 0);
 
 // User Module Providers
 final msgSuccessProvider = StateProvider<String?>((ref) => null);
-final usuarioSearchProvider = StateProvider<String?>((ref) => null);
+final usuarioSearchProvider = StateProvider<String>((ref) => "");
 final passwordContProvider = StateProvider<TextEditingController>((ref) {
   return TextEditingController();
 });

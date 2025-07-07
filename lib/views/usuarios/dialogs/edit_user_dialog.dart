@@ -52,7 +52,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
   @override
   void initState() {
-    rol = widget.usuario?.rol ?? roles[2];
+    rol = widget.usuario?.rol?.nombre ?? roles[2];
     nameController =
         TextEditingController(text: widget.usuario?.username ?? '');
     mailController =

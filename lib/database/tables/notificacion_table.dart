@@ -8,7 +8,9 @@ class NotificacionTable extends Table {
       dateTime().withDefault(currentDateAndTime).nullable()();
   TextColumn get mensaje => text().nullable()();
   TextColumn get tipo => text().nullable()();
-  IntColumn get ruta => integer().nullable()();
+  TextColumn get documento => text().nullable()();
+  TextColumn get estatus => text().withDefault(const Variable("enviado"))();
+  TextColumn get ruta => text().nullable()();
   IntColumn get usuarioInt =>
       integer().nullable().references(UsuarioTable, #id)();
   TextColumn get usuario => text().nullable()();
