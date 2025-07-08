@@ -15,6 +15,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../view-models/services/tarifa_base_service.dart';
@@ -60,94 +61,93 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
     final politicaTarifaProvider = ref.watch(listPolicyProvider(""));
     final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
-    void onEdit(RegistroTarifa register) {
+    void onEdit(TarifaRack register) {
       ref.read(editTarifaProvider.notifier).update((state) => register);
       ref.read(temporadasIndividualesProvider.notifier).update((state) =>
           register.temporadas
-              ?.where((element) =>
-                  ((element.forGroup ?? false) == false) &&
-                  (element.forCash ?? false) == false)
+              ?.where((element) => element.tipo == "individual")
               .toList() ??
           List<Temporada>.empty());
       ref.read(temporadasGrupalesProvider.notifier).update((state) =>
           register.temporadas
-              ?.where((element) => element.forGroup ?? false)
+              ?.where((element) => element.tipo == "grupal")
               .toList() ??
           List<Temporada>.empty());
       ref.read(temporadasEfectivoProvider.notifier).update((state) =>
           register.temporadas
-              ?.where((element) => element.forCash ?? false)
+              ?.where((element) => element.tipo == "efectivo")
               .toList() ??
           List<Temporada>.empty());
       onCreate.call();
     }
 
-    void onDelete(RegistroTarifa register) {
+    void onDelete(TarifaRack register) {
       showDialog(
         context: context,
-        builder: (context) => Dialogs.customAlertDialog(
-          context: context,
-          otherButton: true,
-          title: "Eliminar tarifa",
-          contentText:
-              "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
-          nameButtonMain: "Aceptar",
-          funtionMain: () async {
-            bool isSaves = await TarifaBaseService().deleteTarifaRack(register);
+        builder: (context) {
+          return Dialogs.customAlertDialog(
+            otherButton: true,
+            title: "Eliminar tarifa",
+            contentText:
+                "¿Desea eliminar la siguiente tarifa: ${register.nombre}?",
+            nameButtonMain: "Aceptar",
+            funtionMain: () async {
+              // bool isSaves = await TarifaBaseService().delete(register);
 
-            if (isSaves) {
-              showSnackBar(
-                context: context,
-                title: "Tarifa Eliminada",
-                message: "La tarifa fue eliminada exitosamente.",
-                type: "success",
-                iconCustom: Icons.delete,
-              );
+              // if (isSaves) {
+              //   showSnackBar(
+              //     context: context,
+              //     title: "Tarifa Eliminada",
+              //     message: "La tarifa fue eliminada exitosamente.",
+              //     type: "success",
+              //     iconCustom: Icons.delete,
+              //   );
 
-              Future.delayed(
-                500.ms,
-                () {
-                  ref
-                      .read(changeTarifasProvider.notifier)
-                      .update((state) => UniqueKey().hashCode);
-                },
-              );
-            } else {
-              showSnackBar(
-                context: context,
-                title: "Error al eliminar tarifa",
-                message:
-                    "La tarifa no fue eliminada debido a un error inesperado.",
-                type: "danger",
-                iconCustom: Icons.delete,
-              );
-            }
-          },
-          nameButtonCancel: "Cancelar",
-          withButtonCancel: true,
-          iconData: Icons.delete,
-        ),
-      );
-    }
-
-    void _dialogConfigTariffs(PoliticaTableData? data) {
-      showDialog(
-        context: context,
-        builder: (context) => PoliticsTarifarioDialog(policy: data),
-      ).then(
-        (value) {
-          if (value != null) {
-            ref
-                .read(saveTariffPolityProvider.notifier)
-                .update((state) => value as PoliticaTableData);
-
-            ref
-                .read(changeTariffPolicyProvider.notifier)
-                .update((state) => UniqueKey().hashCode);
-          }
+              //   Future.delayed(
+              //     500.ms,
+              //     () {
+              //       ref
+              //           .read(changeTarifasProvider.notifier)
+              //           .update((state) => UniqueKey().hashCode);
+              //     },
+              //   );
+              // } else {
+              //   showSnackBar(
+              //     context: context,
+              //     title: "Error al eliminar tarifa",
+              //     message:
+              //         "La tarifa no fue eliminada debido a un error inesperado.",
+              //     type: "danger",
+              //     iconCustom: Icons.delete,
+              //   );
+              // }
+            },
+            nameButtonCancel: "Cancelar",
+            withButtonCancel: true,
+            iconData: Icons.delete,
+          );
         },
       );
     }
+
+    // void _dialogConfigTariffs(PoliticaTableData? data) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => PoliticsTarifarioDialog(policy: data),
+    //   ).then(
+    //     (value) {
+    //       if (value != null) {
+    //         ref
+    //             .read(saveTariffPolityProvider.notifier)
+    //             .update((state) => value as PoliticaTableData);
+
+    //         ref
+    //             .read(changeTariffPolicyProvider.notifier)
+    //             .update((state) => UniqueKey().hashCode);
+    //       }
+    //     },
+    //   );
+    // }
 
     return Scaffold(
       body: Padding(
@@ -215,7 +215,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                               icon: HeroIcons.adjustments_horizontal,
                               tooltip: "Politicas de aplicación",
                               onPressed: () {
-                                _dialogConfigTariffs(data);
+                                // _dialogConfigTariffs(data);
                               },
                             ),
                             error: (error, stackTrace) => const Tooltip(
@@ -237,7 +237,7 @@ class _TarifarioViewState extends ConsumerState<TarifarioView> {
                               onPressed: () {
                                 ref
                                     .read(editTarifaProvider.notifier)
-                                    .update((state) => RegistroTarifa());
+                                    .update((state) => TarifaRack());
                                 ref
                                     .read(
                                         temporadasIndividualesProvider.notifier)

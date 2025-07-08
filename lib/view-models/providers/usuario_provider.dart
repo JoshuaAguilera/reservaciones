@@ -153,9 +153,10 @@ final saveUserProvider = FutureProvider<Tuple2<bool, Usuario?>>(
       }
 
       if (response.item2 != null) {
+        final userId = Preferences.userId;
         ref.read(snackbarServiceProvider).showCustomSnackBar(
               message: msg ??
-                  "Usuario ${user.id != null ? "actualizado" : "creado"} correctamente",
+                  "${int.tryParse(userId) == user.idInt ? "Perfil" : "Usuario"} ${user.idInt != null ? "actualizado" : "creado"} correctamente",
               duration: const Duration(seconds: 3),
               type: TypeSnackbar.success,
               withIcon: true,

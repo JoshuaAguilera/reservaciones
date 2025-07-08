@@ -17,13 +17,14 @@ import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/preferences.dart';
-import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+
 import 'package:generador_formato/views/tarifario/dialogs/period_calendar_dialog.dart';
 import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../database/database.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/helpers/constants.dart';
@@ -54,7 +55,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
   bool starflow = false;
   double target = 1;
   Color colorTarifa = Colors.amber;
-  RegistroTarifa? oldRegister;
+  TarifaRack? oldRegister;
   TextEditingController nombreTarifaController = TextEditingController();
   TextEditingController _fechaEntrada = TextEditingController(text: "");
   TextEditingController _fechaSalida = TextEditingController(text: "");
@@ -133,7 +134,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     final temporadaEfectivoListProvider = ref.read(temporadasEfectivoProvider);
     final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
-    if (!starflow && actualTarifa.code != null) {
+    if (!starflow && actualTarifa.idInt != null) {
       nombreTarifaController.text = actualTarifa.nombre!;
       colorTarifa = actualTarifa.color!;
       initiallyExpanded = true;
@@ -366,13 +367,10 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                     ).then(
                                       (value) {
                                         if (value != null) {
-                                          Periodo newPeriod =
-                                              value as Periodo;
+                                          Periodo newPeriod = value as Periodo;
                                           _addPeriod(
-                                            newPeriod.fechaInicial!
-                                                .toString(),
-                                            newPeriod.fechaFinal!
-                                                .toString(),
+                                            newPeriod.fechaInicial!.toString(),
+                                            newPeriod.fechaFinal!.toString(),
                                           );
                                         }
                                       },
@@ -398,7 +396,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                           child: Wrap(
                                             children: [
                                               for (var element in periodos)
-                                                ItemRows.filterItemRow(
+                                                ItemRow.filterItemRow(
                                                   colorCard: colorTarifa,
                                                   initDate:
                                                       element.fechaInicial!,
@@ -1053,8 +1051,8 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                 temporadas: temporadas,
                 temporada: element,
                 onRemove: () => setState(() => temporadas.remove(element)),
-                onChangedDescuento: (p0) => setState(
-                    () => element.descuento = double.tryParse(p0)),
+                onChangedDescuento: (p0) =>
+                    setState(() => element.descuento = double.tryParse(p0)),
                 onChangedName: (p0) => setState(() => element.nombre = p0),
                 onChangedEstancia: (p0) =>
                     element.estanciaMinima = int.tryParse(p0),

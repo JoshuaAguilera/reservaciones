@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/utils/widgets/table_rows.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
@@ -20,8 +20,8 @@ class TarifarioTableView extends ConsumerStatefulWidget {
     required this.onDelete,
   });
   final SidebarXController sideController;
-  final void Function(RegistroTarifa)? onEdit;
-  final void Function(RegistroTarifa)? onDelete;
+  final void Function(TarifaRack)? onEdit;
+  final void Function(TarifaRack)? onDelete;
 
   @override
   _TarifarioTableState createState() => _TarifarioTableState();
@@ -33,7 +33,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
     final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     return Padding(
@@ -283,6 +283,8 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: Settings.applyAnimations ? 750.ms : 0.ms,);
+    ).animate().fadeIn(
+          duration: Settings.applyAnimations ? 750.ms : 0.ms,
+        );
   }
 }

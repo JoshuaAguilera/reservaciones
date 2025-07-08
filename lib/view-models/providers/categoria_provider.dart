@@ -126,10 +126,10 @@ final saveCategoryProvider = FutureProvider<bool>(
     if (resource != null) {
       final response = await CategoriaService().saveData(resource);
 
-      // if (response.item3) {
-      //   ref.read(navigationServiceProvider).navigateToLoginAndReplace();
-      //   return true;
-      // }
+      if (response.item3) {
+        ref.read(navigationServiceProvider).navigateToLoginAndReplace();
+        return true;
+      }
 
       if (response.item1 != null) {
         ref.read(snackbarServiceProvider).showCustomSnackBar(
@@ -144,7 +144,6 @@ final saveCategoryProvider = FutureProvider<bool>(
         ref.read(snackbarServiceProvider).showCustomSnackBar(
               message:
                   "Categoria ${resource.id != null ? "actualizado" : "creado"} correctamente",
-              duration: Duration(seconds: 3),
               type: TypeSnackbar.success,
               withIcon: true,
             );

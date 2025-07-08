@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/database/database.dart';
-import 'package:generador_formato/views/usuarios/dialogs/edit_user_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
@@ -12,6 +10,7 @@ import '../../models/usuario_model.dart';
 import '../../view-models/services/auth_service.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/show_snackbar.dart';
+import '../../views/usuarios/dialogs/edit_user_dialog.dart';
 import '../encrypt/encrypter.dart';
 import '../shared_preferences/settings.dart';
 import 'dialogs.dart';
@@ -51,22 +50,22 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
             if (widget.onUpdateList != null) widget.onUpdateList!.call();
           },
           onUpdate: (p0) async {
-            if (await AuthService().updateUser(p0!)) {
-              showSnackBar(
-                  context: context,
-                  title: "Error al actualizar la informacion del usuario",
-                  message:
-                      "Se presento un problema al intentar actualizar los datos del usuario.",
-                  type: "danger");
-              return;
-            }
-            showSnackBar(
-                context: context,
-                title: "Usuario actualizado correctamente",
-                message: "Se actualizo el usuario: ${p0.username}",
-                type: "success");
+            // if (await AuthService().updateUser(p0!)) {
+            //   showSnackBar(
+            //       context: context,
+            //       title: "Error al actualizar la informacion del usuario",
+            //       message:
+            //           "Se presento un problema al intentar actualizar los datos del usuario.",
+            //       type: "danger");
+            //   return;
+            // }
+            // showSnackBar(
+            //     context: context,
+            //     title: "Usuario actualizado correctamente",
+            //     message: "Se actualizo el usuario: ${p0.username}",
+            //     type: "success");
 
-            if (widget.onUpdateList != null) widget.onUpdateList!.call();
+            // if (widget.onUpdateList != null) widget.onUpdateList!.call();
           },
         );
       },
@@ -77,7 +76,6 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
     showDialog(
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
-        context: context,
         title: "Eliminar Usuario",
         contentText:
             "¿Desea eliminar permanentemente el siguiente\nusuario del sistema: ${user.username}?",
@@ -89,32 +87,32 @@ class _UsuarioItemRowState extends State<UsuarioItemRow> {
         otherButton: true,
         iconData: Icons.delete,
         funtionMain: () async {
-          bool isDeleted = await AuthService().deleteUser(user);
+          // bool isDeleted = await AuthService().deleteUser(user);
 
-          if (isDeleted) {
-            showSnackBar(
-              context: context,
-              title: "Usuario ${user.username} Eliminado",
-              message: "El usuario fue eliminado exitosamente.",
-              type: "success",
-              iconCustom: Icons.delete,
-            );
+          // if (isDeleted) {
+          //   showSnackBar(
+          //     context: context,
+          //     title: "Usuario ${user.username} Eliminado",
+          //     message: "El usuario fue eliminado exitosamente.",
+          //     type: "success",
+          //     iconCustom: Icons.delete,
+          //   );
 
-            if (widget.onUpdateList != null) {
-              widget.onUpdateList!.call();
-            }
-          } else {
-            showSnackBar(
-              context: context,
-              title: "Error al eliminar usuario ${user.username}",
-              message:
-                  "El usuario no fue eliminado debido a un error inesperado.",
-              type: "danger",
-              iconCustom: Icons.delete,
-            );
-          }
+          //   if (widget.onUpdateList != null) {
+          //     widget.onUpdateList!.call();
+          //   }
+          // } else {
+          //   showSnackBar(
+          //     context: context,
+          //     title: "Error al eliminar usuario ${user.username}",
+          //     message:
+          //         "El usuario no fue eliminado debido a un error inesperado.",
+          //     type: "danger",
+          //     iconCustom: Icons.delete,
+          //   );
+          // }
 
-          Navigator.pop(context);
+          // Navigator.pop(context);
         },
       ),
     );

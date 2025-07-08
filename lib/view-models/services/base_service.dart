@@ -4,6 +4,7 @@ import '../../utils/shared_preferences/preferences.dart';
 import '../../utils/shared_preferences/settings.dart';
 
 class BaseService extends ChangeNotifier {
+  final token = Preferences.token;
   var userName = Preferences.username;
   var rol = Preferences.rol;
   var mail = Preferences.mail;

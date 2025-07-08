@@ -155,9 +155,9 @@ class AuthService extends BaseService {
 // Verificación del JWT (para pantallas protegidas)
   Future<bool> verifyJwtToken() async {
     // final token = await secureStorage.read(key: 'jwt_token');
-    final token = Preferences.token;
+
     final secret = await getSecretKey();
-    if (token == null || secret == null) return false;
+    if (token.isEmpty || secret == null) return false;
 
     try {
       JWT.verify(token, SecretKey(secret));

@@ -10,7 +10,6 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/numero_cotizacion_model.dart';
 import '../../models/tarifa_rack_model.dart';
-import '../../models/tarifa_x_dia_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
@@ -21,7 +20,7 @@ import 'card_animation_widget.dart';
 import 'dialogs.dart';
 import '../../res/ui/text_styles.dart';
 
-class ItemRows {
+class ItemRow {
   static Widget statusQuoteRow(NumeroCotizacion register,
       {double sizeText = 13}) {
     return Container(
@@ -189,7 +188,6 @@ class ItemRows {
               showDialog(
                 context: context,
                 builder: (context) => Dialogs.customAlertDialog(
-                  context: context,
                   title: "Eliminar tarifa",
                   contentText:
                       "¿Desea eliminar la siguiente tarifa: ${tarifaRack.nombre}?",
@@ -589,6 +587,67 @@ class ItemRows {
           ),
         ),
       ),
+    );
+  }
+
+  static PopupMenuItem<ListTileTitleAlignment> itemPopup(
+      String name, IconData icon, void Function()? onTap) {
+    return PopupMenuItem<ListTileTitleAlignment>(
+      value: ListTileTitleAlignment.threeLine,
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Icon(icon),
+          TextStyles.standardText(
+            text: name,
+            size: 12.5,
+          )
+        ],
+      ),
+    );
+  }
+
+  static Widget compactOptions({
+    void Function()? onPreseedEdit,
+    void Function()? onPreseedDelete,
+    void Function()? onPressedDuplicate,
+    List<PopupMenuEntry<ListTileTitleAlignment>>? customItems,
+    Color? colorIcon,
+    bool diseablePad = false,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return PopupMenuButton<ListTileTitleAlignment>(
+          iconColor: colorIcon,
+          tooltip: "Opciones",
+          padding:
+              !diseablePad ? const EdgeInsets.all(8) : const EdgeInsets.all(0),
+          itemBuilder: (BuildContext context) =>
+              customItems ??
+              <PopupMenuEntry<ListTileTitleAlignment>>[
+                if (onPreseedEdit != null)
+                  itemPopup(
+                    "Detalles",
+                    Iconsax.stickynote_outline,
+                    onPreseedEdit,
+                  ),
+                if (onPressedDuplicate != null)
+                  itemPopup(
+                    "Duplicar",
+                    Iconsax.copy_outline,
+                    onPressedDuplicate,
+                  ),
+                if (onPreseedDelete != null)
+                  itemPopup(
+                    "Eliminar",
+                    Iconsax.trash_outline,
+                    onPreseedDelete,
+                  ),
+              ],
+        );
+      },
     );
   }
 }

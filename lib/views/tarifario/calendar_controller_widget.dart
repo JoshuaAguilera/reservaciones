@@ -277,7 +277,7 @@ class _ControllerCalendarWidgetState
                                             const EdgeInsets.only(bottom: 10),
                                         shrinkWrap: true,
                                         itemBuilder: (context, index) {
-                                          return ItemRows.tarifaItemRow(
+                                          return ItemRow.tarifaItemRow(
                                             context,
                                             tarifaRack: list[index],
                                             onEdit: () {

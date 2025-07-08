@@ -113,9 +113,9 @@ class CotizacionService extends BaseService {
       Cotizacion cotizacion) async {
     ErrorModel error = ErrorModel();
     bool invalidToken = false;
+    Cotizacion? savedCotizacion;
 
     try {
-      Cotizacion? saveCotizacion;
       final db = AppDatabase();
 
       await db.transaction(
@@ -129,8 +129,8 @@ class CotizacionService extends BaseService {
           if (newCotizacion == null) {
             throw Exception("Error al guardar la cotización");
           }
-          saveCotizacion = newCotizacion;
-          saveCotizacion!.habitaciones ??= List<Habitacion>.empty();
+          savedCotizacion = newCotizacion;
+          savedCotizacion!.habitaciones ??= List<Habitacion>.empty();
 
           for (var room
               in cotizacion.habitaciones ?? List<Habitacion>.empty()) {
@@ -186,7 +186,7 @@ class CotizacionService extends BaseService {
               newRoom.tarifasXHabitacion?.add(newRateRoom);
             }
 
-            saveCotizacion!.habitaciones!.add(newRoom);
+            savedCotizacion!.habitaciones!.add(newRoom);
           }
 
           await tarifaDiaDao.close();
@@ -196,18 +196,16 @@ class CotizacionService extends BaseService {
         },
       );
       await db.close();
-      return Tuple3(null, saveCotizacion, invalidToken);
     } catch (e) {
-      print(e);
-      error.message = e.toString();
+      error = ErrorModel(message: e.toString());
     }
-
-    return Tuple3(error, null, invalidToken);
+    return Tuple3(error, savedCotizacion, invalidToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(Cotizacion cotizacion) async {
     ErrorModel error = ErrorModel();
     bool invalidToken = false;
+    bool deleted = false;
 
     try {
       final db = AppDatabase();
@@ -260,12 +258,11 @@ class CotizacionService extends BaseService {
       );
 
       await db.close();
-      return const Tuple3(null, true, false);
+      deleted = true;
     } catch (e) {
-      print(e);
-      error.message = e.toString();
+      error = ErrorModel(message: e.toString());
     }
 
-    return Tuple3(error, false, invalidToken);
+    return Tuple3(error, deleted, invalidToken);
   }
 }

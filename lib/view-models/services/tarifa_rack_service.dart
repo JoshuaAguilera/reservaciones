@@ -87,11 +87,11 @@ class TarifaRackService extends BaseService {
 
   Future<Tuple3<ErrorModel?, TarifaRack?, bool>> saveData(
       TarifaRack tarifaRack) async {
-    ErrorModel error = ErrorModel();
+    ErrorModel? error;
     bool invalideToken = false;
+    TarifaRack? saveTarifaRack;
 
     try {
-      TarifaRack? saveTarifaRack;
       final db = AppDatabase();
 
       await db.transaction(
@@ -162,20 +162,20 @@ class TarifaRackService extends BaseService {
       );
 
       db.close();
-      return Tuple3(null, saveTarifaRack, invalideToken);
     } catch (e) {
-      print(e);
-      return Tuple3(error, null, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, saveTarifaRack, invalideToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(TarifaRack tarifaRack) async {
     ErrorModel error = ErrorModel();
     bool invalideToken = false;
+    bool deleted = false;
 
     try {
       final db = AppDatabase();
-      final tarifaRackDao = TarifaRackDao(db);
 
       await db.transaction(
         () async {
@@ -222,17 +222,21 @@ class TarifaRackService extends BaseService {
               throw Exception("Error al eliminar la temporada");
             }
           }
+
+          deleted = responseTR > 0;
+          tarifaRackDao.close();
+          tarifaDao.close();
+          registroDao.close();
+          periodoDao.close();
+          temporadaDao.close();
         },
       );
 
-      tarifaRackDao.close();
       db.close();
-      return Tuple3(null, true, invalideToken);
     } catch (e) {
-      print(e);
-      error.message = e.toString();
+      error = ErrorModel(message: e.toString());
     }
 
-    return Tuple3(error, false, invalideToken);
+    return Tuple3(error, deleted, invalideToken);
   }
 }

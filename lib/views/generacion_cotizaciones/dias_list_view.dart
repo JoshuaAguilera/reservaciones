@@ -98,7 +98,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 7, childAspectRatio: 1),
                           itemBuilder: (context, index) {
-                            return ItemRows.getTitleDay(
+                            return ItemRow.getTitleDay(
                               title: 0,
                               withOutDay: true,
                               subTitle: daysNameShort[index],
@@ -122,7 +122,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                                     ink <
                                         checkIn.difference(checkInLimit).inDays;
                                     ink++)
-                                  ItemRows.dayRateRow(
+                                  ItemRow.dayRateRow(
                                     context: context,
                                     day: checkInLimit
                                         .add(Duration(days: ink))
@@ -133,7 +133,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                                     sideController: widget.sideController,
                                   ),
                                 for (var element in list)
-                                  ItemRows.dayRateRow(
+                                  ItemRow.dayRateRow(
                                     context: context,
                                     inPeriod: true,
                                     sideController: widget.sideController,
@@ -146,7 +146,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                                                 .inDays -
                                             1;
                                     ink++)
-                                  ItemRows.dayRateRow(
+                                  ItemRow.dayRateRow(
                                     context: context,
                                     day: checkOut
                                         .add(Duration(days: ink + 1))

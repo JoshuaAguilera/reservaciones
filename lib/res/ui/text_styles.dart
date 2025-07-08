@@ -16,6 +16,7 @@ class TextStyles {
     bool isBold = false,
     Color? color,
     TextOverflow? textOverflow,
+    double? height,
   }) {
     return Text(
       text,
@@ -27,6 +28,7 @@ class TextStyles {
         overClip: overClip,
         color: color,
         overflow: textOverflow,
+        height: height,
       ),
     );
   }

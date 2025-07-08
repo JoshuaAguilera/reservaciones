@@ -189,7 +189,7 @@ class _ManagerTariffGroupDialogState
                                           _selectTariff(roomTariffs[index]));
                                     }
                                   },
-                                  child: ItemRows.filterItemRow(
+                                  child: ItemRow.filterItemRow(
                                     withDeleteButton: false,
                                     colorCard: roomTariffs[index]
                                             .tarifaXDia

@@ -77,50 +77,48 @@ class PoliticaTarifarioService extends BaseService {
 
   Future<Tuple3<ErrorModel?, PoliticaTarifario?, bool>?> saveData(
       PoliticaTarifario politica) async {
-    ErrorModel error = ErrorModel();
+    ErrorModel? error;
     bool invalideToken = false;
+    PoliticaTarifario? savedPolitica;
 
     try {
       final db = AppDatabase();
       final politicaTarifarioDao = PoliticaTarifarioDao(db);
-      PoliticaTarifario? savedPolitica =
-          await politicaTarifarioDao.save(politica);
+      savedPolitica = await politicaTarifarioDao.save(politica);
       await politicaTarifarioDao.close();
       await db.close();
 
-      return Tuple3(null, savedPolitica, invalideToken);
+      if (savedPolitica == null) {
+        throw Exception("Error al guardar la política de tarifario");
+      }
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, null, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, savedPolitica, invalideToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(
       PoliticaTarifario politica) async {
     ErrorModel? error = ErrorModel();
     bool invalideToken = false;
+    bool deleted = false;
 
     try {
       final db = AppDatabase();
-
-      await db.transaction(
-        () async {
-          final politicaDao = PoliticaTarifarioDao(db);
-
-          final response = await politicaDao.delet3(politica.idInt ?? 0);
-          if (response == 0) {
-            throw Exception("Error al eliminar la politica de tarifario");
-          }
-
-          await politicaDao.close();
-        },
-      );
-
+      final politicaDao = PoliticaTarifarioDao(db);
+      final response = await politicaDao.delet3(politica.idInt ?? 0);
+      await politicaDao.close();
       await db.close();
-      return Tuple3(null, true, invalideToken);
+      if (response == 0) {
+        throw Exception("Error al eliminar la politica de tarifario");
+      }
+
+      if (response > 0) deleted = true;
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, false, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, deleted, invalideToken);
   }
 }

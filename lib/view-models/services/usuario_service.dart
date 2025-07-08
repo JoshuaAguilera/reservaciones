@@ -96,12 +96,13 @@ class UsuarioService extends BaseService {
       if (newPassword.isNotEmpty) {
         user.password = EncrypterTool.encryptData(newPassword, null);
       }
-
       savedUser = await usuarioDao.insert(user);
+      await usuarioDao.close();
+      await db.close();
+
       if (savedUser == null) {
         error = ErrorModel(message: "Error al guardar el usuario.");
       }
-      db.close();
     } catch (e) {
       error = ErrorModel(message: e.toString());
     }
@@ -120,11 +121,12 @@ class UsuarioService extends BaseService {
       final db = AppDatabase();
       final usuarioDao = UsuarioDao(db);
       updatedUser = await usuarioDao.save(selectUser);
+      await usuarioDao.close();
+      await db.close();
+
       if (updatedUser == null) {
         throw ("Error al actualizar el estado del usuario.");
       }
-      await usuarioDao.close();
-      await db.close();
     } catch (e) {
       error = ErrorModel(message: e.toString());
     }
@@ -144,6 +146,10 @@ class UsuarioService extends BaseService {
       success = response == 1;
       await usuarioDao.close();
       await db.close();
+
+      if (response == 0) {
+        error = ErrorModel(message: "Error al eliminar el usuario.");
+      }
     } catch (e) {
       error = ErrorModel(message: e.toString());
     }

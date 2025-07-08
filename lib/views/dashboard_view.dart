@@ -243,7 +243,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                               EdgeInsets.only(right: modeHorizontal ? 10 : 0),
                           child: SizedBox(
                             width: modeHorizontal ? 185 : null,
-                            child: ItemRows.statusQuoteRow(element,
+                            child: ItemRow.statusQuoteRow(element,
                                 sizeText: isCompact ? 13 : 11),
                           ),
                         ),

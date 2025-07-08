@@ -84,22 +84,17 @@ class RolService extends BaseService {
 
     try {
       final db = AppDatabase();
+      final rolDao = RolDao(db);
+      savedRol = await rolDao.save(rol);
+      rolDao.close();
+      db.close();
 
-      await db.transaction(
-        () async {
-          final rolDao = RolDao(db);
-          savedRol = await rolDao.save(rol);
-
-          if (savedRol == null) {
-            throw Exception("Error al guardar el rol");
-          }
-        },
-      );
+      if (savedRol == null) throw Exception("Error al guardar el rol");
     } catch (e) {
       error = ErrorModel(message: e.toString());
     }
 
-    return Tuple3(error, null, invalideToken);
+    return Tuple3(error, savedRol, invalideToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(Rol rol) async {
@@ -111,13 +106,13 @@ class RolService extends BaseService {
       final db = AppDatabase();
       final rolDao = RolDao(db);
       int response = await rolDao.delet3(rol.idInt ?? 0);
+      await rolDao.close();
+      await db.close();
+
       if (response == 0) {
         error = ErrorModel(message: "Error al eliminar el rol");
       }
-
       success = response == 1;
-      await rolDao.close();
-      await db.close();
     } catch (e) {
       error = ErrorModel(message: e.toString());
     }

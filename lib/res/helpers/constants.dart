@@ -6,6 +6,7 @@ import '../../models/prefijo_telefonico_model.dart';
 
 const String version = "Alpha 2.0.0";
 const bool inDevelop = true;
+const apiUrl = "https://restapicoralbluehotel-production.up.railway.app/";
 
 const List<String> categorias = <String>[
   'HABITACIÓN DELUXE DOBLE',

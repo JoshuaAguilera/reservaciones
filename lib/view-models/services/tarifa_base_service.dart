@@ -85,11 +85,10 @@ class TarifaBaseService extends BaseService {
       TarifaBase tarifaBase) async {
     ErrorModel error = ErrorModel();
     bool invalideToken = false;
+    TarifaBase? saveBaseTariff;
 
     try {
-      TarifaBase? saveBaseTariff;
       final db = AppDatabase();
-
       await db.transaction(
         () async {
           final tarifaBaseDao = TarifaBaseDao(db);
@@ -137,17 +136,17 @@ class TarifaBaseService extends BaseService {
       );
 
       await db.close();
-      return Tuple3(null, saveBaseTariff, invalideToken);
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, null, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, saveBaseTariff, invalideToken);
   }
 
-  Future<Tuple3<ErrorModel?, bool, bool>> delete(
-      TarifaBase tarifaBase) async {
-    ErrorModel error = ErrorModel();
+  Future<Tuple3<ErrorModel?, bool, bool>> delete(TarifaBase tarifaBase) async {
+    ErrorModel? error;
     bool invalideToken = false;
+    bool deleted = false;
 
     try {
       final db = AppDatabase();
@@ -156,12 +155,14 @@ class TarifaBaseService extends BaseService {
         () async {
           final tarifaBaseDao = TarifaBaseDao(db);
           final tarifaDao = TarifaDao(db);
-
           final responseTB = await tarifaBaseDao.delet3(tarifaBase.idInt ?? 0);
+          await tarifaDao.close();
+          await tarifaBaseDao.close();
+
           if (responseTB == 0) {
             throw Exception("Error al eliminar la tarifa base");
           }
-
+          deleted = responseTB > 0;
           // for (var element in tarifaBase.tarifas ?? <Tarifa>[]) {
           //   final responseT = await tarifaDao.delet3(element.idInt ?? 0);
           //   if (responseT == 0) {
@@ -169,17 +170,14 @@ class TarifaBaseService extends BaseService {
           //         "Error al eliminar la tarifa: ${element.categoria?.nombre}");
           //   }
           // }
-
-          await tarifaDao.close();
-          await tarifaBaseDao.close();
         },
       );
 
       await db.close();
-      return Tuple3(null, true, invalideToken);
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, false, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, deleted, invalideToken);
   }
 }

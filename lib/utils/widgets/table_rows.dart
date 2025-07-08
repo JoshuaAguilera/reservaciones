@@ -229,7 +229,7 @@ class TableRows {
                 itemCount: element.periodos?.length,
                 physics: const AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) => ItemRows.filterItemRow(
+                itemBuilder: (context, index) => ItemRow.filterItemRow(
                   withDeleteButton: false,
                   colorCard: element.color!,
                   initDate: element.periodos![index].fechaInicial!,
@@ -259,7 +259,7 @@ class TableRows {
                     message:
                         "Estancia Min: ${element.temporadas?[index].estanciaMinima ?? 0}\n"
                         "Descuento: ${element.temporadas?[index].descuento ?? 0}%",
-                    child: ItemRows.filterItemRow(
+                    child: ItemRow.filterItemRow(
                       withDeleteButton: false,
                       colorCard:
                           (element.temporadas?[index].tipo ?? "") == "grupal"

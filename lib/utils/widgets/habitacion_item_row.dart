@@ -56,7 +56,6 @@ class _HabitacionItemRowState extends State<HabitacionItemRow> {
     showDialog(
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
-        context: context,
         title: "Eliminar Habitación",
         contentText:
             "¿Desea eliminar la presente habitación\nde la cotización actual?",

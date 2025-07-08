@@ -6,6 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 
 import '../../../database/database.dart';
 import '../../../models/usuario_model.dart';
+import '../../../res/ui/title_page.dart';
 import '../../../view-models/services/auth_service.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/custom_widgets.dart';
@@ -100,46 +101,46 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
     setState(() => inProcess = true);
 
-    if (await AuthService().getUser(nameController.text, widget.usuario?.id)) {
-      messageError =
-          "Nombre no valido. Este usuario ya existe, cambie el nombre de usuario";
-      nameController =
-          TextEditingController(text: widget.usuario?.username ?? '');
+    // if (await AuthService().getUser(nameController.text, widget.usuario?.id)) {
+    //   messageError =
+    //       "Nombre no valido. Este usuario ya existe, cambie el nombre de usuario";
+    //   nameController =
+    //       TextEditingController(text: widget.usuario?.username ?? '');
 
-      showError = true;
-      inProcess = false;
-      setState(() {});
+    //   showError = true;
+    //   inProcess = false;
+    //   setState(() {});
 
-      Future.delayed(4.seconds, () {
-        if (!context.mounted) return;
-        setState(() => showError = false);
-      });
-      return;
-    }
+    //   Future.delayed(4.seconds, () {
+    //     if (!context.mounted) return;
+    //     setState(() => showError = false);
+    //   });
+    //   return;
+    // }
 
-    UsuarioTableData user = widget.usuario != null
-        ? UsuarioTableData(
-            id: widget.usuario!.id,
-            username: nameController.text,
-            correoElectronico: mailController.text,
-            telefono: numberController.text,
-            rol: rol,
-          )
-        : UsuarioTableData(
-            id: 0,
-            username: nameController.text,
-            password:
-                EncrypterTool.encryptData(passwordNewController.text, null),
-            rol: rol,
-          );
+    // UsuarioTableData user = widget.usuario != null
+    //     ? UsuarioTableData(
+    //         id: widget.usuario!.id,
+    //         username: nameController.text,
+    //         correoElectronico: mailController.text,
+    //         telefono: numberController.text,
+    //         rol: rol,
+    //       )
+    //     : UsuarioTableData(
+    //         id: 0,
+    //         username: nameController.text,
+    //         password:
+    //             EncrypterTool.encryptData(passwordNewController.text, null),
+    //         rol: rol,
+    //       );
 
-    if (widget.onInsert != null) {
-      widget.onInsert!.call(user);
-    }
+    // if (widget.onInsert != null) {
+    //   widget.onInsert!.call(user);
+    // }
 
-    if (widget.onUpdate != null) {
-      widget.onUpdate!.call(user);
-    }
+    // if (widget.onUpdate != null) {
+    //   widget.onUpdate!.call(user);
+    // }
     setState(() => inProcess = false);
 
     if (!mounted) return;
@@ -279,22 +280,22 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          child: ChangePasswordWidget(
-                                            passwordController:
-                                                passwordEditController,
-                                            isChanged: (value) => setState(() =>
-                                                showConfigPassword = value),
-                                            userId: widget.usuario!.id,
-                                            username:
-                                                widget.usuario?.username ?? '',
-                                            isPasswordMail: false,
-                                            notAskChange: passwordEditController
-                                                .text.isEmpty,
-                                            onSummitUser: () => saveFunction(
-                                                context, setState, true),
-                                          ),
-                                        ),
+                                        // Expanded(
+                                        //   child: PasswordManager(
+                                        //     passwordController:
+                                        //         passwordEditController,
+                                        //     isChanged: (value) => setState(() =>
+                                        //         showConfigPassword = value),
+                                        //     userId: widget.usuario?.idInt ?? 0,
+                                        //     username:
+                                        //         widget.usuario?.username ?? '',
+                                        //     isPasswordMail: false,
+                                        //     notAskChange: passwordEditController
+                                        //         .text.isEmpty,
+                                        //     onSummitUser: () => saveFunction(
+                                        //         context, setState, true),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),

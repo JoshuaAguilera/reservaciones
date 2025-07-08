@@ -108,7 +108,7 @@ class _TarifarioCalendaryWeekViewState
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7, childAspectRatio: 0.5),
               itemBuilder: (context, index) {
-                return ItemRows.getTitleDay(
+                return ItemRow.getTitleDay(
                   title:
                       widget.initDayWeekGraphics.add(Duration(days: index)).day,
                   subTitle: daysNameShort[widget.initDayWeekGraphics

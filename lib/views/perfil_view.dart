@@ -16,7 +16,7 @@ import '../res/ui/title_page.dart';
 import '../utils/shared_preferences/preferences.dart';
 import '../res/ui/text_styles.dart';
 import '../utils/widgets/change_password_widget.dart';
-import '../utils/widgets/gestor_imagenes_widget.dart';
+import '../utils/widgets/images_widget.dart';
 import '../utils/widgets/textformfield_custom.dart';
 import '../view-models/providers/usuario_provider.dart';
 
@@ -173,7 +173,7 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                           brightness),
                                     ),
                                     GestorImagenes(
-                                      imagenes: [photoPeril],
+                                      selectImage: photoPeril,
                                       isDialog: true,
                                       implementDirecty: true,
                                       blocked: isSaving,
@@ -238,15 +238,15 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                         },
                                       ),
                                     ),
-                                    ChangePasswordWidget(
-                                      passwordController: passwordController,
-                                      isChanged: (value) =>
-                                          setState(() => canChangedKey = value),
-                                      userId: usuario?.idInt ?? 0,
-                                      username: usuario?.username ?? '',
-                                      isPasswordMail: false,
-                                      enable: !isSaving,
-                                    ),
+                                    // PasswordManager(
+                                    //   passwordController: passwordController,
+                                    //   isChanged: (value) =>
+                                    //       setState(() => canChangedKey = value),
+                                    //   userId: usuario?.idInt ?? 0,
+                                    //   username: usuario?.username ?? '',
+                                    //   isPasswordMail: false,
+                                    //   enable: !isSaving,
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -330,16 +330,16 @@ class _PerfilViewState extends ConsumerState<PerfilView> {
                                       ),
                                     ),
                                     const SizedBox(height: 5),
-                                    ChangePasswordWidget(
-                                      passwordController:
-                                          passwordMailController,
-                                      isChanged: (value) => setState(
-                                          () => canChangedKeyMail = value),
-                                      userId: usuario?.idInt ?? 0,
-                                      username: usuario?.username ?? '',
-                                      isPasswordMail: true,
-                                      enable: !isSaving,
-                                    ),
+                                    // PasswordManager(
+                                    //   passwordController:
+                                    //       passwordMailController,
+                                    //   isChanged: (value) => setState(
+                                    //       () => canChangedKeyMail = value),
+                                    //   userId: usuario?.idInt ?? 0,
+                                    //   username: usuario?.username ?? '',
+                                    //   isPasswordMail: true,
+                                    //   enable: !isSaving,
+                                    // ),
                                     const SizedBox(height: 7),
                                   ],
                                 ),

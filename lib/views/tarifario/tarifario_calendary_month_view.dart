@@ -63,7 +63,7 @@ class _TarifarioCalendaryMonthViewState
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 7, childAspectRatio: 0.5),
                       itemBuilder: (context, index) {
-                        return ItemRows.getTitleDay(
+                        return ItemRow.getTitleDay(
                           title: 0,
                           withOutDay: true,
                           subTitle: daysNameShort[widget.initDayWeekGraphics

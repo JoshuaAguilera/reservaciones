@@ -4,12 +4,13 @@ import 'package:tuple/tuple.dart';
 
 import '../../database/dao/imagen_dao.dart';
 import '../../database/database.dart';
+import '../../models/error_model.dart';
 import '../../models/imagen_model.dart';
 import '../../res/helpers/utility.dart';
 import '../../utils/shared_preferences/preferences.dart';
 import 'base_service.dart';
 
-class ImageService extends BaseService {
+class ImagenService extends BaseService {
   Future<Tuple2<String?, Imagen?>> getImageById(int imageId) async {
     Imagen? imagen;
 
@@ -28,41 +29,52 @@ class ImageService extends BaseService {
     return Tuple2(null, imagen);
   }
 
-  Future<Tuple2<String?, Imagen?>> saveImage({
+  Future<Tuple3<ErrorModel?, Imagen?, bool>> saveData({
     required Imagen imagen,
-    String oldUrl = '',
   }) async {
-    Imagen? newImage;
+    ErrorModel? error;
+    Imagen? saveImage;
+    bool invalideToken = false;
 
     try {
-      if (oldUrl.isNotEmpty) {
-        final archivo = File(oldUrl);
-        if (await archivo.exists()) {
-          await archivo.delete();
-        } else {
-          print('El archivo no existe.');
-        }
-      }
-
       final db = AppDatabase();
       final imagenDao = ImagenDao(db);
-      final response = await imagenDao.save(imagen);
+      saveImage = await imagenDao.save(imagen);
       await imagenDao.close();
       await db.close();
 
-      if (response == null) throw Exception('Ocurrió un error al guardar');
-      newImage = response;
+      if (saveImage == null) throw Exception('Ocurrió un error al guardar');
     } catch (e) {
-      print(e);
-      return Tuple2(e.toString(), null);
+      error = ErrorModel(message: e.toString());
     }
 
-    return Tuple2(null, newImage);
+    return Tuple3(error, saveImage, invalideToken);
+  }
+
+  Future<Tuple3<ErrorModel?, bool, bool>> delete(Imagen imagen) async {
+    ErrorModel? error;
+    bool invalideToken = false;
+    bool deleted = false;
+
+    try {
+      final db = AppDatabase();
+      final imagenDao = ImagenDao(db);
+      int response = await imagenDao.delet3(imagen.idInt ?? 0);
+      deleted = response > 0;
+      await imagenDao.close();
+      await db.close();
+
+      if (!deleted) throw Exception('Ocurrió un error al eliminar');
+    } catch (e) {
+      error = ErrorModel(message: e.toString());
+    }
+
+    return Tuple3(error, deleted, invalideToken);
   }
 
   Future<String> handleImageSelection(File? pathImage) async {
     try {
-      final folderPath = '/images';
+      const folderPath = '/images';
       int uniqueCode = Utility.getUniqueCode();
 
       //agregar code para no sobrescribir imagenes

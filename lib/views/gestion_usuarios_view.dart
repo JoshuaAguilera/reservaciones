@@ -321,12 +321,16 @@ import 'package:tuple/tuple.dart';
 import '../res/helpers/animation_helpers.dart';
 import '../res/ui/buttons.dart';
 import '../res/ui/custom_widgets.dart';
+import '../res/ui/text_styles.dart';
 import '../res/ui/title_page.dart';
 import '../utils/widgets/filter_modal.dart';
+import '../utils/widgets/item_rows.dart';
 import '../view-models/providers/gestion_usuario_provider.dart';
 import '../view-models/providers/rol_provider.dart';
 import '../view-models/providers/ui_provider.dart';
 import '../view-models/providers/usuario_provider.dart';
+import 'roles/dialogs/rol_delete_dialog.dart';
+import 'usuarios/dialogs/usuario_delete_dialog.dart';
 
 class GestionUsuariosView extends ConsumerWidget {
   const GestionUsuariosView({
@@ -414,7 +418,7 @@ class GestionUsuariosView extends ConsumerWidget {
                       child: TitlePage(
                         title: "Gestión de usuarios",
                         subtitle:
-                            "Crea, edita, supervisa y declina los usuarios activos del sistema.",
+                            "Administra los usuarios y accesos del sistema.",
                         childOptional: Buttons.buttonPrimary(
                           text: "Agregar usuario",
                           onPressed: () {},
@@ -500,28 +504,20 @@ class GestionUsuariosView extends ConsumerWidget {
                                         .withSelections();
                                   }
 
-                                  if (sectionManager[2]) {
-                                    withSelections = ref
-                                        .read(permisosProvider(
-                                                _getArgPermission())
-                                            .notifier)
-                                        .withSelections();
-                                  }
-
                                   if (!withSelections) return;
 
                                   Widget _dialog = AlertDialog(
-                                    title: TextStyles.textEstandarRegular(
+                                    title: TextStyles.standardText(
                                       text: "Dialogo no encontrado",
                                     ),
                                   );
 
                                   if (sectionManager[0]) {
-                                    _dialog = UsuarioDeleteDialog();
+                                    _dialog = const UsuarioDeleteDialog();
                                   }
 
                                   if (sectionManager[1]) {
-                                    _dialog = RolDeleteDialog();
+                                    _dialog = const RolDeleteDialog();
                                   }
 
                                   showDialog(
@@ -555,14 +551,6 @@ class GestionUsuariosView extends ConsumerWidget {
                                         .selectAll(false);
                                   }
 
-                                  if (sectionManager[2]) {
-                                    ref
-                                        .read(permisosProvider(
-                                                _getArgPermission())
-                                            .notifier)
-                                        .selectAll(false);
-                                  }
-
                                   ref
                                       .read(selectItemsUMProvider.notifier)
                                       .update((state) => false);
@@ -573,13 +561,13 @@ class GestionUsuariosView extends ConsumerWidget {
                                 "Usuarios eliminados",
                                 Iconsax.user_minus_outline,
                                 () {
-                                  pushScreen(
-                                    context,
-                                    screen: const UsuarioRecovery(),
-                                    withNavBar: true,
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.cupertino,
-                                  );
+                                  // pushScreen(
+                                  //   context,
+                                  //   screen: const UsuarioRecovery(),
+                                  //   withNavBar: true,
+                                  //   pageTransitionAnimation:
+                                  //       PageTransitionAnimation.cupertino,
+                                  // );
                                 },
                               ),
                             if (!showSelectFunction)
@@ -599,14 +587,6 @@ class GestionUsuariosView extends ConsumerWidget {
                                   if (sectionManager[1]) {
                                     activeSelection = ref
                                         .read(rolesProvider(_getArgRole())
-                                            .notifier)
-                                        .isNotEmpty();
-                                  }
-
-                                  if (sectionManager[2]) {
-                                    activeSelection = ref
-                                        .read(permisosProvider(
-                                                _getArgPermission())
                                             .notifier)
                                         .isNotEmpty();
                                   }

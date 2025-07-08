@@ -5,6 +5,7 @@ import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
@@ -21,8 +22,8 @@ class TarifarioChecklistView extends ConsumerStatefulWidget {
   });
 
   final SidebarXController sideController;
-  final void Function(RegistroTarifa)? onEdit;
-  final void Function(RegistroTarifa)? onDelete;
+  final void Function(TarifaRack)? onEdit;
+  final void Function(TarifaRack)? onDelete;
 
   @override
   _TarifarioChecklistViewState createState() => _TarifarioChecklistViewState();
@@ -57,7 +58,7 @@ class _TarifarioChecklistViewState
                               itemCount: list.length,
                               shrinkWrap: false,
                               itemBuilder: (context, index) {
-                                return ItemRows.tarifaCheckListItemRow(
+                                return ItemRow.tarifaCheckListItemRow(
                                   rack: list[index],
                                   tarifaBase: tarifasB
                                           .where((elementInt) =>

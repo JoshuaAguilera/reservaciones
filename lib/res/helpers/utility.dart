@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:generador_formato/res/helpers/date_helpers.dart';
@@ -878,5 +880,11 @@ class Utility {
     );
 
     return roundTariff;
+  }
+
+  static double getFileSizeMB(File file) {
+    int sizeInBytes = file.lengthSync();
+    double sizeInMb = sizeInBytes / (1024 * 1024);
+    return sizeInMb;
   }
 }

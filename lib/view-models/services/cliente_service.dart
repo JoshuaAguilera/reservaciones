@@ -76,49 +76,44 @@ class ClienteService extends BaseService {
   Future<Tuple3<ErrorModel?, Cliente?, bool>> saveData(Cliente cliente) async {
     ErrorModel error = ErrorModel();
     bool invalideToken = false;
+    Cliente? savedCliente;
 
     try {
       final db = AppDatabase();
       final clienteDao = ClienteDao(db);
-      Cliente? savedCliente = await clienteDao.save(cliente);
+      savedCliente = await clienteDao.save(cliente);
+      await clienteDao.close();
+      await db.close();
+
       if (savedCliente == null) {
         throw Exception("Error al guardar el cliente");
       }
-
-      await clienteDao.close();
-      await db.close();
-      return Tuple3(null, savedCliente, invalideToken);
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, null, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+
+    return Tuple3(error, savedCliente, invalideToken);
   }
 
   Future<Tuple3<ErrorModel?, bool, bool>> delete(Cliente cliente) async {
     ErrorModel? error = ErrorModel();
     bool invalideToken = false;
+    bool deleted = false;
 
     try {
       final db = AppDatabase();
-
-      await db.transaction(
-        () async {
-          final clienteDao = ClienteDao(db);
-
-          final response = await clienteDao.delet3(cliente.idInt ?? 0);
-          if (response == 0) {
-            throw Exception("Error al eliminar el cliente");
-          }
-
-          await clienteDao.close();
-        },
-      );
-
+      final clienteDao = ClienteDao(db);
+      final response = await clienteDao.delet3(cliente.idInt ?? 0);
+      deleted = response > 0;
+      await clienteDao.close();
       await db.close();
-      return Tuple3(null, true, invalideToken);
+
+      if (response == 0) {
+        throw Exception("Error al eliminar el cliente");
+      }
     } catch (e) {
-      error.message = e.toString();
-      return Tuple3(error, false, invalideToken);
+      error = ErrorModel(message: e.toString());
     }
+    return Tuple3(error, deleted, invalideToken);
   }
 }

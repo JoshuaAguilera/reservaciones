@@ -8,6 +8,7 @@ class AnimatedEntry extends StatefulWidget {
   final AnimationType type;
   final Duration delay;
   final Duration? duration;
+  final double? target;
 
   const AnimatedEntry({
     required this.child,
@@ -15,6 +16,7 @@ class AnimatedEntry extends StatefulWidget {
     this.delay = const Duration(milliseconds: 150),
     this.duration,
     super.key,
+    this.target = 1,
   });
 
   @override
@@ -26,7 +28,7 @@ class _AnimatedEntryState extends State<AnimatedEntry> {
 
   @override
   Widget build(BuildContext context) {
-    final animation = widget.child.animate();
+    final animation = widget.child.animate(target: widget.target);
     switch (widget.type) {
       case AnimationType.fadeIn:
         return animation.fadeIn(

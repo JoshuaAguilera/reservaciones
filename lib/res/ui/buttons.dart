@@ -270,7 +270,7 @@ class Buttons {
 
     return FloatingActionButton(
       elevation: 0,
-      backgroundColor: color ?? Colors.transparent,
+      backgroundColor: color ?? Theme.of(context).scaffoldBackgroundColor,
       highlightElevation: 0,
       shape: CircleBorder(
         side: BorderSide(

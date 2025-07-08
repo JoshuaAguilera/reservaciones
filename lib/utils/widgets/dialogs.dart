@@ -14,7 +14,6 @@ class Dialogs {
     IconData? iconData,
     Color? iconColor,
     Color? colorTextButton,
-    required BuildContext context,
     required String title,
     String contentText = '',
     Widget? contentCustom,
