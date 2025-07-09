@@ -1,18 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import 'package:generador_formato/models/periodo_model.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/models/tarifa_base_model.dart';
 import 'package:generador_formato/models/tarifa_model.dart';
 import 'package:generador_formato/models/temporada_model.dart';
 import 'package:generador_formato/view-models/providers/tarifario_provider.dart';
-import 'package:generador_formato/view-models/services/tarifa_base_service.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/res/ui/show_snackbar.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
@@ -23,8 +19,8 @@ import 'package:generador_formato/utils/widgets/form_tariff_widget.dart';
 import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../database/database.dart';
 import '../../models/tarifa_rack_model.dart';
+import '../../res/helpers/calculator_helpers.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/helpers/constants.dart';
@@ -125,6 +121,11 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     super.dispose();
   }
 
+  bool foundDay(List<String>? list, String day) {
+    if (list == null) return false;
+    return list.any((element) => element.toLowerCase() == day.toLowerCase());
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -142,60 +143,69 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       autoCalculationVPM = false;
       autoCalculationVR = false;
 
+      final weekdays = actualTarifa.periodos!.first.diasActivo;
+
       if (actualTarifa.periodos!.isNotEmpty) {
-        selectedDayWeek[0] = actualTarifa.periodos!.first.enLunes ?? false;
-        selectedDayWeek[1] = actualTarifa.periodos!.first.enMartes ?? false;
-        selectedDayWeek[2] = actualTarifa.periodos!.first.enMiercoles ?? false;
-        selectedDayWeek[3] = actualTarifa.periodos!.first.enJueves ?? false;
-        selectedDayWeek[4] = actualTarifa.periodos!.first.enViernes ?? false;
-        selectedDayWeek[5] = actualTarifa.periodos!.first.enSabado ?? false;
-        selectedDayWeek[6] = actualTarifa.periodos!.first.enDomingo ?? false;
+        selectedDayWeek[0] = foundDay(weekdays, "lunes");
+        selectedDayWeek[1] = foundDay(weekdays, "martes");
+        selectedDayWeek[2] = foundDay(weekdays, "miercoles");
+        selectedDayWeek[3] = foundDay(weekdays, "jueves");
+        selectedDayWeek[4] = foundDay(weekdays, "viernes");
+        selectedDayWeek[5] = foundDay(weekdays, "sabado");
+        selectedDayWeek[6] = foundDay(weekdays, "domingo");
       }
+
       periodos = Utility.getPeriodsRegister(actualTarifa.periodos);
 
-      TarifaTableData? tariffRV = actualTarifa.tarifas
-          ?.where((element) => element.categoria == tipoHabitacion.first)
-          .firstOrNull;
+      Tarifa? tariffRV = actualTarifa.registros?.firstOrNull?.tarifa;
 
-      adults1_2VRController.text =
-          (tariffRV?.tarifaAdultoSGLoDBL ?? 0).toString();
+      adults1_2VRController.text = (tariffRV?.tarifaAdulto1a2 ?? 0).toString();
       paxAdicVRController.text = (tariffRV?.tarifaPaxAdicional ?? 0).toString();
-      adults3VRController.text = tariffRV?.tarifaAdultoTPL != null
-          ? tariffRV!.tarifaAdultoTPL!.toString()
-          : Utility.calculateRate(
-              adults1_2VRController, paxAdicVRController, 1);
-      adults4VRController.text = tariffRV?.tarifaAdultoCPLE != null
-          ? tariffRV!.tarifaAdultoCPLE!.toString()
-          : Utility.calculateRate(
-              adults1_2VRController, paxAdicVRController, 2);
+      adults3VRController.text = tariffRV?.tarifaAdulto3 != null
+          ? tariffRV!.tarifaAdulto3!.toString()
+          : CalculatorHelpers.getRate(
+              tarifaAdulto: adults1_2VRController.text,
+              tarifaPaxAdicional: paxAdicVRController.text,
+              numPaxAdic: 1,
+            );
+      adults4VRController.text = tariffRV?.tarifaAdulto4 != null
+          ? tariffRV!.tarifaAdulto4!.toString()
+          : CalculatorHelpers.getRate(
+              tarifaAdulto: adults1_2VRController.text,
+              tarifaPaxAdicional: paxAdicVRController.text,
+              numPaxAdic: 2,
+            );
       minors7_12VRController.text =
           (tariffRV?.tarifaMenores7a12 ?? 0).toString();
 
-      TarifaTableData? tariffVPM = actualTarifa.tarifas
-          ?.where((element) => element.categoria == tipoHabitacion.last)
-          .firstOrNull;
+      // TarifaTableData? tariffVPM = actualTarifa.tarifas
+      //     ?.where((element) => element.categoria == tipoHabitacion.last)
+      //     .firstOrNull;
 
-      adults1_2VPMController.text =
-          (tariffVPM?.tarifaAdultoSGLoDBL ?? 0).toString();
-      paxAdicVPMController.text =
-          (tariffVPM?.tarifaPaxAdicional ?? 0).toString();
-      adults3VPMController.text = tariffVPM?.tarifaAdultoTPL != null
-          ? tariffVPM!.tarifaAdultoTPL!.toString()
-          : Utility.calculateRate(
-              adults1_2VPMController, paxAdicVPMController, 1);
-      adults4VPMController.text = tariffVPM?.tarifaAdultoCPLE != null
-          ? tariffVPM!.tarifaAdultoCPLE!.toString()
-          : Utility.calculateRate(
-              adults1_2VPMController, paxAdicVPMController, 2);
-      minors7_12VPMController.text =
-          (tariffVPM?.tarifaMenores7a12 ?? 0).toString();
+      // adults1_2VPMController.text =
+      //     (tariffVPM?.tarifaAdultoSGLoDBL ?? 0).toString();
+      // paxAdicVPMController.text =
+      //     (tariffVPM?.tarifaPaxAdicional ?? 0).toString();
+      // adults3VPMController.text = tariffVPM?.tarifaAdultoTPL != null
+      //     ? tariffVPM!.tarifaAdultoTPL!.toString()
+      //     : Utility.calculateRate(
+      //         adults1_2VPMController, paxAdicVPMController, 1);
+      // adults4VPMController.text = tariffVPM?.tarifaAdultoCPLE != null
+      //     ? tariffVPM!.tarifaAdultoCPLE!.toString()
+      //     : Utility.calculateRate(
+      //         adults1_2VPMController, paxAdicVPMController, 2);
+      // minors7_12VPMController.text =
+      //     (tariffVPM?.tarifaMenores7a12 ?? 0).toString();
 
-      if (actualTarifa.tarifas?.first.tarifaPadreId != null) {
+      if (actualTarifa.registros?.firstOrNull?.tarifa?.tarifaBase?.idInt !=
+          null) {
         tarifasBase.when(
           data: (data) {
             selectBaseTariff = data
                 .where((element) =>
-                    element.codigo == actualTarifa.tarifas?.first.code)
+                    element.idInt ==
+                    actualTarifa
+                        .registros?.firstOrNull?.tarifa?.tarifaBase?.idInt)
                 .firstOrNull;
 
             usedBaseTariff = selectBaseTariff != null;
@@ -220,7 +230,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
               CustomWidgets.titleFormPage(
                 context: context,
                 isLoadingButton: isLoading,
-                title: actualTarifa.code != null
+                title: actualTarifa.idInt != null
                     ? "Editar tarifa: ${nombreTarifaController.text}"
                     : "Registrar nueva tarifa",
                 onPressedBack: () {
@@ -700,7 +710,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                       temporadas: temporadaEfectivoListProvider,
                                       title: "Temporadas en Efectivo",
                                       newName: "EFECTIVO",
-                                      forCash: true,
+                                      tipoTemp: "efectivo",
                                       colorSeason: DesktopColors.cashSeason,
                                       withChangeTariffs: true,
                                       withChangeUseTariff: true,
@@ -710,7 +720,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                       temporadas: temporadaGrupListProvider,
                                       title: "Temporadas Grupales",
                                       newName: "GRUPOS",
-                                      forGroup: true,
+                                      tipoTemp: "grupal",
                                       colorSeason: DesktopColors.cotGrupal,
                                     ),
                                   ],
@@ -876,7 +886,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
           .firstWhere((element) => element.categoria == tipoHabitacion.last);
     } else {
       tarifaVR = Tarifa(
-        categoria: tipoHabitacion[0],
+        // categoria: tipoHabitacion[0],
         tarifaAdulto1a2: double.parse(adults1_2VRController.text),
         tarifaAdulto3: double.parse(adults3VRController.text),
         tarifaAdulto4: double.parse(adults4VRController.text),
@@ -885,7 +895,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       );
 
       tarifaVPM = Tarifa(
-        categoria: tipoHabitacion[1],
+        // categoria: tipoHabitacion[1],
         tarifaAdulto1a2: double.parse(adults1_2VPMController.text),
         tarifaAdulto3: double.parse(adults3VPMController.text),
         tarifaAdulto4: double.parse(adults4VPMController.text),
@@ -894,28 +904,29 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
       );
     }
 
-    bool isSaves = oldRegister != null
-        ? await TarifaBaseService().updateTarifaBD(
-            oldRegister: oldRegister!,
-            name: nombreTarifaController.text,
-            colorIdentificativo: colorTarifa,
-            diasAplicacion: selectedDayWeek,
-            periodos: periodos,
-            temporadas: temporadas,
-            tarifaVPM: tarifaVPM,
-            tarifaVR: tarifaVR,
-            withBaseTariff: usedBaseTariff,
-          )
-        : await TarifaBaseService().saveTarifaBD(
-            name: nombreTarifaController.text,
-            colorIdentificativo: colorTarifa,
-            diasAplicacion: selectedDayWeek,
-            temporadas: temporadas,
-            periodos: periodos,
-            tarifaVPM: tarifaVPM,
-            tarifaVR: tarifaVR,
-            withBaseTariff: usedBaseTariff,
-          );
+    bool isSaves = false;
+    // oldRegister != null
+    //     ? await TarifaBaseService().updateTarifaBD(
+    //         oldRegister: oldRegister!,
+    //         name: nombreTarifaController.text,
+    //         colorIdentificativo: colorTarifa,
+    //         diasAplicacion: selectedDayWeek,
+    //         periodos: periodos,
+    //         temporadas: temporadas,
+    //         tarifaVPM: tarifaVPM,
+    //         tarifaVR: tarifaVR,
+    //         withBaseTariff: usedBaseTariff,
+    //       )
+    //     : await TarifaBaseService().saveTarifaBD(
+    //         name: nombreTarifaController.text,
+    //         colorIdentificativo: colorTarifa,
+    //         diasAplicacion: selectedDayWeek,
+    //         temporadas: temporadas,
+    //         periodos: periodos,
+    //         tarifaVPM: tarifaVPM,
+    //         tarifaVR: tarifaVR,
+    //         withBaseTariff: usedBaseTariff,
+    //       );
 
     if (isSaves) {
       showSnackBar(
@@ -957,19 +968,31 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
 
   void _autoCalculationVR() {
     if (autoCalculationVR) {
-      adults3VRController.text =
-          Utility.calculateRate(adults1_2VRController, paxAdicVRController, 1);
-      adults4VRController.text =
-          Utility.calculateRate(adults1_2VRController, paxAdicVRController, 2);
+      adults3VRController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: adults1_2VRController.text,
+        tarifaPaxAdicional: paxAdicVRController.text,
+        numPaxAdic: 1,
+      );
+      adults4VRController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: adults1_2VRController.text,
+        tarifaPaxAdicional: paxAdicVRController.text,
+        numPaxAdic: 2,
+      );
     }
   }
 
   void _autoCalculationVPM() {
     if (autoCalculationVPM) {
-      adults3VPMController.text = Utility.calculateRate(
-          adults1_2VPMController, paxAdicVPMController, 1);
-      adults4VPMController.text = Utility.calculateRate(
-          adults1_2VPMController, paxAdicVPMController, 2);
+      adults3VPMController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: adults1_2VPMController.text,
+        tarifaPaxAdicional: paxAdicVPMController.text,
+        numPaxAdic: 1,
+      );
+      adults4VPMController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: adults1_2VPMController.text,
+        tarifaPaxAdicional: paxAdicVPMController.text,
+        numPaxAdic: 2,
+      );
     }
   }
 
@@ -1018,10 +1041,9 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
     required String newName,
     bool withChangeUseTariff = false,
     bool withChangeTariffs = false,
-    bool forGroup = false,
-    bool forCash = false,
     bool useRomanNumber = false,
     required Color colorSeason,
+    String tipoTemp = "individual",
   }) {
     return _sectionTariffForm(
       screenWidth: screenWidth,
@@ -1034,8 +1056,7 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
               nombre: (temporadas.isEmpty)
                   ? newName
                   : "$newName ${useRomanNumber ? Utility.intToRoman(temporadas.length) : "(${temporadas.length + 1})"}",
-              forGroup: forGroup,
-              forCash: forCash,
+              tipo: tipoTemp,
             ),
           );
         },

@@ -9,6 +9,8 @@ import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/utils/widgets/form_widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../../res/helpers/calculator_helpers.dart';
+import '../../../res/helpers/colors_helpers.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/custom_widgets.dart';
 import '../../../res/ui/show_snackbar.dart';
@@ -45,7 +47,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   final _formKeyManagerBase = GlobalKey<FormState>();
   bool applyUpgrades = false;
   bool showError = false;
-  Tarifa? firstTariff = Tarifa(categoria: tipoHabitacion.first);
+  Tarifa? firstTariff;
   Tarifa? saveTariff;
   double? upgradeCateg;
   double? upgradeMenor;
@@ -129,7 +131,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     if (tarifaPadre?.tarifas != null) {
       Tarifa tarifaMayor = tarifaPadre?.tarifas?.firstWhere(
               (element) => element.categoria == categoriaSeleccionada) ??
-          Tarifa(categoria: categoriaSeleccionada);
+          Tarifa();
+      // Tarifa(categoria: categoriaSeleccionada);
       return obtenerCampo(tarifaMayor) ?? 0;
     }
 
@@ -152,7 +155,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
               height: 655,
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
               decoration: BoxDecoration(
-                color: Utility.darken(Theme.of(context).cardColor, 0.07),
+                color: ColorsHelpers.darken(Theme.of(context).cardColor, 0.07),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
@@ -407,7 +410,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                   categorias[index],
                                               roundActive: 6,
                                               round: 6,
-                                              color: Utility.darken(
+                                              color: ColorsHelpers.darken(
                                                   selectCategory ==
                                                           categorias.first
                                                       ? DesktopColors
@@ -423,14 +426,10 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                                     firstTariff!.copyWith();
 
                                                 Tarifa saveIntTariff = Tarifa(
-                                                  categoria: tipoHabitacion[
-                                                      categorias.indexOf(
-                                                          selectCategory)],
-                                                  code: selectTariff.code ??
-                                                      "${firstTariff?.code} - $selectCategory",
-                                                  id: selectTariff.id ??
-                                                      categorias.indexOf(
-                                                          selectCategory),
+                                                  // categoria: tipoHabitacion[
+                                                  //     categorias.indexOf(
+                                                  //         selectCategory)],
+                                                  id: selectTariff.id,
                                                   tarifaAdulto1a2:
                                                       obtenerTarifa(
                                                     controller:
@@ -491,7 +490,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                               child: Text(
                                                 categorias[index],
                                                 style: TextStyle(
-                                                  color: Utility.darken(
+                                                  color: ColorsHelpers.darken(
                                                     selectCategory ==
                                                             categorias.first
                                                         ? DesktopColors
@@ -573,34 +572,28 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     if (withAutocalculation) {
                                       _autoCalculation();
                                       String saveTariffAdult3 =
-                                          Utility.calculateRate(
-                                        TextEditingController(
-                                            text:
-                                                (saveTariff?.tarifaAdulto1a2 ??
-                                                        0)
-                                                    .toString()),
-                                        TextEditingController(
-                                            text: (saveTariff
-                                                        ?.tarifaPaxAdicional ??
+                                          CalculatorHelpers.getRate(
+                                        tarifaAdulto:
+                                            (saveTariff?.tarifaAdulto1a2 ?? 0)
+                                                .toString(),
+                                        tarifaPaxAdicional:
+                                            (saveTariff?.tarifaPaxAdicional ??
                                                     0)
-                                                .toString()),
-                                        1,
+                                                .toString(),
+                                        numPaxAdic: 1,
                                         applyRound: false,
                                       );
 
                                       String saveTariffAdult4 =
-                                          Utility.calculateRate(
-                                        TextEditingController(
-                                            text:
-                                                (saveTariff?.tarifaAdulto1a2 ??
-                                                        0)
-                                                    .toString()),
-                                        TextEditingController(
-                                            text: (saveTariff
-                                                        ?.tarifaPaxAdicional ??
+                                          CalculatorHelpers.getRate(
+                                        tarifaAdulto:
+                                            (saveTariff?.tarifaAdulto1a2 ?? 0)
+                                                .toString(),
+                                        tarifaPaxAdicional:
+                                            (saveTariff?.tarifaPaxAdicional ??
                                                     0)
-                                                .toString()),
-                                        2,
+                                                .toString(),
+                                        numPaxAdic: 2,
                                         applyRound: false,
                                       );
                                       saveTariff?.tarifaAdulto3 =
@@ -713,8 +706,8 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   }
 
                                   Tarifa nowTariff = Tarifa();
-                                  nowTariff.categoria = tipoHabitacion[
-                                      categorias.indexOf(selectCategory)];
+                                  // nowTariff.categoria = tipoHabitacion[
+                                  //     categorias.indexOf(selectCategory)];
                                   nowTariff.tarifaAdulto1a2 = double.parse(
                                       _tarifaAdultoSingleController.text);
                                   nowTariff.tarifaAdulto3 = double.parse(
@@ -737,7 +730,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   }
 
                                   if (applyUpgrades) {
-                                    saveTariff?.categoria = tipoHabitacion.last;
+                                    // saveTariff?.categoria = tipoHabitacion.last;
                                   }
 
                                   if (selectBaseTariff?.idInt != null) {
@@ -811,10 +804,11 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                             secondTariff?.tarifaMenores7a12);
                                   }
 
-                                  TarifaBase tarifaBase =
-                                      TarifaBase(idInt: selectBaseTariff?.idInt);
+                                  TarifaBase tarifaBase = TarifaBase(
+                                      idInt: selectBaseTariff?.idInt);
                                   tarifaBase.codigo = selectBaseTariff?.codigo;
-                                  tarifaBase.conAutocalculacion = withAutocalculation;
+                                  tarifaBase.conAutocalculacion =
+                                      withAutocalculation;
                                   tarifaBase.nombre =
                                       _nombreTarifaController.text;
                                   tarifaBase.aumIntegrado = double.tryParse(
@@ -823,8 +817,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   tarifaBase.upgradeMenor = upgradeMenor;
                                   tarifaBase.upgradePaxAdic = upGradePaxAdic;
                                   tarifaBase.tarifaBase = tarifaPadre;
-                                  tarifaBase.creadoPor =
-                                      tarifaPadre?.creadoPor;
+                                  tarifaBase.creadoPor = tarifaPadre?.creadoPor;
                                   tarifaBase.tarifas = [
                                     nowTariff,
                                     if (!applyUpgrades ||
@@ -835,37 +828,37 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                   ];
 
                                   if (mounted) {
-                                    String messageResponse =
-                                        selectBaseTariff?.idInt != null
-                                            ? await TarifaBaseService()
-                                                .updateBaseTariff(
-                                                tarifaBase,
-                                                propageChanges:
-                                                    applyPropageChange,
-                                              )
-                                            : await TarifaBaseService()
-                                                .saveBaseTariff(tarifaBase);
+                                    // String messageResponse =
+                                    //     selectBaseTariff?.idInt != null
+                                    //         ? await TarifaBaseService()
+                                    //             .updateBaseTariff(
+                                    //             tarifaBase,
+                                    //             propageChanges:
+                                    //                 applyPropageChange,
+                                    //           )
+                                    //         : await TarifaBaseService()
+                                    //             .saveBaseTariff(tarifaBase);
 
-                                    if (messageResponse.isNotEmpty) {
-                                      messageError =
-                                          "Se presento el siguiente problema al registrar una nueva tarifa base: $messageResponse.";
-                                      setState(() {});
-                                      _toggleSnackbar();
-                                      isLoading = false;
-                                      setState(() {});
-                                      return;
-                                    }
+                                    // if (messageResponse.isNotEmpty) {
+                                    //   messageError =
+                                    //       "Se presento el siguiente problema al registrar una nueva tarifa base: $messageResponse.";
+                                    //   setState(() {});
+                                    //   _toggleSnackbar();
+                                    //   isLoading = false;
+                                    //   setState(() {});
+                                    //   return;
+                                    // }
 
-                                    if (!mounted) return;
-                                    showSnackBar(
-                                      context: context,
-                                      title: "Tarifa Base creada",
-                                      message:
-                                          "Se creo la nueva tarifa base: ${tarifaBase.nombre}",
-                                      type: "success",
-                                    );
+                                    // if (!mounted) return;
+                                    // showSnackBar(
+                                    //   context: context,
+                                    //   title: "Tarifa Base creada",
+                                    //   message:
+                                    //       "Se creo la nueva tarifa base: ${tarifaBase.nombre}",
+                                    //   type: "success",
+                                    // );
 
-                                    Navigator.of(context).pop(true);
+                                    // Navigator.of(context).pop(true);
                                   }
                                 },
                               ),
@@ -920,7 +913,7 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
   double? _getParentRate(double? rate) {
     double dividendo = double.tryParse(_dividendoController.text) ?? 0;
-    double parentRate = Utility.calculateIncrease(
+    double parentRate = CalculatorHelpers.getIncrease(
       (rate ?? 0),
       dividendo,
       withRound: false,
@@ -951,21 +944,21 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
   }
 
   void _applyDiscountTariff(Tarifa? initTariff, {double? percent}) {
-    _tarifaAdultoSingleController.text =
-        Utility.calculateIncrease((initTariff?.tarifaAdulto1a2 ?? 0), percent)
-            .toString();
+    _tarifaAdultoSingleController.text = CalculatorHelpers.getIncrease(
+            (initTariff?.tarifaAdulto1a2 ?? 0), percent)
+        .toString();
     _tarifaAdultoTPLController.text =
-        Utility.calculateIncrease((initTariff?.tarifaAdulto3 ?? 0), percent)
+        CalculatorHelpers.getIncrease((initTariff?.tarifaAdulto3 ?? 0), percent)
             .toString();
     _tarifaAdultoCPLController.text =
-        Utility.calculateIncrease((initTariff?.tarifaAdulto4 ?? 0), percent)
+        CalculatorHelpers.getIncrease((initTariff?.tarifaAdulto4 ?? 0), percent)
             .toString();
-    _tarifaPaxAdicionalController.text = Utility.calculateIncrease(
+    _tarifaPaxAdicionalController.text = CalculatorHelpers.getIncrease(
             (initTariff?.tarifaPaxAdicional ?? 0), percent)
         .toString();
-    _tarifaMenoresController.text =
-        Utility.calculateIncrease((initTariff?.tarifaMenores7a12 ?? 0), percent)
-            .toString();
+    _tarifaMenoresController.text = CalculatorHelpers.getIncrease(
+            (initTariff?.tarifaMenores7a12 ?? 0), percent)
+        .toString();
   }
 
   void _recoverySaveTariff(TarifaBase? selectTariff) {
@@ -1023,35 +1016,34 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
     showDialog(
       context: context,
       builder: (context) => Dialogs.customAlertDialog(
-        context: context,
         title: "Eliminar tarifa Base",
         contentText:
             "¿Desea eliminar la tarifa base del sistema:\n${selectBaseTariff?.nombre}?",
         nameButtonMain: "Aceptar",
         funtionMain: () async {
-          String response =
-              await TarifaBaseService().deleteBaseTariff(selectBaseTariff!);
+          // String response =
+          //     await TarifaBaseService().deleteBaseTariff(selectBaseTariff!);
 
-          if (response.isNotEmpty) {
-            showSnackBar(
-              context: context,
-              title: "Error de eliminación",
-              message:
-                  "Se presento el siguiente problema al eliminar la tarifa: $response.",
-              type: "danger",
-            );
-            return;
-          } else {
-            showSnackBar(
-              context: context,
-              title: "Tarifa base eliminada",
-              message: "Se elimino la tarifa base: ${selectBaseTariff?.nombre}",
-              type: "success",
-              iconCustom: HeroIcons.trash,
-            );
-            Navigator.pop(context);
-            Navigator.of(context).pop(true);
-          }
+          // if (response.isNotEmpty) {
+          //   showSnackBar(
+          //     context: context,
+          //     title: "Error de eliminación",
+          //     message:
+          //         "Se presento el siguiente problema al eliminar la tarifa: $response.",
+          //     type: "danger",
+          //   );
+          //   return;
+          // } else {
+          //   showSnackBar(
+          //     context: context,
+          //     title: "Tarifa base eliminada",
+          //     message: "Se elimino la tarifa base: ${selectBaseTariff?.nombre}",
+          //     type: "success",
+          //     iconCustom: HeroIcons.trash,
+          //   );
+          //   Navigator.pop(context);
+          //   Navigator.of(context).pop(true);
+          // }
         },
         nameButtonCancel: "Cancelar",
         withButtonCancel: true,
@@ -1065,16 +1057,16 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
 
   void _autoCalculation() {
     if (withAutocalculation) {
-      _tarifaAdultoTPLController.text = Utility.calculateRate(
-        _tarifaAdultoSingleController,
-        _tarifaPaxAdicionalController,
-        1,
+      _tarifaAdultoTPLController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: _tarifaAdultoSingleController.text,
+        tarifaPaxAdicional: _tarifaPaxAdicionalController.text,
+        numPaxAdic: 1,
         applyRound: false,
       );
-      _tarifaAdultoCPLController.text = Utility.calculateRate(
-        _tarifaAdultoSingleController,
-        _tarifaPaxAdicionalController,
-        2,
+      _tarifaAdultoCPLController.text = CalculatorHelpers.getRate(
+        tarifaAdulto: _tarifaAdultoSingleController.text,
+        tarifaPaxAdicional: _tarifaPaxAdicionalController.text,
+        numPaxAdic: 1,
         applyRound: false,
       );
     }

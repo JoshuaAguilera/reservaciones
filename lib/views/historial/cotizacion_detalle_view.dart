@@ -10,6 +10,7 @@ import 'package:generador_formato/utils/widgets/habitacion_item_row.dart';
 import 'package:generador_formato/utils/widgets/summary_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../view-models/services/generador_doc_service.dart';
@@ -82,7 +83,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                           showSaveButton: false,
                           context: context,
                           title:
-                              "Detalles de ${(cotizacion.estatus ?? false) ? "Reservación" : "Cotización"} - ${cotizacion.folio}",
+                              "Detalles de ${(cotizacion.estatus == "concretado") ? "Reservación" : "Cotización"} - ${cotizacion.folio}",
                         ),
                         if (!isLoading)
                           Column(
@@ -166,7 +167,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                 .textFormFieldwithBorder(
                                               name: "Fecha de registro",
                                               initialValue:
-                                                  "${Utility.getCompleteDate(data: cotizacion.createdAt)} ${cotizacion.createdAt?.toString().substring(11, 16)}",
+                                                  "${DateHelpers.getStringDate(data: cotizacion.createdAt)} ${cotizacion.createdAt?.toString().substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
@@ -175,15 +176,15 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                           Expanded(
                                             child: TextFormFieldCustom
                                                 .textFormFieldwithBorder(
-                                              name: (cotizacion.estatus ??
-                                                      false)
+                                              name: (cotizacion.estatus ==
+                                                      "concretado")
                                                   ? "Responsable"
                                                   : "Fecha de vigencia",
                                               initialValue: (cotizacion
-                                                          .estatus ??
-                                                      false)
+                                                          .estatus ==
+                                                      "concretado")
                                                   ? "${"${cotizacion.creadoPor?.nombre} "} ${cotizacion.creadoPor?.apellido ?? ''}"
-                                                  : "${Utility.getCompleteDate(data: cotizacion.fechaLimite!)} ${cotizacion.fechaLimite?.toString().substring(11, 16)}",
+                                                  : "${DateHelpers.getStringDate(data: cotizacion.fechaLimite!)} ${cotizacion.fechaLimite?.toString().substring(11, 16)}",
                                               blocked: true,
                                               readOnly: true,
                                             ),
@@ -205,7 +206,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                               ),
                               TextStyles.titleText(
                                 text:
-                                    "Habitaciones ${(cotizacion.estatus ?? false) ? "reservadas" : "cotizadas"}",
+                                    "Habitaciones ${(cotizacion.estatus == "concretado") ? "reservadas" : "cotizadas"}",
                                 color: colorElement,
                               ),
                               const SizedBox(height: 12),
@@ -277,7 +278,8 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                 child: SizedBox(
                                   height: Utility.limitHeightList(cotizacion
                                           .habitaciones
-                                          ?.where((element) => !element.esCortesia)
+                                          ?.where(
+                                              (element) => !element.esCortesia)
                                           .toList()
                                           .length ??
                                       0),
@@ -285,8 +287,8 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
                                     itemCount: cotizacion.habitaciones
-                                            ?.where(
-                                                (element) => !element.esCortesia)
+                                            ?.where((element) =>
+                                                !element.esCortesia)
                                             .toList()
                                             .length ??
                                         0,
@@ -298,25 +300,26 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                   .toList()
                                                   .length ??
                                               0)) {
-                                        return HabitacionItemRow(
-                                          key: ObjectKey(cotizacion
-                                              .habitaciones!
-                                              .where(
-                                                  (element) => !element.esCortesia)
-                                              .toList()[index]
-                                              .hashCode),
-                                          index: index,
-                                          habitacion: cotizacion.habitaciones!
-                                              .where(
-                                                  (element) => !element.esCortesia)
-                                              .toList()[index],
-                                          isTable: !Utility.isResizable(
-                                              extended: widget
-                                                  .sideController.extended,
-                                              context: context),
-                                          esDetalle: true,
-                                          sideController: widget.sideController,
-                                        );
+                                        return const SizedBox();
+                                        // return HabitacionItemRow(
+                                        //   key: ObjectKey(cotizacion
+                                        //       .habitaciones!
+                                        //       .where((element) =>
+                                        //           !element.esCortesia)
+                                        //       .toList()[index]
+                                        //       .hashCode),
+                                        //   index: index,
+                                        //   habitacion: cotizacion.habitaciones!
+                                        //       .where((element) =>
+                                        //           !element.esCortesia)
+                                        //       .toList()[index],
+                                        //   isTable: !Utility.isResizable(
+                                        //       extended: widget
+                                        //           .sideController.extended,
+                                        //       context: context),
+                                        //   esDetalle: true,
+                                        //   sideController: widget.sideController,
+                                        // );
                                       }
                                     },
                                   ),
@@ -333,7 +336,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                   spacing: 10,
                                   runSpacing: 5,
                                   children: [
-                                    if (!(cotizacion.estatus ?? false))
+                                    if (!(cotizacion.estatus == "concretado"))
                                       if (!(DateTime.now().compareTo(
                                               cotizacion.fechaLimite ??
                                                   DateTime.now()) ==
@@ -359,8 +362,6 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                                 comprobantePDF =
                                                     await GeneradorDocService()
                                                         .generarCompInd(
-                                                  habitaciones:
-                                                      cotizacion.habitaciones!,
                                                   cotizacion: cotizacion,
                                                 );
                                               }
@@ -373,7 +374,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                                             },
                                           ),
                                         ),
-                                    if (!(cotizacion.estatus ?? false))
+                                    if (!(cotizacion.estatus == "concretado"))
                                       SizedBox(
                                         width: 230,
                                         height: 40,

@@ -41,7 +41,7 @@ class _TarifarioCalendaryWeekViewState
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
     final dateTariffer = ref.watch(dateTarifferProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
@@ -169,7 +169,7 @@ class _TarifarioCalendaryWeekViewState
                                       if (Utility.showTariffByWeek(
                                               list[index].periodos,
                                               widget.initDayWeekGraphics) &&
-                                          list[index].isSelected!) {
+                                          list[index].select) {
                                         return PeriodItemRow(
                                           isntWeek: false,
                                           weekNow: widget.initDayWeekGraphics,

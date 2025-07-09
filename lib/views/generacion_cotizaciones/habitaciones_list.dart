@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:generador_formato/models/categoria_model.dart';
 import 'package:generador_formato/models/habitacion_model.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -161,14 +162,14 @@ class _HabitacionesListState extends State<HabitacionesList> {
                   itemCount: widget.habitaciones.length,
                   itemBuilder: (_, index) {
                     return HabitacionItemRow(
+                      categoria: Categoria(),
                       key: ObjectKey(widget.habitaciones[index].hashCode),
                       sideController: widget.sideController,
                       index: index,
                       habitacion: widget.habitaciones[index],
                       isTable: viewTable,
                       onPressedDelete: () {
-                        widget.deleteRoom!
-                            .call(widget.habitaciones[index].id!);
+                        widget.deleteRoom!.call(widget.habitaciones[index].id!);
                       },
                       onPressedEdit: () =>
                           widget.editRoom!.call(widget.habitaciones[index]),

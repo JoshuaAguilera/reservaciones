@@ -20,7 +20,10 @@ import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/periodo_model.dart';
 import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../models/temporada_model.dart';
+import '../../res/helpers/colors_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../view-models/providers/usuario_provider.dart';
 import '../../res/ui/buttons.dart';
@@ -63,10 +66,12 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   bool applyFreeTariff = false;
   bool showSwitchCashSeason = false;
   TarifaXDia tarifaLibre = TarifaXDia(
-    color: DesktopColors.turquezaOscure,
+    tarifaRack: TarifaRack(
+      nombre: "Tarifa Libre",
+      color: DesktopColors.turquezaOscure,
+    ),
     descIntegrado: 0,
     id: "tariffFree",
-    nombreTariff: "Tarifa Libre",
   );
   List<TarifaXDia> recoveryTariffs = [];
   bool alreadySaveTariff = false;
@@ -106,7 +111,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
     final habitacionProvider = ref.watch(habitacionSelectProvider);
     final tarifasProvisionalesProvider =
         ref.watch(TarifasProvisionalesProvider.provider);
@@ -135,18 +140,19 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                       title:
                           isEditing ? "Editar Habitación" : "Nueva Habitación",
                       showSaveButton: false,
-                      optionPage: (!showSwitchCashSeason || typeQuote)
-                          ? null
-                          : FormWidgets.inputSwitch(
-                              compact: screenWidth < 950,
-                              activeColor: DesktopColors.azulClaro,
-                              value: useCashSeasonRoom,
-                              context: context,
-                              name: "Usar Temporadas en Efectivo",
-                              onChanged: (p0) => ref
-                                  .watch(useCashSeasonRoomProvider.notifier)
-                                  .update((ref) => p0),
-                            ),
+                      optionPage:
+                          (!showSwitchCashSeason || typeQuote == "grupal")
+                              ? null
+                              : FormWidgets.inputSwitch(
+                                  compact: screenWidth < 950,
+                                  activeColor: DesktopColors.azulClaro,
+                                  value: useCashSeasonRoom,
+                                  context: context,
+                                  name: "Usar Temporadas en Efectivo",
+                                  onChanged: (p0) => ref
+                                      .watch(useCashSeasonRoomProvider.notifier)
+                                      .update((ref) => p0),
+                                ),
                       onPressedBack: () {
                         if (target == 1) {
                           setState(() => target = 0);
@@ -165,9 +171,9 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           () {
                             if (!mounted) return;
                             if (saveTariff == null) {
-                              ref
-                                  .read(saveTariffPolityProvider.notifier)
-                                  .update((state) => politicas);
+                              // ref
+                              //     .read(saveTariffPolityProvider.notifier)
+                              //     .update((state) => politicas);
                             }
                           },
                         );
@@ -183,8 +189,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   tarifasProvisionalesProvider,
                                   descuentoProvider,
                                   refreshTariff: isEditing,
-                                  isGroup: typeQuote,
-                                  useCashSeason: true,
+                                  tipoTemporada: typeQuote,
                                   updateToCash: true,
                                 );
                               } else {
@@ -194,16 +199,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   tarifasProvisionalesProvider,
                                   descuentoProvider,
                                   refreshTariff: isEditing,
-                                  isGroup: typeQuote,
-                                  useCashSeason: false,
+                                  tipoTemporada: typeQuote,
                                   updateToCash: true,
                                 );
                               }
                             });
 
                             if (!startflow) {
-                              isEditing =
-                                  habitacionProvider.tarifasXHabitacion!.isNotEmpty;
+                              isEditing = habitacionProvider
+                                  .tarifasXHabitacion!.isNotEmpty;
                               if (list.isEmpty) {
                                 Future.delayed(
                                   600.ms,
@@ -220,16 +224,18 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                   () => setState(() => showSaveButton = true));
 
                               _fechaEntrada = TextEditingController(
-                                  text: habitacionProvider.checkIn ??
-                                      DateTime.now()
-                                          .toString()
-                                          .substring(0, 10));
+                                text: (habitacionProvider.checkIn ??
+                                        DateTime.now())
+                                    .toString()
+                                    .substring(0, 10),
+                              );
                               _fechaSalida = TextEditingController(
-                                  text: habitacionProvider.checkOut ??
-                                      DateTime.now()
-                                          .add(const Duration(days: 1))
-                                          .toString()
-                                          .substring(0, 10));
+                                text: (habitacionProvider.checkOut ??
+                                        DateTime.now())
+                                    .add(const Duration(days: 1))
+                                    .toString()
+                                    .substring(0, 10),
+                              );
 
                               if (habitacionProvider.tarifasXHabitacion!.any(
                                   (element) => element.id == "tariffFree")) {
@@ -239,8 +245,10 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                               showSwitchCashSeason = habitacionProvider
                                       .tarifasXHabitacion
                                       ?.any((element) =>
-                                          element.temporadas?.any((element) =>
-                                              element.forCash ?? false) ??
+                                          element.tarifaXDia?.tarifaRack
+                                              ?.temporadas
+                                              ?.any((element) =>
+                                                  element.tipo == "efectivo") ??
                                           false) ??
                                   false;
 
@@ -249,8 +257,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                 habitacionProvider,
                                 tarifasProvisionalesProvider,
                                 descuentoProvider,
-                                isGroup: typeQuote,
-                                useCashSeason: useCashSeasonRoom,
+                                tipoTemporada: typeQuote,
                               );
 
                               startflow = true;
@@ -288,24 +295,22 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       .primaryColor,
                                                 ),
                                                 SelectButtonsWidget(
-                                                  selectButton:
-                                                      habitacionProvider
-                                                              .categoria ??
-                                                          tipoHabitacion.first,
+                                                  selectButton: "notnull",
+                                                  // habitacionProvider
+                                                  //         .categoria ??
+                                                  //     tipoHabitacion.first,
                                                   buttons: categoriesColor,
                                                   onPressed: (p0) {
-                                                    habitacionProvider
-                                                            .categoria =
-                                                        tipoHabitacion[p0];
+                                                    // habitacionProvider
+                                                    //         .categoria =
+                                                    //     tipoHabitacion[p0];
                                                     getTarifasSelect(
                                                       list,
                                                       habitacionProvider,
                                                       tarifasProvisionalesProvider,
                                                       descuentoProvider,
                                                       onlyCategory: true,
-                                                      isGroup: typeQuote,
-                                                      useCashSeason:
-                                                          useCashSeasonRoom,
+                                                      tipoTemporada: typeQuote,
                                                     );
                                                     setState(() {});
                                                   },
@@ -338,11 +343,13 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                       context: context,
                                                       builder: (context) =>
                                                           PeriodCalendarDialog(
-                                                        colorTariff: typeQuote
-                                                            ? DesktopColors
-                                                                .cotGrupal
-                                                            : DesktopColors
-                                                                .cotIndiv,
+                                                        colorTariff:
+                                                            typeQuote ==
+                                                                    "grupal"
+                                                                ? DesktopColors
+                                                                    .cotGrupal
+                                                                : DesktopColors
+                                                                    .cotIndiv,
                                                         initDate:
                                                             DateTime.tryParse(
                                                                 _fechaEntrada
@@ -378,11 +385,14 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
 
                                                           habitacionProvider
                                                                   .checkIn =
-                                                              _fechaEntrada
-                                                                  .text;
+                                                              DateTime.tryParse(
+                                                                  _fechaEntrada
+                                                                      .text);
                                                           habitacionProvider
                                                                   .checkOut =
-                                                              _fechaSalida.text;
+                                                              DateTime.tryParse(
+                                                                  _fechaSalida
+                                                                      .text);
 
                                                           getTarifasSelect(
                                                             list,
@@ -391,9 +401,8 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                             descuentoProvider,
                                                             refreshTariff:
                                                                 isEditing,
-                                                            isGroup: typeQuote,
-                                                            useCashSeason:
-                                                                useCashSeasonRoom,
+                                                            tipoTemporada:
+                                                                typeQuote,
                                                           );
                                                           Future.delayed(
                                                             Durations.medium1,
@@ -625,7 +634,7 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                         color: Theme.of(context).primaryColor,
                                       ),
                                     ),
-                                    if (typeQuote)
+                                    if (typeQuote == "grupal")
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(right: 15),
@@ -634,13 +643,16 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                             List<TarifaXDia> preTarifasVacias =
                                                 alternativeTariffInd;
 
-                                            bool isVoidTariff = (applyFreeTariff ||
-                                                habitacionProvider.tarifasXHabitacion!
-                                                    .any((element) =>
-                                                        element.id!.contains(
-                                                            "Unknow") ||
-                                                        element.id!.contains(
-                                                            "tariffFree")));
+                                            bool isVoidTariff =
+                                                (applyFreeTariff ||
+                                                    habitacionProvider
+                                                        .tarifasXHabitacion!
+                                                        .any((element) =>
+                                                            element.id!
+                                                                .contains(
+                                                                    "Unknow") ||
+                                                            element.id!.contains(
+                                                                "tariffFree")));
 
                                             if (isVoidTariff) {
                                               for (var element
@@ -657,61 +669,62 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                             ?.first
                                                             .id ??
                                                         '')) {
-                                                  TarifaXDia _tariff =
-                                                      habitacionProvider
-                                                          .tarifasXHabitacion!.first;
+                                                  // TarifaXDia? _tariff =
+                                                  //     habitacionProvider
+                                                  //         .tarifasXHabitacion
+                                                  //         ?.firstOrNull
+                                                  //         ?.tarifaXDia;
 
-                                                  element.categoria =
-                                                      _tariff.categoria;
-                                                  element.id = _tariff.id;
-                                                  element.color = _tariff.color;
-                                                  element.folioRoom =
-                                                      _tariff.folioRoom;
-                                                  element.descIntegrado =
-                                                      _tariff
-                                                          .descIntegrado;
-                                                  element.numDays =
-                                                      _tariff.numDays;
-                                                  element.idInt = _tariff.idInt;
-                                                  element.subCode =
-                                                      _tariff.subCode;
-                                                  element.tarifa = _tariff
-                                                      .tarifa
-                                                      ?.copyWith();
-                                                  element.tarifas = _tariff
-                                                      .tarifas
-                                                      ?.map((e) => e.copyWith())
-                                                      .toList();
-                                                  element.modificado =
-                                                      _tariff.modificado;
-                                                  element.nombreTariff =
-                                                      _tariff.nombreTariff;
-                                                  element.periodo =
-                                                      _tariff.periodo;
-                                                  element.tarifasBase =
-                                                      _tariff.tarifasBase;
-                                                  element.tarifasEfectivo =
-                                                      _tariff.tarifasEfectivo;
-                                                  element.tariffCode =
-                                                      _tariff.tariffCode;
-                                                  element.temporadaSelect =
-                                                      _tariff.temporadaSelect;
-                                                  element.temporadas =
-                                                      _tariff.temporadas;
+                                                  // element.categoria =
+                                                  //     _tariff.categoria;
+                                                  // element.id = _tariff.id;
+                                                  // element.color = _tariff.color;
+                                                  // element.folioRoom =
+                                                  //     _tariff.folioRoom;
+                                                  // element.descIntegrado =
+                                                  //     _tariff.descIntegrado;
+                                                  // element.numDays =
+                                                  //     _tariff.numDays;
+                                                  // element.idInt = _tariff.idInt;
+                                                  // element.subCode =
+                                                  //     _tariff.subCode;
+                                                  // element.tarifa = _tariff
+                                                  //     .tarifa
+                                                  //     ?.copyWith();
+                                                  // element.tarifas = _tariff
+                                                  //     .tarifas
+                                                  //     ?.map((e) => e.copyWith())
+                                                  //     .toList();
+                                                  // element.modificado =
+                                                  //     _tariff.modificado;
+                                                  // element.nombreTariff =
+                                                  //     _tariff.nombreTariff;
+                                                  // element.periodo =
+                                                  //     _tariff.periodo;
+                                                  // element.tarifasBase =
+                                                  //     _tariff.tarifasBase;
+                                                  // element.tarifasEfectivo =
+                                                  //     _tariff.tarifasEfectivo;
+                                                  // element.tariffCode =
+                                                  //     _tariff.tariffCode;
+                                                  // element.temporadaSelect =
+                                                  //     _tariff.temporadaSelect;
+                                                  // element.temporadas =
+                                                  //     _tariff.temporadas;
                                                 }
                                               }
                                             }
 
-                                            List<TarifaXDia> tarifasFiltradas =
-                                                Utility.getUniqueTariffs(
-                                              isVoidTariff
-                                                  // ? habitacionProvider
-                                                  //     .tarifaXDia!
-                                                  ? preTarifasVacias
-                                                  : alternativeTariffInd.isEmpty
-                                                      ? recoveryTariffs
-                                                      : alternativeTariffInd,
-                                            );
+                                            // List<TarifaXDia> tarifasFiltradas =
+                                            //     Utility.getUniqueTariffs(
+                                            //   isVoidTariff
+                                            //       // ? habitacionProvider
+                                            //       //     .tarifaXDia!
+                                            //       ? preTarifasVacias
+                                            //       : alternativeTariffInd.isEmpty
+                                            //           ? recoveryTariffs
+                                            //           : alternativeTariffInd,
+                                            // );
 
                                             int days = DateTime.parse(
                                                     _fechaSalida.text)
@@ -719,19 +732,19 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                     _fechaEntrada.text))
                                                 .inDays;
 
-                                            showDialogRateManager(
-                                              tarifasFiltradas,
-                                              habitacionProvider,
-                                              days,
-                                              withoutAction: true,
-                                            );
+                                            // showDialogRateManager(
+                                            //   tarifasFiltradas,
+                                            //   habitacionProvider,
+                                            //   days,
+                                            //   withoutAction: true,
+                                            // );
                                           },
-                                          color: Utility.darken(
+                                          color: ColorsHelpers.darken(
                                               DesktopColors.cotGrupal, 0.15),
                                           text: "Gestionar tarifas",
                                         ),
                                       ),
-                                    if ((usuario.rol != 'RECEPCION'))
+                                    if ((usuario?.rol?.nombre != 'RECEPCION'))
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(right: 5),
@@ -748,65 +761,65 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                                     !widget.sideController
                                                         .extended),
                                             onChanged: (p0) {
-                                              setState(
-                                                  () => applyFreeTariff = p0);
-                                              if (applyFreeTariff) {
-                                                tarifaLibre.categoria =
-                                                    habitacionProvider
-                                                        .categoria;
-                                                tarifaLibre.tarifa = null;
-                                                tarifaLibre
-                                                    .descIntegrado = 0;
+                                              // setState(
+                                              //     () => applyFreeTariff = p0);
+                                              // if (applyFreeTariff) {
+                                              //   tarifaLibre.categoria =
+                                              //       habitacionProvider
+                                              //           .categoria;
+                                              //   tarifaLibre.tarifa = null;
+                                              //   tarifaLibre.descIntegrado = 0;
 
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      ManagerTariffSingleDialog(
-                                                    tarifaXHabitacion: tarifaLibre,
-                                                    isAppling: true,
-                                                    numDays: DateTime.parse(
-                                                            habitacionProvider
-                                                                    .checkOut ??
-                                                                '')
-                                                        .difference(DateTime.parse(
-                                                            habitacionProvider
-                                                                    .checkIn ??
-                                                                ''))
-                                                        .inDays,
-                                                  ),
-                                                ).then(
-                                                  (value) {
-                                                    if (value != null) {
-                                                      getTarifasSelect(
-                                                        list,
-                                                        habitacionProvider,
-                                                        tarifasProvisionalesProvider,
-                                                        descuentoProvider,
-                                                        refreshTariff:
-                                                            isEditing,
-                                                        isGroup: typeQuote,
-                                                        useCashSeason:
-                                                            useCashSeasonRoom,
-                                                      );
-                                                    } else {
-                                                      setState(() =>
-                                                          applyFreeTariff =
-                                                              false);
-                                                    }
-                                                  },
-                                                );
-                                              } else {
-                                                getTarifasSelect(
-                                                  list,
-                                                  habitacionProvider,
-                                                  tarifasProvisionalesProvider,
-                                                  descuentoProvider,
-                                                  refreshTariff: isEditing,
-                                                  isGroup: typeQuote,
-                                                  useCashSeason:
-                                                      useCashSeasonRoom,
-                                                );
-                                              }
+                                              //   showDialog(
+                                              //     context: context,
+                                              //     builder: (context) =>
+                                              //         ManagerTariffSingleDialog(
+                                              //       tarifaXHabitacion:
+                                              //           tarifaLibre,
+                                              //       isAppling: true,
+                                              //       numDays: DateTime.parse(
+                                              //               habitacionProvider
+                                              //                       .checkOut ??
+                                              //                   '')
+                                              //           .difference(DateTime.parse(
+                                              //               habitacionProvider
+                                              //                       .checkIn ??
+                                              //                   ''))
+                                              //           .inDays,
+                                              //     ),
+                                              //   ).then(
+                                              //     (value) {
+                                              //       if (value != null) {
+                                              //         getTarifasSelect(
+                                              //           list,
+                                              //           habitacionProvider,
+                                              //           tarifasProvisionalesProvider,
+                                              //           descuentoProvider,
+                                              //           refreshTariff:
+                                              //               isEditing,
+                                              //           isGroup: typeQuote,
+                                              //           useCashSeason:
+                                              //               useCashSeasonRoom,
+                                              //         );
+                                              //       } else {
+                                              //         setState(() =>
+                                              //             applyFreeTariff =
+                                              //                 false);
+                                              //       }
+                                              //     },
+                                              //   );
+                                              // } else {
+                                              //   getTarifasSelect(
+                                              //     list,
+                                              //     habitacionProvider,
+                                              //     tarifasProvisionalesProvider,
+                                              //     descuentoProvider,
+                                              //     refreshTariff: isEditing,
+                                              //     isGroup: typeQuote,
+                                              //     useCashSeason:
+                                              //         useCashSeasonRoom,
+                                              //   );
+                                              // }
                                             },
                                           ),
                                         ),
@@ -816,28 +829,26 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                       child: CustomWidgets.sectionButton(
                                         isCompact: (screenWidth < 925 &&
                                             widget.sideController.extended),
-                                        listModes:
-                                            (Utility.revisedLimitDateTime(
-                                                      DateTime.parse(
-                                                          _fechaEntrada.text),
-                                                      DateTime.parse(
-                                                          _fechaSalida.text),
-                                                    ) &&
-                                                    defineUseScreenWidth(
-                                                        screenWidth))
-                                                ? selectedMode
-                                                : _selectedModeRange,
-                                        modesVisual:
-                                            (Utility.revisedLimitDateTime(
-                                                      DateTime.parse(
-                                                          _fechaEntrada.text),
-                                                      DateTime.parse(
-                                                          _fechaSalida.text),
-                                                    ) &&
-                                                    defineUseScreenWidth(
-                                                        screenWidth))
-                                                ? modesVisual
-                                                : modesVisualRange,
+                                        listModes: (DateHelpers.revisedLimit(
+                                                  DateTime.parse(
+                                                      _fechaEntrada.text),
+                                                  DateTime.parse(
+                                                      _fechaSalida.text),
+                                                ) &&
+                                                defineUseScreenWidth(
+                                                    screenWidth))
+                                            ? selectedMode
+                                            : _selectedModeRange,
+                                        modesVisual: (DateHelpers.revisedLimit(
+                                                  DateTime.parse(
+                                                      _fechaEntrada.text),
+                                                  DateTime.parse(
+                                                      _fechaSalida.text),
+                                                ) &&
+                                                defineUseScreenWidth(
+                                                    screenWidth))
+                                            ? modesVisual
+                                            : modesVisualRange,
                                         onChanged: (p0, p1) => setState(
                                             () => selectedMode[p0] = p0 == p1),
                                       ),
@@ -850,18 +861,16 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                     child: DiasListView(
                                       initDay: _fechaEntrada.text,
                                       lastDay: _fechaSalida.text,
-                                      isCalendary:
-                                          (Utility.revisedLimitDateTime(
-                                                    DateTime.parse(
-                                                        _fechaEntrada.text),
-                                                    DateTime.parse(
-                                                        _fechaSalida.text),
-                                                  ) &&
-                                                  defineUseScreenWidth(
-                                                      screenWidth))
-                                              ? selectedMode.first
-                                              : false,
-                                      isTable: (Utility.revisedLimitDateTime(
+                                      isCalendary: (DateHelpers.revisedLimit(
+                                                DateTime.parse(
+                                                    _fechaEntrada.text),
+                                                DateTime.parse(
+                                                    _fechaSalida.text),
+                                              ) &&
+                                              defineUseScreenWidth(screenWidth))
+                                          ? selectedMode.first
+                                          : false,
+                                      isTable: (DateHelpers.revisedLimit(
                                                 DateTime.parse(
                                                     _fechaEntrada.text),
                                                 DateTime.parse(
@@ -870,17 +879,15 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                                               defineUseScreenWidth(screenWidth))
                                           ? selectedMode[1]
                                           : _selectedModeRange[0],
-                                      isCheckList:
-                                          (Utility.revisedLimitDateTime(
-                                                    DateTime.parse(
-                                                        _fechaEntrada.text),
-                                                    DateTime.parse(
-                                                        _fechaSalida.text),
-                                                  ) &&
-                                                  defineUseScreenWidth(
-                                                      screenWidth))
-                                              ? selectedMode[2]
-                                              : _selectedModeRange[1],
+                                      isCheckList: (DateHelpers.revisedLimit(
+                                                DateTime.parse(
+                                                    _fechaEntrada.text),
+                                                DateTime.parse(
+                                                    _fechaSalida.text),
+                                              ) &&
+                                              defineUseScreenWidth(screenWidth))
+                                          ? selectedMode[2]
+                                          : _selectedModeRange[1],
                                       sideController: widget.sideController,
                                     ),
                                   ),
@@ -961,114 +968,116 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
                           Utility.getUniqueCode().toString();
                     }
 
-                    habitacionProvider.useCashSeason = useCashSeasonRoom;
-                    if (isEditing) {
-                      if (typeQuote) {
-                        if (Utility.revisedIntegrityRoom(
-                            habitacionProvider, habitaciones)) {
-                          int days = DateTime.parse(_fechaSalida.text)
-                              .difference(DateTime.parse(_fechaEntrada.text))
-                              .inDays;
+                    // habitacionProvider.useCashSeason = useCashSeasonRoom;
+                    // if (isEditing) {
+                    //   if (typeQuote) {
+                    //     if (Utility.revisedIntegrityRoom(
+                    //         habitacionProvider, habitaciones)) {
+                    //       int days = DateTime.parse(_fechaSalida.text)
+                    //           .difference(DateTime.parse(_fechaEntrada.text))
+                    //           .inDays;
 
-                          if (alternativeTariffInd.any(
-                                  (element) => element.id == "tariffFree") &&
-                              !applyFreeTariff) {
-                            List<TarifaXDia> tarifasEncontradas = getTariffXDia(
-                              list,
-                              days,
-                              habitacionProvider.categoria ??
-                                  tipoHabitacion.first,
-                              tarifasProvisionalesProvider,
-                              descuentoProvider,
-                              typeQuote,
-                              useCashSeasonRoom,
-                            );
+                    //       if (alternativeTariffInd.any(
+                    //               (element) => element.id == "tariffFree") &&
+                    //           !applyFreeTariff) {
+                    //         List<TarifaXDia> tarifasEncontradas = getTariffXDia(
+                    //           list,
+                    //           days,
+                    //           habitacionProvider.categoria ??
+                    //               tipoHabitacion.first,
+                    //           tarifasProvisionalesProvider,
+                    //           descuentoProvider,
+                    //           typeQuote,
+                    //           useCashSeasonRoom,
+                    //         );
 
-                            alternativeTariffInd.clear();
+                    //         alternativeTariffInd.clear();
 
-                            for (var tarifaDiaria in tarifasEncontradas) {
-                              alternativeTariffInd.add(tarifaDiaria.copyWith());
-                            }
-                          }
-                          for (var element in alternativeTariffInd) {
-                            element.temporadaSelect = Utility.getSeasonNow(
-                              RegistroTarifa(temporadas: element.temporadas),
-                              days,
-                              useCashTariff: useCashSeasonRoom,
-                            );
-                          }
+                    //         for (var tarifaDiaria in tarifasEncontradas) {
+                    //           alternativeTariffInd.add(tarifaDiaria.copyWith());
+                    //         }
+                    //       }
+                    //       for (var element in alternativeTariffInd) {
+                    //         element.temporadaSelect = Utility.getSeasonNow(
+                    //           RegistroTarifa(temporadas: element.temporadas),
+                    //           days,
+                    //           useCashTariff: useCashSeasonRoom,
+                    //         );
+                    //       }
 
-                          habitacionProvider.tarifasXHabitacion = alternativeTariffInd;
-                        } else {
-                          habitacionProvider.tarifasXHabitacion = recoveryTariffs;
-                        }
-                        if (alternativeGrupTariff != null) {
-                          TarifaXDia? subAlternativeTariff =
-                              alternativeGrupTariff?.copyWith();
+                    //       habitacionProvider.tarifasXHabitacion =
+                    //           alternativeTariffInd;
+                    //     } else {
+                    //       habitacionProvider.tarifasXHabitacion =
+                    //           recoveryTariffs;
+                    //     }
+                    //     if (alternativeGrupTariff != null) {
+                    //       TarifaXDia? subAlternativeTariff =
+                    //           alternativeGrupTariff?.copyWith();
 
-                          if ((subAlternativeTariff?.tarifasBase ?? [])
-                              .isNotEmpty) {
-                            subAlternativeTariff?.tarifas =
-                                subAlternativeTariff.tarifasBase;
-                            subAlternativeTariff?.tarifa = subAlternativeTariff
-                                .tarifasBase
-                                ?.where((element) =>
-                                    element.categoria ==
-                                    habitacionProvider.categoria)
-                                .toList()
-                                .firstOrNull;
-                          }
+                    //       if ((subAlternativeTariff?.tarifasBase ?? [])
+                    //           .isNotEmpty) {
+                    //         subAlternativeTariff?.tarifas =
+                    //             subAlternativeTariff.tarifasBase;
+                    //         subAlternativeTariff?.tarifa = subAlternativeTariff
+                    //             .tarifasBase
+                    //             ?.where((element) =>
+                    //                 element.categoria ==
+                    //                 habitacionProvider.categoria)
+                    //             .toList()
+                    //             .firstOrNull;
+                    //       }
 
-                          habitacionProvider.tarifaGrupal =
-                              subAlternativeTariff;
-                        } else if (applyFreeTariff) {
-                          habitacionProvider.tarifaGrupal =
-                              Utility.getUniqueTariffs(
-                                      habitacionProvider.tarifasXHabitacion!)
-                                  .first;
-                        }
-                      }
-                      ref.read(habitacionesProvider.notifier).editItem(
-                          habitacionProvider.id,
-                          habitacionProvider);
-                    } else {
-                      ref
-                          .read(habitacionesProvider.notifier)
-                          .addItem(habitacionProvider, typeQuote);
+                    //       habitacionProvider.tarifaGrupal =
+                    //           subAlternativeTariff;
+                    //     } else if (applyFreeTariff) {
+                    //       habitacionProvider.tarifaGrupal =
+                    //           Utility.getUniqueTariffs(
+                    //                   habitacionProvider.tarifasXHabitacion!)
+                    //               .first;
+                    //     }
+                    //   }
+                    //   ref
+                    //       .read(habitacionesProvider.notifier)
+                    //       .editItem(habitacionProvider.id, habitacionProvider);
+                    // } else {
+                    //   ref
+                    //       .read(habitacionesProvider.notifier)
+                    //       .addItem(habitacionProvider, typeQuote);
 
-                      final politicaTarifaProvider =
-                          ref.watch(listPolicyProvider(""));
-                      final habitaciones = ref.watch(habitacionesProvider);
+                    //   final politicaTarifaProvider =
+                    //       ref.watch(listPolicyProvider(""));
+                    //   final habitaciones = ref.watch(habitacionesProvider);
 
-                      politicaTarifaProvider.when(
-                        data: (data) {
-                          if (data != null) {
-                            int rooms = 0;
-                            for (var element in habitaciones) {
-                              if (!element.esCortesia) rooms += element.count;
-                            }
+                    //   politicaTarifaProvider.when(
+                    //     data: (data) {
+                    //       if (data != null) {
+                    //         int rooms = 0;
+                    //         for (var element in habitaciones) {
+                    //           if (!element.esCortesia) rooms += element.count;
+                    //         }
 
-                            if (!typeQuote &&
-                                rooms >= data.limiteHabitacionCotizacion!) {
-                              ref
-                                  .watch(typeQuoteProvider.notifier)
-                                  .update((ref) => true);
-                            } else if (typeQuote &&
-                                rooms < data.limiteHabitacionCotizacion!) {
-                              ref
-                                  .watch(typeQuoteProvider.notifier)
-                                  .update((ref) => false);
-                            }
-                          }
-                        },
-                        error: (error, stackTrace) {
-                          print("Politicas no encontradas");
-                        },
-                        loading: () {
-                          print("Cargando politicas");
-                        },
-                      );
-                    }
+                    //         if (!typeQuote &&
+                    //             rooms >= data.limiteHabitacionCotizacion!) {
+                    //           ref
+                    //               .watch(typeQuoteProvider.notifier)
+                    //               .update((ref) => true);
+                    //         } else if (typeQuote &&
+                    //             rooms < data.limiteHabitacionCotizacion!) {
+                    //           ref
+                    //               .watch(typeQuoteProvider.notifier)
+                    //               .update((ref) => false);
+                    //         }
+                    //       }
+                    //     },
+                    //     error: (error, stackTrace) {
+                    //       print("Politicas no encontradas");
+                    //     },
+                    //     loading: () {
+                    //       print("Cargando politicas");
+                    //     },
+                    //   );
+                    // }
 
                     if (target == 1) {
                       setState(() => target = 0);
@@ -1110,386 +1119,383 @@ class _HabitacionFormState extends ConsumerState<HabitacionForm> {
   }
 
   void getTarifasSelect(
-    List<RegistroTarifa> list,
+    List<TarifaRack> list,
     Habitacion habitacion,
-    List<TarifaTableData> tarifasProvisionales,
+    List<Tarifa> tarifasProvisionales,
     double descuentoProvisional, {
     bool onlyCategory = false,
     bool updateToCash = false,
     bool refreshTariff = false,
-    required bool isGroup,
-    required bool useCashSeason,
+    String tipoTemporada = "individual",
   }) {
-    if (onlyCategory) {
-      for (var tariffDay in habitacion.tarifasXHabitacion!) {
-        tariffDay.categoria = habitacion.categoria;
-        if (tariffDay.tarifas != null) {
-          if (tariffDay.tarifa != null) {
-            tariffDay.tarifas!.removeWhere(
-                (element) => element.categoria == tariffDay.tarifa!.categoria);
-            tariffDay.tarifas!.add(tariffDay.tarifa!);
-          }
+    // if (onlyCategory) {
+    //   for (var tariffDay in habitacion.tarifasXHabitacion!) {
+    //     tariffDay.categoria = habitacion.categoria;
+    //     if (tariffDay.tarifas != null) {
+    //       if (tariffDay.tarifa != null) {
+    //         tariffDay.tarifas!.removeWhere(
+    //             (element) => element.categoria == tariffDay.tarifa!.categoria);
+    //         tariffDay.tarifas!.add(tariffDay.tarifa!);
+    //       }
 
-          tariffDay.tarifa = tariffDay.tarifas!
-              .where((element) => element.categoria == habitacion.categoria)
-              .firstOrNull;
-        } else {
-          tariffDay.tarifas = [];
-          if (tariffDay.tarifa != null) {
-            tariffDay.tarifas!.add(tariffDay.tarifa!);
-          }
-          tariffDay.tarifa = null;
-        }
-      }
-    } else {
-      if (isEditing && !refreshTariff && !isGroup) return;
+    //       tariffDay.tarifa = tariffDay.tarifas!
+    //           .where((element) => element.categoria == habitacion.categoria)
+    //           .firstOrNull;
+    //     } else {
+    //       tariffDay.tarifas = [];
+    //       if (tariffDay.tarifa != null) {
+    //         tariffDay.tarifas!.add(tariffDay.tarifa!);
+    //       }
+    //       tariffDay.tarifa = null;
+    //     }
+    //   }
+    // } else {
+    //   if (isEditing && !refreshTariff && !isGroup) return;
 
-      if (isGroup || useCashSeason) {
-        if (!alreadySaveTariff) {
-          for (var element in habitacion.tarifasXHabitacion!) {
-            recoveryTariffs.add(element.copyWith());
-          }
-          alreadySaveTariff = true;
-        }
-      }
+    //   if (isGroup || useCashSeason) {
+    //     if (!alreadySaveTariff) {
+    //       for (var element in habitacion.tarifasXHabitacion!) {
+    //         recoveryTariffs.add(element.copyWith());
+    //       }
+    //       alreadySaveTariff = true;
+    //     }
+    //   }
 
-      int days = DateTime.parse(_fechaSalida.text)
-          .difference(DateTime.parse(_fechaEntrada.text))
-          .inDays;
+    //   int days = DateTime.parse(_fechaSalida.text)
+    //       .difference(DateTime.parse(_fechaEntrada.text))
+    //       .inDays;
 
-      if (updateToCash) {
-        for (var element in habitacion.tarifasXHabitacion!) {
-          Temporada? selectSeason = Utility.getSeasonNow(
-            RegistroTarifa(temporadas: element.temporadas),
-            days,
-            isGroup: isGroup,
-            useCashTariff: useCashSeason,
-          );
+    //   if (updateToCash) {
+    //     for (var element in habitacion.tarifasXHabitacion!) {
+    //       Temporada? selectSeason = Utility.getSeasonNow(
+    //         RegistroTarifa(temporadas: element.temporadas),
+    //         days,
+    //         isGroup: isGroup,
+    //         useCashTariff: useCashSeason,
+    //       );
 
-          element.temporadaSelect = selectSeason;
-        }
+    //       element.temporadaSelect = selectSeason;
+    //     }
 
-        setState(() {});
-        return;
-      }
+    //     setState(() {});
+    //     return;
+    //   }
 
-      habitacion.tarifasXHabitacion!.clear();
+    //   habitacion.tarifasXHabitacion!.clear();
 
-      if (isGroup) {
-        if (habitacion.tarifaGrupal != null && !alreadyApply) {
-          for (var ink = 0; ink < days; ink++) {
-            DateTime dateNow =
-                DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
-            TarifaXDia newTariff = habitacion.tarifaGrupal!.copyWith();
-            newTariff.fecha = dateNow;
-            newTariff.dia = ink;
-            newTariff.numDays = 1;
-            habitacion.tarifasXHabitacion!.add(
-              newTariff.copyWith(),
-            );
-          }
-          if (habitacion.tarifaGrupal?.id == "tariffFree") {
-            tarifaLibre = habitacion.tarifaGrupal!;
-            applyFreeTariff = true;
-          } else {
-            alternativeGrupTariff = habitacion.tarifaGrupal;
-          }
-          alreadyApply = true;
-        } else {
-          List<TarifaXDia> tarifasEncontradas = getTariffXDia(
-            list,
-            days,
-            habitacion.categoria ?? tipoHabitacion.first,
-            tarifasProvisionales,
-            descuentoProvisional,
-            isGroup,
-            useCashSeason,
-            saveCashTariff: true,
-          );
+    //   if (isGroup) {
+    //     if (habitacion.tarifaGrupal != null && !alreadyApply) {
+    //       for (var ink = 0; ink < days; ink++) {
+    //         DateTime dateNow =
+    //             DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+    //         TarifaXDia newTariff = habitacion.tarifaGrupal!.copyWith();
+    //         newTariff.fecha = dateNow;
+    //         newTariff.dia = ink;
+    //         newTariff.numDays = 1;
+    //         habitacion.tarifasXHabitacion!.add(
+    //           newTariff.copyWith(),
+    //         );
+    //       }
+    //       if (habitacion.tarifaGrupal?.id == "tariffFree") {
+    //         tarifaLibre = habitacion.tarifaGrupal!;
+    //         applyFreeTariff = true;
+    //       } else {
+    //         alternativeGrupTariff = habitacion.tarifaGrupal;
+    //       }
+    //       alreadyApply = true;
+    //     } else {
+    //       List<TarifaXDia> tarifasEncontradas = getTariffXDia(
+    //         list,
+    //         days,
+    //         habitacion.categoria ?? tipoHabitacion.first,
+    //         tarifasProvisionales,
+    //         descuentoProvisional,
+    //         isGroup,
+    //         useCashSeason,
+    //         saveCashTariff: true,
+    //       );
 
-          alternativeTariffInd.clear();
+    //       alternativeTariffInd.clear();
 
-          for (var tarifaDiaria in tarifasEncontradas) {
-            alternativeTariffInd.add(tarifaDiaria.copyWith());
-          }
+    //       for (var tarifaDiaria in tarifasEncontradas) {
+    //         alternativeTariffInd.add(tarifaDiaria.copyWith());
+    //       }
 
-          List<TarifaXDia> tarifasFiltradas =
-              Utility.getUniqueTariffs(tarifasEncontradas);
+    //       List<TarifaXDia> tarifasFiltradas =
+    //           Utility.getUniqueTariffs(tarifasEncontradas);
 
-          if (tarifasFiltradas.length < 2) {
-            TarifaXDia? tarifaGrupal = tarifasFiltradas.first;
-            tarifaGrupal.numDays = 1;
+    //       if (tarifasFiltradas.length < 2) {
+    //         TarifaXDia? tarifaGrupal = tarifasFiltradas.first;
+    //         tarifaGrupal.numDays = 1;
 
-            tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
-              RegistroTarifa(temporadas: tarifaGrupal.temporadas),
-              DateTime.parse(habitacion.checkOut!)
-                  .difference(DateTime.parse(habitacion.checkIn!))
-                  .inDays,
-              isGroup: true,
-              useCashTariff: false,
-            );
+    //         tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
+    //           RegistroTarifa(temporadas: tarifaGrupal.temporadas),
+    //           DateTime.parse(habitacion.checkOut!)
+    //               .difference(DateTime.parse(habitacion.checkIn!))
+    //               .inDays,
+    //           isGroup: true,
+    //           useCashTariff: false,
+    //         );
 
-            Future.delayed(
-              Durations.short2,
-              () {
-                for (var ink = 0; ink < days; ink++) {
-                  TarifaXDia subTariff = tarifaGrupal.copyWith();
-                  subTariff.dia = ink;
-                  DateTime dateNow = DateTime.parse(_fechaEntrada.text)
-                      .add(Duration(days: ink));
-                  subTariff.fecha = dateNow;
-                  habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
-                }
-                setState(() {});
-              },
-            );
+    //         Future.delayed(
+    //           Durations.short2,
+    //           () {
+    //             for (var ink = 0; ink < days; ink++) {
+    //               TarifaXDia subTariff = tarifaGrupal.copyWith();
+    //               subTariff.dia = ink;
+    //               DateTime dateNow = DateTime.parse(_fechaEntrada.text)
+    //                   .add(Duration(days: ink));
+    //               subTariff.fecha = dateNow;
+    //               habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
+    //             }
+    //             setState(() {});
+    //           },
+    //         );
 
-            return;
-          }
+    //         return;
+    //       }
 
-          Future.delayed(
-            Durations.medium1,
-            () => showDialogRateManager(tarifasFiltradas, habitacion, days),
-          );
-        }
+    //       Future.delayed(
+    //         Durations.medium1,
+    //         () => showDialogRateManager(tarifasFiltradas, habitacion, days),
+    //       );
+    //     }
 
-        return;
-      }
+    //     return;
+    //   }
 
-      habitacion.tarifasXHabitacion!.addAll(
-        getTariffXDia(
-          list,
-          days,
-          habitacion.categoria ?? tipoHabitacion.first,
-          tarifasProvisionales,
-          descuentoProvisional,
-          isGroup,
-          useCashSeason,
-        ),
-      );
-    }
+    //   habitacion.tarifasXHabitacion!.addAll(
+    //     getTariffXDia(
+    //       list,
+    //       days,
+    //       habitacion.categoria ?? tipoHabitacion.first,
+    //       tarifasProvisionales,
+    //       descuentoProvisional,
+    //       isGroup,
+    //       useCashSeason,
+    //     ),
+    //   );
   }
+}
 
-  void showDialogRateManager(
-      List<TarifaXDia> tarifasFiltradas, Habitacion habitacion, int days,
-      {bool withoutAction = false}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return ManagerTariffGroupDialog(tarifasHabitacion: tarifasFiltradas);
-      },
-    ).then(
-      (value) {
-        // if (value == null) return;
-        List<TarifaXDia?> list = value ?? [];
-        if (list.isEmpty) {
-          TarifaXDia? tarifaGrupal = tarifasFiltradas
-              .reduce(((a, b) => a.numDays > b.numDays ? a : b));
+void showDialogRateManager(
+    List<TarifaXDia> tarifasFiltradas, Habitacion habitacion, int days,
+    {bool withoutAction = false}) {
+  // showDialog(
+  //   context: context,
+  //   builder: (context) {
+  //     return ManagerTariffGroupDialog(tarifasHabitacion: tarifasFiltradas);
+  //   },
+  // ).then(
+  //   (value) {
+  //     // if (value == null) return;
+  //     List<TarifaXDia?> list = value ?? [];
+  //     if (list.isEmpty) {
+  //       TarifaXDia? tarifaGrupal = tarifasFiltradas
+  //           .reduce(((a, b) => a.numDays > b.numDays ? a : b));
 
-          if (withoutAction &&
-              tarifaGrupal.id == (alternativeGrupTariff?.id ?? '')) {
-            return;
-          }
+  //       if (withoutAction &&
+  //           tarifaGrupal.id == (alternativeGrupTariff?.id ?? '')) {
+  //         return;
+  //       }
 
-          if (withoutAction) habitacion.tarifasXHabitacion!.clear();
+  //       if (withoutAction) habitacion.tarifasXHabitacion!.clear();
 
-          tarifaGrupal.numDays = 1;
+  //       tarifaGrupal.numDays = 1;
 
-          tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
-            RegistroTarifa(temporadas: tarifaGrupal.temporadas),
-            DateTime.parse(habitacion.checkOut!)
-                .difference(DateTime.parse(habitacion.checkIn!))
-                .inDays,
-            isGroup: true,
-          );
+  //       tarifaGrupal.temporadaSelect = Utility.getSeasonNow(
+  //         RegistroTarifa(temporadas: tarifaGrupal.temporadas),
+  //         DateTime.parse(habitacion.checkOut!)
+  //             .difference(DateTime.parse(habitacion.checkIn!))
+  //             .inDays,
+  //         isGroup: true,
+  //       );
 
-          Future.delayed(
-            Durations.short2,
-            () {
-              TarifaXDia subTariff = tarifaGrupal.copyWith();
-              alternativeGrupTariff = subTariff;
-              for (var ink = 0; ink < days; ink++) {
-                subTariff.dia = ink;
-                DateTime dateNow =
-                    DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
-                subTariff.fecha = dateNow;
-                habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
-              }
-              setState(() {});
-            },
-          );
-        } else {
-          if (!applyFreeTariff) {
-            if (withoutAction &&
-                list.first!.id == alternativeGrupTariff?.id) {
-              if (list.first?.temporadas != null) {
-                if (list.first?.temporadaSelect ==
-                    alternativeGrupTariff?.temporadaSelect) {}
-              } else {
-                if (list.first?.descIntegrado ==
-                    alternativeGrupTariff?.temporadaSelect) {
-                  return;
-                }
-              }
-            }
-          }
+  //       Future.delayed(
+  //         Durations.short2,
+  //         () {
+  //           TarifaXDia subTariff = tarifaGrupal.copyWith();
+  //           alternativeGrupTariff = subTariff;
+  //           for (var ink = 0; ink < days; ink++) {
+  //             subTariff.dia = ink;
+  //             DateTime dateNow =
+  //                 DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+  //             subTariff.fecha = dateNow;
+  //             habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
+  //           }
+  //           setState(() {});
+  //         },
+  //       );
+  //     } else {
+  //       if (!applyFreeTariff) {
+  //         if (withoutAction && list.first!.id == alternativeGrupTariff?.id) {
+  //           if (list.first?.temporadas != null) {
+  //             if (list.first?.temporadaSelect ==
+  //                 alternativeGrupTariff?.temporadaSelect) {}
+  //           } else {
+  //             if (list.first?.descIntegrado ==
+  //                 alternativeGrupTariff?.temporadaSelect) {
+  //               return;
+  //             }
+  //           }
+  //         }
+  //       }
 
-          if (withoutAction) habitacion.tarifasXHabitacion!.clear();
+  //       if (withoutAction) habitacion.tarifasXHabitacion!.clear();
 
-          TarifaXDia subTariff = list.first!.copyWith();
-          subTariff.numDays = 1;
-          alternativeGrupTariff = subTariff.copyWith();
+  //       TarifaXDia subTariff = list.first!.copyWith();
+  //       subTariff.numDays = 1;
+  //       alternativeGrupTariff = subTariff.copyWith();
 
-          if ((subTariff.tarifasBase ?? []).isNotEmpty) {
-            subTariff.tarifas = subTariff.tarifasBase;
-            subTariff.tarifa = subTariff.tarifasBase
-                ?.where((element) => element.categoria == subTariff.categoria)
-                .toList()
-                .firstOrNull;
-          }
+  //       if ((subTariff.tarifasBase ?? []).isNotEmpty) {
+  //         subTariff.tarifas = subTariff.tarifasBase;
+  //         subTariff.tarifa = subTariff.tarifasBase
+  //             ?.where((element) => element.categoria == subTariff.categoria)
+  //             .toList()
+  //             .firstOrNull;
+  //       }
 
-          for (var ink = 0; ink < days; ink++) {
-            subTariff.dia = ink;
+  //       for (var ink = 0; ink < days; ink++) {
+  //         subTariff.dia = ink;
 
-            DateTime dateNow =
-                DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
-            subTariff.fecha = dateNow;
-            habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
-          }
-          setState(() {});
-        }
-      },
-    );
-  }
+  //         DateTime dateNow =
+  //             DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+  //         subTariff.fecha = dateNow;
+  //         habitacion.tarifasXHabitacion!.add(subTariff.copyWith());
+  //       }
+  //       setState(() {});
+  //     }
+  //   },
+  // );
+}
 
-  List<TarifaXDia> getTariffXDia(
-    List<RegistroTarifa> list,
-    int days,
-    String categoria,
-    List<TarifaTableData> tarifasProvisionales,
-    double descuentoProvisional,
-    bool isGroup,
-    bool useCashSeason, {
-    bool saveCashTariff = false,
-  }) {
-    List<TarifaXDia> tarifaXDiaList = [];
+List<TarifaXDia> getTariffXDia(
+  List<RegistroTarifa> list,
+  int days,
+  String categoria,
+  List<TarifaTableData> tarifasProvisionales,
+  double descuentoProvisional,
+  bool isGroup,
+  bool useCashSeason, {
+  bool saveCashTariff = false,
+}) {
+  List<TarifaXDia> tarifaXDiaList = [];
 
-    for (var ink = 0; ink < days; ink++) {
-      DateTime dateNow =
-          DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
+  // for (var ink = 0; ink < days; ink++) {
+  //   DateTime dateNow =
+  //       DateTime.parse(_fechaEntrada.text).add(Duration(days: ink));
 
-      RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
+  //   RegistroTarifa? newTariff = Utility.revisedTariffDay(dateNow, list);
 
-      if (applyFreeTariff) {
-        TarifaXDia newTarifaLibre = TarifaXDia(
-          id: tarifaLibre.id,
-          color: tarifaLibre.color,
-          descIntegrado: tarifaLibre.descIntegrado,
-          modificado: tarifaLibre.modificado,
-          nombreTariff: tarifaLibre.nombreTariff,
-          numDays: tarifaLibre.numDays,
-          periodo: tarifaLibre.periodo?.copyWith(),
-          subCode: tarifaLibre.subCode,
-          tarifa: tarifaLibre.tarifa?.copyWith(),
-          tarifas: tarifaLibre.tarifas
-              ?.map((element) => element.copyWith())
-              .toList(),
-          temporadaSelect: tarifaLibre.temporadaSelect?.copyWith(),
-          temporadas: tarifaLibre.temporadas
-            ?..map((element) => element.copyWith()).toList(),
-        );
-        newTarifaLibre.dia = ink;
-        newTarifaLibre.fecha = dateNow;
-        newTarifaLibre.categoria = categoria;
-        tarifaXDiaList.add(newTarifaLibre);
-        continue;
-      }
+  //   if (applyFreeTariff) {
+  //     TarifaXDia newTarifaLibre = TarifaXDia(
+  //       id: tarifaLibre.id,
+  //       color: tarifaLibre.color,
+  //       descIntegrado: tarifaLibre.descIntegrado,
+  //       modificado: tarifaLibre.modificado,
+  //       nombreTariff: tarifaLibre.nombreTariff,
+  //       numDays: tarifaLibre.numDays,
+  //       periodo: tarifaLibre.periodo?.copyWith(),
+  //       subCode: tarifaLibre.subCode,
+  //       tarifa: tarifaLibre.tarifa?.copyWith(),
+  //       tarifas: tarifaLibre.tarifas
+  //           ?.map((element) => element.copyWith())
+  //           .toList(),
+  //       temporadaSelect: tarifaLibre.temporadaSelect?.copyWith(),
+  //       temporadas: tarifaLibre.temporadas
+  //         ?..map((element) => element.copyWith()).toList(),
+  //     );
+  //     newTarifaLibre.dia = ink;
+  //     newTarifaLibre.fecha = dateNow;
+  //     newTarifaLibre.categoria = categoria;
+  //     tarifaXDiaList.add(newTarifaLibre);
+  //     continue;
+  //   }
 
-      if (newTariff == null) {
-        TarifaXDia tarifaNoDefinida = TarifaXDia();
-        tarifaNoDefinida = TarifaXDia(
-          dia: ink,
-          fecha: dateNow,
-          nombreTariff: "No definido",
-          id: "Unknow",
-          categoria: categoria,
-          descIntegrado:
-              (tarifasProvisionales.isEmpty) ? 0 : descuentoProvisional,
-          tarifas: (tarifasProvisionales.isEmpty)
-              ? null
-              : tarifasProvisionales
-                  .map((element) => element.copyWith())
-                  .toList(),
-          tarifa: (tarifasProvisionales.isEmpty)
-              ? null
-              : (tarifasProvisionales
-                  .map((element) => element.copyWith())
-                  .toList()
-                  .where((element) => element.categoria == categoria)
-                  .firstOrNull),
-        );
+  //   if (newTariff == null) {
+  //     TarifaXDia tarifaNoDefinida = TarifaXDia();
+  //     tarifaNoDefinida = TarifaXDia(
+  //       dia: ink,
+  //       fecha: dateNow,
+  //       nombreTariff: "No definido",
+  //       id: "Unknow",
+  //       categoria: categoria,
+  //       descIntegrado:
+  //           (tarifasProvisionales.isEmpty) ? 0 : descuentoProvisional,
+  //       tarifas: (tarifasProvisionales.isEmpty)
+  //           ? null
+  //           : tarifasProvisionales
+  //               .map((element) => element.copyWith())
+  //               .toList(),
+  //       tarifa: (tarifasProvisionales.isEmpty)
+  //           ? null
+  //           : (tarifasProvisionales
+  //               .map((element) => element.copyWith())
+  //               .toList()
+  //               .where((element) => element.categoria == categoria)
+  //               .firstOrNull),
+  //     );
 
-        tarifaXDiaList.add(tarifaNoDefinida);
-        continue;
-      }
+  //     tarifaXDiaList.add(tarifaNoDefinida);
+  //     continue;
+  //   }
 
-      Temporada? selectSeason = Utility.getSeasonNow(
-        newTariff.copyWith(),
-        days,
-        isGroup: isGroup,
-        useCashTariff: useCashSeason,
-        saveCashTariff: saveCashTariff,
-      );
+  //   Temporada? selectSeason = Utility.getSeasonNow(
+  //     newTariff.copyWith(),
+  //     days,
+  //     isGroup: isGroup,
+  //     useCashTariff: useCashSeason,
+  //     saveCashTariff: saveCashTariff,
+  //   );
 
-      tarifaXDiaList.add(
-        TarifaXDia(
-          dia: ink,
-          fecha: dateNow,
-          color: newTariff.copyWith().color,
-          nombreTariff: newTariff.copyWith().nombre,
-          categoria: categoria,
-          id: newTariff.copyWith().code,
-          idInt: newTariff.copyWith().id,
-          periodo: Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
-          tarifa: (selectSeason?.forCash ?? false)
-              ? Utility.getTarifasData(
-                  [
-                    selectSeason?.tarifas
-                        ?.where((element) => element.categoria == categoria)
-                        .firstOrNull
-                        ?.copyWith()
-                  ],
-                ).first
-              : newTariff
-                  .copyWith()
-                  .tarifas!
-                  .firstWhere((element) => element.categoria == categoria)
-                  .copyWith(),
-          temporadaSelect: selectSeason,
-          temporadas: newTariff.copyWith().temporadas,
-          tarifas: (selectSeason?.forCash ?? false)
-              ? Utility.getTarifasData(
-                  selectSeason?.tarifas ?? List<Tarifa?>.empty(),
-                )
-              : newTariff
-                  .copyWith()
-                  .tarifas
-                  ?.map((element) => element.copyWith())
-                  .toList(),
-          tarifasBase: newTariff
-              .copyWith()
-              .tarifas
-              ?.map((element) => element.copyWith())
-              .toList(),
-        ),
-      );
-    }
+  //   tarifaXDiaList.add(
+  //     TarifaXDia(
+  //       dia: ink,
+  //       fecha: dateNow,
+  //       color: newTariff.copyWith().color,
+  //       nombreTariff: newTariff.copyWith().nombre,
+  //       categoria: categoria,
+  //       id: newTariff.copyWith().code,
+  //       idInt: newTariff.copyWith().id,
+  //       periodo: Utility.getPeriodNow(dateNow, newTariff.copyWith().periodos),
+  //       tarifa: (selectSeason?.forCash ?? false)
+  //           ? Utility.getTarifasData(
+  //               [
+  //                 selectSeason?.tarifas
+  //                     ?.where((element) => element.categoria == categoria)
+  //                     .firstOrNull
+  //                     ?.copyWith()
+  //               ],
+  //             ).first
+  //           : newTariff
+  //               .copyWith()
+  //               .tarifas!
+  //               .firstWhere((element) => element.categoria == categoria)
+  //               .copyWith(),
+  //       temporadaSelect: selectSeason,
+  //       temporadas: newTariff.copyWith().temporadas,
+  //       tarifas: (selectSeason?.forCash ?? false)
+  //           ? Utility.getTarifasData(
+  //               selectSeason?.tarifas ?? List<Tarifa?>.empty(),
+  //             )
+  //           : newTariff
+  //               .copyWith()
+  //               .tarifas
+  //               ?.map((element) => element.copyWith())
+  //               .toList(),
+  //       tarifasBase: newTariff
+  //           .copyWith()
+  //           .tarifas
+  //           ?.map((element) => element.copyWith())
+  //           .toList(),
+  //     ),
+  //   );
+  // }
 
-    showSwitchCashSeason = tarifaXDiaList.any((element) =>
-        element.temporadas?.any((element) => element.forCash ?? false) ??
-        false);
-    setState(() {});
+  // showSwitchCashSeason = tarifaXDiaList.any((element) =>
+  //     element.temporadas?.any((element) => element.forCash ?? false) ??
+  //     false);
+  // setState(() {});
 
-    return tarifaXDiaList;
-  }
+  return tarifaXDiaList;
 }

@@ -233,8 +233,8 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   }
 
   Future<pw.Document> generarComprobante(
-      Cotizacion cotizacion, bool typeQuote) async {
-    if (!typeQuote) {
+      Cotizacion cotizacion, String typeQuote) async {
+    if (!(typeQuote == "grupal")) {
       return pdfPrinc = await GeneradorDocService().generarCompInd(
         cotizacion: cotizacion,
         isDirect: true,

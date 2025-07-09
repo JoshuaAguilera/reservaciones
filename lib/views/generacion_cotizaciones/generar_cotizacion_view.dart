@@ -26,6 +26,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import '../../models/notificacion_model.dart';
 import '../../models/prefijo_telefonico_model.dart';
+import '../../models/tarifa_x_habitacion_model.dart';
 import '../../view-models/providers/dahsboard_provider.dart';
 import '../../view-models/providers/notificacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
@@ -92,7 +93,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     }
 
     void _goDetailRoom(Habitacion habitacion) {
-      Habitacion habitacionSelect = habitacion.CopyWith();
+      Habitacion habitacionSelect = habitacion.copyWith();
       habitacionSelect.tarifasXHabitacion = [];
       for (var element in habitacion.tarifasXHabitacion!) {
         habitacionSelect.tarifasXHabitacion!.add(element.copyWith());
@@ -109,8 +110,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           .read(detectChangeProvider.notifier)
           .update((state) => UniqueKey().hashCode);
 
-      ref.read(useCashSeasonRoomProvider.notifier).update(
-          (state) => useCashTariff || (habitacion.useCashSeason ?? false));
+      // ref.read(useCashSeasonRoomProvider.notifier).update(
+      //     (state) => useCashTariff || (habitacion.useCashSeason ?? false));
 
       Future.delayed(
         800.ms,
@@ -139,7 +140,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           } else {
             if (value == null) return;
 
-            List<TarifaXDia?> selectTariffs = value;
+            List<TarifaXHabitacion?> selectTariffs = value;
             ref
                 .watch(HabitacionProvider.provider.notifier)
                 .implementGroupTariff(selectTariffs);
@@ -149,8 +150,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     }
 
     // if (!(Preferences.rol == 'RECEPCION')) {
-    ref.listen<bool>(typeQuoteProvider, (previous, next) {
-      if (next) {
+    ref.listen<String>(typeQuoteProvider, (previous, next) {
+      if (next == 'grupal') {
         _showConfigurationTariffGroup(firstView: true);
       } else {
         ref.watch(HabitacionProvider.provider.notifier).removeGroupTariff();
@@ -159,30 +160,30 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
     // }
 
     Future saveQuoteBD({int? limitDay}) async {
-      int id = await CotizacionService().saveData(
-        cotizacion: cotizacion,
-        habitaciones: habitaciones,
-        folio: folio,
-        prefijoInit: prefijoInit,
-        isQuoteGroup: typeQuote,
-        limitDay: limitDay,
-      );
+      // int id = await CotizacionService().saveData(
+      //   cotizacion: cotizacion,
+      //   habitaciones: habitaciones,
+      //   folio: folio,
+      //   prefijoInit: prefijoInit,
+      //   isQuoteGroup: typeQuote,
+      //   limitDay: limitDay,
+      // );
 
-      if (id == 0) {
-        if (!context.mounted) return;
-        showSnackBar(
-          type: "danger",
-          context: context,
-          title: "Error al registrar la cotizacion",
-          message: "Se produjo un error al insertar la nueva cotización.",
-        );
-        return;
-      }
+      // if (id == 0) {
+      //   if (!context.mounted) return;
+      //   showSnackBar(
+      //     type: "danger",
+      //     context: context,
+      //     title: "Error al registrar la cotizacion",
+      //     message: "Se produjo un error al insertar la nueva cotización.",
+      //   );
+      //   return;
+      // }
 
-      receiptQuotePresent = cotizacion.CopyWith();
-      receiptQuotePresent.idInt = id;
-      receiptQuotePresent.folio = folio;
-      receiptQuotePresent.esGrupo = typeQuote;
+      receiptQuotePresent = cotizacion.copyWith();
+      // receiptQuotePresent.idInt = id;
+      // receiptQuotePresent.folio = folio;
+      // receiptQuotePresent.esGrupo = typeQuote;
       // receiptQuotePresent.numeroTelefonico =
       //     (cotizacion.numeroTelefonico ?? '').isEmpty
       //         ? ""
@@ -190,7 +191,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       //             (cotizacion.numeroTelefonico ?? '');
       receiptQuotePresent.habitaciones = [];
       for (var element in habitaciones) {
-        receiptQuotePresent.habitaciones!.add(element.CopyWith());
+        receiptQuotePresent.habitaciones!.add(element.copyWith());
       }
 
       comprobantePDF = await ref
@@ -214,7 +215,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
           .read(changeHistoryProvider.notifier)
           .update((state) => UniqueKey().hashCode);
 
-      ref.read(typeQuoteProvider.notifier).update((state) => false);
+      ref.read(typeQuoteProvider.notifier).update((state) => "individual");
 
       ref.read(useCashSeasonProvider.notifier).update((state) => false);
 
@@ -224,8 +225,8 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
 
       Notificacion newNotification = Notificacion(
         idInt: notificaciones.length + 1,
-        mensaje: "info",
-        createdAt:
+        documento: "info",
+        mensaje:
             "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombres ?? ''} ha sido registrada.",
         id: "Nueva cotización registrada",
       );
@@ -271,11 +272,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                 const SizedBox(height: 8),
                                 // if (!(Preferences.rol == 'RECEPCION'))
                                 SizedBox(
-                                  child: (!typeQuote)
+                                  child: (typeQuote == "individual")
                                       ? cardTypeQuote(
                                           type: "Cotización Individual",
                                           color: DesktopColors.cotIndiv,
-                                          withTarget: typeQuote,
+                                          withTarget: typeQuote == "grupal",
                                           //withSwithCashTariff: true,
                                           useCashTariff: useCashTariff,
                                           onPressedSwitch: (p0) {
@@ -288,7 +289,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                       : cardTypeQuote(
                                           type: "Cotización Grupal",
                                           color: DesktopColors.cotGrupal,
-                                          withTarget: !typeQuote,
+                                          withTarget: typeQuote != "grupal",
                                           withButton: true,
                                           onPressedButton: () {
                                             _showConfigurationTariffGroup();

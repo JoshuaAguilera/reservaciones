@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
 import 'package:generador_formato/view-models/providers/tarifario_provider.dart';
 import 'package:generador_formato/view-models/services/tarifa_base_service.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
@@ -9,13 +8,16 @@ import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:generador_formato/utils/shared_preferences/settings.dart';
 import 'package:intl/intl.dart';
 
+import '../../models/tarifa_rack_model.dart';
 import '../../models/temporada_model.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/ui/show_snackbar.dart';
 import '../../res/helpers/utility.dart';
 import '../../utils/widgets/item_rows.dart';
 import '../../res/ui/text_styles.dart';
+import '../../view-models/services/tarifa_rack_service.dart';
 
 class CalendarControllerWidget extends ConsumerStatefulWidget {
   final bool target;
@@ -63,7 +65,7 @@ class _ControllerCalendarWidgetState
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifasProvider = ref.watch(allTarifaProvider(""));
+    final tarifasProvider = ref.watch(listTarifaProvider(""));
     final dateTariffer = ref.watch(dateTarifferProvider);
     final pageWeek = ref.watch(pageWeekControllerProvider);
 
@@ -218,7 +220,7 @@ class _ControllerCalendarWidgetState
                           onPressed: () {
                             ref
                                 .read(editTarifaProvider.notifier)
-                                .update((state) => RegistroTarifa());
+                                .update((state) => TarifaRack());
                             ref
                                 .read(temporadasIndividualesProvider.notifier)
                                 .update(
@@ -289,11 +291,11 @@ class _ControllerCalendarWidgetState
                                                       list[index]
                                                           .temporadas
                                                           ?.where((element) =>
-                                                              ((element.forGroup ??
-                                                                      false) ==
+                                                              ((element.tipo ==
+                                                                      "grupal") ==
                                                                   false) &&
-                                                              ((element.forCash ??
-                                                                      false) ==
+                                                              ((element.tipo ==
+                                                                      "efectivo") ==
                                                                   false))
                                                           .toList()
                                                           .map((e) =>
@@ -308,9 +310,8 @@ class _ControllerCalendarWidgetState
                                                       list[index]
                                                           .temporadas
                                                           ?.where((element) =>
-                                                              element
-                                                                  .forGroup ??
-                                                              false)
+                                                              element.tipo ==
+                                                              "grupal")
                                                           .toList()
                                                           .map((e) =>
                                                               e.copyWith())
@@ -318,15 +319,14 @@ class _ControllerCalendarWidgetState
                                                       List<Temporada>.empty());
 
                                               ref
-                                                  .read(
-                                                      temporadasEfectivoProvider
-                                                          .notifier)
+                                                  .read(temporadasEfectivoProvider
+                                                      .notifier)
                                                   .update((state) =>
                                                       list[index]
                                                           .temporadas
                                                           ?.where((element) =>
-                                                              element.forCash ??
-                                                              false)
+                                                              element.tipo ==
+                                                              "efectivo")
                                                           .toList()
                                                           .map((e) =>
                                                               e.copyWith())
@@ -341,48 +341,47 @@ class _ControllerCalendarWidgetState
                                               widget.onCreated!.call();
                                             },
                                             onDelete: () async {
-                                              bool isSaves =
-                                                  await TarifaBaseService()
-                                                      .deleteTarifaRack(
-                                                          list[index]);
+                                              // bool isSaves =
+                                              //     await TarifaRackService()
+                                              //         .delete(list[index]);
 
-                                              if (isSaves) {
-                                                showSnackBar(
-                                                  context: context,
-                                                  title: "Tarifa Eliminada",
-                                                  message:
-                                                      "La tarifa fue eliminada exitosamente.",
-                                                  type: "success",
-                                                  iconCustom: Icons.delete,
-                                                );
+                                              // if (isSaves) {
+                                              //   showSnackBar(
+                                              //     context: context,
+                                              //     title: "Tarifa Eliminada",
+                                              //     message:
+                                              //         "La tarifa fue eliminada exitosamente.",
+                                              //     type: "success",
+                                              //     iconCustom: Icons.delete,
+                                              //   );
 
-                                                Future.delayed(
-                                                  500.ms,
-                                                  () {
-                                                    ref
-                                                        .read(
-                                                            changeTarifasProvider
-                                                                .notifier)
-                                                        .update((state) =>
-                                                            UniqueKey()
-                                                                .hashCode);
-                                                  },
-                                                );
-                                              } else {
-                                                if (mounted) return;
-                                                showSnackBar(
-                                                    context: context,
-                                                    title:
-                                                        "Error de eliminación",
-                                                    message:
-                                                        "Se detecto un error al intentar eliminar la tarifa. Intentelo más tarde.",
-                                                    type: "danger");
-                                                return;
-                                              }
+                                              //   Future.delayed(
+                                              //     500.ms,
+                                              //     () {
+                                              //       ref
+                                              //           .read(
+                                              //               changeTarifasProvider
+                                              //                   .notifier)
+                                              //           .update((state) =>
+                                              //               UniqueKey()
+                                              //                   .hashCode);
+                                              //     },
+                                              //   );
+                                              // } else {
+                                              //   if (mounted) return;
+                                              //   showSnackBar(
+                                              //       context: context,
+                                              //       title:
+                                              //           "Error de eliminación",
+                                              //       message:
+                                              //           "Se detecto un error al intentar eliminar la tarifa. Intentelo más tarde.",
+                                              //       type: "danger");
+                                              //   return;
+                                              // }
                                             },
                                             onChangedSelect: (p0) {
-                                              setState(() =>
-                                                  list[index].isSelected = p0);
+                                              list[index].select = p0 ?? false;
+                                              setState(() {});
                                               ref
                                                   .read(
                                                       changeTarifasListProvider
@@ -439,7 +438,7 @@ class _ControllerCalendarWidgetState
                     ),
                     Expanded(
                       child: TextStyles.standardText(
-                        text: Utility.getCompleteDate(
+                        text: DateHelpers.getStringDate(
                                 data: DateTime.now(), onlyNameDate: true)
                             .replaceAll(r' ', ''),
                         color: Theme.of(context).dividerColor,

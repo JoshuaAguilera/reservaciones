@@ -32,7 +32,7 @@ class _ManagerCashTariffDialogState extends State<ManagerCashTariffDialog> {
     {"VISTA A LA RESERVA": DesktopColors.vistaReserva},
     {"VISTA PARCIAL AL MAR": DesktopColors.vistaParcialMar},
   ];
-  Tarifa? firstTariff = Tarifa(categoria: tipoHabitacion.first);
+  Tarifa? firstTariff;
   Tarifa? saveTariff;
   bool inProcess = false;
   bool showError = false;
@@ -128,12 +128,10 @@ class _ManagerCashTariffDialogState extends State<ManagerCashTariffDialog> {
                                         firstTariff?.copyWith();
 
                                     Tarifa saveIntTariff = Tarifa(
-                                      categoria: tipoHabitacion[
-                                          categorias.indexOf(selectCategory)],
-                                      code: selectTariff?.code ??
-                                          "${firstTariff?.code} - $selectCategory",
-                                      id: selectTariff?.id ??
-                                          categorias.indexOf(selectCategory),
+                                      // categoria: tipoHabitacion[
+                                      //     categorias.indexOf(selectCategory)],
+                                      // id: selectTariff?.id ??
+                                      //     categorias.indexOf(selectCategory),
                                       tarifaAdulto1a2:
                                           _tarifaAdultoSingleController
                                                   .text.isEmpty
@@ -268,15 +266,9 @@ class _ManagerCashTariffDialogState extends State<ManagerCashTariffDialog> {
                                   categorias.indexOf(selectCategory)])
                           .firstOrNull
                           ?.id;
-                      nowTariff.code = widget.temporada.tarifas
-                          ?.where((element) =>
-                              element.categoria ==
-                              tipoHabitacion[
-                                  categorias.indexOf(selectCategory)])
-                          .firstOrNull
-                          ?.code;
-                      nowTariff.categoria =
-                          tipoHabitacion[categorias.indexOf(selectCategory)];
+
+                      // nowTariff.categoria =
+                      //     tipoHabitacion[categorias.indexOf(selectCategory)];
                       nowTariff.tarifaAdulto1a2 =
                           double.parse(_tarifaAdultoSingleController.text);
                       nowTariff.tarifaAdulto3 =

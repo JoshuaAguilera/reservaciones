@@ -16,6 +16,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../models/categoria_model.dart';
+import '../../models/habitacion_model.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/services/send_quote_service.dart';
 import '../../res/ui/progress_indicator.dart';
@@ -211,7 +213,8 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
       String messageRequest = await SendQuoteService().sendQuoteMail(
         widget.comprobantePDF,
         widget.cotizacion,
-        widget.cotizacion.habitaciones!,
+        widget.cotizacion.habitaciones ?? <Habitacion>[],
+        <Categoria>[],
         newMail: newMail,
       );
       if (messageRequest.isEmpty) {
@@ -315,8 +318,8 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
     String message = (widget.cotizacion.esGrupo ?? false)
         ? await SendQuoteService()
             .generateMessageWhatsAppGroup(widget.cotizacion)
-        : await SendQuoteService().generateMessageWhatsApp(
-            widget.cotizacion, widget.cotizacion.habitaciones!);
+        : await SendQuoteService()
+            .generateMessageWhatsApp(widget.cotizacion, <Categoria>[]);
 
     if (!mounted) return;
     showDialog(

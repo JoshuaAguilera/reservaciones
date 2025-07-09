@@ -2,13 +2,13 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:generador_formato/models/periodo_model.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
 
+import '../../../res/helpers/colors_helpers.dart';
 import '../../../res/ui/buttons.dart';
 import '../../../res/ui/inside_snackbar.dart';
 import '../../../res/ui/title_page.dart';
@@ -122,8 +122,8 @@ class _PeriodCalendarDialogState extends State<PeriodCalendarDialog> {
                       width: 350,
                       child: ScrollableCleanCalendar(
                         daySelectedBackgroundColorBetween:
-                            Utility.darken(widget.colorTariff, -0.3)
-                                .withOpacity(0.9),
+                            ColorsHelpers.darken(widget.colorTariff, -0.3)
+                                .withValues(alpha: 0.9),
                         daySelectedBackgroundColor: widget.colorTariff,
                         locale: "es",
                         calendarController: calendarController,

@@ -2,9 +2,9 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
+import '../../res/helpers/date_helpers.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/helpers/constants.dart';
@@ -36,7 +36,7 @@ class _TarifarioCalendaryMonthViewState
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
     final dateTariffer = ref.watch(dateTarifferProvider);
     final pageWeek = ref.watch(pageWeekControllerProvider);
     final monthController = ref.watch(monthNotifierProvider);
@@ -160,7 +160,7 @@ class _TarifarioCalendaryMonthViewState
                       child: Column(
                         children: [
                           for (var i = 0;
-                              i < Utility.getWeeksMonth(dateTariffer);
+                              i < DateHelpers.getWeeksInMonth(dateTariffer);
                               i++)
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -194,15 +194,16 @@ class _TarifarioCalendaryMonthViewState
                                           itemBuilder: (context, index) {
                                             if (Utility.showTariffByWeek(
                                                     list[index].periodos,
-                                                    Utility.getInitsWeekMonth(
-                                                        dateTariffer, i)) &&
-                                                list[index].isSelected!) {
+                                                    DateHelpers
+                                                        .getInitWeekOfMonth(
+                                                            dateTariffer, i)) &&
+                                                list[index].select!) {
                                               return PeriodItemRow(
                                                 target: monthController
                                                     .targetCalendar,
                                                 compact: true,
-                                                weekNow:
-                                                    Utility.getInitsWeekMonth(
+                                                weekNow: DateHelpers
+                                                    .getInitWeekOfMonth(
                                                         dateTariffer, i),
                                                 tarifa: list[index],
                                                 lenghtDays: 1,

@@ -356,4 +356,11 @@ extension DateOnlyCompare on DateTime {
     ];
     return daysInMonth[month - 1];
   }
+
+  static DateTime getStartOfWeek(DateTime monthStart, int weekIndex) {
+    final firstWeekStart =
+        monthStart.subtract(Duration(days: monthStart.weekday - 1));
+
+    return firstWeekStart.add(Duration(days: weekIndex * 7));
+  }
 }

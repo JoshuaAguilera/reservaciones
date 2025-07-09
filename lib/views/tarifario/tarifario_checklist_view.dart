@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:generador_formato/utils/widgets/item_rows.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../models/registro_tarifa_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
@@ -36,7 +35,7 @@ class _TarifarioChecklistViewState
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(tarifaBaseProvider(""));
     final tarifasBase = ref.watch(tarifaBaseProvider(""));
 
     return Padding(
@@ -61,12 +60,16 @@ class _TarifarioChecklistViewState
                                 return ItemRow.tarifaCheckListItemRow(
                                   rack: list[index],
                                   tarifaBase: tarifasB
-                                          .where((elementInt) =>
-                                              elementInt.idInt ==
-                                              list[index]
-                                                  .tarifas!
-                                                  .first
-                                                  .tarifaPadreId)
+                                          .where(
+                                            (elementInt) =>
+                                                elementInt.idInt ==
+                                                list[index]
+                                                    .registros!
+                                                    .firstOrNull
+                                                    ?.tarifa
+                                                    ?.tarifaBase
+                                                    ?.idInt,
+                                          )
                                           .firstOrNull
                                           ?.nombre ??
                                       '',

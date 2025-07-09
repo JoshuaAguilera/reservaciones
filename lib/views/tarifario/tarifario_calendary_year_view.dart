@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/views/tarifario/calendar_controller_widget.dart';
+import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 
 import '../../models/registro_tarifa_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/helpers/utility.dart';
@@ -38,7 +39,7 @@ class _TarifarioCalendaryYearViewState
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final listTarifasProvider = ref.watch(listTarifaProvider(""));
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
     final dateTariffer = ref.watch(dateTarifferProvider);
 
     return SizedBox(
@@ -118,7 +119,7 @@ class _TarifarioCalendaryYearViewState
   }
 
   Widget buildCalendarYear(
-      DateTime month, List<RegistroTarifa> list, DateTime dateTariffer) {
+      DateTime month, List<TarifaRack> list, DateTime dateTariffer) {
     int daysInMonth = DateTime(dateTariffer.year, month.month + 1, 0).day;
     DateTime firstDayOfMonth = DateTime(dateTariffer.year, month.month, 1);
     int weekdayOfFirstDay = firstDayOfMonth.weekday;
@@ -140,8 +141,10 @@ class _TarifarioCalendaryYearViewState
               dateTariffer.year, month.month, index - weekdayOfFirstDay + 2);
           int text = date.day;
 
-          RegistroTarifa? tariffNow = Utility.revisedTariffDay(
-              DateTime(dateTariffer.year, month.month, text), list);
+          TarifaRack? tariffNow = Utility.revisedTariffDay(
+            DateTime(dateTariffer.year, month.month, text),
+            list,
+          );
 
           return InkWell(
             onTap: () {},
@@ -165,7 +168,7 @@ class _TarifarioCalendaryYearViewState
                       ),
                     ),
                   )
-                else if (tariffNow != null && tariffNow.isSelected!)
+                else if (tariffNow != null && tariffNow.select)
                   Expanded(
                     child: DayInfoItemRow(
                       key: UniqueKey(),

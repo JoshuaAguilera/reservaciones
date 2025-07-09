@@ -19,6 +19,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/periodo_model.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
 import '../../view-models/providers/dahsboard_provider.dart';
 import '../../view-models/providers/usuario_provider.dart';
@@ -99,33 +100,33 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
     }
 
     Future deleteQuote(String? folio) async {
-      if (await CotizacionService().delete(folio ?? '')) {
-        ref
-            .read(changeHistoryProvider.notifier)
-            .update((state) => UniqueKey().hashCode);
+      // if (await CotizacionService().delete(folio ?? '')) {
+      //   ref
+      //       .read(changeHistoryProvider.notifier)
+      //       .update((state) => UniqueKey().hashCode);
 
-        ref
-            .read(changeProvider.notifier)
-            .update((state) => UniqueKey().hashCode);
+      //   ref
+      //       .read(changeProvider.notifier)
+      //       .update((state) => UniqueKey().hashCode);
 
-        if (!mounted) return;
-        showSnackBar(
-          type: "success",
-          context: context,
-          duration: 3.seconds,
-          title: "Elimación completada",
-          message: "La cotizacion: $folio fue eliminada correctamente.",
-        );
-      } else {
-        if (!mounted) return;
-        showSnackBar(
-          type: "danger",
-          context: context,
-          duration: 3.seconds,
-          title: "Elimación erronea",
-          message: "Error al eliminar la cotizacion: $folio.",
-        );
-      }
+      //   if (!mounted) return;
+      //   showSnackBar(
+      //     type: "success",
+      //     context: context,
+      //     duration: 3.seconds,
+      //     title: "Elimación completada",
+      //     message: "La cotizacion: $folio fue eliminada correctamente.",
+      //   );
+      // } else {
+      //   if (!mounted) return;
+      //   showSnackBar(
+      //     type: "danger",
+      //     context: context,
+      //     duration: 3.seconds,
+      //     title: "Elimación erronea",
+      //     message: "Error al eliminar la cotizacion: $folio.",
+      //   );
+      // }
     }
 
     void _updateShowFilter(int index) {
@@ -152,10 +153,10 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TitlePage(
-                  title:
-                      !(usuario.rol != "SUPERADMIN" && usuario.rol != "ADMIN")
-                          ? "Historial de Cotizaciones del Equipo"
-                          : "Historial de Cotizaciones",
+                  title: !(usuario?.rol?.nombre != "SUPERADMIN" &&
+                          usuario?.rol?.nombre != "ADMIN")
+                      ? "Historial de Cotizaciones del Equipo"
+                      : "Historial de Cotizaciones",
                   subtitle: "",
                   childOptional: SizedBox(
                     width: screenWidth * 0.3,
@@ -271,14 +272,16 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                                   "Personalizado" &&
                                               filter == filtros[index] &&
                                               periodFilter != null)
-                                          ? Text(Utility.getStringPeriod(
-                                              initDate:
-                                                  periodFilter.fechaInicial ??
-                                                      DateTime.now(),
-                                              lastDate:
-                                                  periodFilter.fechaFinal ??
-                                                      DateTime.now(),
-                                            ))
+                                          ? Text(
+                                              DateHelpers.getStringPeriod(
+                                                initDate:
+                                                    periodFilter.fechaInicial ??
+                                                        DateTime.now(),
+                                                lastDate:
+                                                    periodFilter.fechaFinal ??
+                                                        DateTime.now(),
+                                              ),
+                                            )
                                           : Text(filtros[index]),
                                     ),
                                   );
@@ -387,9 +390,9 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                   seeReceipt: () async {
                                     List<Habitacion> respHabitaciones = [];
 
-                                    respHabitaciones = await HabitacionService()
-                                        .getHabitacionesByFolio(
-                                            list[index].folio ?? '');
+                                    // respHabitaciones = await HabitacionService()
+                                    //     .getHabitacionesByFolio(
+                                    //         list[index].folio ?? '');
 
                                     if (!mounted) return;
 
@@ -405,8 +408,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       esGrupo: list[index].esGrupo,
                                       estatus: list[index].estatus,
                                       cliente: list[index].cliente,
-                                      folio:
-                                          list[index].folio,
+                                      folio: list[index].folio,
                                       habitaciones: respHabitaciones,
                                       idInt: list[index].idInt,
                                     );
@@ -428,7 +430,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                                       context: context,
                                       builder: (context) {
                                         return Dialogs.customAlertDialog(
-                                          context: context,
                                           title: "Eliminar comprobante",
                                           contentText:
                                               "¿Desea eliminar la siguiente cotización \ndel huesped: ${list[index].cliente?.nombres}?",
