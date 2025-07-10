@@ -256,21 +256,21 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
                               isSaving = true;
                               setState(() {});
 
-                              bool result = await CotizacionService()
-                                  .updateCotizacion(CotizacionTableData(
-                                id: widget.cotizacionId,
-                                // numeroTelefonico: _newNumberController.text,
-                              ));
+                              // bool result = await CotizacionService()
+                              //     .updateCotizacion(CotizacionTableData(
+                              //   id: widget.cotizacionId,
+                              //   // numeroTelefonico: _newNumberController.text,
+                              // ));
 
-                              if (!result) {
-                                snackMessage =
-                                    "Error al guardar nuevo contacto";
-                                typeMessage = "danger";
-                                setState(() {});
+                              // if (!result) {
+                              //   snackMessage =
+                              //       "Error al guardar nuevo contacto";
+                              //   typeMessage = "danger";
+                              //   setState(() {});
 
-                                _toggleSnackbar();
-                                return;
-                              }
+                              //   _toggleSnackbar();
+                              //   return;
+                              // }
 
                               if (widget.saveFunction != null) {
                                 widget.saveFunction!

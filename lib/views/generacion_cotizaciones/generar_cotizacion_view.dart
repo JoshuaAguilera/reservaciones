@@ -27,6 +27,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../models/notificacion_model.dart';
 import '../../models/prefijo_telefonico_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/colors_helpers.dart';
 import '../../view-models/providers/dahsboard_provider.dart';
 import '../../view-models/providers/notificacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
@@ -414,25 +415,20 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                   child: HabitacionesList(
                                     newRoom: () => _goDetailRoom(
                                       Habitacion(
-                                        categoria: tipoHabitacion.first,
                                         adultos: 1,
                                         menores0a6: 0,
                                         menores7a12: 0,
                                         tarifasXHabitacion: [],
                                         esCortesia: false,
-                                        checkIn: DateTime.now()
-                                            .toString()
-                                            .substring(0, 10),
+                                        checkIn: DateTime.now(),
                                         checkOut: DateTime.now()
-                                            .add(const Duration(days: 1))
-                                            .toString()
-                                            .substring(0, 10),
+                                            .add(const Duration(days: 1)),
                                       ),
                                     ),
                                     editRoom: (p0) =>
-                                        _goDetailRoom(p0.CopyWith()),
+                                        _goDetailRoom(p0.copyWith()),
                                     duplicateRoom: (p0) {
-                                      Habitacion roomDuplicate = p0.CopyWith();
+                                      Habitacion roomDuplicate = p0.copyWith();
                                       roomDuplicate.id =
                                           Utility.getUniqueCode().toString();
 
@@ -458,22 +454,22 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               }
                                             }
 
-                                            if (!typeQuote &&
-                                                rooms >=
-                                                    data
-                                                        .limiteHabitacionCotizacion!) {
-                                              ref
-                                                  .watch(typeQuoteProvider
-                                                      .notifier)
-                                                  .update((ref) => true);
-                                            } else if (typeQuote &&
-                                                rooms <
-                                                    data.limiteHabitacionCotizacion!) {
-                                              ref
-                                                  .watch(typeQuoteProvider
-                                                      .notifier)
-                                                  .update((ref) => false);
-                                            }
+                                            // if (!typeQuote &&
+                                            //     rooms >=
+                                            //         data
+                                            //             .limiteHabitacionCotizacion!) {
+                                            //   ref
+                                            //       .watch(typeQuoteProvider
+                                            //           .notifier)
+                                            //       .update((ref) => true);
+                                            // } else if (typeQuote &&
+                                            //     rooms <
+                                            //         data.limiteHabitacionCotizacion!) {
+                                            //   ref
+                                            //       .watch(typeQuoteProvider
+                                            //           .notifier)
+                                            //       .update((ref) => false);
+                                            // }
                                           }
                                         },
                                         error: (error, stackTrace) {
@@ -505,22 +501,22 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                               }
                                             }
 
-                                            if (!typeQuote &&
-                                                rooms >=
-                                                    data
-                                                        .limiteHabitacionCotizacion!) {
-                                              ref
-                                                  .watch(typeQuoteProvider
-                                                      .notifier)
-                                                  .update((ref) => true);
-                                            } else if (typeQuote &&
-                                                rooms <
-                                                    data.limiteHabitacionCotizacion!) {
-                                              ref
-                                                  .watch(typeQuoteProvider
-                                                      .notifier)
-                                                  .update((ref) => false);
-                                            }
+                                            // if (!typeQuote &&
+                                            //     rooms >=
+                                            //         data
+                                            //             .limiteHabitacionCotizacion!) {
+                                            //   ref
+                                            //       .watch(typeQuoteProvider
+                                            //           .notifier)
+                                            //       .update((ref) => true);
+                                            // } else if (typeQuote &&
+                                            //     rooms <
+                                            //         data.limiteHabitacionCotizacion!) {
+                                            //   ref
+                                            //       .watch(typeQuoteProvider
+                                            //           .notifier)
+                                            //       .update((ref) => false);
+                                            // }
                                           }
                                         },
                                         error: (error, stackTrace) {
@@ -621,11 +617,11 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                               data: (data) async {
                                 int? limitDay;
                                 if (data != null) {
-                                  if (typeQuote) {
-                                    limitDay = data.diasVigenciaCotGroup;
-                                  } else {
-                                    limitDay = data.diasVigenciaCotInd;
-                                  }
+                                  // if (typeQuote) {
+                                  //   limitDay = data.diasVigenciaCotGroup;
+                                  // } else {
+                                  //   limitDay = data.diasVigenciaCotInd;
+                                  // }
                                 }
                                 await saveQuoteBD(limitDay: limitDay);
                               },
@@ -683,7 +679,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                       if (onPressedButton == null) return;
                       onPressedButton.call();
                     },
-                    color: Utility.darken(color!, 0.15),
+                    color: ColorsHelpers.darken(color!, 0.15),
                     text: "Gestionar tarifas",
                   ),
                 ),

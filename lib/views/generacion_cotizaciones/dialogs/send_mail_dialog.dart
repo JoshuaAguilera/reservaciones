@@ -147,15 +147,15 @@ class _SendMailDialogState extends State<SendMailDialog> {
                                 return;
                               }
 
-                              bool result = await CotizacionService()
-                                  .updateCotizacion(CotizacionTableData(
-                                id: widget.id,
-                              ));
+                              // bool result = await CotizacionService()
+                              //     .updateCotizacion(CotizacionTableData(
+                              //   id: widget.id,
+                              // ));
 
-                              if (!result) {
-                                Navigator.of(context).pop(true);
-                                return;
-                              }
+                              // if (!result) {
+                              //   Navigator.of(context).pop(true);
+                              //   return;
+                              // }
 
                               if (!mounted) return;
                               if (widget.returnFunction != null) {

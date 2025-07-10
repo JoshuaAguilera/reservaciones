@@ -28,7 +28,9 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart' as acd;
 
 import '../../../models/tarifa_model.dart';
+import '../../../models/tarifa_rack_model.dart';
 import '../../../models/tarifa_x_habitacion_model.dart';
+import '../../../res/helpers/date_helpers.dart';
 import '../../../view-models/providers/tarifario_provider.dart';
 import '../../../res/ui/progress_indicator.dart';
 import '../../../utils/widgets/select_buttons_widget.dart';
@@ -68,12 +70,12 @@ class _ManagerTariffDayWidgetState
   Tarifa? saveTariff;
   bool startFlow = false;
 
-  Map<String, RegistroTarifa?>? selectItemTariff;
+  Map<String, TarifaRack?>? selectItemTariff;
   Color colorTariff = DesktopColors.cerulean;
   bool isEditing = false;
   bool canBeReset = false;
   bool startFlowTariff = false;
-  List<Map<String, RegistroTarifa?>> itemsTariff = [];
+  List<Map<String, TarifaRack?>> itemsTariff = [];
   List<Temporada>? seasons;
   Temporada? selectSeason;
   List<Tarifa?>? tariffs;
@@ -191,11 +193,11 @@ class _ManagerTariffDayWidgetState
     final useCashSeason = ref.watch(useCashSeasonProvider);
     final useCashRoomSeason = ref.watch(useCashSeasonRoomProvider);
     final usuario = ref.watch(userProvider);
-    final tarifaProvider = ref.watch(allTarifaProvider(""));
+    final tarifaProvider = ref.watch(listTarifaProvider(""));
 
     if (!startFlow && selectTariff == null) {
-      selectCategory =
-          categorias[tipoHabitacion.indexOf(habitacionProvider.categoria!)];
+      // selectCategory =
+      //     categorias[tipoHabitacion.indexOf(habitacionProvider.categoria!)];
       startFlow = true;
     }
 
@@ -214,11 +216,11 @@ class _ManagerTariffDayWidgetState
               isDialog: true,
               sizeTitle: 18,
               title: widget.isAppling
-                  ? "Aplicar nueva Tarifa ${typeQuote ? "Grupal " : ""}libre"
-                  : "Modificar tarifa del ${Utility.getCompleteDate(data: widget.tarifaXHabitacion.fecha)}",
+                  ? "Aplicar nueva Tarifa ${typeQuote == "grupal" ? "Grupal " : ""}libre"
+                  : "Modificar tarifa del ${DateHelpers.getStringDate(data: widget.tarifaXHabitacion.fecha)}",
               subtitle: widget.isAppling
-                  ? Utility.getPeriodReservation([habitacionProvider])
-                  : "Tarifa aplicada: ${widget.tarifaXHabitacion.nombreTariff} ${widget.tarifaXHabitacion.subCode != null ? "(modificada)" : ""}",
+                  ? DateHelpers.getPeriodReservation([habitacionProvider])
+                  : "Tarifa aplicada: ${widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.nombre ?? 'No definido'} ${widget.tarifaXHabitacion.subcode != null ? "(modificada)" : ""}",
             ),
             const SizedBox(height: 10),
             Divider(color: Theme.of(context).primaryColor, thickness: 0.6)
@@ -264,9 +266,10 @@ class _ManagerTariffDayWidgetState
 
                                     selectItemTariff = itemsTariff
                                         .where((element) =>
-                                            (element.values.first?.code ??
-                                                '') ==
-                                            widget.tarifaXHabitacion.tariffCode)
+                                            (element.values.first?.idInt ??
+                                                0) ==
+                                            widget.tarifaXHabitacion.tarifaXDia
+                                                ?.tarifaRack?.idInt)
                                         .firstOrNull;
 
                                     startFlowTariff = true;
@@ -276,7 +279,7 @@ class _ManagerTariffDayWidgetState
                                     width: selectItemTariff != null ? 275 : 310,
                                     height: 35,
                                     child: acd.CustomDropdown<
-                                        Map<String, RegistroTarifa?>>.search(
+                                        Map<String, TarifaRack?>>.search(
                                       searchHintText: "Buscar",
                                       hintText: "Selecciona la tarifa definida",
                                       closedHeaderPadding: EdgeInsets.symmetric(

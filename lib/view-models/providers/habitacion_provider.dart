@@ -21,12 +21,12 @@ class HabitacionProvider extends Notifier<List<Habitacion>> {
   Habitacion get current => _current;
   late pw.Document pdfPrinc;
 
-  void addItem(Habitacion item, bool groupQuote) {
+  void addItem(Habitacion item, String typeQuote) {
     _current = item;
     state = [...state, item];
     if (state.length > 1) revisedFreeRooms();
 
-    if (groupQuote) implementGroupTariff([]);
+    if (typeQuote == "grupal") implementGroupTariff([]);
   }
 
   void addFreeItem(Habitacion habitacion, int interval) {

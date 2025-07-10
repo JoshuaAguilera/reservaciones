@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:generador_formato/models/categoria_model.dart';
 import 'package:generador_formato/view-models/providers/habitacion_provider.dart';
 import 'package:generador_formato/res/helpers/constants.dart';
 import 'package:generador_formato/res/helpers/utility.dart';
@@ -76,7 +77,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
                   size: 21),
             ),
             if (widget.isCalendary &&
-                Utility.revisedLimitDateTime(checkIn, checkOut) &&
+                DateHelpers.revisedLimit(checkIn, checkOut) &&
                 defineUseScreenWidth(screenWidth))
               Card(
                 elevation: 7,
@@ -273,8 +274,10 @@ class _DiasListState extends ConsumerState<DiasListView> {
                             screenWidth: screenWidth,
                             tarHab: list[ink],
                             setState: () => setState(() {}),
-                            isGroupTariff: typeQuote,
-                            useCashSeason: useCashSeason || useCashRoomSeason,
+                            categoria: Categoria(),
+                            tipoTemporada: typeQuote,
+                            // isGroupTariff: typeQuote,
+                            // useCashSeason: useCashSeason || useCashRoomSeason,
                           );
                         },
                       ),
@@ -297,8 +300,9 @@ class _DiasListState extends ConsumerState<DiasListView> {
                       return CheckListtileTariffWidget(
                         habitacion: habitacionProvider,
                         tarifaXHab: list[ink],
-                        isGroupTariff: typeQuote,
-                        useSeasonCash: useCashSeason || useCashRoomSeason,
+                        tipoCotizacion: typeQuote,
+                        // isGroupTariff: typeQuote,
+                        // useSeasonCash: useCashSeason || useCashRoomSeason,
                       );
                     },
                   ),
