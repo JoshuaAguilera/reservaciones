@@ -14,11 +14,16 @@ import 'res/helpers/custom_scroll_behavior.dart';
 import 'res/ui/themes.dart';
 import 'utils/shared_preferences/preferences.dart';
 import 'utils/shared_preferences/settings.dart';
+import 'view-models/providers/ui_provider.dart';
 import 'views/home_view.dart';
 import 'views/login_view.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 Future<void> main() async {
   //Compatibily Windows scale
+
   WidgetsFlutterBinding.ensureInitialized();
   await EstructuraDocumento().cargarEstructuras();
   await Permission().cargarPermisos();
@@ -32,24 +37,47 @@ Future<void> main() async {
   //databse
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   InitDatabase.iniciarBD();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    ProviderScope(
+      child: MyApp(scaffoldMessengerKey: scaffoldMessengerKey),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({
+    super.key,
+    required GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
+  });
+
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(snackbarServiceProvider).init(scaffoldMessengerKey);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isPlatformDark =
-        WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
+    // final isPlatformDark =
+    //     WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
     final initTheme =
         Settings.modeDark ? Themes().darkMode() : Themes().lightMode();
+    final navService = ref.read(navigationServiceProvider);
 
     return ThemeProvider(
       initTheme: initTheme,
       builder: (_, snapshot) {
         return MaterialApp(
           title: 'Generador de formatos de pago',
+          navigatorKey: navService.navigatorKey,
+          scaffoldMessengerKey: scaffoldMessengerKey,
           debugShowCheckedModeBanner: false,
           scrollBehavior: CustomScrollBehavior(),
           localizationsDelegates: const [
@@ -61,7 +89,7 @@ class MyApp extends StatelessWidget {
             Locale('en'),
             Locale('es'),
           ],
-          theme: initTheme,
+          theme: snapshot,
           routes: {
             'home': (_) => HomeView(),
             'login': (_) => const LoginView(),

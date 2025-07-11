@@ -1,38 +1,34 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-import '../../models/cotizacion_model.dart';
-import '../../models/tarifa_rack_model.dart';
-import '../../view-models/providers/cotizacion_provider.dart';
-import '../../view-models/providers/dahsboard_provider.dart';
-import '../../view-models/providers/habitacion_provider.dart';
-import '../../view-models/providers/notificacion_provider.dart';
-import '../../view-models/providers/tarifario_provider.dart';
+import '../../models/estatus_snackbar_model.dart';
+import '../../res/helpers/colors_helpers.dart';
+import '../../view-models/providers/ui_provider.dart';
 import '../../view-models/providers/usuario_provider.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/my_sidebar_x_item.dart';
 import '../../res/ui/text_styles.dart';
+import '../../view-models/services/auth_service.dart';
 import '../shared_preferences/preferences.dart';
 
 class SideBar extends ConsumerStatefulWidget {
   final bool isExpanded;
   const SideBar({
-    Key? key,
+    super.key,
     required SidebarXController controller,
     this.isExpanded = false,
-  })  : _controller = controller,
-        super(key: key);
+  }) : _controller = controller;
 
   final SidebarXController _controller;
 
   @override
-  _SideBarState createState() => _SideBarState();
+  ConsumerState<SideBar> createState() => _SideBarState();
 }
 
 class _SideBarState extends ConsumerState<SideBar> {
@@ -42,6 +38,8 @@ class _SideBarState extends ConsumerState<SideBar> {
     final imageUser = ref.watch(imagePerfilProvider);
     final usuario = ref.watch(userProvider);
     final foundImageFile = ref.watch(foundImageFileProvider);
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    bool isDarkMode = brightness == Brightness.dark;
 
     return AbsorbPointer(
       absorbing: foundImageFile,
@@ -51,14 +49,18 @@ class _SideBarState extends ConsumerState<SideBar> {
         theme: SidebarXTheme(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: DesktopColors.canvasColor,
+            color: ColorsHelpers.darken(
+              DesktopColors.canvasColor,
+              isDarkMode ? 0.1 : 0,
+            ),
             borderRadius: BorderRadius.circular(20),
           ),
           hoverColor: DesktopColors.scaffoldBackgroundColor,
           textStyle: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontFamily: "poppins_regular",
-              fontSize: 12),
+            color: Colors.white.withValues(alpha: 0.7),
+            fontFamily: "poppins_regular",
+            fontSize: 12,
+          ),
           selectedTextStyle: const TextStyle(
               color: Colors.white, fontFamily: "poppins_regular", fontSize: 12),
           hoverTextStyle: const TextStyle(
@@ -75,8 +77,9 @@ class _SideBarState extends ConsumerState<SideBar> {
           ),
           selectedItemDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border:
-                Border.all(color: DesktopColors.actionColor.withOpacity(0.37)),
+            border: Border.all(
+              color: DesktopColors.actionColor.withValues(alpha: 0.37),
+            ),
             gradient: LinearGradient(
               colors: [
                 DesktopColors.accentCanvasColor,
@@ -85,13 +88,13 @@ class _SideBarState extends ConsumerState<SideBar> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.28),
+                color: Colors.black.withValues(alpha: 0.28),
                 blurRadius: 30,
               )
             ],
           ),
           iconTheme: IconThemeData(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             size: 20,
           ),
           selectedIconTheme: const IconThemeData(
@@ -102,7 +105,10 @@ class _SideBarState extends ConsumerState<SideBar> {
         extendedTheme: SidebarXTheme(
           width: 200,
           decoration: BoxDecoration(
-            color: DesktopColors.canvasColor,
+            color: ColorsHelpers.darken(
+              DesktopColors.canvasColor,
+              isDarkMode ? 0.1 : 0,
+            ),
           ),
         ),
         footerDivider: DesktopColors.divider,
@@ -154,39 +160,25 @@ class _SideBarState extends ConsumerState<SideBar> {
                                   ),
                                   child: ClipOval(
                                     child: Image.file(
-                                      File(imageUser!.ruta!),
+                                      File(imageUser?.ruta ?? ''),
                                       fit: BoxFit.cover,
                                       width: 45,
                                       height: 45,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Container(
-                                        width: 45,
-                                        height: 45,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white60,
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/image/usuario.png'),
-                                          ),
-                                        ),
-                                      ),
+                                      errorBuilder: (context, error, _) {
+                                        return const Icon(
+                                          Iconsax.user_square_bold,
+                                          size: 45,
+                                          color: Colors.white,
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
                               )
-                            : Container(
-                                width: 45,
-                                height: 45,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white60,
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/image/usuario.png'),
-                                  ),
-                                ),
+                            : const Icon(
+                                Iconsax.user_square_bold,
+                                size: 45,
+                                color: Colors.white,
                               ),
                       ),
                       Expanded(
@@ -204,12 +196,13 @@ class _SideBarState extends ConsumerState<SideBar> {
                               ),
                             ),
                             Text(
-                              usuario?.rol?.nombre ?? '',
+                              usuario?.rol?.nombre ?? 'Unknown Role',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                  fontFamily: "poppins_regular",
-                                  color: Colors.white,
-                                  fontSize: 11),
+                                fontFamily: "poppins_regular",
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
                             )
                           ],
                         ),
@@ -251,7 +244,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                             ),
                             child: ClipOval(
                               child: Image.file(
-                                File(imageUser!.ruta!),
+                                File(imageUser?.ruta ?? ''),
                                 fit: BoxFit.cover,
                                 width: 30,
                                 height: 30,
@@ -289,82 +282,56 @@ class _SideBarState extends ConsumerState<SideBar> {
           }
         },
         items: [
-          _SideBarCustomItem(name: "Inicio", icon: HeroIcons.home),
-          _SideBarCustomItem(
+          sideBarCustomItem(name: "Inicio", icon: HeroIcons.home),
+          sideBarCustomItem(
             name: "Generar Cotización",
             icon: Iconsax.money_send_outline,
           ),
-          _SideBarCustomItem(
+          sideBarCustomItem(
             name: "Historial",
             icon: HeroIcons.clipboard_document_list,
           ),
-          _SideBarCustomItem(
+          sideBarCustomItem(
             name: "Configuración",
             icon: HeroIcons.wrench_screwdriver,
           ),
           // if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
-          _SideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
+          sideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
           // if (usuario.rol == 'SUPERADMIN')
-          _SideBarCustomItem(
+          sideBarCustomItem(
             name: "Gestión de usuarios",
             icon: HeroIcons.user_group,
           ),
-          _SideBarCustomItem(name: "Clientes", icon: Iconsax.profile_2user_bold)
+          sideBarCustomItem(name: "Clientes", icon: Iconsax.profile_2user_bold)
         ],
         headerDivider: Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: DesktopColors.divider,
         ),
-        footerBuilder: (context, extended) {
+        footerBuilder: (_, extended) {
           return SizedBox(
             height: 70, // Ajusta la altura según tus necesidades
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
               child: MySidebarXItem(
-                onTap: () {
-                  ref.watch(NotificacionProvider.provider.notifier).clear();
-                  ref.watch(HabitacionProvider.provider.notifier).clear();
-                  ref
-                      .read(cotizacionProvider.notifier)
-                      .update((state) => Cotizacion());
-                  ref
-                      .read(saveTariffPolityProvider.notifier)
-                      .update((state) => null);
-                  ref.read(filterReport.notifier).update((state) => "Semanal");
-                  ref.read(dateReport.notifier).update(
-                        (state) => DateTime.now().subtract(
-                          Duration(days: DateTime.now().weekday - 1),
-                        ),
-                      );
-                  ref
-                      .read(useCashSeasonProvider.notifier)
-                      .update((state) => false);
-                  ref
-                      .read(useCashSeasonRoomProvider.notifier)
-                      .update((state) => false);
-                  ref
-                      .read(typeQuoteProvider.notifier)
-                      .update((state) => "individual");
-                  ref
-                      .read(showManagerTariffGroupProvider.notifier)
-                      .update((state) => false);
-                  ref
-                      .watch(TarifasProvisionalesProvider.provider.notifier)
-                      .clear();
-                  ref
-                      .read(descuentoProvisionalProvider.notifier)
-                      .update((state) => 0);
-                  ref
-                      .read(editTarifaProvider.notifier)
-                      .update((state) => TarifaRack());
-                  ref
-                      .read(selectedModeViewProvider.notifier)
-                      .update((state) => <bool>[true, false, false]);
-                  ref.read(userProvider.notifier).update((state) => null);
+                onTap: () async {
+                  try {
+                    ref.invalidate(logoutProvider);
+                    await ref.watch(logoutProvider.future);
+                    await AuthService().logout();
+                    await Preferences.clearUserData();
+                  } catch (e) {
+                    ref.read(snackbarServiceProvider).showCustomSnackBar(
+                          message: e.toString(),
+                          duration: const Duration(seconds: 3),
+                          type: TypeSnackbar.danger,
+                          withIcon: true,
+                        );
+                    return;
+                  }
 
-                  ref.read(userViewProvider.notifier).update((state) => false);
-
-                  Navigator.pop(context);
+                  if (!mounted) return;
+                  Navigator.pushReplacementNamed(context, 'login');
                 },
                 controller: widget._controller,
                 selectIndex: 45,
@@ -379,7 +346,7 @@ class _SideBarState extends ConsumerState<SideBar> {
     );
   }
 
-  SidebarXItem _SideBarCustomItem(
+  SidebarXItem sideBarCustomItem(
       {required String name, required IconData icon}) {
     return SidebarXItem(
       label: name,
@@ -391,7 +358,7 @@ class _SideBarState extends ConsumerState<SideBar> {
             size: selected ? 21 : 20,
             color: (selected || hovered)
                 ? Colors.white
-                : Colors.white.withOpacity(0.7),
+                : Colors.white.withValues(alpha: 0.7),
           ),
         );
       },

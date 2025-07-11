@@ -142,6 +142,7 @@ class Buttons {
                       color: (colorBorder ??
                           backgroundColor ??
                           DesktopColors.buttonPrimary),
+                      width: 2,
                     ),
                     borderRadius: const BorderRadius.all(Radius.circular(22)),
                   ),

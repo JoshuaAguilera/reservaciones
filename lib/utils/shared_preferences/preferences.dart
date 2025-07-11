@@ -167,4 +167,39 @@ class Preferences {
     _userImageUrl = value;
     _prefs.setString('userImageUrl', value);
   }
+
+  static Future<void> clearUserData() async {
+    _prefs.remove('token');
+    _prefs.remove('username');
+    _prefs.remove('firstName');
+    _prefs.remove('lastName');
+    _prefs.remove('birthDate');
+    _prefs.remove('mail');
+    _prefs.remove('phoneUser');
+    _prefs.remove('rol');
+    _prefs.remove('passwordMail');
+    _prefs.remove('password');
+    _prefs.remove('sucursal');
+    _prefs.remove('urlApi');
+    _prefs.remove('numberQuotes');
+    _prefs.remove('userIdInt');
+    _prefs.remove('userId');
+    _prefs.remove('userImageUrl');
+    _token = '';
+    _username = '';
+    _lastName = '';
+    _firstName = '';
+    _birthDate = '';
+    _mail = '';
+    _phone = '';
+    _rol = '';
+    _passwordMail = '';
+    _password = '';
+    _urlApi = '';
+    _aplication = '';
+    _numberQuotes = 0;
+    _userIdInt = 0;
+    _userId = '';
+    _userImageUrl = '';
+  }
 }

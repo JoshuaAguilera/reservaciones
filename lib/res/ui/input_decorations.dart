@@ -111,13 +111,13 @@ class InputDecorations {
         fontFamily: fontRegular,
         fontSize: 13,
       ),
-      fillColor: Colors.white,
       border: const OutlineInputBorder(
         borderSide: BorderSide(width: 1.2),
         borderRadius: BorderRadius.all(
           Radius.circular(15),
         ),
       ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15),
       errorStyle: TextStyle(
         color: DesktopColors.errorColor,
         fontFamily: fontRegular,

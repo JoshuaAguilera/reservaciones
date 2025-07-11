@@ -33,6 +33,7 @@ class Themes {
           foregroundColor: const WidgetStatePropertyAll(Colors.white),
         ),
       ),
+      snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
     );
   }
 
@@ -70,6 +71,7 @@ class Themes {
           ),
         ),
       ),
+      snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
     );
   }
 }

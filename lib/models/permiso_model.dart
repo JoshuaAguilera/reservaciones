@@ -99,7 +99,7 @@ class Permission {
   late List<Permiso> _permisos;
 
   Future<void> cargarPermisos() async {
-    String jsonString = await rootBundle.loadString('assets/permissions.json');
+    String jsonString = await rootBundle.loadString('assets/file/permisos.json');
     final List<dynamic> jsonList = json.decode(jsonString);
     List<Permiso> permisos = jsonList.map((e) => Permiso.fromJson(e)).toList();
 

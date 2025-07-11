@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/res/ui/text_styles.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../models/prefijo_telefonico_model.dart';
+import '../../res/helpers/utility.dart';
+import '../../res/ui/text_styles.dart';
 
 class CustomDropdown {
   static Widget dropdownMenuCustom({
@@ -62,8 +62,15 @@ class CustomDropdown {
                             ? null
                             : Transform.translate(
                                 offset: Offset(0, dyCompact),
-                                child: const Icon(Iconsax.arrow_down_1_outline, size: 20),
+                                child: const Icon(
+                                  Iconsax.arrow_down_1_outline,
+                                  size: 20,
+                                ),
                               ),
+                    selectedTrailingIcon: Transform.translate(
+                      offset: Offset(0, dyCompact),
+                      child: const Icon(Iconsax.arrow_up_2_outline, size: 20),
+                    ),
                     inputDecorationTheme: !compact
                         ? null
                         : const InputDecorationTheme(

@@ -189,7 +189,6 @@ class TextStyles {
       overflow: overflow,
       style: TextStyle(
         fontFamily: "poppins_bold",
-        color: color ?? DesktopColors.prussianBlue,
         fontWeight: FontWeight.bold,
         fontSize: size ?? 22,
       ),
@@ -309,7 +308,7 @@ class TextStyles {
       textAlign: aling,
       overflow: overflow,
       style: TextStyle(
-        color: color ?? DesktopColors.turqueza,
+        color: color,
         fontSize: size,
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_medium",

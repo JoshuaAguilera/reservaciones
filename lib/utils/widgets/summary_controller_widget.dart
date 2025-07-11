@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:generador_formato/models/habitacion_model.dart';
-import 'package:generador_formato/models/registro_tarifa_model.dart';
-import 'package:generador_formato/models/tarifa_rack_model.dart';
-import 'package:generador_formato/models/tarifa_x_dia_model.dart';
-import 'package:generador_formato/res/helpers/constants.dart';
-import 'package:generador_formato/res/helpers/utility.dart';
-import 'package:generador_formato/utils/widgets/custom_dropdown.dart';
-import 'package:generador_formato/utils/widgets/dialogs.dart';
 
 import '../../models/categoria_model.dart';
+import '../../models/habitacion_model.dart';
+import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../res/helpers/calculator_helpers.dart';
 import '../../res/helpers/colors_helpers.dart';
-import '../../res/helpers/date_helpers.dart';
+import '../../res/helpers/utility.dart';
 import '../../view-models/providers/habitacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../res/ui/buttons.dart';
@@ -215,8 +209,10 @@ class _SummaryControllerWidgetState
                                                 count: CalculatorHelpers
                                                     .getTotalCategoryRoom(
                                                   TarifaRack(
-                                                    registros: element.tarifaXDia
-                                                        ?.tarifaRack?.registros,
+                                                    registros: element
+                                                        .tarifaXDia
+                                                        ?.tarifaRack
+                                                        ?.registros,
                                                     temporadas: element
                                                             .tarifaXDia
                                                             ?.tarifaRack
@@ -277,8 +273,10 @@ class _SummaryControllerWidgetState
                                                 count: CalculatorHelpers
                                                     .getTotalCategoryRoom(
                                                   TarifaRack(
-                                                    registros: element.tarifaXDia
-                                                        ?.tarifaRack?.registros,
+                                                    registros: element
+                                                        .tarifaXDia
+                                                        ?.tarifaRack
+                                                        ?.registros,
                                                     temporadas: element
                                                             .tarifaXDia
                                                             ?.tarifaRack

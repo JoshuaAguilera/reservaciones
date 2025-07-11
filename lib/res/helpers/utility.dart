@@ -887,4 +887,37 @@ class Utility {
     double sizeInMb = sizeInBytes / (1024 * 1024);
     return sizeInMb;
   }
+
+  static Temporada? getSeasonNow({
+    TarifaRack? rack,
+    required int totalDays,
+    String tipo = "individual",
+  }) {
+    if (rack == null || rack.temporadas == null) {
+      return null;
+    }
+
+    Temporada? nowSeason;
+
+    List<Temporada> validSeasons = [];
+
+    validSeasons = rack
+            .copyWith()
+            .temporadas
+            ?.where(
+                (element) => element.tipo?.toLowerCase() == tipo.toLowerCase())
+            .toList()
+            .map((element) => element.copyWith())
+            .toList() ??
+        [];
+
+    for (var element in validSeasons) {
+      if (totalDays == element.estanciaMinima ||
+          totalDays > element.estanciaMinima!) {
+        nowSeason = element.copyWith();
+      }
+    }
+
+    return nowSeason;
+  }
 }

@@ -281,7 +281,7 @@ class FormWidgets {
     return AbsorbPointer(
       absorbing: readOnly,
       child: StatefulBuilder(
-        builder: (context, snapshot) {
+        builder: (_, snapshot) {
           return TextFormField(
             focusNode: focusNode,
             autofocus: autofocus,

@@ -13,7 +13,7 @@ class EstructuraDocumento {
   late Map<String, String> _mensajes;
 
   Future<void> cargarEstructuras() async {
-    String jsonString = await rootBundle.loadString('assets/structure_docs.json');
+    String jsonString = await rootBundle.loadString('assets/file/comprobante.json');
     _mensajes = Map<String, String>.from(json.decode(jsonString));
   }
 

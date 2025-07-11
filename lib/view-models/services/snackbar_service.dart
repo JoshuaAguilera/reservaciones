@@ -28,13 +28,13 @@ class SnackbarService {
     double elevation = 10,
     int maxLines = 2,
   }) {
-    final context = _scaffoldMessengerKey.currentContext;
-    if (context == null) return;
+    final messenger = _scaffoldMessengerKey.currentState;
+    if (messenger == null) return;
 
-    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    var brightness =
+        ThemeModelInheritedNotifier.of(messenger.context).theme.brightness;
 
     String typeSnack = type ?? '';
-
     if (error != null) typeSnack = TypeSnackbar.danger;
 
     Color backgroundColor = color ??
@@ -50,7 +50,16 @@ class SnackbarService {
     IconData icons = icon ?? IconHelpers.getIconSnackBar(typeSnack);
 
     final snackBar = SnackBar(
+      width: 500,
       behavior: SnackBarBehavior.floating,
+      duration: duration ?? const Duration(seconds: 3),
+      backgroundColor: backgroundColor,
+      showCloseIcon: false,
+      closeIconColor: colorStrong,
+      elevation: elevation,
+      // margin: const EdgeInsets.all(8),
+      dismissDirection: DismissDirection.horizontal,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,6 +97,13 @@ class SnackbarService {
                   ],
                 ),
               ),
+              IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ),
+                onPressed: () => messenger.hideCurrentSnackBar(),
+              ),
             ],
           ),
           if ((error?.listErrors ?? []).isNotEmpty)
@@ -109,16 +125,9 @@ class SnackbarService {
             ),
         ],
       ),
-      duration: duration ?? const Duration(seconds: 3),
-      backgroundColor: backgroundColor,
-      showCloseIcon: true,
-      closeIconColor: colorStrong,
-      elevation: elevation,
-      margin: const EdgeInsets.all(8),
-      dismissDirection: DismissDirection.horizontal,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
 
-    _scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+    // _scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+    messenger.showSnackBar(snackBar);
   }
 }

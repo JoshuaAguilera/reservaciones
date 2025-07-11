@@ -27,9 +27,11 @@ import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart' as acd;
 
+import '../../../models/registro_tarifa_bd_model.dart';
 import '../../../models/tarifa_model.dart';
 import '../../../models/tarifa_rack_model.dart';
 import '../../../models/tarifa_x_habitacion_model.dart';
+import '../../../res/helpers/colors_helpers.dart';
 import '../../../res/helpers/date_helpers.dart';
 import '../../../view-models/providers/tarifario_provider.dart';
 import '../../../res/ui/progress_indicator.dart';
@@ -324,56 +326,58 @@ class _ManagerTariffDayWidgetState
                                         if (value != null) {
                                           Temporada? selectSeason =
                                               Utility.getSeasonNow(
-                                            value.values.first?.copyWith(),
-                                            widget.numDays,
-                                            isGroup: false,
-                                            useCashTariff: useCashSeason,
+                                            rack:
+                                                value.values.first?.copyWith(),
+                                            totalDays: widget.numDays,
+                                            tipo: "individual",
                                           );
 
                                           selectSeason = selectSeason;
                                           seasons =
                                               value.values.first?.temporadas;
-                                          tariffs = (selectSeason?.forCash ??
-                                                  false)
-                                              ? Utility.getTarifasData(
-                                                  selectSeason?.tarifas ??
-                                                      List<Tarifa?>.empty())
-                                              : value.values.first
-                                                  ?.copyWith()
-                                                  .tarifas
-                                                  ?.map((element) =>
-                                                      element.copyWith())
-                                                  .toList();
-
-                                          selectTariff = (selectSeason
-                                                      ?.forCash ??
-                                                  false)
-                                              ? Utility.getTarifasData([
-                                                  selectSeason?.tarifas
-                                                      ?.where((element) =>
-                                                          element.categoria ==
-                                                          tipoHabitacion[
-                                                              categorias.indexOf(
-                                                                  selectCategory)])
-                                                      .firstOrNull
+                                          tariffs =
+                                              (selectSeason?.tipo == "efectivo")
+                                                  ? Utility.getTarifasData(
+                                                      selectSeason?.tarifas ??
+                                                          List<Tarifa?>.empty())
+                                                  : value.values.first
                                                       ?.copyWith()
-                                                ]).first
-                                              : value.values.first
-                                                  ?.copyWith()
-                                                  .tarifas!
-                                                  .firstWhere((element) =>
-                                                      element.categoria ==
-                                                      tipoHabitacion[
-                                                          categorias.indexOf(
-                                                              selectCategory)])
-                                                  .copyWith();
+                                                      .registros
+                                                      ?.map((element) => element
+                                                          .tarifa
+                                                          ?.copyWith())
+                                                      .toList();
 
-                                          baseTariffs = value.values.first
-                                              ?.copyWith()
-                                              .tarifas
-                                              ?.map((element) =>
-                                                  element.copyWith())
-                                              .toList();
+                                          // selectTariff = (selectSeason?.tipo ==
+                                          //         "efectivo")
+                                          //     ? Utility.getTarifasData([
+                                          //         selectSeason?.tarifas
+                                          //             ?.where((element) =>
+                                          //                 element.categoria ==
+                                          //                 tipoHabitacion[
+                                          //                     categorias.indexOf(
+                                          //                         selectCategory)])
+                                          //             .firstOrNull
+                                          //             ?.copyWith()
+                                          //       ]).first
+                                          //     : value.values.first
+                                          //         ?.copyWith()
+                                          //         .tarifas!
+                                          //         .firstWhere(
+                                          //           (element) =>
+                                          //               element.categoria ==
+                                          //               tipoHabitacion[
+                                          //                   categorias.indexOf(
+                                          //                       selectCategory)],
+                                          //         )
+                                          //         .copyWith();
+
+                                          // baseTariffs = value.values.first
+                                          //     ?.copyWith()
+                                          //     .registros
+                                          //     ?.map((element) =>
+                                          //         element.tarifa?.copyWith())
+                                          //     .toList();
 
                                           _descuentoController.text = "0";
 
@@ -441,43 +445,43 @@ class _ManagerTariffDayWidgetState
                                   onPressed: () {
                                     selectItemTariff = null;
 
-                                    if (widget.tarifaXHabitacion.tariffCode ==
-                                        null) {
-                                      selectSeason = widget
-                                          .tarifaXHabitacion.temporadaSelect;
-                                      seasons =
-                                          widget.tarifaXHabitacion.temporadas;
-                                      selectTariff =
-                                          widget.tarifaXHabitacion.tarifa;
-                                      tariffs =
-                                          widget.tarifaXHabitacion.tarifas;
-                                      baseTariffs =
-                                          widget.tarifaXHabitacion.tarifasBase;
-                                      setState(() {});
-                                    } else {
-                                      selectSeason = null;
-                                      seasons = null;
-                                      selectTariff = null;
-                                      tariffs = null;
-                                      baseTariffs = null;
-                                    }
+                                    // if (widget.tarifaXHabitacion.tariffCode ==
+                                    //     null) {
+                                    //   selectSeason = widget
+                                    //       .tarifaXHabitacion.temporadaSelect;
+                                    //   seasons =
+                                    //       widget.tarifaXHabitacion.temporadas;
+                                    //   selectTariff =
+                                    //       widget.tarifaXHabitacion.tarifa;
+                                    //   tariffs =
+                                    //       widget.tarifaXHabitacion.tarifas;
+                                    //   baseTariffs =
+                                    //       widget.tarifaXHabitacion.tarifasBase;
+                                    //   setState(() {});
+                                    // } else {
+                                    //   selectSeason = null;
+                                    //   seasons = null;
+                                    //   selectTariff = null;
+                                    //   tariffs = null;
+                                    //   baseTariffs = null;
+                                    // }
 
                                     saveTariff = null;
                                     setState(() {});
                                     applyTariffData();
-                                    if (widget.tarifaXHabitacion.tariffCode !=
-                                        null) {
-                                      _insertTariffForm(null);
-                                    }
-                                    if (isUnknow || isFreeTariff) {
-                                      isEditing = true;
-                                    }
-                                    canBeReset = false;
-                                    _descuentoController.text = (widget
-                                                .tarifaXHabitacion
-                                                .descIntegrado ??
-                                            0)
-                                        .toString();
+                                    // if (widget.tarifaXHabitacion.tariffCode !=
+                                    //     null) {
+                                    //   _insertTariffForm(null);
+                                    // }
+                                    // if (isUnknow || isFreeTariff) {
+                                    //   isEditing = true;
+                                    // }
+                                    // canBeReset = false;
+                                    // _descuentoController.text = (widget
+                                    //             .tarifaXHabitacion
+                                    //             .descIntegrado ??
+                                    //         0)
+                                    //     .toString();
                                     setState(() {});
                                   },
                                 ),
@@ -504,7 +508,7 @@ class _ManagerTariffDayWidgetState
                         (seasons != null &&
                             (seasons ?? List<Temporada>.empty()).isNotEmpty))
                       CustomDropdown.dropdownMenuCustom(
-                        withPermisse: (usuario.rol != 'RECEPCION'),
+                        withPermisse: (usuario?.rol?.nombre != 'RECEPCION'),
                         initialSelection: selectSeason?.nombre ?? 'No aplicar',
                         onSelected: (String? value) {
                           selectSeason = seasons
@@ -519,7 +523,7 @@ class _ManagerTariffDayWidgetState
                             Temporada? selectSeason = seasons
                                 ?.where((element) =>
                                     (element.nombre == value) &&
-                                    (element.forCash ?? false))
+                                    (element.tipo == "efectivo"))
                                 .toList()
                                 .firstOrNull;
 
@@ -556,8 +560,7 @@ class _ManagerTariffDayWidgetState
                         elements: promociones +
                             Utility.getSeasonstoString(
                               seasons,
-                              onlyGroups: typeQuote,
-                              onlyCash: useCashSeason || useCashRoomSeason,
+                              tipo: typeQuote,
                             ),
                         excepcionItem: "No aplicar",
                         notElements: Utility.getPromocionesNoValidas(
@@ -594,47 +597,47 @@ class _ManagerTariffDayWidgetState
                             buttons: categoriesColor,
                             width: 350,
                             onPressed: (index) {
-                              TarifaTableData? selectTariff =
-                                  (isFreeTariff || isUnknow)
-                                      ? null
-                                      : tariffs
-                                          ?.firstWhere(
-                                            (element) =>
-                                                element.categoria ==
-                                                tipoHabitacion[categorias
-                                                    .indexOf(selectCategory)],
-                                          )
-                                          .copyWith();
+                              // TarifaTableData? selectTariff =
+                              //     (isFreeTariff || isUnknow)
+                              //         ? null
+                              //         : tariffs
+                              //             ?.firstWhere(
+                              //               (element) =>
+                              //                   element.categoria ==
+                              //                   tipoHabitacion[categorias
+                              //                       .indexOf(selectCategory)],
+                              //             )
+                              //             .copyWith();
 
-                              TarifaTableData saveIntTariff = TarifaTableData(
-                                categoria: tipoHabitacion[
-                                    categorias.indexOf(selectCategory)],
-                                code: selectTariff?.code ??
-                                    "${widget.tarifaXHabitacion.id} - $selectCategory",
-                                fecha: selectTariff?.fecha ?? DateTime.now(),
-                                id: selectTariff?.id ??
-                                    categorias.indexOf(selectCategory),
-                                tarifaAdultoSGLoDBL: double.tryParse(
-                                        _tarifaAdultoController.text) ??
-                                    selectTariff?.tarifaAdultoSGLoDBL,
-                                tarifaAdultoTPL: double.tryParse(
-                                        _tarifaAdultoTPLController.text) ??
-                                    selectTariff?.tarifaAdultoTPL,
-                                tarifaAdultoCPLE: double.tryParse(
-                                        _tarifaAdultoCPLController.text) ??
-                                    selectTariff?.tarifaAdultoCPLE,
-                                tarifaPaxAdicional: double.tryParse(
-                                        _tarifaPaxAdicionalController.text) ??
-                                    selectTariff?.tarifaPaxAdicional,
-                                tarifaMenores7a12: double.tryParse(
-                                        _tarifaMenoresController.text) ??
-                                    selectTariff?.tarifaMenores7a12,
-                              );
+                              // TarifaTableData saveIntTariff = TarifaTableData(
+                              //   categoria: tipoHabitacion[
+                              //       categorias.indexOf(selectCategory)],
+                              //   code: selectTariff?.code ??
+                              //       "${widget.tarifaXHabitacion.id} - $selectCategory",
+                              //   fecha: selectTariff?.fecha ?? DateTime.now(),
+                              //   id: selectTariff?.id ??
+                              //       categorias.indexOf(selectCategory),
+                              //   tarifaAdultoSGLoDBL: double.tryParse(
+                              //           _tarifaAdultoController.text) ??
+                              //       selectTariff?.tarifaAdultoSGLoDBL,
+                              //   tarifaAdultoTPL: double.tryParse(
+                              //           _tarifaAdultoTPLController.text) ??
+                              //       selectTariff?.tarifaAdultoTPL,
+                              //   tarifaAdultoCPLE: double.tryParse(
+                              //           _tarifaAdultoCPLController.text) ??
+                              //       selectTariff?.tarifaAdultoCPLE,
+                              //   tarifaPaxAdicional: double.tryParse(
+                              //           _tarifaPaxAdicionalController.text) ??
+                              //       selectTariff?.tarifaPaxAdicional,
+                              //   tarifaMenores7a12: double.tryParse(
+                              //           _tarifaMenoresController.text) ??
+                              //       selectTariff?.tarifaMenores7a12,
+                              // );
 
-                              _insertTariffForm(saveTariff);
+                              // _insertTariffForm(saveTariff);
 
-                              saveTariff = saveIntTariff.copyWith();
-                              showErrorTariff = false;
+                              // saveTariff = saveIntTariff.copyWith();
+                              // showErrorTariff = false;
 
                               setState(
                                   () => selectCategory = categorias[index]);
@@ -643,15 +646,15 @@ class _ManagerTariffDayWidgetState
                         ),
                       ),
                     ),
-                    if (canBeReset && (usuario.rol != 'RECEPCION'))
+                    if (canBeReset && (usuario?.rol?.nombre != 'RECEPCION'))
                       Buttons.iconButtonCard(
                         icon: isEditing
                             ? Iconsax.refresh_bold
                             : Iconsax.edit_outline,
                         backgroundColor: colorTariff,
                         colorIcon: useWhiteForeground(colorTariff)
-                            ? Utility.darken(colorTariff, -0.2)
-                            : Utility.darken(colorTariff, 0.2),
+                            ? ColorsHelpers.darken(colorTariff, -0.2)
+                            : ColorsHelpers.darken(colorTariff, 0.2),
                         tooltip: isEditing ? "Restablecer" : "Modificar",
                         invertColor: isEditing,
                         onPressed: () {
@@ -668,7 +671,6 @@ class _ManagerTariffDayWidgetState
                             showDialog(
                               context: context,
                               builder: (context) => Dialogs.customAlertDialog(
-                                context: context,
                                 iconData: Iconsax.danger_outline,
                                 iconColor: Colors.amber[400],
                                 title: "Alerta de modificación",
@@ -722,27 +724,27 @@ class _ManagerTariffDayWidgetState
                             return;
                           }
 
-                          bool isModificado =
-                              widget.tarifaXHabitacion.modificado ?? false;
+                          // bool isModificado =
+                          //     widget.tarifaXHabitacion.modificado ?? false;
 
-                          TarifaTableData? tariffVG =
-                              (isModificado ? baseTariffs : tariffs)
-                                  ?.where((element) =>
-                                      element.categoria ==
-                                      tipoHabitacion[
-                                          categorias.indexOf(selectCategory)])
-                                  .firstOrNull;
+                          // TarifaTableData? tariffVG =
+                          //     (isModificado ? baseTariffs : tariffs)
+                          //         ?.where((element) =>
+                          //             element.categoria ==
+                          //             tipoHabitacion[
+                          //                 categorias.indexOf(selectCategory)])
+                          //         .firstOrNull;
 
-                          TarifaTableData? tariffVPM =
-                              (isModificado ? baseTariffs : tariffs)
-                                  ?.where((element) =>
-                                      element.categoria !=
-                                      tipoHabitacion[
-                                          categorias.indexOf(selectCategory)])
-                                  .firstOrNull;
+                          // TarifaTableData? tariffVPM =
+                          //     (isModificado ? baseTariffs : tariffs)
+                          //         ?.where((element) =>
+                          //             element.categoria !=
+                          //             tipoHabitacion[
+                          //                 categorias.indexOf(selectCategory)])
+                          //         .firstOrNull;
 
-                          _insertTariffForm(tariffVG);
-                          saveTariff = tariffVPM;
+                          // _insertTariffForm(tariffVG);
+                          // saveTariff = tariffVPM;
                           isEditing = false;
                           setState(() {});
                         },
@@ -767,7 +769,8 @@ class _ManagerTariffDayWidgetState
                         isEditing: ((isUnknow || isFreeTariff)
                                 ? selectItemTariff == null
                                 : false) ||
-                            ((isEditing) && (usuario.rol != 'RECEPCION')),
+                            ((isEditing) &&
+                                (usuario?.rol?.nombre != 'RECEPCION')),
                       ),
                       Divider(color: Theme.of(context).primaryColor),
                       const SizedBox(height: 5),
@@ -816,7 +819,7 @@ class _ManagerTariffDayWidgetState
                                       },
                                     ),
                                   ),
-                                if ((usuario.rol != 'RECEPCION'))
+                                if ((usuario?.rol?.nombre != 'RECEPCION'))
                                   if (!isUnknow &&
                                       !widget.isAppling &&
                                       !isFreeTariff &&
@@ -826,7 +829,7 @@ class _ManagerTariffDayWidgetState
                                       activeColor: colorTariff,
                                       title: "Aplicar en toda la tarifa",
                                       description:
-                                          "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXHabitacion.nombreTariff}${widget.tarifaXHabitacion.subCode != null ? " [modificado]" : ""}\").",
+                                          "(Esta opción aplicara los siguientes cambios en todos los periodos de la tarifa actual: \"${widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.nombre}${widget.tarifaXHabitacion.subcode != null ? " [modificado]" : ""}\").",
                                       value: applyAllTariff,
                                       onChanged: (value) => setState(
                                         () {
@@ -838,7 +841,7 @@ class _ManagerTariffDayWidgetState
                                     ),
                                 if (habitacionProvider.tarifasXHabitacion!.any(
                                         (element) => element.id != 'Unknow') &&
-                                    (usuario.rol != 'RECEPCION'))
+                                    (usuario?.rol?.nombre != 'RECEPCION'))
                                   if (!widget.isAppling && widget.numDays > 1)
                                     CustomWidgets.checkBoxWithDescription(
                                       context,
@@ -951,9 +954,10 @@ class _ManagerTariffDayWidgetState
             text: "APLICAR",
             isBold: true,
             colorText: useWhiteForeground(colorTariff)
-                ? Utility.darken(colorTariff, -0.25)
-                : Utility.darken(colorTariff, 0.25),
-            color: widget.tarifaXHabitacion.color ?? DesktopColors.cerulean,
+                ? ColorsHelpers.darken(colorTariff, -0.25)
+                : ColorsHelpers.darken(colorTariff, 0.25),
+            color: widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.color ??
+                DesktopColors.cerulean,
             onPressed: () {
               if (!_formKeyTariffDay.currentState!.validate()) return;
 
@@ -970,7 +974,7 @@ class _ManagerTariffDayWidgetState
               }
 
               if (applyAllTariff &&
-                  (widget.tarifaXHabitacion.subCode == null && !withChanges)) {
+                  (widget.tarifaXHabitacion.subcode == null && !withChanges)) {
                 Navigator.pop(context);
                 return;
               }
@@ -980,33 +984,34 @@ class _ManagerTariffDayWidgetState
                 return;
               }
 
-              TarifaTableData? newTarifa = selectTariff;
+              Tarifa? newTarifa = selectTariff;
 
               if (selectTariff != null &&
                   (saveTariff!.categoria == selectTariff?.categoria)) {
                 selectTariff = saveTariff;
 
-                int indexFirstTariff = (tariffs ?? []).indexWhere(
-                    (element) => element.categoria == saveTariff!.categoria);
+                int indexFirstTariff = (tariffs ?? []).indexWhere((element) =>
+                    element?.categoria?.idInt == saveTariff?.categoria?.idInt);
 
                 if (indexFirstTariff != -1) {
                   tariffs![indexFirstTariff] = selectTariff!;
                 }
 
-                newTarifa = (tariffs ?? List<TarifaTableData>.empty())
-                    .firstWhere((element) =>
-                        element.categoria != saveTariff!.categoria);
+                newTarifa = (tariffs ?? List<Tarifa>.empty()).firstWhere(
+                    (element) =>
+                        element?.categoria?.idInt !=
+                        saveTariff?.categoria?.idInt);
 
-                TarifaTableData? secondTariff = TarifaTableData(
-                  id: newTarifa.id,
-                  code: newTarifa.code,
-                  categoria: newTarifa.categoria,
-                  fecha: newTarifa.fecha ?? DateTime.now(),
-                  tarifaAdultoSGLoDBL:
+                Tarifa? secondTariff = Tarifa(
+                  id: newTarifa?.id,
+                  idInt: newTarifa?.idInt,
+                  categoria: newTarifa?.categoria?.copyWith(),
+                  createdAt: newTarifa?.createdAt,
+                  tarifaAdulto1a2:
                       double.tryParse(_tarifaAdultoController.text),
-                  tarifaAdultoTPL:
+                  tarifaAdulto3:
                       double.tryParse(_tarifaAdultoTPLController.text),
-                  tarifaAdultoCPLE:
+                  tarifaAdulto4:
                       double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
                       double.tryParse(_tarifaMenoresController.text),
@@ -1014,8 +1019,8 @@ class _ManagerTariffDayWidgetState
                       double.tryParse(_tarifaPaxAdicionalController.text),
                 );
 
-                int indexSecondTariff = (tariffs ?? []).indexWhere(
-                    (element) => element.categoria == secondTariff.categoria);
+                int indexSecondTariff = (tariffs ?? []).indexWhere((element) =>
+                    element?.categoria?.idInt == secondTariff.categoria?.idInt);
 
                 if (indexSecondTariff != -1) {
                   tariffs![indexSecondTariff] = secondTariff;
@@ -1025,17 +1030,16 @@ class _ManagerTariffDayWidgetState
                   _saveTariffNoDefined(selectTariff, secondTariff);
                 }
               } else if (selectTariff != null) {
-                selectTariff = TarifaTableData(
-                  id: newTarifa?.id ?? 0,
-                  code: newTarifa?.code ?? widget.tarifaXHabitacion.id ?? '',
-                  categoria: newTarifa?.categoria ??
-                      widget.tarifaXHabitacion.categoria,
-                  fecha: newTarifa?.fecha ?? DateTime.now(),
-                  tarifaAdultoSGLoDBL:
+                selectTariff = Tarifa(
+                  id: newTarifa?.id,
+                  idInt: newTarifa?.idInt,
+                  categoria: newTarifa?.categoria,
+                  createdAt: newTarifa?.createdAt ?? DateTime.now(),
+                  tarifaAdulto1a2:
                       double.tryParse(_tarifaAdultoController.text),
-                  tarifaAdultoTPL:
+                  tarifaAdulto3:
                       double.tryParse(_tarifaAdultoTPLController.text),
-                  tarifaAdultoCPLE:
+                  tarifaAdulto4:
                       double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
                       double.tryParse(_tarifaMenoresController.text),
@@ -1043,15 +1047,16 @@ class _ManagerTariffDayWidgetState
                       double.tryParse(_tarifaPaxAdicionalController.text),
                 );
 
-                int indexFirstTariff = (tariffs ?? []).indexWhere(
-                    (element) => element.categoria == selectTariff?.categoria);
+                int indexFirstTariff = (tariffs ?? []).indexWhere((element) =>
+                    element?.categoria?.idInt ==
+                    selectTariff?.categoria?.idInt);
 
                 if (indexFirstTariff != -1) {
                   tariffs![indexFirstTariff] = selectTariff!;
                 }
 
-                int indexSecondTariff = (tariffs ?? []).indexWhere(
-                    (element) => element.categoria == saveTariff?.categoria);
+                int indexSecondTariff = (tariffs ?? []).indexWhere((element) =>
+                    element?.categoria?.idInt == saveTariff?.categoria?.idInt);
 
                 if (indexSecondTariff != -1) {
                   tariffs![indexSecondTariff] = saveTariff!;
@@ -1059,16 +1064,16 @@ class _ManagerTariffDayWidgetState
               }
 
               if (selectTariff == null) {
-                TarifaTableData newTariff = TarifaTableData(
-                  id: newTarifa?.id ?? categorias.indexOf(selectCategory),
-                  code: newTarifa?.code ?? '',
-                  categoria: tipoHabitacion[categorias.indexOf(selectCategory)],
-                  fecha: newTarifa?.fecha ?? DateTime.now(),
-                  tarifaAdultoSGLoDBL:
+                Tarifa newTariff = Tarifa(
+                  id: newTarifa?.id, //?? categorias.indexOf(selectCategory),
+                  idInt: newTarifa?.idInt,
+                  // categoria: tipoHabitacion[categorias.indexOf(selectCategory)],
+                  createdAt: newTarifa?.createdAt ?? DateTime.now(),
+                  tarifaAdulto1a2:
                       double.tryParse(_tarifaAdultoController.text),
-                  tarifaAdultoTPL:
+                  tarifaAdulto3:
                       double.tryParse(_tarifaAdultoTPLController.text),
-                  tarifaAdultoCPLE:
+                  tarifaAdulto4:
                       double.tryParse(_tarifaAdultoCPLController.text),
                   tarifaMenores7a12:
                       double.tryParse(_tarifaMenoresController.text),
@@ -1082,17 +1087,17 @@ class _ManagerTariffDayWidgetState
                   saveTariff = selectTariff!.copyWith();
                 }
 
-                TarifaTableData secondTariff = TarifaTableData(
-                  id: categorias.indexOf(categorias
-                      .firstWhere((element) => element != selectCategory)),
+                Tarifa secondTariff = Tarifa(
+                  // id: categorias.indexOf(categorias
+                  //     .firstWhere((element) => element != selectCategory)),
                   // code: saveTariff?.code ?? '',
-                  code: '',
-                  categoria: tipoHabitacion[categorias.indexOf(categorias
-                      .firstWhere((element) => element != selectCategory))],
-                  fecha: saveTariff?.fecha ?? DateTime.now(),
-                  tarifaAdultoSGLoDBL: saveTariff?.tarifaAdultoSGLoDBL,
-                  tarifaAdultoTPL: saveTariff?.tarifaAdultoTPL,
-                  tarifaAdultoCPLE: saveTariff?.tarifaAdultoCPLE,
+                  // code: '',
+                  // categoria: tipoHabitacion[categorias.indexOf(categorias
+                  //     .firstWhere((element) => element != selectCategory))],
+                  createdAt: saveTariff?.createdAt ?? DateTime.now(),
+                  tarifaAdulto1a2: saveTariff?.tarifaAdulto1a2,
+                  tarifaAdulto3: saveTariff?.tarifaAdulto3,
+                  tarifaAdulto4: saveTariff?.tarifaAdulto4,
                   tarifaPaxAdicional: saveTariff?.tarifaPaxAdicional,
                   tarifaMenores7a12: saveTariff?.tarifaMenores7a12,
                 );
@@ -1101,7 +1106,9 @@ class _ManagerTariffDayWidgetState
                   tariffs = [newTariff, secondTariff];
                 } else {
                   int indexSecondTariff = (tariffs ?? []).indexWhere(
-                      (element) => element.categoria == secondTariff.categoria);
+                      (element) =>
+                          element?.categoria?.idInt ==
+                          secondTariff.categoria?.idInt);
 
                   if (indexSecondTariff != -1) {
                     tariffs![indexSecondTariff] = secondTariff;
@@ -1115,122 +1122,126 @@ class _ManagerTariffDayWidgetState
                 }
               }
 
-              widget.tarifaXHabitacion.temporadaSelect = selectSeason;
-              widget.tarifaXHabitacion.tarifas = tariffs;
-              widget.tarifaXHabitacion.tarifa = selectTariff;
-              widget.tarifaXHabitacion.modificado = isEditing;
+              widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect =
+                  selectSeason;
+              widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.registros =
+                  tariffs!
+                      .map((e) => RegistroTarifaBD(tarifa: e?.copyWith()))
+                      .toList();
+              widget.tarifaXHabitacion.tarifaXDia?.modificado = isEditing;
 
               if (isUnknow) {
-                widget.tarifaXHabitacion.temporadas = seasons;
-                widget.tarifaXHabitacion.tarifasBase = baseTariffs;
-                widget.tarifaXHabitacion.tariffCode =
-                    selectItemTariff?.values.first?.code;
+                widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.temporadas =
+                    seasons;
+                // widget.tarifaXHabitacion.tarifasBase = baseTariffs;
+                // widget.tarifaXHabitacion.tariffCode =
+                //     selectItemTariff?.values.first?.code;
               }
 
               if (isUnknow || isFreeTariff) {
-                widget.tarifaXHabitacion.descIntegrado =
+                widget.tarifaXHabitacion.tarifaXDia?.descIntegrado =
                     double.tryParse(_descuentoController.text);
               }
 
               if (selectItemTariff != null && isUnknow) {
-                widget.tarifaXHabitacion.descIntegrado = null;
+                widget.tarifaXHabitacion.tarifaXDia?.descIntegrado = null;
               }
 
               if (applyAllTariff) {
                 for (var element in habitacionProvider.tarifasXHabitacion!) {
                   if (element.id == widget.tarifaXHabitacion.id) {
-                    element.tarifa = selectTariff;
-                    element.subCode = null;
-                    element.temporadaSelect = selectSeason;
-                    element.tarifas = tariffs;
-                    element.modificado = isEditing;
+                    // element.tarifa = selectTariff;
+                    // element.subCode = null;
+                    // element.temporadaSelect = selectSeason;
+                    // element.tarifas = tariffs;
+                    // element.modificado = isEditing;
                   }
                 }
               }
 
               if (applyAllNoTariff && !isUnknow) {
-                widget.tarifaXHabitacion.subCode = !detectFixInChanges()
+                widget.tarifaXHabitacion.subcode = !detectFixInChanges()
                     ? null
                     : UniqueKey().hashCode.toString();
 
                 for (var element in habitacionProvider.tarifasXHabitacion!
                     .where((element) => element.id!.contains("Unknow"))) {
-                  element.tarifa = selectTariff;
-                  element.subCode = widget.tarifaXHabitacion.subCode;
-                  element.categoria = widget.tarifaXHabitacion.categoria;
-                  element.id = widget.tarifaXHabitacion.id;
-                  element.color = widget.tarifaXHabitacion.color;
-                  element.nombreTariff = widget.tarifaXHabitacion.nombreTariff;
-                  element.temporadaSelect = selectSeason;
-                  element.temporadas = seasons;
-                  element.tarifas = tariffs;
-                  element.periodo = widget.tarifaXHabitacion.periodo;
-                  element.tarifasBase = baseTariffs;
-                  element.tarifasEfectivo =
-                      widget.tarifaXHabitacion.tarifasEfectivo;
-                  element.modificado = isEditing;
+                  // element.tarifa = selectTariff;
+                  // element.subCode = widget.tarifaXHabitacion.subCode;
+                  // element.categoria = widget.tarifaXHabitacion.categoria;
+                  // element.id = widget.tarifaXHabitacion.id;
+                  // element.color = widget.tarifaXHabitacion.color;
+                  // element.nombreTariff = widget.tarifaXHabitacion.nombreTariff;
+                  // element.temporadaSelect = selectSeason;
+                  // element.temporadas = seasons;
+                  // element.tarifas = tariffs;
+                  // element.periodo = widget.tarifaXHabitacion.periodo;
+                  // element.tarifasBase = baseTariffs;
+                  // element.tarifasEfectivo =
+                  //     widget.tarifaXHabitacion.tarifasEfectivo;
+                  // element.modificado = isEditing;
                 }
               }
 
               if (applyAllNoTariff && isUnknow) {
                 for (var element in habitacionProvider.tarifasXHabitacion!
                     .where((element) => element.id!.contains("Unknow"))) {
-                  element.tarifa = selectTariff;
-                  element.tarifasBase = baseTariffs;
-                  element.temporadaSelect = selectSeason;
-                  element.temporadas = seasons;
-                  element.categoria = widget.tarifaXHabitacion.categoria;
-                  element.tarifas = tariffs;
-                  element.subCode = null;
-                  element.modificado = isEditing;
-                  element.tariffCode = selectItemTariff?.values.first?.code;
-                  element.descuentoProvisional =
-                      double.parse(_descuentoController.text);
+                  // element.tarifa = selectTariff;
+                  // element.tarifasBase = baseTariffs;
+                  // element.temporadaSelect = selectSeason;
+                  // element.temporadas = seasons;
+                  // element.categoria = widget.tarifaXHabitacion.categoria;
+                  // element.tarifas = tariffs;
+                  // element.subCode = null;
+                  // element.modificado = isEditing;
+                  // element.tariffCode = selectItemTariff?.values.first?.code;
+                  // element.descuentoProvisional =
+                  //     double.parse(_descuentoController.text);
                 }
               }
 
               if (!applyAllTariff && !applyAllNoTariff && !widget.isAppling) {
-                widget.tarifaXHabitacion.subCode =
+                widget.tarifaXHabitacion.subcode =
                     UniqueKey().hashCode.toString();
               }
 
               if (applyAllDays) {
                 for (var element in habitacionProvider.tarifasXHabitacion!) {
-                  element.tarifa = selectTariff?.copyWith();
-                  element.nombreTariff =
-                      widget.tarifaXHabitacion.copyWith().nombreTariff!;
-                  element.id = widget.tarifaXHabitacion.copyWith().id;
-                  element.color = widget.tarifaXHabitacion.copyWith().color;
-                  element.subCode = null;
-                  if (isUnknow || isFreeTariff) {
-                    element.descuentoProvisional =
-                        double.parse(_descuentoController.text);
-                  }
-                  element.tariffCode = selectItemTariff?.values.first?.code;
-                  element.temporadaSelect = selectSeason;
-                  element.temporadas = seasons;
-                  element.tarifas = tariffs?.map((e) => e.copyWith()).toList();
-                  element.periodo = widget.tarifaXHabitacion.copyWith().periodo;
-                  element.tarifasBase = baseTariffs;
-                  element.tarifasEfectivo =
-                      widget.tarifaXHabitacion.tarifasEfectivo;
-                  element.modificado = isEditing;
+                  // element.tarifa = selectTariff?.copyWith();
+                  // element.nombreTariff =
+                  //     widget.tarifaXHabitacion.copyWith().nombreTariff!;
+                  // element.id = widget.tarifaXHabitacion.copyWith().id;
+                  // element.color = widget.tarifaXHabitacion.copyWith().color;
+                  // element.subCode = null;
+                  // if (isUnknow || isFreeTariff) {
+                  //   element.descuentoProvisional =
+                  //       double.parse(_descuentoController.text);
+                  // }
+                  // element.tariffCode = selectItemTariff?.values.first?.code;
+                  // element.temporadaSelect = selectSeason;
+                  // element.temporadas = seasons;
+                  // element.tarifas = tariffs?.map((e) => e.copyWith()).toList();
+                  // element.periodo = widget.tarifaXHabitacion.copyWith().periodo;
+                  // element.tarifasBase = baseTariffs;
+                  // element.tarifasEfectivo =
+                  //     widget.tarifaXHabitacion.tarifasEfectivo;
+                  // element.modificado = isEditing;
                 }
 
                 if (isUnknow) {
                   ref.read(descuentoProvisionalProvider.notifier).update(
                       (state) => double.parse(_descuentoController.text));
 
-                  ref
-                      .read(TarifasProvisionalesProvider.provider.notifier)
-                      .addAll(tariffs ?? []);
+                  // ref
+                  //     .read(TarifasProvisionalesProvider.provider.notifier)
+                  //     .addAll(tariffs ?? []);
                 }
               }
 
               if (widget.isAppling) {
-                widget.tarifaXHabitacion.tarifa = tariffs?.firstWhere(
-                    (element) =>
-                        element.categoria == habitacionProvider.categoria);
+                // widget.tarifaXHabitacion.tarifa = tariffs?.firstWhere(
+                //     (element) =>
+                //         element.categoria == habitacionProvider.categoria);
               }
 
               ref
@@ -1281,12 +1292,12 @@ class _ManagerTariffDayWidgetState
   bool isSameSeason() {
     bool isSame = false;
 
-    isSame = widget.tarifaXHabitacion.temporadaSelect?.nombre ==
+    isSame = widget.tarifaXHabitacion.tarifaXDia?.temporadaSelect?.nombre ==
         (selectSeason?.nombre ?? '');
 
     if ((isUnknow || isFreeTariff) && selectItemTariff == null) {
       isSame = double.tryParse(_descuentoController.text) ==
-          (widget.tarifaXHabitacion.descIntegrado ?? 0);
+          (widget.tarifaXHabitacion.tarifaXDia?.descIntegrado ?? 0);
     }
 
     return isSame;
@@ -1296,34 +1307,37 @@ class _ManagerTariffDayWidgetState
     bool withChanges = false;
 
     if (!isSameSeason()) return true;
-    if (widget.tarifaXHabitacion.temporadas != seasons) return true;
+    if (widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.temporadas != seasons)
+      return true;
     if (selectTariff != null &&
         selectTariff?.categoria ==
             tipoHabitacion[categorias.indexOf(selectCategory)]) {
-      if (selectTariff?.tarifaAdultoSGLoDBL !=
+      if (selectTariff?.tarifaAdulto1a2 !=
           double.tryParse(_tarifaAdultoController.text)) return true;
-      if (selectTariff?.tarifaAdultoTPL !=
+      if (selectTariff?.tarifaAdulto3 !=
           double.tryParse(_tarifaAdultoTPLController.text)) return true;
-      if (selectTariff?.tarifaAdultoCPLE !=
+      if (selectTariff?.tarifaAdulto4 !=
           double.tryParse(_tarifaAdultoCPLController.text)) return true;
       if (selectTariff?.tarifaMenores7a12 !=
           double.tryParse(_tarifaMenoresController.text)) return true;
       if (selectTariff?.tarifaPaxAdicional !=
           double.tryParse(_tarifaPaxAdicionalController.text)) return true;
 
-      if (widget.tarifaXHabitacion.tarifas == null) return false;
-      TarifaTableData? secondTariff = tariffs
-          ?.where((element) => element.categoria == saveTariff!.categoria)
+      if (widget.tarifaXHabitacion.tarifaXDia?.tarifaRack?.registros == null)
+        return false;
+      Tarifa? secondTariff = tariffs
+          ?.where((element) =>
+              element?.categoria?.idInt == saveTariff?.categoria?.idInt)
           .firstOrNull;
       if (secondTariff == null) return false;
 
-      if (secondTariff.tarifaAdultoSGLoDBL != saveTariff!.tarifaAdultoSGLoDBL) {
+      if (secondTariff.tarifaAdulto1a2 != saveTariff!.tarifaAdulto1a2) {
         return true;
       }
-      if (secondTariff.tarifaAdultoTPL != saveTariff!.tarifaAdultoTPL) {
+      if (secondTariff.tarifaAdulto3 != saveTariff!.tarifaAdulto3) {
         return true;
       }
-      if (secondTariff.tarifaAdultoCPLE != saveTariff!.tarifaAdultoCPLE) {
+      if (secondTariff.tarifaAdulto4 != saveTariff!.tarifaAdulto4) {
         return true;
       }
       if (secondTariff.tarifaMenores7a12 != saveTariff!.tarifaMenores7a12) {
@@ -1336,14 +1350,13 @@ class _ManagerTariffDayWidgetState
         selectTariff != null &&
         selectTariff?.categoria !=
             tipoHabitacion[categorias.indexOf(selectCategory)]) {
-      if (selectTariff?.tarifaAdultoSGLoDBL !=
-          saveTariff!.tarifaAdultoSGLoDBL) {
+      if (selectTariff?.tarifaAdulto1a2 != saveTariff!.tarifaAdulto1a2) {
         return true;
       }
-      if (selectTariff?.tarifaAdultoTPL != saveTariff!.tarifaAdultoTPL) {
+      if (selectTariff?.tarifaAdulto3 != saveTariff!.tarifaAdulto3) {
         return true;
       }
-      if (selectTariff?.tarifaAdultoCPLE != saveTariff!.tarifaAdultoCPLE) {
+      if (selectTariff?.tarifaAdulto4 != saveTariff!.tarifaAdulto4) {
         return true;
       }
       if (selectTariff?.tarifaMenores7a12 != saveTariff!.tarifaMenores7a12) {
@@ -1354,18 +1367,17 @@ class _ManagerTariffDayWidgetState
       }
 
       if (tariffs == null) return false;
-      TarifaTableData? secondTariff = tariffs
-          ?.where((element) =>
-              element.categoria ==
-              tipoHabitacion[categorias.indexOf(selectCategory)])
+      Tarifa? secondTariff = tariffs
+          ?.where((element) => element?.categoria?.idInt == 0)
+          // tipoHabitacion[categorias.indexOf(selectCategory)])
           .firstOrNull;
       if (secondTariff == null) return false;
 
-      if (secondTariff.tarifaAdultoSGLoDBL !=
+      if (secondTariff.tarifaAdulto1a2 !=
           double.tryParse(_tarifaAdultoController.text)) return true;
-      if (secondTariff.tarifaAdultoTPL !=
+      if (secondTariff.tarifaAdulto3 !=
           double.tryParse(_tarifaAdultoTPLController.text)) return true;
-      if (secondTariff.tarifaAdultoCPLE !=
+      if (secondTariff.tarifaAdulto4 !=
           double.tryParse(_tarifaAdultoCPLController.text)) return true;
       if (secondTariff.tarifaMenores7a12 !=
           double.tryParse(_tarifaMenoresController.text)) return true;
@@ -1373,15 +1385,17 @@ class _ManagerTariffDayWidgetState
           double.tryParse(_tarifaPaxAdicionalController.text)) return true;
     }
 
-    if (widget.tarifaXHabitacion.modificado != isEditing) return true;
+    if (widget.tarifaXHabitacion.tarifaXDia?.modificado != isEditing) {
+      return true;
+    }
 
     return withChanges;
   }
 
   bool revisedPropiertiesSaveTariff() {
-    if (saveTariff?.tarifaAdultoSGLoDBL == null) return true;
-    if (saveTariff?.tarifaAdultoTPL == null) return true;
-    if (saveTariff?.tarifaAdultoCPLE == null) return true;
+    if (saveTariff?.tarifaAdulto1a2 == null) return true;
+    if (saveTariff?.tarifaAdulto3 == null) return true;
+    if (saveTariff?.tarifaAdulto4 == null) return true;
     if (saveTariff?.tarifaPaxAdicional == null) return true;
     if (saveTariff?.tarifaMenores7a12 == null) return true;
 
@@ -1392,13 +1406,14 @@ class _ManagerTariffDayWidgetState
     bool isValid = false;
     if (isUnknow) return true;
     if (habitacion.tarifasXHabitacion!
-        .any((element) => element.id!.contains("Unknow"))) isValid = true;
+        .any((element) => element.id!.contains("Unknow"))) {
+      isValid = true;
+    }
 
     return isValid;
   }
 
-  void _saveTariffNoDefined(
-      TarifaTableData? firstTariff, TarifaTableData? secondTariff) {
+  void _saveTariffNoDefined(Tarifa? firstTariff, Tarifa? secondTariff) {
     ref
         .read(descuentoProvisionalProvider.notifier)
         .update((state) => double.parse(_descuentoController.text));

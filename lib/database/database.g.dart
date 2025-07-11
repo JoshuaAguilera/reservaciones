@@ -1023,7 +1023,7 @@ class $UsuarioTableTable extends UsuarioTable
   static const VerificationMeta _idIntMeta = const VerificationMeta('idInt');
   @override
   late final GeneratedColumn<int> idInt = GeneratedColumn<int>(
-      'id_int', aliasedName, false,
+      'id_int', aliasedName, true,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
@@ -1219,7 +1219,7 @@ class $UsuarioTableTable extends UsuarioTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuarioTableData(
       idInt: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}id_int']),
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id']),
       username: attachedDatabase.typeMapping
@@ -1259,7 +1259,7 @@ class $UsuarioTableTable extends UsuarioTable
 
 class UsuarioTableData extends DataClass
     implements Insertable<UsuarioTableData> {
-  final int idInt;
+  final int? idInt;
   final String? id;
   final String? username;
   final String? password;
@@ -1275,7 +1275,7 @@ class UsuarioTableData extends DataClass
   final int? rolInt;
   final String? rol;
   const UsuarioTableData(
-      {required this.idInt,
+      {this.idInt,
       this.id,
       this.username,
       this.password,
@@ -1293,7 +1293,9 @@ class UsuarioTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_int'] = Variable<int>(idInt);
+    if (!nullToAbsent || idInt != null) {
+      map['id_int'] = Variable<int>(idInt);
+    }
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<String>(id);
     }
@@ -1341,7 +1343,8 @@ class UsuarioTableData extends DataClass
 
   UsuarioTableCompanion toCompanion(bool nullToAbsent) {
     return UsuarioTableCompanion(
-      idInt: Value(idInt),
+      idInt:
+          idInt == null && nullToAbsent ? const Value.absent() : Value(idInt),
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       username: username == null && nullToAbsent
           ? const Value.absent()
@@ -1384,7 +1387,7 @@ class UsuarioTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuarioTableData(
-      idInt: serializer.fromJson<int>(json['idInt']),
+      idInt: serializer.fromJson<int?>(json['idInt']),
       id: serializer.fromJson<String?>(json['id']),
       username: serializer.fromJson<String?>(json['username']),
       password: serializer.fromJson<String?>(json['password']),
@@ -1406,7 +1409,7 @@ class UsuarioTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idInt': serializer.toJson<int>(idInt),
+      'idInt': serializer.toJson<int?>(idInt),
       'id': serializer.toJson<String?>(id),
       'username': serializer.toJson<String?>(username),
       'password': serializer.toJson<String?>(password),
@@ -1425,7 +1428,7 @@ class UsuarioTableData extends DataClass
   }
 
   UsuarioTableData copyWith(
-          {int? idInt,
+          {Value<int?> idInt = const Value.absent(),
           Value<String?> id = const Value.absent(),
           Value<String?> username = const Value.absent(),
           Value<String?> password = const Value.absent(),
@@ -1441,7 +1444,7 @@ class UsuarioTableData extends DataClass
           Value<int?> rolInt = const Value.absent(),
           Value<String?> rol = const Value.absent()}) =>
       UsuarioTableData(
-        idInt: idInt ?? this.idInt,
+        idInt: idInt.present ? idInt.value : this.idInt,
         id: id.present ? id.value : this.id,
         username: username.present ? username.value : this.username,
         password: password.present ? password.value : this.password,
@@ -1546,7 +1549,7 @@ class UsuarioTableData extends DataClass
 }
 
 class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
-  final Value<int> idInt;
+  final Value<int?> idInt;
   final Value<String?> id;
   final Value<String?> username;
   final Value<String?> password;
@@ -1632,7 +1635,7 @@ class UsuarioTableCompanion extends UpdateCompanion<UsuarioTableData> {
   }
 
   UsuarioTableCompanion copyWith(
-      {Value<int>? idInt,
+      {Value<int?>? idInt,
       Value<String?>? id,
       Value<String?>? username,
       Value<String?>? password,
@@ -12162,7 +12165,7 @@ class $$RolTableTableOrderingComposer
 
 typedef $$UsuarioTableTableCreateCompanionBuilder = UsuarioTableCompanion
     Function({
-  Value<int> idInt,
+  Value<int?> idInt,
   Value<String?> id,
   Value<String?> username,
   Value<String?> password,
@@ -12180,7 +12183,7 @@ typedef $$UsuarioTableTableCreateCompanionBuilder = UsuarioTableCompanion
 });
 typedef $$UsuarioTableTableUpdateCompanionBuilder = UsuarioTableCompanion
     Function({
-  Value<int> idInt,
+  Value<int?> idInt,
   Value<String?> id,
   Value<String?> username,
   Value<String?> password,
@@ -12214,7 +12217,7 @@ class $$UsuarioTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$UsuarioTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> idInt = const Value.absent(),
+            Value<int?> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),
@@ -12248,7 +12251,7 @@ class $$UsuarioTableTableTableManager extends RootTableManager<
             rol: rol,
           ),
           createCompanionCallback: ({
-            Value<int> idInt = const Value.absent(),
+            Value<int?> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
             Value<String?> username = const Value.absent(),
             Value<String?> password = const Value.absent(),

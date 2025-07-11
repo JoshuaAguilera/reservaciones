@@ -4,7 +4,7 @@ import 'imagen_table.dart';
 import 'rol_table.dart';
 
 class UsuarioTable extends Table {
-  IntColumn get idInt => integer().autoIncrement()();
+  IntColumn get idInt => integer().autoIncrement().nullable()();
   TextColumn get id => text().nullable()();
   TextColumn get username => text().nullable()();
   TextColumn get password => text().nullable()();

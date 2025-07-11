@@ -14,12 +14,15 @@ import '../models/cotizacion_model.dart';
 import '../models/notificacion_model.dart';
 import '../models/numero_cotizacion_model.dart';
 import '../models/reporte_cotizacion_model.dart';
+import '../res/helpers/animation_helpers.dart';
 import '../res/helpers/constants.dart';
 import '../res/helpers/date_helpers.dart';
 import '../res/helpers/desktop_colors.dart';
 import '../res/helpers/utility.dart';
+import '../res/ui/buttons.dart';
 import '../res/ui/custom_widgets.dart';
 import '../res/ui/progress_indicator.dart';
+import '../utils/widgets/form_widgets.dart';
 import '../utils/widgets/item_rows.dart';
 import '../utils/widgets/notification_widget.dart';
 import '../view-models/providers/dahsboard_provider.dart';
@@ -297,45 +300,57 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextStyles.titlePagText(
-                      text: "Dashboard", color: Theme.of(context).primaryColor),
-                  Row(
-                    children: [
-                      NotificationWidget(
-                        keyTool: messageKey,
-                        notifications: notificaciones,
-                        viewNotification: viewNotification,
-                        onPressed: () {
-                          if (!viewNotification) {
-                            ref
-                                .read(userViewProvider.notifier)
-                                .update((state) => true);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          widget.sideController.selectIndex(3);
-                        },
-                        icon: Icon(
-                          Icons.settings,
-                          color: brightness == Brightness.light
-                              ? DesktopColors.primary1
-                              : DesktopColors.azulUltClaro,
-                          size: 26,
+              AnimatedEntry(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          height: 40,
+                          child: FormWidgets.textFormField(
+                            name: "Buscar",
+                            suffixIcon: const Icon(
+                                Iconsax.search_normal_1_outline,
+                                size: 20),
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              ).animate().fadeIn(
-                    duration: Settings.applyAnimations
-                        ? null
-                        : const Duration(milliseconds: 0),
+                        Row(
+                          children: [
+                            NotificationWidget(
+                              keyTool: messageKey,
+                              notifications: notificaciones,
+                              viewNotification: viewNotification,
+                              onPressed: () {
+                                if (!viewNotification) {
+                                  ref
+                                      .read(userViewProvider.notifier)
+                                      .update((state) => true);
+                                }
+                              },
+                            ),
+                            Buttons.floatingButton(
+                              context,
+                              tag: "settings",
+                              icon: Iconsax.setting_2_outline,
+                              onPressed: () {
+                                if (!viewNotification) {
+                                  ref
+                                      .read(userViewProvider.notifier)
+                                      .update((state) => true);
+                                }
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
+                ),
+              ),
+              TextStyles.titlePagText(text: "Dashboard"),
               const SizedBox(height: 5),
               if (!isLoading)
                 Center(
@@ -378,27 +393,55 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Iconsax.arrow_left_1_outline,
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                    minHeight: 28,
+                                                    minWidth: 28,
+                                                  ),
+                                                  icon: const Icon(
+                                                    Iconsax
+                                                        .arrow_left_1_outline,
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () =>
+                                                      _changeDateView(),
                                                 ),
-                                                onPressed: () =>
-                                                    _changeDateView(),
-                                              ),
-                                              TextStyles.standardText(
-                                                text: _getPeriodReportSelect(),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Iconsax.arrow_right_4_outline,
+                                                TextStyles.standardText(
+                                                  text:
+                                                      _getPeriodReportSelect(),
                                                 ),
-                                                onPressed: () =>
-                                                    _changeDateView(
-                                                        isAfter: true),
-                                              ),
-                                            ],
+                                                IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                    minHeight: 28,
+                                                    minWidth: 28,
+                                                  ),
+                                                  icon: const Icon(
+                                                    Iconsax
+                                                        .arrow_right_4_outline,
+                                                    size: 18,
+                                                  ),
+                                                  onPressed: () =>
+                                                      _changeDateView(
+                                                          isAfter: true),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           CustomDropdown.dropdownMenuCustom(
                                             fontSize: 12,
