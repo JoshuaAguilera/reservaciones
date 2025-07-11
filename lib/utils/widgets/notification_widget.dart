@@ -7,6 +7,7 @@ import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/helpers/icon_helpers.dart';
 import '../../res/helpers/utility.dart';
+import '../../res/ui/buttons.dart';
 import '../../res/ui/text_styles.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -103,20 +104,12 @@ class _NotificationWidgetState extends State<NotificationWidget> {
           ),
         ),
       ),
-      child: IconButton(
-        onPressed: () {
-          widget.keyTool.currentState?.ensureTooltipVisible();
-          widget.onPressed.call();
-        },
-        icon: Stack(
+      child: Buttons.floatingButton(
+        context,
+        tag: "notificaciones",
+        iconWidget: Stack(
           children: [
-            Icon(
-              CupertinoIcons.bell_solid,
-              color: brightness == Brightness.light
-                  ? DesktopColors.cerulean
-                  : DesktopColors.azulUltClaro,
-              size: 26,
-            ),
+            const Icon(CupertinoIcons.bell, size: 26),
             if (widget.notifications.isNotEmpty && !widget.viewNotification)
               Positioned(
                 top: 0,
@@ -129,6 +122,10 @@ class _NotificationWidgetState extends State<NotificationWidget> {
               )
           ],
         ),
+        onPressed: () {
+          widget.keyTool.currentState?.ensureTooltipVisible();
+          widget.onPressed.call();
+        },
       ),
     );
   }

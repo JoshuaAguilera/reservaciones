@@ -249,31 +249,18 @@ class _SideBarState extends ConsumerState<SideBar> {
                                 width: 30,
                                 height: 30,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white60,
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/image/usuario.png'),
-                                    ),
-                                  ),
+                                    const Icon(
+                                  Iconsax.user_square_bold,
+                                  size: 30,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
                           )
-                        : Container(
-                            width: 30,
-                            height: 30,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white60,
-                              image: DecorationImage(
-                                image: AssetImage('assets/image/usuario.png'),
-                              ),
-                            ),
+                        : const Icon(
+                            Iconsax.user_square_bold,
+                            size: 30,
+                            color: Colors.white,
                           ),
                   ],
                 ),

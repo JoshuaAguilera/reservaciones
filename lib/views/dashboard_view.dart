@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -313,11 +311,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           child: FormWidgets.textFormField(
                             name: "Buscar",
                             suffixIcon: const Icon(
-                                Iconsax.search_normal_1_outline,
-                                size: 20),
+                              Iconsax.search_normal_1_outline,
+                              size: 20,
+                            ),
                           ),
                         ),
                         Row(
+                          spacing: 10,
                           children: [
                             NotificationWidget(
                               keyTool: messageKey,

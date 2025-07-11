@@ -71,6 +71,10 @@ class Themes {
           ),
         ),
       ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+      ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
     );
   }

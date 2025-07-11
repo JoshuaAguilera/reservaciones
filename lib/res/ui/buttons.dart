@@ -262,6 +262,7 @@ class Buttons {
     BuildContext context, {
     void Function()? onPressed,
     IconData? icon,
+    Widget? iconWidget,
     required String tag,
     Color? color,
     double iconSize = 29,
@@ -271,7 +272,7 @@ class Buttons {
 
     return FloatingActionButton(
       elevation: 0,
-      backgroundColor: color ?? Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: color ?? Theme.of(context).cardColor,
       highlightElevation: 0,
       shape: CircleBorder(
         side: BorderSide(
@@ -284,10 +285,11 @@ class Buttons {
       onPressed: onPressed,
       child: Stack(
         children: [
-          Icon(
-            icon,
-            size: iconSize,
-          ),
+          iconWidget ??
+              Icon(
+                icon,
+                size: iconSize,
+              ),
           if (withAdd)
             Positioned(
               bottom: 0,

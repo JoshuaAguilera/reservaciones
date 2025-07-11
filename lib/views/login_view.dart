@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:tuple/tuple.dart';
 
@@ -153,7 +154,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             ),
                             padding: const EdgeInsets.all(3),
                             child: Icon(
-                              Icons.sunny,
+                              !Settings.modeDark
+                                  ? Iconsax.moon_bold
+                                  : Icons.sunny,
                               color: brightness == Brightness.light
                                   ? DesktopColors.prussianBlue
                                   : Colors.white,
