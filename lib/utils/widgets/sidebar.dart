@@ -222,7 +222,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Image(
-                        image: AssetImage("assets/image/icon_home_sidebar.png"),
+                        image: AssetImage("assets/image/logo_desktop.png"),
                         width: 35,
                       ),
                     ),

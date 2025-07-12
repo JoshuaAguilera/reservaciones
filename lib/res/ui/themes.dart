@@ -52,13 +52,17 @@ class Themes {
           ),
         ),
       ),
-      scaffoldBackgroundColor: const Color.fromARGB(255, 238, 238, 238),
-      cardColor: Colors.white,
-      cardTheme: const CardThemeData(color: Colors.white),
+      scaffoldBackgroundColor: Colors.white,
+      cardColor: const Color.fromARGB(255, 238, 238, 238),
+      cardTheme: const CardThemeData(
+        color: Color.fromARGB(255, 238, 238, 238),
+        elevation: 0,
+      ),
       textTheme: TextTheme(
         bodyMedium: TextStyles.styleStandar(color: Colors.black87),
       ),
       inputDecorationTheme: const InputDecorationTheme(
+        fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(width: 1.2),
           borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -76,6 +80,10 @@ class Themes {
         foregroundColor: Colors.black87,
       ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
+      buttonTheme: ButtonThemeData(
+        buttonColor: DesktopColors.buttonPrimary,
+        textTheme: ButtonTextTheme.primary,
+      ),
     );
   }
 }

@@ -102,7 +102,7 @@ class Buttons {
     double? sizeIcon,
     double spaceBetween = 10,
     bool compact = false,
-    double sizeText = 14,
+    double sizeText = 13,
     bool withTextBold = true,
     Color? backgroundColor,
     Color? colorText,
@@ -122,6 +122,7 @@ class Buttons {
       builder: (context, snapshot) {
         var brightness =
             ThemeModelInheritedNotifier.of(context).theme.brightness;
+        bool isDark = brightness == Brightness.dark;
 
         return Opacity(
           opacity: onPressed != null ? 1 : 0.6,
@@ -142,7 +143,7 @@ class Buttons {
                       color: (colorBorder ??
                           backgroundColor ??
                           DesktopColors.buttonPrimary),
-                      width: 2,
+                      width: isDark ? 2 : 0,
                     ),
                     borderRadius: const BorderRadius.all(Radius.circular(22)),
                   ),
@@ -208,12 +209,16 @@ class Buttons {
     IconData? icon,
     bool isLoading = false,
     bool compact = false,
-    double sizeText = 16,
+    double sizeText = 13.5,
     Color? backgroudColor,
     Color? foregroundColor,
   }) {
     return StatefulBuilder(
       builder: (context, _) {
+        var brightness =
+            ThemeModelInheritedNotifier.of(context).theme.brightness;
+        bool isDark = brightness == Brightness.dark;
+
         return buttonPrimary(
           onPressed: onPressed,
           text: text,
@@ -223,9 +228,13 @@ class Buttons {
           isLoading: isLoading,
           withTextBold: false,
           padVer: 0,
-          backgroundColor: backgroudColor ?? Colors.transparent,
-          colorText: foregroundColor ?? Theme.of(context).iconTheme.color,
-          colorBorder: backgroudColor ?? Theme.of(context).iconTheme.color,
+          backgroundColor:
+              backgroudColor ?? Theme.of(context).scaffoldBackgroundColor,
+          colorText: isDark
+              ? Colors.white
+              : foregroundColor ?? Theme.of(context).iconTheme.color,
+          colorBorder: (isDark ? backgroudColor : foregroundColor) ??
+              Theme.of(context).iconTheme.color,
         );
       },
     );
@@ -272,7 +281,7 @@ class Buttons {
 
     return FloatingActionButton(
       elevation: 0,
-      backgroundColor: color ?? Theme.of(context).cardColor,
+      backgroundColor: color ?? Theme.of(context).scaffoldBackgroundColor,
       highlightElevation: 0,
       shape: CircleBorder(
         side: BorderSide(

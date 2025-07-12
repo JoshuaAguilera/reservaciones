@@ -120,7 +120,7 @@ class TextStyles {
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontFamily: isBold ? "poppins_bold" : "poppins_medium",
-        color: color ?? DesktopColors.cerulean,
+        color: color,
         fontWeight: FontWeight.bold,
         fontSize: size,
         overflow: overflow,
@@ -171,11 +171,12 @@ class TextStyles {
     String numeroFormateado = formatter.format(index);
 
     return titleText(
-        text: numeroFormateado,
-        size: size,
-        textAlign: TextAlign.center,
-        color: color ?? DesktopColors.ceruleanOscure,
-        isBold: isBold);
+      text: numeroFormateado,
+      size: size,
+      textAlign: TextAlign.center,
+      color: color,
+      isBold: isBold,
+    );
   }
 
   static Text titlePagText(
@@ -188,7 +189,7 @@ class TextStyles {
       textAlign: TextAlign.start,
       overflow: overflow,
       style: TextStyle(
-        fontFamily: "poppins_bold",
+        fontFamily: "poppins_medium",
         fontWeight: FontWeight.bold,
         fontSize: size ?? 22,
       ),

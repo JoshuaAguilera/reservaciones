@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'desktop_colors.dart';
 
@@ -76,56 +77,40 @@ class ColorsHelpers {
     }
   }
 
-  static List<Color> getGradientQuote(String? tipoCotizacion) {
-    switch (tipoCotizacion) {
-      case "Cotizaciones grupales":
-        return [
-          DesktopColors.cotGrupal,
-          const Color.fromARGB(255, 255, 205, 124)
-        ];
-      case "Reservaciones grupales":
-        return [
-          DesktopColors.resGrupal,
-          const Color.fromARGB(255, 226, 109, 31)
-        ];
-      case "Cotizaciones individuales":
-        return [
-          DesktopColors.cotIndiv,
-          const Color.fromARGB(255, 73, 185, 255)
-        ];
-      case "Reservaciones individuales":
-        return [
-          DesktopColors.resIndiv,
-          const Color.fromARGB(255, 140, 207, 240)
-        ];
-      case "Cotizaciones no concretadas":
-        return [
-          DesktopColors.cotNoConcr,
-          DesktopColors.grisPalido,
-        ];
-      default:
-        return [];
-    }
+  static List<Color> getGradientQuote(Color color) {
+    List<Color> gradient = [];
+    gradient.add(color);
+    gradient.add(darken(color, 0.2));
+    return gradient;
   }
 
   static Color getColorRegisterQuote(String type) {
-    switch (type) {
-      case "Cotizaciones grupales":
+    switch (type.toLowerCase()) {
+      case "grupales":
         return DesktopColors.cotGrupal;
-      case "Reservaciones grupales":
-        return DesktopColors.resGrupal;
-      case "Cotizaciones individuales":
+      case "individuales":
         return DesktopColors.cotIndiv;
-      case "Reservaciones individuales":
+      case "reservadas":
         return DesktopColors.resIndiv;
-      case "Cotizaciones no concretadas":
+      case "caducadas":
         return DesktopColors.cotNoConcr;
+      case "total":
+        return Colors.black54;
       default:
         return Colors.white;
     }
   }
 
-    static Color? getColorTypeUser(String rol,
+  static Color? getForegroundColor(Color? color) {
+    if (color == null) {
+      return null;
+    }
+
+    final luminance = useWhiteForeground(color);
+    return !luminance ? Colors.black87 : Colors.white;
+  }
+
+  static Color? getColorTypeUser(String rol,
       {int alpha = 255, bool isText = false}) {
     switch (rol) {
       case "SUPERADMIN":

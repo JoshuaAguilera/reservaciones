@@ -100,6 +100,7 @@ class InputDecorations {
     Widget? icon,
   }) {
     return InputDecoration(
+      filled: true,
       labelText: labelText,
       counterText: "",
       floatingLabelAlignment:
@@ -116,6 +117,13 @@ class InputDecorations {
         borderRadius: BorderRadius.all(
           Radius.circular(15),
         ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          width: 1.2,
+          color: colorBorder ?? Colors.transparent,
+        ),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15),
       errorStyle: TextStyle(
@@ -276,9 +284,11 @@ class TextInputDecoration {
 class InputBorderDecoration {
   static OutlineInputBorder OutlineBorderEnabled() {
     return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(3.0),
-        borderSide:
-            const BorderSide(color: Color.fromRGBO(162, 162, 162, 1.0)));
+      borderRadius: BorderRadius.circular(3.0),
+      borderSide: const BorderSide(
+        color: Color.fromRGBO(162, 162, 162, 1.0),
+      ),
+    );
   }
 
   static OutlineInputBorder OutlineBorder({double radius = 3}) {
@@ -290,6 +300,8 @@ class InputBorderDecoration {
 
   static OutlineInputBorder NoneBorder() {
     return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(3.0), borderSide: BorderSide.none);
+      borderRadius: BorderRadius.circular(3.0),
+      borderSide: BorderSide.none,
+    );
   }
 }

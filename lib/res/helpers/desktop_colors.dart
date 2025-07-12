@@ -65,4 +65,5 @@ class DesktopColors {
   static Color primary3 = HexColor.fromHex("#30addb");
   static Color primary4 = HexColor.fromHex("#f05556");
   static Color primary5 = HexColor.fromHex("#f2981b");
+  static Color primary6 = HexColor.fromHex("#3d5462");
 }

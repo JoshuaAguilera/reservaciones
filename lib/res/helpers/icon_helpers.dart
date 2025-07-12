@@ -37,17 +37,17 @@ class IconHelpers {
   }
 
   static IconData? getIconCardDashboard(String? tipoCotizacion) {
-    switch (tipoCotizacion) {
-      case "Cotizaciones grupales":
-        return CupertinoIcons.person_2_fill;
-      case "Reservaciones grupales":
-        return CupertinoIcons.person_2_fill;
-      case "Cotizaciones individuales":
-        return CupertinoIcons.person_fill;
-      case "Reservaciones individuales":
-        return CupertinoIcons.person_fill;
-      case "Cotizaciones no concretadas":
-        return Iconsax.clipboard_outline;
+    switch (tipoCotizacion?.toLowerCase()) {
+      case "grupales":
+        return Iconsax.people_outline;
+      case "individuales":
+        return Iconsax.user_outline;
+      case "reservadas":
+        return Iconsax.calendar_tick_outline;
+      case "caducadas":
+        return Iconsax.direct_inbox_outline;
+      case "total":
+        return Iconsax.align_horizontally_outline;
       default:
         return Icons.error_outline;
     }

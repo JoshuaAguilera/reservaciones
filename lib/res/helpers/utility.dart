@@ -216,50 +216,46 @@ class Utility {
       {List<Cotizacion>? respIndToday}) {
     List<NumeroCotizacion> cot = [];
 
+    NumeroCotizacion cotizacionesTotales =
+        NumeroCotizacion(tipoCotizacion: "Total");
+
     NumeroCotizacion cotizacionesGrupales =
-        NumeroCotizacion(tipoCotizacion: "Cotizaciones grupales");
+        NumeroCotizacion(tipoCotizacion: "Grupales");
 
     NumeroCotizacion cotizacionesIndividuales =
-        NumeroCotizacion(tipoCotizacion: "Cotizaciones individuales");
+        NumeroCotizacion(tipoCotizacion: "Individuales");
 
-    NumeroCotizacion reservacionesIndividuales =
-        NumeroCotizacion(tipoCotizacion: "Reservaciones individuales");
-
-    NumeroCotizacion reservacionesGrupales =
-        NumeroCotizacion(tipoCotizacion: "Reservaciones grupales");
+    NumeroCotizacion reservadas =
+        NumeroCotizacion(tipoCotizacion: "Reservadas");
 
     NumeroCotizacion cotizacionesNoConcretadas =
-        NumeroCotizacion(tipoCotizacion: "Cotizaciones no concretadas");
+        NumeroCotizacion(tipoCotizacion: "Caducadas");
 
     for (var element in respIndToday ?? List<Cotizacion>.empty()) {
       if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
               1 &&
-          !(element.estatus == "reservado")) {
+          (element.estatus != "reservado")) {
         cotizacionesNoConcretadas.numCotizaciones++;
 
         continue;
       }
 
+      if (element.estatus == "reservado") {
+        reservadas.numCotizaciones++;
+      }
+
       if (element.esGrupo ?? false) {
-        if (element.estatus == "reservado") {
-          reservacionesGrupales.numCotizaciones++;
-        } else {
-          cotizacionesGrupales.numCotizaciones++;
-        }
+        cotizacionesGrupales.numCotizaciones++;
       } else {
-        if (element.estatus == "reservado") {
-          reservacionesIndividuales.numCotizaciones++;
-        } else {
-          cotizacionesIndividuales.numCotizaciones++;
-        }
+        cotizacionesIndividuales.numCotizaciones++;
       }
     }
 
     cot.addAll([
+      cotizacionesTotales,
       cotizacionesGrupales,
       cotizacionesIndividuales,
-      reservacionesGrupales,
-      reservacionesIndividuales,
+      reservadas,
       cotizacionesNoConcretadas,
     ]);
 

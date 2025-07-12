@@ -71,12 +71,28 @@ class CustomDropdown {
                       offset: Offset(0, dyCompact),
                       child: const Icon(Iconsax.arrow_up_2_outline, size: 20),
                     ),
-                    inputDecorationTheme: !compact
-                        ? null
-                        : const InputDecorationTheme(
-                            contentPadding: EdgeInsets.only(top: -5, left: 15),
-                            border: OutlineInputBorder(),
-                          ),
+                    inputDecorationTheme: InputDecorationTheme(
+                      filled: true,
+                      fillColor: Theme.of(context).cardColor,
+                      contentPadding: const EdgeInsets.only(top: -5, left: 15),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    menuStyle: MenuStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                        Theme.of(context).cardColor,
+                      ),
+                    ),
                     textStyle: TextStyle(
                         fontFamily: "poppins_regular", fontSize: fontSize),
                     dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(

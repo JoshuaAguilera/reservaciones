@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +10,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../models/numero_cotizacion_model.dart';
 import '../../models/tarifa_rack_model.dart';
@@ -21,53 +25,123 @@ import 'dialogs.dart';
 import '../../res/ui/text_styles.dart';
 
 class ItemRow {
-  static Widget statusQuoteRow(NumeroCotizacion register,
-      {double sizeText = 13}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        gradient: LinearGradient(
-          colors: ColorsHelpers.getGradientQuote(register.tipoCotizacion),
-          end: Alignment.centerRight,
-          begin: Alignment.centerLeft,
-        ),
-      ),
-      padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(bottom: 9),
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Icon(
-              IconHelpers.getIconCardDashboard(register.tipoCotizacion),
-              size: 55,
-              color: ColorsHelpers.darken(
-                ColorsHelpers.getColorRegisterQuote(register.tipoCotizacion!),
-                0.12,
-              ),
-            ),
+  static Widget statisticsRow(NumeroCotizacion register,
+      {double sizeText = 15}) {
+    bool isQuest =
+        (register.tipoCotizacion ?? '').toLowerCase().contains("total");
+
+    Color? backgroudColor = isQuest ? DesktopColors.primary6 : Colors.white;
+
+    Color? foregroundColor = ColorsHelpers.getForegroundColor(backgroudColor);
+
+    return Builder(
+      builder: (context) {
+        final brightness =
+            ThemeModelInheritedNotifier.of(context).theme.brightness;
+        bool isDark = brightness == Brightness.dark;
+        Color? foregroundColorInt = !isQuest
+            ? isDark
+                ? Colors.white
+                : DesktopColors.primary6
+            : foregroundColor;
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            gradient: !isQuest
+                ? null
+                : LinearGradient(
+                    colors: ColorsHelpers.getGradientQuote(backgroudColor),
+                    end: Alignment.centerRight,
+                    begin: Alignment.centerLeft,
+                    transform: const GradientRotation(pi / 0.28),
+                  ),
+            color: (!isDark && isQuest)
+                ? backgroudColor
+                : Theme.of(context).scaffoldBackgroundColor,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          constraints: const BoxConstraints(minWidth: 170),
+          padding: const EdgeInsets.all(8),
+          margin: const EdgeInsets.only(bottom: 9),
+          height: 120,
+          child: Stack(
             children: [
-              TextStyles.standardText(
-                text: register.tipoCotizacion ?? '',
-                color: Colors.white,
-                size: sizeText,
-                overClip: true,
-              ),
-              TextStyles.TextTitleList(
-                index: register.numCotizaciones,
-                color: Colors.white,
-                size: 29.5,
-                isBold: false,
+              Column(
+                spacing: 2,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 5,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(
+                        IconHelpers.getIconCardDashboard(
+                            register.tipoCotizacion),
+                        size: 30,
+                        color: (isDark && !isQuest) ? null : foregroundColor,
+                      ),
+                      Flexible(
+                        child: TextStyles.standardText(
+                          text: register.tipoCotizacion ?? '',
+                          color: (isDark && !isQuest) ? null : foregroundColor,
+                          size: sizeText,
+                          overClip: true,
+                          isBold: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: TextStyles.TextTitleList(
+                      index: register.numCotizaciones,
+                      color: (isDark && !isQuest) ? null : foregroundColor,
+                      size: 32,
+                      isBold: false,
+                    ),
+                  ),
+                  Row(
+                    spacing: 5,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: foregroundColorInt!,
+                            width: 1.5,
+                          ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Iconsax.arrow_up_2_outline,
+                              size: 15,
+                              color: foregroundColorInt,
+                            ),
+                            TextStyles.standardText(
+                              text: "5",
+                              size: 10,
+                              color: foregroundColorInt,
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextStyles.standardText(
+                        text: " Incremento del mes",
+                        size: 10,
+                        color: foregroundColorInt,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -646,6 +720,78 @@ class ItemRow {
                     onPreseedDelete,
                   ),
               ],
+        );
+      },
+    );
+  }
+
+  static Widget metricWidget(
+      {required Estadisticas estadistica,
+      double size = 12,
+      required SidebarXController sidebarXController}) {
+    return Builder(
+      builder: (context) {
+        final widthScreen = MediaQuery.of(context).size.width;
+
+        return SizedBox(
+          height: 90,
+          child: Card(
+            color: Theme.of(context).cardTheme.color,
+            child: Tooltip(
+              message: widthScreen > 750 ? "" : "Ocupación",
+              margin: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      width: 100,
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: SfCircularChart(
+                              series: <CircularSeries>[
+                                RadialBarSeries<Estadisticas, String>(
+                                    maximumValue: 100,
+                                    innerRadius: "80%",
+                                    dataSource: [estadistica],
+                                    xValueMapper: (Estadisticas data, _) =>
+                                        data.descripcion,
+                                    yValueMapper: (Estadisticas data, _) =>
+                                        data.porcentaje)
+                              ],
+                            ),
+                          ),
+                          Center(
+                            child: TextStyles.standardText(
+                              text: "50%",
+                              size: 14,
+                              isBold: true,
+                              height: 0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (widthScreen > 1200)
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextStyles.standardText(
+                          text: estadistica.descripcion ?? "Ocupación",
+                          size: size,
+                          color: Theme.of(context).primaryColor,
+                          isBold: true,
+                          overClip: true,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
