@@ -8,6 +8,7 @@ import '../../database/database.dart';
 import '../../models/cotizacion_model.dart';
 import '../../models/error_model.dart';
 import '../../models/habitacion_model.dart';
+import '../../models/estadistica_model.dart';
 import '../../models/tarifa_x_dia_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../models/usuario_model.dart';
@@ -92,6 +93,78 @@ class CotizacionService extends BaseService {
       print(e);
     }
     return cotizaciones;
+  }
+
+  Future<List<Estadistica>> getCounts({
+    required List<Estadistica> stats,
+    String filtro = "Individual",
+  }) async {
+    List<Estadistica> list = [];
+    DateTime now = DateTime.now();
+    DateTime initPastMonth = DateTime(now.year, now.month - 1, 1);
+    DateTime lastPastMonth = DateTime(now.year, now.month, 0);
+    DateTime initNowMonth = DateTime(now.year, now.month, 1);
+    DateTime lastNowMonth = DateTime(now.year, now.month + 1, 0);
+
+    try {
+      final db = AppDatabase();
+      final cotDao = CotizacionDao(db);
+
+      await db.transaction(
+        () async {
+          for (var stat in stats) {
+            bool esTotal = stat.title?.toLowerCase() == "total";
+            bool esGrupal = stat.title?.toLowerCase() == "grupales";
+            bool esIndividual = stat.title?.toLowerCase() == "individuales";
+            bool esConcretada = stat.title?.toLowerCase() == "reservadas";
+            bool esCaducada = stat.title?.toLowerCase() == "caducadas";
+
+            List<bool> filters = [
+              esTotal,
+              esGrupal,
+              esIndividual,
+              esConcretada,
+              esCaducada,
+            ];
+
+            int? totalNow = await cotDao.countBy(
+              filters: filters,
+              creadorId: filtro == "Equipo" ? null : userId,
+            );
+
+            int? nowMonth = await cotDao.countBy(
+              initDate: initNowMonth,
+              lastDate: lastNowMonth,
+              filters: filters,
+              creadorId: filtro == "Equipo" ? null : userId,
+            );
+
+            int? initialMonth = await cotDao.countBy(
+              initDate: initPastMonth,
+              lastDate: lastPastMonth,
+              filters: filters,
+              creadorId: filtro == "Equipo" ? null : userId,
+            );
+
+            Estadistica estadistica = Estadistica(
+              title: stat.title,
+              total: totalNow ?? 0,
+              numNow: nowMonth ?? 0,
+              numInitial: initialMonth ?? 0,
+            );
+
+            list.add(estadistica);
+          }
+        },
+      );
+
+      await cotDao.close();
+      await db.close();
+    } catch (e) {
+      print(e);
+    }
+
+    return list;
   }
 
   Future<Cotizacion?> getByID(int id) async {

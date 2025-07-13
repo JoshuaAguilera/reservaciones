@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sidebarx/sidebarx.dart';
 
 import '../res/helpers/utility.dart';
+import '../view-models/providers/ui_provider.dart';
 import 'clientes/clientes_view.dart';
 import 'configuracion/configuracion_view.dart';
 import 'dashboard_view.dart';
@@ -15,49 +17,47 @@ import 'tarifario/tarifario_form_view.dart';
 import 'tarifario/tarifario_view.dart';
 import 'gestion_usuarios_view.dart';
 
-class MenuView extends StatefulWidget {
-  const MenuView({
-    super.key,
-    required this.controller,
-  });
-
+class MenuView extends ConsumerStatefulWidget {
+  const MenuView({super.key, required this.controller});
   final SidebarXController controller;
 
   @override
-  State<MenuView> createState() => _MenuViewState();
+  ConsumerState<MenuView> createState() => _MenuViewState();
 }
 
-class _MenuViewState extends State<MenuView> {
+class _MenuViewState extends ConsumerState<MenuView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final routePage = ref.watch(routePageProvider);
+
     return AnimatedBuilder(
       animation: widget.controller,
       builder: (context, child) {
         final pageTitle =
             Utility.getTitleByIndex(widget.controller.selectedIndex);
-        switch (widget.controller.selectedIndex) {
-          case 0:
+        switch (routePage) {
+          case "/dashboard":
             return DashboardView(sideController: widget.controller);
-          case 1:
+          case "/generar_cotizacion":
             return GenerarCotizacionView(sideController: widget.controller);
-          case 2:
+          case "/historial":
             return HistorialView(sideController: widget.controller);
-          case 3:
+          case "/configuracion":
             return ConfiguracionView(sideController: widget.controller);
-          case 4:
+          case "/tarifario":
             return TarifarioView(sideController: widget.controller);
-          case 5:
+          case "/gestion_usuarios":
             return GestionUsuariosView(sideController: widget.controller);
-          case 6:
+          case "/clientes":
             return const ClientesView();
-          case 99:
+          case "/perfil":
             return PerfilView(sideController: widget.controller);
-          case 12:
+          case "/cotizacion_detalle":
             return CotizacionDetalleView(sideController: widget.controller);
-          case 15:
+          case "/tarifario_form":
             return TarifarioFormView(sideController: widget.controller);
-          case 16:
+          case "/habitacion_form":
             return HabitacionForm(sideController: widget.controller);
           default:
             return Text(

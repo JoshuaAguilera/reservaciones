@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../models/cotizacion_model.dart';
 import '../../models/habitacion_model.dart';
-import '../../models/numero_cotizacion_model.dart';
+import '../../models/estadistica_model.dart';
 import '../../models/periodo_model.dart';
 import '../../models/politica_tarifario_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
@@ -212,42 +212,42 @@ class Utility {
     return lastDayCurrentMonth.day;
   }
 
-  static List<NumeroCotizacion> getDailyQuotesReport(
+  static List<Estadistica> getDailyQuotesReport(
       {List<Cotizacion>? respIndToday}) {
-    List<NumeroCotizacion> cot = [];
+    List<Estadistica> cot = [];
 
-    NumeroCotizacion cotizacionesTotales =
-        NumeroCotizacion(tipoCotizacion: "Total");
+    Estadistica cotizacionesTotales =
+        Estadistica(title: "Total");
 
-    NumeroCotizacion cotizacionesGrupales =
-        NumeroCotizacion(tipoCotizacion: "Grupales");
+    Estadistica cotizacionesGrupales =
+        Estadistica(title: "Grupales");
 
-    NumeroCotizacion cotizacionesIndividuales =
-        NumeroCotizacion(tipoCotizacion: "Individuales");
+    Estadistica cotizacionesIndividuales =
+        Estadistica(title: "Individuales");
 
-    NumeroCotizacion reservadas =
-        NumeroCotizacion(tipoCotizacion: "Reservadas");
+    Estadistica reservadas =
+        Estadistica(title: "Reservadas");
 
-    NumeroCotizacion cotizacionesNoConcretadas =
-        NumeroCotizacion(tipoCotizacion: "Caducadas");
+    Estadistica cotizacionesNoConcretadas =
+        Estadistica(title: "Caducadas");
 
     for (var element in respIndToday ?? List<Cotizacion>.empty()) {
       if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
               1 &&
           (element.estatus != "reservado")) {
-        cotizacionesNoConcretadas.numCotizaciones++;
+        cotizacionesNoConcretadas.numNow++;
 
         continue;
       }
 
       if (element.estatus == "reservado") {
-        reservadas.numCotizaciones++;
+        reservadas.numNow++;
       }
 
       if (element.esGrupo ?? false) {
-        cotizacionesGrupales.numCotizaciones++;
+        cotizacionesGrupales.numNow++;
       } else {
-        cotizacionesIndividuales.numCotizaciones++;
+        cotizacionesIndividuales.numNow++;
       }
     }
 
@@ -262,11 +262,11 @@ class Utility {
     return cot;
   }
 
-  static bool foundQuotes(List<NumeroCotizacion> todayQuotes) {
+  static bool foundQuotes(List<Estadistica> todayQuotes) {
     bool withQuotes = false;
 
     for (var element in todayQuotes) {
-      if (element.numCotizaciones > 0) {
+      if (element.numNow > 0) {
         withQuotes = true;
       }
     }

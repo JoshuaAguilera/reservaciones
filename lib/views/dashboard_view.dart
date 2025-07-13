@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,9 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../models/cotizacion_model.dart';
-import '../models/notificacion_model.dart';
-import '../models/numero_cotizacion_model.dart';
+import '../models/estadistica_model.dart';
 import '../models/reporte_cotizacion_model.dart';
 import '../res/helpers/animation_helpers.dart';
 import '../res/helpers/constants.dart';
@@ -23,6 +19,7 @@ import '../res/ui/progress_indicator.dart';
 import '../utils/widgets/form_widgets.dart';
 import '../utils/widgets/item_rows.dart';
 import '../utils/widgets/notification_widget.dart';
+import '../utils/widgets/select_buttons_widget.dart';
 import '../view-models/providers/dahsboard_provider.dart';
 import '../view-models/providers/notificacion_provider.dart';
 import '../view-models/providers/usuario_provider.dart';
@@ -43,195 +40,108 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   bool isLoading = false;
   final GlobalKey<TooltipState> messageKey = GlobalKey<TooltipState>();
   bool starflow = false;
-  List<NumeroCotizacion> countQuote = [];
-  List<Estadisticas> estadisticas = [
-    Estadisticas(descripcion: "Disponibilidad", porcentaje: 65),
-    Estadisticas(descripcion: "Ocupacion", porcentaje: 35),
-    Estadisticas(descripcion: "Cotizaciones 30 Dias", porcentaje: 440),
-    Estadisticas(descripcion: "Cotizaciones 90 Dias", porcentaje: 450),
+  Widget? statisticsWidget;
+  List<Estadistica> statistics = [];
+
+  List<Metrica> metricas = [
+    Metrica(
+      title: "Disponibilidad",
+      value: 65,
+      isPorcentage: true,
+      description: "En las ultimas 24 horas",
+    ),
+    Metrica(
+      title: "Ocupacion",
+      value: 35,
+      isPorcentage: true,
+      description: "En las ultimas 24 horas",
+    ),
+    Metrica(
+      title: "Cotizaciones Hoy",
+      value: 3,
+      initValue: 4,
+      description: "Cotizaciones ayer:",
+    ),
+    Metrica(
+      title: "Cotizaciones Semanal",
+      value: 10,
+      initValue: 25,
+      description: "Periodo anterior:",
+    ),
+    Metrica(
+      title: "Cotizaciones 30 Dias",
+      value: 240,
+      initValue: 370,
+      description: "Periodo anterior:",
+    ),
+    Metrica(
+      title: "Cotizaciones 90 Dias",
+      value: 750,
+      initValue: 635,
+      description: "Periodo anterior:",
+    ),
   ];
 
   @override
   void initState() {
+    statistics = Utility.getDailyQuotesReport(respIndToday: []);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
-    double screenHight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    final sizeScreen = MediaQuery.of(context).size;
     final notificaciones = ref.watch(NotificacionProvider.provider);
     final typePeriod = ref.watch(filterReport);
-    final selectTime = ref.watch(dateReport);
+    final selectTime = ref.watch(dateReportProvider);
     final reportesSync = ref.watch(reporteCotizacionesIndProvider(''));
     final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
     final ultimasCotizacionesSync = ref.watch(ultimaCotizacionesProvider(''));
-    final allQuotesSync = ref.watch(allQuotesProvider(''));
+    final countQuotes = ref.watch(statisticsQuoteProvider(statistics));
     final usuario = ref.watch(userProvider);
+    final filtro = ref.watch(filtroDashboardProvider);
     final viewNotification = ref.watch(userViewProvider);
-    final realWidth = screenWidth - (widget.sideController.extended ? 130 : 0);
+    final realWidth =
+        sizeScreen.width - (widget.sideController.extended ? 130 : 0);
 
     double sizeTitles = realWidth > 1050
         ? 16
         : realWidth > 750
-            ? 14
-            : 12;
+            ? 15
+            : 13;
 
-    DateTime _getStartOfWeek() {
-      return selectTime.subtract(Duration(days: selectTime.weekday - 1));
-    }
-
-    DateTime _getEndOfWeek() {
-      return _getStartOfWeek().add(const Duration(days: 6));
-    }
-
-    String _getPeriodReportSelect() {
-      String period = '';
-
-      switch (typePeriod) {
-        case "Semanal":
-          period = DateHelpers.getRangeDate(
-            _getStartOfWeek(),
-            _getEndOfWeek(),
+    void changeDateView({bool isAfter = false}) {
+      ref.read(dateReportProvider.notifier).changeDateView(
+            typePeriod: typePeriod,
+            isAfter: isAfter,
           );
-        case "Mensual":
-          period = "${monthNames[selectTime.month - 1]} ${selectTime.year}";
-        case "Anual":
-          period = selectTime.year.toString();
-        default:
-          period = "Unknow";
-      }
-
-      return period;
     }
 
-    void _changeDateView({bool isAfter = false}) {
-      switch (typePeriod) {
-        case "Semanal":
-          if (!isAfter) {
-            ref.read(dateReport.notifier).update(
-                (state) => selectTime.subtract(const Duration(days: 7)));
-          } else {
-            ref
-                .read(dateReport.notifier)
-                .update((state) => selectTime.add(const Duration(days: 7)));
-          }
-        case "Mensual":
-          if (!isAfter) {
-            ref.read(dateReport.notifier).update((state) => DateTime(
-                selectTime.year, (selectTime.month - 1), selectTime.day));
-          } else {
-            ref.read(dateReport.notifier).update((state) => DateTime(
-                selectTime.year, (selectTime.month + 1), selectTime.day));
-          }
-        case "Anual":
-          if (!isAfter) {
-            ref.read(dateReport.notifier).update((state) => DateTime(
-                (selectTime.year - 1), selectTime.month, selectTime.day));
-          } else {
-            ref.read(dateReport.notifier).update((state) => DateTime(
-                (selectTime.year + 1), selectTime.month, selectTime.day));
-          }
-        default:
-      }
-    }
-
-    Widget _countQuotes(bool isCompact, {bool modeHorizontal = false}) {
+    Widget _countQuotes(bool isCompact) {
       return AnimatedEntry(
         delay: Duration(milliseconds: isCompact ? 250 : 500),
-        child: allQuotesSync.when(
+        child: countQuotes.when(
           data: (list) {
             if (!starflow) {
-              countQuote = Utility.getDailyQuotesReport(respIndToday: list);
-
-              List<Cotizacion> quotesAboutExpire = list.where((element) {
-                if (element.fechaLimite == null) return false;
-
-                int difference =
-                    element.fechaLimite!.difference(DateTime.now()).inDays;
-
-                if (difference <= 2 &&
-                    difference > 0 &&
-                    (element.estatus == "PENDIENTE" ||
-                        element.estatus == "ENVIADA")) {
-                  return true;
-                }
-
-                return false;
-              }).toList();
-
-              Future.delayed(
-                Durations.medium1,
-                () {
-                  if (mounted) {
-                    ref.read(dateReport.notifier).update(
-                          (state) => DateTime.now().subtract(
-                              Duration(days: DateTime.now().weekday - 1)),
-                        );
-
-                    int count = quotesAboutExpire.length;
-
-                    if (count > 0) {
-                      Notificacion newNotification = Notificacion(
-                        idInt: 0,
-                        tipo: "alert",
-                        // ruta: HeroIcons.calendar,
-                        mensaje:
-                            "Tiene${count > 1 ? "s" : ""} ${count > 1 ? count : "una"} cotizacion${count > 1 ? "es" : ""} que esta${count > 1 ? "n" : ""} a punto de dejar de ser vigentes.",
-                        id: "Cotizaciones por Vencer",
-                      );
-
-                      if (!notificaciones
-                          .any((element) => element.idInt == 0)) {
-                        ref
-                            .read(userViewProvider.notifier)
-                            .update((state) => false);
-                        ref
-                            .watch(NotificacionProvider.provider.notifier)
-                            .addItem(newNotification);
-                      } else {
-                        ref
-                            .watch(NotificacionProvider.provider.notifier)
-                            .editItem(newNotification);
-                      }
-                    } else {
-                      ref
-                          .read(userViewProvider.notifier)
-                          .update((state) => false);
-                      if (notificaciones.any((element) => element.idInt == 0)) {
-                        ref
-                            .watch(NotificacionProvider.provider.notifier)
-                            .remove(0);
-                      }
-                    }
-                  }
-                },
-              );
-
+              statisticsWidget = ItemRow.statisticsRow(list);
               starflow = true;
             }
-
-            List<Widget> cards = [];
-
-            for (var element in countQuote) {
-              cards.add(
-                ItemRow.statisticsRow(element, sizeText: isCompact ? 15 : 13),
-              );
-            }
-
-            return Wrap(runSpacing: 5, spacing: 15, children: cards);
+            return statisticsWidget!;
           },
           error: (error, _) => const SizedBox(),
-          loading: () => ProgressIndicatorCustom(screenHight: 450),
+          loading: () {
+            statisticsWidget ??= ItemRow.statisticsRow(statistics);
+            return statisticsWidget!;
+          },
         ),
       );
     }
 
     bool isCompact =
-        screenWidth > (1290 - (widget.sideController.extended ? 0 : 115));
+        sizeScreen.width > (1290 - (widget.sideController.extended ? 0 : 115));
 
-    Widget _textTitle(String text) {
+    Widget textTitle(String text) {
       return TextStyles.standardText(
         isBold: true,
         text: text,
@@ -340,7 +250,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                   foregroundColor: DesktopColors.primary1,
                                   onPressed: () {},
                                 ),
-                                const SizedBox()
                               ],
                             ),
                           ),
@@ -350,18 +259,49 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         spacing: 10,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _textTitle("Cotizaciones del equipo"),
-                          _countQuotes(isCompact, modeHorizontal: true),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: textTitle(filtro == "Individual"
+                                    ? "Tus Cotizaciones"
+                                    : "Cotizaciones del equipo"),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                                child: SelectButtonsWidget(
+                                  selectButton: filtro,
+                                  buttons: [
+                                    {"Individual": DesktopColors.primary3},
+                                    {"Equipo": DesktopColors.primary5},
+                                  ],
+                                  onPressed: (p0) {
+                                    ref
+                                        .read(filtroDashboardProvider.notifier)
+                                        .update((state) =>
+                                            p0 == 0 ? "Individual" : "Equipo");
+                                    starflow = false;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          _countQuotes(isCompact),
                         ],
                       ),
                       if (!isLoading)
                         SizedBox(
-                          height: 520,
+                          height: 550,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Expanded(
-                                flex: 4,
+                                flex: 3,
                                 child: AnimatedEntry(
                                   delay: const Duration(milliseconds: 100),
                                   child: Card(
@@ -385,14 +325,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 Expanded(
-                                                  child: _textTitle(
-                                                    (usuario?.rol?.nombre ==
-                                                                "SUPERADMIN" ||
-                                                            usuario?.rol
-                                                                    ?.nombre ==
-                                                                "ADMIN")
-                                                        ? "Reporte de cotizaciones del equipo"
-                                                        : "Reporte de cotizaciones",
+                                                  child: textTitle(
+                                                    "Reporte de cotizaciones",
                                                   ),
                                                 ),
                                                 Row(
@@ -428,12 +362,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                               size: 18,
                                                             ),
                                                             onPressed: () =>
-                                                                _changeDateView(),
+                                                                changeDateView(),
                                                           ),
                                                           TextStyles
                                                               .standardText(
-                                                            text:
-                                                                _getPeriodReportSelect(),
+                                                            text: DateHelpers
+                                                                .getPeriodSelect(
+                                                              typePeriod,
+                                                              selectTime,
+                                                            ),
                                                           ),
                                                           IconButton(
                                                             padding:
@@ -449,7 +386,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                               size: 18,
                                                             ),
                                                             onPressed: () =>
-                                                                _changeDateView(
+                                                                changeDateView(
                                                                     isAfter:
                                                                         true),
                                                           ),
@@ -478,7 +415,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           ),
                                           const SizedBox(height: 14),
                                           SizedBox(
-                                            height: 450,
+                                            height: 470,
                                             child: reportesSync.when(
                                               data: (list) {
                                                 return Row(
@@ -615,7 +552,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              _textTitle("Metricas"),
+                                              textTitle("Metricas"),
                                               if (realWidth > 980)
                                                 Flexible(
                                                   child:
@@ -630,12 +567,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             ],
                                           ),
                                           ListView.builder(
-                                            itemCount: estadisticas.length,
+                                            itemCount: metricas.length,
                                             shrinkWrap: true,
                                             itemBuilder: (context, index) {
-                                              Estadisticas estadistica =
-                                                  estadisticas[index];
+                                              Metrica estadistica =
+                                                  metricas[index];
                                               return ItemRow.metricWidget(
+                                                index,
                                                 estadistica: estadistica,
                                                 sideController:
                                                     widget.sideController,
@@ -652,7 +590,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           ),
                         ),
                       if (isLoading)
-                        ProgressIndicatorCustom(screenHight: screenHight)
+                        ProgressIndicatorCustom(screenHight: sizeScreen.height)
                       else
                         Center(
                           child: SizedBox(
@@ -678,7 +616,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(8),
-                                                  child: _textTitle(
+                                                  child: textTitle(
                                                       "Cotizaciones de hoy"),
                                                 ),
                                                 cotizacionesDiariasSync.when(
@@ -715,8 +653,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         DesktopColors.cotIndiv,
                                                         DesktopColors.resGrupal,
                                                         DesktopColors.resIndiv,
-                                                        DesktopColors
-                                                            .cotNoConcr,
                                                       ],
                                                       legend: Legend(
                                                         isVisible:
@@ -724,9 +660,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                                 list),
                                                         textStyle: TextStyles
                                                             .styleStandar(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
                                                           size: 11,
                                                         ),
                                                         overflowMode:
@@ -739,17 +672,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         if (Utility.foundQuotes(
                                                             list))
                                                           DoughnutSeries<
-                                                              NumeroCotizacion,
+                                                              Estadistica,
                                                               String>(
                                                             dataSource: list,
-                                                            xValueMapper: (datum,
-                                                                    index) =>
-                                                                datum
-                                                                    .tipoCotizacion,
+                                                            xValueMapper:
+                                                                (datum, index) =>
+                                                                    datum.title,
                                                             yValueMapper: (datum,
                                                                     index) =>
-                                                                datum
-                                                                    .numCotizaciones,
+                                                                datum.numNow,
                                                             enableTooltip: true,
                                                             dataLabelSettings:
                                                                 const DataLabelSettings(
@@ -766,23 +697,20 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                           )
                                                         else
                                                           DoughnutSeries<
-                                                              NumeroCotizacion,
+                                                              Estadistica,
                                                               String>(
                                                             dataSource: [
-                                                              NumeroCotizacion(
-                                                                  tipoCotizacion:
+                                                              Estadistica(
+                                                                  title:
                                                                       "Sin resultados",
-                                                                  numCotizaciones:
-                                                                      1)
+                                                                  numNow: 1)
                                                             ],
-                                                            xValueMapper: (datum,
-                                                                    index) =>
-                                                                datum
-                                                                    .tipoCotizacion,
+                                                            xValueMapper:
+                                                                (datum, index) =>
+                                                                    datum.title,
                                                             yValueMapper: (datum,
                                                                     index) =>
-                                                                datum
-                                                                    .numCotizaciones,
+                                                                datum.numNow,
                                                           )
                                                       ],
                                                     );
@@ -914,7 +842,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         .spaceBetween,
                                                 children: [
                                                   Flexible(
-                                                    child: _textTitle(!(usuario
+                                                    child: textTitle(!(usuario
                                                                     ?.rol
                                                                     ?.nombre !=
                                                                 "SUPERADMIN" &&

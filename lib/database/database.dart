@@ -97,6 +97,16 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  Future<int> count<T extends Table, D>(
+      TableInfo<T, D> tabla, Expression<bool> Function(T tbl) condicion) async {
+    final countExp = tabla.$primaryKey.first.count();
+    final query = selectOnly(tabla)
+      ..addColumns([countExp])
+      ..where(condicion(tabla as dynamic));
+    final row = await query.getSingle();
+    return row.read(countExp) ?? 0;
+  }
 }
 
 LazyDatabase _openConnection() {

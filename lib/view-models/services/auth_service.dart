@@ -29,7 +29,7 @@ class AuthService extends BaseService {
 
     try {
       var response = await verifyJwtToken();
-      if (!response) status = false;
+      if (!response) return false;
       status = true;
     } catch (e) {
       print(e);
@@ -143,7 +143,7 @@ class AuthService extends BaseService {
     );
     final token = jwt.sign(
       SecretKey(secret),
-      expiresIn: const Duration(minutes: 1),
+      expiresIn: const Duration(hours: 10),
     );
 
     // Puedes guardar el token para uso posterior

@@ -154,16 +154,10 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       }
 
       if (showFilter[3]) {
-        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
-            db.cotizacionTable.estatus.equals("reservado");
+        implementFilter = db.cotizacionTable.estatus.equals("reservado");
       }
 
       if (showFilter[4]) {
-        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
-            db.cotizacionTable.estatus.equals("reservado");
-      }
-
-      if (showFilter[5]) {
         implementFilter = db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isSmallerThan(
               Variable(
@@ -216,6 +210,125 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
         cliente: Cliente.fromJson(cli?.toJson() ?? <String, dynamic>{}),
       );
     }).toList();
+  }
+
+  // COUNT
+  Future<int?> countBy({
+    String clienteNombre = "",
+    int? creadorId,
+    int? cerradorId,
+    int? clienteId,
+    DateTime? initDate,
+    DateTime? lastDate,
+    bool inLastDay = false,
+    bool inLastWeek = false,
+    bool inLastMonth = false,
+    bool onlyToday = false,
+    List<bool>? filters,
+  }) async {
+    final query = selectOnly(db.cotizacionTable)
+      ..addColumns([db.cotizacionTable.idInt.count()]);
+
+    if (creadorId != null) {
+      query.where(db.cotizacionTable.creadoPorInt.equals(creadorId));
+    }
+
+    if (cerradorId != null) {
+      query.where(db.cotizacionTable.cerradoPorInt.equals(cerradorId));
+    }
+
+    if (clienteId != null) {
+      query.where(db.cotizacionTable.clienteInt.equals(clienteId));
+    }
+
+    if (initDate != null) {
+      query.where(db.cotizacionTable.createdAt.isBiggerOrEqualValue(initDate));
+    }
+
+    if (lastDate != null) {
+      query.where(db.cotizacionTable.createdAt.isSmallerOrEqualValue(lastDate));
+    }
+
+    if (initDate != null && lastDate != null) {
+      query.where(
+        db.cotizacionTable.createdAt.isBetweenValues(initDate, lastDate),
+      );
+    }
+
+    if (!onlyToday) {
+      if (inLastDay) {
+        query.where(db.cotizacionTable.createdAt.isBetweenValues(
+          DateTime.now().subtract(const Duration(days: 1)),
+          DateTime.now(),
+        ));
+      }
+
+      if (inLastWeek) {
+        query.where(
+          db.cotizacionTable.createdAt.isBetweenValues(
+            DateTime.now().subtract(const Duration(days: 7)),
+            DateTime.now(),
+          ),
+        );
+      }
+
+      if (inLastMonth) {
+        query.where(
+          db.cotizacionTable.createdAt.isBetweenValues(
+              DateTime.now().subtract(const Duration(days: 30)),
+              DateTime.now()),
+        );
+      }
+    } else {
+      query.where(
+        db.cotizacionTable.createdAt.isBetweenValues(
+            DateTime.parse(DateTime.now().toIso8601String().substring(0, 10)),
+            DateTime.now()),
+      );
+    }
+
+    if (filters != null) {
+      Expression<bool> implementFilter = const Variable(true);
+
+      if (filters[1]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
+            db.cotizacionTable.estatus.equals("cotizado") &
+            db.cotizacionTable.fechaLimite.isBiggerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      if (filters[2]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
+            db.cotizacionTable.estatus.equals("cotizado") &
+            db.cotizacionTable.fechaLimite.isBiggerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      if (filters[3]) {
+        implementFilter = db.cotizacionTable.estatus.equals("reservado");
+      }
+
+      if (filters[4]) {
+        implementFilter = db.cotizacionTable.estatus.equals("cotizado") &
+            db.cotizacionTable.fechaLimite.isSmallerThan(
+              Variable(
+                DateTime.now(),
+              ),
+            );
+      }
+
+      query.where(implementFilter);
+    }
+
+    final result = await query.getSingleOrNull();
+    if (result == null) return 0;
+    return result.read(db.cotizacionTable.idInt.count());
   }
 
   // CREATE

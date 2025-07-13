@@ -74,14 +74,14 @@ class _SelectableButtonState extends State<SelectableButton> {
               elevation: WidgetStatePropertyAll(widget.elevation),
             )
           : ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
+              // backgroundColor: WidgetStatePropertyAll(Colors.grey[400]),
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(widget.round!),
                 ),
               ),
               textStyle: WidgetStatePropertyAll(
-                TextStyles.styleStandar(),
+                TextStyles.styleStandar(isBold: true),
               ),
               foregroundColor: WidgetStatePropertyAll(Colors.grey[700]),
               elevation: WidgetStatePropertyAll(widget.elevation),

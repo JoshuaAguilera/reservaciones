@@ -43,8 +43,8 @@ class _SelectButtonsWidgetState extends State<SelectButtonsWidget> {
                 padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 3),
                 child: SelectableButton(
                   selected: isButtonNow,
-                  round: 4,
-                  roundActive: 8,
+                  round: 6,
+                  roundActive: 12,
                   color: ColorsHelpers.darken(
                       widget.buttons[index].values.first, -0.15),
                   onPressed: () {

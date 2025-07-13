@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/cotizacion_model.dart';
-import '../../models/numero_cotizacion_model.dart';
+import '../../models/estadistica_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../services/cotizacion_service.dart';
@@ -12,7 +12,8 @@ final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filter = ref.watch(filterReport);
-  final date = ref.watch(dateReport);
+// Para leer la fecha actual:
+  final date = ref.watch(dateReportProvider);
 
   final list = Utility.getCotizacionQuotes(
     cotizaciones: await CotizacionService().getList(
@@ -27,7 +28,7 @@ final reporteCotizacionesIndProvider =
 });
 
 final cotizacionesDiariasProvider =
-    FutureProvider.family<List<NumeroCotizacion>, String>((ref, arg) async {
+    FutureProvider.family<List<Estadistica>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   DateTime initDate = DateUtils.dateOnly(DateTime.now());
   final list = Utility.getDailyQuotesReport(
@@ -51,14 +52,71 @@ final allQuotesProvider =
   return list;
 });
 
-final changeProvider = StateProvider<int>((ref) {
-  return 0;
+final filtroDashboardProvider = StateProvider<String>((ref) => "Individual");
+
+//Counts of quotes in dashboard
+final statisticsQuoteProvider =
+    FutureProvider.family<List<Estadistica>, List<Estadistica>>(
+        (ref, arg) async {
+  final detectChanged = ref.watch(changeProvider);
+  final filter = ref.watch(filtroDashboardProvider);
+  final list = await CotizacionService().getCounts(stats:arg, filtro: filter);
+  return list;
 });
 
-final filterReport = StateProvider<String>((ref) {
-  return "Semanal";
-});
+final changeProvider = StateProvider<int>((ref) => 0);
 
-final dateReport = StateProvider<DateTime>((ref) {
-  return DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-});
+final filterReport = StateProvider<String>((ref) => "Semanal");
+
+class DateReportNotifier extends StateNotifier<DateTime> {
+  DateReportNotifier(DateTime initialDate) : super(initialDate);
+
+  void changeDateView({
+    required String typePeriod,
+    bool isAfter = false,
+  }) {
+    final sign = isAfter ? 1 : -1;
+    DateTime newDate = state;
+
+    switch (typePeriod) {
+      case "Semanal":
+        newDate = state.add(Duration(days: 7 * sign));
+        break;
+      case "Mensual":
+        int year = state.year;
+        int month = state.month + sign;
+        if (month < 1) {
+          month = 12;
+          year -= 1;
+        } else if (month > 12) {
+          month = 1;
+          year += 1;
+        }
+        int day = state.day;
+        int maxDay = DateTime(year, month + 1, 0).day;
+        if (day > maxDay) day = maxDay;
+        newDate = DateTime(year, month, day);
+        break;
+      case "Anual":
+        int year = state.year + sign;
+        int month = state.month;
+        int day = state.day;
+        int maxDay = DateTime(year, month + 1, 0).day;
+        if (day > maxDay) day = maxDay;
+        newDate = DateTime(year, month, day);
+        break;
+      default:
+        return;
+    }
+
+    state = newDate;
+  }
+}
+
+final dateReportProvider = StateNotifierProvider<DateReportNotifier, DateTime>(
+  (ref) {
+    final date =
+        DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+    return DateReportNotifier(date);
+  },
+);

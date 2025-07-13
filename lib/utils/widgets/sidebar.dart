@@ -272,27 +272,43 @@ class _SideBarState extends ConsumerState<SideBar> {
           }
         },
         items: [
-          sideBarCustomItem(name: "Inicio", icon: HeroIcons.home),
+          sideBarCustomItem(
+            name: "Inicio",
+            icon: HeroIcons.home,
+            route: "/dashboard",
+          ),
           sideBarCustomItem(
             name: "Generar Cotización",
             icon: Iconsax.money_send_outline,
+            route: "/generar_cotizacion",
           ),
           sideBarCustomItem(
             name: "Historial",
             icon: HeroIcons.clipboard_document_list,
+            route: "/historial",
           ),
           sideBarCustomItem(
             name: "Configuración",
             icon: HeroIcons.wrench_screwdriver,
+            route: "/configuracion",
           ),
           // if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
-          sideBarCustomItem(name: "Tarifario", icon: HeroIcons.wallet),
+          sideBarCustomItem(
+            name: "Tarifario",
+            icon: HeroIcons.wallet,
+            route: "/tarifario",
+          ),
           // if (usuario.rol == 'SUPERADMIN')
           sideBarCustomItem(
             name: "Gestión de usuarios",
             icon: HeroIcons.user_group,
+            route: "/gestion_usuarios",
           ),
-          sideBarCustomItem(name: "Clientes", icon: Iconsax.profile_2user_bold)
+          sideBarCustomItem(
+            name: "Clientes",
+            icon: Iconsax.profile_2user_bold,
+            route: "/clientes",
+          ),
         ],
         headerDivider: Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
@@ -336,10 +352,16 @@ class _SideBarState extends ConsumerState<SideBar> {
     );
   }
 
-  SidebarXItem sideBarCustomItem(
-      {required String name, required IconData icon}) {
+  SidebarXItem sideBarCustomItem({
+    required String name,
+    required IconData icon,
+    required String route,
+  }) {
     return SidebarXItem(
       label: name,
+      onTap: () {
+        ref.read(routePageProvider.notifier).state = route;
+      },
       iconBuilder: (selected, hovered) {
         return Tooltip(
           message: !widget._controller.extended ? name : "",

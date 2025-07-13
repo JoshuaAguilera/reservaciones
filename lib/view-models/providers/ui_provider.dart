@@ -10,6 +10,7 @@ import 'tarifario_provider.dart';
 import 'usuario_provider.dart';
 
 final showSearchExtProvider = StateProvider<bool>((ref) => false);
+final routePageProvider = StateProvider<String>((ref) => '/dashboard');
 
 final snackbarServiceProvider = Provider<SnackbarService>((ref) {
   return SnackbarService();
@@ -20,14 +21,13 @@ final navigationServiceProvider = Provider<NavigationService>((ref) {
 });
 
 final logoutProvider = FutureProvider<void>((ref) async {
-  // ref.watch(NotificacionProvider.provider.notifier).clear();
-  // ref.watch(HabitacionProvider.provider.notifier).clear();
-  // ref.watch(TarifasProvisionalesProvider.provider.notifier).clear();
-  // ref.watch(TarifasProvisionalesProvider.provider.notifier).clear();
+  ref.invalidate(NotificacionProvider.provider);
+  ref.invalidate(HabitacionProvider.provider);
+  ref.invalidate(TarifasProvisionalesProvider.provider);
   ref.invalidate(cotizacionProvider);
   ref.invalidate(saveTariffPolityProvider);
   ref.invalidate(filterReport);
-  ref.invalidate(dateReport);
+  ref.invalidate(dateReportProvider);
   ref.invalidate(useCashSeasonProvider);
   ref.invalidate(useCashSeasonRoomProvider);
   ref.invalidate(typeQuoteProvider);

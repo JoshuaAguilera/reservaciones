@@ -2,17 +2,16 @@ import 'dart:math';
 
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../../models/numero_cotizacion_model.dart';
+import '../../models/estadistica_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../res/helpers/colors_helpers.dart';
@@ -25,29 +24,48 @@ import 'dialogs.dart';
 import '../../res/ui/text_styles.dart';
 
 class ItemRow {
-  static Widget statisticsRow(NumeroCotizacion register,
-      {double sizeText = 15}) {
-    bool isQuest =
-        (register.tipoCotizacion ?? '').toLowerCase().contains("total");
+  static Widget statisticsRow(List<Estadistica> list) {
+    List<Widget> cards = [];
+    for (var element in list) {
+      cards.add(ItemRow.statisticRow(element, sizeText: 14));
+    }
 
+    return Wrap(runSpacing: 5, spacing: 14, children: cards);
+  }
+
+  static Widget statisticRow(Estadistica register, {double sizeText = 15}) {
+    bool? status = register.numInitial == register.numNow
+        ? null
+        : register.numNow > register.numInitial;
+    bool isQuest = (register.title ?? '').toLowerCase().contains("total");
     Color? backgroudColor = isQuest ? DesktopColors.primary6 : Colors.white;
-
     Color? foregroundColor = ColorsHelpers.getForegroundColor(backgroudColor);
+
+    IconData iconStatus = status == null
+        ? Iconsax.minus_square_outline
+        : !status
+            ? Iconsax.arrow_down_1_outline
+            : Iconsax.arrow_up_2_outline;
 
     return Builder(
       builder: (context) {
         final brightness =
             ThemeModelInheritedNotifier.of(context).theme.brightness;
         bool isDark = brightness == Brightness.dark;
-        Color? foregroundColorInt = !isQuest
+        Color? foregroundColorSub = (status == null || isQuest)
             ? isDark
-                ? Colors.white
-                : DesktopColors.primary6
-            : foregroundColor;
+                ? null
+                : foregroundColor
+            : ColorsHelpers.getColorNavbar(status ? "success" : "danger");
+
+        if (isDark && !isQuest) {
+          foregroundColorSub =
+              ColorsHelpers.darken(foregroundColorSub ?? Colors.white, -0.3);
+        }
 
         return Container(
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.circular(10),
             gradient: !isQuest
                 ? null
                 : LinearGradient(
@@ -76,14 +94,13 @@ class ItemRow {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(
-                        IconHelpers.getIconCardDashboard(
-                            register.tipoCotizacion),
+                        IconHelpers.getIconCardDashboard(register.title),
                         size: 30,
                         color: (isDark && !isQuest) ? null : foregroundColor,
                       ),
                       Flexible(
                         child: TextStyles.standardText(
-                          text: register.tipoCotizacion ?? '',
+                          text: register.title ?? '',
                           color: (isDark && !isQuest) ? null : foregroundColor,
                           size: sizeText,
                           overClip: true,
@@ -92,12 +109,27 @@ class ItemRow {
                       ),
                     ],
                   ),
-                  Flexible(
-                    child: TextStyles.TextTitleList(
-                      index: register.numCotizaciones,
-                      color: (isDark && !isQuest) ? null : foregroundColor,
-                      size: 32,
-                      isBold: false,
+                  Opacity(
+                    opacity: register.total != null ? 1 : 0.5,
+                    child: Row(
+                      spacing: 5,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: TextStyles.TextTitleList(
+                            index: register.total ?? 0,
+                            color:
+                                (isDark && !isQuest) ? null : foregroundColor,
+                            size: 32,
+                            isBold: false,
+                          ),
+                        ),
+                        if (register.total == null)
+                          LoadingAnimationWidget.twoRotatingArc(
+                            size: 25,
+                            color: foregroundColor ?? Colors.white,
+                          ),
+                      ],
                     ),
                   ),
                   Row(
@@ -107,32 +139,32 @@ class ItemRow {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: foregroundColorInt!,
+                            color: foregroundColorSub ?? Colors.white,
                             width: 1.5,
                           ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5)),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 2),
                         child: Row(
+                          spacing: 2,
                           children: [
                             Icon(
-                              Iconsax.arrow_up_2_outline,
-                              size: 15,
-                              color: foregroundColorInt,
+                              iconStatus,
+                              size: 12,
+                              color: foregroundColorSub,
                             ),
                             TextStyles.standardText(
-                              text: "5",
+                              text: register.difference()?.toString() ?? "0",
                               size: 10,
-                              color: foregroundColorInt,
+                              color: foregroundColorSub,
                             ),
                           ],
                         ),
                       ),
                       TextStyles.standardText(
-                        text: " Incremento del mes",
+                        text: register.getStatusModifier(),
                         size: 10,
-                        color: foregroundColorInt,
+                        color: foregroundColorSub,
                       ),
                     ],
                   ),
@@ -725,10 +757,21 @@ class ItemRow {
     );
   }
 
-  static Widget metricWidget({
-    required Estadisticas estadistica,
+  static Widget metricWidget(
+    int index, {
+    required Metrica estadistica,
     required SidebarXController sideController,
   }) {
+    List<Color> colors = [
+      DesktopColors.primary2,
+      DesktopColors.primary3,
+      DesktopColors.primary4,
+      DesktopColors.primary5,
+      DesktopColors.primary6,
+    ];
+
+    int saveIndex = index % colors.length;
+
     return Builder(
       builder: (context) {
         final screenWidth = MediaQuery.of(context).size.width;
@@ -741,7 +784,7 @@ class ItemRow {
           child: Card(
             color: Theme.of(context).cardTheme.color,
             child: Tooltip(
-              message: isExpanded ? "" : estadistica.descripcion ?? "unknow",
+              message: isExpanded ? "" : estadistica.title ?? "unknow",
               margin: const EdgeInsets.only(top: 8),
               child: Row(
                 mainAxisAlignment: isExpanded
@@ -754,28 +797,41 @@ class ItemRow {
                       width: 80,
                       child: Stack(
                         children: [
+                          Center(
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              decoration: BoxDecoration(
+                                color: colors[saveIndex].withValues(alpha: .2),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(150),
+                                ),
+                              ),
+                            ),
+                          ),
                           SizedBox(
                             height: 80,
                             width: 80,
                             child: SfCircularChart(
+                              palette: [colors[saveIndex]],
                               series: <CircularSeries>[
-                                RadialBarSeries<Estadisticas, String>(
+                                RadialBarSeries<Metrica, String>(
                                   cornerStyle: CornerStyle.bothCurve,
                                   trackColor: Theme.of(context).cardColor,
-                                  maximumValue: 100,
+                                  maximumValue: estadistica.initValue ?? 100,
                                   innerRadius: "80%",
                                   dataSource: [estadistica],
-                                  xValueMapper: (Estadisticas data, _) =>
-                                      data.descripcion,
-                                  yValueMapper: (Estadisticas data, _) =>
-                                      data.porcentaje,
+                                  xValueMapper: (Metrica data, _) =>
+                                      data.description,
+                                  yValueMapper: (Metrica data, _) => data.value,
                                 )
                               ],
                             ),
                           ),
                           Center(
                             child: TextStyles.standardText(
-                              text: "${estadistica.porcentaje}%",
+                              text:
+                                  "${(estadistica.value.toInt())}${estadistica.isPorcentage ? "%" : ""}",
                               size: 14,
                               isBold: true,
                               height: 0,
@@ -788,13 +844,21 @@ class ItemRow {
                   if (isExpanded)
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                        child: TextStyles.standardText(
-                          text: estadistica.descripcion ?? "unknow",
-                          size: 12,
-                          color: Theme.of(context).primaryColor,
-                          isBold: true,
-                          align: TextAlign.start,
+                        padding: const EdgeInsets.fromLTRB(0, 16, 8, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextStyles.standardText(
+                              text: estadistica.title ?? "unknow",
+                              size: 12,
+                              isBold: true,
+                            ),
+                            TextStyles.standardText(
+                              text:
+                                  "${estadistica.description ?? ""} ${estadistica.initValue?.round() ?? ""}",
+                              size: 10.5,
+                            ),
+                          ],
                         ),
                       ),
                     ),

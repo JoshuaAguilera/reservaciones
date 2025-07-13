@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../../models/habitacion_model.dart';
 import '../../models/periodo_model.dart';
+import 'constants.dart';
 
 class DateHelpers {
   static String getStringDate(
@@ -327,6 +328,31 @@ class DateHelpers {
 
     return days.trim();
   }
+
+  static String getPeriodSelect(
+    String typePeriod,
+    DateTime selectTime,
+  ) {
+    String period = '';
+    DateTime startWeek =
+        selectTime.subtract(Duration(days: selectTime.weekday - 1));
+
+    switch (typePeriod) {
+      case "Semanal":
+        period = DateHelpers.getRangeDate(
+          startWeek,
+          startWeek.add(const Duration(days: 6)),
+        );
+      case "Mensual":
+        period = "${monthNames[selectTime.month - 1]} ${selectTime.year}";
+      case "Anual":
+        period = selectTime.year.toString();
+      default:
+        period = "Unknow";
+    }
+
+    return period;
+  }
 }
 
 extension DateOnlyCompare on DateTime {
@@ -352,7 +378,7 @@ extension DateOnlyCompare on DateTime {
       30,
       31,
       30,
-      31 
+      31
     ];
     return daysInMonth[month - 1];
   }
