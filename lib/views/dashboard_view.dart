@@ -44,6 +44,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   final GlobalKey<TooltipState> messageKey = GlobalKey<TooltipState>();
   bool starflow = false;
   List<NumeroCotizacion> countQuote = [];
+  List<Estadisticas> estadisticas = [
+    Estadisticas(descripcion: "Disponibilidad", porcentaje: 65),
+    Estadisticas(descripcion: "Ocupacion", porcentaje: 35),
+    Estadisticas(descripcion: "Cotizaciones 30 Dias", porcentaje: 440),
+    Estadisticas(descripcion: "Cotizaciones 90 Dias", porcentaje: 450),
+  ];
 
   @override
   void initState() {
@@ -64,10 +70,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final allQuotesSync = ref.watch(allQuotesProvider(''));
     final usuario = ref.watch(userProvider);
     final viewNotification = ref.watch(userViewProvider);
+    final realWidth = screenWidth - (widget.sideController.extended ? 130 : 0);
 
-    double sizeTitles = screenWidth > 1050
+    double sizeTitles = realWidth > 1050
         ? 16
-        : screenWidth > 750
+        : realWidth > 750
             ? 14
             : 12;
 
@@ -348,160 +355,174 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         ],
                       ),
                       if (!isLoading)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: AnimatedEntry(
-                                delay: const Duration(milliseconds: 100),
-                                child: Card(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        right: 10, top: 10),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20.0, right: 10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Expanded(
-                                                child: _textTitle((usuario
-                                                                ?.rol?.nombre ==
-                                                            "SUPERADMIN" ||
-                                                        usuario?.rol?.nombre ==
-                                                            "ADMIN")
-                                                    ? "Reporte de cotizaciones del equipo"
-                                                    : "Reporte de cotizaciones"),
-                                              ),
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                spacing: 10,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: Theme.of(context)
-                                                          .cardColor,
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        IconButton(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          constraints:
-                                                              const BoxConstraints(
-                                                            minHeight: 28,
-                                                            minWidth: 28,
-                                                          ),
-                                                          icon: const Icon(
-                                                            Iconsax
-                                                                .arrow_left_1_outline,
-                                                            size: 18,
-                                                          ),
-                                                          onPressed: () =>
-                                                              _changeDateView(),
-                                                        ),
-                                                        TextStyles.standardText(
-                                                          text:
-                                                              _getPeriodReportSelect(),
-                                                        ),
-                                                        IconButton(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          constraints:
-                                                              const BoxConstraints(
-                                                            minHeight: 28,
-                                                            minWidth: 28,
-                                                          ),
-                                                          icon: const Icon(
-                                                            Iconsax
-                                                                .arrow_right_4_outline,
-                                                            size: 18,
-                                                          ),
-                                                          onPressed: () =>
-                                                              _changeDateView(
-                                                                  isAfter:
-                                                                      true),
-                                                        ),
-                                                      ],
-                                                    ),
+                        SizedBox(
+                          height: 520,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                flex: 4,
+                                child: AnimatedEntry(
+                                  delay: const Duration(milliseconds: 100),
+                                  child: Card(
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 10,
+                                        top: 10,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Expanded(
+                                                  child: _textTitle(
+                                                    (usuario?.rol?.nombre ==
+                                                                "SUPERADMIN" ||
+                                                            usuario?.rol
+                                                                    ?.nombre ==
+                                                                "ADMIN")
+                                                        ? "Reporte de cotizaciones del equipo"
+                                                        : "Reporte de cotizaciones",
                                                   ),
-                                                  CustomDropdown
-                                                      .dropdownMenuCustom(
-                                                    fontSize: 12,
-                                                    initialSelection:
-                                                        typePeriod,
-                                                    onSelected:
-                                                        (String? value) => ref
-                                                            .read(filterReport
-                                                                .notifier)
-                                                            .update((state) =>
-                                                                value!),
-                                                    elements: filtrosRegistro,
-                                                    screenWidth: null,
-                                                    compact: true,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                ),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  spacing: 10,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        color: Theme.of(context)
+                                                            .cardColor,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          IconButton(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            constraints:
+                                                                const BoxConstraints(
+                                                              minHeight: 28,
+                                                              minWidth: 28,
+                                                            ),
+                                                            icon: const Icon(
+                                                              Iconsax
+                                                                  .arrow_left_1_outline,
+                                                              size: 18,
+                                                            ),
+                                                            onPressed: () =>
+                                                                _changeDateView(),
+                                                          ),
+                                                          TextStyles
+                                                              .standardText(
+                                                            text:
+                                                                _getPeriodReportSelect(),
+                                                          ),
+                                                          IconButton(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            constraints:
+                                                                const BoxConstraints(
+                                                              minHeight: 28,
+                                                              minWidth: 28,
+                                                            ),
+                                                            icon: const Icon(
+                                                              Iconsax
+                                                                  .arrow_right_4_outline,
+                                                              size: 18,
+                                                            ),
+                                                            onPressed: () =>
+                                                                _changeDateView(
+                                                                    isAfter:
+                                                                        true),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    CustomDropdown
+                                                        .dropdownMenuCustom(
+                                                      fontSize: 12,
+                                                      initialSelection:
+                                                          typePeriod,
+                                                      onSelected:
+                                                          (String? value) => ref
+                                                              .read(filterReport
+                                                                  .notifier)
+                                                              .update((state) =>
+                                                                  value!),
+                                                      elements: filtrosRegistro,
+                                                      screenWidth: null,
+                                                      compact: true,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 14),
-                                        SizedBox(
-                                          height: 450,
-                                          child: reportesSync.when(
-                                            data: (list) {
-                                              return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  RotatedBox(
-                                                    quarterTurns: 3,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 8.0,
-                                                              left: 110),
-                                                      child: TextStyles
-                                                          .standardText(
-                                                        text:
-                                                            "Num. Cotizaciones",
-                                                        size: 12,
+                                          const SizedBox(height: 14),
+                                          SizedBox(
+                                            height: 450,
+                                            child: reportesSync.when(
+                                              data: (list) {
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    RotatedBox(
+                                                      quarterTurns: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                top: 8.0,
+                                                                left: 110),
+                                                        child: TextStyles
+                                                            .standardText(
+                                                          text:
+                                                              "Num. Cotizaciones",
+                                                          size: 12,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    child: SfCartesianChart(
-                                                      plotAreaBorderWidth: 0,
-                                                      tooltipBehavior:
-                                                          TooltipBehavior(
-                                                        enable: true,
-                                                        duration: 1000,
-                                                        textStyle: TextStyles
-                                                            .styleStandar(
-                                                                size: 11),
-                                                      ),
-                                                      palette: [
-                                                        DesktopColors.cotGrupal,
-                                                        DesktopColors.cotIndiv,
-                                                        DesktopColors.resGrupal,
-                                                        DesktopColors.resIndiv,
-                                                      ],
-                                                      legend: Legend(
+                                                    Expanded(
+                                                      child: SfCartesianChart(
+                                                        plotAreaBorderWidth: 0,
+                                                        tooltipBehavior:
+                                                            TooltipBehavior(
+                                                          enable: true,
+                                                          duration: 1000,
+                                                          textStyle: TextStyles
+                                                              .styleStandar(
+                                                                  size: 11),
+                                                        ),
+                                                        palette: [
+                                                          DesktopColors
+                                                              .cotGrupal,
+                                                          DesktopColors
+                                                              .cotIndiv,
+                                                          DesktopColors
+                                                              .resGrupal,
+                                                          DesktopColors
+                                                              .resIndiv,
+                                                        ],
+                                                        legend: Legend(
                                                           isVisible: true,
                                                           orientation:
                                                               LegendItemOrientation
@@ -516,131 +537,119 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                           ),
                                                           overflowMode:
                                                               LegendItemOverflowMode
-                                                                  .wrap),
-                                                      series: [
-                                                        ColumnSeries(
-                                                          dataSource: list,
-                                                          xValueMapper:
-                                                              (datum, _) =>
-                                                                  datum.dia,
-                                                          yValueMapper: (datum,
-                                                                  _) =>
-                                                              datum
-                                                                  .numCotizacionesGrupales,
-                                                          name:
-                                                              "Cotizaciones Grupales",
+                                                                  .wrap,
                                                         ),
-                                                        ColumnSeries(
-                                                          dataSource: list,
-                                                          xValueMapper:
-                                                              (datum, index) =>
-                                                                  datum.dia,
-                                                          yValueMapper: (datum,
-                                                                  index) =>
-                                                              datum
-                                                                  .numCotizacionesIndividual,
-                                                          name:
-                                                              "Cotizaciones Individuales",
+                                                        series: [
+                                                          columnSeries(
+                                                            dataSource: list,
+                                                            esGrupal: true,
+                                                          ),
+                                                          columnSeries(
+                                                            dataSource: list,
+                                                          ),
+                                                          splineSeries(
+                                                            dataSource: list,
+                                                            esGrupal: true,
+                                                          ),
+                                                          splineSeries(
+                                                            dataSource: list,
+                                                          ),
+                                                        ],
+                                                        primaryXAxis:
+                                                            CategoryAxis(
+                                                          labelRotation:
+                                                              45, //Opcional
+                                                          labelStyle: TextStyles
+                                                              .styleStandar(
+                                                            size: 12,
+                                                          ),
+                                                          axisLine:
+                                                              const AxisLine(
+                                                                  width: 2),
+                                                          majorGridLines:
+                                                              const MajorGridLines(
+                                                                  width: 0),
                                                         ),
-                                                        SplineSeries<
-                                                            ReporteCotizacion,
-                                                            String>(
-                                                          splineType: SplineType
-                                                              .monotonic,
-                                                          dataSource: list,
-                                                          xValueMapper:
-                                                              (datum, index) =>
-                                                                  datum.dia,
-                                                          yValueMapper: (datum,
-                                                                  index) =>
-                                                              datum
-                                                                  .numReservacionesGrupales,
-                                                          name:
-                                                              "Reservaciones grupales",
-                                                        ),
-                                                        SplineSeries<
-                                                            ReporteCotizacion,
-                                                            String>(
-                                                          splineType: SplineType
-                                                              .monotonic,
-                                                          dataSource: list,
-                                                          xValueMapper:
-                                                              (datum, index) =>
-                                                                  datum.dia,
-                                                          yValueMapper: (datum,
-                                                                  index) =>
-                                                              datum
-                                                                  .numReservacionesIndividual,
-                                                          name:
-                                                              "Reservaciones individuales",
-                                                        ),
-                                                      ],
-                                                      primaryXAxis:
-                                                          CategoryAxis(
-                                                        labelRotation:
-                                                            45, //Opcional
-                                                        labelStyle: TextStyles
-                                                            .styleStandar(
-                                                          size: 12,
-                                                        ),
-                                                        axisLine:
-                                                            const AxisLine(
-                                                                width: 2),
-                                                        majorGridLines:
-                                                            const MajorGridLines(
-                                                                width: 0),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                            error: (error, stackTrace) {
-                                              return TextStyles.standardText(
-                                                text:
-                                                    "No se han encontrado resultados",
-                                              );
-                                            },
-                                            loading: () {
-                                              return ProgressIndicatorCustom(
-                                                screenHight: 450,
-                                              );
-                                            },
-                                          ),
-                                        )
-                                      ],
+                                                  ],
+                                                );
+                                              },
+                                              error: (error, stackTrace) {
+                                                return TextStyles.standardText(
+                                                  text:
+                                                      "No se han encontrado resultados",
+                                                );
+                                              },
+                                              loading: () {
+                                                return ProgressIndicatorCustom(
+                                                  screenHight: 450,
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Card(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 16, 10, 10),
-                                  child: Column(
-                                    spacing: 10,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _textTitle("Metricas"),
-                                      ItemRow.metricWidget(
-                                        sidebarXController:
-                                            widget.sideController,
-                                        estadistica: Estadisticas(
-                                          descripcion: "Disponibilidad",
-                                          porcentaje: 85,
-                                        ),
+                              Expanded(
+                                flex: realWidth > 980 ? 1 : 0,
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: realWidth > 980 ? 240 : 120,
+                                  ),
+                                  child: Card(
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 16, 10, 10),
+                                      child: Column(
+                                        spacing: 10,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              _textTitle("Metricas"),
+                                              if (realWidth > 980)
+                                                Flexible(
+                                                  child:
+                                                      TextStyles.standardText(
+                                                    text: DateHelpers
+                                                        .getStringDate(
+                                                      data: DateTime.now(),
+                                                      compact: true,
+                                                    ),
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                          ListView.builder(
+                                            itemCount: estadisticas.length,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              Estadisticas estadistica =
+                                                  estadisticas[index];
+                                              return ItemRow.metricWidget(
+                                                estadistica: estadistica,
+                                                sideController:
+                                                    widget.sideController,
+                                              );
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       if (isLoading)
                         ProgressIndicatorCustom(screenHight: screenHight)
@@ -826,7 +835,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                     Alignment.bottomCenter,
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                    bottom: screenWidth < 1090
+                                                    bottom: realWidth < 1090
                                                         ? 32
                                                         : 20,
                                                   ),
@@ -845,25 +854,25 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         "Cotizaciones grupales",
                                                         DesktopColors.cotGrupal,
                                                         compact:
-                                                            screenWidth < 1090,
+                                                            realWidth < 1090,
                                                       ),
                                                       itemTodayData(
                                                         "Cotizaciones individuales",
                                                         DesktopColors.cotIndiv,
                                                         compact:
-                                                            screenWidth < 1090,
+                                                            realWidth < 1090,
                                                       ),
                                                       itemTodayData(
                                                         "Reservaciones individuales",
                                                         DesktopColors.resIndiv,
                                                         compact:
-                                                            screenWidth < 1090,
+                                                            realWidth < 1090,
                                                       ),
                                                       itemTodayData(
                                                         "Reservaciones grupales",
                                                         DesktopColors.resGrupal,
                                                         compact:
-                                                            screenWidth < 1090,
+                                                            realWidth < 1090,
                                                       ),
                                                     ],
                                                   ),
@@ -969,7 +978,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                     delay: const Duration(
                                                         milliseconds: 1250),
                                                     child: SizedBox(
-                                                      width: screenWidth,
+                                                      width: realWidth,
                                                       height: 310,
                                                       child: ListView.builder(
                                                         itemCount: list.length,
@@ -983,7 +992,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                                 list[index],
                                                             index: index,
                                                             screenWidth:
-                                                                screenWidth,
+                                                                realWidth,
                                                             isQuery: true,
                                                           );
                                                         },
@@ -1047,6 +1056,31 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ),
         ],
       ),
+    );
+  }
+
+  splineSeries({List<ReporteCotizacion>? dataSource, bool esGrupal = false}) {
+    return SplineSeries<ReporteCotizacion, String>(
+      splineType: SplineType.monotonic,
+      dataSource: dataSource ?? [],
+      xValueMapper: (datum, index) => datum.dia,
+      yValueMapper: (datum, index) {
+        if (esGrupal) return datum.numReservacionesGrupales;
+        return datum.numReservacionesIndividual;
+      },
+      name: "Reservaciones ${esGrupal ? "grupales" : "individuales"}",
+    );
+  }
+
+  columnSeries({List<ReporteCotizacion>? dataSource, bool esGrupal = false}) {
+    return ColumnSeries<ReporteCotizacion, String>(
+      dataSource: dataSource ?? [],
+      xValueMapper: (datum, index) => datum.dia,
+      yValueMapper: (datum, index) {
+        if (esGrupal) return datum.numCotizacionesGrupales;
+        return datum.numCotizacionesIndividual;
+      },
+      name: "Cotizaciones ${esGrupal ? "grupales" : "individuales"}",
     );
   }
 }

@@ -725,47 +725,57 @@ class ItemRow {
     );
   }
 
-  static Widget metricWidget(
-      {required Estadisticas estadistica,
-      double size = 12,
-      required SidebarXController sidebarXController}) {
+  static Widget metricWidget({
+    required Estadisticas estadistica,
+    required SidebarXController sideController,
+  }) {
     return Builder(
       builder: (context) {
-        final widthScreen = MediaQuery.of(context).size.width;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final realWidth = screenWidth - (sideController.extended ? 130 : 0);
+        bool isExpanded = realWidth > 980;
 
         return SizedBox(
-          height: 90,
+          width: isExpanded ? null : 140,
+          height: 80,
           child: Card(
             color: Theme.of(context).cardTheme.color,
             child: Tooltip(
-              message: widthScreen > 750 ? "" : "Ocupación",
+              message: isExpanded ? "" : estadistica.descripcion ?? "unknow",
               margin: const EdgeInsets.only(top: 8),
               child: Row(
+                mainAxisAlignment: isExpanded
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
                 children: [
                   Expanded(
+                    flex: 0,
                     child: SizedBox(
-                      width: 100,
+                      width: 80,
                       child: Stack(
                         children: [
                           SizedBox(
-                            height: 100,
-                            width: 100,
+                            height: 80,
+                            width: 80,
                             child: SfCircularChart(
                               series: <CircularSeries>[
                                 RadialBarSeries<Estadisticas, String>(
-                                    maximumValue: 100,
-                                    innerRadius: "80%",
-                                    dataSource: [estadistica],
-                                    xValueMapper: (Estadisticas data, _) =>
-                                        data.descripcion,
-                                    yValueMapper: (Estadisticas data, _) =>
-                                        data.porcentaje)
+                                  cornerStyle: CornerStyle.bothCurve,
+                                  trackColor: Theme.of(context).cardColor,
+                                  maximumValue: 100,
+                                  innerRadius: "80%",
+                                  dataSource: [estadistica],
+                                  xValueMapper: (Estadisticas data, _) =>
+                                      data.descripcion,
+                                  yValueMapper: (Estadisticas data, _) =>
+                                      data.porcentaje,
+                                )
                               ],
                             ),
                           ),
                           Center(
                             child: TextStyles.standardText(
-                              text: "50%",
+                              text: "${estadistica.porcentaje}%",
                               size: 14,
                               isBold: true,
                               height: 0,
@@ -775,16 +785,16 @@ class ItemRow {
                       ),
                     ),
                   ),
-                  if (widthScreen > 1200)
+                  if (isExpanded)
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
                         child: TextStyles.standardText(
-                          text: estadistica.descripcion ?? "Ocupación",
-                          size: size,
+                          text: estadistica.descripcion ?? "unknow",
+                          size: 12,
                           color: Theme.of(context).primaryColor,
                           isBold: true,
-                          overClip: true,
+                          align: TextAlign.start,
                         ),
                       ),
                     ),

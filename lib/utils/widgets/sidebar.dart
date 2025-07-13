@@ -73,7 +73,12 @@ class _SideBarState extends ConsumerState<SideBar> {
           selectedItemTextPadding: const EdgeInsets.only(left: 30),
           itemDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: DesktopColors.canvasColor),
+            border: Border.all(
+              color: ColorsHelpers.darken(
+                DesktopColors.canvasColor,
+                isDarkMode ? 0.1 : 0,
+              ),
+            ),
           ),
           selectedItemDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -114,103 +119,101 @@ class _SideBarState extends ConsumerState<SideBar> {
         footerDivider: DesktopColors.divider,
         headerBuilder: (context, extended) {
           if (extended) {
-            return SizedBox(
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      widget._controller.selectIndex(0);
-                    },
-                    child: Stack(
-                      children: [
-                        const SizedBox(
-                          child: Image(
-                            image: AssetImage("assets/image/large_logo.png"),
-                            width: 180,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 5,
-                          child: TextStyles.standardText(
-                            text: "Versión $version",
-                            size: 9,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MySidebarXItem(
-                    onTap: () => widget._controller.selectIndex(99),
-                    controller: widget._controller,
-                    selectIndex: 99,
+            return Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    widget._controller.selectIndex(0);
+                  },
+                  child: Stack(
                     children: [
-                      Expanded(
-                        child: (imageUser?.ruta?.isNotEmpty ?? false)
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white60,
-                                    ),
-                                  ),
-                                  child: ClipOval(
-                                    child: Image.file(
-                                      File(imageUser?.ruta ?? ''),
-                                      fit: BoxFit.cover,
-                                      width: 45,
-                                      height: 45,
-                                      errorBuilder: (context, error, _) {
-                                        return const Icon(
-                                          Iconsax.user_square_bold,
-                                          size: 45,
-                                          color: Colors.white,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const Icon(
-                                Iconsax.user_square_bold,
-                                size: 45,
-                                color: Colors.white,
-                              ),
+                      const SizedBox(
+                        child: Image(
+                          image: AssetImage("assets/image/large_logo.png"),
+                          width: 180,
+                        ),
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              Preferences.username,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: "poppins_regular",
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              usuario?.rol?.nombre ?? 'Unknown Role',
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: "poppins_regular",
-                                color: Colors.white,
-                                fontSize: 11,
-                              ),
-                            )
-                          ],
+                      Positioned(
+                        bottom: 0,
+                        right: 5,
+                        child: TextStyles.standardText(
+                          text: "Versión $version",
+                          size: 9,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                MySidebarXItem(
+                  onTap: () => widget._controller.selectIndex(99),
+                  controller: widget._controller,
+                  selectIndex: 99,
+                  children: [
+                    Expanded(
+                      child: (imageUser?.ruta?.isNotEmpty ?? false)
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: Image.file(
+                                    File(imageUser?.ruta ?? ''),
+                                    fit: BoxFit.cover,
+                                    width: 45,
+                                    height: 45,
+                                    errorBuilder: (context, error, _) {
+                                      return const Icon(
+                                        Iconsax.user_square_bold,
+                                        size: 45,
+                                        color: Colors.white,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const Icon(
+                              Iconsax.user_square_bold,
+                              size: 45,
+                              color: Colors.white,
+                            ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Preferences.username,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: "poppins_regular",
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            usuario?.rol?.nombre ?? 'Unknown Role',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: "poppins_regular",
+                              color: Colors.white,
+                              fontSize: 11,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             );
           } else {
             return Column(

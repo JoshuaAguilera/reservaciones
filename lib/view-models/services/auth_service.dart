@@ -20,11 +20,11 @@ class AuthService extends BaseService {
 
   Future<bool> validToken() async {
     bool status = false;
-    status = await validTokenNW();
+    status = await validTokenBD();
     return status;
   }
 
-  Future<bool> validTokenNW() async {
+  Future<bool> validTokenBD() async {
     bool status = false;
 
     try {
@@ -143,7 +143,7 @@ class AuthService extends BaseService {
     );
     final token = jwt.sign(
       SecretKey(secret),
-      expiresIn: const Duration(hours: 12),
+      expiresIn: const Duration(minutes: 1),
     );
 
     // Puedes guardar el token para uso posterior
