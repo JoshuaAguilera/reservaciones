@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:generador_formato/res/helpers/date_helpers.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -15,6 +14,7 @@ import '../../models/estadistica_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../res/helpers/colors_helpers.dart';
+import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/helpers/icon_helpers.dart';
 import '../../res/helpers/utility.dart';
@@ -762,14 +762,7 @@ class ItemRow {
     required Metrica estadistica,
     required SidebarXController sideController,
   }) {
-    List<Color> colors = [
-      DesktopColors.primary2,
-      DesktopColors.primary3,
-      DesktopColors.primary4,
-      DesktopColors.primary5,
-      DesktopColors.primary6,
-    ];
-
+    List<Color> colors = DesktopColors.getPrimaryColors();
     int saveIndex = index % colors.length;
 
     return Builder(

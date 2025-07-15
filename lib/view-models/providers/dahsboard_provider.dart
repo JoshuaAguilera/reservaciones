@@ -9,12 +9,12 @@ import '../services/cotizacion_service.dart';
 import '../../res/helpers/utility.dart';
 
 final reporteCotizacionesIndProvider =
-    FutureProvider.family<List<List<ReporteCotizacion>>, String>((ref, arg) async {
+    FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filterDate = ref.watch(filterReport);
   final filter = ref.watch(filtroDashboardProvider);
   final date = ref.watch(dateReportProvider);
-  bool adminView =  filter == "Equipo";
+  bool adminView = filter == "Equipo";
 
   final response = await CotizacionService().getList(
     initDate: DateHelpers.calculatePeriodReport(filter: filterDate, date: date),
@@ -27,18 +27,13 @@ final reporteCotizacionesIndProvider =
     conDetalle: adminView,
   );
 
-  if (adminView) {
-  
-  }
-  
-
   final list = Utility.getCotizacionQuotes(
     cotizaciones: response,
     filter: filterDate,
     date: date,
   );
 
-  return [list];
+  return list;
 });
 
 final cotizacionesDiariasProvider =

@@ -198,8 +198,6 @@ class Utility {
     return listCot;
   }
 
-  
-
   static int getDaysInMonth(int year, int month) {
     int nextMonth = month == 12 ? 1 : month + 1;
     int nextMonthYear = month == 12 ? year + 1 : year;
@@ -887,5 +885,21 @@ class Utility {
     }
 
     return nowSeason;
+  }
+
+  static Map<String, List<ReporteCotizacion>> getReportByUser(
+      List<ReporteCotizacion> list) {
+    Map<String, List<ReporteCotizacion>> reportByUser = {};
+
+    for (var element in list) {
+      String userKey = element.toString();
+
+      if (!reportByUser.containsKey(userKey)) {
+        reportByUser[userKey] = [];
+      }
+      reportByUser[userKey]?.add(element);
+    }
+
+    return reportByUser;
   }
 }

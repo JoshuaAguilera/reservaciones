@@ -66,4 +66,12 @@ class DesktopColors {
   static Color primary4 = HexColor.fromHex("#f05556");
   static Color primary5 = HexColor.fromHex("#f2981b");
   static Color primary6 = HexColor.fromHex("#3d5462");
+
+  static List<Color> getQuotesColors() {
+    return [cotGrupal, cotIndiv, resGrupal, resIndiv];
+  }
+
+  static List<Color> getPrimaryColors() {
+    return [primary2, primary3, primary4, primary5, primary6];
+  }
 }

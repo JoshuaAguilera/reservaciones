@@ -16,4 +16,14 @@ class ReporteCotizacion {
     required this.numReservacionesIndividual,
     this.usuario,
   });
+
+  @override
+  String toString() {
+    return usuario?.username ?? "Unknown User";
+  }
+  
+
+  int get totalCotizaciones {
+    return numCotizacionesIndividual + numCotizacionesGrupales;
+  }
 }

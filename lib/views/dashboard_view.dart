@@ -324,7 +324,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Expanded(
+                                                Flexible(
                                                   child: textTitle(
                                                     "Reporte de cotizaciones",
                                                   ),
@@ -420,6 +420,26 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             height: 470,
                                             child: reportesSync.when(
                                               data: (list) {
+                                                Map<String,
+                                                        List<ReporteCotizacion>>
+                                                    map =
+                                                    Utility.getReportByUser(
+                                                        list);
+
+                                                List<
+                                                        CartesianSeries<dynamic,
+                                                            dynamic>>
+                                                    seriesGrup = [];
+
+                                                for (var element
+                                                    in map.entries) {
+                                                  final serie = columnSeries(
+                                                      dataSource: list,
+                                                      esGrupal: true,
+                                                      filtro: filtro);
+                                                  seriesGrup.add(serie);
+                                                }
+
                                                 return Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
@@ -448,16 +468,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                           enable: true,
                                                           duration: 1000,
                                                         ),
-                                                        palette: [
-                                                          DesktopColors
-                                                              .cotGrupal,
-                                                          DesktopColors
-                                                              .cotIndiv,
-                                                          DesktopColors
-                                                              .resGrupal,
-                                                          DesktopColors
-                                                              .resIndiv,
-                                                        ],
+                                                        palette: filtro ==
+                                                                "Equipo"
+                                                            ? DesktopColors
+                                                                .getPrimaryColors()
+                                                            : DesktopColors
+                                                                .getQuotesColors(),
                                                         legend: Legend(
                                                           isVisible: true,
                                                           orientation:
@@ -475,28 +491,37 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                               LegendItemOverflowMode
                                                                   .wrap,
                                                         ),
-                                                        series: [
-                                                          columnSeries(
-                                                              dataSource:
-                                                                  list.first,
-                                                              esGrupal: true,
-                                                              filtro: filtro),
-                                                          columnSeries(
-                                                              dataSource:
-                                                                  list.first,
-                                                              filtro: filtro),
-                                                          splineSeries(
-                                                            dataSource:
-                                                                list.first,
-                                                            esGrupal: true,
-                                                            filtro: filtro,
-                                                          ),
-                                                          splineSeries(
-                                                            dataSource:
-                                                                list.first,
-                                                            filtro: filtro,
-                                                          ),
-                                                        ],
+                                                        series:
+                                                            filtro == "Equipo"
+                                                                ? seriesGrup
+                                                                : [
+                                                                    columnSeries(
+                                                                        dataSource:
+                                                                            list,
+                                                                        esGrupal:
+                                                                            true,
+                                                                        filtro:
+                                                                            filtro),
+                                                                    columnSeries(
+                                                                        dataSource:
+                                                                            list,
+                                                                        filtro:
+                                                                            filtro),
+                                                                    splineSeries(
+                                                                      dataSource:
+                                                                          list,
+                                                                      esGrupal:
+                                                                          true,
+                                                                      filtro:
+                                                                          filtro,
+                                                                    ),
+                                                                    splineSeries(
+                                                                      dataSource:
+                                                                          list,
+                                                                      filtro:
+                                                                          filtro,
+                                                                    ),
+                                                                  ],
                                                         primaryXAxis:
                                                             CategoryAxis(
                                                           labelRotation:
@@ -1004,7 +1029,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       dataSource: dataSource ?? [],
       xValueMapper: (datum, index) {
         return filtro == "Equipo"
-            ? datum.usuario?.nombre ?? "Sin novedades."
+            ? datum.usuario?.nombre ?? "Sin actividad."
             : datum.dia;
       },
       yValueMapper: (datum, index) {
@@ -1024,14 +1049,16 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       dataSource: dataSource ?? [],
       xValueMapper: (datum, index) {
         return filtro == "Equipo"
-            ? datum.usuario?.nombre ?? "Sin novedades."
+            ? datum.usuario?.nombre ?? "Sin actividad."
             : datum.dia;
       },
       yValueMapper: (datum, index) {
+        if (filtro == "Equipo") return datum.totalCotizaciones;
         if (esGrupal) return datum.numCotizacionesGrupales;
         return datum.numCotizacionesIndividual;
       },
-      name: "Cotizaciones ${esGrupal ? "grupales" : "individuales"}",
+      name:
+          "Cotizaciones ${filtro == "Equipo" ? "" : esGrupal ? "grupales" : "individuales"}",
     );
   }
 }
