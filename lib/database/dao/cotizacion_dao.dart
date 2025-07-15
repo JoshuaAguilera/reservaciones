@@ -35,7 +35,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
     bool inLastWeek = false,
     bool inLastMonth = false,
     bool onlyToday = false,
-    List<bool>? showFilter,
+    List<bool>? filters,
     bool conDetalle = false,
   }) async {
     final creadorAlias = alias(db.usuarioTable, 'creador');
@@ -130,10 +130,10 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       );
     }
 
-    if (showFilter != null) {
+    if (filters != null) {
       Expression<bool> implementFilter = const Variable(true);
 
-      if (showFilter[1]) {
+      if (filters[1]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(true) &
             db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isBiggerThan(
@@ -143,7 +143,7 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
             );
       }
 
-      if (showFilter[2]) {
+      if (filters[2]) {
         implementFilter = db.cotizacionTable.esGrupo.equals(false) &
             db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isBiggerThan(
@@ -152,12 +152,17 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
               ),
             );
       }
-
-      if (showFilter[3]) {
-        implementFilter = db.cotizacionTable.estatus.equals("reservado");
+      if (filters[3]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
+            db.cotizacionTable.estatus.equals("reservado");
       }
 
-      if (showFilter[4]) {
+      if (filters[4]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
+            db.cotizacionTable.estatus.equals("reservado");
+      }
+
+      if (filters[5]) {
         implementFilter = db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isSmallerThan(
               Variable(
@@ -311,10 +316,16 @@ class CotizacionDao extends DatabaseAccessor<AppDatabase>
       }
 
       if (filters[3]) {
-        implementFilter = db.cotizacionTable.estatus.equals("reservado");
+        implementFilter = db.cotizacionTable.esGrupo.equals(true) &
+            db.cotizacionTable.estatus.equals("reservado");
       }
 
       if (filters[4]) {
+        implementFilter = db.cotizacionTable.esGrupo.equals(false) &
+            db.cotizacionTable.estatus.equals("reservado");
+      }
+
+      if (filters[5]) {
         implementFilter = db.cotizacionTable.estatus.equals("cotizado") &
             db.cotizacionTable.fechaLimite.isSmallerThan(
               Variable(

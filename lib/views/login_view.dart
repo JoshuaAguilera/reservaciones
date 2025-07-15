@@ -112,6 +112,58 @@ class _LoginViewState extends ConsumerState<LoginView> {
           builder: (context, constraints) {
             return Stack(
               children: [
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height,
+                    ),
+                    child: Column(
+                      spacing: 20,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              children: [
+                                SizedBox(
+                                  width: 350,
+                                  child: Image(
+                                    image: AssetImage(brightness ==
+                                            Brightness.light
+                                        ? "assets/image/alternative_logo.png"
+                                        : "assets/image/large_logo.png"),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 10,
+                                  right: 0,
+                                  child: TextStyles.standardText(
+                                    text: "Versión $version",
+                                    size: 11,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        if (isLoading)
+                          Center(
+                            child: LoadingAnimationWidget.discreteCircle(
+                              color: DesktopColors.primary4,
+                              secondRingColor: DesktopColors.primary5,
+                              thirdRingColor: DesktopColors.primary1,
+                              size: 40,
+                            ),
+                          ),
+                        if (!isLoading) const _LoginForm(),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
                 ThemeSwitcher(
                   clipper: const ThemeSwitcherCircleClipper(),
                   builder: (cont) {
@@ -166,49 +218,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       ),
                     );
                   },
-                ),
-                Column(
-                  spacing: 20,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          children: [
-                            SizedBox(
-                              width: 350,
-                              child: Image(
-                                image: AssetImage(brightness == Brightness.light
-                                    ? "assets/image/alternative_logo.png"
-                                    : "assets/image/large_logo.png"),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 10,
-                              right: 0,
-                              child: TextStyles.standardText(
-                                text: "Versión $version",
-                                size: 11,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    if (isLoading)
-                      Center(
-                        child: LoadingAnimationWidget.discreteCircle(
-                          color: DesktopColors.primary4,
-                          secondRingColor: DesktopColors.primary5,
-                          thirdRingColor: DesktopColors.primary1,
-                          size: 40,
-                        ),
-                      ),
-                    if (!isLoading) const _LoginForm(),
-                    const SizedBox(height: 50),
-                  ],
                 ),
               ],
             );

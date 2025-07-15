@@ -60,6 +60,15 @@ class Themes {
       ),
       textTheme: TextTheme(
         bodyMedium: TextStyles.styleStandar(color: Colors.black87),
+        displayMedium: TextStyles.styleStandar(color: Colors.black87),
+        labelMedium: TextStyles.styleStandar(color: Colors.black87),
+        headlineMedium: TextStyles.styleStandar(color: Colors.black87),
+        titleMedium: TextStyles.styleStandar(color: Colors.black87),
+        // bodySmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
+        // displaySmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
+        // labelSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
+        // headlineSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
+        // titleSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
       ),
       inputDecorationTheme: const InputDecorationTheme(
         fillColor: Colors.white,

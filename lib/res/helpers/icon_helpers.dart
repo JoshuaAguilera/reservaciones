@@ -42,8 +42,10 @@ class IconHelpers {
         return Iconsax.people_outline;
       case "individuales":
         return Iconsax.user_outline;
-      case "reservadas":
-        return Iconsax.calendar_tick_outline;
+      case "reservadas grp":
+        return Iconsax.calendar_1_outline;
+      case "reservadas ind":
+        return Iconsax.calendar_outline;
       case "caducadas":
         return Iconsax.direct_inbox_outline;
       case "total":

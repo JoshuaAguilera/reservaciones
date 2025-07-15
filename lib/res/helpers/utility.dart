@@ -81,125 +81,124 @@ class Utility {
     required String filter,
     required DateTime date,
   }) {
-    List<ReporteCotizacion> listCot = [];
-    DateTime now = date;
+    final List<ReporteCotizacion> listCot = [];
+    final quotes = cotizaciones ?? [];
 
     switch (filter) {
       case "Semanal":
-        try {
-          for (var i = 1; i < 8; i++) {
-            ReporteCotizacion quoteDay = ReporteCotizacion(
-              numCotizacionesGrupales: 0,
-              numCotizacionesIndividual: 0,
-              numReservacionesGrupales: 0,
-              numReservacionesIndividual: 0,
-            );
-
-            if (cotizaciones != null) {
-              List<Cotizacion> quotesInd = cotizaciones
-                  .where((element) => element.createdAt?.weekday == i)
-                  .toList();
-
-              for (var element in quotesInd) {
-                if (element.esGrupo!) {
-                  if (element.estatus == "reservado") {
-                    quoteDay.numReservacionesGrupales++;
-                  } else {
-                    quoteDay.numCotizacionesGrupales++;
-                  }
-                } else {
-                  if (element.estatus == "reservado") {
-                    quoteDay.numReservacionesIndividual++;
-                  } else {
-                    quoteDay.numCotizacionesIndividual++;
-                  }
-                }
-              }
-            }
-
-            quoteDay.dia = dayNames[i - 1];
-            listCot.add(quoteDay);
-          }
-        } catch (e) {
-          print(e);
+        // Agrupar por día de la semana (1=Lunes, 7=Domingo)
+        final Map<int, List<Cotizacion>> groupedByWeekday = {};
+        for (final cot in quotes) {
+          final wd = cot.createdAt?.weekday ?? 0;
+          if (wd == 0) continue;
+          groupedByWeekday.putIfAbsent(wd, () => []).add(cot);
         }
-        break;
-      case "Mensual":
-        for (var i = 1; i < getDaysInMonth(now.year, now.month) + 1; i++) {
-          ReporteCotizacion quoteDay = ReporteCotizacion(
+        for (var i = 1; i <= 7; i++) {
+          final quoteDay = ReporteCotizacion(
             numCotizacionesGrupales: 0,
             numCotizacionesIndividual: 0,
             numReservacionesGrupales: 0,
             numReservacionesIndividual: 0,
           );
-
-          if (cotizaciones != null) {
-            List<Cotizacion> quotes = cotizaciones
-                .where((element) => element.createdAt?.day == i)
-                .toList();
-
-            for (var element in quotes) {
-              if (element.esGrupo!) {
-                if (element.estatus == "reservado") {
-                  quoteDay.numReservacionesGrupales++;
-                } else {
-                  quoteDay.numCotizacionesGrupales++;
-                }
+          final dayQuotes = groupedByWeekday[i] ?? [];
+          for (final cot in dayQuotes) {
+            if (cot.esGrupo ?? false) {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesGrupales++;
               } else {
-                if (element.estatus == "reservado") {
-                  quoteDay.numReservacionesIndividual++;
-                } else {
-                  quoteDay.numCotizacionesIndividual++;
-                }
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesIndividual++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
               }
             }
           }
+          quoteDay.dia = dayNames[i - 1];
+          listCot.add(quoteDay);
+        }
+        break;
 
+      case "Mensual":
+        final daysInMonth = getDaysInMonth(date.year, date.month);
+        final Map<int, List<Cotizacion>> groupedByDay = {};
+        for (final cot in quotes) {
+          final d = cot.createdAt?.day ?? 0;
+          if (d == 0) continue;
+          groupedByDay.putIfAbsent(d, () => []).add(cot);
+        }
+        for (var i = 1; i <= daysInMonth; i++) {
+          final quoteDay = ReporteCotizacion(
+            numCotizacionesGrupales: 0,
+            numCotizacionesIndividual: 0,
+            numReservacionesGrupales: 0,
+            numReservacionesIndividual: 0,
+          );
+          final dayQuotes = groupedByDay[i] ?? [];
+          for (final cot in dayQuotes) {
+            if (cot.esGrupo ?? false) {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesGrupales++;
+              } else {
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesIndividual++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
+              }
+            }
+          }
           quoteDay.dia = "$i";
           listCot.add(quoteDay);
         }
         break;
+
       case "Anual":
-        for (var i = 1; i < 12 + 1; i++) {
-          ReporteCotizacion quoteDay = ReporteCotizacion(
+        final Map<int, List<Cotizacion>> groupedByMonth = {};
+        for (final cot in quotes) {
+          final m = cot.createdAt?.month ?? 0;
+          if (m == 0) continue;
+          groupedByMonth.putIfAbsent(m, () => []).add(cot);
+        }
+        for (var i = 1; i <= 12; i++) {
+          final quoteDay = ReporteCotizacion(
             numCotizacionesGrupales: 0,
             numCotizacionesIndividual: 0,
             numReservacionesGrupales: 0,
             numReservacionesIndividual: 0,
           );
-
-          if (cotizaciones != null) {
-            List<Cotizacion> quotes = cotizaciones
-                .where((element) => element.createdAt?.month == i)
-                .toList();
-
-            for (var element in quotes) {
-              if (element.esGrupo!) {
-                if (element.estatus == "reservado") {
-                  quoteDay.numReservacionesGrupales++;
-                } else {
-                  quoteDay.numCotizacionesGrupales++;
-                }
+          final monthQuotes = groupedByMonth[i] ?? [];
+          for (final cot in monthQuotes) {
+            if (cot.esGrupo ?? false) {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesGrupales++;
               } else {
-                if (element.estatus == "reservado") {
-                  quoteDay.numReservacionesIndividual++;
-                } else {
-                  quoteDay.numCotizacionesIndividual++;
-                }
+                quoteDay.numCotizacionesGrupales++;
+              }
+            } else {
+              if (cot.estatus == "reservado") {
+                quoteDay.numReservacionesIndividual++;
+              } else {
+                quoteDay.numCotizacionesIndividual++;
               }
             }
           }
-
           quoteDay.dia = monthNames[i - 1];
           listCot.add(quoteDay);
         }
-
         break;
       default:
+        // Nada
+        break;
     }
-
     return listCot;
   }
+
+  
 
   static int getDaysInMonth(int year, int month) {
     int nextMonth = month == 12 ? 1 : month + 1;
@@ -216,46 +215,19 @@ class Utility {
       {List<Cotizacion>? respIndToday}) {
     List<Estadistica> cot = [];
 
-    Estadistica cotizacionesTotales =
-        Estadistica(title: "Total");
-
-    Estadistica cotizacionesGrupales =
-        Estadistica(title: "Grupales");
-
-    Estadistica cotizacionesIndividuales =
-        Estadistica(title: "Individuales");
-
-    Estadistica reservadas =
-        Estadistica(title: "Reservadas");
-
-    Estadistica cotizacionesNoConcretadas =
-        Estadistica(title: "Caducadas");
-
-    for (var element in respIndToday ?? List<Cotizacion>.empty()) {
-      if (DateTime.now().compareTo(element.fechaLimite ?? DateTime.now()) ==
-              1 &&
-          (element.estatus != "reservado")) {
-        cotizacionesNoConcretadas.numNow++;
-
-        continue;
-      }
-
-      if (element.estatus == "reservado") {
-        reservadas.numNow++;
-      }
-
-      if (element.esGrupo ?? false) {
-        cotizacionesGrupales.numNow++;
-      } else {
-        cotizacionesIndividuales.numNow++;
-      }
-    }
+    Estadistica cotizacionesTotales = Estadistica(title: "Total");
+    Estadistica cotizacionesGrupales = Estadistica(title: "Grupales");
+    Estadistica cotizacionesIndividuales = Estadistica(title: "Individuales");
+    Estadistica reservadasInd = Estadistica(title: "Reservadas Ind");
+    Estadistica reservadasGrp = Estadistica(title: "Reservadas Grp");
+    Estadistica cotizacionesNoConcretadas = Estadistica(title: "Caducadas");
 
     cot.addAll([
       cotizacionesTotales,
       cotizacionesGrupales,
       cotizacionesIndividuales,
-      reservadas,
+      reservadasInd,
+      reservadasGrp,
       cotizacionesNoConcretadas,
     ]);
 

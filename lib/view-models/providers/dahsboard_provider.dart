@@ -9,22 +9,36 @@ import '../services/cotizacion_service.dart';
 import '../../res/helpers/utility.dart';
 
 final reporteCotizacionesIndProvider =
-    FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
+    FutureProvider.family<List<List<ReporteCotizacion>>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
-  final filter = ref.watch(filterReport);
-// Para leer la fecha actual:
+  final filterDate = ref.watch(filterReport);
+  final filter = ref.watch(filtroDashboardProvider);
   final date = ref.watch(dateReportProvider);
+  bool adminView =  filter == "Equipo";
+
+  final response = await CotizacionService().getList(
+    initDate: DateHelpers.calculatePeriodReport(filter: filterDate, date: date),
+    lastDate: DateHelpers.calculatePeriodReport(
+      filter: filterDate,
+      date: date,
+      addTime: true,
+    ),
+    limit: 1000,
+    conDetalle: adminView,
+  );
+
+  if (adminView) {
+  
+  }
+  
 
   final list = Utility.getCotizacionQuotes(
-    cotizaciones: await CotizacionService().getList(
-      initDate: DateHelpers.calculatePeriodReport(filter: filter, date: date),
-      lastDate: DateHelpers.calculatePeriodReport(
-          filter: filter, date: date, addTime: true),
-    ),
-    filter: filter,
+    cotizaciones: response,
+    filter: filterDate,
     date: date,
   );
-  return list;
+
+  return [list];
 });
 
 final cotizacionesDiariasProvider =
@@ -60,7 +74,7 @@ final statisticsQuoteProvider =
         (ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filter = ref.watch(filtroDashboardProvider);
-  final list = await CotizacionService().getCounts(stats:arg, filtro: filter);
+  final list = await CotizacionService().getCounts(stats: arg, filtro: filter);
   return list;
 });
 

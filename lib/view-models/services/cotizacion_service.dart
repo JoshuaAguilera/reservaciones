@@ -80,7 +80,7 @@ class CotizacionService extends BaseService {
         conDetalle: conDetalle,
         creadorId: creadorPor?.idInt,
         cerradorId: cerradorPor?.idInt,
-        showFilter: showFilter,
+        filters: showFilter,
         inLastDay: inLastDay,
         inLastWeek: inLastWeek,
         inLastMonth: inLastMonth,
@@ -113,17 +113,20 @@ class CotizacionService extends BaseService {
       await db.transaction(
         () async {
           for (var stat in stats) {
-            bool esTotal = stat.title?.toLowerCase() == "total";
-            bool esGrupal = stat.title?.toLowerCase() == "grupales";
-            bool esIndividual = stat.title?.toLowerCase() == "individuales";
-            bool esConcretada = stat.title?.toLowerCase() == "reservadas";
-            bool esCaducada = stat.title?.toLowerCase() == "caducadas";
+            String title = stat.title?.toLowerCase() ?? "";
+            bool esTotal = title == "total";
+            bool esGrupal = title == "grupales";
+            bool esIndividual = title == "individuales";
+            bool esConcretadaInd = title == "reservadas ind";
+            bool esConcretadaGrp = title == "reservadas grp";
+            bool esCaducada = title == "caducadas";
 
             List<bool> filters = [
               esTotal,
               esGrupal,
               esIndividual,
-              esConcretada,
+              esConcretadaGrp,
+              esConcretadaInd,
               esCaducada,
             ];
 

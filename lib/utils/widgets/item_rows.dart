@@ -27,7 +27,7 @@ class ItemRow {
   static Widget statisticsRow(List<Estadistica> list) {
     List<Widget> cards = [];
     for (var element in list) {
-      cards.add(ItemRow.statisticRow(element, sizeText: 14));
+      cards.add(ItemRow.statisticRow(element, sizeText: 13.5));
     }
 
     return Wrap(runSpacing: 5, spacing: 14, children: cards);

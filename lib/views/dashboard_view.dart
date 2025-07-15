@@ -399,11 +399,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                       initialSelection:
                                                           typePeriod,
                                                       onSelected:
-                                                          (String? value) => ref
-                                                              .read(filterReport
-                                                                  .notifier)
-                                                              .update((state) =>
-                                                                  value!),
+                                                          (String? value) {
+                                                        ref
+                                                            .read(filterReport
+                                                                .notifier)
+                                                            .update((state) =>
+                                                                value!);
+                                                      },
                                                       elements: filtrosRegistro,
                                                       screenWidth: null,
                                                       compact: true,
@@ -445,9 +447,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                             TooltipBehavior(
                                                           enable: true,
                                                           duration: 1000,
-                                                          textStyle: TextStyles
-                                                              .styleStandar(
-                                                                  size: 11),
                                                         ),
                                                         palette: [
                                                           DesktopColors
@@ -478,24 +477,32 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         ),
                                                         series: [
                                                           columnSeries(
-                                                            dataSource: list,
-                                                            esGrupal: true,
-                                                          ),
+                                                              dataSource:
+                                                                  list.first,
+                                                              esGrupal: true,
+                                                              filtro: filtro),
                                                           columnSeries(
-                                                            dataSource: list,
-                                                          ),
+                                                              dataSource:
+                                                                  list.first,
+                                                              filtro: filtro),
                                                           splineSeries(
-                                                            dataSource: list,
+                                                            dataSource:
+                                                                list.first,
                                                             esGrupal: true,
+                                                            filtro: filtro,
                                                           ),
                                                           splineSeries(
-                                                            dataSource: list,
+                                                            dataSource:
+                                                                list.first,
+                                                            filtro: filtro,
                                                           ),
                                                         ],
                                                         primaryXAxis:
                                                             CategoryAxis(
                                                           labelRotation:
-                                                              45, //Opcional
+                                                              filtro == "Equipo"
+                                                                  ? 0
+                                                                  : 45, //Opcional
                                                           labelStyle: TextStyles
                                                               .styleStandar(
                                                             size: 12,
@@ -987,11 +994,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  splineSeries({List<ReporteCotizacion>? dataSource, bool esGrupal = false}) {
+  splineSeries({
+    List<ReporteCotizacion>? dataSource,
+    bool esGrupal = false,
+    String filtro = "Individual",
+  }) {
     return SplineSeries<ReporteCotizacion, String>(
       splineType: SplineType.monotonic,
       dataSource: dataSource ?? [],
-      xValueMapper: (datum, index) => datum.dia,
+      xValueMapper: (datum, index) {
+        return filtro == "Equipo"
+            ? datum.usuario?.nombre ?? "Sin novedades."
+            : datum.dia;
+      },
       yValueMapper: (datum, index) {
         if (esGrupal) return datum.numReservacionesGrupales;
         return datum.numReservacionesIndividual;
@@ -1000,10 +1015,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  columnSeries({List<ReporteCotizacion>? dataSource, bool esGrupal = false}) {
+  columnSeries({
+    List<ReporteCotizacion>? dataSource,
+    bool esGrupal = false,
+    String filtro = "Individual",
+  }) {
     return ColumnSeries<ReporteCotizacion, String>(
       dataSource: dataSource ?? [],
-      xValueMapper: (datum, index) => datum.dia,
+      xValueMapper: (datum, index) {
+        return filtro == "Equipo"
+            ? datum.usuario?.nombre ?? "Sin novedades."
+            : datum.dia;
+      },
       yValueMapper: (datum, index) {
         if (esGrupal) return datum.numCotizacionesGrupales;
         return datum.numCotizacionesIndividual;
