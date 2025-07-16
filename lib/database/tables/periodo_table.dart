@@ -12,6 +12,6 @@ class PeriodoTable extends Table {
   DateTimeColumn get fechaFinal => dateTime().nullable()();
   TextColumn get diasActivo => text().map(const StringListConverter())();
   IntColumn get tarifaRackInt =>
-      integer().nullable().references(TarifaRackTable, #id)();
+      integer().nullable().references(TarifaRackTable, #idInt)();
   TextColumn get tarifaRack => text().nullable()();
 }

@@ -12,6 +12,6 @@ class PoliticaTarifarioTable extends Table {
   TextColumn get valor => text().nullable()();
   TextColumn get descripcion => text().nullable()();
   IntColumn get creadoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get creadoPor => text().nullable()();
 }

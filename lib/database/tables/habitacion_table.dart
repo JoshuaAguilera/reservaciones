@@ -8,7 +8,7 @@ class HabitacionTable extends Table {
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime).nullable()();
   IntColumn get cotizacionInt =>
-      integer().nullable().references(CotizacionTable, #id)();
+      integer().nullable().references(CotizacionTable, #idInt)();
   TextColumn get cotizacion => text().nullable()();
   DateTimeColumn get checkIn => dateTime().nullable()();
   DateTimeColumn get checkOut => dateTime().nullable()();

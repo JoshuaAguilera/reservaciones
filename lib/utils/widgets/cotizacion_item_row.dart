@@ -125,7 +125,7 @@ class _ComprobanteItemRowState extends State<ComprobanteItemRow> {
           subtitle: Wrap(
             spacing: 10,
             children: [
-              TextStyles.TextAsociative("Folio: ", widget.cotizacion.folio!,
+              TextStyles.TextAsociative("Folio: ", widget.cotizacion.folio ?? "n/a",
                   size: widget.isQuery ? 11 : 12, color: colorTextIndice),
               TextStyles.TextAsociative("Fecha: ",
                   "${DateHelpers.getStringDate(data: widget.cotizacion.createdAt)} ${widget.cotizacion.createdAt?.toIso8601String().substring(11, 16)}",

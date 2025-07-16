@@ -12,6 +12,6 @@ class NotificacionTable extends Table {
   TextColumn get estatus => text().withDefault(const Variable("enviado"))();
   TextColumn get ruta => text().nullable()();
   IntColumn get usuarioInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get usuario => text().nullable()();
 }

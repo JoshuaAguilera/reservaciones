@@ -15,9 +15,9 @@ class TarifaBaseTable extends Table {
   RealColumn get upgradeMenor => real().nullable()();
   RealColumn get upgradePaxAdic => real().nullable()();
   IntColumn get tarifaBaseInt =>
-      integer().nullable().references(TarifaBaseTable, #id)();
+      integer().nullable().references(TarifaBaseTable, #idInt)();
   TextColumn get tarifaBase => text().nullable()();
   IntColumn get creadoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get creadoPor => text().nullable()();
 }

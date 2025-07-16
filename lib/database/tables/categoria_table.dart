@@ -12,9 +12,9 @@ class CategoriaTable extends Table {
   TextColumn get color => text().nullable()();
   TextColumn get descripcion => text().nullable()();
   IntColumn get tipoHabitacionInt =>
-      integer().nullable().references(TipoHabitacionTable, #id)();
+      integer().nullable().references(TipoHabitacionTable, #idInt)();
   TextColumn get tipoHabitacion => text().nullable()();
   IntColumn get creadoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get creadoPor => text().nullable()();
 }

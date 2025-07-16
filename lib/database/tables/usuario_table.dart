@@ -17,8 +17,8 @@ class UsuarioTable extends Table {
   DateTimeColumn get fechaNacimiento => dateTime().nullable()();
   TextColumn get nombre => text().nullable()();
   TextColumn get apellido => text().nullable()();
-  IntColumn get imagenInt => integer().nullable().references(ImagenTable, #id)();
+  IntColumn get imagenInt => integer().nullable().references(ImagenTable, #idInt)();
   TextColumn get imagen => text().nullable()();
-  IntColumn get rolInt => integer().nullable().references(RolTable, #id)();
+  IntColumn get rolInt => integer().nullable().references(RolTable, #idInt)();
   TextColumn get rol => text().nullable()();
 }

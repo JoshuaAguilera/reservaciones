@@ -22,7 +22,6 @@ class Estadistica {
   }
 
   int? difference() {
-    if (numInitial == 0) return null;
     return (numNow - numInitial).abs();
   }
 }

@@ -10,7 +10,7 @@ class TarifaTable extends Table {
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime).nullable()();
   IntColumn get categoriaInt =>
-      integer().nullable().references(CategoriaTable, #id)();
+      integer().nullable().references(CategoriaTable, #idInt)();
   TextColumn get categoria => text().nullable()();
   RealColumn get tarifaAdulto1a2 => real().nullable()();
   RealColumn get tarifaAdulto3 => real().nullable()();

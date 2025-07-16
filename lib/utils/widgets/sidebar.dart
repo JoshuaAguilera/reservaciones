@@ -150,7 +150,15 @@ class _SideBarState extends ConsumerState<SideBar> {
                   ),
                 ),
                 MySidebarXItem(
-                  onTap: () => controller.selectIndex(99),
+                  onTap: () {
+                    ref.read(sidebarControllerProvider).selectIndex(99);
+                    ref.read(selectPageProvider.notifier).state = SidebarItem(
+                      route: "/perfil",
+                      title: "Perfil",
+                      icon: Iconsax.user_square_bold,
+                      requiredPermissions: [],
+                    );
+                  },
                   controller: controller,
                   selectIndex: 99,
                   children: [
@@ -237,6 +245,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                 ),
                 MySidebarXItem(
                   onTap: () {
+                    ref.read(sidebarControllerProvider).selectIndex(99);
                     ref.read(selectPageProvider.notifier).state = SidebarItem(
                       route: "/perfil",
                       title: "Perfil",

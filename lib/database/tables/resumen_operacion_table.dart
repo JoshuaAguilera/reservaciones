@@ -12,12 +12,12 @@ class ResumenOperacionTable extends Table {
   RealColumn get impuestos => real().withDefault(const Constant(0))();
   RealColumn get total => real().withDefault(const Constant(0))();
   IntColumn get habitacionInt =>
-      integer().nullable().references(HabitacionTable, #id)();
+      integer().nullable().references(HabitacionTable, #idInt)();
   TextColumn get habitacion => text().nullable()();
   IntColumn get categoriaInt =>
-      integer().nullable().references(CategoriaTable, #id)();
+      integer().nullable().references(CategoriaTable, #idInt)();
   TextColumn get categoria => text().nullable()();
   IntColumn get cotizacionInt =>
-      integer().nullable().references(CotizacionTable, #id)();
+      integer().nullable().references(CotizacionTable, #idInt)();
   TextColumn get cotizacion => text().nullable()();
 }

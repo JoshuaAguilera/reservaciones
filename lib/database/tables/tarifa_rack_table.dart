@@ -10,6 +10,6 @@ class TarifaRackTable extends Table {
   TextColumn get nombre => text().nullable()();
   TextColumn get color => text().nullable()();
   IntColumn get creadoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get creadoPor => text().nullable()();
 }

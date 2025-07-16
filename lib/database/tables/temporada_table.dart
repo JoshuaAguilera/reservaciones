@@ -14,6 +14,6 @@ class TemporadaTable extends Table {
   RealColumn get ocupMin => real().nullable()();
   RealColumn get ocupMax => real().nullable()();
   IntColumn get tarifaRackInt =>
-      integer().nullable().references(TarifaRackTable, #id)();
+      integer().nullable().references(TarifaRackTable, #idInt)();
   TextColumn get tarifaRack => text().nullable()();
 }

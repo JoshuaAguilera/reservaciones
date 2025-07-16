@@ -7,7 +7,7 @@ class ReservacionTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
   TextColumn get id => text().nullable()();
   IntColumn get cotizacionInt =>
-      integer().nullable().references(CotizacionTable, #id)();
+      integer().nullable().references(CotizacionTable, #idInt)();
   TextColumn get cotizacion => text().nullable()();
   TextColumn get sku => text().nullable()();
   TextColumn get folio => text().nullable()();
@@ -22,8 +22,10 @@ class ReservacionTable extends Table {
 }
 
 class ReservacionBrazaleteTable extends Table {
+  IntColumn get idInt => integer().autoIncrement()();
+  TextColumn get id => text().nullable()();
   IntColumn get reservacionInt =>
-      integer().nullable().references(ReservacionTable, #id)();
+      integer().nullable().references(ReservacionTable, #idInt)();
   TextColumn get reservacion => text().nullable()();
   TextColumn get codigo => text().nullable()();
   TextColumn get folioReservacion => text().nullable()();

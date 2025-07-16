@@ -8,18 +8,18 @@ class CotizacionTable extends Table {
   TextColumn get id => text().nullable()();
   TextColumn get folio => text().nullable()();
   IntColumn get clienteInt =>
-      integer().nullable().references(ClienteTable, #id)();
+      integer().nullable().references(ClienteTable, #idInt)();
   TextColumn get cliente => text().nullable()();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime).nullable()();
   DateTimeColumn get fechaLimite => dateTime().nullable()();
-  TextColumn get estatus => text().nullable()();
-  BoolColumn get esGrupo => boolean().nullable()();
+  TextColumn get estatus => text().withDefault(const Constant("cotizado"))();
+  BoolColumn get esGrupo => boolean().withDefault(const Constant(false))();
   IntColumn get creadoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get creadoPor => text().nullable()();
   IntColumn get cerradoPorInt =>
-      integer().nullable().references(UsuarioTable, #id)();
+      integer().nullable().references(UsuarioTable, #idInt)();
   TextColumn get cerradoPor => text().nullable()();
   RealColumn get subtotal => real().withDefault(const Constant(0))();
   RealColumn get descuento => real().withDefault(const Constant(0))();
@@ -27,6 +27,6 @@ class CotizacionTable extends Table {
   RealColumn get total => real().withDefault(const Constant(0))();
   TextColumn get comentarios => text().nullable()();
   IntColumn get cotizacionInt =>
-      integer().nullable().references(CotizacionTable, #id)();
+      integer().nullable().references(CotizacionTable, #idInt)();
   TextColumn get cotizacion => text().nullable()();
 }

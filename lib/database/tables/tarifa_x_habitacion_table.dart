@@ -8,10 +8,10 @@ class TarifaXHabitacionTable extends Table {
   TextColumn get id => text().nullable()();
   TextColumn get subcode => text().nullable()();
   IntColumn get habitacionInt =>
-      integer().nullable().references(HabitacionTable, #id)();
+      integer().nullable().references(HabitacionTable, #idInt)();
   TextColumn get habitacion => text().nullable()();
   IntColumn get tarifaXDiaInt =>
-      integer().nullable().references(TarifaXDiaTable, #id)();
+      integer().nullable().references(TarifaXDiaTable, #idInt)();
   TextColumn get tarifaXDia => text().nullable()();
   IntColumn get dia => integer().nullable()();
   DateTimeColumn get fecha => dateTime().nullable()();

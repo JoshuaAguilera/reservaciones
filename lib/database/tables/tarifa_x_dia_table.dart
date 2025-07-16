@@ -6,7 +6,7 @@ class TarifaXDiaTable extends Table {
   IntColumn get idInt => integer().autoIncrement()();
   TextColumn get id => text().nullable()();
   IntColumn get tarifaRackInt =>
-      integer().nullable().references(TarifaRackTable, #id)();
+      integer().nullable().references(TarifaRackTable, #idInt)();
   TextColumn get tarifaRack => text().nullable()();
   RealColumn get descIntegrado => real().nullable()();
   BoolColumn get esLibre => boolean().nullable()();

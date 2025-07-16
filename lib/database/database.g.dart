@@ -1098,8 +1098,8 @@ class $UsuarioTableTable extends UsuarioTable
       'imagen_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES imagen_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES imagen_table (id_int)'));
   static const VerificationMeta _imagenMeta = const VerificationMeta('imagen');
   @override
   late final GeneratedColumn<String> imagen = GeneratedColumn<String>(
@@ -1112,7 +1112,7 @@ class $UsuarioTableTable extends UsuarioTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES rol_table (id)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES rol_table (id_int)'));
   static const VerificationMeta _rolMeta = const VerificationMeta('rol');
   @override
   late final GeneratedColumn<String> rol = GeneratedColumn<String>(
@@ -1795,7 +1795,7 @@ class $CategoriaTableTable extends CategoriaTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tipo_habitacion_table (id)'));
+          'REFERENCES tipo_habitacion_table (id_int)'));
   static const VerificationMeta _tipoHabitacionMeta =
       const VerificationMeta('tipoHabitacion');
   @override
@@ -1809,8 +1809,8 @@ class $CategoriaTableTable extends CategoriaTable
       'creado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _creadoPorMeta =
       const VerificationMeta('creadoPor');
   @override
@@ -2901,8 +2901,8 @@ class $CotizacionTableTable extends CotizacionTable
       'cliente_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES cliente_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES cliente_table (id_int)'));
   static const VerificationMeta _clienteMeta =
       const VerificationMeta('cliente');
   @override
@@ -2927,17 +2927,20 @@ class $CotizacionTableTable extends CotizacionTable
       const VerificationMeta('estatus');
   @override
   late final GeneratedColumn<String> estatus = GeneratedColumn<String>(
-      'estatus', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      'estatus', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant("cotizado"));
   static const VerificationMeta _esGrupoMeta =
       const VerificationMeta('esGrupo');
   @override
   late final GeneratedColumn<bool> esGrupo = GeneratedColumn<bool>(
-      'es_grupo', aliasedName, true,
+      'es_grupo', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("es_grupo" IN (0, 1))'));
+          GeneratedColumn.constraintIsAlways('CHECK ("es_grupo" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _creadoPorIntMeta =
       const VerificationMeta('creadoPorInt');
   @override
@@ -2945,8 +2948,8 @@ class $CotizacionTableTable extends CotizacionTable
       'creado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _creadoPorMeta =
       const VerificationMeta('creadoPor');
   @override
@@ -2960,8 +2963,8 @@ class $CotizacionTableTable extends CotizacionTable
       'cerrado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _cerradoPorMeta =
       const VerificationMeta('cerradoPor');
   @override
@@ -3013,7 +3016,7 @@ class $CotizacionTableTable extends CotizacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES cotizacion_table (id)'));
+          'REFERENCES cotizacion_table (id_int)'));
   static const VerificationMeta _cotizacionMeta =
       const VerificationMeta('cotizacion');
   @override
@@ -3173,9 +3176,9 @@ class $CotizacionTableTable extends CotizacionTable
       fechaLimite: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}fecha_limite']),
       estatus: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}estatus']),
+          .read(DriftSqlType.string, data['${effectivePrefix}estatus'])!,
       esGrupo: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo']),
+          .read(DriftSqlType.bool, data['${effectivePrefix}es_grupo'])!,
       creadoPorInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}creado_por_int']),
       creadoPor: attachedDatabase.typeMapping
@@ -3216,8 +3219,8 @@ class CotizacionTableData extends DataClass
   final String? cliente;
   final DateTime? createdAt;
   final DateTime? fechaLimite;
-  final String? estatus;
-  final bool? esGrupo;
+  final String estatus;
+  final bool esGrupo;
   final int? creadoPorInt;
   final String? creadoPor;
   final int? cerradoPorInt;
@@ -3237,8 +3240,8 @@ class CotizacionTableData extends DataClass
       this.cliente,
       this.createdAt,
       this.fechaLimite,
-      this.estatus,
-      this.esGrupo,
+      required this.estatus,
+      required this.esGrupo,
       this.creadoPorInt,
       this.creadoPor,
       this.cerradoPorInt,
@@ -3272,12 +3275,8 @@ class CotizacionTableData extends DataClass
     if (!nullToAbsent || fechaLimite != null) {
       map['fecha_limite'] = Variable<DateTime>(fechaLimite);
     }
-    if (!nullToAbsent || estatus != null) {
-      map['estatus'] = Variable<String>(estatus);
-    }
-    if (!nullToAbsent || esGrupo != null) {
-      map['es_grupo'] = Variable<bool>(esGrupo);
-    }
+    map['estatus'] = Variable<String>(estatus);
+    map['es_grupo'] = Variable<bool>(esGrupo);
     if (!nullToAbsent || creadoPorInt != null) {
       map['creado_por_int'] = Variable<int>(creadoPorInt);
     }
@@ -3324,12 +3323,8 @@ class CotizacionTableData extends DataClass
       fechaLimite: fechaLimite == null && nullToAbsent
           ? const Value.absent()
           : Value(fechaLimite),
-      estatus: estatus == null && nullToAbsent
-          ? const Value.absent()
-          : Value(estatus),
-      esGrupo: esGrupo == null && nullToAbsent
-          ? const Value.absent()
-          : Value(esGrupo),
+      estatus: Value(estatus),
+      esGrupo: Value(esGrupo),
       creadoPorInt: creadoPorInt == null && nullToAbsent
           ? const Value.absent()
           : Value(creadoPorInt),
@@ -3369,8 +3364,8 @@ class CotizacionTableData extends DataClass
       cliente: serializer.fromJson<String?>(json['cliente']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       fechaLimite: serializer.fromJson<DateTime?>(json['fechaLimite']),
-      estatus: serializer.fromJson<String?>(json['estatus']),
-      esGrupo: serializer.fromJson<bool?>(json['esGrupo']),
+      estatus: serializer.fromJson<String>(json['estatus']),
+      esGrupo: serializer.fromJson<bool>(json['esGrupo']),
       creadoPorInt: serializer.fromJson<int?>(json['creadoPorInt']),
       creadoPor: serializer.fromJson<String?>(json['creadoPor']),
       cerradoPorInt: serializer.fromJson<int?>(json['cerradoPorInt']),
@@ -3395,8 +3390,8 @@ class CotizacionTableData extends DataClass
       'cliente': serializer.toJson<String?>(cliente),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'fechaLimite': serializer.toJson<DateTime?>(fechaLimite),
-      'estatus': serializer.toJson<String?>(estatus),
-      'esGrupo': serializer.toJson<bool?>(esGrupo),
+      'estatus': serializer.toJson<String>(estatus),
+      'esGrupo': serializer.toJson<bool>(esGrupo),
       'creadoPorInt': serializer.toJson<int?>(creadoPorInt),
       'creadoPor': serializer.toJson<String?>(creadoPor),
       'cerradoPorInt': serializer.toJson<int?>(cerradoPorInt),
@@ -3419,8 +3414,8 @@ class CotizacionTableData extends DataClass
           Value<String?> cliente = const Value.absent(),
           Value<DateTime?> createdAt = const Value.absent(),
           Value<DateTime?> fechaLimite = const Value.absent(),
-          Value<String?> estatus = const Value.absent(),
-          Value<bool?> esGrupo = const Value.absent(),
+          String? estatus,
+          bool? esGrupo,
           Value<int?> creadoPorInt = const Value.absent(),
           Value<String?> creadoPor = const Value.absent(),
           Value<int?> cerradoPorInt = const Value.absent(),
@@ -3440,8 +3435,8 @@ class CotizacionTableData extends DataClass
         cliente: cliente.present ? cliente.value : this.cliente,
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
         fechaLimite: fechaLimite.present ? fechaLimite.value : this.fechaLimite,
-        estatus: estatus.present ? estatus.value : this.estatus,
-        esGrupo: esGrupo.present ? esGrupo.value : this.esGrupo,
+        estatus: estatus ?? this.estatus,
+        esGrupo: esGrupo ?? this.esGrupo,
         creadoPorInt:
             creadoPorInt.present ? creadoPorInt.value : this.creadoPorInt,
         creadoPor: creadoPor.present ? creadoPor.value : this.creadoPor,
@@ -3576,8 +3571,8 @@ class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
   final Value<String?> cliente;
   final Value<DateTime?> createdAt;
   final Value<DateTime?> fechaLimite;
-  final Value<String?> estatus;
-  final Value<bool?> esGrupo;
+  final Value<String> estatus;
+  final Value<bool> esGrupo;
   final Value<int?> creadoPorInt;
   final Value<String?> creadoPor;
   final Value<int?> cerradoPorInt;
@@ -3687,8 +3682,8 @@ class CotizacionTableCompanion extends UpdateCompanion<CotizacionTableData> {
       Value<String?>? cliente,
       Value<DateTime?>? createdAt,
       Value<DateTime?>? fechaLimite,
-      Value<String?>? estatus,
-      Value<bool?>? esGrupo,
+      Value<String>? estatus,
+      Value<bool>? esGrupo,
       Value<int?>? creadoPorInt,
       Value<String?>? creadoPor,
       Value<int?>? cerradoPorInt,
@@ -3854,7 +3849,7 @@ class $HabitacionTableTable extends HabitacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES cotizacion_table (id)'));
+          'REFERENCES cotizacion_table (id_int)'));
   static const VerificationMeta _cotizacionMeta =
       const VerificationMeta('cotizacion');
   @override
@@ -4539,8 +4534,8 @@ class $NotificacionTableTable extends NotificacionTable
       'usuario_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _usuarioMeta =
       const VerificationMeta('usuario');
   @override
@@ -5024,8 +5019,8 @@ class $TarifaRackTableTable extends TarifaRackTable
       'creado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _creadoPorMeta =
       const VerificationMeta('creadoPor');
   @override
@@ -5420,7 +5415,7 @@ class $PeriodoTableTable extends PeriodoTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tarifa_rack_table (id)'));
+          'REFERENCES tarifa_rack_table (id_int)'));
   static const VerificationMeta _tarifaRackMeta =
       const VerificationMeta('tarifaRack');
   @override
@@ -5871,8 +5866,8 @@ class $PoliticaTarifarioTableTable extends PoliticaTarifarioTable
       'creado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _creadoPorMeta =
       const VerificationMeta('creadoPor');
   @override
@@ -6319,7 +6314,7 @@ class $ReservacionTableTable extends ReservacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES cotizacion_table (id)'));
+          'REFERENCES cotizacion_table (id_int)'));
   static const VerificationMeta _cotizacionMeta =
       const VerificationMeta('cotizacion');
   @override
@@ -6967,7 +6962,7 @@ class $ResumenOperacionTableTable extends ResumenOperacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES habitacion_table (id)'));
+          'REFERENCES habitacion_table (id_int)'));
   static const VerificationMeta _habitacionMeta =
       const VerificationMeta('habitacion');
   @override
@@ -6982,7 +6977,7 @@ class $ResumenOperacionTableTable extends ResumenOperacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES categoria_table (id)'));
+          'REFERENCES categoria_table (id_int)'));
   static const VerificationMeta _categoriaMeta =
       const VerificationMeta('categoria');
   @override
@@ -6997,7 +6992,7 @@ class $ResumenOperacionTableTable extends ResumenOperacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES cotizacion_table (id)'));
+          'REFERENCES cotizacion_table (id_int)'));
   static const VerificationMeta _cotizacionMeta =
       const VerificationMeta('cotizacion');
   @override
@@ -7604,7 +7599,7 @@ class $TarifaBaseTableTable extends TarifaBaseTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tarifa_base_table (id)'));
+          'REFERENCES tarifa_base_table (id_int)'));
   static const VerificationMeta _tarifaBaseMeta =
       const VerificationMeta('tarifaBase');
   @override
@@ -7618,8 +7613,8 @@ class $TarifaBaseTableTable extends TarifaBaseTable
       'creado_por_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES usuario_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES usuario_table (id_int)'));
   static const VerificationMeta _creadoPorMeta =
       const VerificationMeta('creadoPor');
   @override
@@ -8283,7 +8278,7 @@ class $TarifaTableTable extends TarifaTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES categoria_table (id)'));
+          'REFERENCES categoria_table (id_int)'));
   static const VerificationMeta _categoriaMeta =
       const VerificationMeta('categoria');
   @override
@@ -8964,7 +8959,7 @@ class $TarifaXDiaTableTable extends TarifaXDiaTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tarifa_rack_table (id)'));
+          'REFERENCES tarifa_rack_table (id_int)'));
   static const VerificationMeta _tarifaRackMeta =
       const VerificationMeta('tarifaRack');
   @override
@@ -9521,7 +9516,7 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES habitacion_table (id)'));
+          'REFERENCES habitacion_table (id_int)'));
   static const VerificationMeta _habitacionMeta =
       const VerificationMeta('habitacion');
   @override
@@ -9536,7 +9531,7 @@ class $TarifaXHabitacionTableTable extends TarifaXHabitacionTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tarifa_x_dia_table (id)'));
+          'REFERENCES tarifa_x_dia_table (id_int)'));
   static const VerificationMeta _tarifaXDiaMeta =
       const VerificationMeta('tarifaXDia');
   @override
@@ -10084,7 +10079,7 @@ class $TemporadaTableTable extends TemporadaTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES tarifa_rack_table (id)'));
+          'REFERENCES tarifa_rack_table (id_int)'));
   static const VerificationMeta _tarifaRackMeta =
       const VerificationMeta('tarifaRack');
   @override
@@ -10596,7 +10591,7 @@ class $TarifaTemporadaTableTable extends TarifaTemporadaTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES temporada_table (id)'));
+          'REFERENCES temporada_table (id_int)'));
   static const VerificationMeta _temporadaMeta =
       const VerificationMeta('temporada');
   @override
@@ -10610,8 +10605,8 @@ class $TarifaTemporadaTableTable extends TarifaTemporadaTable
       'tarifa_int', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES tarifa_table (id)'));
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES tarifa_table (id_int)'));
   static const VerificationMeta _tarifaMeta = const VerificationMeta('tarifa');
   @override
   late final GeneratedColumn<String> tarifa = GeneratedColumn<String>(
@@ -10930,6 +10925,20 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ReservacionBrazaleteTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idIntMeta = const VerificationMeta('idInt');
+  @override
+  late final GeneratedColumn<int> idInt = GeneratedColumn<int>(
+      'id_int', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _reservacionIntMeta =
       const VerificationMeta('reservacionInt');
   @override
@@ -10938,7 +10947,7 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES reservacion_table (id)'));
+          'REFERENCES reservacion_table (id_int)'));
   static const VerificationMeta _reservacionMeta =
       const VerificationMeta('reservacion');
   @override
@@ -10958,7 +10967,7 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [reservacionInt, reservacion, codigo, folioReservacion];
+      [idInt, id, reservacionInt, reservacion, codigo, folioReservacion];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -10970,6 +10979,13 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id_int')) {
+      context.handle(
+          _idIntMeta, idInt.isAcceptableOrUnknown(data['id_int']!, _idIntMeta));
+    }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
     if (data.containsKey('reservacion_int')) {
       context.handle(
           _reservacionIntMeta,
@@ -10996,12 +11012,16 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {idInt};
   @override
   ReservacionBrazaleteTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ReservacionBrazaleteTableData(
+      idInt: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id_int'])!,
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id']),
       reservacionInt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}reservacion_int']),
       reservacion: attachedDatabase.typeMapping
@@ -11021,18 +11041,26 @@ class $ReservacionBrazaleteTableTable extends ReservacionBrazaleteTable
 
 class ReservacionBrazaleteTableData extends DataClass
     implements Insertable<ReservacionBrazaleteTableData> {
+  final int idInt;
+  final String? id;
   final int? reservacionInt;
   final String? reservacion;
   final String? codigo;
   final String? folioReservacion;
   const ReservacionBrazaleteTableData(
-      {this.reservacionInt,
+      {required this.idInt,
+      this.id,
+      this.reservacionInt,
       this.reservacion,
       this.codigo,
       this.folioReservacion});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id_int'] = Variable<int>(idInt);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
+    }
     if (!nullToAbsent || reservacionInt != null) {
       map['reservacion_int'] = Variable<int>(reservacionInt);
     }
@@ -11050,6 +11078,8 @@ class ReservacionBrazaleteTableData extends DataClass
 
   ReservacionBrazaleteTableCompanion toCompanion(bool nullToAbsent) {
     return ReservacionBrazaleteTableCompanion(
+      idInt: Value(idInt),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       reservacionInt: reservacionInt == null && nullToAbsent
           ? const Value.absent()
           : Value(reservacionInt),
@@ -11068,6 +11098,8 @@ class ReservacionBrazaleteTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ReservacionBrazaleteTableData(
+      idInt: serializer.fromJson<int>(json['idInt']),
+      id: serializer.fromJson<String?>(json['id']),
       reservacionInt: serializer.fromJson<int?>(json['reservacionInt']),
       reservacion: serializer.fromJson<String?>(json['reservacion']),
       codigo: serializer.fromJson<String?>(json['codigo']),
@@ -11078,6 +11110,8 @@ class ReservacionBrazaleteTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'idInt': serializer.toJson<int>(idInt),
+      'id': serializer.toJson<String?>(id),
       'reservacionInt': serializer.toJson<int?>(reservacionInt),
       'reservacion': serializer.toJson<String?>(reservacion),
       'codigo': serializer.toJson<String?>(codigo),
@@ -11086,11 +11120,15 @@ class ReservacionBrazaleteTableData extends DataClass
   }
 
   ReservacionBrazaleteTableData copyWith(
-          {Value<int?> reservacionInt = const Value.absent(),
+          {int? idInt,
+          Value<String?> id = const Value.absent(),
+          Value<int?> reservacionInt = const Value.absent(),
           Value<String?> reservacion = const Value.absent(),
           Value<String?> codigo = const Value.absent(),
           Value<String?> folioReservacion = const Value.absent()}) =>
       ReservacionBrazaleteTableData(
+        idInt: idInt ?? this.idInt,
+        id: id.present ? id.value : this.id,
         reservacionInt:
             reservacionInt.present ? reservacionInt.value : this.reservacionInt,
         reservacion: reservacion.present ? reservacion.value : this.reservacion,
@@ -11102,6 +11140,8 @@ class ReservacionBrazaleteTableData extends DataClass
   ReservacionBrazaleteTableData copyWithCompanion(
       ReservacionBrazaleteTableCompanion data) {
     return ReservacionBrazaleteTableData(
+      idInt: data.idInt.present ? data.idInt.value : this.idInt,
+      id: data.id.present ? data.id.value : this.id,
       reservacionInt: data.reservacionInt.present
           ? data.reservacionInt.value
           : this.reservacionInt,
@@ -11117,6 +11157,8 @@ class ReservacionBrazaleteTableData extends DataClass
   @override
   String toString() {
     return (StringBuffer('ReservacionBrazaleteTableData(')
+          ..write('idInt: $idInt, ')
+          ..write('id: $id, ')
           ..write('reservacionInt: $reservacionInt, ')
           ..write('reservacion: $reservacion, ')
           ..write('codigo: $codigo, ')
@@ -11126,12 +11168,14 @@ class ReservacionBrazaleteTableData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(reservacionInt, reservacion, codigo, folioReservacion);
+  int get hashCode => Object.hash(
+      idInt, id, reservacionInt, reservacion, codigo, folioReservacion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ReservacionBrazaleteTableData &&
+          other.idInt == this.idInt &&
+          other.id == this.id &&
           other.reservacionInt == this.reservacionInt &&
           other.reservacion == this.reservacion &&
           other.codigo == this.codigo &&
@@ -11140,59 +11184,72 @@ class ReservacionBrazaleteTableData extends DataClass
 
 class ReservacionBrazaleteTableCompanion
     extends UpdateCompanion<ReservacionBrazaleteTableData> {
+  final Value<int> idInt;
+  final Value<String?> id;
   final Value<int?> reservacionInt;
   final Value<String?> reservacion;
   final Value<String?> codigo;
   final Value<String?> folioReservacion;
-  final Value<int> rowid;
   const ReservacionBrazaleteTableCompanion({
+    this.idInt = const Value.absent(),
+    this.id = const Value.absent(),
     this.reservacionInt = const Value.absent(),
     this.reservacion = const Value.absent(),
     this.codigo = const Value.absent(),
     this.folioReservacion = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   ReservacionBrazaleteTableCompanion.insert({
+    this.idInt = const Value.absent(),
+    this.id = const Value.absent(),
     this.reservacionInt = const Value.absent(),
     this.reservacion = const Value.absent(),
     this.codigo = const Value.absent(),
     this.folioReservacion = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   static Insertable<ReservacionBrazaleteTableData> custom({
+    Expression<int>? idInt,
+    Expression<String>? id,
     Expression<int>? reservacionInt,
     Expression<String>? reservacion,
     Expression<String>? codigo,
     Expression<String>? folioReservacion,
-    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (idInt != null) 'id_int': idInt,
+      if (id != null) 'id': id,
       if (reservacionInt != null) 'reservacion_int': reservacionInt,
       if (reservacion != null) 'reservacion': reservacion,
       if (codigo != null) 'codigo': codigo,
       if (folioReservacion != null) 'folio_reservacion': folioReservacion,
-      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ReservacionBrazaleteTableCompanion copyWith(
-      {Value<int?>? reservacionInt,
+      {Value<int>? idInt,
+      Value<String?>? id,
+      Value<int?>? reservacionInt,
       Value<String?>? reservacion,
       Value<String?>? codigo,
-      Value<String?>? folioReservacion,
-      Value<int>? rowid}) {
+      Value<String?>? folioReservacion}) {
     return ReservacionBrazaleteTableCompanion(
+      idInt: idInt ?? this.idInt,
+      id: id ?? this.id,
       reservacionInt: reservacionInt ?? this.reservacionInt,
       reservacion: reservacion ?? this.reservacion,
       codigo: codigo ?? this.codigo,
       folioReservacion: folioReservacion ?? this.folioReservacion,
-      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (idInt.present) {
+      map['id_int'] = Variable<int>(idInt.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
     if (reservacionInt.present) {
       map['reservacion_int'] = Variable<int>(reservacionInt.value);
     }
@@ -11205,20 +11262,18 @@ class ReservacionBrazaleteTableCompanion
     if (folioReservacion.present) {
       map['folio_reservacion'] = Variable<String>(folioReservacion.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('ReservacionBrazaleteTableCompanion(')
+          ..write('idInt: $idInt, ')
+          ..write('id: $id, ')
           ..write('reservacionInt: $reservacionInt, ')
           ..write('reservacion: $reservacion, ')
           ..write('codigo: $codigo, ')
-          ..write('folioReservacion: $folioReservacion, ')
-          ..write('rowid: $rowid')
+          ..write('folioReservacion: $folioReservacion')
           ..write(')'))
         .toString();
   }
@@ -11808,7 +11863,7 @@ class $$TipoHabitacionTableTableFilterComposer
       ComposableFilter Function($$CategoriaTableTableFilterComposer f) f) {
     final $$CategoriaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.categoriaTable,
         getReferencedColumn: (t) => t.tipoHabitacionInt,
         builder: (joinBuilder, parentComposers) =>
@@ -11954,7 +12009,7 @@ class $$ImagenTableTableFilterComposer
       ComposableFilter Function($$UsuarioTableTableFilterComposer f) f) {
     final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.imagenInt,
         builder: (joinBuilder, parentComposers) =>
@@ -12114,7 +12169,7 @@ class $$RolTableTableFilterComposer
       ComposableFilter Function($$UsuarioTableTableFilterComposer f) f) {
     final $$UsuarioTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.usuarioTable,
         getReferencedColumn: (t) => t.rolInt,
         builder: (joinBuilder, parentComposers) =>
@@ -12360,7 +12415,7 @@ class $$UsuarioTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.imagenInt,
         referencedTable: $state.db.imagenTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$ImagenTableTableFilterComposer(ComposerState($state.db,
                 $state.db.imagenTable, joinBuilder, parentComposers)));
@@ -12372,7 +12427,7 @@ class $$UsuarioTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.rolInt,
         referencedTable: $state.db.rolTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$RolTableTableFilterComposer(ComposerState(
                 $state.db, $state.db.rolTable, joinBuilder, parentComposers)));
@@ -12383,7 +12438,7 @@ class $$UsuarioTableTableFilterComposer
       ComposableFilter Function($$CategoriaTableTableFilterComposer f) f) {
     final $$CategoriaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.categoriaTable,
         getReferencedColumn: (t) => t.creadoPorInt,
         builder: (joinBuilder, parentComposers) =>
@@ -12397,7 +12452,7 @@ class $$UsuarioTableTableFilterComposer
     final $$NotificacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.notificacionTable,
             getReferencedColumn: (t) => t.usuarioInt,
             builder: (joinBuilder, parentComposers) =>
@@ -12414,7 +12469,7 @@ class $$UsuarioTableTableFilterComposer
     final $$TarifaRackTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaRackTable,
             getReferencedColumn: (t) => t.creadoPorInt,
             builder: (joinBuilder, parentComposers) =>
@@ -12429,7 +12484,7 @@ class $$UsuarioTableTableFilterComposer
     final $$PoliticaTarifarioTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.politicaTarifarioTable,
             getReferencedColumn: (t) => t.creadoPorInt,
             builder: (joinBuilder, parentComposers) =>
@@ -12460,7 +12515,7 @@ class $$UsuarioTableTableFilterComposer
     final $$TarifaBaseTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaBaseTable,
             getReferencedColumn: (t) => t.creadoPorInt,
             builder: (joinBuilder, parentComposers) =>
@@ -12543,7 +12598,7 @@ class $$UsuarioTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.imagenInt,
         referencedTable: $state.db.imagenTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$ImagenTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.imagenTable, joinBuilder, parentComposers)));
@@ -12555,7 +12610,7 @@ class $$UsuarioTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.rolInt,
         referencedTable: $state.db.rolTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$RolTableTableOrderingComposer(ComposerState(
                 $state.db, $state.db.rolTable, joinBuilder, parentComposers)));
@@ -12707,7 +12762,7 @@ class $$CategoriaTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tipoHabitacionInt,
             referencedTable: $state.db.tipoHabitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TipoHabitacionTableTableFilterComposer(ComposerState(
                     $state.db,
@@ -12722,7 +12777,7 @@ class $$CategoriaTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -12735,7 +12790,7 @@ class $$CategoriaTableTableFilterComposer
     final $$ResumenOperacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.resumenOperacionTable,
             getReferencedColumn: (t) => t.categoriaInt,
             builder: (joinBuilder, parentComposers) =>
@@ -12751,7 +12806,7 @@ class $$CategoriaTableTableFilterComposer
       ComposableFilter Function($$TarifaTableTableFilterComposer f) f) {
     final $$TarifaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.tarifaTable,
         getReferencedColumn: (t) => t.categoriaInt,
         builder: (joinBuilder, parentComposers) =>
@@ -12810,7 +12865,7 @@ class $$CategoriaTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tipoHabitacionInt,
             referencedTable: $state.db.tipoHabitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TipoHabitacionTableTableOrderingComposer(ComposerState(
                     $state.db,
@@ -12825,7 +12880,7 @@ class $$CategoriaTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -13007,7 +13062,7 @@ class $$ClienteTableTableFilterComposer
     final $$CotizacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.cotizacionTable,
             getReferencedColumn: (t) => t.clienteInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13090,8 +13145,8 @@ typedef $$CotizacionTableTableCreateCompanionBuilder = CotizacionTableCompanion
   Value<String?> cliente,
   Value<DateTime?> createdAt,
   Value<DateTime?> fechaLimite,
-  Value<String?> estatus,
-  Value<bool?> esGrupo,
+  Value<String> estatus,
+  Value<bool> esGrupo,
   Value<int?> creadoPorInt,
   Value<String?> creadoPor,
   Value<int?> cerradoPorInt,
@@ -13113,8 +13168,8 @@ typedef $$CotizacionTableTableUpdateCompanionBuilder = CotizacionTableCompanion
   Value<String?> cliente,
   Value<DateTime?> createdAt,
   Value<DateTime?> fechaLimite,
-  Value<String?> estatus,
-  Value<bool?> esGrupo,
+  Value<String> estatus,
+  Value<bool> esGrupo,
   Value<int?> creadoPorInt,
   Value<String?> creadoPor,
   Value<int?> cerradoPorInt,
@@ -13153,8 +13208,8 @@ class $$CotizacionTableTableTableManager extends RootTableManager<
             Value<String?> cliente = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
             Value<DateTime?> fechaLimite = const Value.absent(),
-            Value<String?> estatus = const Value.absent(),
-            Value<bool?> esGrupo = const Value.absent(),
+            Value<String> estatus = const Value.absent(),
+            Value<bool> esGrupo = const Value.absent(),
             Value<int?> creadoPorInt = const Value.absent(),
             Value<String?> creadoPor = const Value.absent(),
             Value<int?> cerradoPorInt = const Value.absent(),
@@ -13197,8 +13252,8 @@ class $$CotizacionTableTableTableManager extends RootTableManager<
             Value<String?> cliente = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
             Value<DateTime?> fechaLimite = const Value.absent(),
-            Value<String?> estatus = const Value.absent(),
-            Value<bool?> esGrupo = const Value.absent(),
+            Value<String> estatus = const Value.absent(),
+            Value<bool> esGrupo = const Value.absent(),
             Value<int?> creadoPorInt = const Value.absent(),
             Value<String?> creadoPor = const Value.absent(),
             Value<int?> cerradoPorInt = const Value.absent(),
@@ -13324,7 +13379,7 @@ class $$CotizacionTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.clienteInt,
         referencedTable: $state.db.clienteTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$ClienteTableTableFilterComposer(ComposerState($state.db,
                 $state.db.clienteTable, joinBuilder, parentComposers)));
@@ -13336,7 +13391,7 @@ class $$CotizacionTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -13348,7 +13403,7 @@ class $$CotizacionTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.cerradoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -13361,7 +13416,7 @@ class $$CotizacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -13373,7 +13428,7 @@ class $$CotizacionTableTableFilterComposer
     final $$HabitacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.habitacionTable,
             getReferencedColumn: (t) => t.cotizacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13387,7 +13442,7 @@ class $$CotizacionTableTableFilterComposer
     final $$ReservacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.reservacionTable,
             getReferencedColumn: (t) => t.cotizacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13402,7 +13457,7 @@ class $$CotizacionTableTableFilterComposer
     final $$ResumenOperacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.resumenOperacionTable,
             getReferencedColumn: (t) => t.cotizacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13503,7 +13558,7 @@ class $$CotizacionTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.clienteInt,
         referencedTable: $state.db.clienteTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$ClienteTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.clienteTable, joinBuilder, parentComposers)));
@@ -13515,7 +13570,7 @@ class $$CotizacionTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -13527,7 +13582,7 @@ class $$CotizacionTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.cerradoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -13540,7 +13595,7 @@ class $$CotizacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -13730,7 +13785,7 @@ class $$HabitacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -13743,7 +13798,7 @@ class $$HabitacionTableTableFilterComposer
     final $$ResumenOperacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.resumenOperacionTable,
             getReferencedColumn: (t) => t.habitacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13761,7 +13816,7 @@ class $$HabitacionTableTableFilterComposer
     final $$TarifaXHabitacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaXHabitacionTable,
             getReferencedColumn: (t) => t.habitacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -13843,7 +13898,7 @@ class $$HabitacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -13999,7 +14054,7 @@ class $$NotificacionTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.usuarioInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14060,7 +14115,7 @@ class $$NotificacionTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.usuarioInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14183,7 +14238,7 @@ class $$TarifaRackTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14194,7 +14249,7 @@ class $$TarifaRackTableTableFilterComposer
       ComposableFilter Function($$PeriodoTableTableFilterComposer f) f) {
     final $$PeriodoTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.periodoTable,
         getReferencedColumn: (t) => t.tarifaRackInt,
         builder: (joinBuilder, parentComposers) =>
@@ -14208,7 +14263,7 @@ class $$TarifaRackTableTableFilterComposer
     final $$TarifaXDiaTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaXDiaTable,
             getReferencedColumn: (t) => t.tarifaRackInt,
             builder: (joinBuilder, parentComposers) =>
@@ -14221,7 +14276,7 @@ class $$TarifaRackTableTableFilterComposer
       ComposableFilter Function($$TemporadaTableTableFilterComposer f) f) {
     final $$TemporadaTableTableFilterComposer composer = $state.composerBuilder(
         composer: this,
-        getCurrentColumn: (t) => t.id,
+        getCurrentColumn: (t) => t.idInt,
         referencedTable: $state.db.temporadaTable,
         getReferencedColumn: (t) => t.tarifaRackInt,
         builder: (joinBuilder, parentComposers) =>
@@ -14286,7 +14341,7 @@ class $$TarifaRackTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14422,7 +14477,7 @@ class $$PeriodoTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableFilterComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -14474,7 +14529,7 @@ class $$PeriodoTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -14619,7 +14674,7 @@ class $$PoliticaTarifarioTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14675,7 +14730,7 @@ class $$PoliticaTarifarioTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -14849,7 +14904,7 @@ class $$ReservacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -14875,7 +14930,7 @@ class $$ReservacionTableTableFilterComposer
     final $$ReservacionBrazaleteTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.reservacionBrazaleteTable,
             getReferencedColumn: (t) => t.reservacionInt,
             builder: (joinBuilder, parentComposers) =>
@@ -14947,7 +15002,7 @@ class $$ReservacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -15128,7 +15183,7 @@ class $$ResumenOperacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.habitacionInt,
             referencedTable: $state.db.habitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$HabitacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.habitacionTable, joinBuilder, parentComposers)));
@@ -15140,7 +15195,7 @@ class $$ResumenOperacionTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.categoriaInt,
         referencedTable: $state.db.categoriaTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$CategoriaTableTableFilterComposer(ComposerState($state.db,
                 $state.db.categoriaTable, joinBuilder, parentComposers)));
@@ -15153,7 +15208,7 @@ class $$ResumenOperacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -15215,7 +15270,7 @@ class $$ResumenOperacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.habitacionInt,
             referencedTable: $state.db.habitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$HabitacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.habitacionTable, joinBuilder, parentComposers)));
@@ -15228,7 +15283,7 @@ class $$ResumenOperacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.categoriaInt,
             referencedTable: $state.db.categoriaTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CategoriaTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.categoriaTable, joinBuilder, parentComposers)));
@@ -15241,7 +15296,7 @@ class $$ResumenOperacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.cotizacionInt,
             referencedTable: $state.db.cotizacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CotizacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.cotizacionTable, joinBuilder, parentComposers)));
@@ -15437,7 +15492,7 @@ class $$TarifaBaseTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaBaseInt,
             referencedTable: $state.db.tarifaBaseTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaBaseTableTableFilterComposer(ComposerState($state.db,
                     $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
@@ -15449,7 +15504,7 @@ class $$TarifaBaseTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableFilterComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -15539,7 +15594,7 @@ class $$TarifaBaseTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaBaseInt,
             referencedTable: $state.db.tarifaBaseTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaBaseTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.tarifaBaseTable, joinBuilder, parentComposers)));
@@ -15551,7 +15606,7 @@ class $$TarifaBaseTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.creadoPorInt,
         referencedTable: $state.db.usuarioTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$UsuarioTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.usuarioTable, joinBuilder, parentComposers)));
@@ -15734,7 +15789,7 @@ class $$TarifaTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.categoriaInt,
         referencedTable: $state.db.categoriaTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$CategoriaTableTableFilterComposer(ComposerState($state.db,
                 $state.db.categoriaTable, joinBuilder, parentComposers)));
@@ -15760,7 +15815,7 @@ class $$TarifaTableTableFilterComposer
     final $$TarifaTemporadaTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaTemporadaTable,
             getReferencedColumn: (t) => t.tarifaInt,
             builder: (joinBuilder, parentComposers) =>
@@ -15854,7 +15909,7 @@ class $$TarifaTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.categoriaInt,
             referencedTable: $state.db.categoriaTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$CategoriaTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.categoriaTable, joinBuilder, parentComposers)));
@@ -16024,7 +16079,7 @@ class $$TarifaXDiaTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableFilterComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -16037,7 +16092,7 @@ class $$TarifaXDiaTableTableFilterComposer
     final $$TarifaXHabitacionTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaXHabitacionTable,
             getReferencedColumn: (t) => t.tarifaXDiaInt,
             builder: (joinBuilder, parentComposers) =>
@@ -16104,7 +16159,7 @@ class $$TarifaXDiaTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -16256,7 +16311,7 @@ class $$TarifaXHabitacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.habitacionInt,
             referencedTable: $state.db.habitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$HabitacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.habitacionTable, joinBuilder, parentComposers)));
@@ -16269,7 +16324,7 @@ class $$TarifaXHabitacionTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaXDiaInt,
             referencedTable: $state.db.tarifaXDiaTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaXDiaTableTableFilterComposer(ComposerState($state.db,
                     $state.db.tarifaXDiaTable, joinBuilder, parentComposers)));
@@ -16326,7 +16381,7 @@ class $$TarifaXHabitacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.habitacionInt,
             referencedTable: $state.db.habitacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$HabitacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.habitacionTable, joinBuilder, parentComposers)));
@@ -16339,7 +16394,7 @@ class $$TarifaXHabitacionTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaXDiaInt,
             referencedTable: $state.db.tarifaXDiaTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaXDiaTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.tarifaXDiaTable, joinBuilder, parentComposers)));
@@ -16507,7 +16562,7 @@ class $$TemporadaTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableFilterComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -16520,7 +16575,7 @@ class $$TemporadaTableTableFilterComposer
     final $$TarifaTemporadaTableTableFilterComposer composer =
         $state.composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.id,
+            getCurrentColumn: (t) => t.idInt,
             referencedTable: $state.db.tarifaTemporadaTable,
             getReferencedColumn: (t) => t.temporadaInt,
             builder: (joinBuilder, parentComposers) =>
@@ -16592,7 +16647,7 @@ class $$TemporadaTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.tarifaRackInt,
             referencedTable: $state.db.tarifaRackTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TarifaRackTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.tarifaRackTable, joinBuilder, parentComposers)));
@@ -16699,7 +16754,7 @@ class $$TarifaTemporadaTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.temporadaInt,
         referencedTable: $state.db.temporadaTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$TemporadaTableTableFilterComposer(ComposerState($state.db,
                 $state.db.temporadaTable, joinBuilder, parentComposers)));
@@ -16711,7 +16766,7 @@ class $$TarifaTemporadaTableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.tarifaInt,
         referencedTable: $state.db.tarifaTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$TarifaTableTableFilterComposer(ComposerState($state.db,
                 $state.db.tarifaTable, joinBuilder, parentComposers)));
@@ -16748,7 +16803,7 @@ class $$TarifaTemporadaTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.temporadaInt,
             referencedTable: $state.db.temporadaTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$TemporadaTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.temporadaTable, joinBuilder, parentComposers)));
@@ -16760,7 +16815,7 @@ class $$TarifaTemporadaTableTableOrderingComposer
         composer: this,
         getCurrentColumn: (t) => t.tarifaInt,
         referencedTable: $state.db.tarifaTable,
-        getReferencedColumn: (t) => t.id,
+        getReferencedColumn: (t) => t.idInt,
         builder: (joinBuilder, parentComposers) =>
             $$TarifaTableTableOrderingComposer(ComposerState($state.db,
                 $state.db.tarifaTable, joinBuilder, parentComposers)));
@@ -16770,19 +16825,21 @@ class $$TarifaTemporadaTableTableOrderingComposer
 
 typedef $$ReservacionBrazaleteTableTableCreateCompanionBuilder
     = ReservacionBrazaleteTableCompanion Function({
+  Value<int> idInt,
+  Value<String?> id,
   Value<int?> reservacionInt,
   Value<String?> reservacion,
   Value<String?> codigo,
   Value<String?> folioReservacion,
-  Value<int> rowid,
 });
 typedef $$ReservacionBrazaleteTableTableUpdateCompanionBuilder
     = ReservacionBrazaleteTableCompanion Function({
+  Value<int> idInt,
+  Value<String?> id,
   Value<int?> reservacionInt,
   Value<String?> reservacion,
   Value<String?> codigo,
   Value<String?> folioReservacion,
-  Value<int> rowid,
 });
 
 class $$ReservacionBrazaleteTableTableTableManager extends RootTableManager<
@@ -16803,32 +16860,36 @@ class $$ReservacionBrazaleteTableTableTableManager extends RootTableManager<
           orderingComposer: $$ReservacionBrazaleteTableTableOrderingComposer(
               ComposerState(db, table)),
           updateCompanionCallback: ({
+            Value<int> idInt = const Value.absent(),
+            Value<String?> id = const Value.absent(),
             Value<int?> reservacionInt = const Value.absent(),
             Value<String?> reservacion = const Value.absent(),
             Value<String?> codigo = const Value.absent(),
             Value<String?> folioReservacion = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
           }) =>
               ReservacionBrazaleteTableCompanion(
+            idInt: idInt,
+            id: id,
             reservacionInt: reservacionInt,
             reservacion: reservacion,
             codigo: codigo,
             folioReservacion: folioReservacion,
-            rowid: rowid,
           ),
           createCompanionCallback: ({
+            Value<int> idInt = const Value.absent(),
+            Value<String?> id = const Value.absent(),
             Value<int?> reservacionInt = const Value.absent(),
             Value<String?> reservacion = const Value.absent(),
             Value<String?> codigo = const Value.absent(),
             Value<String?> folioReservacion = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
           }) =>
               ReservacionBrazaleteTableCompanion.insert(
+            idInt: idInt,
+            id: id,
             reservacionInt: reservacionInt,
             reservacion: reservacion,
             codigo: codigo,
             folioReservacion: folioReservacion,
-            rowid: rowid,
           ),
         ));
 }
@@ -16836,6 +16897,16 @@ class $$ReservacionBrazaleteTableTableTableManager extends RootTableManager<
 class $$ReservacionBrazaleteTableTableFilterComposer
     extends FilterComposer<_$AppDatabase, $ReservacionBrazaleteTableTable> {
   $$ReservacionBrazaleteTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get idInt => $state.composableBuilder(
+      column: $state.table.idInt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ColumnFilters<String> get reservacion => $state.composableBuilder(
       column: $state.table.reservacion,
       builder: (column, joinBuilders) =>
@@ -16857,7 +16928,7 @@ class $$ReservacionBrazaleteTableTableFilterComposer
             composer: this,
             getCurrentColumn: (t) => t.reservacionInt,
             referencedTable: $state.db.reservacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$ReservacionTableTableFilterComposer(ComposerState($state.db,
                     $state.db.reservacionTable, joinBuilder, parentComposers)));
@@ -16868,6 +16939,16 @@ class $$ReservacionBrazaleteTableTableFilterComposer
 class $$ReservacionBrazaleteTableTableOrderingComposer
     extends OrderingComposer<_$AppDatabase, $ReservacionBrazaleteTableTable> {
   $$ReservacionBrazaleteTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get idInt => $state.composableBuilder(
+      column: $state.table.idInt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get reservacion => $state.composableBuilder(
       column: $state.table.reservacion,
       builder: (column, joinBuilders) =>
@@ -16889,7 +16970,7 @@ class $$ReservacionBrazaleteTableTableOrderingComposer
             composer: this,
             getCurrentColumn: (t) => t.reservacionInt,
             referencedTable: $state.db.reservacionTable,
-            getReferencedColumn: (t) => t.id,
+            getReferencedColumn: (t) => t.idInt,
             builder: (joinBuilder, parentComposers) =>
                 $$ReservacionTableTableOrderingComposer(ComposerState($state.db,
                     $state.db.reservacionTable, joinBuilder, parentComposers)));
