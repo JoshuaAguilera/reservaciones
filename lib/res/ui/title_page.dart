@@ -73,7 +73,7 @@ class _TitlePageState extends State<TitlePage> {
                           text: widget.subtitle,
                           color: Theme.of(context).primaryColor,
                           size: widget.sizeSubtitle,
-                          textOverflow: widget.textOverflow,
+                          overflow: widget.textOverflow,
                         ),
                     ],
                   ),

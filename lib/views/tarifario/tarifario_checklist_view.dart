@@ -105,7 +105,6 @@ class _TarifarioChecklistViewState
                 child: SizedBox(
                   height: 150,
                   child: CustomWidgets.messageNotResult(
-                    context: context,
                     sizeImage: 100,
                     screenWidth: screenWidth,
                     extended: widget.sideController.extended,
@@ -116,7 +115,6 @@ class _TarifarioChecklistViewState
             error: (error, stackTrace) => SizedBox(
               height: 150,
               child: CustomWidgets.messageNotResult(
-                  context: context,
                   sizeImage: 100,
                   screenWidth: screenWidth,
                   extended: widget.sideController.extended),

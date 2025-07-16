@@ -29,16 +29,17 @@ final authProvider = FutureProvider<bool>(
       // ref.read(userProvider.notifier).state = response.item2;
     }
 
-    ref.watch(usernameProvider.notifier).state.text = '';
-    ref.watch(passwordProvider.notifier).state.text = '';
     if (saveName) Settings.savename = username.text;
+
+    if (!saveName) ref.watch(usernameProvider.notifier).state.text = '';
+    ref.watch(passwordProvider.notifier).state.text = '';
 
     return success;
   },
 );
 
 final usernameProvider = StateProvider<TextEditingController>((ref) {
-  return TextEditingController();
+  return TextEditingController(text: Settings.savename);
 });
 final passwordProvider = StateProvider<TextEditingController>((ref) {
   return TextEditingController();

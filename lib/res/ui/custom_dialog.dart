@@ -67,7 +67,7 @@ class _CustomDialogState extends State<CustomDialog> {
             child: widget.content ??
                 TextStyles.standardText(
                   text: widget.contentString ?? '',
-                  textOverflow: TextOverflow.clip,
+                  overflow: TextOverflow.clip,
                 ),
           ),
           actions: [

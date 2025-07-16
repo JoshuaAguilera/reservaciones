@@ -15,7 +15,7 @@ class TextStyles {
     double size = 12,
     bool isBold = false,
     Color? color,
-    TextOverflow? textOverflow,
+    TextOverflow? overflow,
     double? height,
   }) {
     return Text(
@@ -27,7 +27,7 @@ class TextStyles {
         isBold: isBold,
         overClip: overClip,
         color: color,
-        overflow: textOverflow,
+        overflow: overflow,
         height: height,
       ),
     );
@@ -118,13 +118,27 @@ class TextStyles {
       text,
       textAlign: textAlign,
       overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        fontFamily: isBold ? "poppins_bold" : "poppins_medium",
+      style: titleTextStyle(
+        size: size,
         color: color,
-        fontWeight: FontWeight.bold,
-        fontSize: size,
+        isBold: isBold,
         overflow: overflow,
       ),
+    );
+  }
+
+  static TextStyle titleTextStyle({
+    double size = 18,
+    Color? color,
+    bool isBold = true,
+    TextOverflow? overflow,
+  }) {
+    return TextStyle(
+      fontFamily: isBold ? "poppins_bold" : "poppins_medium",
+      color: color,
+      fontWeight: FontWeight.bold,
+      fontSize: size,
+      overflow: overflow,
     );
   }
 

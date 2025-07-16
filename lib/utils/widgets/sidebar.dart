@@ -7,6 +7,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import '../../models/estatus_snackbar_model.dart';
+import '../../models/ui_models.dart';
 import '../../res/helpers/colors_helpers.dart';
 import '../../view-models/providers/ui_provider.dart';
 import '../../view-models/providers/usuario_provider.dart';
@@ -21,11 +22,8 @@ class SideBar extends ConsumerStatefulWidget {
   final bool isExpanded;
   const SideBar({
     super.key,
-    required SidebarXController controller,
     this.isExpanded = false,
-  }) : _controller = controller;
-
-  final SidebarXController _controller;
+  });
 
   @override
   ConsumerState<SideBar> createState() => _SideBarState();
@@ -33,18 +31,26 @@ class SideBar extends ConsumerStatefulWidget {
 
 class _SideBarState extends ConsumerState<SideBar> {
   bool startflow = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final imageUser = ref.watch(imagePerfilProvider);
     final usuario = ref.watch(userProvider);
     final foundImageFile = ref.watch(foundImageFileProvider);
+    final sidebarItems = ref.watch(sidebarItemsProvider);
+    final controller = ref.watch(sidebarControllerProvider);
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     bool isDarkMode = brightness == Brightness.dark;
 
     return AbsorbPointer(
       absorbing: foundImageFile,
       child: SidebarX(
-        controller: widget._controller,
+        controller: controller,
         showToggleButton: !widget.isExpanded,
         theme: SidebarXTheme(
           margin: const EdgeInsets.all(10),
@@ -122,9 +128,7 @@ class _SideBarState extends ConsumerState<SideBar> {
             return Column(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    widget._controller.selectIndex(0);
-                  },
+                  onTap: () => navigateToRoute(ref, "/dashboard"),
                   child: Stack(
                     children: [
                       const SizedBox(
@@ -146,8 +150,8 @@ class _SideBarState extends ConsumerState<SideBar> {
                   ),
                 ),
                 MySidebarXItem(
-                  onTap: () => widget._controller.selectIndex(99),
-                  controller: widget._controller,
+                  onTap: () => controller.selectIndex(99),
+                  controller: controller,
                   selectIndex: 99,
                   children: [
                     Expanded(
@@ -219,7 +223,7 @@ class _SideBarState extends ConsumerState<SideBar> {
             return Column(
               children: [
                 GestureDetector(
-                  onTap: () => widget._controller.selectIndex(0),
+                  onTap: () => navigateToRoute(ref, "/dashboard"),
                   child: const Tooltip(
                     message: "Versión $version",
                     child: Padding(
@@ -232,8 +236,15 @@ class _SideBarState extends ConsumerState<SideBar> {
                   ),
                 ),
                 MySidebarXItem(
-                  onTap: () => widget._controller.selectIndex(99),
-                  controller: widget._controller,
+                  onTap: () {
+                    ref.read(selectPageProvider.notifier).state = SidebarItem(
+                      route: "/perfil",
+                      title: "Perfil",
+                      icon: Iconsax.user_square_bold,
+                      requiredPermissions: [],
+                    );
+                  },
+                  controller: controller,
                   tooltip: "Perfil",
                   selectIndex: 99,
                   children: [
@@ -271,45 +282,9 @@ class _SideBarState extends ConsumerState<SideBar> {
             );
           }
         },
-        items: [
-          sideBarCustomItem(
-            name: "Inicio",
-            icon: HeroIcons.home,
-            route: "/dashboard",
-          ),
-          sideBarCustomItem(
-            name: "Generar Cotización",
-            icon: Iconsax.money_send_outline,
-            route: "/generar_cotizacion",
-          ),
-          sideBarCustomItem(
-            name: "Historial",
-            icon: HeroIcons.clipboard_document_list,
-            route: "/historial",
-          ),
-          sideBarCustomItem(
-            name: "Configuración",
-            icon: HeroIcons.wrench_screwdriver,
-            route: "/configuracion",
-          ),
-          // if (usuario.rol == 'SUPERADMIN' || usuario.rol == 'ADMIN')
-          sideBarCustomItem(
-            name: "Tarifario",
-            icon: HeroIcons.wallet,
-            route: "/tarifario",
-          ),
-          // if (usuario.rol == 'SUPERADMIN')
-          sideBarCustomItem(
-            name: "Gestión de usuarios",
-            icon: HeroIcons.user_group,
-            route: "/gestion_usuarios",
-          ),
-          sideBarCustomItem(
-            name: "Clientes",
-            icon: Iconsax.profile_2user_bold,
-            route: "/clientes",
-          ),
-        ],
+        items: sidebarItems.map((item) {
+          return sideBarCustomItem(item: item);
+        }).toList(),
         headerDivider: Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: DesktopColors.divider,
@@ -322,7 +297,6 @@ class _SideBarState extends ConsumerState<SideBar> {
               child: MySidebarXItem(
                 onTap: () async {
                   try {
-                    ref.invalidate(logoutProvider);
                     await ref.watch(logoutProvider.future);
                     await AuthService().logout();
                     await Preferences.clearUserData();
@@ -339,11 +313,11 @@ class _SideBarState extends ConsumerState<SideBar> {
                   if (!mounted) return;
                   Navigator.pushReplacementNamed(context, 'login');
                 },
-                controller: widget._controller,
+                controller: controller,
                 selectIndex: 45,
                 icon: HeroIcons.arrow_right_on_rectangle,
                 label: "Cerrar sesión",
-                tooltip: widget._controller.extended ? '' : "Cerrar sesión",
+                tooltip: controller.extended ? '' : "Cerrar sesión",
               ),
             ),
           );
@@ -352,21 +326,17 @@ class _SideBarState extends ConsumerState<SideBar> {
     );
   }
 
-  SidebarXItem sideBarCustomItem({
-    required String name,
-    required IconData icon,
-    required String route,
-  }) {
+  SidebarXItem sideBarCustomItem({required SidebarItem item}) {
+    final controller = ref.watch(sidebarControllerProvider);
+
     return SidebarXItem(
-      label: name,
-      onTap: () {
-        ref.read(routePageProvider.notifier).state = route;
-      },
+      label: item.title,
+      onTap: () => ref.read(selectPageProvider.notifier).state = item,
       iconBuilder: (selected, hovered) {
         return Tooltip(
-          message: !widget._controller.extended ? name : "",
+          message: !controller.extended ? item.title : "",
           child: Icon(
-            icon,
+            item.icon,
             size: selected ? 21 : 20,
             color: (selected || hovered)
                 ? Colors.white

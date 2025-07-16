@@ -6,7 +6,7 @@ import '../../utils/shared_preferences/settings.dart';
 class AnimatedEntry extends StatefulWidget {
   final Widget child;
   final AnimationType type;
-  final Duration delay;
+  final Duration? delay;
   final Duration? duration;
   final double? target;
 

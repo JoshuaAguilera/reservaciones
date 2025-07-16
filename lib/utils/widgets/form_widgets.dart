@@ -485,7 +485,7 @@ class FormWidgets {
                       TextStyles.standardText(
                         text: title,
                         size: titleSize,
-                        textOverflow: TextOverflow.clip,
+                        overflow: TextOverflow.clip,
                       ),
                       if (compact && description.isNotEmpty)
                         Padding(
@@ -506,7 +506,7 @@ class FormWidgets {
               TextStyles.standardText(
                 text: description,
                 size: 10,
-                textOverflow: TextOverflow.clip,
+                overflow: TextOverflow.clip,
                 align: TextAlign.justify,
               ),
             if (!compact) const SizedBox(height: 30),

@@ -184,7 +184,6 @@ class _HabitacionesListState extends State<HabitacionesList> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 18.0),
                 child: CustomWidgets.messageNotResult(
-                  context: context,
                   sizeImage: 90,
                   message: "Sin habitaciones asignadas",
                 ),

@@ -138,7 +138,6 @@ class _TarifarioCalendaryMonthViewState
                           child: SizedBox(
                               height: 150,
                               child: CustomWidgets.messageNotResult(
-                                context: context,
                                 sizeImage: 100,
                               )),
                         ),

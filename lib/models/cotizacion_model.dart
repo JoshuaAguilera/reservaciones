@@ -32,6 +32,7 @@ class Cotizacion {
   Cotizacion? cotizacion;
   List<Habitacion>? habitaciones;
   List<ResumenOperacion>? resumenes;
+  bool select;
 
   Cotizacion({
     this.idInt,
@@ -48,6 +49,7 @@ class Cotizacion {
     this.comentarios,
     this.cotizacion,
     this.resumenes,
+    this.select = false,
   });
 
   Cotizacion copyWith({
@@ -65,6 +67,7 @@ class Cotizacion {
     String? comentarios,
     Cotizacion? cotizacion,
     List<ResumenOperacion>? resumenes,
+    bool? selected,
   }) =>
       Cotizacion(
         idInt: idInt ?? this.idInt,
@@ -82,6 +85,7 @@ class Cotizacion {
         cliente: cliente?.copyWith(),
         resumenes:
             (resumenes ?? this.resumenes)?.map((e) => e.copyWith()).toList(),
+        select: selected ?? this.select,
       );
 
   factory Cotizacion.fromJson(Map<String, dynamic> json) => Cotizacion(

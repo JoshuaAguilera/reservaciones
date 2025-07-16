@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/cotizacion_model.dart';
 import '../../models/estadistica_model.dart';
+import '../../models/filter_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../services/cotizacion_service.dart';
@@ -41,8 +42,11 @@ final cotizacionesDiariasProvider =
   final detectChanged = ref.watch(changeProvider);
   DateTime initDate = DateUtils.dateOnly(DateTime.now());
   final list = Utility.getDailyQuotesReport(
-    respIndToday: await CotizacionService()
-        .getList(initDate: initDate, lastDate: DateTime.now()),
+    respIndToday: await CotizacionService().getList(
+      initDate: initDate,
+      lastDate: DateTime.now(),
+      limit: 100,
+    ),
   );
   return list;
 });
@@ -129,3 +133,11 @@ final dateReportProvider = StateNotifierProvider<DateReportNotifier, DateTime>(
     return DateReportNotifier(date);
   },
 );
+
+final filterQuoteDashProvider = StateProvider<Filter>((ref) {
+  return Filter(
+    layout: Layout.checkList,
+    orderBy: OrderBy.antiguo,
+    status: "",
+  );
+});

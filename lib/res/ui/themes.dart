@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 
+import '../helpers/colors_helpers.dart';
 import 'text_styles.dart';
 
 class Themes {
@@ -26,6 +27,9 @@ class Themes {
         suffixIconColor: Colors.white,
       ),
       iconTheme: const IconThemeData(color: Colors.white),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        foregroundColor: Colors.white,
+      ),
       // canvasColor: DesktopColors.backgroudColor,
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
@@ -34,6 +38,16 @@ class Themes {
         ),
       ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
+      appBarTheme: AppBarTheme(
+        titleTextStyle: TextStyles.titleTextStyle(
+          isBold: true,
+          size: 18,
+          color: Colors.white,
+        ),
+        backgroundColor: ColorsHelpers.darken(DesktopColors.canvasColor, 0.1),
+        iconTheme: const IconThemeData(color: Colors.white),
+        foregroundColor: Colors.white,
+      ),
     );
   }
 
@@ -64,11 +78,6 @@ class Themes {
         labelMedium: TextStyles.styleStandar(color: Colors.black87),
         headlineMedium: TextStyles.styleStandar(color: Colors.black87),
         titleMedium: TextStyles.styleStandar(color: Colors.black87),
-        // bodySmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
-        // displaySmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
-        // labelSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
-        // headlineSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
-        // titleSmall: TextStyles.styleStandar(color: Colors.black87, size: 10),
       ),
       inputDecorationTheme: const InputDecorationTheme(
         fillColor: Colors.white,
@@ -87,6 +96,16 @@ class Themes {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
+      ),
+      appBarTheme: AppBarTheme(
+        titleTextStyle: TextStyles.titleTextStyle(
+          isBold: true,
+          size: 18,
+          color: Colors.white,
+        ),
+        backgroundColor: DesktopColors.canvasColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+        foregroundColor: Colors.white,
       ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
       buttonTheme: ButtonThemeData(

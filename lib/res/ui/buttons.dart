@@ -416,7 +416,7 @@ class Buttons {
               child: TextStyles.standardText(
                 text: text,
                 color: color,
-                textOverflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

@@ -257,7 +257,6 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
               return SizedBox(
                   height: 200,
                   child: CustomWidgets.messageNotResult(
-                    context: context,
                     sizeImage: 120,
                     screenWidth: screenWidth,
                     extended: widget.sideController.extended,
@@ -267,7 +266,6 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
             error: (error, stackTrace) => SizedBox(
                 height: 150,
                 child: CustomWidgets.messageNotResult(
-                    context: context,
                     sizeImage: 100,
                     screenWidth: screenWidth,
                     extended: widget.sideController.extended)),

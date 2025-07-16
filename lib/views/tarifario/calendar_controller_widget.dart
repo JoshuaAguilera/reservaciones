@@ -257,7 +257,8 @@ class _ControllerCalendarWidgetState
                                 return SizedBox(
                                   height: 150,
                                   child: CustomWidgets.messageNotResult(
-                                      context: context, sizeImage: 100),
+                                    sizeImage: 100,
+                                  ),
                                 );
                               } else {
                                 return listTarifasProvider.when(
@@ -407,7 +408,8 @@ class _ControllerCalendarWidgetState
                               return SizedBox(
                                 height: 150,
                                 child: CustomWidgets.messageNotResult(
-                                    context: context, sizeImage: 100),
+                                  sizeImage: 100,
+                                ),
                               );
                             },
                             loading: () {

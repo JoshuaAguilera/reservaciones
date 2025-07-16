@@ -28,7 +28,7 @@ import '../../models/notificacion_model.dart';
 import '../../models/prefijo_telefonico_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
 import '../../res/helpers/colors_helpers.dart';
-import '../../view-models/providers/dahsboard_provider.dart';
+import '../../view-models/providers/dashboard_provider.dart';
 import '../../view-models/providers/notificacion_provider.dart';
 import '../../view-models/providers/tarifario_provider.dart';
 import '../../view-models/services/cotizacion_service.dart';
@@ -181,7 +181,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       //   return;
       // }
 
-      receiptQuotePresent = cotizacion.copyWith();
+      receiptQuotePresent = cotizacion!.copyWith();
       // receiptQuotePresent.idInt = id;
       // receiptQuotePresent.folio = folio;
       // receiptQuotePresent.esGrupo = typeQuote;
@@ -325,12 +325,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                           name: "Nombre completo",
                                           msgError: "Campo requerido*",
                                           controller: TextEditingController(
-                                              text:
-                                                  cotizacion.cliente?.nombres ??
-                                                      ''),
+                                              text: cotizacion
+                                                      ?.cliente?.nombres ??
+                                                  ''),
                                           isRequired: true,
                                           onChanged: (p0) =>
-                                              cotizacion.cliente?.nombres = p0,
+                                              cotizacion?.cliente?.nombres = p0,
                                           onUnfocus: () => setState(() {}),
                                         ),
                                         Row(
@@ -367,14 +367,14 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                     "Numero Telefonico (Contacto o WhatsApp)",
                                                 msgError: "Campo requerido*",
                                                 controller: TextEditingController(
-                                                    text: cotizacion.cliente
+                                                    text: cotizacion?.cliente
                                                             ?.numeroTelefonico ??
                                                         ''),
                                                 isNumeric: true,
                                                 isDecimal: false,
                                                 isRequired: false,
                                                 onChanged: (p0) {
-                                                  cotizacion.cliente
+                                                  cotizacion?.cliente
                                                       ?.numeroTelefonico = p0;
                                                 },
                                                 onUnfocus: () =>
@@ -388,12 +388,12 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                                                 name: "Correo electronico",
                                                 msgError: "Campo requerido*",
                                                 controller: TextEditingController(
-                                                    text: cotizacion.cliente
+                                                    text: cotizacion?.cliente
                                                             ?.correoElectronico ??
                                                         ''),
                                                 isRequired: false,
                                                 onChanged: (p0) {
-                                                  cotizacion.cliente
+                                                  cotizacion?.cliente
                                                       ?.correoElectronico = p0;
                                                 },
                                                 onUnfocus: () =>
@@ -570,10 +570,10 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                         isFinish ? receiptQuotePresent.habitaciones : null,
                     finishQuote: isFinish,
                     showCancel: (habitaciones.isNotEmpty ||
-                        (cotizacion.cliente?.nombres?.isNotEmpty ?? false) ||
-                        (cotizacion.cliente?.correoElectronico?.isNotEmpty ??
+                        (cotizacion?.cliente?.nombres?.isNotEmpty ?? false) ||
+                        (cotizacion?.cliente?.correoElectronico?.isNotEmpty ??
                             false) ||
-                        (cotizacion.cliente?.numeroTelefonico?.isNotEmpty ??
+                        (cotizacion?.cliente?.numeroTelefonico?.isNotEmpty ??
                             false)),
                     onCancel: () {
                       ref

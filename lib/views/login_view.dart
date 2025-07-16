@@ -14,7 +14,7 @@ import '../res/ui/themes.dart';
 import '../utils/shared_preferences/settings.dart';
 import '../view-models/providers/auth_provider.dart';
 import '../view-models/providers/cotizacion_provider.dart';
-import '../view-models/providers/dahsboard_provider.dart';
+import '../view-models/providers/dashboard_provider.dart';
 import '../view-models/providers/habitacion_provider.dart';
 import '../view-models/providers/tarifario_provider.dart';
 import '../view-models/providers/ui_provider.dart';
@@ -339,9 +339,8 @@ class _LoginFormState extends ConsumerState<_LoginForm> {
                                 enable: !isLoading,
                                 compact: true,
                                 onChanged: (p0) {
-                                  ref
-                                      .read(saveNameProvider.notifier)
-                                      .update((state) => p0!);
+                                  ref.read(saveNameProvider.notifier).state =
+                                      p0 ?? false;
                                 },
                               ),
                               SizedBox(

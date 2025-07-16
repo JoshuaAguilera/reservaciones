@@ -21,7 +21,7 @@ import 'package:sidebarx/sidebarx.dart';
 import '../../models/periodo_model.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
-import '../../view-models/providers/dahsboard_provider.dart';
+import '../../view-models/providers/dashboard_provider.dart';
 import '../../view-models/providers/usuario_provider.dart';
 import '../../view-models/services/cotizacion_service.dart';
 import '../../res/ui/buttons.dart';
@@ -361,7 +361,6 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                             height: screenHeight * 0.5,
                             child: CustomWidgets.messageNotResult(
                               sizeMessage: 12,
-                              context: context,
                             ),
                           )
                             .animate(
@@ -460,7 +459,8 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                     return SizedBox(
                       height: screenHeight * 0.5,
                       child: CustomWidgets.messageNotResult(
-                          sizeMessage: 15, context: context),
+                        sizeMessage: 15,
+                      ),
                     );
                   },
                   loading: () {

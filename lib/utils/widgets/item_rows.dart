@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -18,6 +19,7 @@ import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/helpers/icon_helpers.dart';
 import '../../res/helpers/utility.dart';
+import '../../view-models/providers/ui_provider.dart';
 import '../shared_preferences/settings.dart';
 import 'card_animation_widget.dart';
 import 'dialogs.dart';
@@ -760,14 +762,14 @@ class ItemRow {
   static Widget metricWidget(
     int index, {
     required Metrica estadistica,
-    required SidebarXController sideController,
   }) {
     List<Color> colors = DesktopColors.getPrimaryColors();
     int saveIndex = index % colors.length;
 
-    return Builder(
-      builder: (context) {
+    return Consumer(
+      builder: (context, ref, _) {
         final screenWidth = MediaQuery.of(context).size.width;
+        final sideController = ref.watch(sidebarControllerProvider);
         final realWidth = screenWidth - (sideController.extended ? 130 : 0);
         bool isExpanded = realWidth > 980;
 

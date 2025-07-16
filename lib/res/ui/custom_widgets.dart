@@ -9,6 +9,7 @@ import '../../models/tarifa_model.dart';
 import '../../models/temporada_model.dart';
 import '../../utils/widgets/table_rows.dart';
 import '../../views/tarifario/dialogs/manager_cash_tariff_dialog.dart';
+import '../helpers/animation_helpers.dart';
 import '../helpers/colors_helpers.dart';
 import '../helpers/desktop_colors.dart';
 import '../../utils/widgets/form_widgets.dart';
@@ -279,40 +280,45 @@ class CustomWidgets {
 
   static Widget messageNotResult({
     double sizeMessage = 11,
-    required BuildContext context,
     double sizeImage = 120,
     double? screenWidth,
     bool extended = false,
     String message = "No se encontraron resultados",
+    Duration? delay,
   }) {
-    return SizedBox(
-      width: screenWidth != null
-          ? (screenWidth > 1280)
-              ? (screenWidth - 385 - (extended ? 230 : 118))
-              : (screenWidth > 800)
-                  ? screenWidth - (extended ? 230 : 118)
-                  : screenWidth - 28
-          : null,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              image: const AssetImage("assets/image/not_results.png"),
-              width: sizeImage,
-              height: sizeImage,
+    return Builder(builder: (context) {
+      return AnimatedEntry(
+        delay: delay,
+        child: SizedBox(
+          width: screenWidth != null
+              ? (screenWidth > 1280)
+                  ? (screenWidth - 385 - (extended ? 230 : 118))
+                  : (screenWidth > 800)
+                      ? screenWidth - (extended ? 230 : 118)
+                      : screenWidth - 28
+              : null,
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(
+                  image: const AssetImage("assets/image/not_results.png"),
+                  width: sizeImage,
+                  height: sizeImage,
+                ),
+                TextStyles.standardText(
+                  text: message,
+                  size: sizeMessage,
+                  color: Theme.of(context).primaryColor,
+                  align: TextAlign.center,
+                ),
+              ],
             ),
-            TextStyles.standardText(
-              text: message,
-              size: sizeMessage,
-              color: Theme.of(context).primaryColor,
-              align: TextAlign.center,
-            ),
-          ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   static Widget sectionButton({

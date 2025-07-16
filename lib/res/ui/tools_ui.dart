@@ -181,7 +181,7 @@ class ToolsUi {
                     color: colorApplyStrong,
                     isBold: !newVersion,
                     size: textSize,
-                    textOverflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
