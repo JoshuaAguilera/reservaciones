@@ -64,14 +64,14 @@ class TarifaXDia {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
-      "tarifa_rack_int": tarifaRack?.idInt,
-      "tarifa_rack": tarifaRack?.id,
-      "desc_integrado": descIntegrado,
-      "es_libre": esLibre,
-      "temporada_json": temporadaSelect,
-      "periodo_json": periodoSelect,
+      "tarifaRackInt": tarifaRack?.idInt,
+      "tarifaRack": tarifaRack?.id,
+      "descIntegrado": descIntegrado,
+      "esLibre": esLibre,
+      "temporadaJson": temporadaSelect,
+      "periodoJson": periodoSelect,
     };
 
     // Remueve todas las claves con valor null
@@ -84,16 +84,16 @@ class TarifaXDia {
     return TarifaXDia(
       idInt: json['id'],
       id: json['code'],
-      esLibre: json['es_libre'],
-      descIntegrado: json['desc_integrado'],
-      tarifaRack: json['tarifa_rack_json'] != null
-          ? tarifaRackFromJson(json['tarifa_rack_json'])
+      esLibre: json['esLibre'],
+      descIntegrado: json['descIntegrado'],
+      tarifaRack: json['tarifaRackJson'] != null
+          ? tarifaRackFromJson(json['tarifaRackJson'])
           : null,
-      temporadaSelect: json['temporada_json'] != null
-          ? temporadaFromJson(json['temporada_json'])
+      temporadaSelect: json['temporadaJson'] != null
+          ? temporadaFromJson(json['temporadaJson'])
           : null,
-      periodoSelect: json['periodo_json'] != null
-          ? periodoFromJson(json['periodo_json'])
+      periodoSelect: json['periodoJson'] != null
+          ? periodoFromJson(json['periodoJson'])
           : null,
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'cotizacion_model.dart';
 import 'usuario_model.dart';
 
@@ -81,18 +82,16 @@ class Reservacion {
 
   factory Reservacion.fromJson(Map<String, dynamic> json) => Reservacion(
         id: json['id'],
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         cotizacion: json['cotizacion'],
         sku: json['sku'],
         folio: json['folio'],
         estatus: json['estatus'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
-        reservacionZabia: json['reservacion_zabia_id'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
+        reservacionZabia: json['reservacionZabiaId'],
         deposito: json['deposito'],
-        creadoPor: json['creado_por'] != null
-            ? Usuario.fromJson(json['creado_por'])
+        creadoPor: json['creadoPor'] != null
+            ? Usuario.fromJson(json['creadoPor'])
             : null,
         brazaletes: json['brazaletes'] != null
             ? json['brazaletes'] != '[]'
@@ -104,17 +103,17 @@ class Reservacion {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
       "id": id,
-      "id_int": idInt,
-      "cotizacion_int": cotizacion?.idInt,
+      "idInt": idInt,
+      "cotizacionInt": cotizacion?.idInt,
       "cotizacion": cotizacion?.id,
       "sku": sku,
       "folio": folio,
       "estatus": estatus,
       "descripcion": deposito,
-      "reservacion_zabia_id": reservacionZabia,
+      "reservacionZabiaId": reservacionZabia,
       "deposito": deposito,
-      "creado_por_int": creadoPor?.idInt,
-      "creado_por": creadoPor?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "creadoPor": creadoPor?.id,
       "brazaletes": brazaletes,
     };
 
@@ -152,18 +151,18 @@ class Brazalete {
       );
 
   factory Brazalete.fromJson(Map<String, dynamic> json) => Brazalete(
-        reservacionInt: json['reservacion_int'],
+        reservacionInt: json['reservacionInt'],
         reservacion: json['reservacion'],
         codigo: json['codigo'],
-        folioReservacion: json['folio_reservacion'],
+        folioReservacion: json['folioReservacion'],
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "reservacion_int": reservacionInt,
+      "reservacionInt": reservacionInt,
       "reservacion": reservacion,
       "codigo": codigo,
-      "folio_reservacion": folioReservacion,
+      "folioReservacion": folioReservacion,
     };
 
     // Remueve todas las claves con valor null

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
+
 List<Periodo> periodosFromJson(String str) =>
     List<Periodo>.from(json.decode(str).map((x) => Periodo.fromJson(x)));
 
@@ -60,34 +62,28 @@ class Periodo {
 
   factory Periodo.fromJson(Map<String, dynamic> json) => Periodo(
         id: json['id'],
-        idInt: json['id_int'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
-        fechaInicial: json['fecha_inicial'] == null
-            ? null
-            : DateTime.tryParse(json['fecha_inicial']),
-        fechaFinal: json['fecha_final'] == null
-            ? null
-            : DateTime.tryParse(json['fecha_final']),
-        diasActivo: json['dias_activo'] != null
-            ? json['dias_activo'] != '[]'
-                ? candenasFromJson(json['dias_activo'])
+        idInt: json['idInt'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
+        fechaInicial: DateValueFormat.fromJSON(json['fechaInicial']),
+        fechaFinal: DateValueFormat.fromJSON(json['fechaFinal']),
+        diasActivo: json['diasActivo'] != null
+            ? json['diasActivo'] != '[]'
+                ? candenasFromJson(json['diasActivo'])
                 : List<String>.empty()
             : List<String>.empty(),
-        tarifaRack: json['tarifa_rack'],
-        tarifaRackInt: json['tarifa_rack_int'],
+        tarifaRack: json['tarifaRack'],
+        tarifaRackInt: json['tarifaRackInt'],
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
       "id": id,
-      "id_int": idInt,
-      "fecha_inicial": fechaInicial,
-      "fecha_final": fechaFinal,
-      "dias_activo": diasActivo,
-      "tarifa_rack": tarifaRack,
-      "tarifa_rack_int": tarifaRackInt,
+      "idInt": idInt,
+      "fechaInicial": fechaInicial,
+      "fechaFinal": fechaFinal,
+      "diasActivo": diasActivo,
+      "tarifaRack": tarifaRack,
+      "tarifaRackInt": tarifaRackInt,
     };
 
     // Remueve todas las claves con valor null

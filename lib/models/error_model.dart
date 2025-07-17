@@ -23,7 +23,7 @@ class ErrorModel {
 
   factory ErrorModel.fromJson(Map<String, dynamic> json) {
     return ErrorModel(
-      requestId: json['request_Id'],
+      requestId: json['requestId'],
       title: json['title'] ?? "",
       code: json['code'] ?? "",
       listErrors: json['listErrors'] != null

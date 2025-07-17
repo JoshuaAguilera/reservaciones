@@ -13,9 +13,7 @@ final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filterDate = ref.watch(filterReport);
-  final filter = ref.watch(filtroDashboardProvider);
   final date = ref.watch(dateReportProvider);
-  bool adminView = filter == "Equipo";
 
   final response = await CotizacionService().getList(
     initDate: DateHelpers.calculatePeriodReport(filter: filterDate, date: date),
@@ -25,7 +23,6 @@ final reporteCotizacionesIndProvider =
       addTime: true,
     ),
     limit: 1000,
-    conDetalle: adminView,
   );
 
   final list = Utility.getCotizacionQuotes(

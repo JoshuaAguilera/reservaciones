@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/ui/message_error_scroll.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -83,17 +86,17 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
           );
     }
 
-    double sizeTitles = realWidth > 1050
-        ? 16
-        : realWidth > 750
-            ? 15
-            : 13;
-
     Widget textTitle(String text) {
       return TextStyles.standardText(
         isBold: true,
         text: text,
-        size: sizeTitles,
+        size: math.max(
+          13,
+          math.min(
+            20.sp * 0.9,
+            16,
+          ),
+        ),
       );
     }
 

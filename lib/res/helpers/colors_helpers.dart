@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+import '../../models/cotizacion_model.dart';
 import 'desktop_colors.dart';
 
 extension HexColor on Color {
@@ -84,20 +85,20 @@ class ColorsHelpers {
     return gradient;
   }
 
-  static Color getColorRegisterQuote(String type) {
-    switch (type.toLowerCase()) {
-      case "grupales":
-        return DesktopColors.cotGrupal;
-      case "individuales":
-        return DesktopColors.cotIndiv;
-      case "reservadas":
-        return DesktopColors.resIndiv;
-      case "caducadas":
-        return DesktopColors.cotNoConcr;
-      case "total":
-        return Colors.black54;
-      default:
-        return Colors.white;
+  static Color getColorQuote(Cotizacion quote) {
+    bool isInvalid = false;
+    bool isGrupal = quote.esGrupo ?? false;
+    if (quote.fechaLimite != null) {
+      final created = quote.createdAt ?? DateTime.now();
+      isInvalid = quote.fechaLimite!.isBefore(created);
+    }
+
+    if (isInvalid) return DesktopColors.grisPalido;
+
+    if (quote.estatus == "cotizado") {
+      return isGrupal ? DesktopColors.cotGrupal : DesktopColors.cotIndiv;
+    } else {
+      return isGrupal ? DesktopColors.resGrupal : DesktopColors.resIndiv;
     }
   }
 

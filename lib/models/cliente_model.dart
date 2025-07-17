@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
+
 List<Cliente> ClientesFromJson(String str) =>
     List<Cliente>.from(json.decode(str).map((x) => Cliente.fromJson(x)));
 String ClientesToJson(List<Cliente> data) =>
@@ -69,31 +71,33 @@ class Cliente {
         createdAt: createdAt ?? this.createdAt,
       );
 
+  String get fullName {
+    return '${nombres ?? ''} ${apellidos ?? ''}'.trim();
+  }
+
   factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['_id'],
         nombres: json['nombres'],
         apellidos: json['apellidos'],
-        numeroTelefonico: json['numero_telefonico'],
-        correoElectronico: json['correo_electronico'],
+        numeroTelefonico: json['numeroTelefonico'],
+        correoElectronico: json['correoElectronico'],
         pais: json['pais'],
         estado: json['estado'],
         ciudad: json['ciudad'],
         direccion: json['direccion'],
         notas: json['notas'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "nombres": nombres,
       "apellidos": apellidos,
-      "numero_telefonico": numeroTelefonico,
-      "correo_electronico": correoElectronico,
+      "numeroTelefonico": numeroTelefonico,
+      "correoElectronico": correoElectronico,
       "pais": pais,
       "estado": estado,
       "ciudad": ciudad,

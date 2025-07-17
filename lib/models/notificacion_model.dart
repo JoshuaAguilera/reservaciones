@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'usuario_model.dart';
 
 List<Notificacion> notificacionesFromJson(String str) =>
@@ -68,10 +69,8 @@ class Notificacion {
 
   factory Notificacion.fromJson(Map<String, dynamic> json) => Notificacion(
         id: json['id'],
-        idInt: json['id_int'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
+        idInt: json['idInt'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
         mensaje: json['mensaje'],
         tipo: json['tipo'],
         ruta: json['ruta'],
@@ -84,7 +83,7 @@ class Notificacion {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
       "id": id,
-      "id_int": idInt,
+      "idInt": idInt,
       "mensaje": mensaje,
       "documento": documento,
       "estatus": estatus,

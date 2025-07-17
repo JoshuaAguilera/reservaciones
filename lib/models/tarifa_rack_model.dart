@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../res/helpers/colors_helpers.dart';
+import '../res/helpers/date_helpers.dart';
 import 'periodo_model.dart';
 import 'registro_tarifa_bd_model.dart';
 import 'temporada_model.dart';
@@ -73,15 +74,13 @@ class TarifaRack {
 
   factory TarifaRack.fromJson(Map<String, dynamic> json) {
     return TarifaRack(
-      idInt: json['id_int'],
+      idInt: json['idInt'],
       id: json['id'],
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.tryParse(json['created_at']),
+      createdAt: DateValueFormat.fromJSON(json['createdAt']),
       nombre: json['nombre'],
       color: ColorsHelpers.colorFromJson(json['color']),
-      creadoPor: json['creado_por'] != null
-          ? Usuario.fromJson(json['creado_por'])
+      creadoPor: json['creadoPor'] != null
+          ? Usuario.fromJson(json['creadoPor'])
           : null,
       periodos: json['periodos'] != null
           ? json['periodos'] != '[]'
@@ -93,9 +92,9 @@ class TarifaRack {
               ? listTemporadaFromJson(json['temporadas'])
               : List<Temporada>.empty()
           : List<Temporada>.empty(),
-      registros: json['registros_tarifa'] != null
-          ? json['registros_tarifa'] != '[]'
-              ? listRegistroTarifaFromJson(json['registros_tarifa'])
+      registros: json['registrosTarifa'] != null
+          ? json['registrosTarifa'] != '[]'
+              ? listRegistroTarifaFromJson(json['registrosTarifa'])
               : List<RegistroTarifaBD>.empty()
           : List<RegistroTarifaBD>.empty(),
     );
@@ -103,12 +102,12 @@ class TarifaRack {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "nombre": nombre,
       "color": ColorsHelpers.colorToJson(color),
-      "creado_por_int": creadoPor?.idInt,
-      "creado_por": creadoPor?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "creadoPor": creadoPor?.id,
     };
 
     // Remueve todas las claves con valor null

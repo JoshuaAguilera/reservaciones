@@ -72,11 +72,11 @@ class ResumenOperacion {
 
   factory ResumenOperacion.fromJson(Map<String, dynamic> json) =>
       ResumenOperacion(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['id'],
-        habitacionInt: json['habitacion_int'],
+        habitacionInt: json['habitacionInt'],
         habitacion: json['habitacion'],
-        cotizacionInt: json['cotizacion_int'],
+        cotizacionInt: json['cotizacionInt'],
         cotizacion: json['cotizacion'],
         subtotal: json['subtotal'],
         descuento: json['descuento'],
@@ -91,17 +91,17 @@ class ResumenOperacion {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
-      "habitacion_int": habitacionInt,
+      "habitacionInt": habitacionInt,
       "habitacion": habitacion,
-      "cotizacion_int": cotizacionInt,
+      "cotizacionInt": cotizacionInt,
       "cotizacion": cotizacion,
       "subtotal": subtotal,
       "descuento": descuento,
       "impuestos": impuestos,
       "total": total,
-      "categoria_int": categoria?.idInt,
+      "categoriaInt": categoria?.idInt,
       "categoria": categoria?.id,
     };
 

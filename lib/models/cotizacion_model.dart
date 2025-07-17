@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'cliente_model.dart';
 import 'habitacion_model.dart';
 import 'resumen_operacion_model.dart';
@@ -89,7 +90,7 @@ class Cotizacion {
       );
 
   factory Cotizacion.fromJson(Map<String, dynamic> json) => Cotizacion(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['_id'],
         folio: json['folio'],
         cliente: json['cliente'] != null
@@ -97,19 +98,15 @@ class Cotizacion {
                 json['cliente'],
               )
             : null,
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
-        fechaLimite: json['fecha_limite'] == null
-            ? null
-            : DateTime.tryParse(json['fecha_limite']),
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
+        fechaLimite: DateValueFormat.fromJSON(json['fechaLimite']),
         estatus: json['estatus'],
-        esGrupo: json['es_grupo'],
-        creadoPor: json['creado_por'] != null
-            ? Usuario.fromJson(json['creado_por'])
+        esGrupo: json['esGrupo'],
+        creadoPor: json['creadoPor'] != null
+            ? Usuario.fromJson(json['creadoPor'])
             : null,
-        cerradoPor: json['cerrado_por'] != null
-            ? Usuario.fromJson(json['cerrado_por'])
+        cerradoPor: json['cerradoPor'] != null
+            ? Usuario.fromJson(json['cerradoPor'])
             : null,
         comentarios: json['comentarios'],
         cotizacion: (json['cotizacion']) != null
@@ -129,21 +126,21 @@ class Cotizacion {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "folio": folio,
       "cliente": cliente?.id,
-      "cliente_int": cliente?.idInt,
-      "fecha_limite": fechaLimite,
+      "clienteInt": cliente?.idInt,
+      "fechaLimite": fechaLimite,
       "estatus": estatus,
-      "es_grupo": esGrupo,
-      "creado_por": creadoPor?.id,
-      "creado_por_int": creadoPor?.idInt,
-      "cerrado_por": cerradoPor?.id,
-      "cerrado_por_int": cerradoPor?.idInt,
+      "esGrupo": esGrupo,
+      "creadoPor": creadoPor?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "cerradoPor": cerradoPor?.id,
+      "cerradoPorInt": cerradoPor?.idInt,
       "comentarios": comentarios,
       "cotizacion": cotizacion?.id,
-      "cotizacion_int": cotizacion?.idInt,
+      "cotizacionInt": cotizacion?.idInt,
       "resumenes": resumenes,
     };
 

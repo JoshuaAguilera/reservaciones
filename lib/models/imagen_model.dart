@@ -55,9 +55,9 @@ class Imagen {
         nombre: json['nombre'],
         ruta: json['ruta'],
         url: json['url'],
-        createdAt: json['created_at'] == null
+        createdAt: json['createdAt'] == null
             ? null
-            : DateTime.tryParse(json['created_at']),
+            : DateTime.tryParse(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() {

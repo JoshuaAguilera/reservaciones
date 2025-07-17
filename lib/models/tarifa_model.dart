@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'categoria_model.dart';
 import 'tarifa_base_model.dart';
 
@@ -69,18 +70,18 @@ class Tarifa {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      'id_int': idInt,
+      'idInt': idInt,
       'id': id,
-      'categoria_int': categoria?.idInt,
+      'categoriaInt': categoria?.idInt,
       'categoria': categoria?.id,
-      'tarifa_adulto1a2': tarifaAdulto1a2,
-      'tarifa_adulto3': tarifaAdulto3,
-      'tarifa_adulto4': tarifaAdulto4,
-      'tarifa_menores7a12': tarifaMenores7a12,
-      'tarifa_menores0a6': tarifaMenores0a6,
-      'tarifa_pax_adicional': tarifaPaxAdicional,
-      'tarifa_base_int': tarifaBase?.idInt,
-      'tarifa_base': tarifaBase?.id,
+      'tarifaAdulto1a2': tarifaAdulto1a2,
+      'tarifaAdulto3': tarifaAdulto3,
+      'tarifaAdulto4': tarifaAdulto4,
+      'tarifaMenores7a12': tarifaMenores7a12,
+      'tarifaMenores0a6': tarifaMenores0a6,
+      'tarifaPaxAdicional': tarifaPaxAdicional,
+      'tarifaBaseInt': tarifaBase?.idInt,
+      'tarifaBase': tarifaBase?.id,
     };
 
     // Remueve todas las claves con valor null
@@ -92,17 +93,17 @@ class Tarifa {
   factory Tarifa.fromJson(Map<String, dynamic> json) {
     return Tarifa(
       id: json['id'],
-      idInt: json['id_int'],
+      idInt: json['idInt'],
       categoria: json['categoria'],
-      createdAt: json['created_at'] ?? DateTime.now().toString(),
-      tarifaAdulto1a2: json['tarifa_adulto1a2'],
-      tarifaAdulto3: json['tarifa_adulto3'],
-      tarifaAdulto4: json['tarifa_adulto4'],
-      tarifaMenores7a12: json['tarifa_menores7a12'],
-      tarifaMenores0a6: json['tarifa_menores0a6'],
-      tarifaPaxAdicional: json['tarifa_pax_adicional'],
-      tarifaBase: json['tarifa_base'] != null
-          ? TarifaBase.fromJson(json['tarifa_base'])
+      createdAt: DateValueFormat.fromJSON(json['createdAt']),
+      tarifaAdulto1a2: json['tarifaAdulto1a2'],
+      tarifaAdulto3: json['tarifaAdulto3'],
+      tarifaAdulto4: json['tarifaAdulto4'],
+      tarifaMenores7a12: json['tarifaMenores7a12'],
+      tarifaMenores0a6: json['tarifaMenores0a6'],
+      tarifaPaxAdicional: json['tarifaPaxAdicional'],
+      tarifaBase: json['tarifaBase'] != null
+          ? TarifaBase.fromJson(json['tarifaBase'])
           : null,
     );
   }

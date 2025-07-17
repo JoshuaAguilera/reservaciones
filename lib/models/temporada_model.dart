@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../res/helpers/date_helpers.dart';
 import 'tarifa_model.dart';
 
 List<Temporada> temporadasFromJson(String str) =>
@@ -75,15 +76,15 @@ class Temporada {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      'id_int': idInt,
+      'idInt': idInt,
       'id': id,
       'tipo': tipo,
       'nombre': nombre,
-      'created_at': createdAt,
-      'estancia_minima': estanciaMinima,
+      'createdAt': createdAt,
+      'estanciaMinima': estanciaMinima,
       'descuento': descuento,
-      'ocup_min': ocupMin,
-      'ocup_max': ocupMax,
+      'ocupMin': ocupMin,
+      'ocupMax': ocupMax,
       'tarifas': tarifas,
     };
 
@@ -95,19 +96,22 @@ class Temporada {
 
   factory Temporada.fromJson(Map<String, dynamic> json) {
     return Temporada(
-      idInt: json['id'],
-      id: json['code'],
+      idInt: json['idInt'],
+      id: json['id'],
       tarifas: json['tarifas'] != null
           ? json['tarifas'] != '[]'
               ? listTarifasFromJson(json['tarifas'])
               : List<Tarifa>.empty()
           : List<Tarifa>.empty(),
-      createdAt: DateTime.parse(json['fecha'] ?? DateTime.now().toString()),
+      createdAt: DateValueFormat.fromJSON(json['createdAt']),
       nombre: json['nombre'],
       editable: json['editable'],
       estanciaMinima: json['estanciaMinima'],
       descuento: json['porcentajePromocion'],
       useTariff: json['useTariff'],
+      ocupMax: json['ocupMax'],
+      ocupMin: json['ocupMin'],
+      tipo: json['tipo'],
     );
   }
 }

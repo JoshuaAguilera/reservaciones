@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'resumen_operacion_model.dart';
 import 'tarifa_x_habitacion_model.dart';
 
@@ -90,18 +91,18 @@ class Habitacion {
 
   Map<String, dynamic> toJson() {
     final data = {
-      'id_int': idInt,
+      'idInt': idInt,
       'id': id,
-      'cotizacion_int': cotizacionInt,
+      'cotizacionInt': cotizacionInt,
       'cotizacion': cotizacion,
-      'check_in': checkIn,
-      'check_out': checkOut,
+      'checkIn': checkIn,
+      'checkOut': checkOut,
       'adultos': adultos,
       'menores0a6': menores0a6,
       'menores7a12': menores7a12,
-      'pax_adic': paxAdic,
+      'paxAdic': paxAdic,
       'count': count,
-      'es_cortesia': esCortesia,
+      'esCortesia': esCortesia,
     };
 
     // Remueve todas las claves con valor null
@@ -112,27 +113,22 @@ class Habitacion {
 
   factory Habitacion.fromJson(Map<String, dynamic> json) {
     return Habitacion(
-      idInt: json['id_int'],
+      idInt: json['idInt'],
       id: json['id'],
-      cotizacionInt: json['cotizacion_int'],
+      cotizacionInt: json['cotizacionInt'],
       cotizacion: json['cotizacion'],
-      checkIn:
-          json['check_in'] == null ? null : DateTime.tryParse(json['check_in']),
-      checkOut: json['check_out'] == null
-          ? null
-          : DateTime.tryParse(json['check_out']),
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.tryParse(json['created_at']),
+      checkIn: DateValueFormat.fromJSON(json['checkIn']),
+      checkOut: DateValueFormat.fromJSON(json['checkOut']),
+      createdAt: DateValueFormat.fromJSON(json['createdAt']),
       adultos: json['adultos'],
       menores0a6: json['menores0a6'],
       menores7a12: json['menores7a12'],
-      paxAdic: json['pax_adic'],
+      paxAdic: json['paxAdic'],
       count: json['count'],
       esCortesia: json['isFree'],
-      tarifasXHabitacion: json['tarifas_x_habitacion'] != null
-          ? json['tarifas_x_habitacion'] != '[]'
-              ? listTarifaXHabitacionsFromJson(json['tarifas_x_habitacion'])
+      tarifasXHabitacion: json['tarifasXHabitacion'] != null
+          ? json['tarifasXHabitacion'] != '[]'
+              ? listTarifaXHabitacionsFromJson(json['tarifasXHabitacion'])
               : List<TarifaXHabitacion>.empty()
           : List<TarifaXHabitacion>.empty(),
       resumenes: json['resumenes'] != null

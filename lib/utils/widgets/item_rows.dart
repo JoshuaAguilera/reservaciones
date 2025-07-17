@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
@@ -19,6 +20,7 @@ import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/helpers/icon_helpers.dart';
 import '../../res/helpers/utility.dart';
+import '../../res/ui/tools_ui.dart';
 import '../../view-models/providers/ui_provider.dart';
 import '../shared_preferences/settings.dart';
 import 'card_animation_widget.dart';
@@ -59,6 +61,20 @@ class ItemRow {
                 ? null
                 : foregroundColor
             : ColorsHelpers.getColorNavbar(status ? "success" : "danger");
+
+        Widget textTitle(String text, {double size = 13}) {
+          return TextStyles.standardText(
+            isBold: true,
+            text: text,
+            size: max(
+              size,
+              min(
+                20.sp * 0.9,
+                size + 3,
+              ),
+            ),
+          );
+        }
 
         if (isDark && !isQuest) {
           foregroundColorSub =
@@ -698,67 +714,6 @@ class ItemRow {
     );
   }
 
-  static PopupMenuItem<ListTileTitleAlignment> itemPopup(
-      String name, IconData icon, void Function()? onTap) {
-    return PopupMenuItem<ListTileTitleAlignment>(
-      value: ListTileTitleAlignment.threeLine,
-      onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 10,
-        children: [
-          Icon(icon),
-          TextStyles.standardText(
-            text: name,
-            size: 12.5,
-          )
-        ],
-      ),
-    );
-  }
-
-  static Widget compactOptions({
-    void Function()? onPreseedEdit,
-    void Function()? onPreseedDelete,
-    void Function()? onPressedDuplicate,
-    List<PopupMenuEntry<ListTileTitleAlignment>>? customItems,
-    Color? colorIcon,
-    bool diseablePad = false,
-  }) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        return PopupMenuButton<ListTileTitleAlignment>(
-          iconColor: colorIcon,
-          tooltip: "Opciones",
-          padding:
-              !diseablePad ? const EdgeInsets.all(8) : const EdgeInsets.all(0),
-          itemBuilder: (BuildContext context) =>
-              customItems ??
-              <PopupMenuEntry<ListTileTitleAlignment>>[
-                if (onPreseedEdit != null)
-                  itemPopup(
-                    "Detalles",
-                    Iconsax.stickynote_outline,
-                    onPreseedEdit,
-                  ),
-                if (onPressedDuplicate != null)
-                  itemPopup(
-                    "Duplicar",
-                    Iconsax.copy_outline,
-                    onPressedDuplicate,
-                  ),
-                if (onPreseedDelete != null)
-                  itemPopup(
-                    "Eliminar",
-                    Iconsax.trash_outline,
-                    onPreseedDelete,
-                  ),
-              ],
-        );
-      },
-    );
-  }
-
   static Widget metricWidget(
     int index, {
     required Metrica estadistica,
@@ -863,6 +818,229 @@ class ItemRow {
           ),
         );
       },
+    );
+  }
+
+  static Widget itemRowCheckList(
+    BuildContext context, {
+    bool enable = true,
+    String title = "",
+    Widget? leadingWidget,
+    IconData? icon,
+    String description = '',
+    String details = '',
+    double height = 80,
+    Color? color,
+    double elevation = 0,
+    double radius = 18,
+    double sizeIcon = 38,
+    double sizeDescription = 12,
+    bool isThreeLine = true,
+    bool hideTrailing = false,
+    IconData? trailingIcon,
+    Widget? trailingWidget,
+    Widget? descriptionWidget,
+    Widget? detailsWidget,
+    double padTopLeading = 9,
+    double? heightTitle,
+    bool applyBoldDescription = false,
+    bool showCheckBox = false,
+    bool valueCheckBox = false,
+    void Function()? onTap,
+    void Function(bool?)? onChangedCheckBox,
+    void Function()? onPressedEdit,
+    void Function()? onPressedDelete,
+    void Function()? onPressedDuplicate,
+    void Function()? onPreseedTrailingIcon,
+    List<PopupMenuEntry<ListTileTitleAlignment>>? customItems,
+  }) {
+    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
+    Color colorItem = (color ?? DesktopColors.greyClean).withValues(
+      alpha: brightness == Brightness.dark ? 0.5 : 1,
+    );
+
+    double bias = brightness == Brightness.dark ? 110 : 0;
+
+    Color colorContent = useWhiteForeground(colorItem, bias: bias)
+        ? Colors.white
+        : Colors.black87;
+
+    return ToolsUi.blockedWidget(
+      isBloqued: !enable,
+      child: Row(
+        children: [
+          if (showCheckBox)
+            SizedBox(
+              width: 30,
+              child: Checkbox(
+                value: valueCheckBox,
+                activeColor: DesktopColors.buttonPrimary,
+                onChanged: !enable ? null : onChangedCheckBox,
+              ),
+            ),
+          Expanded(
+            child: SizedBox(
+              height: height,
+              child: Card(
+                color: colorItem,
+                elevation: elevation,
+                shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(radius),
+                  borderSide: const BorderSide(color: Colors.transparent),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.only(left: 15, right: 4),
+                  onTap: onTap,
+                  leading: Padding(
+                    padding: EdgeInsets.only(top: padTopLeading),
+                    child: leadingWidget ??
+                        Icon(
+                          icon ?? Iconsax.unlimited_outline,
+                          size: sizeIcon,
+                          color: colorContent,
+                        ),
+                  ),
+                  isThreeLine: isThreeLine,
+                  title: title.isEmpty
+                      ? null
+                      : TextStyles.standardText(
+                          text: title,
+                          size: max(12, min(20.sp, 14)),
+                          color: colorContent,
+                          height: heightTitle,
+                        ),
+                  subtitle: Padding(
+                    padding: EdgeInsets.only(right: hideTrailing ? 8 : 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: detailsWidget != null ? 3.5 : 0,
+                      children: [
+                        if (descriptionWidget != null)
+                          descriptionWidget
+                        else
+                          TextStyles.standardText(
+                            text: description,
+                            color: colorContent,
+                            size: max(
+                                sizeDescription,
+                                min(
+                                  20.sp,
+                                  sizeDescription + 1,
+                                )),
+                            isBold: applyBoldDescription,
+                            maxLines: details.isEmpty
+                                ? 2
+                                : title.isEmpty
+                                    ? 2
+                                    : 1,
+                            height: 1.25,
+                          ),
+                        if (detailsWidget != null)
+                          detailsWidget
+                        else
+                          TextStyles.standardText(
+                            text: details,
+                            color: colorContent,
+                            size: max(11, min(20.sp, 12)),
+                            maxLines: 1,
+                            height: 1.25,
+                          ),
+                      ],
+                    ),
+                  ),
+                  trailing: hideTrailing
+                      ? null
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: (trailingIcon != null)
+                              ? IconButton(
+                                  icon: Icon(
+                                    trailingIcon,
+                                    size: 30,
+                                    color: colorContent,
+                                  ),
+                                  onPressed:
+                                      !enable ? null : onPreseedTrailingIcon,
+                                )
+                              : trailingWidget ??
+                                  compactOptions(
+                                    customItems: customItems,
+                                    onPreseedEdit:
+                                        !enable ? null : onPressedEdit,
+                                    onPreseedDelete:
+                                        !enable ? null : onPressedDelete,
+                                    onPressedDuplicate:
+                                        !enable ? null : onPressedDuplicate,
+                                    colorIcon: colorContent,
+                                  ),
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget compactOptions({
+    void Function()? onPreseedEdit,
+    void Function()? onPreseedDelete,
+    void Function()? onPressedDuplicate,
+    List<PopupMenuEntry<ListTileTitleAlignment>>? customItems,
+    Color? colorIcon,
+    bool diseablePad = false,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return PopupMenuButton<ListTileTitleAlignment>(
+          iconColor: colorIcon,
+          tooltip: "Opciones",
+          padding: !diseablePad ? EdgeInsets.all(8) : EdgeInsets.all(0),
+          itemBuilder: (BuildContext context) =>
+              customItems ??
+              <PopupMenuEntry<ListTileTitleAlignment>>[
+                if (onPreseedEdit != null)
+                  itemPopup(
+                    "Detalles",
+                    Iconsax.stickynote_outline,
+                    onPreseedEdit,
+                  ),
+                if (onPressedDuplicate != null)
+                  itemPopup(
+                    "Duplicar",
+                    Iconsax.copy_outline,
+                    onPressedDuplicate,
+                  ),
+                if (onPreseedDelete != null)
+                  itemPopup(
+                    "Eliminar",
+                    Iconsax.trash_outline,
+                    onPreseedDelete,
+                  ),
+              ],
+        );
+      },
+    );
+  }
+
+  static PopupMenuItem<ListTileTitleAlignment> itemPopup(
+      String name, IconData icon, void Function()? onTap) {
+    return PopupMenuItem<ListTileTitleAlignment>(
+      value: ListTileTitleAlignment.threeLine,
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Icon(icon),
+          TextStyles.standardText(
+            text: name,
+            size: 12.5,
+          )
+        ],
+      ),
     );
   }
 }

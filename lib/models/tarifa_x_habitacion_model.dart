@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'tarifa_x_dia_model.dart';
 
 List<TarifaXHabitacion> tarifaXHabitacionXHabitacionsFromJson(String str) =>
@@ -63,16 +64,16 @@ class TarifaXHabitacion {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      'id_int': idInt,
+      'idInt': idInt,
       'id': id,
       'subcode': subcode,
-      'habitacion_int': habitacionInt,
+      'habitacionInt': habitacionInt,
       'habitacion': habitacion,
-      'tarifa_x_dia_int': tarifaXDia?.idInt,
-      'tarifa_x_dia': tarifaXDia?.id,
+      'tarifaXDiaInt': tarifaXDia?.idInt,
+      'tarifaXDia': tarifaXDia?.id,
       'dia': dia,
       'fecha': fecha,
-      'es_grupal': esGrupal,
+      'esGrupal': esGrupal,
     };
 
     // Remueve todas las claves con valor null
@@ -83,15 +84,15 @@ class TarifaXHabitacion {
 
   factory TarifaXHabitacion.fromJson(Map<String, dynamic> json) {
     return TarifaXHabitacion(
-      idInt: json['id_int'],
+      idInt: json['idInt'],
       id: json['id'],
       subcode: json['subcode'],
-      habitacionInt: json['habitacion_int'],
+      habitacionInt: json['habitacionInt'],
       habitacion: json['habitacion'],
-      tarifaXDia: json['tarifa_x_dia'],
+      tarifaXDia: json['tarifaXDia'],
       dia: json['dia'],
-      fecha: json['fecha'] ?? DateTime.now().toString(),
-      esGrupal: json['es_grupal'],
+      fecha: DateValueFormat.fromJSON(json['fecha']),
+      esGrupal: json['esGrupal'],
     );
   }
 }

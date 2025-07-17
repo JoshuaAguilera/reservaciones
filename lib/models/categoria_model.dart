@@ -61,19 +61,19 @@ class Categoria {
 
   factory Categoria.fromJson(Map<String, dynamic> json) {
     return Categoria(
-      idInt: json['id_int'],
+      idInt: json['idInt'],
       id: json['id'],
       nombre: json['nombre'],
       descripcion: json['descripcion'],
       color: ColorsHelpers.colorFromJson(json['color']),
-      tipoHabitacion: json['tipo_habitacion'] != null
+      tipoHabitacion: json['tipoHabitacion'] != null
           ? TipoHabitacion.fromJson(
-              json['tipo_habitacion'],
+              json['tipoHabitacion'],
             )
           : null,
-      creadoPor: json['creado_por'] != null
+      creadoPor: json['creadoPor'] != null
           ? Usuario.fromJson(
-              json['creado_por'],
+              json['creadoPor'],
             )
           : null,
     );
@@ -81,15 +81,15 @@ class Categoria {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "nombre": nombre,
       "descripcion": descripcion,
       "color": color,
-      "tipo_habitacion_int": tipoHabitacion?.idInt,
-      "tipo_habitacion": tipoHabitacion?.id,
-      "creado_por_int": creadoPor?.idInt,
-      "creado_por": creadoPor?.id,
+      "tipoHabitacionInt": tipoHabitacion?.idInt,
+      "tipoHabitacion": tipoHabitacion?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "creadoPor": creadoPor?.id,
     };
 
     // Remueve todas las claves con valor null

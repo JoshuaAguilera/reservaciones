@@ -44,7 +44,7 @@ class TipoHabitacion {
       );
 
   factory TipoHabitacion.fromJson(Map<String, dynamic> json) => TipoHabitacion(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['_id'],
         codigo: json['codigo'],
         orden: json['orden'],
@@ -53,7 +53,7 @@ class TipoHabitacion {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "codigo": codigo,
       "orden": orden,

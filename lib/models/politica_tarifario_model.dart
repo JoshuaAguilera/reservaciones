@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'usuario_model.dart';
 
 List<PoliticaTarifario> politicasFromJson(String str) =>
@@ -62,31 +63,27 @@ class PoliticaTarifario {
   factory PoliticaTarifario.fromJson(Map<String, dynamic> json) =>
       PoliticaTarifario(
         id: json['id'],
-        idInt: json['id_int'],
-        createdAt: json['created_at'] == null
-            ? null
-            : DateTime.tryParse(json['created_at']),
-        updatedAt: json['updated_at'] == null
-            ? null
-            : DateTime.tryParse(json['updated_at']),
+        idInt: json['idInt'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
+        updatedAt: DateValueFormat.fromJSON(json['updatedAt']),
         clave: json['clave'],
         descripcion: json['descripcion'],
         valor: json['valor'],
-        creadoPor: json['creado_por'] != null
-            ? Usuario.fromJson(json['creado_por'])
+        creadoPor: json['creadoPor'] != null
+            ? Usuario.fromJson(json['creadoPor'])
             : null,
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
       "id": id,
-      "id_int": idInt,
-      "updated_at": updatedAt,
+      "idInt": idInt,
+      "updatedAt": updatedAt,
       "clave": clave,
       "descripcion": descripcion,
       "valor": valor,
-      "creado_por_int": creadoPor?.idInt,
-      "creado_por": creadoPor?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "creadoPor": creadoPor?.id,
     };
 
     // Remueve todas las claves con valor null

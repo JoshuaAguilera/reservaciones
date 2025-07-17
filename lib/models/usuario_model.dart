@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
 import 'imagen_model.dart';
 import 'rol_model.dart';
 
@@ -81,37 +82,37 @@ class Usuario {
       );
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['id'],
         username: json['username'],
         password: json['password'],
         rol: json['rol'] != null ? Rol.fromJson(json['rol']) : null,
         estatus: json['estatus'],
         telefono: json['telefono'],
-        correoElectronico: json['correo_electronico'],
-        fechaNacimiento: json['fecha_nacimiento'],
+        correoElectronico: json['correoElectronico'],
+        fechaNacimiento: json['fechaNacimiento'],
         nombre: json['nombre'],
         apellido: json['apellido'],
         imagen: json['imagen'] != null ? Imagen.fromJson(json['imagen']) : null,
-        createdAt: json['created_at'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "username": username,
       "password": password,
       "rol": rol?.id,
-      "rol_int": rol?.idInt,
+      "rolInt": rol?.idInt,
       "estado": estatus,
       "telefono": telefono,
-      "correo_electronico": correoElectronico,
-      "fecha_nacimiento": fechaNacimiento,
+      "correoElectronico": correoElectronico,
+      "fechaNacimiento": fechaNacimiento,
       "nombre": nombre,
       "apellido": apellido,
       "imagen": imagen?.id,
-      "imagen_int": imagen?.idInt,
+      "imagenInt": imagen?.idInt,
     };
 
     // Remueve todas las claves con valor null

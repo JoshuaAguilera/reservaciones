@@ -74,20 +74,20 @@ class TarifaBase {
       );
 
   factory TarifaBase.fromJson(Map<String, dynamic> json) => TarifaBase(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['id'],
         nombre: json['nombre'],
         codigo: json['codigo'],
-        aumIntegrado: json['aumento_integrado'],
-        conAutocalculacion: json['con_autocalculacion'],
-        upgradeCategoria: json['upgrade_categoria'],
-        upgradeMenor: json['upgrade_menor'],
-        upgradePaxAdic: json['upgrade_pax_adic'],
-        tarifaBase: json['tarifa_base'] != null
-            ? TarifaBase.fromJson(json['tarifa_base'])
+        aumIntegrado: json['aumentoIntegrado'],
+        conAutocalculacion: json['conAutocalculacion'],
+        upgradeCategoria: json['upgradeCategoria'],
+        upgradeMenor: json['upgradeMenor'],
+        upgradePaxAdic: json['upgradePaxAdic'],
+        tarifaBase: json['tarifaBase'] != null
+            ? TarifaBase.fromJson(json['tarifaBase'])
             : null,
-        creadoPor: json['creado_por'] != null
-            ? Usuario.fromJson(json['creado_por'])
+        creadoPor: json['creadoPor'] != null
+            ? Usuario.fromJson(json['creadoPor'])
             : null,
         tarifas: json['tarifas'] != null
             ? json['tarifas'] != '[]'
@@ -98,19 +98,19 @@ class TarifaBase {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "codigo": codigo,
       "nombre": nombre,
-      "aumento_integrado": aumIntegrado,
-      "con_autocalculacion": conAutocalculacion,
-      "upgrade_categoria": upgradeCategoria,
-      "upgrade_menor": upgradeMenor,
-      "upgrade_pax_adic": upgradePaxAdic,
-      "tarifa_base_int": tarifaBase?.idInt,
-      "tarifa_base": tarifaBase?.id,
-      "creado_por_int": creadoPor?.idInt,
-      "creado_por": creadoPor?.id,
+      "aumIntegrado": aumIntegrado,
+      "conAutocalculacion": conAutocalculacion,
+      "upgradeCategoria": upgradeCategoria,
+      "upgradeMenor": upgradeMenor,
+      "upgradePaxAdic": upgradePaxAdic,
+      "tarifaBaseInt": tarifaBase?.idInt,
+      "tarifaBase": tarifaBase?.id,
+      "creadoPorInt": creadoPor?.idInt,
+      "creadoPor": creadoPor?.id,
       "tarifas": tarifas,
     };
 

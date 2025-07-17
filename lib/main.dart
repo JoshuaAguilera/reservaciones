@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/models/estructura_documento.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -71,32 +72,38 @@ class _MyAppState extends ConsumerState<MyApp> {
         Settings.modeDark ? Themes().darkMode() : Themes().lightMode();
     final navService = ref.read(navigationServiceProvider);
 
-    return ThemeProvider(
-      initTheme: initTheme,
-      builder: (_, snapshot) {
-        return MaterialApp(
-          title: 'Generador de formatos de pago',
-          navigatorKey: navService.navigatorKey,
-          scaffoldMessengerKey: scaffoldMessengerKey,
-          debugShowCheckedModeBanner: false,
-          scrollBehavior: CustomScrollBehavior(),
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('es'),
-          ],
-          theme: snapshot,
-          routes: {
-            'home': (_) => HomeView(),
-            'login': (_) => const LoginView(),
-          },
-          initialRoute: 'login',
-        );
-      },
-    );
+    return ScreenUtilInit(
+        designSize: const Size(1920, 1080),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return ThemeProvider(
+            initTheme: initTheme,
+            builder: (_, snapshot) {
+              return MaterialApp(
+                title: 'Tarifiko',
+                navigatorKey: navService.navigatorKey,
+                scaffoldMessengerKey: scaffoldMessengerKey,
+                debugShowCheckedModeBanner: false,
+                scrollBehavior: CustomScrollBehavior(),
+                localizationsDelegates: const [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'),
+                  Locale('es'),
+                ],
+                theme: snapshot,
+                routes: {
+                  'home': (_) => HomeView(),
+                  'login': (_) => const LoginView(),
+                },
+                initialRoute: 'login',
+              );
+            },
+          );
+        });
   }
 }

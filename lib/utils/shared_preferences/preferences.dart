@@ -19,6 +19,7 @@ class Preferences {
   static int _userIdInt = 0;
   static String _userId = '';
   static String _userImageUrl = '';
+  static String _hotelId = '';
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -166,6 +167,15 @@ class Preferences {
   static set userImageUrl(String value) {
     _userImageUrl = value;
     _prefs.setString('userImageUrl', value);
+  }
+
+  static String get hotelId {
+    return _prefs.getString('hotelId') ?? _hotelId;
+  }
+
+  static set hotelId(String value) {
+    _hotelId = value;
+    _prefs.setString('hotelId', value);
   }
 
   static Future<void> clearUserData() async {

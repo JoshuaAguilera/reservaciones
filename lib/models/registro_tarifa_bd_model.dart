@@ -51,23 +51,23 @@ class RegistroTarifaBD {
       );
 
   RegistroTarifaBD.fromJson(Map<String, dynamic> json) {
-    idInt = json['id_int'] as int?;
+    idInt = json['idInt'] as int?;
     id = json['id'] as String?;
-    esOriginal = json['es_original'] as bool? ?? false;
+    esOriginal = json['esOriginal'] as bool? ?? false;
     tarifa = json['tarifa'] != null ? Tarifa.fromJson(json['tarifa']) : null;
-    tarifaRackIdInt = json['tarifa_rack_id_int'] as int?;
-    tarifaRackId = json['tarifa_rack_id'] as String?;
+    tarifaRackIdInt = json['tarifaRackIdInt'] as int?;
+    tarifaRackId = json['tarifaRackId'] as String?;
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      'id_int': idInt,
+      'idInt': idInt,
       'id': id,
-      'es_original': esOriginal,
-      'tarifa_id_int': tarifa?.idInt,
-      'tarifa_id': tarifa?.id,
-      'tarifa_rack_id_int': tarifaRackIdInt,
-      'tarifa_rack_id': tarifaRackId,
+      'esOriginal': esOriginal,
+      'tarifaIdInt': tarifa?.idInt,
+      'tarifaId': tarifa?.id,
+      'tarifaRackIdInt': tarifaRackIdInt,
+      'tarifaRackId': tarifaRackId,
     };
 
     data.removeWhere((key, value) => value == null);

@@ -15,6 +15,14 @@ class Themes {
       dividerColor: DesktopColors.azulCielo,
       textTheme: TextTheme(
         bodyMedium: TextStyles.styleStandar(color: Colors.white),
+        displayMedium: TextStyles.styleStandar(color: Colors.white),
+        labelMedium: TextStyles.styleStandar(color: Colors.white),
+        headlineMedium: TextStyles.styleStandar(color: Colors.white),
+        titleMedium: TextStyles.styleStandar(color: Colors.white),
+        titleLarge: TextStyles.styleStandar(color: Colors.white),
+        bodyLarge: TextStyles.styleStandar(color: Colors.white),
+        titleSmall: TextStyles.styleStandar(color: Colors.white, size: 13),
+        bodySmall: TextStyles.styleStandar(color: Colors.white, size: 10),
       ),
       inputDecorationTheme: const InputDecorationTheme(
         enabledBorder: OutlineInputBorder(
@@ -33,8 +41,11 @@ class Themes {
       // canvasColor: DesktopColors.backgroudColor,
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          iconColor: WidgetStatePropertyAll(DesktopColors.cerulean),
-          foregroundColor: const WidgetStatePropertyAll(Colors.white),
+          iconColor: WidgetStatePropertyAll(DesktopColors.azulUltClaro),
+          foregroundColor: WidgetStatePropertyAll(DesktopColors.azulUltClaro),
+          textStyle: WidgetStatePropertyAll(
+            TextStyles.styleStandar(),
+          ),
         ),
       ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
@@ -88,8 +99,10 @@ class Themes {
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: WidgetStatePropertyAll(
-            DesktopColors.buttonPrimary,
+          iconColor: WidgetStatePropertyAll(DesktopColors.cerulean),
+          foregroundColor: WidgetStatePropertyAll(DesktopColors.cerulean),
+          textStyle: WidgetStatePropertyAll(
+            TextStyles.styleStandar(isBold: true),
           ),
         ),
       ),

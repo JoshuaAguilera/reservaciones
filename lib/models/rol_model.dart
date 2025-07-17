@@ -55,7 +55,7 @@ class Rol {
       );
 
   factory Rol.fromJson(Map<String, dynamic> json) => Rol(
-        idInt: json['id_int'],
+        idInt: json['idInt'],
         id: json['id'],
         nombre: json['nombre'],
         color: ColorsHelpers.colorFromJson(json['color']),
@@ -69,7 +69,7 @@ class Rol {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
-      "id_int": idInt,
+      "idInt": idInt,
       "id": id,
       "nombre": nombre,
       "color": ColorsHelpers.colorToJson(color),

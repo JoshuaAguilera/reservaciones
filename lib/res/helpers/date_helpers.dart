@@ -355,6 +355,19 @@ class DateHelpers {
   }
 }
 
+extension DateValueFormat on DateTime {
+  static DateTime? fromJSON(dynamic value) {
+    return value is int
+        ? DateTime.fromMillisecondsSinceEpoch(
+            value * 1000,
+            isUtc: true,
+          )
+        : value is String
+            ? DateTime.tryParse(value)
+            : null;
+  }
+}
+
 extension DateOnlyCompare on DateTime {
   bool isSameDate(DateTime other) {
     return year == other.year && month == other.month && day == other.day;
