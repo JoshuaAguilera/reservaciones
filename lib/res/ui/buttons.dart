@@ -183,13 +183,13 @@ class Buttons {
                     if (text.isNotEmpty)
                       Expanded(
                         flex: 0,
-                        child: TextStyles.standardText(
+                        child: AppText.styledText(
                           text: !isLoading ? text : "Espere",
                           size: sizeText,
                           align: (icon != null)
                               ? TextAlign.start
                               : TextAlign.center,
-                          isBold: withTextBold,
+                          fontFamily: withTextBold ? AppText.fontMedium : null,
                           color: colorText ?? colorContent,
                         ),
                       ),
@@ -209,7 +209,7 @@ class Buttons {
     IconData? icon,
     bool isLoading = false,
     bool compact = false,
-    double sizeText = 13.5,
+    double sizeText = 13,
     Color? backgroudColor,
     Color? foregroundColor,
   }) {
@@ -276,11 +276,13 @@ class Buttons {
     Color? color,
     double iconSize = 29,
     bool withAdd = false,
+    String? toolTip,
   }) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
 
     return FloatingActionButton(
       elevation: 0,
+      tooltip: toolTip,
       backgroundColor: color ?? Theme.of(context).scaffoldBackgroundColor,
       highlightElevation: 0,
       shape: CircleBorder(

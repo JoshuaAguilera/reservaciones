@@ -68,15 +68,16 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     // final isPlatformDark =
     //     WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
-    final initTheme =
-        Settings.modeDark ? Themes().darkMode() : Themes().lightMode();
-    final navService = ref.read(navigationServiceProvider);
 
     return ScreenUtilInit(
         designSize: const Size(1920, 1080),
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
+          final navService = ref.read(navigationServiceProvider);
+          final initTheme =
+              Settings.modeDark ? Themes().darkMode() : Themes().lightMode();
+
           return ThemeProvider(
             initTheme: initTheme,
             builder: (_, snapshot) {

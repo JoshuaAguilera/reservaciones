@@ -32,6 +32,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
   @override
   Widget build(BuildContext context) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    int length = widget.notifications.length;
 
     return Tooltip(
       key: widget.keyTool,
@@ -45,7 +46,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         borderRadius: const BorderRadius.all(Radius.circular(5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
             spreadRadius: 5,
             blurRadius: 7,
             offset: const Offset(0, 3),
@@ -62,11 +63,8 @@ class _NotificationWidgetState extends State<NotificationWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextStyles.titleText(
-                    size: 14,
-                    text:
-                        "Notificaciones ${widget.notifications.length > 0 ? "(${widget.notifications.length})" : ""}",
-                    color: Theme.of(context).primaryColor,
+                  AppText.sectionTitleText(
+                    text: "Notificaciones ${length > 0 ? "($length)" : ""}",
                   ),
                   const Divider(
                     height: 10,
@@ -77,9 +75,9 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Center(
-                          child: TextStyles.standardText(
-                              text: "No hay notificaciones por ahora.",
-                              size: 12)),
+                          child: AppText.simpleText(
+                        text: "No hay notificaciones por ahora.",
+                      )),
                     )
                   else
                     SizedBox(
@@ -132,9 +130,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(
-      {Key? key, required this.notificacion, this.isLast = false})
-      : super(key: key);
+  const _NotificationItem({required this.notificacion, this.isLast = false});
 
   final Notificacion notificacion;
   final bool isLast;
@@ -168,16 +164,12 @@ class _NotificationItem extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: TextStyles.standardText(
-              text: notificacion.id ?? '',
-              size: 12.5,
-              isBold: true,
+            title: AppText.listTitleText(
+              text: notificacion.mensaje ?? '',
               color: Colors.white,
             ),
-            subtitle: TextStyles.standardText(
+            subtitle: AppText.listBodyText(
               text: (notificacion.createdAt ?? DateTime.now()).toString(),
-              size: 11,
-              overClip: true,
               color: Colors.white,
             ),
           ),

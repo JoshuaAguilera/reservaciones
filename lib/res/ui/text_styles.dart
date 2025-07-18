@@ -1,6 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/helpers/desktop_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -34,7 +36,7 @@ class TextStyles {
   }
 
   static TextStyle styleStandar({
-    double size = 12,
+    double? size,
     bool isBold = false,
     bool overClip = false,
     Color? color,
@@ -328,6 +330,170 @@ class TextStyles {
         fontWeight: FontWeight.bold,
         fontFamily: "poppins_medium",
       ),
+    );
+  }
+}
+
+class AppText {
+  static const String fontRegular = "poppins_regular";
+  static const String fontBold = "poppins_bold";
+  static const String fontMedium = "poppins_medium";
+
+  static Text styledText({
+    required String text,
+    int? maxLines,
+    TextAlign align = TextAlign.left,
+    Color? color,
+    TextOverflow? overflow,
+    double? height,
+    double size = 13,
+    double? maxSize,
+    FontWeight fontWeight = FontWeight.normal,
+    String? fontFamily,
+  }) {
+    return Text(
+      text,
+      textAlign: align,
+      maxLines: maxLines,
+      style: _style(
+        color: color,
+        overflow: overflow,
+        height: height,
+        size: size,
+        maxSize: maxSize,
+        fontWeight: fontWeight,
+        fontFamily: fontFamily,
+      ),
+    );
+  }
+
+  static TextStyle _style({
+    Color? color,
+    TextOverflow? overflow,
+    double? height,
+    double size = 13,
+    double? maxSize,
+    FontWeight fontWeight = FontWeight.normal,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? fontRegular,
+      color: color,
+      fontSize: math.max(size, math.min(24.sp, maxSize ?? (size + 3))),
+      fontWeight: fontWeight,
+      overflow: overflow ?? TextOverflow.ellipsis,
+      height: height,
+    );
+  }
+
+  //Text
+  static Text simpleText({
+    required String text,
+    Color? color,
+    TextAlign align = TextAlign.left,
+  }) {
+    return styledText(
+      text: text,
+      size: 11,
+      maxSize: 13.5,
+      color: color,
+      align: align,
+    );
+  }
+
+  static Text sectionTitleText({
+    required String text,
+    Color? color,
+  }) {
+    return styledText(
+      text: text,
+      size: 14,
+      maxSize: 16,
+      fontWeight: FontWeight.bold,
+      fontFamily: fontMedium,
+      color: color,
+    );
+  }
+
+  static Text cardTitleText({
+    required String text,
+    Color? color,
+  }) {
+    return styledText(
+      text: text,
+      size: 18,
+      maxSize: 22,
+      fontWeight: FontWeight.bold,
+      fontFamily: fontBold,
+      color: color,
+    );
+  }
+
+  static Text listTitleText({
+    required String text,
+    Color? color,
+  }) {
+    return styledText(
+      text: text,
+      size: 12.5,
+      maxSize: 14.5,
+      fontWeight: FontWeight.bold,
+      fontFamily: fontMedium,
+      color: color,
+    );
+  }
+
+  static Text listBodyText({
+    required String text,
+    Color? color,
+    double size = 11.5,
+  }) {
+    return styledText(
+      text: text,
+      size: size,
+      maxSize: size + 2,
+      color: color,
+    );
+  }
+
+  // Styles
+  static TextStyle simpleStyle({
+    double size = 11.5,
+    double maxSize = 13.5,
+    bool isBold = false,
+    Color? color,
+  }) {
+    return _style(
+      size: size,
+      maxSize: maxSize,
+      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+      color: color,
+    );
+  }
+
+  static TextStyle inputStyle({
+    double size = 13,
+    Color? color,
+    double? height,
+  }) {
+    return _style(
+      size: size,
+      maxSize: size + 3,
+      color: color,
+      height: height,
+    );
+  }
+
+  static TextStyle selectButtonStyle({
+    double size = 12.5,
+    Color? color,
+  }) {
+    return _style(
+      size: size,
+      maxSize: size + 1.5,
+      color: color,
+      fontFamily: fontMedium,
+      fontWeight: FontWeight.bold,
     );
   }
 }

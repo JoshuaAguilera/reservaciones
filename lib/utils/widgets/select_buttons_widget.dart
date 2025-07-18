@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../res/helpers/colors_helpers.dart';
 import '../../res/ui/buttons.dart';
+import '../../res/ui/text_styles.dart';
 
 class SelectButtonsWidget extends StatefulWidget {
   const SelectButtonsWidget({
-    Key? key,
+    super.key,
     required this.selectButton,
     required this.buttons,
     this.width,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   final String selectButton;
   final List<Map<String, Color>> buttons;
@@ -56,7 +57,7 @@ class _SelectButtonsWidgetState extends State<SelectButtonsWidget> {
                   },
                   child: Text(
                     widget.buttons[index].keys.first,
-                    style: TextStyle(
+                    style: AppText.selectButtonStyle(
                       color: ColorsHelpers.darken(
                           widget.buttons[index].values.first, 0.15),
                     ),

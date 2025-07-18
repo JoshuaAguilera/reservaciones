@@ -12,7 +12,6 @@ class CustomDropdown {
     required void Function(String?)? onSelected,
     required List<String> elements,
     List<String>? notElements,
-    double fontSize = 13,
     double? screenWidth,
     String removeItem = '',
     String label = '',
@@ -93,8 +92,7 @@ class CustomDropdown {
                         Theme.of(context).cardColor,
                       ),
                     ),
-                    textStyle: TextStyle(
-                        fontFamily: "poppins_regular", fontSize: fontSize),
+                    textStyle: AppText.simpleStyle(),
                     dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
                       (String value) {
                         bool enable = (excepcionItem.isNotEmpty &&
@@ -110,10 +108,7 @@ class CustomDropdown {
                           enabled: enable,
                           style: ButtonStyle(
                             textStyle: WidgetStatePropertyAll(
-                              TextStyle(
-                                fontFamily: "poppins_regular",
-                                fontSize: fontSize,
-                              ),
+                              AppText.inputStyle(),
                             ),
                           ),
                         );

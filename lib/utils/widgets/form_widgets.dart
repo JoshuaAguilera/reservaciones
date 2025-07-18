@@ -305,9 +305,8 @@ class FormWidgets {
                 return null;
               }
             },
-            style: TextStyle(
-              fontFamily: "poppins_regular",
-              fontSize: sizeText ?? 13,
+            style: AppText.inputStyle(
+              size: sizeText ?? 13,
               color: colorText,
               height: heightText,
             ),

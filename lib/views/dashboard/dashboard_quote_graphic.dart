@@ -1,8 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/ui/message_error_scroll.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -87,17 +84,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
     }
 
     Widget textTitle(String text) {
-      return TextStyles.standardText(
-        isBold: true,
-        text: text,
-        size: math.max(
-          13,
-          math.min(
-            20.sp * 0.9,
-            16,
-          ),
-        ),
-      );
+      return AppText.sectionTitleText(text: text);
     }
 
     return Row(
@@ -150,7 +137,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                                       ),
                                       onPressed: () => changeDateView(),
                                     ),
-                                    TextStyles.standardText(
+                                    AppText.simpleText(
                                       text: DateHelpers.getPeriodSelect(
                                         typePeriod,
                                         selectTime,
@@ -173,7 +160,6 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                                 ),
                               ),
                               CustomDropdown.dropdownMenuCustom(
-                                fontSize: 12,
                                 initialSelection: typePeriod,
                                 onSelected: (String? value) {
                                   ref
@@ -283,9 +269,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                           return const MessageErrorScroll();
                         },
                         loading: () {
-                          return ProgressIndicatorCustom(
-                            screenHight: 450,
-                          );
+                          return ProgressIndicatorCustom(screenHight: 450);
                         },
                       ),
                     )

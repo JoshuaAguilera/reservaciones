@@ -1,9 +1,5 @@
-import 'dart:math' as math;
-
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -46,7 +42,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
     final sizeScreen = MediaQuery.of(context).size;
     final notificaciones = ref.watch(NotificacionProvider.provider);
     final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
@@ -56,18 +51,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
-    Widget textTitle(String text, {double size = 13}) {
-      return TextStyles.standardText(
-        isBold: true,
-        text: text,
-        size: math.max(
-          size,
-          math.min(
-            20.sp * 0.9,
-            size + 3,
-          ),
-        ),
-      );
+    Widget textTitle(String text) {
+      return AppText.sectionTitleText(text: text);
     }
 
     Widget _countQuotes(bool isCompact) {
@@ -130,6 +115,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       ),
                       Buttons.floatingButton(
                         context,
+                        toolTip: "Configuración",
                         tag: "settings",
                         icon: Iconsax.setting_2_outline,
                         onPressed: () {
@@ -157,8 +143,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextStyles.titlePagText(text: "Dashboard"),
-                          TextStyles.standardText(
+                          AppText.cardTitleText(text: "Dashboard"),
+                          AppText.simpleText(
                             text:
                                 "Planifica, prioriza y realiza tus tareas con facilidad.",
                           ),
@@ -197,7 +183,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             filtro == "Individual"
                                 ? "Tus Cotizaciones"
                                 : "Cotizaciones del equipo",
-                            size: 14,
                           ),
                         ),
                         Container(
@@ -224,10 +209,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     _countQuotes(isCompact),
                   ],
                 ),
-                const SizedBox(
-                  height: 550,
-                  child: DashboardQuoteGraphic(),
-                ),
+                const SizedBox(height: 550, child: DashboardQuoteGraphic()),
                 Center(
                   child: SizedBox(
                     height: 390,
@@ -259,23 +241,17 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           data: (list) {
                                             return SfCircularChart(
                                               margin: const EdgeInsets.all(0),
-                                              tooltipBehavior:
-                                                  !Utility.foundQuotes(list)
-                                                      ? null
-                                                      : TooltipBehavior(
-                                                          enable: true,
-                                                          duration: 1000,
-                                                          textStyle: TextStyles
-                                                              .styleStandar(
-                                                            size: 11,
-                                                            color: brightness ==
-                                                                    Brightness
-                                                                        .light
-                                                                ? Colors.white
-                                                                : DesktopColors
-                                                                    .prussianBlue,
-                                                          ),
-                                                        ),
+                                              tooltipBehavior: !Utility
+                                                      .foundQuotes(list)
+                                                  ? null
+                                                  : TooltipBehavior(
+                                                      enable: true,
+                                                      duration: 1000,
+                                                      textStyle:
+                                                          AppText.simpleStyle(
+                                                        size: 11,
+                                                      ),
+                                                    ),
                                               palette: [
                                                 (Utility.foundQuotes(list))
                                                     ? DesktopColors.cotGrupal
@@ -287,8 +263,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                               legend: Legend(
                                                 isVisible:
                                                     Utility.foundQuotes(list),
-                                                textStyle:
-                                                    TextStyles.styleStandar(
+                                                textStyle: AppText.simpleStyle(
                                                   size: 11,
                                                 ),
                                                 overflowMode:
@@ -308,13 +283,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                             datum.numNow,
                                                     enableTooltip: true,
                                                     dataLabelSettings:
-                                                        const DataLabelSettings(
+                                                        DataLabelSettings(
                                                       isVisible: true,
                                                       showZeroValue: false,
-                                                      textStyle: TextStyle(
-                                                        fontFamily:
-                                                            "poppins_regular",
-                                                        fontSize: 11,
+                                                      textStyle:
+                                                          AppText.simpleStyle(
+                                                        size: 11,
                                                       ),
                                                     ),
                                                   )
@@ -359,9 +333,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           child: AnimatedEntry(
                                             delay: const Duration(
                                                 milliseconds: 350),
-                                            child: TextStyles.standardText(
+                                            child: AppText.simpleText(
                                               text: "Sin nuevas\nCotizaciones",
-                                              size: 11,
                                               align: TextAlign.center,
                                             ),
                                           ),
@@ -419,21 +392,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       return const SizedBox();
                                     }
                                   },
-                                  error: (error, stackTrace) {
-                                    return Container();
-                                  },
-                                  loading: () {
-                                    return const SizedBox();
-                                  },
+                                  error: (error, stackTrace) => Container(),
+                                  loading: () => const SizedBox(),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        const Expanded(
-                          flex: 3,
-                          child: DashboardQuoteList(),
-                        ),
+                        const Expanded(flex: 3, child: DashboardQuoteList()),
                       ],
                     ),
                   ),
@@ -459,11 +425,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           if (!compact) const SizedBox(width: 5),
           if (!compact)
             Expanded(
-              child: TextStyles.standardText(
-                text: name,
-                color: Theme.of(context).primaryColor,
-                size: 11,
-              ),
+              child: AppText.simpleText(text: name),
             ),
         ],
       ),

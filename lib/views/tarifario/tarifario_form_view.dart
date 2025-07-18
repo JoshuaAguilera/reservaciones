@@ -457,7 +457,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                             text: "Tarifa Base:  "),
                                         CustomDropdown.dropdownMenuCustom(
                                           compactWidth: 260,
-                                          fontSize: 12,
                                           initialSelection: selectTariff,
                                           onSelected: (String? value) {
                                             if (value == selectTariff) return;

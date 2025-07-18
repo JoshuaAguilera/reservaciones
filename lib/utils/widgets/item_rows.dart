@@ -8,6 +8,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sidebarx/src/controller/sidebarx_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -45,6 +46,9 @@ class ItemRow {
     Color? backgroudColor = isQuest ? DesktopColors.primary6 : Colors.white;
     Color? foregroundColor = ColorsHelpers.getForegroundColor(backgroudColor);
 
+    NumberFormat formatter = NumberFormat('00');
+    String numeroFormateado = formatter.format(register.total ?? 0);
+
     IconData iconStatus = status == null
         ? Iconsax.minus_square_outline
         : !status
@@ -62,24 +66,13 @@ class ItemRow {
                 : foregroundColor
             : ColorsHelpers.getColorNavbar(status ? "success" : "danger");
 
-        Widget textTitle(String text, {double size = 13}) {
-          return TextStyles.standardText(
-            isBold: true,
-            text: text,
-            size: max(
-              size,
-              min(
-                20.sp * 0.9,
-                size + 3,
-              ),
-            ),
-          );
-        }
-
         if (isDark && !isQuest) {
           foregroundColorSub =
               ColorsHelpers.darken(foregroundColorSub ?? Colors.white, -0.3);
         }
+
+        Color? foregroundColorInt =
+            (isDark && !isQuest) ? null : foregroundColor;
 
         return Container(
           decoration: BoxDecoration(
@@ -114,15 +107,12 @@ class ItemRow {
                       Icon(
                         IconHelpers.getIconCardDashboard(register.title),
                         size: 30,
-                        color: (isDark && !isQuest) ? null : foregroundColor,
+                        color: foregroundColorInt,
                       ),
                       Flexible(
-                        child: TextStyles.standardText(
+                        child: AppText.sectionTitleText(
                           text: register.title ?? '',
-                          color: (isDark && !isQuest) ? null : foregroundColor,
-                          size: sizeText,
-                          overClip: true,
-                          isBold: true,
+                          color: foregroundColorInt,
                         ),
                       ),
                     ],
@@ -134,12 +124,11 @@ class ItemRow {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Flexible(
-                          child: TextStyles.TextTitleList(
-                            index: register.total ?? 0,
-                            color:
-                                (isDark && !isQuest) ? null : foregroundColor,
+                          child: AppText.styledText(
+                            text: numeroFormateado,
                             size: 32,
-                            isBold: false,
+                            color: foregroundColorInt,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         if (register.total == null)
@@ -171,7 +160,7 @@ class ItemRow {
                               size: 12,
                               color: foregroundColorSub,
                             ),
-                            TextStyles.standardText(
+                            AppText.styledText(
                               text: register.difference()?.toString() ?? "0",
                               size: 10,
                               color: foregroundColorSub,
@@ -179,7 +168,7 @@ class ItemRow {
                           ],
                         ),
                       ),
-                      TextStyles.standardText(
+                      AppText.styledText(
                         text: register.getStatusModifier(),
                         size: 10,
                         color: foregroundColorSub,

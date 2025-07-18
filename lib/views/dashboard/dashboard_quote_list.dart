@@ -1,8 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
@@ -41,18 +38,8 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
-    Widget textTitle(String text, {double size = 13}) {
-      return TextStyles.standardText(
-        isBold: true,
-        text: text,
-        size: math.max(
-          size,
-          math.min(
-            20.sp * 0.9,
-            size + 3,
-          ),
-        ),
-      );
+    Widget textTitle(String text) {
+      return AppText.styledText(text: text, fontWeight: FontWeight.bold);
     }
 
     return AnimatedEntry(

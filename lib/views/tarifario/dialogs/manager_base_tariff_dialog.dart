@@ -231,7 +231,6 @@ class _ManagerBaseTariffDialogState extends State<ManagerBaseTariffDialog> {
                                     ),
                                     const SizedBox(width: 10),
                                     CustomDropdown.dropdownMenuCustom(
-                                      fontSize: 12,
                                       initialSelection:
                                           tarifaPadre?.nombre ?? 'Ninguna',
                                       onSelected: (String? value) {
