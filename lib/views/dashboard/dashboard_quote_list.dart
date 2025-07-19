@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../models/cotizacion_model.dart';
 import '../../models/filter_model.dart';
@@ -75,8 +76,10 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
                     key: ValueKey(keyList + updateList),
                     firstPageKey: 1,
                     provider: cotizacionesProvider(""),
-                    itemBuilder: (context, item, index) =>
-                        CotizacionItem(cotizacion: item),
+                    itemBuilder: (context, item, index) => CotizacionItem(
+                      cotizacion: item,
+                      inDashboard: true,
+                    ),
                     pagedBuilder: (controller, builder) {
                       if (filterList.layout == Layout.mosaico) {
                         return PagedGridView<int, Cotizacion>(
@@ -141,13 +144,13 @@ class CotizacionItem extends ConsumerWidget {
     this.inDashboard = false,
   });
 
-  void onPressedEdit(BuildContext context) {
-    // pushScreen(
-    //   context,
-    //   screen: RolForm(role: cotizacion),
-    //   withNavBar: true,
-    //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
-    // );
+  void onPressedEdit(WidgetRef ref) {
+    navigateToRoute(
+      ref,
+      "/historial",
+      subRoute: "/detalle",
+      ids: Tuple2(cotizacion.id, cotizacion.idInt),
+    );
   }
 
   void onPreseedDelete(BuildContext context) {
@@ -168,13 +171,13 @@ class CotizacionItem extends ConsumerWidget {
 
     return Stack(
       children: [
-        if (layout == Layout.checkList) itemList(selectItem),
-        if (layout == Layout.mosaico) itemContent(selectItem),
+        if (layout == Layout.checkList) itemList(selectItem, ref),
+        if (layout == Layout.mosaico) itemContent(selectItem, ref),
       ],
     );
   }
 
-  Widget itemContent(bool selectItem) {
+  Widget itemContent(bool selectItem, WidgetRef ref) {
     return StatefulBuilder(builder: (context, snapshot) {
       return GraphicsElements.containerElement(
         context,
@@ -196,8 +199,9 @@ class CotizacionItem extends ConsumerWidget {
                 },
               )
             : ItemRow.compactOptions(
-                onPreseedEdit: () => onPressedEdit(context),
-                onPreseedDelete: () => onPreseedDelete(context),
+                onPreseedEdit: () => onPressedEdit(ref),
+                onPreseedDelete:
+                    inDashboard ? null : () => onPreseedDelete(context),
               ),
         metricsWidget: Column(
           spacing: 2,
@@ -206,17 +210,17 @@ class CotizacionItem extends ConsumerWidget {
             Text(
               "Tipo: ${cotizacion.esGrupo == true ? "Grupal" : "Individual"}",
             ),
-            TextStyles.standardText(
-                text: "Fecha: ${cotizacion.createdAt?.toString() ?? ''}",
-                size: 11,
-                maxLines: 2),
+            AppText.listBodyText(
+              text: "Fecha: ${cotizacion.createdAt?.toString() ?? ''}",
+              maxLines: 2,
+            ),
           ],
         ),
       );
     });
   }
 
-  Widget itemList(bool selectItem) {
+  Widget itemList(bool selectItem, WidgetRef ref) {
     return StatefulBuilder(
       builder: (context, snapshot) {
         String limiteDate =
@@ -240,8 +244,8 @@ class CotizacionItem extends ConsumerWidget {
           details: "$createdDate     $limiteDate",
           color: ColorsHelpers.getColorQuote(cotizacion).withValues(alpha: 0.5),
           radius: 12,
-          onPressedEdit: () => onPressedEdit(context),
-          onPressedDelete: () => onPreseedDelete(context),
+          onPressedEdit: () => onPressedEdit(ref),
+          onPressedDelete: inDashboard ? null : () => onPreseedDelete(context),
         );
       },
     );

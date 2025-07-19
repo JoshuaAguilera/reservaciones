@@ -768,11 +768,11 @@ class ItemRow {
                             ),
                           ),
                           Center(
-                            child: TextStyles.standardText(
+                            child: AppText.styledText(
                               text:
                                   "${(estadistica.value.toInt())}${estadistica.isPorcentage ? "%" : ""}",
                               size: 14,
-                              isBold: true,
+                              fontWeight: FontWeight.bold,
                               height: 0,
                             ),
                           ),
@@ -787,15 +787,12 @@ class ItemRow {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextStyles.standardText(
+                            AppText.listTitleText(
                               text: estadistica.title ?? "unknow",
-                              size: 12,
-                              isBold: true,
                             ),
-                            TextStyles.standardText(
+                            AppText.listBodyText(
                               text:
                                   "${estadistica.description ?? ""} ${estadistica.initValue?.round() ?? ""}",
-                              size: 10.5,
                             ),
                           ],
                         ),
@@ -986,7 +983,8 @@ class ItemRow {
         return PopupMenuButton<ListTileTitleAlignment>(
           iconColor: colorIcon,
           tooltip: "Opciones",
-          padding: !diseablePad ? EdgeInsets.all(8) : EdgeInsets.all(0),
+          padding:
+              !diseablePad ? const EdgeInsets.all(8) : const EdgeInsets.all(0),
           itemBuilder: (BuildContext context) =>
               customItems ??
               <PopupMenuEntry<ListTileTitleAlignment>>[
@@ -1022,13 +1020,7 @@ class ItemRow {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         spacing: 10,
-        children: [
-          Icon(icon),
-          TextStyles.standardText(
-            text: name,
-            size: 12.5,
-          )
-        ],
+        children: [Icon(icon), AppText.simpleText(text: name)],
       ),
     );
   }

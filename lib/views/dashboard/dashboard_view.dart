@@ -51,9 +51,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
-    Widget textTitle(String text) {
-      return AppText.sectionTitleText(text: text);
-    }
+    Widget textTitle(String text) => AppText.sectionTitleText(text: text);
 
     Widget _countQuotes(bool isCompact) {
       return AnimatedEntry(
@@ -333,9 +331,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                           child: AnimatedEntry(
                                             delay: const Duration(
                                                 milliseconds: 350),
-                                            child: AppText.simpleText(
+                                            child: AppText.styledText(
                                               text: "Sin nuevas\nCotizaciones",
                                               align: TextAlign.center,
+                                              size: 10,
+                                              maxSize: 11,
                                             ),
                                           ),
                                         );
@@ -425,7 +425,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           if (!compact) const SizedBox(width: 5),
           if (!compact)
             Expanded(
-              child: AppText.simpleText(text: name),
+              child: AppText.styledText(
+                text: name,
+                size: 10,
+                maxSize: 11,
+              ),
             ),
         ],
       ),

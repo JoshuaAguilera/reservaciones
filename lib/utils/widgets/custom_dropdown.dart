@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -186,10 +185,7 @@ class CustomDropdown {
               ),
               style: ButtonStyle(
                 textStyle: WidgetStatePropertyAll(
-                  TextStyle(
-                      fontFamily: "poppins_regular",
-                      fontSize: fontSize,
-                      color: Theme.of(context).primaryColor),
+                  AppText.selectButtonStyle(size: fontSize),
                 ),
               ),
             );

@@ -204,9 +204,8 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       top: 8.0, left: 110),
-                                  child: TextStyles.standardText(
+                                  child: AppText.simpleText(
                                     text: "Num. Cotizaciones",
-                                    size: 12,
                                   ),
                                 ),
                               ),
@@ -226,8 +225,9 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                                         LegendItemOrientation.horizontal,
                                     isResponsive: true,
                                     position: LegendPosition.bottom,
-                                    textStyle: TextStyles.styleStandar(
-                                      size: 11,
+                                    textStyle: AppText.simpleStyle(
+                                      size: 10,
+                                      maxSize: 11,
                                     ),
                                     overflowMode: LegendItemOverflowMode.wrap,
                                   ),
@@ -253,9 +253,8 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                                   primaryXAxis: CategoryAxis(
                                     labelRotation:
                                         filtro == "Equipo" ? 0 : 45, //Opcional
-                                    labelStyle: TextStyles.styleStandar(
-                                      size: 12,
-                                    ),
+                                    labelStyle:
+                                        AppText.simpleStyle(maxSize: 12),
                                     axisLine: const AxisLine(width: 2),
                                     majorGridLines:
                                         const MajorGridLines(width: 0),
@@ -265,9 +264,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                             ],
                           );
                         },
-                        error: (error, stackTrace) {
-                          return const MessageErrorScroll();
-                        },
+                        error: (error, _) => const MessageErrorScroll(),
                         loading: () {
                           return ProgressIndicatorCustom(screenHight: 450);
                         },
@@ -299,11 +296,12 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                         textTitle("Metricas"),
                         if (realWidth > 980)
                           Flexible(
-                            child: TextStyles.standardText(
+                            child: AppText.simpleText(
                               text: DateHelpers.getStringDate(
                                 data: DateTime.now(),
                                 compact: true,
                               ),
+                              align: TextAlign.end,
                             ),
                           )
                       ],

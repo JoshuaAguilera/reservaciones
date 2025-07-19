@@ -170,13 +170,13 @@ class CotizacionService extends BaseService {
     return list;
   }
 
-  Future<Cotizacion?> getByID(int id) async {
+  Future<Cotizacion?> getByID(Tuple2<String?, int?> ids) async {
     Cotizacion? cotizacion;
 
     try {
       final db = AppDatabase();
       final cotDao = CotizacionDao(db);
-      cotizacion = await cotDao.getByID(id);
+      cotizacion = await cotDao.getByID(ids.item2 ?? 0);
       await db.close();
     } catch (e) {
       print(e);

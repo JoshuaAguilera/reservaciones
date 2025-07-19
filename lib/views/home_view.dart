@@ -61,13 +61,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         body: Row(
           children: [
             if (!isSmallScreen) const SideBar(),
-            Expanded(
-              child: Center(
-                child: MenuView(
-                  controller: controller,
-                ),
-              ),
-            ),
+            const Expanded(child: Center(child: MenuView())),
           ],
         ),
       ),

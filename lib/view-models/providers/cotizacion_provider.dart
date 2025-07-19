@@ -13,6 +13,15 @@ import '../../res/helpers/constants.dart';
 import '../services/cotizacion_service.dart';
 import 'ui_provider.dart';
 
+// Proveedores de consulta de cotizacion por ID
+final cotizacionByIdProvider =
+    FutureProvider.family<Cotizacion?, Tuple2<String?, int?>?>(
+        (ref, arg) async {
+  if (arg == null) return null;
+  final cotizacion = await CotizacionService().getByID(arg);
+  return cotizacion;
+});
+
 final uniqueFolioProvider =
     StateProvider<String>((ref) => UniqueKey().hashCode.toString());
 

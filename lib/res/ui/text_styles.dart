@@ -435,8 +435,8 @@ class AppText {
   }) {
     return styledText(
       text: text,
-      size: 12.5,
-      maxSize: 14.5,
+      size: 12,
+      maxSize: 14,
       fontWeight: FontWeight.bold,
       fontFamily: fontMedium,
       color: color,
@@ -446,13 +446,15 @@ class AppText {
   static Text listBodyText({
     required String text,
     Color? color,
-    double size = 11.5,
+    double size = 11,
+    int? maxLines,
   }) {
     return styledText(
       text: text,
       size: size,
-      maxSize: size + 2,
+      maxSize: size + 1.5,
       color: color,
+      maxLines: maxLines,
     );
   }
 

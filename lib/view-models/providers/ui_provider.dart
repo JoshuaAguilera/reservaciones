@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sidebarx/sidebarx.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../models/ui_models.dart';
 import '../services/navigator_service.dart';
@@ -86,10 +87,23 @@ final selectPageProvider = StateProvider<SidebarItem>(
   },
 );
 
-Future<void> navigateToRoute(WidgetRef ref, String route) async {
+Future<void> navigateToRoute(
+  WidgetRef ref,
+  String route, {
+  String subRoute = "",
+  Tuple2<String?, int?>? ids,
+}) async {
   final sidebarItems = ref.read(sidebarItemsProvider);
   final selectedSidebarItem =
       sidebarItems.firstWhere((item) => item.route == route);
+
+  if (subRoute.isNotEmpty) {
+    selectedSidebarItem.subRoute = subRoute;
+  }
+
+  if (ids != null) {
+    selectedSidebarItem.ids = ids;
+  }
 
   ref.read(sidebarControllerProvider).selectIndex(selectedSidebarItem.index);
   ref.read(selectPageProvider.notifier).state = selectedSidebarItem;

@@ -43,7 +43,7 @@ class SummaryControllerWidget extends ConsumerStatefulWidget {
   final List<Habitacion>? saveRooms;
 
   @override
-  _SummaryControllerWidgetState createState() =>
+  ConsumerState<SummaryControllerWidget> createState() =>
       _SummaryControllerWidgetState();
 }
 
@@ -116,7 +116,7 @@ class _SummaryControllerWidgetState
                                             roomExpansionTileList(
                                               showList: showListVR,
                                               habitaciones: widget.finishQuote
-                                                  ? widget.saveRooms!
+                                                  ? widget.saveRooms ?? []
                                                   : habitacionesProvider,
                                               isVR: true,
                                               changeColor: true,
@@ -129,7 +129,7 @@ class _SummaryControllerWidgetState
                                             roomExpansionTileList(
                                               showList: showListVPM,
                                               habitaciones: widget.finishQuote
-                                                  ? widget.saveRooms!
+                                                  ? widget.saveRooms ?? []
                                                   : habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
@@ -153,7 +153,7 @@ class _SummaryControllerWidgetState
                                             roomExpansionTileList(
                                               showList: showListVR,
                                               habitaciones: widget.finishQuote
-                                                  ? widget.saveRooms!
+                                                  ? widget.saveRooms ?? []
                                                   : habitacionesProvider,
                                               isVR: true,
                                               changeColor: true,
@@ -166,7 +166,7 @@ class _SummaryControllerWidgetState
                                             roomExpansionTileList(
                                               showList: showListVPM,
                                               habitaciones: widget.finishQuote
-                                                  ? widget.saveRooms!
+                                                  ? widget.saveRooms ?? []
                                                   : habitacionesProvider,
                                               isVR: false,
                                               onExpansionChanged: (p0) =>
@@ -221,9 +221,9 @@ class _SummaryControllerWidgetState
                                                                     ?.temporadaSelect !=
                                                                 null
                                                             ? [
-                                                                element
-                                                                    .tarifaXDia!
-                                                                    .temporadaSelect!
+                                                                // element
+                                                                //     .tarifaXDia
+                                                                //     .temporadaSelect!
                                                               ]
                                                             : []),
                                                   ),
@@ -285,9 +285,9 @@ class _SummaryControllerWidgetState
                                                                     ?.temporadaSelect !=
                                                                 null
                                                             ? [
-                                                                element
-                                                                    .tarifaXDia!
-                                                                    .temporadaSelect!
+                                                                // element
+                                                                //     .tarifaXDia!
+                                                                //     .temporadaSelect!
                                                               ]
                                                             : []),
                                                   ),
@@ -512,9 +512,7 @@ class _SummaryControllerWidgetState
                               saveRoom(
                                   habitacionProvider, typeQuote, useCashSeason);
                             } else {
-                              if (widget.onSaveQuote != null) {
-                                widget.onSaveQuote!.call();
-                              }
+                              widget.onSaveQuote?.call();
                             }
                           },
                         ),
@@ -535,9 +533,7 @@ class _SummaryControllerWidgetState
                                 (widget.finishQuote ? false : widget.isLoading)
                                     ? null
                                     : () {
-                                        if (widget.onCancel != null) {
-                                          widget.onCancel!.call();
-                                        }
+                                        widget.onCancel?.call();
                                       },
                           ),
                         ),
@@ -882,8 +878,6 @@ class _SummaryControllerWidgetState
     // habitacionProvider.totalVPM =
     //     habitacionProvider.totalRealVPM! - habitacionProvider.descuentoVPM!;
 
-    if (widget.onSaveQuote != null) {
-      widget.onSaveQuote!.call();
-    }
+    widget.onSaveQuote?.call();
   }
 }
