@@ -102,7 +102,7 @@ class Buttons {
     double? sizeIcon,
     double spaceBetween = 10,
     bool compact = false,
-    double sizeText = 13,
+    double sizeText = 12,
     bool withTextBold = true,
     Color? backgroundColor,
     Color? colorText,
@@ -209,7 +209,7 @@ class Buttons {
     IconData? icon,
     bool isLoading = false,
     bool compact = false,
-    double sizeText = 13,
+    double sizeText = 12,
     Color? backgroudColor,
     Color? foregroundColor,
   }) {

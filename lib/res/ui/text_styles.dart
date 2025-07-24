@@ -379,7 +379,7 @@ class AppText {
     return TextStyle(
       fontFamily: fontFamily ?? fontRegular,
       color: color,
-      fontSize: math.max(size, math.min(24.sp, maxSize ?? (size + 3))),
+      fontSize: math.max(size, math.min(16.sp, maxSize ?? (size + 2))),
       fontWeight: fontWeight,
       overflow: overflow ?? TextOverflow.ellipsis,
       height: height,
@@ -448,6 +448,8 @@ class AppText {
     Color? color,
     double size = 11,
     int? maxLines,
+    FontWeight fontWeight = FontWeight.normal,
+    double? height,
   }) {
     return styledText(
       text: text,

@@ -8,27 +8,38 @@ import '../../models/reporte_cotizacion_model.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../services/cotizacion_service.dart';
 import '../../res/helpers/utility.dart';
+import 'usuario_provider.dart';
 
 final reporteCotizacionesIndProvider =
     FutureProvider.family<List<ReporteCotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
   final filterDate = ref.watch(filterReport);
+  final filter = ref.watch(filtroDashboardProvider);
   final date = ref.watch(dateReportProvider);
+  final us = ref.watch(userProvider);
+
+  final initDate = DateHelpers.calculatePeriodReport(
+    filter: filterDate,
+    date: date,
+  );
+  final lastDate = DateHelpers.calculatePeriodReport(
+    filter: filterDate,
+    date: date,
+    addTime: true,
+  );
 
   final response = await CotizacionService().getList(
-    initDate: DateHelpers.calculatePeriodReport(filter: filterDate, date: date),
-    lastDate: DateHelpers.calculatePeriodReport(
-      filter: filterDate,
-      date: date,
-      addTime: true,
-    ),
+    initDate: initDate,
+    lastDate: lastDate,
     limit: 1000,
+    cerradorPor: filter == "Equipo" ? null : us,
   );
 
   final list = Utility.getCotizacionQuotes(
     cotizaciones: response,
     filter: filterDate,
     date: date,
+    adminView: filter == "Equipo",
   );
 
   return list;
@@ -37,12 +48,16 @@ final reporteCotizacionesIndProvider =
 final cotizacionesDiariasProvider =
     FutureProvider.family<List<Estadistica>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
-  DateTime initDate = DateUtils.dateOnly(DateTime.now());
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+  final now = DateTime.now();
+  DateTime initDate = DateUtils.dateOnly(now);
   final list = Utility.getDailyQuotesReport(
     respIndToday: await CotizacionService().getList(
       initDate: initDate,
-      lastDate: DateTime.now(),
+      lastDate: now,
       limit: 100,
+      cerradorPor: filter == "Equipo" ? null : us,
     ),
   );
   return list;
@@ -51,7 +66,10 @@ final cotizacionesDiariasProvider =
 final ultimaCotizacionesProvider =
     FutureProvider.family<List<Cotizacion>, String>((ref, arg) async {
   final detectChanged = ref.watch(changeProvider);
-  final list = await CotizacionService().getList();
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+  final list = await CotizacionService()
+      .getList(creadorPor: filter == "Equipo" ? null : us);
   return list;
 });
 
@@ -137,4 +155,129 @@ final filterQuoteDashProvider = StateProvider<Filter>((ref) {
     orderBy: OrderBy.antiguo,
     status: "",
   );
+});
+
+final cotizaciones24hProvider =
+    FutureProvider.family<Metrica, String>((ref, arg) async {
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+
+  final metric = Metrica(
+    title: "Cotizaciones Hoy",
+    description: "Cotizaciones ayer:",
+    initValue: 0,
+    value: 0,
+  );
+  final now = DateTime.now();
+  DateTime initDate = DateUtils.dateOnly(now);
+  final pastDate = DateUtils.dateOnly(now.subtract(const Duration(days: 1)));
+
+  final nowList = await CotizacionService().getList(
+    initDate: initDate,
+    lastDate: now,
+    limit: 100,
+    creadorPor: filter == "Equipo" ? null : us,
+  );
+
+  final pastList = await CotizacionService().getList(
+    initDate: pastDate,
+    lastDate: initDate,
+    limit: 100,
+  );
+
+  metric.value = (nowList.length).toDouble();
+  metric.initValue = (pastList.length).toDouble();
+
+  return metric;
+});
+
+final cotizaciones7dProvider =
+    FutureProvider.family<Metrica, String>((ref, arg) async {
+  final metric = Metrica(
+    title: "Cotizaciones Semanales",
+    description: "Periodo anterior:",
+    initValue: 0,
+    value: 0,
+  );
+  final now = DateTime.now();
+  DateTime initDate =
+      DateUtils.dateOnly(now).subtract(Duration(days: now.weekday - 1));
+  final pastDate = DateUtils.dateOnly(now.subtract(const Duration(days: 7)));
+
+  final nowList = await CotizacionService().getList(
+    initDate: initDate,
+    lastDate: now,
+    limit: 1000,
+  );
+
+  final pastList = await CotizacionService().getList(
+    initDate: pastDate,
+    lastDate: initDate.subtract(const Duration(days: 1)),
+    limit: 1000,
+  );
+
+  metric.value = (nowList.length).toDouble();
+  metric.initValue = (pastList.length).toDouble();
+
+  return metric;
+});
+
+final cotizaciones30dProvider =
+    FutureProvider.family<Metrica, String>((ref, arg) async {
+  final metric = Metrica(
+    title: "Cotizaciones 30 días",
+    description: "Periodo anterior:",
+    initValue: 0,
+    value: 0,
+  );
+  final now = DateTime.now();
+  DateTime initDate = DateTime(now.year, now.month, 1);
+  final pastDate = DateTime(now.year, now.month - 1, 1);
+
+  final nowList = await CotizacionService().getList(
+    initDate: initDate,
+    lastDate: now,
+    limit: 1000,
+  );
+
+  final pastList = await CotizacionService().getList(
+    initDate: pastDate,
+    lastDate: initDate.subtract(const Duration(days: 1)),
+    limit: 1000,
+  );
+
+  metric.value = (nowList.length).toDouble();
+  metric.initValue = (pastList.length).toDouble();
+
+  return metric;
+});
+
+final cotizaciones90dProvider =
+    FutureProvider.family<Metrica, String>((ref, arg) async {
+  final metric = Metrica(
+    title: "Cotizaciones 90 días",
+    description: "Periodo anterior:",
+    initValue: 0,
+    value: 0,
+  );
+  final now = DateTime.now();
+  DateTime initDate = DateTime(now.year, now.month - 2, 1);
+  final pastDate = DateTime(now.year, now.month - 5, 1);
+
+  final nowList = await CotizacionService().getList(
+    initDate: initDate,
+    lastDate: now,
+    limit: 1000,
+  );
+
+  final pastList = await CotizacionService().getList(
+    initDate: pastDate,
+    lastDate: initDate.subtract(const Duration(days: 1)),
+    limit: 1000,
+  );
+
+  metric.value = (nowList.length).toDouble();
+  metric.initValue = (pastList.length).toDouble();
+
+  return metric;
 });

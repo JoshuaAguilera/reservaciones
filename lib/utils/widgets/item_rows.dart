@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -16,6 +15,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../models/estadistica_model.dart';
 import '../../models/tarifa_rack_model.dart';
 import '../../models/tarifa_x_habitacion_model.dart';
+import '../../res/helpers/animation_helpers.dart' as ah;
 import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
@@ -83,7 +83,7 @@ class ItemRow {
                     colors: ColorsHelpers.getGradientQuote(backgroudColor),
                     end: Alignment.centerRight,
                     begin: Alignment.centerLeft,
-                    transform: const GradientRotation(pi / 0.28),
+                    transform: const GradientRotation(math.pi / 0.28),
                   ),
             color: (!isDark && isQuest)
                 ? backgroudColor
@@ -162,16 +162,18 @@ class ItemRow {
                             ),
                             AppText.styledText(
                               text: register.difference()?.toString() ?? "0",
-                              size: 10,
                               color: foregroundColorSub,
+                              size: 10,
+                              maxSize: 12,
                             ),
                           ],
                         ),
                       ),
                       AppText.styledText(
                         text: register.getStatusModifier(),
-                        size: 10,
                         color: foregroundColorSub,
+                        size: 10,
+                        maxSize: 12,
                       ),
                     ],
                   ),
@@ -705,25 +707,37 @@ class ItemRow {
 
   static Widget metricWidget(
     int index, {
-    required Metrica estadistica,
+    Metrica? metrica,
+    bool isLoading = false,
   }) {
     List<Color> colors = DesktopColors.getPrimaryColors();
     int saveIndex = index % colors.length;
+    final selectMetric = metrica ??
+        Metrica(
+          description: "Loading",
+          initValue: 0,
+          value: 0,
+        );
 
     return Consumer(
       builder: (context, ref, _) {
         final screenWidth = MediaQuery.of(context).size.width;
         final sideController = ref.watch(sidebarControllerProvider);
         final realWidth = screenWidth - (sideController.extended ? 130 : 0);
-        bool isExpanded = realWidth > 980;
+        bool isExpanded = realWidth > 1000;
+        double maxValue = isLoading
+            ? 100
+            : (selectMetric.initValue ?? 0) < selectMetric.value
+                ? selectMetric.value
+                : selectMetric.initValue ?? 100;
 
         return SizedBox(
-          width: isExpanded ? null : 140,
           height: 80,
           child: Card(
             color: Theme.of(context).cardTheme.color,
             child: Tooltip(
-              message: isExpanded ? "" : estadistica.title ?? "unknow",
+              message:
+                  (isExpanded || isLoading) ? "" : metrica?.title ?? "unknow",
               margin: const EdgeInsets.only(top: 8),
               child: Row(
                 mainAxisAlignment: isExpanded
@@ -741,7 +755,10 @@ class ItemRow {
                               width: 55,
                               height: 55,
                               decoration: BoxDecoration(
-                                color: colors[saveIndex].withValues(alpha: .2),
+                                color: (isLoading
+                                        ? DesktopColors.grisPalido
+                                        : colors[saveIndex])
+                                    .withValues(alpha: .2),
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(150),
                                 ),
@@ -752,25 +769,29 @@ class ItemRow {
                             height: 80,
                             width: 80,
                             child: SfCircularChart(
-                              palette: [colors[saveIndex]],
+                              palette: isLoading
+                                  ? [DesktopColors.grisPalido]
+                                  : [colors[saveIndex]],
                               series: <CircularSeries>[
                                 RadialBarSeries<Metrica, String>(
                                   cornerStyle: CornerStyle.bothCurve,
                                   trackColor: Theme.of(context).cardColor,
-                                  maximumValue: estadistica.initValue ?? 100,
+                                  maximumValue: maxValue,
                                   innerRadius: "80%",
-                                  dataSource: [estadistica],
+                                  dataSource: [selectMetric],
                                   xValueMapper: (Metrica data, _) =>
                                       data.description,
-                                  yValueMapper: (Metrica data, _) => data.value,
+                                  yValueMapper: (Metrica data, _) =>
+                                      isLoading ? 30 : data.value,
                                 )
                               ],
                             ),
                           ),
                           Center(
                             child: AppText.styledText(
-                              text:
-                                  "${(estadistica.value.toInt())}${estadistica.isPorcentage ? "%" : ""}",
+                              text: isLoading
+                                  ? "?%"
+                                  : "${(metrica?.value.toInt())}${(metrica?.isPorcentage ?? false) ? "%" : ""}",
                               size: 14,
                               fontWeight: FontWeight.bold,
                               height: 0,
@@ -787,13 +808,34 @@ class ItemRow {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText.listTitleText(
-                              text: estadistica.title ?? "unknow",
-                            ),
-                            AppText.listBodyText(
-                              text:
-                                  "${estadistica.description ?? ""} ${estadistica.initValue?.round() ?? ""}",
-                            ),
+                            if (isLoading)
+                              AppText.listTitleText(
+                                text: "Cargando...",
+                              )
+                            else
+                              AppText.listTitleText(
+                                text: metrica?.title ?? "unknow",
+                              ),
+                            if (isLoading)
+                              ah.AnimatedEntry(
+                                type: ah.AnimationType.shimmer,
+                                delay: const Duration(milliseconds: 2500),
+                                duration: const Duration(milliseconds: 750),
+                                child: Container(
+                                  height: 16,
+                                  margin: const EdgeInsets.only(top: 3),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    color: DesktopColors.grisPalido,
+                                  ),
+                                ),
+                              )
+                            else
+                              AppText.listBodyText(
+                                text:
+                                    "${metrica?.description ?? ""} ${metrica?.initValue?.round() ?? ""}",
+                              ),
                           ],
                         ),
                       ),
@@ -846,7 +888,7 @@ class ItemRow {
       alpha: brightness == Brightness.dark ? 0.5 : 1,
     );
 
-    double bias = brightness == Brightness.dark ? 110 : 0;
+    double bias = brightness == Brightness.dark ? 110 : 20;
 
     Color colorContent = useWhiteForeground(colorItem, bias: bias)
         ? Colors.white
@@ -890,11 +932,9 @@ class ItemRow {
                   isThreeLine: isThreeLine,
                   title: title.isEmpty
                       ? null
-                      : TextStyles.standardText(
+                      : AppText.listTitleText(
                           text: title,
-                          size: max(12, min(20.sp, 14)),
                           color: colorContent,
-                          height: heightTitle,
                         ),
                   subtitle: Padding(
                     padding: EdgeInsets.only(right: hideTrailing ? 8 : 0),
@@ -905,16 +945,12 @@ class ItemRow {
                         if (descriptionWidget != null)
                           descriptionWidget
                         else
-                          TextStyles.standardText(
+                          AppText.listBodyText(
                             text: description,
                             color: colorContent,
-                            size: max(
-                                sizeDescription,
-                                min(
-                                  20.sp,
-                                  sizeDescription + 1,
-                                )),
-                            isBold: applyBoldDescription,
+                            fontWeight: applyBoldDescription
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             maxLines: details.isEmpty
                                 ? 2
                                 : title.isEmpty
@@ -925,10 +961,9 @@ class ItemRow {
                         if (detailsWidget != null)
                           detailsWidget
                         else
-                          TextStyles.standardText(
+                          AppText.listBodyText(
                             text: details,
                             color: colorContent,
-                            size: max(11, min(20.sp, 12)),
                             maxLines: 1,
                             height: 1.25,
                           ),

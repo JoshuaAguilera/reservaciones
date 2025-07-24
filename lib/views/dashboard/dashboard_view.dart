@@ -55,14 +55,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     Widget _countQuotes(bool isCompact) {
       return AnimatedEntry(
-        delay: Duration(milliseconds: isCompact ? 250 : 500),
         child: countQuotes.when(
           data: (list) {
-            if (!starflow) {
-              statisticsWidget = ItemRow.statisticsRow(list);
-              starflow = true;
-            }
-            return statisticsWidget!;
+            return ItemRow.statisticsRow(list);
           },
           error: (error, _) => const SizedBox(),
           loading: () {

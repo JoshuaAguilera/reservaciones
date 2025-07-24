@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/ui/message_error_scroll.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -10,6 +11,7 @@ import '../../res/helpers/animation_helpers.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/general_helpers.dart';
 import '../../res/helpers/utility.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../res/ui/text_styles.dart';
@@ -27,6 +29,7 @@ class DashboardQuoteGraphic extends ConsumerStatefulWidget {
 }
 
 class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
+  final sampleMetric = ItemRow.metricWidget(1, isLoading: true);
   List<Metrica> metricas = [
     Metrica(
       title: "Disponibilidad",
@@ -75,6 +78,10 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
     final reportesSync = ref.watch(reporteCotizacionesIndProvider(''));
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
+    final cotizaciones24h = ref.watch(cotizaciones24hProvider(''));
+    final cotizaciones7d = ref.watch(cotizaciones7dProvider(''));
+    final cotizaciones30d = ref.watch(cotizaciones30dProvider(''));
+    final cotizaciones90d = ref.watch(cotizaciones90dProvider(''));
 
     void changeDateView({bool isAfter = false}) {
       ref.read(dateReportProvider.notifier).changeDateView(
@@ -91,9 +98,8 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          flex: 3,
           child: AnimatedEntry(
-            delay: const Duration(milliseconds: 100),
+            delay: const Duration(milliseconds: 150),
             child: Card(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Padding(
@@ -276,12 +282,10 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
             ),
           ),
         ),
-        Expanded(
-          flex: realWidth > 980 ? 1 : 0,
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: realWidth > 980 ? 240 : 120,
-            ),
+        SizedBox(
+          width: GeneralHelpers.clampSize(380.w, min: 135, max: 320),
+          child: AnimatedEntry(
+            delay: const Duration(milliseconds: 250),
             child: Card(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Padding(
@@ -306,16 +310,39 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                           )
                       ],
                     ),
-                    ListView.builder(
-                      itemCount: metricas.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final estadistica = metricas[index];
-                        return ItemRow.metricWidget(
-                          index,
-                          estadistica: estadistica,
-                        );
-                      },
+                    AnimatedEntry(
+                      child: Column(
+                        children: [
+                          cotizaciones24h.when(
+                            data: (metric) {
+                              return ItemRow.metricWidget(0, metrica: metric);
+                            },
+                            error: (error, _) => Container(),
+                            loading: () => sampleMetric,
+                          ),
+                          cotizaciones7d.when(
+                            data: (metric) {
+                              return ItemRow.metricWidget(1, metrica: metric);
+                            },
+                            error: (error, _) => Container(),
+                            loading: () => sampleMetric,
+                          ),
+                          cotizaciones30d.when(
+                            data: (metric) {
+                              return ItemRow.metricWidget(2, metrica: metric);
+                            },
+                            error: (error, _) => Container(),
+                            loading: () => sampleMetric,
+                          ),
+                          cotizaciones90d.when(
+                            data: (metric) {
+                              return ItemRow.metricWidget(3, metrica: metric);
+                            },
+                            error: (error, _) => Container(),
+                            loading: () => sampleMetric,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -357,7 +384,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
       dataSource: dataSource ?? [],
       xValueMapper: (datum, index) {
         return filtro == "Equipo"
-            ? datum.usuario?.nombre ?? "Sin actividad."
+            ? datum.usuario?.username ?? "Sin actividad."
             : datum.dia;
       },
       yValueMapper: (datum, index) {

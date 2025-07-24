@@ -39,9 +39,8 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
-    Widget textTitle(String text) {
-      return AppText.styledText(text: text, fontWeight: FontWeight.bold);
-    }
+    Widget textTitle(String text) =>
+        AppText.styledText(text: text, fontWeight: FontWeight.bold);
 
     return AnimatedEntry(
       delay: const Duration(milliseconds: 1050),
@@ -60,15 +59,16 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
                     child: textTitle("Ultimas cotizaciones"),
                   ),
                   TextButton(
-                    onPressed: () {
-                      navigateToRoute(ref, "/historial");
-                    },
-                    child: const Text("Mostrar todos"),
+                    onPressed: () => navigateToRoute(ref, "/historial"),
+                    child: AppText.styledText(
+                      text: "Mostrar todos",
+                      fontFamily: AppText.fontMedium,
+                    ),
                   ),
                 ],
               ),
               AnimatedEntry(
-                delay: const Duration(milliseconds: 1250),
+                delay: const Duration(milliseconds: 1050),
                 child: SizedBox(
                   width: realWidth,
                   height: 310,
@@ -242,7 +242,7 @@ class CotizacionItem extends ConsumerWidget {
           title: cotizacion.cliente?.fullName ?? '',
           description: "Folio: ${cotizacion.folio ?? 'unknown'}",
           details: "$createdDate     $limiteDate",
-          color: ColorsHelpers.getColorQuote(cotizacion).withValues(alpha: 0.5),
+          color: ColorsHelpers.getColorQuote(cotizacion),
           radius: 12,
           onPressedEdit: () => onPressedEdit(ref),
           onPressedDelete: inDashboard ? null : () => onPreseedDelete(context),

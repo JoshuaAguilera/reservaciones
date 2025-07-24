@@ -34,12 +34,12 @@ class DesktopColors {
   static Divider divider = Divider(color: white.withOpacity(0.3), height: 2);
 
   //Colors Graphics
-  static Color cotGrupal = Color.fromARGB(255, 233, 170, 69);
-  static Color cotIndiv = Color.fromARGB(255, 26, 112, 166);
-  static Color resGrupal = Color.fromARGB(255, 220, 108, 64);
-  static Color resIndiv = Color.fromARGB(255, 76, 162, 205);
-  static Color cotNoConcr = Color.fromARGB(255, 126, 126, 126);
-  static Color notFound = const Color.fromARGB(255, 204, 202, 202);
+  static Color cotGrupal = HexColor.fromHex("#f1bd74");
+  static Color cotIndiv = HexColor.fromHex("#89bad9");
+  static Color resGrupal = HexColor.fromHex("#d67c6c");
+  static Color resIndiv = HexColor.fromHex("#7dc4d2");
+  static Color cotNoConcr = HexColor.fromHex("#7e7e7e");
+  static Color notFound = HexColor.fromHex("#cccccc");
 
   //Color notification
   static Color notNormal = Color.fromARGB(255, 74, 131, 204);
@@ -72,6 +72,6 @@ class DesktopColors {
   }
 
   static List<Color> getPrimaryColors() {
-    return [primary2, primary3, primary4, primary5, primary6];
+    return [primary4, primary5, primary6, primary2, primary3];
   }
 }

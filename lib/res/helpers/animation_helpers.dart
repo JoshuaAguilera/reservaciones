@@ -46,9 +46,23 @@ class _AnimatedEntryState extends State<AnimatedEntry> {
           delay: !withAnimaitions ? null : widget.delay,
           duration: !withAnimaitions ? 0.ms : widget.duration,
         );
+      case AnimationType.shimmer:
+        return widget.child.animate(
+          onPlay: (controller) {
+            if (!context.mounted) return;
+            controller.repeat(period: 3.seconds);
+          },
+          effects: [
+            ShimmerEffect(
+              delay: !withAnimaitions ? null : widget.delay,
+              duration: !withAnimaitions ? 0.ms : widget.duration,
+              color: Colors.white,
+            ),
+          ],
+        );
       // agrega más tipos aquí
     }
   }
 }
 
-enum AnimationType { fadeIn, slideIn, scale /* etc */ }
+enum AnimationType { fadeIn, slideIn, scale, shimmer /* etc */ }

@@ -80,9 +80,54 @@ class Utility {
     List<Cotizacion>? cotizaciones,
     required String filter,
     required DateTime date,
+    bool adminView = false,
   }) {
     final List<ReporteCotizacion> listCot = [];
     final quotes = cotizaciones ?? [];
+
+    if (adminView) {
+      for (final cot in quotes) {
+        final quoteDay = ReporteCotizacion(
+          numCotizacionesGrupales: 0,
+          numCotizacionesIndividual: 0,
+          numReservacionesGrupales: 0,
+          numReservacionesIndividual: 0,
+          usuario: cot.creadoPor,
+        );
+
+        if (cot.esGrupo ?? false) {
+          if (cot.estatus == "reservado") {
+            quoteDay.numReservacionesGrupales++;
+          } else {
+            quoteDay.numCotizacionesGrupales++;
+          }
+        } else {
+          if (cot.estatus == "reservado") {
+            quoteDay.numReservacionesIndividual++;
+          } else {
+            quoteDay.numCotizacionesIndividual++;
+          }
+        }
+
+        bool userExist = listCot.any(
+            (element) => element.usuario?.compareID(cot.creadoPor) ?? false);
+
+        if (userExist) {
+          // Si el usuario ya existe, actualizamos la cotización
+          final existing = listCot.firstWhere(
+              (element) => element.usuario?.compareID(cot.creadoPor) ?? false);
+          existing.numCotizacionesGrupales += quoteDay.numCotizacionesGrupales;
+          existing.numCotizacionesIndividual += quoteDay.numCotizacionesIndividual;
+          existing.numReservacionesGrupales += quoteDay.numReservacionesGrupales;
+          existing.numReservacionesIndividual += quoteDay.numReservacionesIndividual;
+        } else {
+          // Si no existe, lo añadimos
+          listCot.add(quoteDay);
+        }
+      }
+
+      return listCot;
+    }
 
     switch (filter) {
       case "Semanal":
@@ -115,6 +160,8 @@ class Utility {
                 quoteDay.numCotizacionesIndividual++;
               }
             }
+
+            quoteDay.usuario = cot.creadoPor;
           }
           quoteDay.dia = dayNames[i - 1];
           listCot.add(quoteDay);
@@ -151,6 +198,7 @@ class Utility {
                 quoteDay.numCotizacionesIndividual++;
               }
             }
+            quoteDay.usuario = cot.creadoPor;
           }
           quoteDay.dia = "$i";
           listCot.add(quoteDay);
@@ -186,6 +234,8 @@ class Utility {
                 quoteDay.numCotizacionesIndividual++;
               }
             }
+
+            quoteDay.usuario = cot.creadoPor;
           }
           quoteDay.dia = monthNames[i - 1];
           listCot.add(quoteDay);

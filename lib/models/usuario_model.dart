@@ -48,6 +48,11 @@ class Usuario {
     this.select = false,
   });
 
+  bool compareID(Usuario? other) {
+    if (other == null) return false;
+    return id == other.id || idInt == other.idInt;
+  }
+
   Usuario copyWith({
     int? idInt,
     String? id,
