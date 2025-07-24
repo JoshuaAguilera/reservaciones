@@ -43,7 +43,7 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
         AppText.styledText(text: text, fontWeight: FontWeight.bold);
 
     return AnimatedEntry(
-      delay: const Duration(milliseconds: 1050),
+      delay: const Duration(milliseconds: 650),
       child: Card(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Padding(

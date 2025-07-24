@@ -11,7 +11,9 @@ import '../../models/politica_tarifario_model.dart';
 import '../../models/usuario_model.dart';
 import '../../res/helpers/constants.dart';
 import '../services/cotizacion_service.dart';
+import 'dashboard_provider.dart';
 import 'ui_provider.dart';
+import 'usuario_provider.dart';
 
 // Proveedores de consulta de cotizacion por ID
 final cotizacionByIdProvider =
@@ -93,7 +95,7 @@ class CotizacionesNotifier extends PagedNotifier<int, Cotizacion> {
               limit: limit,
               search: mix.item1,
               ordenBy: mix.item2,
-              cerradorPor: mix.item3,
+              creadorPor: mix.item3,
               showFilter: mix.item4,
               initDate: mix.item5?.fechaInicial,
               lastDate: mix.item5?.fechaFinal,
@@ -168,12 +170,23 @@ final cotizacionesProvider = StateNotifierProvider.family<CotizacionesNotifier,
     PagedState<int, Cotizacion>, String>((ref, mix) {
   final period = ref.watch(periodoProvider);
   final search = ref.watch(searchProvider);
-  final filter = ref.watch(filtroProvider);
+  final orderBy = ref.watch(filtroProvider);
   final showFilter = ref.watch(showFilterProvider);
   final keyList = ref.watch(keyQuoteListProvider);
+  final user = ref.watch(userProvider);
+  final filter = ref.watch(filtroDashboardProvider);
 
   return CotizacionesNotifier(
-      ref, Tuple6(search, filter, null, showFilter, period, keyList));
+    ref,
+    Tuple6(
+      search,
+      orderBy,
+      filter == "Equipo" ? null : user,
+      showFilter,
+      period,
+      keyList,
+    ),
+  );
 });
 
 final cotizacionesReqProvider =

@@ -23,4 +23,25 @@ class SidebarItem {
     required this.requiredPermissions,
     this.ids,
   });
+
+  SidebarItem copyWith({
+    String? route,
+    String? subRoute,
+    String? arg,
+    String? title,
+    IconData? icon,
+    int? index,
+    Tuple2<String?, int?>? ids,
+  }) {
+    return SidebarItem(
+      route: route ?? this.route,
+      subRoute: subRoute ?? this.subRoute,
+      arg: arg ?? this.arg,
+      title: title ?? this.title,
+      icon: icon ?? this.icon,
+      index: index ?? this.index,
+      requiredPermissions: requiredPermissions,
+      ids: ids ?? this.ids,
+    );
+  }
 }

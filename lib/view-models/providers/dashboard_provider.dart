@@ -193,6 +193,9 @@ final cotizaciones24hProvider =
 
 final cotizaciones7dProvider =
     FutureProvider.family<Metrica, String>((ref, arg) async {
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+
   final metric = Metrica(
     title: "Cotizaciones Semanales",
     description: "Periodo anterior:",
@@ -208,12 +211,14 @@ final cotizaciones7dProvider =
     initDate: initDate,
     lastDate: now,
     limit: 1000,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   final pastList = await CotizacionService().getList(
     initDate: pastDate,
     lastDate: initDate.subtract(const Duration(days: 1)),
     limit: 1000,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   metric.value = (nowList.length).toDouble();
@@ -224,6 +229,9 @@ final cotizaciones7dProvider =
 
 final cotizaciones30dProvider =
     FutureProvider.family<Metrica, String>((ref, arg) async {
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+
   final metric = Metrica(
     title: "Cotizaciones 30 días",
     description: "Periodo anterior:",
@@ -238,12 +246,14 @@ final cotizaciones30dProvider =
     initDate: initDate,
     lastDate: now,
     limit: 1000,
+    cerradorPor: filter == "Equipo" ? null : us,
   );
 
   final pastList = await CotizacionService().getList(
     initDate: pastDate,
     lastDate: initDate.subtract(const Duration(days: 1)),
     limit: 1000,
+    cerradorPor: filter == "Equipo" ? null : us,
   );
 
   metric.value = (nowList.length).toDouble();
@@ -254,6 +264,9 @@ final cotizaciones30dProvider =
 
 final cotizaciones90dProvider =
     FutureProvider.family<Metrica, String>((ref, arg) async {
+  final filter = ref.watch(filtroDashboardProvider);
+  final us = ref.watch(userProvider);
+
   final metric = Metrica(
     title: "Cotizaciones 90 días",
     description: "Periodo anterior:",
@@ -268,12 +281,14 @@ final cotizaciones90dProvider =
     initDate: initDate,
     lastDate: now,
     limit: 1000,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   final pastList = await CotizacionService().getList(
     initDate: pastDate,
     lastDate: initDate.subtract(const Duration(days: 1)),
     limit: 1000,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   metric.value = (nowList.length).toDouble();

@@ -26,7 +26,7 @@ final sidebarItemsProvider = Provider<List<SidebarItem>>((ref) {
     SidebarItem(
       route: '/dashboard',
       title: 'Dashboard',
-      icon: Icons.dashboard,
+      icon: Iconsax.home_1_bold,
       requiredPermissions: [],
     ),
     SidebarItem(
@@ -93,7 +93,8 @@ Future<void> navigateToRoute(
   String subRoute = "",
   Tuple2<String?, int?>? ids,
 }) async {
-  final sidebarItems = ref.read(sidebarItemsProvider);
+  final sidebarItems =
+      ref.read(sidebarItemsProvider).map((e) => e.copyWith()).toList();
   final selectedSidebarItem =
       sidebarItems.firstWhere((item) => item.route == route);
 
