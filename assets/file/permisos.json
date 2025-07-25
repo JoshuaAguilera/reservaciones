@@ -1,53 +1,5 @@
 [
   {
-    "id": "persons:create",
-    "resource": "persons",
-    "action": "create",
-    "description": "Crear personas"
-  },
-  {
-    "id": "persons:list",
-    "resource": "persons",
-    "action": "list",
-    "description": "Ver lista de personas"
-  },
-  {
-    "id": "persons:read_all",
-    "resource": "persons",
-    "action": "read_all",
-    "description": "Ver detalles de todas las personas",
-    "isLocal": true
-  },
-  {
-    "id": "persons:read_own",
-    "resource": "persons",
-    "action": "read_own",
-    "description": "Ver detalles de persona propia",
-    "isLocal": true,
-    "isDefault": true
-  },
-  {
-    "id": "persons:update_all",
-    "resource": "persons",
-    "action": "update:all",
-    "description": "Actualizar todas las personas",
-    "isLocal": true
-  },
-  {
-    "id": "persons:update_own",
-    "resource": "persons",
-    "action": "update_own",
-    "description": "Actualizar persona propia",
-    "isLocal": true,
-    "isDefault": true
-  },
-  {
-    "id": "persons:delete",
-    "resource": "persons",
-    "action": "delete",
-    "description": "Borrar personas"
-  },
-  {
     "id": "images:create",
     "resource": "images",
     "action": "create",
@@ -78,124 +30,124 @@
     "description": "Borrar imagenes"
   },
   {
-    "id": "towel_registers:create",
-    "resource": "towel_registers",
+    "id": "cotizaciones:create",
+    "resource": "cotizaciones",
     "action": "create",
-    "description": "Crear registros de toallas"
+    "description": "Crear cotizaciones"
   },
   {
-    "id": "towel_registers:list",
-    "resource": "towel_registers",
+    "id": "cotizaciones:list",
+    "resource": "cotizaciones",
     "action": "list",
-    "description": "Ver lista de registros de toallas"
+    "description": "Ver lista de cotizaciones"
   },
   {
-    "id": "towel_registers:read",
-    "resource": "towel_registers",
+    "id": "cotizaciones:read",
+    "resource": "cotizaciones",
     "action": "read",
-    "description": "Ver detalles de registro de toallas"
+    "description": "Ver detalles de cotizaciones"
   },
   {
-    "id": "towel_registers:update",
-    "resource": "towel_registers",
+    "id": "cotizaciones:update",
+    "resource": "cotizaciones",
     "action": "update",
-    "description": "Actualizar registros de toallas"
+    "description": "Actualizar registros de cotizaciones"
   },
   {
-    "id": "towel_registers:delete",
-    "resource": "towel_registers",
+    "id": "cotizaciones:delete",
+    "resource": "cotizaciones",
     "action": "delete",
-    "description": "Borrar registros de toallas"
+    "description": "Borrar registros de cotizaciones"
   },
   {
-    "id": "towels:create",
-    "resource": "towels",
+    "id": "clientes:create",
+    "resource": "clientes",
     "action": "create",
-    "description": "Crear toallas"
+    "description": "Crear clientes"
   },
   {
-    "id": "towels:list",
-    "resource": "towels",
+    "id": "clientes:list",
+    "resource": "clientes",
     "action": "list",
-    "description": "Ver lista de toallas"
+    "description": "Ver lista de clientes"
   },
   {
-    "id": "towels:read",
-    "resource": "towels",
+    "id": "clientes:read",
+    "resource": "clientes",
     "action": "read",
-    "description": "Ver detalles de toalla"
+    "description": "Ver detalles de clientes"
   },
   {
-    "id": "towels:update",
-    "resource": "towels",
+    "id": "clientes:update",
+    "resource": "clientes",
     "action": "update",
-    "description": "Actualizar toallas"
+    "description": "Actualizar clientes"
   },
   {
-    "id": "towels:delete",
-    "resource": "towels",
+    "id": "clientes:delete",
+    "resource": "clientes",
     "action": "delete",
-    "description": "Borrar toallas"
+    "description": "Borrar clientes"
   },
   {
-    "id": "loans:create",
-    "resource": "loans",
+    "id": "tarifas_base:create",
+    "resource": "tarifas_base",
     "action": "create",
-    "description": "Crear prestamos"
+    "description": "Crear tarifas base"
   },
   {
-    "id": "loans:list",
-    "resource": "loans",
+    "id": "tarifas_base:list",
+    "resource": "tarifas_base",
     "action": "list",
-    "description": "Ver lista de prestamos"
+    "description": "Ver lista de tarifas base"
   },
   {
-    "id": "loans:read",
-    "resource": "loans",
+    "id": "tarifas_base:read",
+    "resource": "tarifas_base",
     "action": "read",
-    "description": "Ver detalles de prestamos"
+    "description": "Ver detalles de tarifas base"
   },
   {
-    "id": "loans:update",
-    "resource": "loans",
+    "id": "tarifas_base:update",
+    "resource": "tarifas_base",
     "action": "update",
-    "description": "Actualizar prestamos"
+    "description": "Actualizar tarifas base"
   },
   {
-    "id": "loans:delete",
-    "resource": "loans",
+    "id": "tarifas_base:delete",
+    "resource": "tarifas_base",
     "action": "delete",
-    "description": "Borrar prestamos"
+    "description": "Borrar tarifas base"
   },
   {
-    "id": "resources:create",
-    "resource": "resources",
+    "id": "politicas:create",
+    "resource": "politicas",
     "action": "create",
-    "description": "Crear recursos"
+    "description": "Crear politicas"
   },
   {
-    "id": "resources:list",
-    "resource": "resources",
+    "id": "politicas:list",
+    "resource": "politicas",
     "action": "list",
-    "description": "Ver lista de recursos"
+    "description": "Ver lista de politicas"
   },
   {
-    "id": "resources:read",
-    "resource": "resources",
+    "id": "politicas:read",
+    "resource": "politicas",
     "action": "read",
-    "description": "Ver detalles de recurso"
+    "description": "Ver detalles de politicas"
   },
   {
-    "id": "resources:update",
-    "resource": "resources",
+    "id": "politicas:update",
+    "resource": "politicas",
     "action": "update",
-    "description": "Actualizar recursos"
+    "description": "Actualizar politicas"
   },
   {
-    "id": "resources:delete",
-    "resource": "resources",
+    "id": "politicas:delete",
+    "resource": "politicas",
     "action": "delete",
-    "description": "Borrar recursos"
+    "description": "Borrar politicas"
   },
   {
     "id": "notifications:create",
@@ -264,64 +216,34 @@
     "isDefault": true
   },
   {
-    "id": "destinations:create",
-    "resource": "destinations",
+    "id": "tarifas:create",
+    "resource": "tarifas",
     "action": "create",
-    "description": "Crear destinos"
+    "description": "Crear tarifas"
   },
   {
-    "id": "destinations:list",
-    "resource": "destinations",
+    "id": "tarifas:list",
+    "resource": "tarifas",
     "action": "list",
-    "description": "Ver lista de destinos"
+    "description": "Ver lista de tarifas"
   },
   {
-    "id": "destinations:read",
-    "resource": "destinations",
+    "id": "tarifas:read",
+    "resource": "tarifas",
     "action": "read",
-    "description": "Ver detalles de destino"
+    "description": "Ver detalles de tarifas"
   },
   {
-    "id": "destinations:update",
-    "resource": "destinations",
+    "id": "tarifas:update",
+    "resource": "tarifas",
     "action": "update",
-    "description": "Actualizar destinos"
+    "description": "Actualizar tarifas"
   },
   {
-    "id": "destinations:delete",
-    "resource": "destinations",
+    "id": "tarifas:delete",
+    "resource": "tarifas",
     "action": "delete",
-    "description": "Borrar destinos"
-  },
-  {
-    "id": "folios:create",
-    "resource": "folios",
-    "action": "create",
-    "description": "Crear folios"
-  },
-  {
-    "id": "folios:list",
-    "resource": "folios",
-    "action": "list",
-    "description": "Ver lista de folios"
-  },
-  {
-    "id": "folios:read",
-    "resource": "folios",
-    "action": "read",
-    "description": "Ver detalles de folio"
-  },
-  {
-    "id": "folios:update",
-    "resource": "folios",
-    "action": "update",
-    "description": "Actualizar folios"
-  },
-  {
-    "id": "folios:delete",
-    "resource": "folios",
-    "action": "delete",
-    "description": "Borrar folios"
+    "description": "Borrar tarifas"
   },
   {
     "id": "users:create",
@@ -442,5 +364,35 @@
     "resource": "event",
     "action": "list",
     "description": "Ver la lista de eventos"
+  },
+  {
+    "id": "configurationSMTP:change",
+    "resource": "configurationSMTP",
+    "action": "change",
+    "description": "Cambiar configuración SMTP"
+  },
+  {
+    "id": "configurationDocument:change",
+    "resource": "configurationDocument",
+    "action": "change",
+    "description": "Cambiar configuración de documentos"
+  },
+  {
+    "id": "changeSeason:change",
+    "resource": "changeSeason",
+    "action": "change",
+    "description": "Cambiar temporada en tarifas de cotizaciones"
+  },
+  {
+    "id": "changeTariff:change",
+    "resource": "changeTariff",
+    "action": "change",
+    "description": "Cambiar tarifa en cotizaciones"
+  },
+  {
+    "id": "changeBaseRate:change",
+    "resource": "changeBaseRate",
+    "action": "change",
+    "description": "Cambiar tarifa base en cotizaciones"
   }
 ]

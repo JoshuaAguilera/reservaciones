@@ -1,144 +1,137 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 import '../../models/notificacion_model.dart';
 import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/general_helpers.dart';
 import '../../res/helpers/icon_helpers.dart';
-import '../../res/helpers/utility.dart';
 import '../../res/ui/buttons.dart';
+import '../../res/ui/custom_widgets.dart';
+import '../../res/ui/message_error_scroll.dart';
+import '../../res/ui/page_base.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../res/ui/text_styles.dart';
+import '../../view-models/providers/notificacion_provider.dart';
+import '../../view-models/providers/ui_provider.dart';
 
-class NotificationWidget extends StatefulWidget {
+class NotificationWidget extends ConsumerStatefulWidget {
   const NotificationWidget({
     super.key,
-    required this.notifications,
-    required this.keyTool,
-    required this.onPressed,
-    this.viewNotification = false,
   });
 
-  final List<Notificacion> notifications;
-  final GlobalKey<TooltipState> keyTool;
-  final void Function() onPressed;
-  final bool viewNotification;
-
   @override
-  State<NotificationWidget> createState() => _NotificationWidgetState();
+  ConsumerState<NotificationWidget> createState() => _NotificationWidgetState();
 }
 
-class _NotificationWidgetState extends State<NotificationWidget> {
+class _NotificationWidgetState extends ConsumerState<NotificationWidget> {
   @override
   Widget build(BuildContext context) {
-    var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
-    int length = widget.notifications.length;
+    return Container(
+      width: GeneralHelpers.clampSize(240.w, min: 275, max: 450),
+      height: MediaQuery.of(context).size.height,
+      color: Theme.of(context).cardColor,
+      child: PageBase(
+        padH: 20,
+        padV: 20,
+        spacing: 0,
+        children: [
+          Row(
+            children: [
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText.cardTitleText(text: "Notificaciones"),
+                    AppText.simpleText(
+                      text: "Aquí puedes ver todas tus notificaciones.",
+                    ),
+                  ],
+                ),
+              ),
+              Buttons.floatingButton(
+                context,
+                toolTip: "Cerrar",
+                tag: "close-notification",
+                icon: Icons.close_rounded,
+                onPressed: () {
+                  ref.read(showNotificationsProvider.notifier).state = false;
+                },
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 350,
+            width: 280,
+            child: Consumer(builder: (context, ref, _) {
+              final keyList = ref.watch(keyNotListProvider);
+              final updateList = ref.watch(updateViewNotificationListProvider);
 
-    return Tooltip(
-      key: widget.keyTool,
-      triggerMode: TooltipTriggerMode.manual,
-      margin: const EdgeInsets.only(right: 50),
-      showDuration: const Duration(seconds: 1),
-      decoration: BoxDecoration(
-        color: brightness == Brightness.light
-            ? Colors.white
-            : DesktopColors.grisSemiPalido,
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
+              return RiverPagedBuilder<int, Notificacion>(
+                key: ValueKey(keyList + updateList),
+                firstPageKey: 1,
+                provider: notificacionesProvider(""),
+                itemBuilder: (context, item, index) => _NotificationItem(
+                  notificacion: item,
+                ),
+                pagedBuilder: (controller, builder) {
+                  return PagedListView(
+                    pagingController: controller,
+                    builderDelegate: builder,
+                  );
+                },
+                firstPageErrorIndicatorBuilder: (_, __) {
+                  return SizedBox(
+                    height: 280,
+                    child: CustomWidgets.messageNotResult(
+                      delay: const Duration(milliseconds: 1250),
+                    ),
+                  );
+                },
+                limit: 20,
+                noMoreItemsIndicatorBuilder: (context, controller) {
+                  return MessageErrorScroll.messageNotFound();
+                },
+                noItemsFoundIndicatorBuilder: (_, __) {
+                  return const MessageErrorScroll(
+                    icon: Iconsax.direct_normal_outline,
+                    title: 'No se encontraron notificaciones',
+                    message: 'No tienes notificaciones pendientes.',
+                  );
+                },
+                newPageProgressIndicatorBuilder: (context, controller) {
+                  return ProgressIndicatorCustom(screenHight: 310);
+                },
+                firstPageProgressIndicatorBuilder: (context, controller) {
+                  return ProgressIndicatorCustom(screenHight: 310);
+                },
+              );
+            }),
           ),
         ],
       ),
-      //Realizar llamado para desaparecer la notificacion de visto
-      richMessage: WidgetSpan(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            width: 300,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText.sectionTitleText(
-                    text: "Notificaciones ${length > 0 ? "($length)" : ""}",
-                  ),
-                  const Divider(
-                    height: 10,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(height: 5),
-                  if (widget.notifications.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Center(
-                          child: AppText.simpleText(
-                        text: "No hay notificaciones por ahora.",
-                      )),
-                    )
-                  else
-                    SizedBox(
-                      height: Utility.limitHeightList(
-                          widget.notifications.length, 3, 200),
-                      child: ListView.builder(
-                        itemCount: widget.notifications.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return _NotificationItem(
-                            notificacion: widget.notifications[index],
-                            isLast: widget.notifications[index] ==
-                                widget.notifications.last,
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: 5)
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      child: Buttons.floatingButton(
-        context,
-        tag: "notificaciones",
-        iconWidget: Stack(
-          children: [
-            const Icon(CupertinoIcons.bell, size: 26),
-            if (widget.notifications.isNotEmpty && !widget.viewNotification)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Icon(
-                  Icons.circle,
-                  color: DesktopColors.notDanger,
-                  size: 14,
-                ),
-              )
-          ],
-        ),
-        onPressed: () {
-          widget.keyTool.currentState?.ensureTooltipVisible();
-          widget.onPressed.call();
-        },
-      ),
-    );
+    ).animate().fadeIn(
+          begin: 1,
+          duration: 20.seconds,
+        );
   }
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem({required this.notificacion, this.isLast = false});
+  const _NotificationItem({required this.notificacion});
 
   final Notificacion notificacion;
-  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: isLast ? 0 : 8),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [

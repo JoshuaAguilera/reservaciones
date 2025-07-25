@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class PageBase extends StatelessWidget {
   final List<Widget> children;
   final double spacing;
+  final double padH;
+  final double padV;
   final void Function(bool, Object?)? onClosePage;
 
   const PageBase({
@@ -10,6 +12,8 @@ class PageBase extends StatelessWidget {
     required this.children,
     this.onClosePage,
     this.spacing = 10,
+    this.padH = 10,
+    this.padV = 12,
   });
 
   @override
@@ -22,7 +26,7 @@ class PageBase extends StatelessWidget {
       },
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           child: SingleChildScrollView(
             child: Column(
               spacing: spacing,

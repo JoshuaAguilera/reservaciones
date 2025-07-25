@@ -29,10 +29,8 @@ class MessageErrorScroll extends StatelessWidget {
           spacing: 8,
           children: [
             if (icon != null) Icon(icon, size: 20, color: Colors.grey),
-            TextStyles.standardText(
+            AppText.sectionTitleText(
               text: messageNotFound ?? "No se encontraron mas resultados.",
-              size: 12,
-              align: TextAlign.center,
             ),
           ],
         ),
@@ -51,21 +49,15 @@ class MessageErrorScroll extends StatelessWidget {
           child: Column(
             spacing: 16,
             children: [
-              Icon(
-                icon ?? Iconsax.danger_outline,
-                size: 48,
-              ),
-              TextStyles.standardText(
+              Icon(icon ?? Iconsax.danger_outline, size: 48),
+              AppText.sectionTitleText(
                 text: title ?? '',
-                align: TextAlign.center,
-                isBold: true,
-                size: 14,
+                overflow: TextOverflow.clip,
+                textAlign: TextAlign.center,
               ),
-              TextStyles.standardText(
+              AppText.simpleText(
                 text: message ?? '',
                 align: TextAlign.center,
-                size: 12,
-                overflow: TextOverflow.clip,
               )
             ],
           ),

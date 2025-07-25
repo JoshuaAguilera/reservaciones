@@ -94,7 +94,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
     //Drawer_Views
     final sectionManager = ref.read(sectionManagerProvider);
     final managerFilter = ref.read(filterUMProvider);
-    final notificationFilter = ref.read(filterNotificationProvider);
+    final notificationFilter = ref.read(filterNotProvider);
 
     String? layout = Layout.checkList;
     String? order = OrderBy.antiguo;
@@ -178,7 +178,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
   @override
   Widget build(BuildContext context) {
     final userFilter = ref.read(filterUMProvider);
-    final notificationFilter = ref.read(filterNotificationProvider);
+    final notificationFilter = ref.read(filterNotProvider);
     final sectionManager = ref.read(sectionManagerProvider);
 
     return LayoutBuilder(
@@ -334,7 +334,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
                           // }
                           case "NOTIFICATIONS":
                             ref
-                                .watch(filterNotificationProvider.notifier)
+                                .watch(filterNotProvider.notifier)
                                 .update(
                               (state) {
                                 return Filter(
@@ -346,7 +346,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
 
                             ref.invalidate(notificacionesProvider);
                             ref
-                                .read(keyNotificationListProvider.notifier)
+                                .read(keyNotListProvider.notifier)
                                 .update((state) => newCode);
                           // case "NOTIFICATION_RULES":
                           //   ref.watch(filterNotRuleProvider.notifier).update(
@@ -487,7 +487,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
 
                           case "NOTIFICATIONS":
                             ref
-                                .watch(filterNotificationProvider.notifier)
+                                .watch(filterNotProvider.notifier)
                                 .update(
                               (state) {
                                 return Filter(orderBy: orderBy, status: tag);
@@ -552,7 +552,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
 
                             case "NOTIFICATIONS":
                               ref
-                                  .read(keyNotificationListProvider.notifier)
+                                  .read(keyNotListProvider.notifier)
                                   .update((state) => newCode);
                             // case "NOTIFICATION_RULES":
                             //   ref

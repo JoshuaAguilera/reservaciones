@@ -14,6 +14,8 @@ import 'notificacion_provider.dart';
 import 'tarifario_provider.dart';
 import 'usuario_provider.dart';
 
+final showNotificationsProvider = StateProvider<bool>((ref) => false);
+
 final sidebarControllerProvider = Provider<SidebarXController>((ref) {
   return SidebarXController(selectedIndex: 0, extended: true);
 });

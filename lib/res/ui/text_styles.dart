@@ -404,25 +404,31 @@ class AppText {
   static Text sectionTitleText({
     required String text,
     Color? color,
+    TextOverflow? overflow,
+    TextAlign? textAlign,
   }) {
     return styledText(
       text: text,
       size: 14,
       maxSize: 16,
+      overflow: overflow,
       fontWeight: FontWeight.bold,
       fontFamily: fontMedium,
       color: color,
+      align: textAlign ?? TextAlign.left,
     );
   }
 
   static Text cardTitleText({
     required String text,
     Color? color,
+    TextOverflow? overflow,
   }) {
     return styledText(
       text: text,
       size: 18,
       maxSize: 22,
+      overflow: overflow,
       fontWeight: FontWeight.bold,
       fontFamily: fontBold,
       color: color,

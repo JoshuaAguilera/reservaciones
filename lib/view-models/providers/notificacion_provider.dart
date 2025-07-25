@@ -9,11 +9,11 @@ import '../../models/notificacion_model.dart';
 import '../services/notificacion_service.dart';
 import 'ui_provider.dart';
 
-final filterNotificationProvider = StateProvider<Filter>((ref) {
+final filterNotProvider = StateProvider<Filter>((ref) {
   return Filter(orderBy: OrderBy.recientes, status: "");
 });
 
-final searchFateProvider = StateProvider<TextEditingController>((ref) {
+final searchNotProvider = StateProvider<TextEditingController>((ref) {
   return TextEditingController();
 });
 
@@ -132,10 +132,19 @@ class NotificacionesNotifier extends PagedNotifier<int, Notificacion> {
 }
 
 final notificacionesProvider = StateNotifierProvider.family<
-    NotificacionesNotifier,
-    PagedState<int, Notificacion>,
-    Tuple4<String, String, String, String>>((ref, mix) {
-  return NotificacionesNotifier(ref, mix);
+    NotificacionesNotifier, PagedState<int, Notificacion>, String>((ref, mix) {
+  final search = ref.watch(searchNotProvider).text;
+  final filter = ref.watch(filterNotProvider);
+  final keyList = ref.watch(keyNotListProvider);
+
+  final arg = Tuple4(
+    search,
+    filter.orderBy.toString(),
+    filter.status,
+    keyList,
+  );
+
+  return NotificacionesNotifier(ref, arg);
 });
 
 final notificacionProvider = StateProvider<Notificacion?>((ref) => null);
@@ -213,7 +222,7 @@ final deleteNotificationProvider = FutureProvider<bool>(
   },
 );
 
-final keyNotificationListProvider = StateProvider<String>((ref) {
+final keyNotListProvider = StateProvider<String>((ref) {
   return UniqueKey().hashCode.toString();
 });
 

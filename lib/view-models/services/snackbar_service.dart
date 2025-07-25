@@ -131,3 +131,11 @@ class SnackbarService {
     messenger.showSnackBar(snackBar);
   }
 }
+
+enum SnackBarType {
+  info,
+  alert,
+  danger,
+  success,
+  system, /* etc */
+}

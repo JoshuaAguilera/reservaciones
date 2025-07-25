@@ -29,16 +29,27 @@ import 'dialogs.dart';
 import '../../res/ui/text_styles.dart';
 
 class ItemRow {
-  static Widget statisticsRow(List<Estadistica> list) {
+  static Widget statisticsRow(
+    List<Estadistica> list, {
+    bool isLoading = false,
+  }) {
     List<Widget> cards = [];
     for (var element in list) {
-      cards.add(ItemRow.statisticRow(element, sizeText: 13.5));
+      cards.add(ItemRow.statisticRow(
+        element,
+        sizeText: 13.5,
+        isLoading: isLoading,
+      ));
     }
 
     return Wrap(runSpacing: 5, spacing: 14, children: cards);
   }
 
-  static Widget statisticRow(Estadistica register, {double sizeText = 15}) {
+  static Widget statisticRow(
+    Estadistica register, {
+    double sizeText = 15,
+    bool isLoading = false,
+  }) {
     bool? status = register.numInitial == register.numNow
         ? null
         : register.numNow > register.numInitial;
@@ -64,7 +75,11 @@ class ItemRow {
             ? isDark
                 ? null
                 : foregroundColor
-            : ColorsHelpers.getColorNavbar(status ? "success" : "danger");
+            : ColorsHelpers.getColorNavbar(status
+                ? register.title == "Caducadas"
+                    ? "alert"
+                    : "success"
+                : "danger");
 
         if (isDark && !isQuest) {
           foregroundColorSub =
@@ -118,7 +133,7 @@ class ItemRow {
                     ],
                   ),
                   Opacity(
-                    opacity: register.total != null ? 1 : 0.5,
+                    opacity: !isLoading ? 1 : 0.5,
                     child: Row(
                       spacing: 5,
                       mainAxisSize: MainAxisSize.min,
@@ -131,10 +146,10 @@ class ItemRow {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (register.total == null)
+                        if (isLoading)
                           LoadingAnimationWidget.twoRotatingArc(
                             size: 25,
-                            color: foregroundColor ?? Colors.white,
+                            color: foregroundColorInt ?? Colors.white,
                           ),
                       ],
                     ),

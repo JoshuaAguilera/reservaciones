@@ -32,7 +32,7 @@ final reporteCotizacionesIndProvider =
     initDate: initDate,
     lastDate: lastDate,
     limit: 1000,
-    cerradorPor: filter == "Equipo" ? null : us,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   final list = Utility.getCotizacionQuotes(
@@ -246,14 +246,14 @@ final cotizaciones30dProvider =
     initDate: initDate,
     lastDate: now,
     limit: 1000,
-    cerradorPor: filter == "Equipo" ? null : us,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   final pastList = await CotizacionService().getList(
     initDate: pastDate,
     lastDate: initDate.subtract(const Duration(days: 1)),
     limit: 1000,
-    cerradorPor: filter == "Equipo" ? null : us,
+    creadorPor: filter == "Equipo" ? null : us,
   );
 
   metric.value = (nowList.length).toDouble();

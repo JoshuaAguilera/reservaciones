@@ -12,10 +12,8 @@ import '../../res/ui/page_base.dart';
 import '../../res/ui/progress_indicator.dart';
 import '../../utils/widgets/form_widgets.dart';
 import '../../utils/widgets/item_rows.dart';
-import '../../utils/widgets/notification_widget.dart';
 import '../../utils/widgets/select_buttons_widget.dart';
 import '../../view-models/providers/dashboard_provider.dart';
-import '../../view-models/providers/notificacion_provider.dart';
 import '../../view-models/providers/ui_provider.dart';
 import '../../res/ui/text_styles.dart';
 import 'dashboard_quote_graphic.dart';
@@ -43,11 +41,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final sizeScreen = MediaQuery.of(context).size;
-    final notificaciones = ref.watch(NotificacionProvider.provider);
     final cotizacionesDiariasSync = ref.watch(cotizacionesDiariasProvider(''));
     final countQuotes = ref.watch(statisticsQuoteProvider(statistics));
     final filtro = ref.watch(filtroDashboardProvider);
-    final viewNotification = ref.watch(userViewProvider);
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
@@ -61,7 +57,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           },
           error: (error, _) => const SizedBox(),
           loading: () {
-            statisticsWidget ??= ItemRow.statisticsRow(statistics);
+            statisticsWidget ??= ItemRow.statisticsRow(
+              statistics,
+              isLoading: true,
+            );
             return statisticsWidget!;
           },
         ),
@@ -94,16 +93,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   Row(
                     spacing: 10,
                     children: [
-                      NotificationWidget(
-                        keyTool: messageKey,
-                        notifications: notificaciones,
-                        viewNotification: viewNotification,
+                      Buttons.floatingButton(
+                        context,
+                        toolTip: "Notificaciones",
+                        tag: "notifications",
+                        icon: Iconsax.notification_outline,
                         onPressed: () {
-                          if (!viewNotification) {
-                            ref
-                                .read(userViewProvider.notifier)
-                                .update((state) => true);
-                          }
+                          ref.read(showNotificationsProvider.notifier).state =
+                              true;
                         },
                       ),
                       Buttons.floatingButton(

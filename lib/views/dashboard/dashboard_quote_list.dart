@@ -15,6 +15,7 @@ import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/custom_widgets.dart';
 import '../../res/ui/graphics_elements.dart';
 import '../../res/ui/message_error_scroll.dart';
+import '../../res/ui/progress_indicator.dart';
 import '../../res/ui/text_styles.dart';
 import '../../utils/widgets/item_rows.dart';
 import '../../view-models/providers/cotizacion_provider.dart';
@@ -122,6 +123,12 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
                         message:
                             'No hay cotizaciones registradas en el sistema.',
                       );
+                    },
+                    newPageProgressIndicatorBuilder: (context, controller) {
+                      return ProgressIndicatorCustom(screenHight: 310);
+                    },
+                    firstPageProgressIndicatorBuilder: (context, controller) {
+                      return ProgressIndicatorCustom(screenHight: 310);
                     },
                   ),
                 ),
