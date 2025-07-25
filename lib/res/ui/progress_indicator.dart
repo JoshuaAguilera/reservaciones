@@ -5,47 +5,66 @@ Widget ProgressIndicatorCustom({
   required double screenHight,
   double sizeProgressIndicator = 45,
   Widget? message,
-  String typeLoading = "fourRotatingDots",
   Color? colorIndicator,
+  IndicatorType type = IndicatorType.fourRotatingDots,
 }) {
   Widget typeLoadingIndicator = LoadingAnimationWidget.fourRotatingDots(
     color: colorIndicator ?? Colors.grey,
     size: sizeProgressIndicator,
   );
 
-  switch (typeLoading) {
-    case "progressiveDots":
+  /*
+  LoadingAnimationWidget.twoRotatingArc(
+                            size: 25,
+                            color: foregroundColorInt ?? Colors.white,
+                          )
+   */
+
+  switch (type) {
+    case IndicatorType.progressiveDots:
       typeLoadingIndicator = LoadingAnimationWidget.progressiveDots(
         color: colorIndicator ?? Colors.grey,
         size: sizeProgressIndicator,
       );
       break;
-    case "staggeredDotsWave":
+    case IndicatorType.staggeredDotsWave:
       typeLoadingIndicator = LoadingAnimationWidget.staggeredDotsWave(
         color: colorIndicator ?? Colors.grey,
         size: sizeProgressIndicator - 10,
       );
       break;
-    default:
+    case IndicatorType.fourRotatingDots:
       typeLoadingIndicator = LoadingAnimationWidget.fourRotatingDots(
         color: colorIndicator ?? Colors.grey,
         size: sizeProgressIndicator,
       );
+      break;
+    case IndicatorType.twoRotatingArc:
+      typeLoadingIndicator = LoadingAnimationWidget.twoRotatingArc(
+        color: colorIndicator ?? Colors.grey,
+        size: sizeProgressIndicator,
+      );
+      break;
   }
 
   return Center(
-    child: Padding(
-      padding: EdgeInsets.only(top: screenHight * 0.37),
-      child: Center(
-        child: Column(
-          children: [
-            typeLoadingIndicator,
-            message ?? const SizedBox(),
-          ],
-        ),
-      ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        typeLoadingIndicator,
+        message ?? const SizedBox(),
+      ],
     ),
   );
+}
+
+enum IndicatorType {
+  progressiveDots,
+  staggeredDotsWave,
+  fourRotatingDots,
+  twoRotatingArc,
+  /* etc */
 }
 
 Widget ProgressIndicatorEstandar({

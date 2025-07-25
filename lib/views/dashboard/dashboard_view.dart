@@ -14,6 +14,7 @@ import '../../utils/widgets/form_widgets.dart';
 import '../../utils/widgets/item_rows.dart';
 import '../../utils/widgets/select_buttons_widget.dart';
 import '../../view-models/providers/dashboard_provider.dart';
+import '../../view-models/providers/notificacion_provider.dart';
 import '../../view-models/providers/ui_provider.dart';
 import '../../res/ui/text_styles.dart';
 import 'dashboard_quote_graphic.dart';
@@ -45,6 +46,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final countQuotes = ref.watch(statisticsQuoteProvider(statistics));
     final filtro = ref.watch(filtroDashboardProvider);
     final sideController = ref.watch(sidebarControllerProvider);
+    final getNotificaciones = ref.watch(getNotifProvider(''));
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
     Widget textTitle(String text) => AppText.sectionTitleText(text: text);
@@ -93,14 +95,32 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   Row(
                     spacing: 10,
                     children: [
-                      Buttons.floatingButton(
-                        context,
-                        toolTip: "Notificaciones",
-                        tag: "notifications",
-                        icon: Iconsax.notification_outline,
-                        onPressed: () {
-                          ref.read(showNotificationsProvider.notifier).state =
-                              true;
+                      getNotificaciones.when(
+                        data: (list) {
+                          bool hasNotifications = list.isNotEmpty;
+
+                          return Buttons.floatingButton(
+                            context,
+                            toolTip: "Notificaciones",
+                            tag: "notifications",
+                            withAlert: hasNotifications,
+                            icon: Iconsax.notification_outline,
+                            onPressed: () {
+                              ref
+                                  .read(showNotificationsProvider.notifier)
+                                  .state = true;
+                            },
+                          );
+                        },
+                        error: (error, stackTrace) {
+                          return const SizedBox();
+                        },
+                        loading: () {
+                          return ProgressIndicatorCustom(
+                            screenHight: 40,
+                            sizeProgressIndicator: 25,
+                            type: IndicatorType.twoRotatingArc,
+                          );
                         },
                       ),
                       Buttons.floatingButton(
@@ -308,7 +328,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                             return ProgressIndicatorCustom(
                                                 screenHight: 350);
                                           },
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),

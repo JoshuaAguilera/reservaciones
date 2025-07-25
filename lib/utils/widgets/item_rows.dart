@@ -75,11 +75,9 @@ class ItemRow {
             ? isDark
                 ? null
                 : foregroundColor
-            : ColorsHelpers.getColorNavbar(status
-                ? register.title == "Caducadas"
-                    ? "alert"
-                    : "success"
-                : "danger");
+            : register.title == "Caducadas"
+                ? DesktopColors.primary5
+                : ColorsHelpers.getColorNavbar(status ? "success" : "danger");
 
         if (isDark && !isQuest) {
           foregroundColorSub =

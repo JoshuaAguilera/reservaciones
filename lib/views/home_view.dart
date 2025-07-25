@@ -1,31 +1,53 @@
+import 'dart:async';
+
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../res/ui/page_base.dart';
-import '../res/ui/text_styles.dart';
+import '../res/helpers/animation_helpers.dart';
 import '../utils/widgets/notification_widget.dart';
 import '../utils/widgets/sidebar.dart';
 import '../view-models/providers/ui_provider.dart';
 import 'menu_view.dart';
 
 class HomeView extends ConsumerStatefulWidget {
-  HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
   bool startflow = false;
   final _key = GlobalKey<ScaffoldState>();
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    // Inicia el polling al iniciar la pantalla
+    _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+      // final notificaciones = await obtenerNotificaciones(
+      //   db: widget.db,
+      //   usuario: widget.usuarioActual,
+      // );
+      // for (var notificacion in notificaciones) {
+      //   // Mostrar notificación (puedes usar un paquete de notificaciones locales)
+      //   print("Tienes una notificación: ${notificacion['titulo']}");
+      //   // Marcar como leída
+      //   await marcarComoLeida(
+      //     db: widget.db,
+      //     idNotificacion: notificacion['id'],
+      //   );
+      // }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -74,17 +96,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
               ],
             ),
             if (showNotifications)
-              ModalBarrier(
-                color: Colors.black.withValues(alpha: 0.5),
-                onDismiss: () {
-                  ref.read(showNotificationsProvider.notifier).state = false;
-                },
+              AnimatedEntry(
+                child: ModalBarrier(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  onDismiss: () {
+                    ref.read(showNotificationsProvider.notifier).state = false;
+                  },
+                ),
               ),
             if (showNotifications)
-              Positioned(
-                right: 0,
-                child: NotificationWidget(),
-              ),
+              const Positioned(right: 0, child: NotificationWidget()),
           ],
         ),
       ),

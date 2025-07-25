@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../../models/cotizacion_model.dart';
+import '../../models/notificacion_model.dart';
 import 'desktop_colors.dart';
 
 extension HexColor on Color {
@@ -124,6 +125,21 @@ class ColorsHelpers {
         return Color.fromARGB(alpha, 230, 92, 0);
       default:
         return isText ? DesktopColors.grisPalido : DesktopColors.greyClean;
+    }
+  }
+
+  static Color getColorNotification(NotificationType? level) {
+    switch (level) {
+      case NotificationType.info:
+        return DesktopColors.primary3;
+      case NotificationType.alert:
+        return DesktopColors.primary5;
+      case NotificationType.danger:
+        return DesktopColors.primary4;
+      case NotificationType.success:
+        return DesktopColors.primary2;
+      default:
+        return DesktopColors.primary6;
     }
   }
 }

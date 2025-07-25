@@ -24,7 +24,7 @@ class Notificacion {
   String? mensaje;
   String? documento;
   String? estatus;
-  String? tipo;
+  NotificationType? tipo;
   String? ruta;
   bool select = false;
   Usuario? usuario;
@@ -47,7 +47,7 @@ class Notificacion {
     String? id,
     DateTime? createdAt,
     String? mensaje,
-    String? tipo,
+    NotificationType? tipo,
     String? ruta,
     Usuario? usuario,
     String? documento,
@@ -72,7 +72,12 @@ class Notificacion {
         idInt: json['idInt'],
         createdAt: DateValueFormat.fromJSON(json['createdAt']),
         mensaje: json['mensaje'],
-        tipo: json['tipo'],
+        tipo: json['tipo'] != null
+            ? NotificationType.values.firstWhere(
+                (e) => e.toString() == 'NotificationType.${json['tipo']}',
+                orElse: () => NotificationType.message,
+              )
+            : null,
         ruta: json['ruta'],
         documento: json['documento'],
         estatus: json['estatus'],
@@ -87,7 +92,7 @@ class Notificacion {
       "mensaje": mensaje,
       "documento": documento,
       "estatus": estatus,
-      "tipo": tipo,
+      "tipo": tipo?.toString().split('.').last,
       "ruta": ruta,
       "usuario_int": usuario?.idInt,
       "usuario": usuario?.id,
@@ -98,4 +103,13 @@ class Notificacion {
 
     return data;
   }
+}
+
+enum NotificationType {
+  alert,
+  info,
+  danger,
+  success,
+  message,
+  /* etc */
 }

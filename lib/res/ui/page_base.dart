@@ -6,6 +6,7 @@ class PageBase extends StatelessWidget {
   final double padH;
   final double padV;
   final void Function(bool, Object?)? onClosePage;
+  final Color? backgroundColor;
 
   const PageBase({
     super.key,
@@ -14,6 +15,7 @@ class PageBase extends StatelessWidget {
     this.spacing = 10,
     this.padH = 10,
     this.padV = 12,
+    this.backgroundColor,
   });
 
   @override
@@ -25,6 +27,8 @@ class PageBase extends StatelessWidget {
         }
       },
       child: Scaffold(
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           child: SingleChildScrollView(

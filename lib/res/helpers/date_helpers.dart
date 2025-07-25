@@ -5,8 +5,12 @@ import '../../models/periodo_model.dart';
 import 'constants.dart';
 
 class DateHelpers {
-  static String getStringDate(
-      {DateTime? data, bool compact = false, bool onlyNameDate = false}) {
+  static String getStringDate({
+    DateTime? data,
+    bool compact = false,
+    bool onlyNameDate = false,
+    bool withTime = false,
+  }) {
     String date = "";
 
     if (!compact) {
@@ -24,6 +28,12 @@ class DateHelpers {
       DateFormat formatter = DateFormat('dd - MM - yy');
       date = formatter.format(nowDate);
       date = date.replaceAll(r'-', "/");
+    }
+
+    if (withTime) {
+      DateFormat timeFormatter = DateFormat('HH:mm');
+      String time = timeFormatter.format(data ?? DateTime.now());
+      date += "  $time";
     }
 
     return date;

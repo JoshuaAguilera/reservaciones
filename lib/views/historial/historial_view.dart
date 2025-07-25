@@ -466,7 +466,7 @@ class _HistorialViewState extends ConsumerState<HistorialView> {
                   loading: () {
                     return ProgressIndicatorCustom(
                       screenHight: screenHeight,
-                      typeLoading: "progressiveDots",
+                      type: IndicatorType.progressiveDots,
                       message: TextStyles.standardText(
                         text: "Buscando cotizaciones",
                         align: TextAlign.center,

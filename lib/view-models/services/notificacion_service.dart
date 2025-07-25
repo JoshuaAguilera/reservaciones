@@ -4,13 +4,14 @@ import '../../database/dao/notificacion_dao.dart';
 import '../../database/database.dart';
 import '../../models/error_model.dart';
 import '../../models/notificacion_model.dart';
+import '../../models/usuario_model.dart';
 import 'base_service.dart';
 
 class NotificacionService extends BaseService {
   Future<List<Notificacion>> getList({
     String tipo = "",
     String documento = "",
-    int? idUsuario,
+    Usuario? usuario,
     String estatus = '',
     DateTime? initDate,
     DateTime? lastDate,
@@ -54,7 +55,7 @@ class NotificacionService extends BaseService {
         initDate: initDate,
         lastDate: lastDate,
         documento: documento,
-        idUsuario: idUsuario,
+        idUsuario: usuario?.idInt,
         page: page,
         limit: limit,
         orderBy: ordenSBy,

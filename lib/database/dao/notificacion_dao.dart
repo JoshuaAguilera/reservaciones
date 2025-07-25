@@ -107,7 +107,10 @@ class NotificacionDao extends DatabaseAccessor<AppDatabase>
         return Notificacion(
           idInt: notificacion.idInt,
           id: notificacion.id,
-          tipo: notificacion.tipo,
+          tipo: NotificationType.values.firstWhere(
+            (e) => e.toString().split('.').last == notificacion.tipo.toString(),
+            orElse: () => NotificationType.message,
+          ),
           mensaje: notificacion.mensaje,
           // ruta: notificacion.ruta,
           // documento: notificacion.documento,
@@ -150,7 +153,10 @@ class NotificacionDao extends DatabaseAccessor<AppDatabase>
     return Notificacion(
       idInt: notificacion.idInt,
       id: notificacion.id,
-      tipo: notificacion.tipo,
+      tipo: NotificationType.values.firstWhere(
+        (e) => e.toString().split('.').last == notificacion.tipo.toString(),
+        orElse: () => NotificationType.message,
+      ),
       mensaje: notificacion.mensaje,
       // ruta: notificacion.ruta,
       // documento: notificacion.documento,

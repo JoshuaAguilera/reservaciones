@@ -276,6 +276,7 @@ class Buttons {
     Color? color,
     double iconSize = 29,
     bool withAdd = false,
+    bool withAlert = false,
     String? toolTip,
   }) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
@@ -316,6 +317,18 @@ class Buttons {
                 ),
               ),
             ),
+          if (withAlert)
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Icon(
+                Icons.circle,
+                size: 12,
+                color: brightness == Brightness.dark
+                    ? Colors.redAccent
+                    : Colors.red,
+              ),
+            )
         ],
       ),
     );

@@ -29,7 +29,7 @@ class MessageErrorScroll extends StatelessWidget {
           spacing: 8,
           children: [
             if (icon != null) Icon(icon, size: 20, color: Colors.grey),
-            AppText.sectionTitleText(
+            AppText.simpleText(
               text: messageNotFound ?? "No se encontraron mas resultados.",
             ),
           ],

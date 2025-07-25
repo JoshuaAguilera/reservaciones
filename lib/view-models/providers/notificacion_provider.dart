@@ -8,6 +8,14 @@ import '../../models/filter_model.dart';
 import '../../models/notificacion_model.dart';
 import '../services/notificacion_service.dart';
 import 'ui_provider.dart';
+import 'usuario_provider.dart';
+
+final getNotifProvider =
+    FutureProvider.family<List<Notificacion>, String>((ref, arg) async {
+  final user = ref.watch(userProvider);
+  final list = await NotificacionService().getList(usuario: user);
+  return list;
+});
 
 final filterNotProvider = StateProvider<Filter>((ref) {
   return Filter(orderBy: OrderBy.recientes, status: "");
@@ -28,13 +36,48 @@ class NotificacionesNotifier extends PagedNotifier<int, Notificacion> {
   NotificacionesNotifier(this.ref, Tuple4<String, String, String, String> mix)
       : super(
           load: (page, limit) {
-            return NotificacionService().getList(
-              page: page,
-              limit: limit,
-              tipo: mix.item1,
-              orderBy: mix.item2,
-              estatus: mix.item3,
-            );
+            final user = ref.watch(userProvider);
+
+            final test = [
+              Notificacion(
+                idInt: 1,
+                tipo: NotificationType.info,
+                documento: "cotizacion",
+                estatus: "Enviado",
+                mensaje: "Nueva cotización recibida",
+                usuario: user,
+                createdAt: DateTime.now(),
+              ),
+              Notificacion(
+                idInt: 1,
+                tipo: NotificationType.alert,
+                documento: "cotizacion",
+                estatus: "Enviado",
+                mensaje: "Cotizaciones a punto de vencer",
+                usuario: user,
+                createdAt: DateTime.now(),
+              ),
+              Notificacion(
+                idInt: 1,
+                tipo: NotificationType.danger,
+                documento: "cotizacion",
+                estatus: "Enviado",
+                mensaje: "Cotizacion cancelada",
+                usuario: user,
+                createdAt: DateTime.now(),
+              ),
+            ];
+
+            return Future.value(test);
+
+            // return NotificacionService().getList(
+            //   page: page,
+            //   limit: limit,
+            //   tipo: mix.item1,
+            //   orderBy: mix.item2,
+            //   estatus: mix.item3,
+            //   usuario: user,
+            // );
           },
           nextPageKeyBuilder: NextPageKeyBuilderDefault.mysqlPagination,
         );
@@ -175,7 +218,7 @@ final saveNotificationProvider = FutureProvider<bool>(
         ref.read(snackbarServiceProvider).showCustomSnackBar(
               message:
                   "Notificacion ${notification.id != null ? "actualizada" : "creada"} correctamente",
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
               type: TypeSnackbar.success,
               withIcon: true,
             );
@@ -210,7 +253,7 @@ final deleteNotificationProvider = FutureProvider<bool>(
       }
       ref.read(snackbarServiceProvider).showCustomSnackBar(
             message: "Notificacion eliminada correctamente",
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
             type: TypeSnackbar.success,
             withIcon: true,
           );
@@ -256,11 +299,7 @@ class NotificacionProvider extends StateNotifier<List<Notificacion>> {
     state = [...state.where((element) => element.idInt != id)];
   }
 
-  void clear() {
-    state = [];
-  }
+  void clear() => state = [];
 }
 
-final userViewProvider = StateProvider<bool>((ref) {
-  return false;
-});
+final userViewProvider = StateProvider<bool>((ref) => false);

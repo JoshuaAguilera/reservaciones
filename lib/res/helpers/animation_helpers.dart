@@ -46,6 +46,13 @@ class _AnimatedEntryState extends State<AnimatedEntry> {
           delay: !withAnimaitions ? null : widget.delay,
           duration: !withAnimaitions ? 0.ms : widget.duration,
         );
+      case AnimationType.slideX:
+        return animation.slideX(
+          begin: 1,
+          end: 0,
+          delay: !withAnimaitions ? null : widget.delay,
+          duration: !withAnimaitions ? 0.ms : widget.duration,
+        );
       case AnimationType.shimmer:
         return widget.child.animate(
           onPlay: (controller) {
@@ -65,4 +72,10 @@ class _AnimatedEntryState extends State<AnimatedEntry> {
   }
 }
 
-enum AnimationType { fadeIn, slideIn, scale, shimmer /* etc */ }
+enum AnimationType {
+  fadeIn,
+  slideIn,
+  scale,
+  shimmer,
+  slideX, /* etc */
+}

@@ -69,7 +69,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
             loadingWidget: ProgressIndicatorCustom(
               screenHight: screenHeight,
               colorIndicator: Colors.white,
-              typeLoading: "progressiveDots",
+              type: IndicatorType.progressiveDots,
               message: TextStyles.standardText(
                 text: "Cargando comprobante",
                 align: TextAlign.center,
@@ -120,7 +120,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
                   screenHight: 17,
                   sizeProgressIndicator: 43,
                   colorIndicator: Colors.white,
-                  typeLoading: "staggeredDotsWave",
+                  type: IndicatorType.staggeredDotsWave,
                 ),
               if (!isLoadingDoc)
                 IconButton(
