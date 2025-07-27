@@ -283,7 +283,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
           ),
         ),
         SizedBox(
-          width: GeneralHelpers.clampSize(380.w, min: 135, max: 320),
+          width: GeneralHelpers.clampSize(500.w, min: realWidth > 800 ? 135 : 80, max: realWidth > 800 ? 300 : 135),
           child: AnimatedEntry(
             delay: const Duration(milliseconds: 250),
             child: Card(

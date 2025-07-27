@@ -21,7 +21,8 @@ class Notificacion {
   int? idInt;
   String? id;
   DateTime? createdAt;
-  String? mensaje;
+  String? title;
+  String? message;
   String? documento;
   String? estatus;
   NotificationType? tipo;
@@ -34,7 +35,8 @@ class Notificacion {
     this.id,
     this.tipo,
     this.createdAt,
-    this.mensaje,
+    this.title,
+    this.message,
     this.ruta,
     this.usuario,
     this.documento,
@@ -46,7 +48,8 @@ class Notificacion {
     int? idInt,
     String? id,
     DateTime? createdAt,
-    String? mensaje,
+    String? title,
+    String? message,
     NotificationType? tipo,
     String? ruta,
     Usuario? usuario,
@@ -57,7 +60,8 @@ class Notificacion {
       Notificacion(
         idInt: idInt ?? this.idInt,
         id: id ?? this.id,
-        mensaje: mensaje ?? this.mensaje,
+        title: title ?? this.title,
+        message: message ?? this.message,
         ruta: ruta ?? this.ruta,
         tipo: tipo ?? this.tipo,
         usuario: usuario?.copyWith() ?? this.usuario?.copyWith(),
@@ -71,7 +75,7 @@ class Notificacion {
         id: json['id'],
         idInt: json['idInt'],
         createdAt: DateValueFormat.fromJSON(json['createdAt']),
-        mensaje: json['mensaje'],
+        title: json['mensaje'],
         tipo: json['tipo'] != null
             ? NotificationType.values.firstWhere(
                 (e) => e.toString() == 'NotificationType.${json['tipo']}',
@@ -89,7 +93,7 @@ class Notificacion {
     final data = <String, dynamic>{
       "id": id,
       "idInt": idInt,
-      "mensaje": mensaje,
+      "mensaje": title,
       "documento": documento,
       "estatus": estatus,
       "tipo": tipo?.toString().split('.').last,

@@ -5,13 +5,13 @@ import '../helpers/desktop_colors.dart';
 import '../../utils/shared_preferences/settings.dart';
 import 'title_page.dart';
 
-class ContainerSection extends StatelessWidget {
-  const ContainerSection({
-    Key? key,
+class ItemContainer extends StatelessWidget {
+  const ItemContainer({
+    super.key,
     required this.title,
     required this.icons,
     required this.children,
-  }) : super(key: key);
+  });
 
   final List<Widget> children;
   final String title;

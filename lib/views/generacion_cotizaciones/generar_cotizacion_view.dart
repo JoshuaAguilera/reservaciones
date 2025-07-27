@@ -227,7 +227,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
       Notificacion newNotification = Notificacion(
         idInt: notificaciones.length + 1,
         documento: "info",
-        mensaje:
+        title:
             "Nueva cotización a nombre de ${receiptQuotePresent.cliente?.nombres ?? ''} ha sido registrada.",
         id: "Nueva cotización registrada",
       );

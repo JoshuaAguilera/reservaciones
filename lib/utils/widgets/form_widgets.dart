@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
@@ -9,6 +10,7 @@ import 'package:icons_plus/icons_plus.dart';
 
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/general_helpers.dart';
 import '../../res/ui/input_decorations.dart';
 import '../../res/ui/tools_ui.dart';
 import 'number_input_with_increment_decrement.dart';
@@ -206,27 +208,31 @@ class FormWidgets {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               if (!compact)
-                TextStyles.standardText(
+                AppText.styledText(
                   text: name,
-                  color: Theme.of(context).primaryColor,
+                  fontFamily: AppText.fontMedium,
+                  size: 11,
                 ),
               SizedBox(
                 height: 25,
-                child: Switch(
-                  value: value,
-                  trackOutlineColor: !(isModeDark && value)
-                      ? null
-                      : const WidgetStatePropertyAll(Colors.white30),
-                  activeColor: activeColor ?? Colors.white,
-                  inactiveTrackColor:
-                      !isModeDark ? null : inactiveColor ?? Colors.blue[200],
-                  inactiveThumbColor: !isModeDark
-                      ? null
-                      : value
-                          ? Colors.white
-                          : Colors.amber,
-                  activeTrackColor: !isModeDark ? null : Colors.black54,
-                  onChanged: onChanged,
+                child: Transform.scale(
+                  scale: GeneralHelpers.clampSize(2.w, min: 0.8, max: 1),
+                  child: Switch(
+                    value: value,
+                    trackOutlineColor: !(isModeDark && value)
+                        ? null
+                        : const WidgetStatePropertyAll(Colors.white30),
+                    activeColor: activeColor ?? Colors.white,
+                    inactiveTrackColor:
+                        !isModeDark ? null : inactiveColor ?? Colors.blue[200],
+                    inactiveThumbColor: !isModeDark
+                        ? null
+                        : value
+                            ? Colors.white
+                            : Colors.amber,
+                    activeTrackColor: !isModeDark ? null : Colors.black54,
+                    onChanged: onChanged,
+                  ),
                 ),
               ),
             ],
@@ -260,6 +266,7 @@ class FormWidgets {
     Color? colorText,
     Color? colorBorder,
     Color? colorIcon,
+    Color? fillColor,
     bool autofocus = false,
     bool filled = false,
     TextInputType? keyboardType,
@@ -306,7 +313,7 @@ class FormWidgets {
               }
             },
             style: AppText.inputStyle(
-              size: sizeText ?? 13,
+              size: sizeText ?? 11,
               color: colorText,
               height: heightText,
             ),
@@ -330,6 +337,7 @@ class FormWidgets {
               labelText: name,
               colorLabel: colorText,
               colorBorder: colorBorder,
+              fillColor: fillColor,
               icon: icon,
               suffixIcon: isPassword
                   ? IconButton(

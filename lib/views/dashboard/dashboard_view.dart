@@ -10,6 +10,7 @@ import '../../res/helpers/utility.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/ui/page_base.dart';
 import '../../res/ui/progress_indicator.dart';
+import '../../res/ui/section_container.dart';
 import '../../utils/widgets/form_widgets.dart';
 import '../../utils/widgets/item_rows.dart';
 import '../../utils/widgets/select_buttons_widget.dart';
@@ -75,10 +76,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     return PageBase(
       children: [
         AnimatedEntry(
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
+          child: SectionContainer(
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
@@ -136,123 +136,100 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   )
                 ],
               ),
-            ),
+            ],
           ),
         ),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Column(
-              spacing: 15,
+        SectionContainer(
+          title: "Dashboard",
+          subtitle: "Planifica, prioriza y realiza tus tareas con facilidad.",
+          headerWidget: Row(
+            spacing: 10,
+            children: [
+              Buttons.buttonPrimary(
+                text: "Crear cotización",
+                icon: Iconsax.card_add_outline,
+                backgroundColor: DesktopColors.primary1,
+                onPressed: () => navigateToRoute(ref, "/generar_cotizacion"),
+              ),
+              Buttons.buttonSecundary(
+                text: "Crear tarifa",
+                icon: Iconsax.wallet_add_1_outline,
+                foregroundColor: DesktopColors.primary1,
+                onPressed: () => navigateToRoute(ref, "/tarifario"),
+              ),
+            ],
+          ),
+          children: [
+            Column(
+              spacing: 10,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText.cardTitleText(text: "Dashboard"),
-                          AppText.simpleText(
-                            text:
-                                "Planifica, prioriza y realiza tus tareas con facilidad.",
-                          ),
-                        ],
+                      child: textTitle(
+                        filtro == "Individual"
+                            ? "Tus Cotizaciones"
+                            : "Cotizaciones del equipo",
                       ),
                     ),
-                    Row(
-                      spacing: 10,
-                      children: [
-                        Buttons.buttonPrimary(
-                          text: "Crear cotización",
-                          icon: Iconsax.card_add_outline,
-                          backgroundColor: DesktopColors.primary1,
-                          onPressed: () =>
-                              navigateToRoute(ref, "/generar_cotizacion"),
-                        ),
-                        Buttons.buttonSecundary(
-                          text: "Crear tarifa",
-                          icon: Iconsax.wallet_add_1_outline,
-                          foregroundColor: DesktopColors.primary1,
-                          onPressed: () => navigateToRoute(ref, "/tarifario"),
-                        ),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      child: SelectButtonsWidget(
+                        selectButton: filtro,
+                        buttons: [
+                          {"Individual": DesktopColors.primary3},
+                          {"Equipo": DesktopColors.primary5},
+                        ],
+                        onPressed: (p0) {
+                          ref.read(filtroDashboardProvider.notifier).update(
+                              (state) => p0 == 0 ? "Individual" : "Equipo");
+                          starflow = false;
+                          setState(() {});
+                        },
+                      ),
                     ),
                   ],
                 ),
-                Column(
+                _countQuotes(isCompact),
+              ],
+            ),
+            const SizedBox(height: 550, child: DashboardQuoteGraphic()),
+            Center(
+              child: SizedBox(
+                height: 390,
+                child: Row(
                   spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: textTitle(
-                            filtro == "Individual"
-                                ? "Tus Cotizaciones"
-                                : "Cotizaciones del equipo",
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                          ),
-                          child: SelectButtonsWidget(
-                            selectButton: filtro,
-                            buttons: [
-                              {"Individual": DesktopColors.primary3},
-                              {"Equipo": DesktopColors.primary5},
-                            ],
-                            onPressed: (p0) {
-                              ref.read(filtroDashboardProvider.notifier).update(
-                                  (state) => p0 == 0 ? "Individual" : "Equipo");
-                              starflow = false;
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    _countQuotes(isCompact),
-                  ],
-                ),
-                const SizedBox(height: 550, child: DashboardQuoteGraphic()),
-                Center(
-                  child: SizedBox(
-                    height: 390,
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: AnimatedEntry(
-                            delay: const Duration(milliseconds: 550),
-                            child: Stack(
-                              children: [
-                                Card(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: textTitle(
-                                            "Cotizaciones de hoy",
-                                          ),
-                                        ),
-                                        cotizacionesDiariasSync.when(
-                                          data: (list) {
-                                            return SfCircularChart(
-                                              margin: const EdgeInsets.all(0),
-                                              tooltipBehavior: !Utility
-                                                      .foundQuotes(list)
+                    Expanded(
+                      flex: 2,
+                      child: AnimatedEntry(
+                        delay: const Duration(milliseconds: 550),
+                        child: Stack(
+                          children: [
+                            Card(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: textTitle(
+                                        "Cotizaciones de hoy",
+                                      ),
+                                    ),
+                                    cotizacionesDiariasSync.when(
+                                      data: (list) {
+                                        return SfCircularChart(
+                                          margin: const EdgeInsets.all(0),
+                                          tooltipBehavior:
+                                              !Utility.foundQuotes(list)
                                                   ? null
                                                   : TooltipBehavior(
                                                       enable: true,
@@ -262,163 +239,155 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                                         size: 11,
                                                       ),
                                                     ),
-                                              palette: [
-                                                (Utility.foundQuotes(list))
-                                                    ? DesktopColors.cotGrupal
-                                                    : DesktopColors.azulClaro,
-                                                DesktopColors.cotIndiv,
-                                                DesktopColors.resGrupal,
-                                                DesktopColors.resIndiv,
-                                              ],
-                                              legend: Legend(
-                                                isVisible:
-                                                    Utility.foundQuotes(list),
-                                                textStyle: AppText.simpleStyle(
-                                                  size: 11,
-                                                ),
-                                                overflowMode:
-                                                    LegendItemOverflowMode.wrap,
-                                                position: LegendPosition.bottom,
-                                              ),
-                                              series: [
-                                                if (Utility.foundQuotes(list))
-                                                  DoughnutSeries<Estadistica,
-                                                      String>(
-                                                    dataSource: list,
-                                                    xValueMapper:
-                                                        (datum, index) =>
-                                                            datum.title,
-                                                    yValueMapper:
-                                                        (datum, index) =>
-                                                            datum.numNow,
-                                                    enableTooltip: true,
-                                                    dataLabelSettings:
-                                                        DataLabelSettings(
-                                                      isVisible: true,
-                                                      showZeroValue: false,
-                                                      textStyle:
-                                                          AppText.simpleStyle(
-                                                        size: 11,
-                                                      ),
-                                                    ),
-                                                  )
-                                                else
-                                                  DoughnutSeries<Estadistica,
-                                                      String>(
-                                                    dataSource: [
-                                                      Estadistica(
-                                                          title:
-                                                              "Sin resultados",
-                                                          numNow: 1)
-                                                    ],
-                                                    xValueMapper:
-                                                        (datum, index) =>
-                                                            datum.title,
-                                                    yValueMapper:
-                                                        (datum, index) =>
-                                                            datum.numNow,
-                                                  )
-                                              ],
-                                            );
-                                          },
-                                          error: (error, stackTrace) {
-                                            return const SizedBox();
-                                          },
-                                          loading: () {
-                                            return ProgressIndicatorCustom(
-                                                screenHight: 350);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: cotizacionesDiariasSync.when(
-                                    data: (list) {
-                                      if (!Utility.foundQuotes(list)) {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
-                                          child: AnimatedEntry(
-                                            delay: const Duration(
-                                                milliseconds: 350),
-                                            child: AppText.styledText(
-                                              text: "Sin nuevas\nCotizaciones",
-                                              align: TextAlign.center,
-                                              size: 10,
-                                              maxSize: 11,
+                                          palette: [
+                                            (Utility.foundQuotes(list))
+                                                ? DesktopColors.cotGrupal
+                                                : DesktopColors.azulClaro,
+                                            DesktopColors.cotIndiv,
+                                            DesktopColors.resGrupal,
+                                            DesktopColors.resIndiv,
+                                          ],
+                                          legend: Legend(
+                                            isVisible:
+                                                Utility.foundQuotes(list),
+                                            textStyle: AppText.simpleStyle(
+                                              size: 11,
                                             ),
+                                            overflowMode:
+                                                LegendItemOverflowMode.wrap,
+                                            position: LegendPosition.bottom,
                                           ),
+                                          series: [
+                                            if (Utility.foundQuotes(list))
+                                              DoughnutSeries<Estadistica,
+                                                  String>(
+                                                dataSource: list,
+                                                xValueMapper: (datum, index) =>
+                                                    datum.title,
+                                                yValueMapper: (datum, index) =>
+                                                    datum.numNow,
+                                                enableTooltip: true,
+                                                dataLabelSettings:
+                                                    DataLabelSettings(
+                                                  isVisible: true,
+                                                  showZeroValue: false,
+                                                  textStyle:
+                                                      AppText.simpleStyle(
+                                                    size: 11,
+                                                  ),
+                                                ),
+                                              )
+                                            else
+                                              DoughnutSeries<Estadistica,
+                                                  String>(
+                                                dataSource: [
+                                                  Estadistica(
+                                                      title: "Sin resultados",
+                                                      numNow: 1)
+                                                ],
+                                                xValueMapper: (datum, index) =>
+                                                    datum.title,
+                                                yValueMapper: (datum, index) =>
+                                                    datum.numNow,
+                                              )
+                                          ],
                                         );
-                                      } else {
+                                      },
+                                      error: (error, stackTrace) {
                                         return const SizedBox();
-                                      }
-                                    },
-                                    error: (error, _) => Container(),
-                                    loading: () => const SizedBox(),
-                                  ),
+                                      },
+                                      loading: () {
+                                        return ProgressIndicatorCustom(
+                                            screenHight: 350);
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                cotizacionesDiariasSync.when(
-                                  data: (list) {
-                                    if (!Utility.foundQuotes(list)) {
-                                      return Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                            bottom: realWidth < 1090 ? 32 : 20,
-                                          ),
-                                          child: Wrap(
-                                            runAlignment: WrapAlignment.center,
-                                            crossAxisAlignment:
-                                                WrapCrossAlignment.center,
-                                            alignment: WrapAlignment.center,
-                                            spacing: 7,
-                                            runSpacing: 4,
-                                            children: [
-                                              itemTodayData(
-                                                "Cotizaciones grupales",
-                                                DesktopColors.cotGrupal,
-                                                compact: realWidth < 1090,
-                                              ),
-                                              itemTodayData(
-                                                "Cotizaciones individuales",
-                                                DesktopColors.cotIndiv,
-                                                compact: realWidth < 1090,
-                                              ),
-                                              itemTodayData(
-                                                "Reservaciones individuales",
-                                                DesktopColors.resIndiv,
-                                                compact: realWidth < 1090,
-                                              ),
-                                              itemTodayData(
-                                                "Reservaciones grupales",
-                                                DesktopColors.resGrupal,
-                                                compact: realWidth < 1090,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return const SizedBox();
-                                    }
-                                  },
-                                  error: (error, stackTrace) => Container(),
-                                  loading: () => const SizedBox(),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                            Center(
+                              child: cotizacionesDiariasSync.when(
+                                data: (list) {
+                                  if (!Utility.foundQuotes(list)) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: AnimatedEntry(
+                                        delay:
+                                            const Duration(milliseconds: 350),
+                                        child: AppText.styledText(
+                                          text: "Sin nuevas\nCotizaciones",
+                                          align: TextAlign.center,
+                                          size: 10,
+                                          maxSize: 11,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                },
+                                error: (error, _) => Container(),
+                                loading: () => const SizedBox(),
+                              ),
+                            ),
+                            cotizacionesDiariasSync.when(
+                              data: (list) {
+                                if (!Utility.foundQuotes(list)) {
+                                  return Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom: realWidth < 1090 ? 32 : 20,
+                                      ),
+                                      child: Wrap(
+                                        runAlignment: WrapAlignment.center,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        alignment: WrapAlignment.center,
+                                        spacing: 7,
+                                        runSpacing: 4,
+                                        children: [
+                                          itemTodayData(
+                                            "Cotizaciones grupales",
+                                            DesktopColors.cotGrupal,
+                                            compact: realWidth < 1090,
+                                          ),
+                                          itemTodayData(
+                                            "Cotizaciones individuales",
+                                            DesktopColors.cotIndiv,
+                                            compact: realWidth < 1090,
+                                          ),
+                                          itemTodayData(
+                                            "Reservaciones individuales",
+                                            DesktopColors.resIndiv,
+                                            compact: realWidth < 1090,
+                                          ),
+                                          itemTodayData(
+                                            "Reservaciones grupales",
+                                            DesktopColors.resGrupal,
+                                            compact: realWidth < 1090,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
+                              error: (error, stackTrace) => Container(),
+                              loading: () => const SizedBox(),
+                            ),
+                          ],
                         ),
-                        const Expanded(flex: 3, child: DashboardQuoteList()),
-                      ],
+                      ),
                     ),
-                  ),
+                    const Expanded(flex: 3, child: DashboardQuoteList()),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );

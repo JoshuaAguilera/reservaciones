@@ -98,9 +98,11 @@ class InputDecorations {
     bool centerLabel = true,
     String? msgError,
     Widget? icon,
+    Color? fillColor,
   }) {
     return InputDecoration(
       filled: true,
+      fillColor: fillColor,
       labelText: labelText,
       counterText: "",
       floatingLabelAlignment:
@@ -133,7 +135,9 @@ class InputDecorations {
       ),
       suffixIcon: suffixIcon,
       icon: icon,
-      focusedBorder: InputBorderDecoration.OutlineBorder(radius: 12),
+      focusedBorder: InputBorderDecoration.OutlineBorder(
+        radius: 12,
+      ),
       errorBorder: const OutlineInputBorder(
         borderSide: BorderSide(width: 1.2, color: Colors.red),
         borderRadius: BorderRadius.all(Radius.circular(15)),

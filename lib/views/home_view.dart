@@ -27,21 +27,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
     // Inicia el polling al iniciar la pantalla
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      // final notificaciones = await obtenerNotificaciones(
-      //   db: widget.db,
-      //   usuario: widget.usuarioActual,
-      // );
-      // for (var notificacion in notificaciones) {
-      //   // Mostrar notificación (puedes usar un paquete de notificaciones locales)
-      //   print("Tienes una notificación: ${notificacion['titulo']}");
-      //   // Marcar como leída
-      //   await marcarComoLeida(
-      //     db: widget.db,
-      //     idNotificacion: notificacion['id'],
-      //   );
-      // }
-    });
+    // _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+    // final notificaciones = await obtenerNotificaciones(
+    //   db: widget.db,
+    //   usuario: widget.usuarioActual,
+    // );
+    // for (var notificacion in notificaciones) {
+    //   // Mostrar notificación (puedes usar un paquete de notificaciones locales)
+    //   print("Tienes una notificación: ${notificacion['titulo']}");
+    //   // Marcar como leída
+    //   await marcarComoLeida(
+    //     db: widget.db,
+    //     idNotificacion: notificacion['id'],
+    //   );
+    // }
+    // });
   }
 
   @override

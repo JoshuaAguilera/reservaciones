@@ -65,12 +65,8 @@ class _NotificationWidgetState extends ConsumerState<NotificationWidget> {
                       ],
                     ),
                   ),
-                  Buttons.floatingButton(
-                    context,
-                    toolTip: "Cerrar",
-                    tag: "close-notification",
-                    iconSize: 25,
-                    icon: Icons.close_rounded,
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
                     onPressed: () {
                       ref.read(showNotificationsProvider.notifier).state =
                           false;
@@ -137,10 +133,23 @@ class _NotificationWidgetState extends ConsumerState<NotificationWidget> {
   }
 }
 
-class _NotificationItem extends StatelessWidget {
+class _NotificationItem extends StatefulWidget {
   const _NotificationItem({required this.notificacion});
-
   final Notificacion notificacion;
+
+  @override
+  State<_NotificationItem> createState() => _NotificationItemState();
+}
+
+class _NotificationItemState extends State<_NotificationItem> {
+  bool isExpanded = false;
+  bool isReaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isReaded = widget.notificacion.estatus == 'Leido';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,58 +157,124 @@ class _NotificationItem extends StatelessWidget {
       return ColorsHelpers.getColorNotification(tipo);
     }
 
-    return ExpansionTile(
-      tilePadding: const EdgeInsets.all(0),
-      showTrailingIcon: false,
-      shape: Border.all(color: Theme.of(context).scaffoldBackgroundColor),
-      
-      title: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              getColorNotification(notificacion.tipo),
-              ColorsHelpers.darken(
-                  getColorNotification(notificacion.tipo), -0.2)
-            ],
-            end: Alignment.centerRight,
-            begin: Alignment.center,
-          ),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: ListTile(
-                minTileHeight: 0,
-                title: AppText.listTitleText(
-                  text: notificacion.mensaje ?? '',
-                  color: Colors.white,
-                ),
-                subtitle: AppText.listBodyText(
-                  text: DateHelpers.getStringDate(
-                    data: notificacion.createdAt,
-                    withTime: true,
+    final contentColor = getColorNotification(widget.notificacion.tipo);
+    final iconColor = ColorsHelpers.darken(contentColor, 0.05);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: isExpanded ? 5 : 3),
+      child: ListTileTheme(
+        minVerticalPadding: 0,
+        child: Opacity(
+          opacity: (!isExpanded && isReaded) ? 0.7 : 1,
+          child: ExpansionTile(
+            showTrailingIcon: false,
+            initiallyExpanded: isExpanded,
+            tilePadding: const EdgeInsets.all(0),
+            shape: ContinuousRectangleBorder(
+              side: BorderSide(
+                width: 4,
+                color: isExpanded
+                    ? contentColor
+                    : Theme.of(context).scaffoldBackgroundColor,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onExpansionChanged: (value) {
+              isExpanded = value;
+              setState(() {});
+            },
+            title: Container(
+              decoration: BoxDecoration(
+                gradient: isExpanded
+                    ? null
+                    : LinearGradient(
+                        colors: [
+                          contentColor,
+                          ColorsHelpers.darken(contentColor, -0.2)
+                        ],
+                        end: Alignment.centerRight,
+                        begin: Alignment.center,
+                      ),
+                borderRadius: BorderRadius.circular(6),
+                color: isExpanded
+                    ? Theme.of(context).scaffoldBackgroundColor
+                    : null,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: ListTile(
+                      minTileHeight: 0,
+                      title: AppText.listTitleText(
+                        text: widget.notificacion.title ?? '',
+                        color: isExpanded ? null : Colors.white,
+                      ),
+                      subtitle: AppText.listBodyText(
+                        text:
+                            "Hace ${DateHelpers.getCountDate(widget.notificacion.createdAt)} ${isReaded ? "(leído)" : ""}",
+                        color: isExpanded ? null : Colors.white,
+                      ),
+                    ),
                   ),
-                  color: Colors.white,
-                ),
+                  Icon(
+                    IconHelpers.getIconNavbar(widget.notificacion.tipo
+                            ?.toString()
+                            .split('.')
+                            .last) ??
+                        CupertinoIcons.bell,
+                    color: iconColor,
+                    size: GeneralHelpers.clampSize(100.w, min: 25, max: 65),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: Icon(
+                      isExpanded
+                          ? Iconsax.arrow_up_outline
+                          : Iconsax.arrow_bottom_outline,
+                      color: iconColor,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Icon(
-              IconHelpers.getIconNavbar(
-                      notificacion.tipo?.toString().split('.').last) ??
-                  CupertinoIcons.bell,
-              color: ColorsHelpers.darken(
-                  getColorNotification(notificacion.tipo), 0.05),
-              size: GeneralHelpers.clampSize(100.w, min: 25, max: 65),
-            ),
-            IconButton(
-              icon: const Icon(Iconsax.trash_outline),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ],
+            expandedCrossAxisAlignment: CrossAxisAlignment.start,
+            childrenPadding: const EdgeInsets.fromLTRB(15, 2, 15, 12),
+            children: [
+              AppText.simpleText(
+                text: widget.notificacion.message ?? '',
+                overflow: TextOverflow.clip,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 30,
+                child: Row(
+                  spacing: 20,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Buttons.buttonPrimary(
+                        text: "Ver detalles",
+                        backgroundColor: contentColor,
+                        icon: Iconsax.arrow_right_4_outline,
+                        padVer: 0,
+                        onPressed: () {},
+                      ),
+                    ),
+                    Expanded(
+                      child: Buttons.buttonSecundary(
+                        text: "Descartar",
+                        icon: Iconsax.close_circle_outline,
+                        onPressed: () {},
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

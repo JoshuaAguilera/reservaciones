@@ -42,7 +42,7 @@ class _MenuViewState extends ConsumerState<MenuView> {
             }
             return HistorialView(sideController: sidebarController);
           case "/configuracion":
-            return ConfiguracionView(sideController: sidebarController);
+            return const ConfiguracionView();
           case "/tarifario":
             return TarifarioView(sideController: sidebarController);
           case "/gestion_usuarios":

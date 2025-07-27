@@ -147,7 +147,7 @@ const List<String> typeSettings = [
   // "Acerca del programa"
   // "Formato Individual",
   // "Formato Grupal",
-  // "Planes y categorias",
+  "Tarifario",
 ];
 
 const List<String> textFont = <String>[

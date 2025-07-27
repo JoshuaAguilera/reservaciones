@@ -15,7 +15,7 @@ class SelectableButton extends StatefulWidget {
     required this.selected,
     required this.onPressed,
     required this.child,
-    this.color = const Color.fromRGBO(144, 202, 249, 1),
+    this.color = const Color.fromARGB(255, 144, 228, 249),
     this.round = 12,
     this.roundActive = 10,
     this.elevation = 0,
@@ -63,9 +63,7 @@ class _SelectableButtonState extends State<SelectableButton> {
                   borderRadius: BorderRadius.circular(widget.roundActive!),
                 ),
               ),
-              textStyle: WidgetStatePropertyAll(
-                TextStyles.styleStandar(isBold: true),
-              ),
+              textStyle: WidgetStatePropertyAll(AppText.selectButtonStyle()),
               foregroundColor: WidgetStatePropertyAll(
                 widget.selected
                     ? DesktopColors.ceruleanOscure
@@ -80,9 +78,7 @@ class _SelectableButtonState extends State<SelectableButton> {
                   borderRadius: BorderRadius.circular(widget.round!),
                 ),
               ),
-              textStyle: WidgetStatePropertyAll(
-                TextStyles.styleStandar(isBold: true),
-              ),
+              textStyle: WidgetStatePropertyAll(AppText.selectButtonStyle()),
               foregroundColor: WidgetStatePropertyAll(Colors.grey[700]),
               elevation: WidgetStatePropertyAll(widget.elevation),
             ),
@@ -159,7 +155,7 @@ class Buttons {
                 padding: EdgeInsets.symmetric(vertical: padVer ?? 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     if (icon != null && !isLoading)
                       Padding(
@@ -181,8 +177,7 @@ class Buttons {
                       ),
                     if (isLoading) const SizedBox(width: 10),
                     if (text.isNotEmpty)
-                      Expanded(
-                        flex: 0,
+                      Flexible(
                         child: AppText.styledText(
                           text: !isLoading ? text : "Espere",
                           size: sizeText,

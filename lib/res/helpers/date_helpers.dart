@@ -42,6 +42,18 @@ class DateHelpers {
   static String getCountDate(DateTime? date) {
     Duration time = DateTime.now().difference(date ?? DateTime.now());
 
+    if (time.inDays >= 365) {
+      return "${(time.inDays / 365).floor()} año${(time.inDays / 365).floor() > 1 ? "s" : ""}";
+    }
+
+    if (time.inDays >= 30) {
+      return "${(time.inDays / 30).floor()} mes${(time.inDays / 30).floor() > 1 ? "es" : ""}";
+    }
+
+    if (time.inDays >= 7) {
+      return "${(time.inDays / 7).floor()} semana${(time.inDays / 7).floor() > 1 ? "s" : ""}";
+    }
+
     if (time.inDays >= 1) {
       return "${time.inDays} dia${time.inDays > 1 ? "s" : ""}";
     }

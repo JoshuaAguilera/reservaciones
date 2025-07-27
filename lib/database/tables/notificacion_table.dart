@@ -6,6 +6,7 @@ class NotificacionTable extends Table {
   TextColumn get id => text().nullable()();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime).nullable()();
+  TextColumn get titulo => text().nullable()();
   TextColumn get mensaje => text().nullable()();
   TextColumn get tipo => text().nullable()();
   TextColumn get documento => text().nullable()();

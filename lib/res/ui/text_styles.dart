@@ -379,7 +379,7 @@ class AppText {
     return TextStyle(
       fontFamily: fontFamily ?? fontRegular,
       color: color,
-      fontSize: math.max(size, math.min(16.sp, maxSize ?? (size + 2))),
+      fontSize: math.max(size, math.min(24.sp, maxSize ?? (size + 2))),
       fontWeight: fontWeight,
       overflow: overflow ?? TextOverflow.ellipsis,
       height: height,
@@ -391,6 +391,8 @@ class AppText {
     required String text,
     Color? color,
     TextAlign align = TextAlign.left,
+    TextOverflow? overflow,
+    String fontFamily = fontRegular,
   }) {
     return styledText(
       text: text,
@@ -398,6 +400,8 @@ class AppText {
       maxSize: 13.5,
       color: color,
       align: align,
+      overflow: overflow,
+      fontFamily: fontFamily,
     );
   }
 
@@ -423,6 +427,7 @@ class AppText {
     required String text,
     Color? color,
     TextOverflow? overflow,
+    String fontFamily = fontBold,
   }) {
     return styledText(
       text: text,
@@ -430,7 +435,7 @@ class AppText {
       maxSize: 22,
       overflow: overflow,
       fontWeight: FontWeight.bold,
-      fontFamily: fontBold,
+      fontFamily: fontFamily,
       color: color,
     );
   }

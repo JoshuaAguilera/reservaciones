@@ -737,7 +737,7 @@ class ItemRow {
         final screenWidth = MediaQuery.of(context).size.width;
         final sideController = ref.watch(sidebarControllerProvider);
         final realWidth = screenWidth - (sideController.extended ? 130 : 0);
-        bool isExpanded = realWidth > 1000;
+        bool isExpanded = realWidth > 800;
         double maxValue = isLoading
             ? 100
             : (selectMetric.initValue ?? 0) < selectMetric.value
@@ -821,14 +821,11 @@ class ItemRow {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (isLoading)
-                              AppText.listTitleText(
-                                text: "Cargando...",
-                              )
-                            else
-                              AppText.listTitleText(
-                                text: metrica?.title ?? "unknow",
-                              ),
+                            AppText.listTitleText(
+                              text: isLoading
+                                  ? "Cargando..."
+                                  : metrica?.title ?? "unknow",
+                            ),
                             if (isLoading)
                               ah.AnimatedEntry(
                                 type: ah.AnimationType.shimmer,

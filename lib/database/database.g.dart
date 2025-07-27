@@ -4497,6 +4497,11 @@ class $NotificacionTableTable extends NotificacionTable
       type: DriftSqlType.dateTime,
       requiredDuringInsert: false,
       defaultValue: currentDateAndTime);
+  static const VerificationMeta _tituloMeta = const VerificationMeta('titulo');
+  @override
+  late final GeneratedColumn<String> titulo = GeneratedColumn<String>(
+      'titulo', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _mensajeMeta =
       const VerificationMeta('mensaje');
   @override
@@ -4547,6 +4552,7 @@ class $NotificacionTableTable extends NotificacionTable
         idInt,
         id,
         createdAt,
+        titulo,
         mensaje,
         tipo,
         documento,
@@ -4576,6 +4582,10 @@ class $NotificacionTableTable extends NotificacionTable
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('titulo')) {
+      context.handle(_tituloMeta,
+          titulo.isAcceptableOrUnknown(data['titulo']!, _tituloMeta));
     }
     if (data.containsKey('mensaje')) {
       context.handle(_mensajeMeta,
@@ -4622,6 +4632,8 @@ class $NotificacionTableTable extends NotificacionTable
           .read(DriftSqlType.string, data['${effectivePrefix}id']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
+      titulo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}titulo']),
       mensaje: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}mensaje']),
       tipo: attachedDatabase.typeMapping
@@ -4650,6 +4662,7 @@ class NotificacionTableData extends DataClass
   final int idInt;
   final String? id;
   final DateTime? createdAt;
+  final String? titulo;
   final String? mensaje;
   final String? tipo;
   final String? documento;
@@ -4661,6 +4674,7 @@ class NotificacionTableData extends DataClass
       {required this.idInt,
       this.id,
       this.createdAt,
+      this.titulo,
       this.mensaje,
       this.tipo,
       this.documento,
@@ -4677,6 +4691,9 @@ class NotificacionTableData extends DataClass
     }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
+    }
+    if (!nullToAbsent || titulo != null) {
+      map['titulo'] = Variable<String>(titulo);
     }
     if (!nullToAbsent || mensaje != null) {
       map['mensaje'] = Variable<String>(mensaje);
@@ -4707,6 +4724,8 @@ class NotificacionTableData extends DataClass
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
+      titulo:
+          titulo == null && nullToAbsent ? const Value.absent() : Value(titulo),
       mensaje: mensaje == null && nullToAbsent
           ? const Value.absent()
           : Value(mensaje),
@@ -4732,6 +4751,7 @@ class NotificacionTableData extends DataClass
       idInt: serializer.fromJson<int>(json['idInt']),
       id: serializer.fromJson<String?>(json['id']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      titulo: serializer.fromJson<String?>(json['titulo']),
       mensaje: serializer.fromJson<String?>(json['mensaje']),
       tipo: serializer.fromJson<String?>(json['tipo']),
       documento: serializer.fromJson<String?>(json['documento']),
@@ -4748,6 +4768,7 @@ class NotificacionTableData extends DataClass
       'idInt': serializer.toJson<int>(idInt),
       'id': serializer.toJson<String?>(id),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'titulo': serializer.toJson<String?>(titulo),
       'mensaje': serializer.toJson<String?>(mensaje),
       'tipo': serializer.toJson<String?>(tipo),
       'documento': serializer.toJson<String?>(documento),
@@ -4762,6 +4783,7 @@ class NotificacionTableData extends DataClass
           {int? idInt,
           Value<String?> id = const Value.absent(),
           Value<DateTime?> createdAt = const Value.absent(),
+          Value<String?> titulo = const Value.absent(),
           Value<String?> mensaje = const Value.absent(),
           Value<String?> tipo = const Value.absent(),
           Value<String?> documento = const Value.absent(),
@@ -4773,6 +4795,7 @@ class NotificacionTableData extends DataClass
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
         createdAt: createdAt.present ? createdAt.value : this.createdAt,
+        titulo: titulo.present ? titulo.value : this.titulo,
         mensaje: mensaje.present ? mensaje.value : this.mensaje,
         tipo: tipo.present ? tipo.value : this.tipo,
         documento: documento.present ? documento.value : this.documento,
@@ -4786,6 +4809,7 @@ class NotificacionTableData extends DataClass
       idInt: data.idInt.present ? data.idInt.value : this.idInt,
       id: data.id.present ? data.id.value : this.id,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      titulo: data.titulo.present ? data.titulo.value : this.titulo,
       mensaje: data.mensaje.present ? data.mensaje.value : this.mensaje,
       tipo: data.tipo.present ? data.tipo.value : this.tipo,
       documento: data.documento.present ? data.documento.value : this.documento,
@@ -4803,6 +4827,7 @@ class NotificacionTableData extends DataClass
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
+          ..write('titulo: $titulo, ')
           ..write('mensaje: $mensaje, ')
           ..write('tipo: $tipo, ')
           ..write('documento: $documento, ')
@@ -4815,7 +4840,7 @@ class NotificacionTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(idInt, id, createdAt, mensaje, tipo,
+  int get hashCode => Object.hash(idInt, id, createdAt, titulo, mensaje, tipo,
       documento, estatus, ruta, usuarioInt, usuario);
   @override
   bool operator ==(Object other) =>
@@ -4824,6 +4849,7 @@ class NotificacionTableData extends DataClass
           other.idInt == this.idInt &&
           other.id == this.id &&
           other.createdAt == this.createdAt &&
+          other.titulo == this.titulo &&
           other.mensaje == this.mensaje &&
           other.tipo == this.tipo &&
           other.documento == this.documento &&
@@ -4838,6 +4864,7 @@ class NotificacionTableCompanion
   final Value<int> idInt;
   final Value<String?> id;
   final Value<DateTime?> createdAt;
+  final Value<String?> titulo;
   final Value<String?> mensaje;
   final Value<String?> tipo;
   final Value<String?> documento;
@@ -4849,6 +4876,7 @@ class NotificacionTableCompanion
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.titulo = const Value.absent(),
     this.mensaje = const Value.absent(),
     this.tipo = const Value.absent(),
     this.documento = const Value.absent(),
@@ -4861,6 +4889,7 @@ class NotificacionTableCompanion
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.titulo = const Value.absent(),
     this.mensaje = const Value.absent(),
     this.tipo = const Value.absent(),
     this.documento = const Value.absent(),
@@ -4873,6 +4902,7 @@ class NotificacionTableCompanion
     Expression<int>? idInt,
     Expression<String>? id,
     Expression<DateTime>? createdAt,
+    Expression<String>? titulo,
     Expression<String>? mensaje,
     Expression<String>? tipo,
     Expression<String>? documento,
@@ -4885,6 +4915,7 @@ class NotificacionTableCompanion
       if (idInt != null) 'id_int': idInt,
       if (id != null) 'id': id,
       if (createdAt != null) 'created_at': createdAt,
+      if (titulo != null) 'titulo': titulo,
       if (mensaje != null) 'mensaje': mensaje,
       if (tipo != null) 'tipo': tipo,
       if (documento != null) 'documento': documento,
@@ -4899,6 +4930,7 @@ class NotificacionTableCompanion
       {Value<int>? idInt,
       Value<String?>? id,
       Value<DateTime?>? createdAt,
+      Value<String?>? titulo,
       Value<String?>? mensaje,
       Value<String?>? tipo,
       Value<String?>? documento,
@@ -4910,6 +4942,7 @@ class NotificacionTableCompanion
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
+      titulo: titulo ?? this.titulo,
       mensaje: mensaje ?? this.mensaje,
       tipo: tipo ?? this.tipo,
       documento: documento ?? this.documento,
@@ -4931,6 +4964,9 @@ class NotificacionTableCompanion
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (titulo.present) {
+      map['titulo'] = Variable<String>(titulo.value);
     }
     if (mensaje.present) {
       map['mensaje'] = Variable<String>(mensaje.value);
@@ -4962,6 +4998,7 @@ class NotificacionTableCompanion
           ..write('idInt: $idInt, ')
           ..write('id: $id, ')
           ..write('createdAt: $createdAt, ')
+          ..write('titulo: $titulo, ')
           ..write('mensaje: $mensaje, ')
           ..write('tipo: $tipo, ')
           ..write('documento: $documento, ')
@@ -13911,6 +13948,7 @@ typedef $$NotificacionTableTableCreateCompanionBuilder
   Value<int> idInt,
   Value<String?> id,
   Value<DateTime?> createdAt,
+  Value<String?> titulo,
   Value<String?> mensaje,
   Value<String?> tipo,
   Value<String?> documento,
@@ -13924,6 +13962,7 @@ typedef $$NotificacionTableTableUpdateCompanionBuilder
   Value<int> idInt,
   Value<String?> id,
   Value<DateTime?> createdAt,
+  Value<String?> titulo,
   Value<String?> mensaje,
   Value<String?> tipo,
   Value<String?> documento,
@@ -13954,6 +13993,7 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
+            Value<String?> titulo = const Value.absent(),
             Value<String?> mensaje = const Value.absent(),
             Value<String?> tipo = const Value.absent(),
             Value<String?> documento = const Value.absent(),
@@ -13966,6 +14006,7 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             idInt: idInt,
             id: id,
             createdAt: createdAt,
+            titulo: titulo,
             mensaje: mensaje,
             tipo: tipo,
             documento: documento,
@@ -13978,6 +14019,7 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             Value<int> idInt = const Value.absent(),
             Value<String?> id = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
+            Value<String?> titulo = const Value.absent(),
             Value<String?> mensaje = const Value.absent(),
             Value<String?> tipo = const Value.absent(),
             Value<String?> documento = const Value.absent(),
@@ -13990,6 +14032,7 @@ class $$NotificacionTableTableTableManager extends RootTableManager<
             idInt: idInt,
             id: id,
             createdAt: createdAt,
+            titulo: titulo,
             mensaje: mensaje,
             tipo: tipo,
             documento: documento,
@@ -14016,6 +14059,11 @@ class $$NotificacionTableTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
       column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titulo => $state.composableBuilder(
+      column: $state.table.titulo,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -14077,6 +14125,11 @@ class $$NotificacionTableTableOrderingComposer
 
   ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
       column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titulo => $state.composableBuilder(
+      column: $state.table.titulo,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
