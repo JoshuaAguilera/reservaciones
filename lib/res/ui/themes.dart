@@ -131,6 +131,13 @@ class Themes {
           ),
         ),
       ),
+      dialogBackgroundColor: Colors.white,
+      dialogTheme: const DialogTheme(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+      ),
       scaffoldBackgroundColor: Colors.white,
       cardColor: const Color.fromARGB(255, 238, 238, 238),
       cardTheme: const CardThemeData(
@@ -173,6 +180,30 @@ class Themes {
         bodySmall: TextStyles.styleStandar(
           color: Colors.black87,
           size: AppTextSizes.bodySmall,
+        ),
+        displayLarge: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.displayLarge,
+        ),
+        displaySmall: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.displaySmall,
+        ),
+        headlineLarge: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.headlineLarge,
+        ),
+        headlineSmall: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.headlineSmall,
+        ),
+        labelLarge: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.labelLarge,
+        ),
+        labelSmall: TextStyles.styleStandar(
+          color: Colors.black87,
+          size: AppTextSizes.labelSmall,
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(

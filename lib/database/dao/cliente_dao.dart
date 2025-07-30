@@ -80,7 +80,6 @@ class ClienteDao extends DatabaseAccessor<AppDatabase> with _$ClienteDaoMixin {
     query.limit(limit, offset: offset);
 
     final data = await query.get();
-
     return data.map(
       (e) {
         Cliente client = Cliente.fromJson(e.toJson());

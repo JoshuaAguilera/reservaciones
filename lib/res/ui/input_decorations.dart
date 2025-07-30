@@ -109,10 +109,9 @@ class InputDecorations {
           !centerLabel ? null : FloatingLabelAlignment.center,
       alignLabelWithHint: true,
       isDense: false,
-      labelStyle: TextStyle(
+      labelStyle: AppText.inputStyle(
         color: colorLabel,
-        fontFamily: fontRegular,
-        fontSize: 13,
+        size: 12,
       ),
       border: const OutlineInputBorder(
         borderSide: BorderSide(width: 1.2),

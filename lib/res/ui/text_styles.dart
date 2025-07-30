@@ -342,7 +342,7 @@ class AppText {
   static Text styledText({
     required String text,
     int? maxLines,
-    TextAlign align = TextAlign.left,
+    TextAlign? align,
     Color? color,
     TextOverflow? overflow,
     double? height,
@@ -440,6 +440,23 @@ class AppText {
     );
   }
 
+  static Text pageTitleText({
+    required String text,
+    Color? color,
+    TextOverflow? overflow,
+    String fontFamily = fontMedium,
+  }) {
+    return styledText(
+      text: text,
+      size: 20,
+      maxSize: 24,
+      overflow: overflow,
+      fontFamily: fontFamily,
+      fontWeight: FontWeight.bold,
+      color: color,
+    );
+  }
+
   static Text listTitleText({
     required String text,
     Color? color,
@@ -454,6 +471,18 @@ class AppText {
     );
   }
 
+  static Text textButtonStyle({
+    required String text,
+    Color? color,
+  }) {
+    return styledText(
+      text: text,
+      size: 12,
+      fontFamily: fontMedium,
+      color: color,
+    );
+  }
+
   static Text listBodyText({
     required String text,
     Color? color,
@@ -461,6 +490,8 @@ class AppText {
     int? maxLines,
     FontWeight fontWeight = FontWeight.normal,
     double? height,
+    TextOverflow? overflow,
+    TextAlign? textAlign,
   }) {
     return styledText(
       text: text,
@@ -468,6 +499,8 @@ class AppText {
       maxSize: size + 1.5,
       color: color,
       maxLines: maxLines,
+      overflow: overflow,
+      align: textAlign,
     );
   }
 
@@ -493,7 +526,7 @@ class AppText {
   }) {
     return _style(
       size: size,
-      maxSize: size + 3,
+      maxSize: size + 2,
       color: color,
       height: height,
     );

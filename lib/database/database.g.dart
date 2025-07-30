@@ -39,8 +39,22 @@ class $TipoHabitacionTableTable extends TipoHabitacionTable
   late final GeneratedColumn<String> descripcion = GeneratedColumn<String>(
       'descripcion', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _camasMeta = const VerificationMeta('camas');
   @override
-  List<GeneratedColumn> get $columns => [idInt, id, codigo, orden, descripcion];
+  late final GeneratedColumn<String> camas = GeneratedColumn<String>(
+      'camas', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idInt, id, codigo, orden, descripcion, camas, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -73,6 +87,14 @@ class $TipoHabitacionTableTable extends TipoHabitacionTable
           descripcion.isAcceptableOrUnknown(
               data['descripcion']!, _descripcionMeta));
     }
+    if (data.containsKey('camas')) {
+      context.handle(
+          _camasMeta, camas.isAcceptableOrUnknown(data['camas']!, _camasMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
     return context;
   }
 
@@ -93,6 +115,10 @@ class $TipoHabitacionTableTable extends TipoHabitacionTable
           .read(DriftSqlType.int, data['${effectivePrefix}orden']),
       descripcion: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}descripcion']),
+      camas: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}camas']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
   }
 
@@ -109,12 +135,16 @@ class TipoHabitacionTableData extends DataClass
   final String? codigo;
   final int? orden;
   final String? descripcion;
+  final String? camas;
+  final DateTime? createdAt;
   const TipoHabitacionTableData(
       {required this.idInt,
       this.id,
       this.codigo,
       this.orden,
-      this.descripcion});
+      this.descripcion,
+      this.camas,
+      this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -131,6 +161,12 @@ class TipoHabitacionTableData extends DataClass
     if (!nullToAbsent || descripcion != null) {
       map['descripcion'] = Variable<String>(descripcion);
     }
+    if (!nullToAbsent || camas != null) {
+      map['camas'] = Variable<String>(camas);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
     return map;
   }
 
@@ -145,6 +181,11 @@ class TipoHabitacionTableData extends DataClass
       descripcion: descripcion == null && nullToAbsent
           ? const Value.absent()
           : Value(descripcion),
+      camas:
+          camas == null && nullToAbsent ? const Value.absent() : Value(camas),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -157,6 +198,8 @@ class TipoHabitacionTableData extends DataClass
       codigo: serializer.fromJson<String?>(json['codigo']),
       orden: serializer.fromJson<int?>(json['orden']),
       descripcion: serializer.fromJson<String?>(json['descripcion']),
+      camas: serializer.fromJson<String?>(json['camas']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -168,6 +211,8 @@ class TipoHabitacionTableData extends DataClass
       'codigo': serializer.toJson<String?>(codigo),
       'orden': serializer.toJson<int?>(orden),
       'descripcion': serializer.toJson<String?>(descripcion),
+      'camas': serializer.toJson<String?>(camas),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
@@ -176,13 +221,17 @@ class TipoHabitacionTableData extends DataClass
           Value<String?> id = const Value.absent(),
           Value<String?> codigo = const Value.absent(),
           Value<int?> orden = const Value.absent(),
-          Value<String?> descripcion = const Value.absent()}) =>
+          Value<String?> descripcion = const Value.absent(),
+          Value<String?> camas = const Value.absent(),
+          Value<DateTime?> createdAt = const Value.absent()}) =>
       TipoHabitacionTableData(
         idInt: idInt ?? this.idInt,
         id: id.present ? id.value : this.id,
         codigo: codigo.present ? codigo.value : this.codigo,
         orden: orden.present ? orden.value : this.orden,
         descripcion: descripcion.present ? descripcion.value : this.descripcion,
+        camas: camas.present ? camas.value : this.camas,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
       );
   TipoHabitacionTableData copyWithCompanion(TipoHabitacionTableCompanion data) {
     return TipoHabitacionTableData(
@@ -192,6 +241,8 @@ class TipoHabitacionTableData extends DataClass
       orden: data.orden.present ? data.orden.value : this.orden,
       descripcion:
           data.descripcion.present ? data.descripcion.value : this.descripcion,
+      camas: data.camas.present ? data.camas.value : this.camas,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -202,13 +253,16 @@ class TipoHabitacionTableData extends DataClass
           ..write('id: $id, ')
           ..write('codigo: $codigo, ')
           ..write('orden: $orden, ')
-          ..write('descripcion: $descripcion')
+          ..write('descripcion: $descripcion, ')
+          ..write('camas: $camas, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idInt, id, codigo, orden, descripcion);
+  int get hashCode =>
+      Object.hash(idInt, id, codigo, orden, descripcion, camas, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -217,7 +271,9 @@ class TipoHabitacionTableData extends DataClass
           other.id == this.id &&
           other.codigo == this.codigo &&
           other.orden == this.orden &&
-          other.descripcion == this.descripcion);
+          other.descripcion == this.descripcion &&
+          other.camas == this.camas &&
+          other.createdAt == this.createdAt);
 }
 
 class TipoHabitacionTableCompanion
@@ -227,12 +283,16 @@ class TipoHabitacionTableCompanion
   final Value<String?> codigo;
   final Value<int?> orden;
   final Value<String?> descripcion;
+  final Value<String?> camas;
+  final Value<DateTime?> createdAt;
   const TipoHabitacionTableCompanion({
     this.idInt = const Value.absent(),
     this.id = const Value.absent(),
     this.codigo = const Value.absent(),
     this.orden = const Value.absent(),
     this.descripcion = const Value.absent(),
+    this.camas = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   TipoHabitacionTableCompanion.insert({
     this.idInt = const Value.absent(),
@@ -240,6 +300,8 @@ class TipoHabitacionTableCompanion
     this.codigo = const Value.absent(),
     this.orden = const Value.absent(),
     this.descripcion = const Value.absent(),
+    this.camas = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   static Insertable<TipoHabitacionTableData> custom({
     Expression<int>? idInt,
@@ -247,6 +309,8 @@ class TipoHabitacionTableCompanion
     Expression<String>? codigo,
     Expression<int>? orden,
     Expression<String>? descripcion,
+    Expression<String>? camas,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (idInt != null) 'id_int': idInt,
@@ -254,6 +318,8 @@ class TipoHabitacionTableCompanion
       if (codigo != null) 'codigo': codigo,
       if (orden != null) 'orden': orden,
       if (descripcion != null) 'descripcion': descripcion,
+      if (camas != null) 'camas': camas,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
@@ -262,13 +328,17 @@ class TipoHabitacionTableCompanion
       Value<String?>? id,
       Value<String?>? codigo,
       Value<int?>? orden,
-      Value<String?>? descripcion}) {
+      Value<String?>? descripcion,
+      Value<String?>? camas,
+      Value<DateTime?>? createdAt}) {
     return TipoHabitacionTableCompanion(
       idInt: idInt ?? this.idInt,
       id: id ?? this.id,
       codigo: codigo ?? this.codigo,
       orden: orden ?? this.orden,
       descripcion: descripcion ?? this.descripcion,
+      camas: camas ?? this.camas,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -290,6 +360,12 @@ class TipoHabitacionTableCompanion
     if (descripcion.present) {
       map['descripcion'] = Variable<String>(descripcion.value);
     }
+    if (camas.present) {
+      map['camas'] = Variable<String>(camas.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     return map;
   }
 
@@ -300,7 +376,9 @@ class TipoHabitacionTableCompanion
           ..write('id: $id, ')
           ..write('codigo: $codigo, ')
           ..write('orden: $orden, ')
-          ..write('descripcion: $descripcion')
+          ..write('descripcion: $descripcion, ')
+          ..write('camas: $camas, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -11810,6 +11888,8 @@ typedef $$TipoHabitacionTableTableCreateCompanionBuilder
   Value<String?> codigo,
   Value<int?> orden,
   Value<String?> descripcion,
+  Value<String?> camas,
+  Value<DateTime?> createdAt,
 });
 typedef $$TipoHabitacionTableTableUpdateCompanionBuilder
     = TipoHabitacionTableCompanion Function({
@@ -11818,6 +11898,8 @@ typedef $$TipoHabitacionTableTableUpdateCompanionBuilder
   Value<String?> codigo,
   Value<int?> orden,
   Value<String?> descripcion,
+  Value<String?> camas,
+  Value<DateTime?> createdAt,
 });
 
 class $$TipoHabitacionTableTableTableManager extends RootTableManager<
@@ -11843,6 +11925,8 @@ class $$TipoHabitacionTableTableTableManager extends RootTableManager<
             Value<String?> codigo = const Value.absent(),
             Value<int?> orden = const Value.absent(),
             Value<String?> descripcion = const Value.absent(),
+            Value<String?> camas = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               TipoHabitacionTableCompanion(
             idInt: idInt,
@@ -11850,6 +11934,8 @@ class $$TipoHabitacionTableTableTableManager extends RootTableManager<
             codigo: codigo,
             orden: orden,
             descripcion: descripcion,
+            camas: camas,
+            createdAt: createdAt,
           ),
           createCompanionCallback: ({
             Value<int> idInt = const Value.absent(),
@@ -11857,6 +11943,8 @@ class $$TipoHabitacionTableTableTableManager extends RootTableManager<
             Value<String?> codigo = const Value.absent(),
             Value<int?> orden = const Value.absent(),
             Value<String?> descripcion = const Value.absent(),
+            Value<String?> camas = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               TipoHabitacionTableCompanion.insert(
             idInt: idInt,
@@ -11864,6 +11952,8 @@ class $$TipoHabitacionTableTableTableManager extends RootTableManager<
             codigo: codigo,
             orden: orden,
             descripcion: descripcion,
+            camas: camas,
+            createdAt: createdAt,
           ),
         ));
 }
@@ -11893,6 +11983,16 @@ class $$TipoHabitacionTableTableFilterComposer
 
   ColumnFilters<String> get descripcion => $state.composableBuilder(
       column: $state.table.descripcion,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get camas => $state.composableBuilder(
+      column: $state.table.camas,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -11935,6 +12035,16 @@ class $$TipoHabitacionTableTableOrderingComposer
 
   ColumnOrderings<String> get descripcion => $state.composableBuilder(
       column: $state.table.descripcion,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get camas => $state.composableBuilder(
+      column: $state.table.camas,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

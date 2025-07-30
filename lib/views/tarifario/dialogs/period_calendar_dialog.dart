@@ -93,6 +93,7 @@ class _PeriodCalendarDialogState extends State<PeriodCalendarDialog> {
     double screenHight = MediaQuery.of(context).size.height;
 
     return Dialog(
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: SizedBox(
         height: 650,

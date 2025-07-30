@@ -9,21 +9,21 @@ import '../../models/filter_model.dart';
 import '../services/categoria_service.dart';
 import 'ui_provider.dart';
 
-final filterResourceProvider = StateProvider<Filter>((ref) {
+final filterCategoryProvider = StateProvider<Filter>((ref) {
   return Filter(
     layout: Layout.checkList,
     orderBy: OrderBy.antiguo,
   );
 });
 
-final searchResourceProvider = StateProvider<TextEditingController>((ref) {
+final searchCategoryProvider = StateProvider<TextEditingController>((ref) {
   return TextEditingController();
 });
 
-final selectResourceProvider = StateProvider<bool>((ref) => false);
-final selectAllResourceProvider = StateProvider<bool>((ref) => false);
+final selectCategoryProvider = StateProvider<bool>((ref) => false);
+final selectAllCategoryProvider = StateProvider<bool>((ref) => false);
 
-final recursoSearchProvider = StateProvider<String>((ref) => "");
+final categoriaSearchProvider = StateProvider<String>((ref) => "");
 
 class CategoriasNotifier extends PagedNotifier<int, Categoria> {
   final Ref ref;
@@ -155,7 +155,7 @@ final saveCategoryProvider = FutureProvider<bool>(
   },
 );
 
-final deleteResourceProvider = FutureProvider<bool>(
+final deleteCategoryProvider = FutureProvider<bool>(
   (ref) async {
     final resource = ref.watch(categoriaProvider);
 
@@ -188,10 +188,10 @@ final deleteResourceProvider = FutureProvider<bool>(
   },
 );
 
-final keyResourceListProvider = StateProvider<String>((ref) {
+final keyCategoryListProvider = StateProvider<String>((ref) {
   return UniqueKey().hashCode.toString();
 });
 
-final updateViewResourceListProvider = StateProvider<String>((ref) {
+final updateViewCategoryListProvider = StateProvider<String>((ref) {
   return UniqueKey().hashCode.toString();
 });

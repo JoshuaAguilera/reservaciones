@@ -306,10 +306,7 @@ class _LoginFormState extends ConsumerState<_LoginForm> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextStyles.mediumText(
-                                text: "Iniciar sesión",
-                                size: sizeScreen.width > 350 ? 22 : 18,
-                              ),
+                              AppText.pageTitleText(text: "Iniciar sesión"),
                               const Divider(),
                             ],
                           ),
@@ -361,7 +358,7 @@ class _LoginFormState extends ConsumerState<_LoginForm> {
                                   //     .watch(showForgotPassProvider.notifier)
                                   //     .update((state) => true);
                                 },
-                                child: TextStyles.standardText(
+                                child: AppText.textButtonStyle(
                                   text: "¿Haz olvidado tu contraseña?",
                                 ),
                               ),

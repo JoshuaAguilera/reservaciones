@@ -191,7 +191,7 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
 
   // DELETE
   Future<int> delet3(int id) {
-    var response = (delete(db.clienteTable)
+    var response = (delete(db.categoriaTable)
           ..where((u) {
             return u.idInt.equals(id);
           }))

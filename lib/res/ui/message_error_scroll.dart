@@ -47,18 +47,15 @@ class MessageErrorScroll extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
           child: Column(
-            spacing: 16,
             children: [
               Icon(icon ?? Iconsax.danger_outline, size: 48),
-              AppText.sectionTitleText(
-                text: title ?? '',
-                overflow: TextOverflow.clip,
-                textAlign: TextAlign.center,
-              ),
-              AppText.simpleText(
+              const SizedBox(height: 16),
+              AppText.listTitleText(text: title ?? ''),
+              AppText.listBodyText(
                 text: message ?? '',
-                align: TextAlign.center,
-              )
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.clip,
+              ),
             ],
           ),
         ),

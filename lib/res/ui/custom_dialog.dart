@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../helpers/functions_ui.dart';
+import '../helpers/general_helpers.dart';
 import 'buttons.dart';
 import 'text_styles.dart';
 
@@ -48,66 +50,76 @@ class _CustomDialogState extends State<CustomDialog> {
         return AlertDialog(
           actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          title: Row(
-            spacing: 10,
-            children: [
-              widget.iconWidget ??
-                  (widget.icon != null ? Icon(widget.icon) : SizedBox()),
-              Align(
-                child: TextStyles.standardText(
-                  text: widget.title,
-                  size: 18,
-                  height: 1,
+          title: SizedBox(
+            height: 35,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  spacing: 10,
+                  children: [
+                    if (widget.withIcon)
+                      widget.iconWidget ??
+                          (widget.icon != null
+                              ? Icon(widget.icon)
+                              : const SizedBox()),
+                    Align(
+                      child: AppText.cardTitleText(text: widget.title),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  visualDensity: const VisualDensity(vertical: -4),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
           ),
           content: SizedBox(
-            width: constraints.maxWidth * 0.65,
+            width: GeneralHelpers.clampSize(750.sp, min: 400, max: 600),
             child: widget.content ??
-                TextStyles.standardText(
+                AppText.simpleText(
                   text: widget.contentString ?? '',
                   overflow: TextOverflow.clip,
                 ),
           ),
           actions: [
             if (widget.withButtonSecondary)
-              TextButton(
+              Buttons.filterButton1(
+                title: widget.nameButton2,
                 onPressed: (widget.withLoadingProcess && loadingProcess)
                     ? null
                     : () {
                         applyUnfocus();
-                        Navigator.pop(context);
-                      },
-                style: ButtonStyle(
-                  foregroundColor: WidgetStatePropertyAll(
-                    Theme.of(context).iconTheme.color,
-                  ),
-                ),
-                child: TextStyles.standardText(
-                  text: widget.nameButton2,
-                ),
-              ),
-            SizedBox(
-              height: 35,
-              child: Buttons.buttonSecundary(
-                text: widget.nameButton1,
-                sizeText: 14,
-                compact: true,
-                isLoading: loadingProcess,
-                foregroundColor: Colors.white,
-                backgroudColor: Theme.of(context).iconTheme.color,
-                onPressed: () {
-                  applyUnfocus();
-                  if (widget.withLoadingProcess) {
-                    loadingProcess = true;
-                    setState(() {});
-                  }
+                        if (widget.withLoadingProcess) {
+                          loadingProcess = true;
+                          setState(() {});
+                        }
 
-                  widget.funtion1!.call();
-                  if (!widget.notCloseInstant) Navigator.of(context).pop(true);
-                },
+                        if (!widget.notCloseInstant) {
+                          Navigator.of(context).pop();
+                        }
+                      },
               ),
+            Buttons.buttonSecundary(
+              text: widget.nameButton1,
+              compact: true,
+              isLoading: loadingProcess,
+              foregroundColor: Colors.white,
+              backgroudColor: Theme.of(context).iconTheme.color,
+              onPressed: () {
+                applyUnfocus();
+                if (widget.withLoadingProcess) {
+                  loadingProcess = true;
+                  setState(() {});
+                }
+
+                widget.funtion1!.call();
+                if (!widget.notCloseInstant) Navigator.of(context).pop(true);
+              },
             ),
           ],
         );

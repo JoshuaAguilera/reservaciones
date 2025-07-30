@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../res/helpers/date_helpers.dart';
+
 List<TipoHabitacion> TipoHabitacionesFromJson(String str) =>
     List<TipoHabitacion>.from(
         json.decode(str).map((x) => TipoHabitacion.fromJson(x)));
@@ -18,14 +20,18 @@ class TipoHabitacion {
   String? id;
   String? codigo;
   String? orden;
+  String? camas;
   String? descripcion;
+  DateTime? createdAt;
 
   TipoHabitacion({
     this.idInt,
     this.id,
     this.codigo,
     this.orden,
+    this.camas,
     this.descripcion,
+    this.createdAt,
   });
 
   TipoHabitacion copyWith({
@@ -34,13 +40,17 @@ class TipoHabitacion {
     String? codigo,
     String? orden,
     String? descripcion,
+    String? camas,
+    DateTime? createdAt,
   }) =>
       TipoHabitacion(
         idInt: idInt ?? this.idInt,
         id: id ?? this.id,
         codigo: codigo ?? this.codigo,
         orden: orden ?? this.orden,
+        camas: camas ?? this.camas,
         descripcion: descripcion ?? this.descripcion,
+        createdAt: createdAt ?? this.createdAt,
       );
 
   factory TipoHabitacion.fromJson(Map<String, dynamic> json) => TipoHabitacion(
@@ -49,6 +59,8 @@ class TipoHabitacion {
         codigo: json['codigo'],
         orden: json['orden'],
         descripcion: json['descripcion'],
+        camas: json['camas'],
+        createdAt: DateValueFormat.fromJSON(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() {
@@ -58,6 +70,8 @@ class TipoHabitacion {
       "codigo": codigo,
       "orden": orden,
       "descripcion": descripcion,
+      "camas": camas,
+      "createdAt": createdAt,
     };
 
     // Remueve todas las claves con valor null

@@ -40,8 +40,7 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
     final sideController = ref.watch(sidebarControllerProvider);
     final realWidth = sizeScreen.width - (sideController.extended ? 130 : 0);
 
-    Widget textTitle(String text) =>
-        AppText.styledText(text: text, fontWeight: FontWeight.bold);
+    Widget textTitle(String text) => AppText.sectionTitleText(text: text);
 
     return AnimatedEntry(
       delay: const Duration(milliseconds: 650),
@@ -118,7 +117,7 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
                     },
                     noItemsFoundIndicatorBuilder: (_, __) {
                       return const MessageErrorScroll(
-                        icon: HeroIcons.folder_open,
+                        icon: Iconsax.folder_open_outline,
                         title: 'No se encontraron cotizaciones',
                         message:
                             'No hay cotizaciones registradas en el sistema.',

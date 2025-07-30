@@ -6,4 +6,7 @@ class TipoHabitacionTable extends Table {
   TextColumn get codigo => text().nullable()();
   IntColumn get orden => integer().nullable()();
   TextColumn get descripcion => text().nullable()();
+  TextColumn get camas => text().nullable()();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime).nullable()();
 }

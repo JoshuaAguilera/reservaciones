@@ -98,7 +98,7 @@ class Buttons {
     double? sizeIcon,
     double spaceBetween = 10,
     bool compact = false,
-    double sizeText = 12,
+    double sizeText = 13,
     bool withTextBold = true,
     Color? backgroundColor,
     Color? colorText,
@@ -141,7 +141,9 @@ class Buttons {
                           DesktopColors.buttonPrimary),
                       width: isDark ? 2 : 0,
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(22)),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(22),
+                    ),
                   ),
                 ),
                 backgroundColor: WidgetStateProperty.all(
@@ -336,45 +338,44 @@ class Buttons {
     Color? textColor,
     required void Function()? onPressed,
   }) {
-    return Expanded(
-      child: StatefulBuilder(builder: (context, _) {
-        var brightness =
-            ThemeModelInheritedNotifier.of(context).theme.brightness;
-
-        Color colorText = textColor ??
-            (isActive
-                ? brightness == Brightness.dark
-                    ? Colors.black54
-                    : Colors.white
-                : brightness == Brightness.dark
-                    ? Colors.white54
-                    : Colors.black54);
-        Color colorBorder = (isActive
-            ? Colors.white
-            : brightness == Brightness.dark
-                ? Colors.white30
-                : Colors.black54);
-
-        return buttonPrimary(
-          text: title ?? '',
-          icon: icon,
-          spaceBetween: 0,
-          withTextBold: false,
-          backgroundColor: isActive
+    return StatefulBuilder(builder: (context, _) {
+      var brightness =
+          ThemeModelInheritedNotifier.of(context).theme.brightness;
+    
+      Color colorText = textColor ??
+          (isActive
               ? brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black87
+                  ? Colors.black54
+                  : Colors.white
               : brightness == Brightness.dark
-                  ? Colors.transparent
-                  : Colors.white,
-          forceColor: true,
-          colorText: colorText,
-          colorBorder: colorBorder,
-          onPressed: onPressed,
-          padVer: 0,
-        );
-      }),
-    );
+                  ? Colors.white54
+                  : Colors.black54);
+      Color colorBorder = (isActive
+          ? Colors.white
+          : brightness == Brightness.dark
+              ? Colors.white30
+              : Colors.black54);
+    
+      return buttonPrimary(
+        text: title ?? '',
+        icon: icon,
+        compact: true,
+        spaceBetween: 0,
+        withTextBold: false,
+        backgroundColor: isActive
+            ? brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87
+            : brightness == Brightness.dark
+                ? Colors.transparent
+                : Colors.white,
+        forceColor: true,
+        colorText: colorText,
+        colorBorder: colorBorder,
+        onPressed: onPressed,
+        padVer: 0,
+      );
+    });
   }
 
   static Widget filterButton2({

@@ -313,7 +313,7 @@ class FormWidgets {
               }
             },
             style: AppText.inputStyle(
-              size: sizeText ?? 11,
+              size: sizeText ?? 12.5,
               color: colorText,
               height: heightText,
             ),
@@ -489,10 +489,8 @@ class FormWidgets {
                 Expanded(
                   child: Row(
                     children: [
-                      TextStyles.standardText(
+                      AppText.textButtonStyle(
                         text: title,
-                        size: titleSize,
-                        overflow: TextOverflow.clip,
                       ),
                       if (compact && description.isNotEmpty)
                         Padding(
