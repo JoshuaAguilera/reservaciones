@@ -19,7 +19,7 @@ class TipoHabitacion {
   int? idInt;
   String? id;
   String? codigo;
-  String? orden;
+  int? orden;
   String? camas;
   String? descripcion;
   DateTime? createdAt;
@@ -38,7 +38,7 @@ class TipoHabitacion {
     int? idInt,
     String? id,
     String? codigo,
-    String? orden,
+    int? orden,
     String? descripcion,
     String? camas,
     DateTime? createdAt,

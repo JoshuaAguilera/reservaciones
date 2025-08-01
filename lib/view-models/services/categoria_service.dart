@@ -102,16 +102,15 @@ class CategoriaService extends BaseService {
     return Tuple3(error, savedCategoria, invalideToken);
   }
 
-  Future<Tuple3<ErrorModel?, bool, bool>> delete(Categoria categoria) async {
+  Future<Tuple2<ErrorModel?, bool>> delete(Categoria categoria) async {
     ErrorModel? error = ErrorModel();
     bool invalideToken = false;
-    bool deleted = false;
 
     try {
       final db = AppDatabase();
       final categoriaDao = CategoriaDao(db);
       final response = await categoriaDao.delet3(categoria.idInt ?? 0);
-      deleted = response > 0;
+
       await categoriaDao.close();
       await db.close();
 
@@ -122,6 +121,6 @@ class CategoriaService extends BaseService {
       error = ErrorModel(message: e.toString());
     }
 
-    return Tuple3(error, deleted, invalideToken);
+    return Tuple2(error, invalideToken);
   }
 }

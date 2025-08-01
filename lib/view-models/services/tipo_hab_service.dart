@@ -81,44 +81,39 @@ class TipoHabService extends BaseService {
 
     try {
       final db = AppDatabase();
-      final tipoHabitacionDao = TipoHabitacionDao(db);
-      savedTipoHabitacion = await tipoHabitacionDao.save(tipoHabitacion);
-      await tipoHabitacionDao.close();
+      savedTipoHabitacion = await db.tipoHabitacionDao.save(tipoHabitacion);
       await db.close();
 
       if (savedTipoHabitacion == null) {
         throw Exception("Error al guardar el tipo de habitación");
       }
     } catch (e) {
+      print(e); // Log the error
       error = ErrorModel(message: e.toString());
     }
 
     return Tuple3(error, savedTipoHabitacion, invalideToken);
   }
 
-  Future<Tuple3<ErrorModel?, bool, bool>> delete(
+  Future<Tuple2<ErrorModel?, bool>> delete(
     TipoHabitacion tipoHabitacion,
   ) async {
-    ErrorModel? error = ErrorModel();
+    ErrorModel? error;
     bool invalideToken = false;
-    bool deleted = false;
+    final db = AppDatabase();
 
     try {
-      final db = AppDatabase();
-      final tipoHabitacionDao = TipoHabitacionDao(db);
       final response =
-          await tipoHabitacionDao.delet3(tipoHabitacion.idInt ?? 0);
-      deleted = response > 0;
-      await tipoHabitacionDao.close();
-      await db.close();
-
+          await db.tipoHabitacionDao.delet3(tipoHabitacion.idInt ?? 0);
       if (response == 0) {
         throw Exception("Error al eliminar el tipo de habitación");
       }
     } catch (e) {
+      print(e);
       error = ErrorModel(message: e.toString());
     }
 
-    return Tuple3(error, deleted, invalideToken);
+    await db.close();
+    return Tuple2(error, invalideToken);
   }
 }

@@ -65,18 +65,18 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoIndView> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           spacing: 10,
                           children: [
-                            FormWidgets.inputColor(
-                              primaryColor: colorLogoInd,
-                              nameInput: "Color de logotipo: ",
-                              blocked: applyWhitBlack,
-                              colorText: Theme.of(context).primaryColor,
-                            ),
-                            FormWidgets.inputColor(
-                              primaryColor: colorTableInd,
-                              nameInput: "Color de tablas: ",
-                              blocked: applyWhitBlack,
-                              colorText: Theme.of(context).primaryColor,
-                            ),
+                            // FormWidgets.inputColor(
+                            //   primaryColor: colorLogoInd,
+                            //   nameInput: "Color de logotipo: ",
+                            //   blocked: applyWhitBlack,
+                            //   colorText: Theme.of(context).primaryColor,
+                            // ),
+                            // FormWidgets.inputColor(
+                            //   primaryColor: colorTableInd,
+                            //   nameInput: "Color de tablas: ",
+                            //   blocked: applyWhitBlack,
+                            //   colorText: Theme.of(context).primaryColor,
+                            // ),
                             FormWidgets.inputSwitch(
                               value: applyWhitBlack,
                               activeColor: Colors.grey[900],

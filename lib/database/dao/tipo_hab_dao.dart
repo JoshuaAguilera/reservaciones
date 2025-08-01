@@ -84,8 +84,12 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
   // CREATE
   Future<TipoHabitacion?> insert(TipoHabitacion tipoHabitacion) async {
     var response = await into(db.tipoHabitacionTable).insertReturningOrNull(
-      TipoHabitacionTableData.fromJson(
-        tipoHabitacion.toJson(),
+      TipoHabitacionTableCompanion(
+        descripcion: Value(tipoHabitacion.descripcion),
+        codigo: Value(tipoHabitacion.codigo),
+        camas: Value(tipoHabitacion.camas),
+        orden: Value(tipoHabitacion.orden),
+        id: Value(tipoHabitacion.id),
       ),
     );
 
@@ -107,8 +111,13 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
   // UPDATE
   Future<TipoHabitacion?> updat3(TipoHabitacion tipoHabitacion) async {
     var response = await update(db.tipoHabitacionTable).replace(
-      TipoHabitacionTableData.fromJson(
-        tipoHabitacion.toJson(),
+      TipoHabitacionTableCompanion(
+        idInt: Value(tipoHabitacion.idInt ?? 0),
+        id: Value(tipoHabitacion.id),
+        descripcion: Value(tipoHabitacion.descripcion),
+        codigo: Value(tipoHabitacion.codigo),
+        camas: Value(tipoHabitacion.camas),
+        orden: Value(tipoHabitacion.orden),
       ),
     );
 

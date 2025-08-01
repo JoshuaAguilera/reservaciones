@@ -107,18 +107,18 @@ class Buttons {
     Color? colorSplash,
     bool forceColor = false,
   }) {
-    Color colorContent = (useWhiteForeground(
-      backgroundColor ?? DesktopColors.buttonPrimary,
-      bias: 75,
-    )
-        ? Colors.white
-        : Colors.black87);
-
     return StatefulBuilder(
       builder: (context, snapshot) {
         var brightness =
             ThemeModelInheritedNotifier.of(context).theme.brightness;
         bool isDark = brightness == Brightness.dark;
+
+        Color colorContent = (useWhiteForeground(
+          backgroundColor ?? Theme.of(context).cardColor,
+          bias: 75,
+        )
+            ? Colors.white
+            : Colors.black87);
 
         return Opacity(
           opacity: onPressed != null ? 1 : 0.6,
@@ -126,13 +126,13 @@ class Buttons {
             absorbing: isLoading,
             child: TextButton(
               style: ButtonStyle(
-                overlayColor: brightness == Brightness.light
-                    ? null
-                    : WidgetStatePropertyAll(
-                        colorSplash ??
-                            backgroundColor ??
-                            DesktopColors.buttonPrimary,
-                      ),
+                // overlayColor: brightness == Brightness.light
+                //     ? null
+                //     : WidgetStatePropertyAll(
+                //         colorSplash ??
+                //             backgroundColor ??
+                //             DesktopColors.buttonPrimary,
+                //       ),
                 shape: WidgetStateProperty.all(
                   ContinuousRectangleBorder(
                     side: BorderSide(
@@ -206,7 +206,7 @@ class Buttons {
     IconData? icon,
     bool isLoading = false,
     bool compact = false,
-    double sizeText = 12,
+    double sizeText = 13,
     Color? backgroudColor,
     Color? foregroundColor,
   }) {
@@ -339,9 +339,8 @@ class Buttons {
     required void Function()? onPressed,
   }) {
     return StatefulBuilder(builder: (context, _) {
-      var brightness =
-          ThemeModelInheritedNotifier.of(context).theme.brightness;
-    
+      var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+
       Color colorText = textColor ??
           (isActive
               ? brightness == Brightness.dark
@@ -355,7 +354,7 @@ class Buttons {
           : brightness == Brightness.dark
               ? Colors.white30
               : Colors.black54);
-    
+
       return buttonPrimary(
         text: title ?? '',
         icon: icon,

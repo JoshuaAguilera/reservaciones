@@ -2,6 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 
+import '../helpers/colors_helpers.dart';
 import '../helpers/desktop_colors.dart';
 import 'text_styles.dart';
 
@@ -9,33 +10,38 @@ class InputDecorations {
   static String fontRegular = "poppins_regular";
 
   static CustomDropdownDecoration defaultDropdownDecoration(
-      BuildContext context) {
+    BuildContext context, {
+    Color? closedFillColor,
+  }) {
     var brightness = ThemeModelInheritedNotifier.of(context).theme.brightness;
+    Color? fillColor = closedFillColor ??
+        (brightness != Brightness.dark ? null : Colors.transparent);
+
     return CustomDropdownDecoration(
-      closedFillColor:
-          brightness != Brightness.dark ? null : Colors.transparent,
-      hintStyle: TextStyles.styleStandar(),
-      listItemStyle: TextStyles.styleStandar(),
-      headerStyle: TextStyles.styleStandar(),
-      errorStyle: TextStyles.styleStandar(color: Colors.red),
-      noResultFoundStyle: TextStyles.styleStandar(),
+      closedFillColor: fillColor,
+      hintStyle: AppText.inputStyle(size: 12.5),
+      listItemStyle: AppText.inputStyle(size: 12.5),
+      headerStyle: AppText.inputStyle(size: 12.5),
+      errorStyle: AppText.inputStyle(size: 12.5, color: Colors.red),
+      noResultFoundStyle: AppText.inputStyle(size: 12.5),
       searchFieldDecoration: SearchFieldDecoration(
-        textStyle: TextStyles.styleStandar(),
+        textStyle: AppText.inputStyle(size: 12.5),
         fillColor: brightness != Brightness.dark ? null : Colors.transparent,
       ),
-      closedBorder: Border.all(
-          color: brightness == Brightness.dark ? Colors.white : Colors.black),
       closedBorderRadius: const BorderRadius.all(Radius.circular(14)),
       expandedBorderRadius: BorderRadius.circular(5),
       expandedFillColor:
           brightness != Brightness.dark ? null : Theme.of(context).cardColor,
+      listItemDecoration: ListItemDecoration(
+        selectedColor: ColorsHelpers.darken(fillColor ?? Colors.white, -0.03),
+      ),
     );
   }
 
   static CustomDropdownDisabledDecoration defaultDropdownDiseableDecoration() {
     return CustomDropdownDisabledDecoration(
-      hintStyle: TextStyles.styleStandar(color: Colors.black38),
-      headerStyle: TextStyles.styleStandar(color: Colors.black38),
+      hintStyle: AppText.inputStyle(color: Colors.black38),
+      headerStyle: AppText.inputStyle(color: Colors.black38),
       border: Border.all(color: Colors.black38),
       borderRadius: const BorderRadius.all(Radius.circular(14)),
     );
@@ -92,6 +98,7 @@ class InputDecorations {
 
   static InputDecoration authInputDecoration({
     required String labelText,
+    String? hintText,
     Color? colorBorder,
     Color? colorLabel,
     Widget? suffixIcon,
@@ -104,15 +111,14 @@ class InputDecorations {
       filled: true,
       fillColor: fillColor,
       labelText: labelText,
+      hintText: hintText,
       counterText: "",
       floatingLabelAlignment:
           !centerLabel ? null : FloatingLabelAlignment.center,
       alignLabelWithHint: true,
       isDense: false,
-      labelStyle: AppText.inputStyle(
-        color: colorLabel,
-        size: 12,
-      ),
+      labelStyle: AppText.inputStyle(color: colorLabel, size: 12),
+      hintStyle: AppText.inputStyle(color: colorLabel, size: 12),
       border: const OutlineInputBorder(
         borderSide: BorderSide(width: 1.2),
         borderRadius: BorderRadius.all(

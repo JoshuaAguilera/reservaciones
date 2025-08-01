@@ -294,8 +294,6 @@ class _FormTarifarioViewState extends ConsumerState<TarifarioFormView> {
                                             child: FormWidgets.inputColor(
                                               nameInput: "Color:",
                                               primaryColor: colorTarifa,
-                                              colorText: Theme.of(context)
-                                                  .primaryColor,
                                               onChangedColor: (p0) => setState(
                                                   () => colorTarifa = p0),
                                             ),

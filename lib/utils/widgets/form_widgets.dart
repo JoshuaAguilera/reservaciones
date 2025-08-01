@@ -4,28 +4,29 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generador_formato/res/ui/buttons.dart';
-import 'package:generador_formato/utils/widgets/textformfield_custom.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
+import '../../res/helpers/functions_ui.dart';
 import '../../res/helpers/general_helpers.dart';
 import '../../res/ui/input_decorations.dart';
 import '../../res/ui/tools_ui.dart';
 import 'number_input_with_increment_decrement.dart';
 import '../../res/ui/text_styles.dart';
+import 'textformfield_custom.dart';
 
 class FormWidgets {
   static Widget inputColor({
     required String nameInput,
-    required Color primaryColor,
+    Color? primaryColor,
     bool blocked = false,
-    required Color colorText,
-    void Function(Color)? onChangedColor,
+    required void Function(Color) onChangedColor,
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceBetween,
   }) {
-    Color pickerColor = primaryColor;
-    Color currentColor = primaryColor;
+    Color pickerColor = primaryColor ?? DesktopColors.buttonPrimary;
+    Color currentColor = primaryColor ?? DesktopColors.buttonPrimary;
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -33,62 +34,75 @@ class FormWidgets {
           setState(() => pickerColor = color);
         }
 
-        return Opacity(
-          opacity: blocked ? 0.6 : 1,
-          child: AbsorbPointer(
-            absorbing: blocked,
-            child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: TextStyles.titleText(
+        return Row(
+          mainAxisAlignment: mainAxisAlignment,
+          children: [
+            AppText.simpleText(text: nameInput),
+            ToolsUi.blockedWidget(
+              isBloqued: blocked,
+              child: GestureDetector(
+                onTap: () {
+                  applyUnfocus();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: AppText.sectionTitleText(
                           text: "Selecciona un color",
-                          color: Theme.of(context).primaryColor),
-                      content: SingleChildScrollView(
-                        child: MaterialPicker(
-                          pickerColor: pickerColor,
-                          onColorChanged: changeColor,
-                          enableLabel: false,
-                          portraitOnly: true,
+                        ),
+                        content: SingleChildScrollView(
+                          child: HueRingPicker(
+                            pickerColor: pickerColor,
+                            pickerAreaBorderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                            onColorChanged: changeColor,
+                            portraitOnly: false,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          Buttons.buttonPrimary(
+                            text: "Aceptar",
+                            onPressed: () {
+                              setState(() => currentColor = pickerColor);
+                              onChangedColor.call(currentColor);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).iconTheme.color ??
+                              Colors.black87,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(5),
                         ),
                       ),
-                      actions: <Widget>[
-                        Buttons.commonButton(
-                          onPressed: () {
-                            setState(() => currentColor = pickerColor);
-                            onChangedColor!.call(currentColor);
-                            Navigator.of(context).pop();
-                          },
-                          text: "Aceptar",
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Stack(
-                children: [
-                  TextFormFieldCustom.textFormFieldwithBorder(
-                      name: "Color", initialValue: "s", blocked: true),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Center(
                       child: Container(
                         height: 30,
-                        width: 500,
+                        width: 100,
                         decoration: BoxDecoration(
-                            color: currentColor,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5))),
+                          color: currentColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(5),
+                          ),
+                        ),
                       ),
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -288,7 +302,7 @@ class FormWidgets {
     return AbsorbPointer(
       absorbing: readOnly,
       child: StatefulBuilder(
-        builder: (_, snapshot) {
+        builder: (context, snapshot) {
           return TextFormField(
             focusNode: focusNode,
             autofocus: autofocus,
@@ -431,22 +445,22 @@ class FormWidgets {
     bool isError = false,
     bool readOnly = false,
     int? maxLines,
+    Color? fillColor,
   }) {
     return TextField(
       readOnly: readOnly,
       controller: controller,
       maxLines: maxLines,
       keyboardType: TextInputType.multiline,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: isError
-            ? Colors.white.withOpacity(0.3)
-            : Colors.white.withOpacity(0.1),
-        border: const OutlineInputBorder(),
+      decoration: InputDecorations.authInputDecoration(
+        labelText: "",
+        fillColor: fillColor,
         hintText: hintText,
       ),
-      style: TextStyles.styleStandar(
-          color: isError ? DesktopColors.errorColor : null),
+      style: AppText.inputStyle(
+        size: 12.5,
+        color: isError ? DesktopColors.errorColor : null,
+      ),
     );
   }
 

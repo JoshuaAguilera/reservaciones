@@ -29,7 +29,7 @@ class SectionContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: backgroundColor ?? Theme.of(context).cardColor,
+      color: backgroundColor ?? Theme.of(context).cardTheme.color,
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: padH,

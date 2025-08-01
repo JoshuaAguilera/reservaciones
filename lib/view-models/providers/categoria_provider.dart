@@ -117,6 +117,12 @@ final categoriasReqProvider =
   return list;
 });
 
+final categoriaListProvider =
+    FutureProvider.family<List<Categoria>, String>((ref, arg) async {
+  final list = await CategoriaService().getList();
+  return list;
+});
+
 final categoriaProvider = StateProvider<Categoria?>((ref) => null);
 
 final saveCategoryProvider = FutureProvider<bool>(
@@ -161,10 +167,10 @@ final deleteCategoryProvider = FutureProvider<bool>(
 
     if (resource != null) {
       final response = await CategoriaService().delete(resource);
-      // if (response.item2) {
-      //   ref.read(navigationServiceProvider).navigateToLoginAndReplace();
-      //   return true;
-      // }
+      if (response.item2) {
+        ref.read(navigationServiceProvider).navigateToLoginAndReplace();
+        return true;
+      }
 
       if (response.item1 != null) {
         ref.read(snackbarServiceProvider).showCustomSnackBar(

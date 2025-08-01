@@ -48,7 +48,7 @@ class _CustomDialogState extends State<CustomDialog> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AlertDialog(
-          actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+          // actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
           insetPadding: const EdgeInsets.symmetric(horizontal: 24),
           title: SizedBox(
             height: 35,
@@ -94,14 +94,7 @@ class _CustomDialogState extends State<CustomDialog> {
                     ? null
                     : () {
                         applyUnfocus();
-                        if (widget.withLoadingProcess) {
-                          loadingProcess = true;
-                          setState(() {});
-                        }
-
-                        if (!widget.notCloseInstant) {
-                          Navigator.of(context).pop();
-                        }
+                        Navigator.pop(context);
                       },
               ),
             Buttons.buttonSecundary(

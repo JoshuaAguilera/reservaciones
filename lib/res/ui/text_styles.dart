@@ -396,7 +396,7 @@ class AppText {
   }) {
     return styledText(
       text: text,
-      size: 11,
+      size: 12.5,
       maxSize: 13.5,
       color: color,
       align: align,
@@ -526,7 +526,7 @@ class AppText {
   }) {
     return _style(
       size: size,
-      maxSize: size + 2,
+      maxSize: size + 1,
       color: color,
       height: height,
     );

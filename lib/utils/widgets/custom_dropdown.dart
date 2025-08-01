@@ -86,11 +86,6 @@ class CustomDropdown {
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                     ),
-                    menuStyle: MenuStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        Theme.of(context).cardColor,
-                      ),
-                    ),
                     textStyle: AppText.simpleStyle(),
                     dropdownMenuEntries: items.map<DropdownMenuEntry<String>>(
                       (String value) {

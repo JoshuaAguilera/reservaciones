@@ -70,16 +70,16 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                               crossAxisAlignment: WrapCrossAlignment.center,
                               spacing: 10,
                               children: [
-                                FormWidgets.inputColor(
-                                  primaryColor: colorLogoInd,
-                                  nameInput: "Color de logotipo: ",
-                                  colorText: Theme.of(context).primaryColor,
-                                ),
-                                FormWidgets.inputColor(
-                                  primaryColor: colorTableInd,
-                                  nameInput: "Color de tablas: ",
-                                  colorText: Theme.of(context).primaryColor,
-                                ),
+                                // FormWidgets.inputColor(
+                                //   primaryColor: colorLogoInd,
+                                //   nameInput: "Color de logotipo: ",
+                                //   colorText: Theme.of(context).primaryColor,
+                                // ),
+                                // FormWidgets.inputColor(
+                                //   primaryColor: colorTableInd,
+                                //   nameInput: "Color de tablas: ",
+                                //   colorText: Theme.of(context).primaryColor,
+                                // ),
                               ],
                             ),
                             Wrap(

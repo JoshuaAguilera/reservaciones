@@ -141,13 +141,12 @@ const List<String> daysNameShort = [
 ];
 
 const List<String> typeSettings = [
-  "Generales",
+  "Generales", "Tarifario",
   "Servidor SMTP",
   "Ayuda y manuales",
   // "Acerca del programa"
   // "Formato Individual",
   // "Formato Grupal",
-  "Tarifario",
 ];
 
 const List<String> textFont = <String>[

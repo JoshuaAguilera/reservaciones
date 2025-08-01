@@ -13,6 +13,7 @@ import 'dao/cliente_dao.dart';
 import 'dao/cotizacion_dao.dart';
 import 'dao/habitacion_dao.dart';
 import 'dao/imagen_dao.dart';
+import 'dao/notificacion_dao.dart';
 import 'dao/periodo_dao.dart';
 import 'dao/politica_tarifario_dao.dart';
 import 'dao/registro_tarifa_dao.dart';
@@ -24,6 +25,7 @@ import 'dao/tarifa_rack_dao.dart';
 import 'dao/tarifa_x_dia_dao.dart';
 import 'dao/tarifa_x_habitacion_dao.dart';
 import 'dao/temporada_dao.dart';
+import 'dao/tipo_hab_dao.dart';
 import 'dao/usuario_dao.dart';
 import 'tables/categoria_table.dart';
 import 'tables/cliente_table.dart';
@@ -90,6 +92,8 @@ part 'database.g.dart';
     PoliticaTarifarioDao,
     RegistroTarifaDao,
     RolDao,
+    TipoHabitacionDao,
+    NotificacionDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
