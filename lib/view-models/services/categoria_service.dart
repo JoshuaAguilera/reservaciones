@@ -96,6 +96,7 @@ class CategoriaService extends BaseService {
         throw Exception("Error al guardar el categoria");
       }
     } catch (e) {
+      print(e);
       error = ErrorModel(message: e.toString());
     }
 

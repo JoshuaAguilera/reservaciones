@@ -123,11 +123,9 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<Categoria?> insert(Categoria categoria) async {
+  Future<Categoria?> insert(CategoriaTableCompanion categoria) async {
     var response = await into(db.categoriaTable).insertReturningOrNull(
-      CategoriaTableData.fromJson(
-        categoria.toJson(),
-      ),
+      categoria,
     );
 
     if (response == null) return null;
@@ -169,23 +167,32 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<Categoria?> updat3(Categoria categoria) async {
+  Future<Categoria?> updat3(CategoriaTableCompanion categoria) async {
     var response = await update(db.categoriaTable).replace(
-      CategoriaTableData.fromJson(
-        categoria.toJson(),
-      ),
+      categoria,
     );
 
     if (!response) return null;
-    return await getByID(categoria.idInt ?? 0);
+    return await getByID(categoria.idInt.value);
   }
 
   // SAVE
   Future<Categoria?> save(Categoria categoria) async {
+    final category = CategoriaTableCompanion(
+      id: Value(categoria.id),
+      color: Value(ColorsHelpers.colorToJson(categoria.color)),
+      descripcion: Value(categoria.descripcion),
+      nombre: Value(categoria.nombre),
+      tipoHabitacionInt: Value(categoria.tipoHabitacion?.idInt),
+      tipoHabitacion: Value(categoria.tipoHabitacion?.id),
+      creadoPor: Value(categoria.creadoPor?.id),
+      creadoPorInt: Value(categoria.creadoPor?.idInt),
+    );
+
     if (categoria.idInt == null) {
-      return await insert(categoria);
+      return await insert(category);
     } else {
-      return await updat3(categoria);
+      return await updat3(category);
     }
   }
 

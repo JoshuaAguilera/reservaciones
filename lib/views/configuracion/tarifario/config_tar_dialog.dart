@@ -15,6 +15,7 @@ import '../../../res/ui/text_styles.dart';
 import '../../../utils/widgets/form_widgets.dart';
 import '../../../view-models/providers/categoria_provider.dart';
 import '../../../view-models/providers/tipo_hab_provider.dart';
+import '../../../view-models/providers/usuario_provider.dart';
 
 class TipoHabDialog extends StatefulWidget {
   final TipoHabitacion? tipoHabitacion;
@@ -214,6 +215,7 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
   void initState() {
     super.initState();
     if (widget.categoria != null) {
+      selectColor = widget.categoria?.color;
       _nombreController.text = widget.categoria!.nombre ?? '';
       _descriptionController.text = widget.categoria!.descripcion ?? '';
     }
@@ -228,6 +230,9 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
       builder: (context, ref, child) {
         return StatefulBuilder(
           builder: (context, snapshot) {
+            double dialogWidth =
+                GeneralHelpers.clampSize(750.sp, min: 350, max: 600);
+
             return CustomDialog(
               withIcon: true,
               notCloseInstant: true,
@@ -250,100 +255,114 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                       spacing: 10,
                       runSpacing: 10,
                       children: [
-                        FormWidgets.textFormField(
-                          name: "Nombre",
-                          fillColor: fillColor,
-                          controller: _nombreController,
-                        ),
-                        tipoHabitacionAsync.when(
-                          data: (data) {
-                            return CustomDropdown<TipoHabitacion>.searchRequest(
-                              futureRequest: (p0) {
-                                return ref.read(tipoHabListProvider(
-                                  Tuple3(p0, 1, 100),
-                                ).future);
-                              },
-                              hintText: 'Seleccione un Tipo de Habitación',
-                              closedHeaderPadding: selectType != null
-                                  ? const EdgeInsets.fromLTRB(10, 2, 16, 2)
-                                  : const EdgeInsets.fromLTRB(10, 14, 16, 14),
-                              enabled: !isLoading,
-                              disabledDecoration: InputDecorations
-                                  .defaultDropdownDiseableDecoration(),
-                              decoration:
-                                  InputDecorations.defaultDropdownDecoration(
-                                context,
-                                closedFillColor: fillColor,
-                              ),
-                              items: data,
-                              listItemPadding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 9,
-                              ),
-                              visibility: (p0) {
-                                if (p0) applyUnfocus();
-                              },
-                              headerBuilder: (context, selectedItem, enabled) {
-                                return DropdownMenuItem(
-                                  child: AppText.simpleText(
-                                    text: selectedItem.codigo ?? 'unknown',
-                                  ),
-                                );
-                              },
-                              listItemBuilder:
-                                  (context, item, isSelected, onItemSelect) =>
-                                      DropdownMenuItem(
-                                child: AppText.simpleText(
-                                  text: item.codigo ?? 'unknown',
-                                ),
-                              ),
-                              initialItem: (widget.categoria != null)
-                                  ? data.firstWhere((element) =>
-                                      element.idInt == widget.categoria?.idInt)
-                                  : selectType,
-                              searchHintText: 'Buscar tipo de habitación',
-                              noResultFoundText:
-                                  "Tipo de habitación no encontrado",
-                              validator: (p0) {
-                                if (p0 == null) {
-                                  return "Tipo de habitación requerido*";
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                if (!mounted) return;
-                                if (value != null) {
-                                  applyUnfocus();
-                                  selectType = value;
-                                  setState(() {});
-                                }
-                              },
-                            );
-                          },
-                          error: (error, stackTrace) => AppText.simpleText(
-                            text: "Error al consultar tipos de habitación",
+                        SizedBox(
+                          width: dialogWidth < 375
+                              ? null
+                              : (dialogWidth * 0.95) / 2,
+                          child: FormWidgets.textFormField(
+                            name: "Nombre",
+                            fillColor: fillColor,
+                            controller: _nombreController,
                           ),
-                          loading: () {
-                            return const Align(
-                              alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 32,
-                                width: 32,
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          },
                         ),
                         SizedBox(
-                          child: FormWidgets.inputColor(
-                            nameInput: "Color Identificador: ",
-                            primaryColor: selectColor,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            onChangedColor: (p0) {
-                              selectColor = p0;
-                              snapshot(() {});
+                          width: dialogWidth < 375
+                              ? null
+                              : (dialogWidth * 0.95) / 2,
+                          child: tipoHabitacionAsync.when(
+                            data: (data) {
+                              return CustomDropdown<
+                                  TipoHabitacion>.searchRequest(
+                                futureRequest: (p0) {
+                                  return ref.read(tipoHabListProvider(
+                                    Tuple3(p0, 1, 100),
+                                  ).future);
+                                },
+                                hintText: 'Seleccione un Tipo de Habitación',
+                                closedHeaderPadding: selectType != null
+                                    ? const EdgeInsets.fromLTRB(10, 2, 16, 2)
+                                    : const EdgeInsets.fromLTRB(10, 14, 16, 14),
+                                enabled: !isLoading,
+                                disabledDecoration: InputDecorations
+                                    .defaultDropdownDiseableDecoration(),
+                                decoration:
+                                    InputDecorations.defaultDropdownDecoration(
+                                  context,
+                                  closedFillColor: fillColor,
+                                ),
+                                items: data,
+                                listItemPadding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 9,
+                                ),
+                                visibility: (p0) {
+                                  if (p0) applyUnfocus();
+                                },
+                                headerBuilder:
+                                    (context, selectedItem, enabled) {
+                                  return DropdownMenuItem(
+                                    child: AppText.simpleText(
+                                      text: selectedItem.codigo ?? 'unknown',
+                                    ),
+                                  );
+                                },
+                                listItemBuilder:
+                                    (context, item, isSelected, onItemSelect) =>
+                                        DropdownMenuItem(
+                                  child: AppText.simpleText(
+                                    text: item.codigo ?? 'unknown',
+                                  ),
+                                ),
+                                initialItem: (widget.categoria != null)
+                                    ? data
+                                        .where((element) =>
+                                            element.idInt ==
+                                            widget.categoria?.tipoHabitacion
+                                                ?.idInt)
+                                        .firstOrNull
+                                    : selectType,
+                                searchHintText: 'Buscar tipo de habitación',
+                                noResultFoundText:
+                                    "Tipo de habitación no encontrado",
+                                validator: (p0) {
+                                  if (p0 == null) {
+                                    return "Tipo de habitación requerido*";
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  if (!mounted) return;
+                                  if (value != null) {
+                                    applyUnfocus();
+                                    selectType = value;
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            },
+                            error: (error, stackTrace) => AppText.simpleText(
+                              text: "Error al consultar tipos de habitación",
+                            ),
+                            loading: () {
+                              return const Align(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                  height: 32,
+                                  width: 32,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
                             },
                           ),
+                        ),
+                        FormWidgets.inputColor(
+                          nameInput: "Color Identificador: ",
+                          primaryColor: selectColor,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          onChangedColor: (p0) {
+                            selectColor = p0;
+                            snapshot(() {});
+                          },
                         ),
                       ],
                     ),
@@ -366,12 +385,16 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                 if (!_formKey.currentState!.validate()) return;
                 isLoading = true;
                 snapshot(() {});
+                final user = ref.watch(userProvider);
 
                 Categoria newCategoria = Categoria();
                 newCategoria.nombre = _nombreController.text.trim();
+                newCategoria.color = selectColor;
+                newCategoria.tipoHabitacion = selectType;
                 newCategoria.descripcion = _descriptionController.text;
                 newCategoria.id = widget.categoria?.id;
                 newCategoria.idInt = widget.categoria?.idInt;
+                newCategoria.creadoPor = user;
 
                 ref.read(categoriaProvider.notifier).state = newCategoria;
 
@@ -383,10 +406,8 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                   return;
                 }
 
-                ref
-                    .read(tipoHabitacionProvider.notifier)
-                    .update((state) => null);
-                ref.invalidate(tipoHabListProvider(const Tuple3("", 1, 5)));
+                ref.read(categoriaProvider.notifier).update((state) => null);
+                ref.invalidate(categoriaListProvider(""));
                 isLoading = false;
                 snapshot(() {});
 

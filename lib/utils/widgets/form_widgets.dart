@@ -7,6 +7,7 @@ import 'package:generador_formato/res/ui/buttons.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../res/helpers/colors_helpers.dart';
 import '../../res/helpers/constants.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/helpers/functions_ui.dart';
@@ -23,7 +24,7 @@ class FormWidgets {
     Color? primaryColor,
     bool blocked = false,
     required void Function(Color) onChangedColor,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceBetween,
+    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
   }) {
     Color pickerColor = primaryColor ?? DesktopColors.buttonPrimary;
     Color currentColor = primaryColor ?? DesktopColors.buttonPrimary;
@@ -34,10 +35,13 @@ class FormWidgets {
           setState(() => pickerColor = color);
         }
 
-        return Row(
+        return Column(
+          spacing: 3,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: mainAxisAlignment,
           children: [
-            AppText.simpleText(text: nameInput),
+            AppText.styledText(text: nameInput, size: 9),
             ToolsUi.blockedWidget(
               isBloqued: blocked,
               child: GestureDetector(
@@ -73,23 +77,22 @@ class FormWidgets {
                     },
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).iconTheme.color ??
-                              Colors.black87,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                      ),
-                      child: Container(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                    color: Theme.of(context).cardColor,
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
                         height: 30,
-                        width: 100,
+                        width: 30,
                         decoration: BoxDecoration(
                           color: currentColor,
                           borderRadius: const BorderRadius.all(
@@ -97,7 +100,10 @@ class FormWidgets {
                           ),
                         ),
                       ),
-                    ),
+                      AppText.simpleText(
+                        text: HexColor.colorToHex(currentColor) ?? 'Unknown',
+                      )
+                    ],
                   ),
                 ),
               ),

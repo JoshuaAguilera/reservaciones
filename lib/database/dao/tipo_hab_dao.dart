@@ -82,16 +82,10 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // CREATE
-  Future<TipoHabitacion?> insert(TipoHabitacion tipoHabitacion) async {
-    var response = await into(db.tipoHabitacionTable).insertReturningOrNull(
-      TipoHabitacionTableCompanion(
-        descripcion: Value(tipoHabitacion.descripcion),
-        codigo: Value(tipoHabitacion.codigo),
-        camas: Value(tipoHabitacion.camas),
-        orden: Value(tipoHabitacion.orden),
-        id: Value(tipoHabitacion.id),
-      ),
-    );
+  Future<TipoHabitacion?> insert(
+      TipoHabitacionTableCompanion tipoHabitacion) async {
+    var response = await into(db.tipoHabitacionTable)
+        .insertReturningOrNull(tipoHabitacion);
 
     if (response == null) return null;
     return TipoHabitacion.fromJson(response.toJson());
@@ -109,28 +103,28 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
   }
 
   // UPDATE
-  Future<TipoHabitacion?> updat3(TipoHabitacion tipoHabitacion) async {
-    var response = await update(db.tipoHabitacionTable).replace(
-      TipoHabitacionTableCompanion(
-        idInt: Value(tipoHabitacion.idInt ?? 0),
-        id: Value(tipoHabitacion.id),
-        descripcion: Value(tipoHabitacion.descripcion),
-        codigo: Value(tipoHabitacion.codigo),
-        camas: Value(tipoHabitacion.camas),
-        orden: Value(tipoHabitacion.orden),
-      ),
-    );
+  Future<TipoHabitacion?> updat3(
+      TipoHabitacionTableCompanion tipoHabitacion) async {
+    var response = await update(db.tipoHabitacionTable).replace(tipoHabitacion);
 
     if (!response) return null;
-    return await getByID(tipoHabitacion.idInt ?? 0);
+    return await getByID(tipoHabitacion.idInt.value);
   }
 
   // SAVE
   Future<TipoHabitacion?> save(TipoHabitacion tipoHabitacion) async {
+    final type = TipoHabitacionTableCompanion(
+      id: Value(tipoHabitacion.id),
+      descripcion: Value(tipoHabitacion.descripcion),
+      codigo: Value(tipoHabitacion.codigo),
+      camas: Value(tipoHabitacion.camas),
+      orden: Value(tipoHabitacion.orden),
+    );
+
     if (tipoHabitacion.idInt == null) {
-      return await insert(tipoHabitacion);
+      return await insert(type);
     } else {
-      return await updat3(tipoHabitacion);
+      return await updat3(type);
     }
   }
 

@@ -255,7 +255,7 @@ class CategoriasList extends ConsumerWidget {
                         columns: <DataColumn>[
                           _dataColumn("ID"),
                           _dataColumn("Nombre"),
-                          if (realWidth > 750) _dataColumn("Color"),
+                          if (realWidth > 800) _dataColumn("Color"),
                           _dataColumn("Descripción"),
                           _dataColumn("Opciones"),
                         ],
@@ -311,9 +311,12 @@ class Categorias extends DataTableSource {
   final BuildContext context;
   Categorias(this.data, this.screenWidth, this.context);
 
-  DataCell _dataCell(String text) {
+  DataCell _dataCell(String text, {double? width}) {
     return DataCell(
-      AppText.simpleText(text: text, overflow: TextOverflow.ellipsis),
+      SizedBox(
+        width: width,
+        child: AppText.simpleText(text: text, overflow: TextOverflow.ellipsis),
+      ),
     );
   }
 
@@ -328,8 +331,23 @@ class Categorias extends DataTableSource {
       cells: [
         _dataCell('${row.idInt ?? row.id ?? '?'}'),
         _dataCell(row.nombre ?? 'unknown'),
-        if (screenWidth > 750) _dataCell('${HexColor.colorToHex(row.color)}'),
-        _dataCell('${row.descripcion}'),
+        if (screenWidth > 800)
+          DataCell(Container(
+            width: 135.w,
+            height: 25,
+            decoration: BoxDecoration(
+              color: row.color,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Center(
+              child: AppText.simpleText(
+                text: HexColor.colorToHex(row.color) ?? "unknown",
+                overflow: TextOverflow.ellipsis,
+                color: ColorsHelpers.getForegroundColor(row.color),
+              ),
+            ),
+          )),
+        _dataCell('${row.descripcion}', width: 450.w),
         DataCell(
           ItemRow.compactOptions(
             onPreseedEdit: () {
