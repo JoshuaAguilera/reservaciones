@@ -6,7 +6,7 @@ import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../models/cotizacion_model.dart';
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../../models/statistic_model.dart';
 import '../../res/helpers/animation_helpers.dart';
 import '../../res/helpers/colors_helpers.dart';
@@ -124,10 +124,10 @@ class _DashboardQuoteListState extends ConsumerState<DashboardQuoteList> {
                       );
                     },
                     newPageProgressIndicatorBuilder: (context, controller) {
-                      return ProgressIndicatorCustom(screenHight: 310);
+                      return ProgressIndicatorCustom(screenHeight: 310);
                     },
                     firstPageProgressIndicatorBuilder: (context, controller) {
-                      return ProgressIndicatorCustom(screenHight: 310);
+                      return ProgressIndicatorCustom(screenHeight: 310);
                     },
                   ),
                 ),

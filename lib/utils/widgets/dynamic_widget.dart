@@ -240,7 +240,7 @@ class dynamicWidget {
                     : screenWidth - 28,
             child: Center(
               child: ProgressIndicatorCustom(
-                screenHight: screenHeight - 250,
+                screenHeight: screenHeight - 250,
                 sizeProgressIndicator: 50,
               ),
             ),

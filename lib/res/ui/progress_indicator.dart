@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 Widget ProgressIndicatorCustom({
-  required double screenHight,
+  required double screenHeight,
   double sizeProgressIndicator = 45,
   Widget? message,
   Color? colorIndicator,
@@ -49,6 +49,7 @@ Widget ProgressIndicatorCustom({
 
   return Center(
     child: Column(
+      mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

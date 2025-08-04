@@ -179,6 +179,9 @@ class CategoriaDao extends DatabaseAccessor<AppDatabase>
   // SAVE
   Future<Categoria?> save(Categoria categoria) async {
     final category = CategoriaTableCompanion(
+      idInt: categoria.idInt != null
+          ? Value(categoria.idInt!)
+          : const Value.absent(),
       id: Value(categoria.id),
       color: Value(ColorsHelpers.colorToJson(categoria.color)),
       descripcion: Value(categoria.descripcion),

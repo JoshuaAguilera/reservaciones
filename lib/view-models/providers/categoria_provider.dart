@@ -5,7 +5,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../models/categoria_model.dart';
 import '../../models/estatus_snackbar_model.dart';
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../services/categoria_service.dart';
 import 'ui_provider.dart';
 

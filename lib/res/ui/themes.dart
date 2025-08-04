@@ -114,10 +114,9 @@ class Themes {
         foregroundColor: Colors.white,
       ),
       dialogTheme: const DialogTheme(
-         shape: RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        
       ),
     );
   }
@@ -215,8 +214,10 @@ class Themes {
       inputDecorationTheme: const InputDecorationTheme(
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(width: 1.2),
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(width: 1.2, color: Colors.transparent),
+          borderRadius: BorderRadius.all(
+            Radius.circular(15),
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -243,10 +244,10 @@ class Themes {
         foregroundColor: Colors.white,
       ),
       snackBarTheme: const SnackBarThemeData(closeIconColor: Colors.white),
-      dropdownMenuTheme: DropdownMenuThemeData(
+      dropdownMenuTheme: const DropdownMenuThemeData(
         menuStyle: MenuStyle(
           backgroundColor: WidgetStatePropertyAll(
-            DesktopColors.canvasColor,
+            Colors.white,
           ),
         ),
       ),

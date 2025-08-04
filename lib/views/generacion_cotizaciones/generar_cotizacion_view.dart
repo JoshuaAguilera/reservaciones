@@ -548,7 +548,7 @@ class GenerarCotizacionViewState extends ConsumerState<GenerarCotizacionView> {
                             ),
                           if (isLoading && !isFinish)
                             ProgressIndicatorCustom(
-                              screenHight: screenHeight,
+                              screenHeight: screenHeight,
                               message: TextStyles.standardText(
                                 text: "Generando comprobante de\ncotización",
                                 align: TextAlign.center,

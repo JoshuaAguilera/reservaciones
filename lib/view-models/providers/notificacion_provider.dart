@@ -4,7 +4,7 @@ import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../models/estatus_snackbar_model.dart';
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../../models/notificacion_model.dart';
 import '../services/notificacion_service.dart';
 import 'ui_provider.dart';
@@ -66,7 +66,8 @@ class NotificacionesNotifier extends PagedNotifier<int, Notificacion> {
                 documento: "cotizacion",
                 estatus: "Leido",
                 title: "Cotizacion cancelada",
-                message: "La cotización ha sido cancelada por el cliente, revisa el motivo",
+                message:
+                    "La cotización ha sido cancelada por el cliente, revisa el motivo",
                 usuario: user,
                 createdAt: DateTime.now(),
               ),

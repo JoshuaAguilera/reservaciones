@@ -23,6 +23,7 @@ class TipoHabitacion {
   String? camas;
   String? descripcion;
   DateTime? createdAt;
+  bool select;
 
   TipoHabitacion({
     this.idInt,
@@ -32,6 +33,7 @@ class TipoHabitacion {
     this.camas,
     this.descripcion,
     this.createdAt,
+    this.select = false,
   });
 
   TipoHabitacion copyWith({

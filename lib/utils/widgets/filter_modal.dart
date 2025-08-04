@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:tuple/tuple.dart';
 
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../../res/helpers/desktop_colors.dart';
 import '../../res/ui/buttons.dart';
 import '../../res/ui/section_content.dart';
@@ -333,9 +333,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
                           //       .update((state) => newCode);
                           // }
                           case "NOTIFICATIONS":
-                            ref
-                                .watch(filterNotProvider.notifier)
-                                .update(
+                            ref.watch(filterNotProvider.notifier).update(
                               (state) {
                                 return Filter(
                                   orderBy: OrderBy.recientes,
@@ -486,9 +484,7 @@ class _FilterModal extends ConsumerState<FilterModal> {
                             );
 
                           case "NOTIFICATIONS":
-                            ref
-                                .watch(filterNotProvider.notifier)
-                                .update(
+                            ref.watch(filterNotProvider.notifier).update(
                               (state) {
                                 return Filter(orderBy: orderBy, status: tag);
                               },

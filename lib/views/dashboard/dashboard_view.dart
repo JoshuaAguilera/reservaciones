@@ -117,7 +117,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         },
                         loading: () {
                           return ProgressIndicatorCustom(
-                            screenHight: 40,
+                            screenHeight: 40,
                             sizeProgressIndicator: 25,
                             type: IndicatorType.twoRotatingArc,
                           );
@@ -298,7 +298,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                                       },
                                       loading: () {
                                         return ProgressIndicatorCustom(
-                                            screenHight: 350);
+                                            screenHeight: 350);
                                       },
                                     ),
                                   ],

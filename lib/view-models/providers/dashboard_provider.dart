@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/cotizacion_model.dart';
 import '../../models/estadistica_model.dart';
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../../models/reporte_cotizacion_model.dart';
 import '../../res/helpers/date_helpers.dart';
 import '../services/cotizacion_service.dart';

@@ -392,7 +392,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
                         ),
                       if (isLoading && !isFinish)
                         ProgressIndicatorCustom(
-                          screenHight: screenHight,
+                          screenHeight: screenHight,
                           message: TextStyles.standardText(
                             text: "Generando comprante PDF",
                             align: TextAlign.center,
@@ -419,7 +419,7 @@ class _CotizacionDetalleViewState extends ConsumerState<CotizacionDetalleView> {
           },
           error: (error, _) => const MessageErrorScroll(),
           loading: () {
-            return ProgressIndicatorCustom(screenHight: 450);
+            return ProgressIndicatorCustom(screenHeight: 450);
           },
         ),
       ],

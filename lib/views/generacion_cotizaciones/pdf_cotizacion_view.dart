@@ -67,7 +67,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
           width: screenWidth < 1080 ? null : 1080,
           child: PdfPreview(
             loadingWidget: ProgressIndicatorCustom(
-              screenHight: screenHeight,
+              screenHeight: screenHeight,
               colorIndicator: Colors.white,
               type: IndicatorType.progressiveDots,
               message: TextStyles.standardText(
@@ -117,7 +117,7 @@ class _PdfCotizacionViewState extends ConsumerState<PdfCotizacionView> {
             actions: [
               if (isLoadingDoc)
                 ProgressIndicatorCustom(
-                  screenHight: 17,
+                  screenHeight: 17,
                   sizeProgressIndicator: 43,
                   colorIndicator: Colors.white,
                   type: IndicatorType.staggeredDotsWave,

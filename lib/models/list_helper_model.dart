@@ -1,3 +1,17 @@
+class PaginatedList {
+  int pageIndex;
+  int pageSize;
+
+  PaginatedList({
+    required this.pageIndex,
+    required this.pageSize,
+  });
+
+  int totalPages(int totalItems) => (totalItems / pageSize).ceil();
+  bool hasNextPage(int totalItems) => pageIndex < totalPages(totalItems) - 1;
+  bool get hasPreviousPage => pageIndex > 0;
+}
+
 class Layout {
   static const String _checkList = "C";
   static String get checkList => _checkList;

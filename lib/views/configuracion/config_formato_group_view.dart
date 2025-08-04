@@ -158,7 +158,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                       canChangeOrientation: false,
                       canChangePageFormat: false,
                       canDebug: false,
-                      loadingWidget: ProgressIndicatorCustom(screenHight: 0),
+                      loadingWidget: ProgressIndicatorCustom(screenHeight: 0),
                       allowSharing: false,
                       allowPrinting: false,
                       pdfFileName:
@@ -195,7 +195,7 @@ class _ConfigFormatoViewState extends ConsumerState<ConfigFormatoGroupView> {
                 },
                 loading: () {
                   return ProgressIndicatorCustom(
-                      screenHight: screenHight * 0.2);
+                      screenHeight: screenHight * 0.2);
                 },
               ),
             ],

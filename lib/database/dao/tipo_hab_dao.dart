@@ -13,6 +13,15 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
 
   var mapEmpty = <String, dynamic>{};
 
+  Future<int> count() async {
+    final query = selectOnly(db.tipoHabitacionTable)
+      ..addColumns([db.tipoHabitacionTable.idInt.count()]);
+
+    final result = await query.getSingleOrNull();
+    if (result == null) return 0;
+    return result.read(db.tipoHabitacionTable.idInt.count()) ?? 0;
+  }
+
   // LIST
   Future<List<TipoHabitacion>> getList({
     String descripcion = '',
@@ -114,6 +123,9 @@ class TipoHabitacionDao extends DatabaseAccessor<AppDatabase>
   // SAVE
   Future<TipoHabitacion?> save(TipoHabitacion tipoHabitacion) async {
     final type = TipoHabitacionTableCompanion(
+      idInt: tipoHabitacion.idInt != null
+          ? Value(tipoHabitacion.idInt!)
+          : const Value.absent(),
       id: Value(tipoHabitacion.id),
       descripcion: Value(tipoHabitacion.descripcion),
       codigo: Value(tipoHabitacion.codigo),

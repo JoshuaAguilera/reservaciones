@@ -272,7 +272,7 @@ class _DashboardQuoteGraphicState extends ConsumerState<DashboardQuoteGraphic> {
                         },
                         error: (error, _) => const MessageErrorScroll(),
                         loading: () {
-                          return ProgressIndicatorCustom(screenHight: 450);
+                          return ProgressIndicatorCustom(screenHeight: 450);
                         },
                       ),
                     )

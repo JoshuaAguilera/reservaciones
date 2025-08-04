@@ -7,6 +7,20 @@ import '../../models/tipo_habitacion_model.dart';
 import 'base_service.dart';
 
 class TipoHabService extends BaseService {
+  Future<int> count() async {
+    try {
+      final db = AppDatabase();
+      final tipoHabitacionDao = TipoHabitacionDao(db);
+      final count = await tipoHabitacionDao.count();
+      await tipoHabitacionDao.close();
+      await db.close();
+      return count;
+    } catch (e) {
+      print(e);
+    }
+    return 0;
+  }
+
   Future<List<TipoHabitacion>> getList({
     String descripcion = "",
     String codigo = "",

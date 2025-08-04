@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 
 final sectionManagerProvider = StateProvider<List<bool>>((ref) {
   return [true, false];

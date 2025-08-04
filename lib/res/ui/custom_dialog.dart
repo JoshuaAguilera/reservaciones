@@ -15,10 +15,12 @@ class CustomDialog extends StatefulWidget {
   final String? contentString;
   final String nameButton1;
   final void Function()? funtion1;
+  final void Function()? funtion2;
   final String nameButton2;
   final bool withButtonSecondary;
   final bool notCloseInstant;
   final bool withLoadingProcess;
+  final bool withActions;
 
   const CustomDialog({
     super.key,
@@ -29,11 +31,13 @@ class CustomDialog extends StatefulWidget {
     this.content,
     this.contentString,
     this.nameButton1 = 'Aceptar',
-    required this.funtion1,
+    this.funtion1,
+    this.funtion2,
     this.nameButton2 = 'Cancelar',
     this.withButtonSecondary = false,
     this.notCloseInstant = false,
     this.withLoadingProcess = false,
+    this.withActions = true,
   });
 
   @override
@@ -86,35 +90,39 @@ class _CustomDialogState extends State<CustomDialog> {
                   overflow: TextOverflow.clip,
                 ),
           ),
-          actions: [
-            if (widget.withButtonSecondary)
-              Buttons.filterButton1(
-                title: widget.nameButton2,
-                onPressed: (widget.withLoadingProcess && loadingProcess)
-                    ? null
-                    : () {
-                        applyUnfocus();
-                        Navigator.pop(context);
-                      },
-              ),
-            Buttons.buttonSecundary(
-              text: widget.nameButton1,
-              compact: true,
-              isLoading: loadingProcess,
-              foregroundColor: Colors.white,
-              backgroudColor: Theme.of(context).iconTheme.color,
-              onPressed: () {
-                applyUnfocus();
-                if (widget.withLoadingProcess) {
-                  loadingProcess = true;
-                  setState(() {});
-                }
+          actions: !widget.withActions
+              ? []
+              : [
+                  if (widget.withButtonSecondary)
+                    Buttons.filterButton1(
+                      title: widget.nameButton2,
+                      onPressed: (widget.withLoadingProcess && loadingProcess)
+                          ? null
+                          : widget.funtion2 ??
+                              () {
+                                applyUnfocus();
+                                Navigator.pop(context);
+                              },
+                    ),
+                  Buttons.buttonSecundary(
+                    text: widget.nameButton1,
+                    compact: true,
+                    isLoading: loadingProcess,
+                    foregroundColor: Colors.white,
+                    backgroudColor: Theme.of(context).iconTheme.color,
+                    onPressed: () {
+                      applyUnfocus();
+                      if (widget.withLoadingProcess) {
+                        loadingProcess = true;
+                        setState(() {});
+                      }
 
-                widget.funtion1!.call();
-                if (!widget.notCloseInstant) Navigator.of(context).pop(true);
-              },
-            ),
-          ],
+                      widget.funtion1?.call();
+                      if (!widget.notCloseInstant)
+                        Navigator.of(context).pop(true);
+                    },
+                  ),
+                ],
         );
       },
     );

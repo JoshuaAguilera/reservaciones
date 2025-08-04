@@ -115,7 +115,7 @@ class Buttons {
 
         Color colorContent = (useWhiteForeground(
           backgroundColor ?? Theme.of(context).cardColor,
-          bias: 75,
+          bias: 110,
         )
             ? Colors.white
             : Colors.black87);
@@ -244,20 +244,25 @@ class Buttons {
     Color? colorIcon,
     String tooltip = "",
     bool invertColor = false,
+    double size = 40,
   }) {
-    return Card(
-      color: (invertColor ? colorIcon : backgroundColor) ??
-          DesktopColors.buttonPrimary,
+    return Container(
+      decoration: BoxDecoration(
+        color: (invertColor ? colorIcon : backgroundColor) ??
+            DesktopColors.buttonPrimary,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: SizedBox(
-        height: 40,
-        width: 40,
+        height: size,
+        width: size,
         child: IconButton(
           tooltip: tooltip,
           onPressed: onPressed,
+          padding: EdgeInsets.zero,
           icon: Icon(
             icon,
-            color: (invertColor ? backgroundColor : colorIcon) ?? Colors.white,
-            size: 25,
+            color: (invertColor ? backgroundColor : colorIcon),
+            size: size - 10,
           ),
         ),
       ),

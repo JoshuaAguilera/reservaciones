@@ -322,7 +322,7 @@ class _DiasListState extends ConsumerState<DiasListView> {
             TextStyles.standardText(text: "Error de calculación de tarifas"),
         loading: () => SizedBox(
           height: 350,
-          child: ProgressIndicatorCustom(screenHight: 0),
+          child: ProgressIndicatorCustom(screenHeight: 0),
         ),
       ),
     );

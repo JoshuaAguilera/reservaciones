@@ -5,7 +5,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../models/cotizacion_model.dart';
 import '../../models/estatus_snackbar_model.dart';
-import '../../models/filter_model.dart';
+import '../../models/list_helper_model.dart';
 import '../../models/periodo_model.dart';
 import '../../models/politica_tarifario_model.dart';
 import '../../models/usuario_model.dart';

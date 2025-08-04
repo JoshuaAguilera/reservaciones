@@ -416,7 +416,7 @@ class _ControllerCalendarWidgetState
                               return SizedBox(
                                 height: 150,
                                 child: ProgressIndicatorCustom(
-                                  screenHight: 5,
+                                  screenHeight: 5,
                                   sizeProgressIndicator: 25,
                                 ),
                               );

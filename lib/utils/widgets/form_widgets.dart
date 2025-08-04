@@ -50,17 +50,39 @@ class FormWidgets {
                   showDialog(
                     context: context,
                     builder: (context) {
+                      final fillColor = Theme.of(context).cardColor;
+
                       return AlertDialog(
-                        title: AppText.sectionTitleText(
+                        title: AppText.cardTitleText(
                           text: "Selecciona un color",
                         ),
-                        content: SingleChildScrollView(
-                          child: HueRingPicker(
-                            pickerColor: pickerColor,
-                            pickerAreaBorderRadius:
-                                const BorderRadius.all(Radius.circular(50)),
-                            onColorChanged: changeColor,
-                            portraitOnly: false,
+                        content: Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: Theme.of(context).colorScheme.copyWith(
+                                  primary: pickerColor,
+                                ),
+                            inputDecorationTheme: InputDecorationTheme(
+                              filled: true,
+                              fillColor: fillColor,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 1.2, color: Colors.transparent),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            child: HueRingPicker(
+                              pickerColor: pickerColor,
+                              pickerAreaBorderRadius:
+                                  const BorderRadius.all(Radius.circular(50)),
+                              onColorChanged: changeColor,
+                              portraitOnly: true,
+                            ),
                           ),
                         ),
                         actions: <Widget>[

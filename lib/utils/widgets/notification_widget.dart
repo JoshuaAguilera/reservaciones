@@ -117,10 +117,10 @@ class _NotificationWidgetState extends ConsumerState<NotificationWidget> {
                       );
                     },
                     newPageProgressIndicatorBuilder: (context, controller) {
-                      return ProgressIndicatorCustom(screenHight: 310);
+                      return ProgressIndicatorCustom(screenHeight: 310);
                     },
                     firstPageProgressIndicatorBuilder: (context, controller) {
-                      return ProgressIndicatorCustom(screenHight: 310);
+                      return ProgressIndicatorCustom(screenHeight: 310);
                     },
                   );
                 }),

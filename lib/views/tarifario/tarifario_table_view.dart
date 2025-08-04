@@ -238,7 +238,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                         },
                         error: (error, stackTrace) => const SizedBox(),
                         loading: () => ProgressIndicatorCustom(
-                          screenHight: screenHeight,
+                          screenHeight: screenHeight,
                           type: IndicatorType.progressiveDots,
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",
@@ -270,7 +270,7 @@ class _TarifarioTableState extends ConsumerState<TarifarioTableView> {
                     screenWidth: screenWidth,
                     extended: widget.sideController.extended)),
             loading: () => ProgressIndicatorCustom(
-              screenHight: screenHeight,
+              screenHeight: screenHeight,
               type: IndicatorType.progressiveDots,
               message: TextStyles.standardText(
                 text: "Buscando Tarifario",

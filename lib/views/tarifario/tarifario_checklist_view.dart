@@ -85,7 +85,7 @@ class _TarifarioChecklistViewState
                         },
                         error: (error, stackTrace) => const SizedBox(),
                         loading: () => ProgressIndicatorCustom(
-                          screenHight: screenHeight,
+                          screenHeight: screenHeight,
                           type: IndicatorType.progressiveDots,
                           message: TextStyles.standardText(
                             text: "Cargando Tarifas Base",

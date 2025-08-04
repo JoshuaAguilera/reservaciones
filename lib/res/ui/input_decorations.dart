@@ -42,7 +42,6 @@ class InputDecorations {
     return CustomDropdownDisabledDecoration(
       hintStyle: AppText.inputStyle(color: Colors.black38),
       headerStyle: AppText.inputStyle(color: Colors.black38),
-      border: Border.all(color: Colors.black38),
       borderRadius: const BorderRadius.all(Radius.circular(14)),
     );
   }

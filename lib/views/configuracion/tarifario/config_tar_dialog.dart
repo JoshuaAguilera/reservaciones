@@ -2,8 +2,8 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:generador_formato/res/ui/progress_indicator.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../../models/categoria_model.dart';
 import '../../../models/tipo_habitacion_model.dart';
@@ -146,7 +146,8 @@ class _TipoHabDialogState extends State<TipoHabDialog> {
                 ref
                     .read(tipoHabitacionProvider.notifier)
                     .update((state) => null);
-                ref.invalidate(tipoHabListProvider(const Tuple3("", 1, 5)));
+                ref.invalidate(tipoHabListProvider(null));
+                ref.invalidate(tipoHabListProvider(""));
                 isLoading = false;
                 snapshot(() {});
 
@@ -185,7 +186,8 @@ class TipoHabDeleteDialog extends ConsumerWidget {
           if (response) return;
 
           ref.read(tipoHabitacionProvider.notifier).update((state) => null);
-          ref.invalidate(tipoHabListProvider(const Tuple3("", 1, 5)));
+          ref.invalidate(tipoHabListProvider(""));
+          ref.invalidate(tipoHabListProvider(null));
 
           if (!context.mounted) return;
           Navigator.of(context).pop(true);
@@ -215,6 +217,7 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
   void initState() {
     super.initState();
     if (widget.categoria != null) {
+      selectType = widget.categoria?.tipoHabitacion;
       selectColor = widget.categoria?.color;
       _nombreController.text = widget.categoria!.nombre ?? '';
       _descriptionController.text = widget.categoria!.descripcion ?? '';
@@ -273,15 +276,12 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                             data: (data) {
                               return CustomDropdown<
                                   TipoHabitacion>.searchRequest(
-                                futureRequest: (p0) {
-                                  return ref.read(tipoHabListProvider(
-                                    Tuple3(p0, 1, 100),
-                                  ).future);
+                                futureRequest: (p0) async {
+                                  final response = await ref
+                                      .read(tipoHabListProvider(p0).future);
+                                  return Future.value(response.item1);
                                 },
                                 hintText: 'Seleccione un Tipo de Habitación',
-                                closedHeaderPadding: selectType != null
-                                    ? const EdgeInsets.fromLTRB(10, 2, 16, 2)
-                                    : const EdgeInsets.fromLTRB(10, 14, 16, 14),
                                 enabled: !isLoading,
                                 disabledDecoration: InputDecorations
                                     .defaultDropdownDiseableDecoration(),
@@ -290,7 +290,7 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                                   context,
                                   closedFillColor: fillColor,
                                 ),
-                                items: data,
+                                items: data.item1,
                                 listItemPadding: const EdgeInsets.symmetric(
                                   horizontal: 15,
                                   vertical: 9,
@@ -300,9 +300,12 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                                 },
                                 headerBuilder:
                                     (context, selectedItem, enabled) {
-                                  return DropdownMenuItem(
-                                    child: AppText.simpleText(
-                                      text: selectedItem.codigo ?? 'unknown',
+                                  return SizedBox(
+                                    height: 20,
+                                    child: DropdownMenuItem(
+                                      child: AppText.simpleText(
+                                        text: selectedItem.codigo ?? 'unknown',
+                                      ),
                                     ),
                                   );
                                 },
@@ -314,7 +317,7 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                                   ),
                                 ),
                                 initialItem: (widget.categoria != null)
-                                    ? data
+                                    ? data.item1
                                         .where((element) =>
                                             element.idInt ==
                                             widget.categoria?.tipoHabitacion
@@ -344,12 +347,15 @@ class _CategoriaDialogState extends ConsumerState<CategoriaDialog> {
                               text: "Error al consultar tipos de habitación",
                             ),
                             loading: () {
-                              return const Align(
+                              return Align(
                                 alignment: Alignment.center,
                                 child: SizedBox(
                                   height: 32,
                                   width: 32,
-                                  child: CircularProgressIndicator(),
+                                  child: ProgressIndicatorCustom(
+                                    screenHeight: 32,
+                                    sizeProgressIndicator: 32,
+                                  ),
                                 ),
                               );
                             },
@@ -444,7 +450,7 @@ class CategoriaDeleteDialog extends ConsumerWidget {
           if (response) return;
 
           ref.read(tipoHabitacionProvider.notifier).update((state) => null);
-          ref.invalidate(tipoHabListProvider(const Tuple3("", 1, 5)));
+          ref.invalidate(tipoHabListProvider(""));
 
           if (!context.mounted) return;
           Navigator.of(context).pop(true);

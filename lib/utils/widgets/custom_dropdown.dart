@@ -21,6 +21,7 @@ class CustomDropdown {
     double compactHeight = 30,
     bool withPermisse = true,
     double dyCompact = -8,
+    Color? fillColor,
   }) {
     List<String> items = elements.toList();
 
@@ -71,7 +72,7 @@ class CustomDropdown {
                     ),
                     inputDecorationTheme: InputDecorationTheme(
                       filled: true,
-                      fillColor: Theme.of(context).cardColor,
+                      fillColor: fillColor ?? Theme.of(context).cardColor,
                       contentPadding: const EdgeInsets.only(top: -5, left: 15),
                       border: const OutlineInputBorder(
                         borderSide: BorderSide(
